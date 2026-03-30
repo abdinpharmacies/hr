@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="hr_employee_view_org_chart_form" model="ir.ui.view">
+            <field name="name">hr_employee_view_org_chart_form</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="mode">primary</field>
+            <field name="priority">10000</field>
+            <field name="arch" type="xml">
+                <form string="Org Chart">
+                    <sheet>
+                        <div class="row">
+                            <div id="o_work_employee_main" class="col-md-12 col-lg-6">
+                                <div id="o_employee_right">
+                                    <h4 class="o_org_chart_title mb16 mt0">Organization Chart</h4>
+                                    <field name="child_ids" widget="hr_org_chart" readonly="1"/>
+                                </div>
+                            </div>
+                        </div>
+
+                    </sheet>
+                    <footer>
+                        <button string="Close" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

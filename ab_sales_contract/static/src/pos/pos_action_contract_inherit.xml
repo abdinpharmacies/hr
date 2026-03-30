@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_contract.PosActionContractInherit"
+       t-inherit="ab_sales.PosAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_customer_group')]" position="before">
+            <div class="o_ab_sales_pos_top_group o_ab_sales_pos_contract_group">
+                <div class="o_ab_sales_pos_field_row">
+                    <ABMany2one
+                            relation="'ab_contract'"
+                            value="contractValue()"
+                            onUpdate="onContractM2OUpdate"
+                            placeholder="'Contract...'"
+                            domain="() => [['active', '=', true]]"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="'Contract'"
+                    />
+                </div>
+            </div>
+        </xpath>
+    </t>
+</templates>

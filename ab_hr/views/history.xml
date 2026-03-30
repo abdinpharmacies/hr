@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_hr_emp_history_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_emp_history_view_tree</field>
+            <field name="model">ab_hr_emp_history</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_emp_history_tree"
+                      decoration-danger="termination_date != False"
+                      limit="100">
+                    <field name="id" class="text-muted"/>
+                    <field name="is_applied" optional="show" widget="boolean_toggle"/>
+                    <field name="accid" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="job_id" optional="show"/>
+                    <field name="old_job_title" optional="show"/>
+                    <field name="old_workplace" optional="show"/>
+                    <field name="territory" optional="show"/>
+                    <field name="action_type" optional="show"/>
+                    <field name="action_date" optional="show"/>
+                    <field name="is_issue_as_action" optional="hide"/>
+                    <field name="issue_date" optional="hide"/>
+                    <field name="history_diff" optional="show"/>
+                    <field name="start_fir_date" optional="show"/>
+                    <field name="replacement_date" optional="show"/>
+                    <field name="termination_date" optional="show"/>
+                    <field name="notes" optional="hide"/>
+                    <field name="alt_job_id" optional="show"/>
+                    <field name="new_job_title" optional="show"/>
+                    <field name="new_workplace" optional="show"/>
+                    <field name="workplace_region" optional="show"/>
+                    <field name="attached_file" optional="hide"/>
+                    <field name="attached_link" optional="hide"/>
+                    <field name="payroll_action_month" optional="show"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="emp_history_view_form" model="ir.ui.view">
+            <field name="name">emp_history_view_form</field>
+            <field name="model">ab_hr_emp_history</field>
+            <field name="arch" type="xml">
+                <form string="emp_history_form">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active == True"/>
+
+                        <div class="d-flex justify-content-around">
+                            <div>
+                                <div class="pl-5">
+                                    <field name="is_applied" nolabel="1" widget="boolean_toggle"/>
+                                </div>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+
+                        <group class="h1 text-muted text-center">
+                            <field name="accid" readonly="1" nolabel="1" class="h1 text-muted"/>
+                        </group>
+                        <group class="h1 text-info text-center">
+                            <field name="employee_id" nolabel="1"/>
+                        </group>
+                        <group string="Action Type">
+                            <field name="action_type" nolabel="1" class="h4"/>
+                        </group>
+                        <group col="4">
+                            <field name="job_id"/>
+                            <field name="old_job_title"/>
+                            <field name="old_workplace"/>
+                            <field name="territory"/>
+                            <field name="action_date"/>
+                            <field name="notes"/>
+                            <field name="new_job_title"/>
+                            <field name="new_workplace"/>
+                            <field name="new_territory"/>
+                            <field name="attached_file"/>
+                            <field name="attached_link"/>
+                            <field name="alt_job_id"/>
+                            <field name="history_diff"/>
+                            <field name="start_fir_date"/>
+                            <field name="replacement_date"/>
+                            <field name="termination_date"/>
+                            <field name="payroll_action_month"/>
+                            <field name="create_uid"/>
+                            <field name="create_date"/>
+                            <field name="write_uid"/>
+                            <field name="write_date"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- ab_hr_emp_history_pivot -->
+        <record model="ir.ui.view" id="ab_hr_emp_history_pivot">
+            <field name="name">ab_hr_emp_history.pivot</field>
+            <field name="model">ab_hr_emp_history</field>
+            <field name="arch" type="xml">
+                <pivot string="Abdin hr Pivot">
+                    <field name="employee_id" type="row"/>
+                </pivot>
+            </field>
+        </record>
+        <record id="ab_hr_emp_history_search" model="ir.ui.view">
+            <field name="name">ab_hr_emp_history_search</field>
+            <field name="model">ab_hr_emp_history</field>
+            <field name="arch" type="xml">
+                <search string="History">
+                    <field name="employee_id"/>
+                    <field name="job_id"/>
+                    <field name="old_job_title"/>
+                    <field name="old_workplace"/>
+                    <field name="territory"/>
+                    <field name="action_type"/>
+                    <field name="action_date"/>
+                    <field name="notes" optional="hide"/>
+                    <field name="is_issue_as_action"/>
+                    <field name="alt_job_id"/>
+                    <field name="new_job_title"/>
+                    <field name="new_workplace"/>
+                    <field name="workplace_region"/>
+                    <field name="attached_link" optional="hide"/>
+                    <filter name="firing_cycle"
+                            string="Firing Cycle"
+                            domain="[
+                                      ('job_id.issue_date', '!=', False),
+                                      ('job_id.termination_date', '=', False),
+                                      ('is_issue_as_action', '=', True),
+                                      ('start_fir_date','&lt;=',context_today().strftime('%%Y-%%m-%%d')),
+                                      ('action_type.action_date_type', 'in', ('direct_issue','pending_issue'))
+                                      ]"
+                    />
+                    <filter name="issues"
+                            string="Issues"
+                            domain="[
+                                      ('job_id.issue_date', '!=', False),
+                                      ('action_type.action_date_type', 'in', ['pending_issue','direct_issue']),
+                                      ]"
+
+                    />
+                </search>
+            </field>
+        </record>
+
+        <record id="emp_history_action_form" model="ir.actions.act_window">
+            <field name="name">History Actions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_emp_history</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+        <record id="emp_history_action" model="ir.actions.act_window">
+            <field name="name">History Actions</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_emp_history</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem name="History"
+                  parent="history_and_history_reports_sub_menu"
+                  id="ab_hr_emp_history_menu"
+                  action="emp_history_action"
+                  sequence="10"/>
+
+
+        <!--############################## Server Action ############################-->
+        <!-- Add SERVER_ACTION generate_employees-->
+        <record id="ab_hr_termination_process_act" model="ir.actions.server">
+            <field name="name">Firing Cycle</field>
+            <field name="type">ir.actions.server</field>
+            <field name="model_id" ref="ab_hr.model_ab_hr_emp_history"/>
+            <field name="binding_model_id" eval="0"/>
+        </record>
+
+
+    </data>
+</odoo>

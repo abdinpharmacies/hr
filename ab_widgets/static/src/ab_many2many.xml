@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_widgets.ABMany2many">
+        <div class="o_ab_many2many_wrapper">
+            <div class="o_ab_many2many_tags">
+                <t t-if="!selected.length">
+                    <span class="text-muted">No items selected.</span>
+                </t>
+                <t t-foreach="selected" t-as="item" t-key="item.id">
+                    <span class="badge text-bg-light border d-flex align-items-center gap-1">
+                        <span t-esc="item.display_name || item.name"/>
+                        <button class="btn btn-sm btn-link p-0"
+                                type="button"
+                                t-on-click="() => removeValue(item.id)">
+                            <i class="fa fa-times" aria-hidden="true"/>
+                        </button>
+                    </span>
+                </t>
+            </div>
+            <ABMany2one
+                    relation="props.relation"
+                    value="state.input"
+                    onUpdate="onInputUpdate"
+                    domain="props.domain"
+                    context="props.context"
+                    placeholder="props.placeholder"
+                    string="props.string"
+                    canCreate="props.canCreate"
+                    canCreateEdit="props.canCreateEdit"
+                    canQuickCreate="props.canQuickCreate"
+                    canOpen="props.canOpen"
+                    canWrite="props.canWrite"
+                    searchThreshold="props.searchThreshold"
+                    searchMoreLabel="props.searchMoreLabel"
+            />
+        </div>
+    </t>
+</templates>

@@ -1,0 +1,1546 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_hr_applicant
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-08 12:10+0000\n"
+"PO-Revision-Date: 2026-03-08 12:10+0000\n"
+"Last-Translator: Codex\n"
+"Language-Team: Arabic\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_hr_applicant
+#: model:ir.actions.report,print_report_name:ab_hr_applicant.action_report_ab_hr_application
+msgid "'Application - %s' % (object.name)"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "01"
+msgstr "01"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "02"
+msgstr "02"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "03"
+msgstr "03"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "5-digit code"
+msgstr "رمز من 5 أرقام"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid ""
+"<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n"
+"                                                            <span class=\"visually-hidden\">Refresh CAPTCHA</span>"
+msgstr ""
+"<i class=\"fa fa-refresh\" aria-hidden=\"true\"/>\n"
+"                                                            <span class=\"visually-hidden\">تحديث رمز التحقق</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "<option value=\"\">Choose governorate first...</option>"
+msgstr "<option value=\"\">اختر المحافظة أولاً...</option>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "<option value=\"\">Choose...</option>"
+msgstr "<option value=\"\">اختر...</option>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "<span class=\"badge bg-info\">Upcoming</span>"
+msgstr "<span class=\"badge bg-info\">قريبًا</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "<span class=\"badge bg-secondary\">Closed</span>"
+msgstr "<span class=\"badge bg-secondary\">مغلق</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "<span class=\"badge bg-success\">Open</span>"
+msgstr "<span class=\"badge bg-success\">مفتوح</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid ""
+"<span class=\"badge rounded-pill text-bg-primary px-3 py-2 step-indicator\" data-step=\"0\">1. Personal Information</span>\n"
+"                                            <span class=\"badge rounded-pill text-bg-secondary px-3 py-2 step-indicator\" data-step=\"1\">2. Experience</span>\n"
+"                                            <span class=\"badge rounded-pill text-bg-secondary px-3 py-2 step-indicator\" data-step=\"2\">3. Courses</span>\n"
+"                                            <span class=\"badge rounded-pill text-bg-secondary px-3 py-2 step-indicator\" data-step=\"3\">4. Job Details</span>"
+msgstr ""
+"<span class=\"badge rounded-pill text-bg-primary px-3 py-2 step-indicator\" data-step=\"0\">١. البيانات الشخصية</span>\n"
+"                                            <span class=\"badge rounded-pill text-bg-secondary px-3 py-2 step-indicator\" data-step=\"1\">٢. الخبرات</span>\n"
+"                                            <span class=\"badge rounded-pill text-bg-secondary px-3 py-2 step-indicator\" data-step=\"2\">٣. الدورات</span>\n"
+"                                            <span class=\"badge rounded-pill text-bg-secondary px-3 py-2 step-indicator\" data-step=\"3\">٤. تفاصيل الوظيفة</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-danger\">Rejected</span>"
+msgstr "<span class=\"badge text-bg-danger\">مرفوض</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-info\">Duplicated Training</span>"
+msgstr "<span class=\"badge text-bg-info\">تدريب مكرر</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-info\">Training</span>"
+msgstr "<span class=\"badge text-bg-info\">تدريب</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-primary\">Advanced Training</span>"
+msgstr "<span class=\"badge text-bg-primary\">تدريب متقدم</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-purple\">Re-Appraisal</span>"
+msgstr "<span class=\"badge text-bg-purple\">إعادة التقييم</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-secondary\">S.List</span>"
+msgstr "<span class=\"badge text-bg-secondary\">قائمة مختصرة</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-success\">Accepted-Job Offer</span>"
+msgstr "<span class=\"badge text-bg-success\">قبول عرض العمل</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-success\">Accepted-Short List</span>"
+msgstr "<span class=\"badge text-bg-success\">قبول القائمة القصيرة</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-success\">Accepted-Waiting List</span>"
+msgstr "<span class=\"badge text-bg-success\">قبول قائمة الانتظار</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_kanban_view
+msgid "<span class=\"badge text-bg-warning\">Archived</span>"
+msgstr "<span class=\"badge text-bg-warning\">مؤرشف</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "<span class=\"form-check-label\">After Midnight</span>"
+msgstr "<span class=\"form-check-label\">بعد منتصف الليل</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "<span class=\"form-check-label\">Evening</span>"
+msgstr "<span class=\"form-check-label\">مسائي</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "<span class=\"form-check-label\">Morning</span>"
+msgstr "<span class=\"form-check-label\">صباحي</span>"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "<span class=\"me-2\">National ID:</span>"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_form_view
+msgid "<span class=\"me-2\">Schedule interview with:</span>"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "<strong>Registration Period:</strong><br/>"
+msgstr "<strong>فترة التقديم:</strong><br/>"
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_hr_application
+msgid "Abdin HR Applicants"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_hr_interview
+msgid "Abdin HR Interviews"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_hr_job_post
+msgid "Abdin HR Job Post"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_hr_course
+msgid "Abdin Training Courses"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__accepted_job_offer
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Accepted Job Offer"
+msgstr "قبول عرض العمل"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__accepted_short_list
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Accepted Short List"
+msgstr "قبول القائمة القصيرة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__accepted_waiting_list
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Accepted Waiting List"
+msgstr "قبول قائمة الانتظار"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__accepted_job_offer
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__accepted_job_offer
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Accepted-Job Offer"
+msgstr "قبول عرض العمل"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__accepted_short_list
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__accepted_short_list
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Accepted-Short List"
+msgstr "قبول القائمة القصيرة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__accepted_waiting_list
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__accepted_waiting_list
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Accepted-Waiting List"
+msgstr "قبول قائمة الانتظار"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__action
+msgid "Action"
+msgstr "الإجراء"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__active
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Add your previous work experience records (optional)."
+msgstr "أضف سجلات خبراتك العملية السابقة (اختياري)."
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__address
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Address *"
+msgstr "العنوان *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Address Information"
+msgstr "معلومات العنوان"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__advanced_training
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__advanced_training
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__advanced_training
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Advanced Training"
+msgstr "تدريب متقدم"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__after_midnight
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "After Midnight"
+msgstr "بعد منتصف الليل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "After Midnight Shift"
+msgstr "وردية بعد منتصف الليل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Age must be 18+"
+msgstr "يجب أن يكون العمر 18 سنة فأكثر"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__applicant_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__applicant_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__applicant_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__applicant_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Applicant"
+msgstr "المتقدم"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__applicant_status
+msgid "Applicant Status"
+msgstr "حالة المتقدم"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Application"
+msgstr "طلب التوظيف"
+
+#. module: ab_hr_applicant
+#: model:ir.actions.report,name:ab_hr_applicant.action_report_ab_hr_application
+msgid "Application Form"
+msgstr "نموذج طلب وظيفة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Application Type"
+msgstr "نوع الطلب"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Application step progress"
+msgstr "تقدم خطوات الطلب"
+
+#. module: ab_hr_applicant
+#: model:ir.actions.act_window,name:ab_hr_applicant.ab_hr_application_action
+#: model:ir.ui.menu,name:ab_hr_applicant.ab_hr_application
+#: model:ir.ui.menu,name:ab_hr_applicant.ab_hr_application_menu
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "Applications"
+msgstr "طلبات التوظيف"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "Applications Closed"
+msgstr "التقديم مغلق"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "Apply Now"
+msgstr "قدّم الآن"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__archived
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__archived
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__archived
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_job_post__status__available
+msgid "Available"
+msgstr "متاح"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__bconnect_experience
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Bconnect Experience"
+msgstr "خبرة Bconnect"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__birth_date
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Birth Date"
+msgstr "تاريخ الميلاد"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Birth Date *"
+msgstr "تاريخ الميلاد *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.view_ab_hr_interview_result_wizard_form
+msgid "Cancel"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__religion__christian
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Christian"
+msgstr "مسيحي"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__city_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__city_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "City"
+msgstr "المدينة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "City *"
+msgstr "المدينة *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__company_name
+msgid "Company Name"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.view_ab_hr_interview_result_wizard_form
+msgid "Confirm"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Contact"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Contact Information"
+msgstr "معلومات التواصل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Courses"
+msgstr "الدورات"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_import_log__stage__write
+msgid "Create/Write"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "Created By"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "Created Date"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__create_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__create_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__create_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__create_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__create_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__create_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__create_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__create_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__create_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__create_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__create_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__create_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__create_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__create_date
+msgid "Created on"
+msgstr "أُنشئ في"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__applicant_status__current_employee
+msgid "Current employee"
+msgstr "موظف حالي"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__military_status__delayed
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Delayed"
+msgstr "مؤجل"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__description
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_form_view
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Did not perform"
+msgstr "لم يؤدِّ"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__military_status__did_not_perform
+msgid "Did not perform "
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__display_name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__display_name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__display_name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__display_name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__display_name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__display_name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__display_name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__marital_status__divorced
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Divorced"
+msgstr "مطلق"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__duplicated_training
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__duplicated_training
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__duplicated_training
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Duplicated Training"
+msgstr "تدريب مكرر"
+
+#. module: ab_hr_applicant
+#: model:ir.model.constraint,message:ab_hr_applicant.constraint_ab_required_job_unique_required_job
+msgid "Each HR Job can only be linked once in Required Jobs."
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Education"
+msgstr "التعليم"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__email
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Email"
+msgstr "البريد الإلكتروني"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__ending_date
+msgid "End Date"
+msgstr "تاريخ النهاية"
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/ab_hr_interview_result_wizard.py:0
+msgid "End Date must be after Start Date."
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_job_post__status__ended
+msgid "Ended"
+msgstr "انتهى"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__ending_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__ending_date
+msgid "Ending Date"
+msgstr "تاريخ الانتهاء"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Enter Code *"
+msgstr "أدخل الرمز *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Enter the 5-digit verification code from the image"
+msgstr "أدخل رمز التحقق المكوّن من 5 أرقام من الصورة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__evening
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Evening"
+msgstr "مسائي"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "Evening Shift"
+msgstr "وردية مسائية"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Exempt"
+msgstr "معفى"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__expected_salary
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Expected Salary"
+msgstr "الراتب المتوقع"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Expected Salary *"
+msgstr "الراتب المتوقع *"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__experience_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Experience"
+msgstr "الخبرات"
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_hr_experience
+msgid "Experiences"
+msgstr "الخبرات"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "Explore our current vacancies and apply online"
+msgstr "استكشف الوظائف الشاغرة الحالية وقدّم عبر الإنترنت"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__gender__female
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Female"
+msgstr "أنثى"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Fill in the form below to submit your application."
+msgstr "املأ النموذج أدناه لإرسال طلبك."
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,help:ab_hr_applicant.field_ab_hr_interview_result_wizard__to_hour
+msgid "Float time, e.g. 17.0 = 17:00"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,help:ab_hr_applicant.field_ab_hr_interview_result_wizard__from_hour
+msgid "Float time, e.g. 8.5 = 08:30"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "Form Type"
+msgstr "نوع الاستمارة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__applicant_status__former_employee
+msgid "Former employee"
+msgstr "موظف سابق"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__from_hour
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "From"
+msgstr "من"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "From (YYYY-MM-DD)"
+msgstr "من (YYYY-MM-DD)"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__from_hour
+msgid "From Hour"
+msgstr "من الساعة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Full Name (Arabic – 4 Words) *"
+msgstr "الاسم الكامل (عربي - 4 مقاطع) *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Full name (4 parts)"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__gender
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Gender"
+msgstr "النوع"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Gender *"
+msgstr "النوع *"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__governorate_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Governorate"
+msgstr "المحافظة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Governorate *"
+msgstr "المحافظة *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Governorate, city, and full address details."
+msgstr "المحافظة والمدينة وتفاصيل العنوان بالكامل."
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__grade
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Grade"
+msgstr "التقدير"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__graduate_date
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Graduate Date"
+msgstr "تاريخ التخرج"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Graduate Date *"
+msgstr "تاريخ التخرج *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "Has Email"
+msgstr "لديه بريد إلكتروني"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Has Result"
+msgstr "لديه نتيجة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "How we can reach you quickly."
+msgstr "كيف يمكننا التواصل معك بسرعة."
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Human Verification"
+msgstr "التحقق البشري"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Identity"
+msgstr "الهوية"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Identity Information"
+msgstr "معلومات الهوية"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__import_date
+msgid "Import Date"
+msgstr "تاريخ الاستيراد"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__interview_id
+msgid "Interview"
+msgstr "المقابلة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__interview_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__interview_date
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Interview Date"
+msgstr "تاريخ المقابلة"
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_hr_interview_result_wizard
+msgid "Interview Result Wizard"
+msgstr "معالج نتيجة المقابلة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__interviewer_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__interviewer_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Interviewer"
+msgstr "المقابِل"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__Interviews_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_list_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Interviews"
+msgstr "المقابلات"
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/ab_hr_interview.py:0
+msgid "Invalid Action"
+msgstr "إجراء غير صالح"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__is_publish
+msgid "Is Publish"
+msgstr "منشور"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__religion__jewish
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Jewish"
+msgstr "يهودي"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__job_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__job_id
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Job Application"
+msgstr "طلب وظيفة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Job Application Form"
+msgstr "نموذج طلب وظيفة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Job Details"
+msgstr "تفاصيل الوظيفة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "Job Openings"
+msgstr "الوظائف الشاغرة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_form_view
+msgid "Job Post"
+msgstr "إعلان وظيفة"
+
+#. module: ab_hr_applicant
+#: model:ir.actions.act_window,name:ab_hr_applicant.ab_hr_job_post_action
+#: model:ir.ui.menu,name:ab_hr_applicant.ab_hr_job_post_menu
+msgid "Job Posts"
+msgstr "إعلانات الوظائف"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__job_title
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__last_action
+msgid "Last Action"
+msgstr "آخر إجراء"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__write_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__write_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__write_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__write_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__write_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__write_uid
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__write_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__write_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__write_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__write_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__write_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__write_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__write_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "List training courses and certifications (optional)."
+msgstr "أضف الدورات التدريبية والشهادات (اختياري)."
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_hr_import_log
+msgid "MSSQL Import Log"
+msgstr "سجل استيراد MSSQL"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__mssql_int_id
+msgid "MSSQL Interview ID"
+msgstr "معرف مقابلة MSSQL"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__gender__male
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Male"
+msgstr "ذكر"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_import_log__stage__m2o
+msgid "Many2one Lookup"
+msgstr "بحث Many2one"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__marital_status
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Marital Status"
+msgstr "الحالة الاجتماعية"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Marital Status *"
+msgstr "الحالة الاجتماعية *"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__marital_status__married
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Married"
+msgstr "متزوج"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Maximum salary allowed is 100000"
+msgstr "الحد الأقصى للراتب المسموح به هو 100000"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__message
+msgid "Message"
+msgstr "الرسالة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__military_status
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Military Status"
+msgstr "الموقف التجنيدي"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Military Status *"
+msgstr "الموقف التجنيدي *"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__mobile
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Mobile"
+msgstr "الجوال"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Mobile *"
+msgstr "رقم الجوال *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Mobile number must be exactly 11 digits"
+msgstr "يجب أن يكون رقم الجوال مكوّنًا من 11 رقمًا"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__morning
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Morning"
+msgstr "صباحي"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+msgid "Morning Shift"
+msgstr "وردية صباحية"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__mssql_app_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__mssql_app_id
+msgid "Mssql App"
+msgstr "تطبيق MSSQL"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__religion__muslim
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Muslim"
+msgstr "مسلم"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__name
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_required_job__name
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "National ID"
+msgstr "الرقم القومي"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "National ID *"
+msgstr "الرقم القومي *"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "National ID must be exactly 14 digits"
+msgstr "يجب أن يكون الرقم القومي مكوّنًا من 14 رقمًا"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__national_identity
+msgid "National Identity"
+msgstr "الرقم القومي"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__nationality
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Nationality"
+msgstr "الجنسية"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Next"
+msgstr "التالي"
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/mssql_import.py:0
+msgid ""
+"No Required Job found. Please create at least one Required Job before "
+"import."
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "No Result"
+msgstr "بدون نتيجة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__note
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.view_ab_hr_interview_result_wizard_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.view_ab_hr_interview_result_wizard_form
+msgid "Optional notes..."
+msgstr "ملاحظات اختيارية..."
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__organization
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Organization"
+msgstr "الجهة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__payload
+msgid "Payload"
+msgstr "البيانات"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__military_status__perform
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Perform"
+msgstr "أدى الخدمة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Period"
+msgstr "المدة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "Personal"
+msgstr "شخصي"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Personal Information"
+msgstr "البيانات الشخصية"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Personal and academic details."
+msgstr "البيانات الشخصية والأكاديمية."
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Please enter a full name in Arabic with at least 4 words"
+msgstr "يرجى إدخال اسم كامل بالعربية لا يقل عن 4 مقاطع"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Please enter a valid Arabic address"
+msgstr "يرجى إدخال عنوان عربي صحيح"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Please enter a valid Arabic qualification"
+msgstr "يرجى إدخال مؤهل عربي صحيح"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Please enter a valid email address"
+msgstr "يرجى إدخال بريد إلكتروني صحيح"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Preferred Work Shifts"
+msgstr "فترات العمل المفضلة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Previous"
+msgstr "السابق"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Previous Experience"
+msgstr "الخبرة السابقة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__website_published
+msgid "Published on Website"
+msgstr "منشور على الموقع"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__qualification
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Qualification"
+msgstr "المؤهل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Qualification *"
+msgstr "المؤهل *"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__re_appraisal_interview
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__re_appraisal_interview
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__re_appraisal_interview
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Re-Appraisal Interview"
+msgstr "مقابلة إعادة التقييم"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__reason_for_leaving
+msgid "Reason For Leaving"
+msgstr "سبب ترك العمل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Reason for leaving"
+msgstr "سبب ترك العمل"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__type_of_form__recruit
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Recruit"
+msgstr "توظيف"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.view_ab_hr_interview_result_wizard_form
+msgid "Register Interview Result"
+msgstr "تسجيل نتيجة المقابلة"
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/ab_hr_interview.py:0
+#: model:ir.actions.act_window,name:ab_hr_applicant.action_ab_hr_interview_result_wizard
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_form_view
+msgid "Register Result"
+msgstr "تسجيل النتيجة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__registration_end
+msgid "Registration End"
+msgstr "نهاية التقديم"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__registration_start
+msgid "Registration Start"
+msgstr "بداية التقديم"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__rejected
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__rejected
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__rejected
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__religion
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Religion"
+msgstr "الديانة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Religion *"
+msgstr "الديانة *"
+
+#. module: ab_hr_applicant
+#: model:ir.model,name:ab_hr_applicant.model_ab_required_job
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__required_job_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__required_job_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_required_job_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Required Job"
+msgstr "الوظيفة المطلوبة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Required Job *"
+msgstr "الوظيفة المطلوبة *"
+
+#. module: ab_hr_applicant
+#: model:ir.actions.act_window,name:ab_hr_applicant.ab_required_job_action
+#: model:ir.ui.menu,name:ab_hr_applicant.ab_required_job_menu
+msgid "Required Jobs"
+msgstr "الوظائف المطلوبة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__action
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__s_list
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__s_list
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__s_list
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+msgid "S.List"
+msgstr "قائمة مختصرة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_import_log__stage__sql
+msgid "SQL Read"
+msgstr "قراءة SQL"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__salary
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Salary"
+msgstr "الراتب"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_form_view
+msgid "Schedule"
+msgstr "الجدولة"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_form_view
+msgid "Schedule Interview"
+msgstr "جدولة مقابلة"
+
+#. module: ab_hr_applicant
+#: model:ir.actions.act_window,name:ab_hr_applicant.ab_hr_interview_action_schedule
+#: model:ir.ui.menu,name:ab_hr_applicant.ab_hr_interview_menu_schedule
+msgid "Schedule Interviews"
+msgstr "جدولة المقابلات"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.actions.act_window,help:ab_hr_applicant.ab_hr_application_action
+#: model_terms:ir.actions.act_window,help:ab_hr_applicant.ab_hr_interview_action_schedule
+msgid "Schedule interviews for applicants."
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_import_log__stage__selection
+msgid "Selection Mapping"
+msgstr "مطابقة القيم"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+msgid "Short List"
+msgstr "القائمة القصيرة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__marital_status__single
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Single"
+msgstr "أعزب"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__specialty
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Specialty"
+msgstr "التخصص"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_import_log__stage
+msgid "Stage"
+msgstr "المرحلة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__starting_date
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/ab_hr_interview_result_wizard.py:0
+msgid "Start Date and End Date are required for Training actions."
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_experience__starting_date
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__starting_date
+msgid "Starting Date"
+msgstr "تاريخ البدء"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Step 1 of 4"
+msgstr "الخطوة 1 من 4"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__store_id
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/ab_hr_interview_result_wizard.py:0
+msgid "Store is required for Training actions."
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Submit Application"
+msgstr "إرسال الطلب"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__telephone
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Telephone"
+msgstr "الهاتف"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_website_list
+msgid "There are currently no job openings available."
+msgstr "لا توجد وظائف شاغرة متاحة حاليًا."
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_course__time_period
+msgid "Time Period"
+msgstr "الفترة الزمنية"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__name
+msgid "Title"
+msgstr "العنوان"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview_result_wizard__to_hour
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "To"
+msgstr "إلى"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "To (YYYY-MM-DD)"
+msgstr "إلى (YYYY-MM-DD)"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__to_hour
+msgid "To Hour"
+msgstr "إلى الساعة"
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/ab_hr_interview_result_wizard.py:0
+msgid "To hour must be greater than From hour."
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__last_action__training
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__type_of_form__training
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview__action__training
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_interview_result_wizard__action__training
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_interview_search_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Training"
+msgstr "تدريب"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Training Courses"
+msgstr "الدورات التدريبية"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.view_ab_hr_interview_result_wizard_form
+msgid "Training Details"
+msgstr "تفاصيل التدريب"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__trainingcourses_ids
+msgid "Trainingcourses"
+msgstr "الدورات التدريبية"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Type *"
+msgstr "النوع *"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_application__type_of_form
+msgid "Type Of Form"
+msgstr "نوع الاستمارة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_interview__type_of_form
+msgid "Type of Form"
+msgstr "نوع الاستمارة"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__religion__undefined
+msgid "Undefined"
+msgstr "غير محدد"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Unrequired"
+msgstr "غير مطلوب"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_job_post__status__upcoming
+msgid "Upcoming"
+msgstr "قريبًا"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Verification code"
+msgstr "رمز التحقق"
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__marital_status__widower
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_form
+msgid "Widower"
+msgstr "أرمل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_application_form_view
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.report_ab_hr_application
+msgid "Work Shifts"
+msgstr "ورديات العمل"
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.ab_hr_job_post_form_view
+msgid "Write job post description..."
+msgstr ""
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/ab_hr_interview.py:0
+#: code:addons/ab_hr_applicant/models/ab_hr_interview_result_wizard.py:0
+msgid "You cannot set an interview result before the interview date."
+msgstr "لا يمكنك تسجيل نتيجة المقابلة قبل موعد المقابلة."
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__military_status__exempt
+msgid "exempt"
+msgstr ""
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/mssql_import.py:0
+msgid "pyodbc is not installed on the server."
+msgstr ""
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/mssql_import.py:0
+msgid "pyodbc غير مثبت. نفّذ: pip install pyodbc"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields,field_description:ab_hr_applicant.field_ab_hr_job_post__status
+msgid "status"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model:ir.model.fields.selection,name:ab_hr_applicant.selection__ab_hr_application__military_status__unrequired
+msgid "unrequired"
+msgstr ""
+
+#. module: ab_hr_applicant
+#: model_terms:ir.ui.view,arch_db:ab_hr_applicant.website_apply_thanks
+msgid ""
+"تم استلام طلبك بنجاح ✅                                <br/>\n"
+"                شكراً لتقديمك، سيتم مراجعة البيانات والتواصل معك."
+msgstr ""
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/mssql_import.py:0
+msgid "لازم تحدد insert_from و insert_to"
+msgstr ""
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/mssql_import.py:0
+msgid "لازم تضبط system parameters: mssql.server و mssql.database"
+msgstr ""
+
+#. module: ab_hr_applicant
+#. odoo-python
+#: code:addons/ab_hr_applicant/models/mssql_import.py:0
+msgid "مش لاقي دولة مصر (EG) في res.country. لازم تكون موجودة."
+msgstr ""

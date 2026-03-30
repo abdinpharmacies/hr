@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_root"
+                  name="Inventory"
+                  web_icon="ab_inventory,static/description/icon.png"
+                  sequence="101"/>
+
+        <menuitem id="config_sub_menu" name="Configuration" parent="menu_root" sequence="100"/>
+    </data>
+</odoo>

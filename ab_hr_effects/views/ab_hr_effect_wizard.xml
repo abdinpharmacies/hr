@@ -1,0 +1,1402 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_hr_effect_wizard_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_effect_wizard_view_tree</field>
+            <field name="model">ab_hr_effect_wizard</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_effect_wizard_tree"
+                      decoration-info="effect_status in ('draft','under_application')"
+                      decoration-warning="effect_status == 'direct_manager_review'"
+                      decoration-muted="effect_status == 'upper_manager_review'"
+                      decoration-success="effect_status == 'applied'"
+                      decoration-danger="effect_status in ('archived','rejected')"
+                >
+                    <field name="effect_status" widget="badge"
+                           decoration-info="effect_status in ('draft','under_application')"
+                           decoration-warning="effect_status == 'direct_manager_review'"
+                           decoration-muted="effect_status == 'upper_manager_review'"
+                           decoration-success="effect_status == 'applied'"
+                           decoration-danger="effect_status in ('archived','rejected')"/>
+                    <field name="accid"/>
+                    <field name="employee_id"/>
+                    <field name="job_title"/>
+                    <field name="workplace"/>
+                    <field name="effect_type_id"/>
+                    <field name="periodic_effect"/>
+                    <field name="weekly_effect"/>
+                    <field name="effect_date"/>
+                    <field name="end_date"/>
+                    <field name="hour_value"/>
+                    <field name="second_hour_value"/>
+                    <field name="effect_weekday"/>
+                    <field name="weekly_day_off_number"/>
+                    <field name="supervision_type" optional="hide"/>
+                    <field name="effect_reason"/>
+                    <field name="double_approval" invisible="1"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'direct_manager_review'}"
+                            invisible="effect_status != 'draft'"
+                            type="object" string="Direct Manager Review" class="btn-warning"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'upper_manager_review'}"
+                            invisible="(effect_status != 'direct_manager_review' or not double_approval)"
+                            type="object" string="Upper Manager Review" class="btn-info"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'under_application'}"
+                            invisible="((effect_status == 'direct_manager_review' and double_approval) or (effect_status != 'direct_manager_review' and effect_status != 'upper_manager_review'))"
+                            type="object" string="Under Application" class="btn-primary"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'rejected'}"
+                            invisible="effect_status not in ['direct_manager_review', 'upper_manager_review']"
+                            type="object" string="Reject" class="btn-danger"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'draft'}"
+                            invisible="effect_status not in ['direct_manager_review', 'upper_manager_review', 'under_application']"
+                            type="object" string="Back to Draft" class="btn-secondary"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'applied'}"
+                            invisible="effect_status != 'under_application'"
+                            type="object" string="Apply" class="btn-success"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'archived'}"
+                            invisible="effect_status not in ['draft', 'rejected']"
+                            type="object" string="Archive" class="btn-danger"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'draft'}"
+                            invisible="effect_status != 'archived'"
+                            type="object" string="Unarchive" class="btn-secondary"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_effect_wizard_view_tree_employee" model="ir.ui.view">
+            <field name="name">ab_hr_effect_wizard_view_tree_employee</field>
+            <field name="model">ab_hr_effect_wizard</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_effect_wizard_tree"
+                      decoration-info="effect_status in ('draft','under_application')"
+                      decoration-warning="effect_status == 'direct_manager_review'"
+                      decoration-muted="effect_status == 'upper_manager_review'"
+                      decoration-success="effect_status == 'applied'"
+                      decoration-danger="effect_status in ('archived','rejected')"
+                >
+                    <field name="effect_status" widget="badge"
+                           decoration-info="effect_status in ('draft','under_application')"
+                           decoration-warning="effect_status == 'direct_manager_review'"
+                           decoration-muted="effect_status == 'upper_manager_review'"
+                           decoration-success="effect_status == 'applied'"
+                           decoration-danger="effect_status in ('archived','rejected')"/>
+                    <field name="effect_type_id"/>
+                    <field name="periodic_effect"/>
+                    <field name="weekly_effect"/>
+                    <field name="effect_date"/>
+                    <field name="end_date"/>
+                    <field name="hour_value"/>
+                    <field name="second_hour_value"/>
+                    <field name="effect_weekday"/>
+                    <field name="weekly_day_off_number"/>
+                    <field name="effect_numerical_value"/>
+                    <field name="monthly_weekly_vacancies"/>
+                    <field name="supervision_type" optional="hide"/>
+                    <field name="effect_reason"/>
+                    <field name="double_approval" invisible="1"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'direct_manager_review'}"
+                            invisible="effect_status != 'draft'"
+                            type="object" string="Direct Manager Review" class="btn-warning"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'upper_manager_review'}"
+                            invisible="(effect_status != 'direct_manager_review' or not double_approval)"
+                            type="object" string="Upper Manager Review" class="btn-info"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'under_application'}"
+                            invisible="((effect_status == 'direct_manager_review' and double_approval) or (effect_status != 'direct_manager_review' and effect_status != 'upper_manager_review'))"
+                            type="object" string="Under Application" class="btn-primary"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'rejected'}"
+                            invisible="effect_status not in ['direct_manager_review', 'upper_manager_review']"
+                            type="object" string="Reject" class="btn-danger"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'draft'}"
+                            invisible="effect_status not in ['direct_manager_review', 'upper_manager_review', 'under_application']"
+                            type="object" string="Back to Draft" class="btn-secondary"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'applied'}"
+                            invisible="effect_status != 'under_application'"
+                            type="object" string="Apply" class="btn-success"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'archived'}"
+                            invisible="effect_status not in ['draft', 'rejected']"
+                            type="object" string="Archive" class="btn-danger"/>
+                    <button name="btn_change_status"
+                            context="{'effect_target': 'draft'}"
+                            invisible="effect_status != 'archived'"
+                            type="object" string="Unarchive" class="btn-secondary"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_effect_wizard_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_effect_wizard_view_search</field>
+            <field name="model">ab_hr_effect_wizard</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_effect_wizard_search">
+                    <field name="accid"/>
+                    <field name="employee_id"/>
+                    <field name="job_title"/>
+                    <field name="workplace"/>
+                    <field name="effect_type_id"/>
+                    <field name="periodic_effect"/>
+                    <field name="weekly_effect"/>
+                    <field name="effect_date"/>
+                    <field name="end_date"/>
+                    <field name="hour_value"/>
+                    <field name="second_hour_value"/>
+                    <field name="effect_weekday"/>
+                    <field name="weekly_day_off_number"/>
+                    <field name="effect_reason"/>
+                    <field name="effect_status"/>
+                    <separator/>
+                    <filter name="supervision_type_direct"
+                            string="Direct Supervision"
+                            domain="[('supervision_type','=','direct')]"/>
+                    <filter name="supervision_type_indirect"
+                            string="Indirect Supervision"
+                            domain="[('supervision_type','=','indirect')]"/>
+                    <filter name="supervision_type_indirect_to_subordinate"
+                            string="Indirect To Subordinate"
+                            domain="[('supervision_type','=','indirect_to_subordinate')]"/>
+                    <filter name="supervision_type_myself"
+                            string="Myself"
+                            domain="[('supervision_type','=','myself')]"/>
+                    <filter name="supervision_type_workplace_manager"
+                            string="Workplace Manager Job"
+                            domain="[('supervision_type','=','workplace_manager_job')]"/>
+                    <filter name="supervision_type_other"
+                            string="Other"
+                            domain="[('supervision_type','=','other')]"/>
+                    <separator/>
+                    <filter name="active_employees"
+                            string="Active Employees"
+                            domain="[('employee_id.active','=',True)]"/>
+                    <separator/>
+                    <filter name="under_app_all"
+                            string="Under Application"
+                            domain="[('effect_status', '=', 'under_application')]"/>
+                    <filter name="draft_only"
+                            string="Draft"
+                            domain="[('effect_status', '=', 'draft')]"/>
+                    <filter name="direct_manager_review_only"
+                            string="Direct Manager Review"
+                            domain="[('effect_status', '=', 'direct_manager_review')]"/>
+                    <filter name="upper_manager_review_only"
+                            string="Upper Manager Review"
+                            domain="[('effect_status', '=', 'upper_manager_review')]"/>
+                    <filter name="applied_only"
+                            string="Applied"
+                            domain="[('effect_status', '=', 'applied')]"/>
+                    <filter name="rejected_only"
+                            string="Rejected"
+                            domain="[('effect_status', '=', 'rejected')]"/>
+                    <filter name="archived_only"
+                            string="Archived"
+                            domain="[('effect_status', '=', 'archived')]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_effect_wizard_form" model="ir.ui.view">
+            <field name="name">ab.hr.effects.wizard.form</field>
+            <field name="model">ab_hr_effect_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Add Payroll Effect">
+                    <header>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               statusbar_visible="draft,direct_manager_review,under_application,applied,rejected,archived"
+                               invisible="double_approval"/>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               statusbar_visible="draft,direct_manager_review,upper_manager_review,under_application,applied,rejected,archived"
+                               invisible="not double_approval"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(is_hr_manager or effect_status != 'draft')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(is_hr_manager or (effect_status != 'direct_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(is_hr_manager or ((effect_status == 'direct_manager_review' and double_approval) or (effect_status != 'direct_manager_review' and effect_status != 'upper_manager_review')))"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(is_hr_manager or effect_status not in ['direct_manager_review', 'upper_manager_review'])"
+                                type="object" string="Reject" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (supervision_type not in ['direct', 'indirect'] or effect_status in ['draft', 'applied', 'archived', 'rejected']))"
+                                type="object" string="Back to Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(is_hr_manager or effect_status != 'under_application')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(is_hr_manager or effect_status not in ['draft', 'rejected'])"
+                                type="object" string="Archived" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (not is_payroll_user or effect_status != 'archived'))"
+                                type="object" string="Unarchive" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(not is_hr_manager or effect_status == 'draft')"
+                                type="object" string="Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(not is_hr_manager or effect_status == 'direct_manager_review')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(not is_hr_manager or (effect_status == 'upper_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(not is_hr_manager or effect_status == 'under_application')"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(not is_hr_manager or effect_status == 'rejected')"
+                                type="object" string="Rejected" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(not is_hr_manager or effect_status == 'applied')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(not is_hr_manager or effect_status == 'archived')"
+                                type="object" string="Archived" class="btn-danger"/>
+                    </header>
+                    <sheet>
+                        <field name="basic_effect" invisible="1"/>
+                        <field name="is_number" invisible="1"/>
+                        <field name="employee_id" invisible="1" force_save="1"/>
+                        <field name="is_hourly_effect" invisible="1"/>
+                        <field name="is_dual_hour_effect" invisible="1"/>
+                        <field name="is_reason_required" invisible="1"/>
+                        <field name="is_attachment_required" invisible="1"/>
+                        <field name="is_attendance_time_effect" invisible="1"/>
+                        <field name="is_weekly_effect" invisible="1"/>
+                        <field name="is_weekday_effect" invisible="1"/>
+                        <field name="change_day_off_date" invisible="1"/>
+                        <field name="weekly_vacation_work_permit" invisible="1"/>
+                        <field name="weekly_day_off_integer" invisible="1"/>
+                        <field name="select_day_off_number" invisible="1"/>
+                        <field name="basic_working_hour_number" invisible="1"/>
+                        <field name="is_period" invisible="1"/>
+                        <field name="double_approval" invisible="1"/>
+                        <field name="is_hr_manager" invisible="1"/>
+                        <field name="is_payroll_user" invisible="1"/>
+                        <field name="day_off" invisible="1"/>
+                        <field name="day_off_exist" invisible="1"/>
+                        <field name="supervision_type" invisible="1"/>
+                        <field name="allowed_effect_type_ids" invisible="1"/>
+
+
+                        <widget name="web_ribbon" title="Personal Effect" bg_color="bg-danger"
+                                invisible="supervision_type != 'myself'"/>
+                        <widget name="web_ribbon" title="Direct Subordinate" bg_color="bg-success"
+                                invisible="supervision_type != 'direct'"/>
+                        <widget name="web_ribbon" title="Indirect Subordinate" bg_color="bg-warning"
+                                invisible="supervision_type != 'indirect'"/>
+
+                        <group class="h2 text-info text-center">
+                            <field name="job_info_html" readonly="1" nolabel="1"/>
+                        </group>
+
+                        <group class="h2 text-info text-center">
+                            <field name="supervision_type" readonly="1"/>
+                        </group>
+
+
+                        <group col="4" class="h2 text-info text-center">
+                            <field name="max_effects_info_html" readonly="1" nolabel="1"/>
+                        </group>
+
+                        <div class="o_row h2 text-info text-center"
+                             invisible="(not is_weekly_effect or is_period)">
+
+                            <div class="o_cell justify-content-center align-items-center">
+                                <label for="effect_type_id"
+                                       string="Effect Type"
+                                       class="h2"
+                                       style="width: 100%; text-align: center; font-size: 20px; font-weight: bold;"/>
+                                <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"
+                                       style="width: 50%; text-align: center; font-size: 20px"/>
+                            </div>
+
+                        </div>
+
+                        <div class="o_row h2 text-info text-center"
+                             invisible="(is_period or is_weekly_effect)">
+                            <div class="o_cell justify-content-center align-items-center">
+                                <label for="effect_type_id"
+                                       string="Effect Type"
+                                       class="h2"
+                                       style="width: 100%; text-align: center; font-size: 20px; font-weight: bold;"/>
+                                <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"
+                                       style="width: 50%; text-align: center; font-size: 20px"/>
+                            </div>
+                        </div>
+
+                        <div class="o_row h2 text-info text-center"
+                             invisible="(not is_period or is_weekly_effect)">
+                            <div class="o_cell d-flex flex-column align-items-center">
+                                <label for="effect_type_id" string="Effect Type"/>
+                                <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                            </div>
+                            <div class="o_cell d-flex flex-column align-items-center">
+                                <label for="periodic_effect" string="Periodic Effect"/>
+                                <field name="periodic_effect" widget="boolean_toggle" class="mt-1"/>
+                            </div>
+                        </div>
+
+                        <div class="o_row h2 text-info text-center"
+                             invisible="(not is_period or not is_weekly_effect)">
+
+
+                            <div class="o_cell d-flex flex-column align-items-center">
+                                <label for="effect_type_id" string="Effect Type"/>
+                                <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                            </div>
+
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(not is_period or weekly_effect)">
+                                <label for="periodic_effect" string="Periodic Effect"/>
+                                <field name="periodic_effect" widget="boolean_toggle" class="mt-1"/>
+                            </div>
+
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(not is_weekly_effect or (periodic_effect or is_weekday_effect))">
+                                <label for="weekly_effect" string="Weekly Effect"/>
+                                <field name="weekly_effect" widget="boolean_toggle" class="mt-1"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(not is_weekly_effect or not weekly_effect)">
+                                <label for="yearly_effect" string="Yearly Effect"
+                                       groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                                <field name="yearly_effect" widget="boolean_toggle" class="mt-1"
+                                       groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                            </div>
+
+                        </div>
+
+                        <div class="o_row h2 text-info text-center"
+                             invisible="(is_period or not is_weekly_effect)">
+
+                            <div class="o_cell d-flex flex-column align-items-center">
+                                <label for="effect_type_id" string="Effect Type"/>
+                                <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(not is_weekly_effect or is_weekday_effect)">
+                                <label for="weekly_effect" string="Weekly Effect"/>
+                                <field name="weekly_effect" widget="boolean_toggle" class="mt-1"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(not is_weekly_effect or not weekly_effect)">
+                                <label for="yearly_effect" string="Yearly Effect"/>
+                                <field name="yearly_effect" widget="boolean_toggle" class="mt-1"
+                                       groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                            </div>
+
+                        </div>
+
+
+                        <div class="o_row h2 text-info text-center"
+                             invisible="(basic_effect and (not basic_working_hour_number and not select_day_off_number))">
+
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(weekly_vacation_work_permit or (is_weekly_effect or (is_period or weekly_day_off_integer >= 1)))">
+
+                                <div class="o_cell justify-content-center align-items-center">
+                                    <label for="effect_date"
+                                           string="Effect Date"
+                                           style="width: 100%; text-align: center; font-size: 19px; font-weight: bold;"
+                                           class="o_cell justify-content-center align-items-center h2"/>
+                                    <field name="effect_date"
+                                           style="width: 100%; text-align: center; font-size: 19px"
+                                           class="o_cell justify-content-center align-items-center"/>
+                                </div>
+
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(weekly_vacation_work_permit or (is_weekly_effect or (not is_period or (periodic_effect or weekly_day_off_integer >= 1))))">
+                                <label for="effect_date"
+                                       string="Effect Date"
+                                       class="h2"
+                                       style="width: 100%; text-align: center; font-size: 18px; font-weight: bold;"/>
+                                <field name="effect_date" style="width: 40%; text-align: center"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="(weekly_vacation_work_permit or (periodic_effect or (weekly_effect or (not is_weekly_effect or weekly_day_off_integer >= 1))))">
+                                <label for="effect_date"
+                                       string="Effect Date"
+                                       class="h2"
+                                       style="width: 100%; text-align: center; font-size: 18px; font-weight: bold;"/>
+                                <field name="effect_date" style="width: 40%; text-align: center"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 style="flex: 1;"
+                                 invisible="(weekly_vacation_work_permit or not periodic_effect)">
+                                <label for="effect_date" string="Start Date"/>
+                                <field name="effect_date"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 invisible="not periodic_effect">
+                                <label for="end_date" string="End Date"/>
+                                <field name="end_date" required="periodic_effect"/>
+                            </div>
+
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 style="flex: 1;"
+                                 invisible="not weekly_vacation_work_permit">
+                                <label for="monthly_weekly_vacancies" string="Weekly Vacancies"/>
+                                <field name="monthly_weekly_vacancies"
+                                       required="(change_day_off_date or weekly_vacation_work_permit)"
+                                       invisible="not weekly_vacation_work_permit"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 style="flex: 1;"
+                                 invisible="not change_day_off_date" required="change_day_off_date">
+                                <label for="monthly_weekly_vacancies" string="Previous Day-Off Date"/>
+                                <field name="monthly_weekly_vacancies"
+                                       invisible="not change_day_off_date" required="change_day_off_date"/>
+                            </div>
+
+                            <div class="o_cell d-flex flex-column align-items-center"
+                                 style="flex: 1;"
+                                 invisible="(weekly_vacation_work_permit or not change_day_off_date)">
+                                <label for="effect_date" string="New Day-off Date"/>
+                                <field name="effect_date"/>
+                            </div>
+
+                        </div>
+
+                        <div class="o_cell d-flex flex-column align-items-center"
+                             invisible="not select_day_off_number">
+                            <label for="weekly_day_off_number"
+                                   string="Weekly day off number "
+                                   class="h2"
+                                   style="width: 100%; text-align: center; font-size: 18px; font-weight: bold;"/>
+                            <field name="weekly_day_off_number"
+                                   required="select_day_off_number"
+                                   style="width: 40%; text-align: center"/>
+                        </div>
+
+
+                        <div class="o_cell d-flex flex-column align-items-center"
+                             style="flex: 1;"
+                             invisible="(not is_weekday_effect or weekly_effect)" required="is_weekday_effect">
+                            <label for="effect_weekday" string="Week Day" style="width: 100%;
+        text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                            <field name="effect_weekday" style="width: 40%; text-align: center; font-size: 16px"/>
+                        </div>
+
+                        <div class="o_cell d-flex flex-column align-items-center"
+                             style="flex: 1;"
+                             invisible="not weekly_effect" required="weekly_effect">
+                            <label for="effect_weekday" string="Week Day" style="width: 100%;
+        text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                            <field name="effect_weekday" style="width: 40%; text-align: center; font-size: 16px"/>
+                        </div>
+
+
+                        <group invisible="not is_number">
+                            <field name="effect_numerical_value" required="is_number"/>
+                        </group>
+
+
+                        <div class="o_row h2 text-info text-center" invisible="not is_hourly_effect"
+                             required="is_hourly_effect">
+
+                            <div class="o_row h2 text-info text-center"
+                                 invisible="is_dual_hour_effect">
+
+                                <div class="o_cell justify-content-center align-items-center"
+                                     style="flex: 1;"
+                                     invisible="is_attendance_time_effect">
+                                    <label for="hour_value" string="FP Value" style="width: 100%;
+        text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                                    <field name="hour_value" style="width: 40%; text-align: center; font-size: 16px"
+                                           required="is_hourly_effect"/>
+                                </div>
+                                <div class="o_cell justify-content-center align-items-center"
+                                     style="flex: 1;"
+                                     invisible="not is_attendance_time_effect">
+                                    <label for="hour_value" string="Attendance Time" style="width: 100%;
+        text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                                    <field name="hour_value" style="width: 40%; text-align: center; font-size: 16px"
+                                           required="is_hourly_effect"/>
+                                </div>
+                            </div>
+
+
+                            <div class="o_row h2 text-info text-center"
+                                 invisible="(not is_dual_hour_effect or is_attendance_time_effect)">
+                                <div class="o_cell d-flex flex-column align-items-center"
+                                     style="flex: 1;">
+                                    <label for="hour_value" string="In FP Value"/>
+                                    <field name="hour_value" required="is_hourly_effect"/>
+                                </div>
+
+                                <div class="o_cell d-flex flex-column align-items-center"
+                                     style="flex: 1;">
+                                    <label for="second_hour_value" string="Out FP Value"/>
+                                    <field name="second_hour_value"
+                                           required="is_dual_hour_effect"/>
+                                </div>
+
+                            </div>
+                        </div>
+
+
+                        <group>
+                            <field name="effect_reason" nolabel="1" placeholder="Write notes…"
+                                   required="is_reason_required"/>
+                        </group>
+
+                        <div class="o_cell d-flex flex-column align-items-center">
+
+                            <field name="attached_file"
+                                   style="alignment: center"
+                                   required="is_attachment_required"/>
+                        </div>
+
+
+                        <group class="text-center">
+                            <field name="automated_effects_note" nolabel="1" placeholder="Effect Note" readonly="1"/>
+                        </group>
+                    </sheet>
+
+                    <footer>
+                        <button name="action_save"
+                                string="Save and Close"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Cancel"
+                                class="btn-default"
+                                special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_effect_wizard_form_postcreate" model="ir.ui.view">
+            <field name="name">ab.hr.effects.wizard.form.postcreate</field>
+            <field name="model">ab_hr_effect_wizard</field>
+            <field name="priority" eval="20"/>
+            <field name="arch" type="xml">
+                <form string="Add Payroll Effect">
+                    <header>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               statusbar_visible="draft,direct_manager_review,under_application,applied,rejected,archived"
+                               invisible="double_approval"/>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               statusbar_visible="draft,direct_manager_review,upper_manager_review,under_application,applied,rejected,archived"
+                               invisible="not double_approval"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(is_hr_manager or effect_status != 'draft')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(is_hr_manager or (effect_status != 'direct_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(is_hr_manager or ((effect_status == 'direct_manager_review' and double_approval) or (effect_status != 'direct_manager_review' and effect_status != 'upper_manager_review')))"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(is_hr_manager or effect_status not in ['direct_manager_review', 'upper_manager_review'])"
+                                type="object" string="Reject" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (supervision_type not in ['direct', 'indirect'] or effect_status in ['draft', 'applied', 'archived', 'rejected']))"
+                                type="object" string="Back to Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(is_hr_manager or effect_status != 'under_application')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(is_hr_manager or effect_status not in ['draft', 'rejected'])"
+                                type="object" string="Archived" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (not is_payroll_user or effect_status != 'archived'))"
+                                type="object" string="Unarchive" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(not is_hr_manager or effect_status == 'draft')"
+                                type="object" string="Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(not is_hr_manager or effect_status == 'direct_manager_review')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(not is_hr_manager or (effect_status == 'upper_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(not is_hr_manager or effect_status == 'under_application')"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(not is_hr_manager or effect_status == 'rejected')"
+                                type="object" string="Rejected" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(not is_hr_manager or effect_status == 'applied')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(not is_hr_manager or effect_status == 'archived')"
+                                type="object" string="Archived" class="btn-danger"/>
+                    </header>
+                    <sheet>
+                        <div class="o_row justify-content-center">
+                            <div class="o_col-12 o_col-md-10 o_col-lg-8 o_col-xl-7 o_form_sheet">
+                                <field name="basic_effect" invisible="1"/>
+                                <field name="is_number" invisible="1"/>
+                                <field name="is_hourly_effect" invisible="1"/>
+                                <field name="is_dual_hour_effect" invisible="1"/>
+                                <field name="is_reason_required" invisible="1"/>
+                                <field name="is_attachment_required" invisible="1"/>
+                                <field name="is_attendance_time_effect" invisible="1"/>
+                                <field name="is_weekly_effect" invisible="1"/>
+                                <field name="is_weekday_effect" invisible="1"/>
+                                <field name="change_day_off_date" invisible="1"/>
+                                <field name="weekly_vacation_work_permit" invisible="1"/>
+                                <field name="weekly_day_off_integer" invisible="1"/>
+                                <field name="select_day_off_number" invisible="1"/>
+                                <field name="basic_working_hour_number" invisible="1"/>
+                                <field name="is_period" invisible="1"/>
+                                <field name="double_approval" invisible="1"/>
+                                <field name="is_hr_manager" invisible="1"/>
+                                <field name="is_payroll_user" invisible="1"/>
+                                <field name="day_off" invisible="1"/>
+                                <field name="day_off_exist" invisible="1"/>
+                                <field name="supervision_type" invisible="1"/>
+                                <field name="allowed_effect_type_ids" invisible="1"/>
+
+
+                                <widget name="web_ribbon" title="Personal Effect" bg_color="bg-danger"
+                                        invisible="supervision_type != 'myself'"/>
+                                <widget name="web_ribbon" title="Direct Subordinate" bg_color="bg-success"
+                                        invisible="supervision_type != 'direct'"/>
+                                <widget name="web_ribbon" title="Indirect Subordinate" bg_color="bg-warning"
+                                        invisible="supervision_type != 'indirect'"/>
+
+
+                                <group col="4" class="h2 text-info text-center">
+                                    <field name="max_effects_info_html" readonly="1" nolabel="1"/>
+
+                                </group>
+
+                                <div class="o_row h2 text-info text-center"
+                                     invisible="(not is_weekly_effect or is_period)">
+
+                                    <div class="o_cell justify-content-center align-items-center">
+                                        <label for="effect_type_id"
+                                               string="Effect Type"
+                                               class="h2"
+                                               style="width: 100%; text-align: center; font-size: 20px; font-weight: bold;"/>
+                                        <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"
+                                               style="width: 50%; text-align: center; font-size: 20px"/>
+                                    </div>
+
+                                </div>
+
+                                <div class="o_row h2 text-info text-center"
+                                     invisible="(is_period or is_weekly_effect)">
+                                    <div class="o_cell justify-content-center align-items-center">
+                                        <label for="effect_type_id"
+                                               string="Effect Type"
+                                               class="h2"
+                                               style="width: 100%; text-align: center; font-size: 20px; font-weight: bold;"/>
+                                        <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"
+                                               style="width: 50%; text-align: center; font-size: 20px"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_row h2 text-info text-center"
+                                     invisible="(not is_period or is_weekly_effect)">
+                                    <div class="o_cell d-flex flex-column align-items-center">
+                                        <label for="effect_type_id" string="Effect Type"/>
+                                        <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                                    </div>
+                                    <div class="o_cell d-flex flex-column align-items-center">
+                                        <label for="periodic_effect" string="Periodic Effect"/>
+                                        <field name="periodic_effect" widget="boolean_toggle" class="mt-1"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_row h2 text-info text-center"
+                                     invisible="(not is_period or not is_weekly_effect)">
+
+
+                                    <div class="o_cell d-flex flex-column align-items-center">
+                                        <label for="effect_type_id" string="Effect Type"/>
+                                        <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                                    </div>
+
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(not is_period or weekly_effect)">
+                                        <label for="periodic_effect" string="Periodic Effect"/>
+                                        <field name="periodic_effect" widget="boolean_toggle" class="mt-1"/>
+                                    </div>
+
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(not is_weekly_effect or (periodic_effect or is_weekday_effect))">
+                                        <label for="weekly_effect" string="Weekly Effect"/>
+                                        <field name="weekly_effect" widget="boolean_toggle" class="mt-1"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(not is_weekly_effect or not weekly_effect)">
+                                        <label for="yearly_effect" string="Yearly Effect"/>
+                                        <field name="yearly_effect" widget="boolean_toggle" class="mt-1"
+                                               groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                                    </div>
+
+                                </div>
+
+                                <div class="o_row h2 text-info text-center"
+                                     invisible="(is_period or not is_weekly_effect)">
+
+                                    <div class="o_cell d-flex flex-column align-items-center">
+                                        <label for="effect_type_id" string="Effect Type"/>
+                                        <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(not is_weekly_effect or is_weekday_effect)">
+                                        <label for="weekly_effect" string="Weekly Effect"/>
+                                        <field name="weekly_effect" widget="boolean_toggle" class="mt-1"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(not is_weekly_effect or not weekly_effect)">
+                                        <label for="yearly_effect" string="Yearly Effect"/>
+                                        <field name="yearly_effect" widget="boolean_toggle" class="mt-1"
+                                               groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="o_row h2 text-info text-center"
+                                     invisible="(basic_effect and (not basic_working_hour_number and not select_day_off_number))">
+
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(weekly_vacation_work_permit or (is_weekly_effect or (is_period or weekly_day_off_integer >= 1)))">
+
+                                        <div class="o_cell justify-content-center align-items-center">
+                                            <label for="effect_date"
+                                                   string="Effect Date"
+                                                   style="width: 100%; text-align: center; font-size: 19px; font-weight: bold;"
+                                                   class="o_cell justify-content-center align-items-center h2"/>
+                                            <field name="effect_date"
+                                                   style="width: 100%; text-align: center; font-size: 19px"
+                                                   class="o_cell justify-content-center align-items-center"/>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(weekly_vacation_work_permit or (is_weekly_effect or (not is_period or (periodic_effect or weekly_day_off_integer >= 1))))">
+                                        <label for="effect_date"
+                                               string="Effect Date"
+                                               class="h2"
+                                               style="width: 100%; text-align: center; font-size: 18px; font-weight: bold;"/>
+                                        <field name="effect_date" style="width: 40%; text-align: center"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="(weekly_vacation_work_permit or (periodic_effect or (weekly_effect or (not is_weekly_effect or weekly_day_off_integer >= 1))))">
+                                        <label for="effect_date"
+                                               string="Effect Date"
+                                               class="h2"
+                                               style="width: 100%; text-align: center; font-size: 18px; font-weight: bold;"/>
+                                        <field name="effect_date" style="width: 40%; text-align: center"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         style="flex: 1;"
+                                         invisible="(weekly_vacation_work_permit or not periodic_effect)">
+                                        <label for="effect_date" string="Start Date"/>
+                                        <field name="effect_date"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         invisible="not periodic_effect">
+                                        <label for="end_date" string="End Date"/>
+                                        <field name="end_date" required="periodic_effect"/>
+                                    </div>
+
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         style="flex: 1;"
+                                         invisible="not weekly_vacation_work_permit">
+                                        <label for="monthly_weekly_vacancies" string="Weekly Vacancies"/>
+                                        <field name="monthly_weekly_vacancies"
+                                               required="(change_day_off_date or weekly_vacation_work_permit)"
+                                               invisible="not weekly_vacation_work_permit"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         style="flex: 1;"
+                                         invisible="not change_day_off_date" required="change_day_off_date">
+                                        <label for="monthly_weekly_vacancies" string="Previous Day-Off Date"/>
+                                        <field name="monthly_weekly_vacancies"
+                                               invisible="not change_day_off_date" required="change_day_off_date"/>
+                                    </div>
+
+                                    <div class="o_cell d-flex flex-column align-items-center"
+                                         style="flex: 1;"
+                                         invisible="(weekly_vacation_work_permit or not change_day_off_date)">
+                                        <label for="effect_date" string="New Day-off Date"/>
+                                        <field name="effect_date"/>
+                                    </div>
+
+                                </div>
+
+                                <div class="o_cell d-flex flex-column align-items-center"
+                                     invisible="not select_day_off_number">
+                                    <label for="weekly_day_off_number"
+                                           string="Weekly day off number "
+                                           class="h2"
+                                           style="width: 100%; text-align: center; font-size: 18px; font-weight: bold;"/>
+                                    <field name="weekly_day_off_number"
+                                           required="select_day_off_number"
+                                           style="width: 40%; text-align: center"/>
+                                </div>
+
+
+                                <div class="o_cell d-flex flex-column align-items-center"
+                                     style="flex: 1;"
+                                     invisible="(not is_weekday_effect or weekly_effect)" required="is_weekday_effect">
+                                    <label for="effect_weekday" string="Week Day" style="width: 100%;
+                text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                                    <field name="effect_weekday"
+                                           style="width: 40%; text-align: center; font-size: 16px"/>
+                                </div>
+
+                                <div class="o_cell d-flex flex-column align-items-center"
+                                     style="flex: 1;"
+                                     invisible="not weekly_effect" required="weekly_effect">
+                                    <label for="effect_weekday" string="Week Day" style="width: 100%;
+                text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                                    <field name="effect_weekday"
+                                           style="width: 40%; text-align: center; font-size: 16px"/>
+                                </div>
+
+
+                                <group invisible="not is_number">
+                                    <field name="effect_numerical_value"
+                                           required="is_number"/>
+                                </group>
+
+
+                                <div class="o_row h2 text-info text-center" invisible="not is_hourly_effect"
+                                     required="is_hourly_effect">
+
+                                    <div class="o_row h2 text-info text-center"
+                                         invisible="is_dual_hour_effect">
+
+                                        <div class="o_cell justify-content-center align-items-center"
+                                             style="flex: 1;"
+                                             invisible="is_attendance_time_effect">
+                                            <label for="hour_value" string="FP Value" style="width: 100%;
+                text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                                            <field name="hour_value"
+                                                   style="width: 40%; text-align: center; font-size: 16px"
+                                                   required="is_hourly_effect"/>
+                                        </div>
+                                        <div class="o_cell justify-content-center align-items-center"
+                                             style="flex: 1;"
+                                             invisible="not is_attendance_time_effect">
+                                            <label for="hour_value" string="Attendance Time" style="width: 100%;
+                text-align: center; font-size: 18px; font-weight: bold;" class="h2"/>
+                                            <field name="hour_value"
+                                                   style="width: 40%; text-align: center; font-size: 16px"
+                                                   required="is_hourly_effect"/>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="o_row h2 text-info text-center"
+                                         invisible="(not is_dual_hour_effect or is_attendance_time_effect)">
+                                        <div class="o_cell d-flex flex-column align-items-center"
+                                             style="flex: 1;">
+                                            <label for="hour_value" string="In FP Value"/>
+                                            <field name="hour_value"
+                                                   required="is_hourly_effect"/>
+                                        </div>
+
+                                        <div class="o_cell d-flex flex-column align-items-center"
+                                             style="flex: 1;">
+                                            <label for="second_hour_value" string="Out FP Value"/>
+                                            <field name="second_hour_value"
+                                                   required="is_dual_hour_effect"/>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                                <group>
+                                    <field name="effect_reason" nolabel="1" placeholder="Write notesƒ??"
+                                           required="is_reason_required"/>
+                                </group>
+
+                                <div class="o_cell d-flex flex-column align-items-center">
+
+                                    <field name="attached_file"
+                                           style="alignment: center"
+                                           required="is_attachment_required"/>
+                                </div>
+
+
+                                <group class="text-center">
+                                    <field name="automated_effects_note" nolabel="1" placeholder="Effect Note"
+                                           readonly="1"/>
+                                </group>
+                            </div>
+                        </div>
+                    </sheet>
+
+                    <footer>
+                        <button name="action_save"
+                                string="Save and Close"
+                                type="object"
+                                class="btn-primary"/>
+                        <button string="Cancel"
+                                class="btn-default"
+                                special="cancel"/>
+                    </footer>
+
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_effect_wizard_form_postsave" model="ir.ui.view">
+            <field name="name">ab.hr.effects.wizard.form.postsave</field>
+            <field name="model">ab_hr_effect_wizard</field>
+            <field name="priority" eval="1"/>
+            <field name="arch" type="xml">
+                <form string="Payroll Effect">
+                    <header>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               readonly="1"
+                               statusbar_visible="draft,direct_manager_review,under_application,applied,rejected,archived"
+                               invisible="double_approval"/>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               readonly="1"
+                               statusbar_visible="draft,direct_manager_review,upper_manager_review,under_application,applied,rejected,archived"
+                               invisible="not double_approval"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(is_hr_manager or effect_status != 'draft')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(is_hr_manager or (effect_status != 'direct_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(is_hr_manager or ((effect_status == 'direct_manager_review' and double_approval) or (effect_status != 'direct_manager_review' and effect_status != 'upper_manager_review')))"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(is_hr_manager or effect_status not in ['direct_manager_review', 'upper_manager_review'])"
+                                type="object" string="Reject" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (supervision_type not in ['direct', 'indirect'] or effect_status in ['draft', 'applied', 'archived', 'rejected']))"
+                                type="object" string="Back to Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(is_hr_manager or effect_status != 'under_application')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(is_hr_manager or effect_status not in ['draft', 'rejected'])"
+                                type="object" string="Archived" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (not is_payroll_user or effect_status != 'archived'))"
+                                type="object" string="Unarchive" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(not is_hr_manager or effect_status == 'draft')"
+                                type="object" string="Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(not is_hr_manager or effect_status == 'direct_manager_review')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(not is_hr_manager or (effect_status == 'upper_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(not is_hr_manager or effect_status == 'under_application')"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(not is_hr_manager or effect_status == 'rejected')"
+                                type="object" string="Rejected" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(not is_hr_manager or effect_status == 'applied')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(not is_hr_manager or effect_status == 'archived')"
+                                type="object" string="Archived" class="btn-danger"/>
+                    </header>
+                    <sheet>
+                        <field name="basic_effect" invisible="1"/>
+                        <field name="is_number" invisible="1"/>
+                        <field name="employee_id" invisible="1" force_save="1"/>
+                        <field name="is_hourly_effect" invisible="1"/>
+                        <field name="is_dual_hour_effect" invisible="1"/>
+                        <field name="is_reason_required" invisible="1"/>
+                        <field name="is_attachment_required" invisible="1"/>
+                        <field name="is_attendance_time_effect" invisible="1"/>
+                        <field name="is_weekly_effect" invisible="1"/>
+                        <field name="is_weekday_effect" invisible="1"/>
+                        <field name="change_day_off_date" invisible="1"/>
+                        <field name="weekly_vacation_work_permit" invisible="1"/>
+                        <field name="weekly_day_off_integer" invisible="1"/>
+                        <field name="select_day_off_number" invisible="1"/>
+                        <field name="basic_working_hour_number" invisible="1"/>
+                        <field name="is_period" invisible="1"/>
+                        <field name="double_approval" invisible="1"/>
+                        <field name="is_hr_manager" invisible="1"/>
+                        <field name="is_payroll_user" invisible="1"/>
+                        <field name="can_edit_postsave" invisible="1"/>
+                        <field name="day_off" invisible="1"/>
+                        <field name="day_off_exist" invisible="1"/>
+                        <field name="supervision_type" invisible="1"/>
+                        <field name="allowed_effect_type_ids" invisible="1"/>
+
+                        <group readonly="not can_edit_postsave">
+                            <field name="job_info_html" readonly="1" nolabel="1"/>
+                        </group>
+
+                        <group readonly="not can_edit_postsave">
+                            <field name="max_effects_info_html" readonly="1" nolabel="1"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Effect">
+                                <group col="6" readonly="not can_edit_postsave">
+                                    <field name="effect_status" readonly="1"/>
+                                    <field name="periodic_effect"/>
+                                    <field name="weekly_effect"/>
+                                    <field name="yearly_effect" groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                                </group>
+                                <group col="6" readonly="not can_edit_postsave">
+                                    <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                                    <field name="effect_date"
+                                           invisible="weekly_vacation_work_permit"/>
+                                    <field name="monthly_weekly_vacancies"
+                                           invisible="not weekly_vacation_work_permit"
+                                           required="(change_day_off_date or weekly_vacation_work_permit)"/>
+                                    <field name="end_date"/>
+
+
+                                </group>
+                            </page>
+                            <page string="Values">
+                                <group col="8" readonly="not can_edit_postsave">
+                                    <field name="effect_numerical_value"/>
+                                    <field name="weekly_day_off_number"/>
+                                    <field name="attendance_time" readonly="1"/>
+                                    <field name="effect_weekday"
+                                           required="(is_weekday_effect or weekly_effect)"/>
+                                </group>
+                                <group col="8" readonly="not can_edit_postsave">
+                                    <field name="hour_value"/>
+                                    <field name="second_hour_value"/>
+                                    <field name="monthly_weekly_vacancies"
+                                           required="(change_day_off_date or weekly_vacation_work_permit)"
+                                           invisible="weekly_vacation_work_permit"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <group readonly="not can_edit_postsave">
+                                    <field name="effect_reason" placeholder="Write notes"/>
+                                </group>
+                                <group readonly="not can_edit_postsave">
+                                    <field name="attached_file"/>
+                                </group>
+                                <group readonly="not can_edit_postsave">
+                                    <field name="automated_effects_note" readonly="1" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page string="Employee Data">
+                                <group col="4" readonly="not can_edit_postsave">
+                                    <field name="accid" readonly="1"/>
+                                    <field name="workplace" readonly="1"/>
+                                    <field name="job_title" readonly="1"/>
+                                    <field name="supervision_type" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_effect_wizard_form_postsave_readonly" model="ir.ui.view">
+            <field name="name">ab.hr.effects.wizard.form.postsave.readonly</field>
+            <field name="model">ab_hr_effect_wizard</field>
+            <field name="priority" eval="5"/>
+            <field name="arch" type="xml">
+                <form string="Payroll Effect" create="false" edit="false" delete="false">
+                    <header>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               readonly="1"
+                               statusbar_visible="draft,direct_manager_review,under_application,applied,rejected,archived"
+                               invisible="double_approval"/>
+                        <field name="effect_status"
+                               widget="statusbar"
+                               readonly="1"
+                               statusbar_visible="draft,direct_manager_review,upper_manager_review,under_application,applied,rejected,archived"
+                               invisible="not double_approval"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(is_hr_manager or effect_status != 'draft')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(is_hr_manager or (effect_status != 'direct_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(is_hr_manager or ((effect_status == 'direct_manager_review' and double_approval) or (effect_status != 'direct_manager_review' and effect_status != 'upper_manager_review')))"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(is_hr_manager or effect_status not in ['direct_manager_review', 'upper_manager_review'])"
+                                type="object" string="Reject" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (supervision_type not in ['direct', 'indirect'] or effect_status in ['draft', 'applied', 'archived', 'rejected']))"
+                                type="object" string="Back to Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(is_hr_manager or effect_status != 'under_application')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(is_hr_manager or effect_status not in ['draft', 'rejected'])"
+                                type="object" string="Archived" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(is_hr_manager or (not is_payroll_user or effect_status != 'archived'))"
+                                type="object" string="Unarchive" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'draft'}"
+                                invisible="(not is_hr_manager or effect_status == 'draft')"
+                                type="object" string="Draft" class="btn-secondary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'direct_manager_review'}"
+                                invisible="(not is_hr_manager or effect_status == 'direct_manager_review')"
+                                type="object" string="Direct Manager Review" class="btn-warning"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'upper_manager_review'}"
+                                invisible="(not is_hr_manager or (effect_status == 'upper_manager_review' or not double_approval))"
+                                type="object" string="Upper Manager Review" class="btn-info"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'under_application'}"
+                                invisible="(not is_hr_manager or effect_status == 'under_application')"
+                                type="object" string="Under Application" class="btn-primary"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'rejected'}"
+                                invisible="(not is_hr_manager or effect_status == 'rejected')"
+                                type="object" string="Rejected" class="btn-danger"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'applied'}"
+                                invisible="(not is_hr_manager or effect_status == 'applied')"
+                                type="object" string="Applied" class="btn-success"/>
+                        <button name="btn_change_status"
+                                context="{'effect_target': 'archived'}"
+                                invisible="(not is_hr_manager or effect_status == 'archived')"
+                                type="object" string="Archived" class="btn-danger"/>
+                    </header>
+                    <sheet>
+                        <field name="basic_effect" invisible="1"/>
+                        <field name="is_number" invisible="1"/>
+                        <field name="employee_id" invisible="1" force_save="1"/>
+                        <field name="is_hourly_effect" invisible="1"/>
+                        <field name="is_dual_hour_effect" invisible="1"/>
+                        <field name="is_reason_required" invisible="1"/>
+                        <field name="is_attachment_required" invisible="1"/>
+                        <field name="is_attendance_time_effect" invisible="1"/>
+                        <field name="is_weekly_effect" invisible="1"/>
+                        <field name="is_weekday_effect" invisible="1"/>
+                        <field name="change_day_off_date" invisible="1"/>
+                        <field name="weekly_vacation_work_permit" invisible="1"/>
+                        <field name="weekly_day_off_integer" invisible="1"/>
+                        <field name="select_day_off_number" invisible="1"/>
+                        <field name="basic_working_hour_number" invisible="1"/>
+                        <field name="is_period" invisible="1"/>
+                        <field name="double_approval" invisible="1"/>
+                        <field name="is_hr_manager" invisible="1"/>
+                        <field name="is_payroll_user" invisible="1"/>
+                        <field name="can_edit_postsave" invisible="1"/>
+                        <field name="day_off" invisible="1"/>
+                        <field name="day_off_exist" invisible="1"/>
+                        <field name="supervision_type" invisible="1"/>
+                        <field name="allowed_effect_type_ids" invisible="1"/>
+
+                        <group>
+                            <field name="job_info_html" readonly="1" nolabel="1"/>
+                        </group>
+
+                        <group>
+                            <field name="max_effects_info_html" readonly="1" nolabel="1"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Effect">
+                                <group col="6">
+                                    <field name="effect_status" readonly="1"/>
+                                    <field name="periodic_effect"/>
+                                    <field name="weekly_effect"/>
+                                    <field name="yearly_effect" groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                                </group>
+                                <group col="6">
+                                    <field name="effect_type_id" domain="[('id', 'in', allowed_effect_type_ids)]"/>
+                                    <field name="effect_date"
+                                           invisible="weekly_vacation_work_permit"/>
+                                    <field name="monthly_weekly_vacancies"
+                                           invisible="not weekly_vacation_work_permit"
+                                           required="(change_day_off_date or weekly_vacation_work_permit)"/>
+                                    <field name="end_date"/>
+
+
+                                </group>
+                            </page>
+                            <page string="Values">
+                                <group col="8">
+                                    <field name="effect_numerical_value"/>
+                                    <field name="weekly_day_off_number"/>
+                                    <field name="attendance_time" readonly="1"/>
+                                    <field name="effect_weekday"
+                                           required="(is_weekday_effect or weekly_effect)"/>
+                                </group>
+                                <group col="8">
+                                    <field name="hour_value"/>
+                                    <field name="second_hour_value"/>
+                                    <field name="monthly_weekly_vacancies"
+                                           required="(change_day_off_date or weekly_vacation_work_permit)"
+                                           invisible="weekly_vacation_work_permit"/>
+                                </group>
+                            </page>
+                            <page string="Notes">
+                                <group>
+                                    <field name="effect_reason" placeholder="Write notes"/>
+                                </group>
+                                <group>
+                                    <field name="attached_file"/>
+                                </group>
+                                <group>
+                                    <field name="automated_effects_note" readonly="1" nolabel="1"/>
+                                </group>
+                            </page>
+                            <page string="Employee Data">
+                                <group col="4">
+                                    <field name="accid" readonly="1"/>
+                                    <field name="workplace" readonly="1"/>
+                                    <field name="job_title" readonly="1"/>
+                                    <field name="supervision_type" readonly="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_effect_wizard_action" model="ir.actions.act_window">
+            <field name="name">Effects Wizard</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_effect_wizard</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids" eval="[(5, 0, 0),
+                                          (0, 0, {'view_mode': 'list', 'view_id': ref('ab_hr_effect_wizard_view_tree')})]"/>
+            <field name="search_view_id" ref="ab_hr_effect_wizard_view_search"/>
+            <field name="context">{'sudo_wizard_create': True}</field>
+        </record>
+
+        <record id="ab_hr_effect_wizard_apply_under_application_batch" model="ir.actions.server">
+            <field name="name">Apply Under Application (Batch)</field>
+            <field name="model_id" ref="model_ab_hr_effect_wizard"/>
+            <field name="binding_model_id" ref="model_ab_hr_effect_wizard"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">env['ab_hr_effect_wizard'].browse(
+                env.context.get('active_ids', [])).action_apply_under_application_batch()</field>
+        </record>
+
+        <record id="ab_hr_effect_wizard_reset_to_draft_batch" model="ir.actions.server">
+            <field name="name">Reset to Draft (Batch)</field>
+            <field name="model_id" ref="model_ab_hr_effect_wizard"/>
+            <field name="binding_model_id" ref="model_ab_hr_effect_wizard"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">env['ab_hr_effect_wizard'].browse(
+                env.context.get('active_ids', [])).action_reset_to_draft_batch()</field>
+        </record>
+
+        <menuitem id="ab_hr_effect_wizard_menu"
+                  name="Effects Wizard"
+                  parent="ab_hr_main_payroll_effects_menu"
+                  action="ab_hr_effect_wizard_action"
+                  groups="base.group_user"
+                  sequence="110"/>
+    </data>
+</odoo>

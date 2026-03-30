@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_ab_whatsapp_dashboard" model="ir.actions.client">
+            <field name="name">WhatsApp Dashboard</field>
+            <field name="tag">ab_whatsapp_api.dashboard</field>
+        </record>
+
+        <menuitem
+            id="menu_ab_whatsapp_api_root"
+            name="WhatsApp API"
+            action="action_ab_whatsapp_dashboard"
+            sequence="40"
+            groups="base.group_system"
+        />
+    </data>
+</odoo>

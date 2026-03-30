@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_pos.AbPosAction">
+        <div class="o_ab_pos_simple container-fluid py-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <h2 class="m-0">Ab POS</h2>
+                <button class="btn btn-primary" t-on-click="save" t-att-disabled="state.saving || state.loading">
+                    <t t-if="state.saving">Saving…</t>
+                    <t t-else="">Save</t>
+                </button>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="text-muted">Loading…</div>
+            </t>
+            <t t-else="">
+                <div class="row g-3">
+                    <div class="col-12 col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <label class="form-label">Store</label>
+                                    <select class="form-select" t-model="state.selectedStoreId">
+                                        <t t-foreach="state.stores" t-as="s" t-key="s.id">
+                                            <option t-att-value="s.id">
+                                                <t t-esc="(s.code ? s.code + ' - ' : '') + (s.name || '')"/>
+                                            </option>
+                                        </t>
+                                    </select>
+                                </div>
+
+                                <div class="mb-2">
+                                    <label class="form-label">Customer (optional)</label>
+                                    <input class="form-control" placeholder="Search customer…" t-on-input="onSearchCustomers"/>
+                                </div>
+                                <div class="list-group" style="max-height: 240px; overflow:auto;">
+                                    <t t-foreach="state.customers" t-as="c" t-key="c.id">
+                                        <button type="button"
+                                                t-attf-class="list-group-item list-group-item-action #{c.id == state.selectedCustomerId ? 'active' : ''}"
+                                                t-on-click="() => this.selectCustomer(c)">
+                                            <div class="d-flex justify-content-between">
+                                                <span t-esc="c.name || ('#' + c.id)"/>
+                                                <small class="opacity-75" t-esc="c.mobile_phone || c.code || ''"/>
+                                            </div>
+                                        </button>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card mt-3">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Total</strong>
+                                    <strong t-esc="total.toFixed(2)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="mb-2">
+                                    <label class="form-label">Products</label>
+                                    <input class="form-control" placeholder="Search product…" t-on-input="onSearchProducts"/>
+                                </div>
+                                <div class="row row-cols-1 row-cols-md-2 g-2" style="max-height: 520px; overflow:auto;">
+                                    <t t-foreach="state.products" t-as="p" t-key="p.id">
+                                        <div class="col">
+                                            <div class="card h-100" role="button" style="cursor:pointer;" t-on-click="() => this.addProduct(p)">
+                                                <div class="card-body p-2">
+                                                    <div class="fw-semibold small text-truncate" t-esc="productLabel(p)"/>
+                                                    <div class="d-flex justify-content-between align-items-center mt-2">
+                                                        <small class="text-muted text-truncate" t-esc="p.code || ''"/>
+                                                        <span class="badge bg-light text-dark" t-esc="formatPrice(p.default_price)"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-lg-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <label class="form-label">Order</label>
+                                <t t-if="!state.lines.length">
+                                    <div class="text-muted">No lines yet.</div>
+                                </t>
+                                <t t-else="">
+                                    <div class="list-group">
+                                        <t t-foreach="state.lines" t-as="l" t-key="l.product.id">
+                                            <div class="list-group-item d-flex align-items-center justify-content-between">
+                                                <div>
+                                                    <div t-esc="productLabel(l.product)"/>
+                                                    <small class="text-muted" t-esc="formatPrice(l.product.default_price)"/>
+                                                </div>
+                                                <div class="btn-group">
+                                                    <button class="btn btn-outline-secondary" t-on-click="() => this.decLine(l)">-</button>
+                                                    <button class="btn btn-outline-secondary disabled" t-esc="l.qty"/>
+                                                    <button class="btn btn-outline-secondary" t-on-click="() => this.incLine(l)">+</button>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

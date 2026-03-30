@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="ab_employee_tools_menu_root" name="Employee Tools" sequence="10"
+                  web_icon="ab_employee_tools,static/description/icon.png"
+                  groups="ab_employee_tools.group_ab_employee_tools_admin,ab_employee_tools.group_ab_employee_tools_user,ab_employee_tools.group_ab_employee_tools_ro"/>
+        <menuitem id="ab_employee_tools_menu_tools"
+                  name="Employee Tools"
+                  parent="ab_employee_tools_menu_root"
+                  action="employee_tools_action"
+                  groups="ab_employee_tools.group_ab_employee_tools_admin,ab_employee_tools.group_ab_employee_tools_user,ab_employee_tools.group_ab_employee_tools_ro"
+                  sequence="10"/>
+        <menuitem id="ab_employee_tools_menu_types"
+                  name="Tool Types"
+                  parent="ab_employee_tools_menu_root"
+                  action="tools_type_action"
+                  groups="ab_employee_tools.group_ab_employee_tools_admin,ab_employee_tools.group_ab_employee_tools_user,ab_employee_tools.group_ab_employee_tools_ro"
+                  sequence="20"/>
+        <menuitem id="ab_employee_tools_menu_inventory"
+                  name="Tools Inventory"
+                  parent="ab_employee_tools_menu_root"
+                  action="employee_tools_inventory_move_action"
+                  groups="ab_employee_tools.group_ab_employee_tools_admin,ab_employee_tools.group_ab_employee_tools_user,ab_employee_tools.group_ab_employee_tools_ro"
+                  sequence="30"/>
+
+    </data>
+</odoo>

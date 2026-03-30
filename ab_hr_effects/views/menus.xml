@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="ab_hr_main_payroll_effects_menu"
+        name="HR Effects"
+        parent="ab_hr.menu_root"
+        sequence="2"/>
+    </data>
+</odoo>

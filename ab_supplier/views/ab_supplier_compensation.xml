@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_supplier_compensation_view_tree" model="ir.ui.view">
+            <field name="name">ab_supplier_compensation_view_tree</field>
+            <field name="model">ab_supplier_compensation</field>
+            <field name="arch" type="xml">
+                <list string="ab_supplier_compensation_tree">
+                    <field name="offers_company" optional="show"/>
+                    <field name="supplier_id" optional="show"/>
+                    <field name="compensation_payment_type" optional="show"/>
+                    <field name="compensation_type" optional="show"/>
+                    <field name="compensation_value" optional="show"/>
+                    <field name="month_of_sale" optional="show"/>
+                    <field name="month_of_deduction" optional="show"/>
+                    <field name="notes" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_supplier_compensation_view_form" model="ir.ui.view">
+            <field name="name">ab_supplier_compensation_view_form</field>
+            <field name="model">ab_supplier_compensation</field>
+            <field name="arch" type="xml">
+                <form string="ab_supplier_compensation_form">
+                    <sheet>
+                        <group>
+                            <field name="offers_company"/>
+                            <field name="supplier_id"/>
+                            <field name="compensation_payment_type"/>
+                            <field name="compensation_type"/>
+                            <field name="compensation_value"/>
+                            <field name="month_of_sale"/>
+                            <field name="month_of_deduction"/>
+                            <field name="notes"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_supplier_compensation_view_search" model="ir.ui.view">
+            <field name="name">ab_supplier_compensation_view_search</field>
+            <field name="model">ab_supplier_compensation</field>
+            <field name="arch" type="xml">
+                <search string="ab_supplier_compensation_search">
+                    <field name="offers_company"/>
+                    <field name="supplier_id"/>
+                    <field name="compensation_payment_type"/>
+                    <field name="compensation_type"/>
+                    <field name="compensation_value"/>
+                    <field name="month_of_sale"/>
+                    <field name="month_of_deduction"/>
+                    <field name="notes"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_supplier_compensation_view_pivot" model="ir.ui.view">
+            <field name="name">ab_supplier_compensation_view_pivot</field>
+            <field name="model">ab_supplier_compensation</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_supplier_compensation_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_supplier_compensation_action" model="ir.actions.act_window">
+            <field name="name">Ab supplier compensation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_supplier_compensation</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+
+    </data>
+</odoo>

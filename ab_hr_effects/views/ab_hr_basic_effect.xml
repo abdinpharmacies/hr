@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_hr_basic_effect_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_basic_effect_view_tree</field>
+            <field name="model">ab_hr_basic_effect</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_basic_effect_tree" multi_edit="1">
+                    <field name="basic_working_hour_number" invisible="1"/>
+                    <field name="accid" widget="badge"
+                           decoration-danger="job_status == 'inactive'"/>
+                    <field name="employee_id"/>
+                    <field name="job_title" readonly="1" optional="show"/>
+                    <field name="workplace" readonly="1" optional="show"/>
+                    <field name="supervision_type" optional="hide"/>
+                    <field name="effect_type_id" widget="badge"/>
+                    <field name="effect_value" widget="badge"/>
+                    <field name="basic_working_hour_value"
+                           optional="hide"
+                           invisible="not basic_working_hour_number"/>
+                    <field name="job_status" optional="hide"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_basic_effect_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_basic_effect_view_form</field>
+            <field name="model">ab_hr_basic_effect</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_basic_effect_form">
+                    <sheet>
+
+                        <field name="supervision_type" invisible="1"/>
+                        <field name="basic_working_hour_number" invisible="1"/>
+                        <group class="h1 text-muted text-center">
+                            <field name="accid"
+                                   readonly="1"
+                                   nolabel="1"
+                                   class="h1 text-muted"/>
+                        </group>
+                        <group class="h1 text-info text-center">
+                            <field name="employee_id" nolabel="1"/>
+                        </group>
+
+                        <notebook>
+                        </notebook>
+                        <notebook>
+
+                        </notebook>
+
+                        <group rowspan="4" col="16" class="o_cell d-flex flex-column text-center h2">
+                            <field name="job_title" string="Job Title" nolabel="1" readonly="1"/>
+                            <field name="workplace" string="Workplace" nolabel="1" readonly="1"/>
+                        </group>
+
+                        <notebook>
+                        </notebook>
+                        <notebook>
+                        </notebook>
+
+                        <div>
+                            <div class="h2" style="font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 10px;">
+                                Basic Effect Data
+                            </div>
+                            <notebook>
+                            </notebook>
+                            <group col="4" class="o_cell d-flex flex-column text-center h2">
+                                <field name="effect_type_id" string="Effect Type"/>
+
+                                <field name="effect_value" string="Effect Value"
+                                       class="text-muted"/>
+                                <field name="basic_working_hour_value"
+                                       string="Basic Working Hour Number"
+                                       class="text-muted"
+                                       invisible="not basic_working_hour_number"/>
+
+                            </group>
+
+                        </div>
+
+                        <notebook>
+                        </notebook>
+                        <group col="4" string="Create and Write Info">
+                            <field name="create_uid"/>
+                            <field name="create_date"/>
+                            <field name="write_uid"/>
+                            <field name="write_date"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_basic_effect_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_basic_effect_view_search</field>
+            <field name="model">ab_hr_basic_effect</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_basic_effect_search">
+                    <filter name="supervision_type_direct"
+                            string="Direct Supervision"
+                            domain="[('supervision_type','=','direct')]"/>
+                    <filter name="supervision_type_indirect"
+                            string="Indirect Supervision"
+                            domain="[('supervision_type','=','indirect')]"/>
+                    <filter name="supervision_type_indirect_to_subordinate"
+                            string="Indirect To Subordinate"
+                            domain="[('supervision_type','=','indirect_to_subordinate')]"/>
+                    <filter name="supervision_type_myself"
+                            string="Myself"
+                            domain="[('supervision_type','=','myself')]"/>
+                    <filter name="supervision_type_workplace_manager"
+                            string="Workplace Manager Job"
+                            domain="[('supervision_type','=','workplace_manager_job')]"/>
+                    <filter name="supervision_type_other"
+                            string="Other"
+                            domain="[('supervision_type','=','other')]"/>
+                    <filter name="active_employees"
+                            string="Active Employees"
+                            domain="[('employee_id.active','=',True)]"/>
+                    <separator/>
+                    <field name="accid"/>
+                    <field name="employee_id"/>
+                    <field name="job_title"/>
+                    <field name="workplace"/>
+                    <field name="supervision_type"/>
+                    <field name="effect_type_id"/>
+                    <field name="effect_value"/>
+                    <field name="create_uid"/>
+                    <field name="create_date"/>
+                    <field name="write_uid"/>
+                    <field name="write_date"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_hr_basic_effect_view_pivot" model="ir.ui.view">
+            <field name="name">ab_hr_basic_effect_view_pivot</field>
+            <field name="model">ab_hr_basic_effect</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_hr_basic_effect_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_basic_effect_action" model="ir.actions.act_window">
+            <field name="name">Ab hr basic effects</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_basic_effect</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_hr_basic_effect_menu"
+                  name="Basic Effects"
+                  parent="ab_hr_main_payroll_effects_menu"
+                  action="ab_hr_basic_effect_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_supplier_bracket_view_tree" model="ir.ui.view">
+            <field name="name">ab_supplier_bracket_view_tree</field>
+            <field name="model">ab_supplier_bracket</field>
+            <field name="arch" type="xml">
+                <list string="ab_supplier_bracket_tree" multi_edit="1">
+                    <field name="supplier_id" optional="show"/>
+                    <field name="payment_type" optional="show"/>
+                    <field name="termination_day" optional="show"/>
+                    <field name="credit_days" optional="show"/>
+                    <field name="discount" optional="show"/>
+                    <field name="withdrawal_bracket" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_supplier_bracket_view_form" model="ir.ui.view">
+            <field name="name">ab_supplier_bracket_view_form</field>
+            <field name="model">ab_supplier_bracket</field>
+            <field name="arch" type="xml">
+                <form string="ab_supplier_bracket_form">
+                    <sheet>
+                        <group>
+                            <field name="payment_type"/>
+                            <field name="supplier_id"/>
+                            <field name="termination_day"/>
+                            <field name="credit_days"/>
+                            <field name="discount"/>
+                            <field name="withdrawal_bracket"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_supplier_bracket_view_search" model="ir.ui.view">
+            <field name="name">ab_supplier_bracket_view_search</field>
+            <field name="model">ab_supplier_bracket</field>
+            <field name="arch" type="xml">
+                <search string="ab_supplier_bracket_search">
+                    <field name="supplier_id"/>
+                    <field name="start_day"/>
+                    <field name="credit_days"/>
+                    <field name="discount"/>
+                    <field name="withdrawal_bracket"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_supplier_bracket_view_pivot" model="ir.ui.view">
+            <field name="name">ab_supplier_bracket_view_pivot</field>
+            <field name="model">ab_supplier_bracket</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_supplier_bracket_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_supplier_bracket_action" model="ir.actions.act_window">
+            <field name="name">Supplier Bracket</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_supplier_bracket</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template>
+    <t t-name="abdin_js.RefresherButton" owl="1">
+        <nav class="oe_refresher" aria-label="Pager">
+            <span aria-atomic="true">
+                <button
+                        class="fa fa-refresh fa-2x btn btn-secondary text-success o_pager_refresh"
+                        aria-label="Refresh"
+                        t-on-click="_doRefresh"
+                        title="Refresh"
+                        tabindex="-1"
+                />
+            </span>
+        </nav>
+    </t>
+</template>

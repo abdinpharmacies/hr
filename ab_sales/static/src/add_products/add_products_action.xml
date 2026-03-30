@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.AddProductsAction">
+        <div class="o_ab_sales_add_products container-fluid py-3">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <div class="d-flex align-items-center gap-2">
+                    <h3 class="m-0">Add Products</h3>
+                    <t t-if="state.storeName">
+                        <span class="badge rounded-pill text-bg-light" t-att-title="'Current store: ' + state.storeName">
+                            <i class="fa fa-shopping-cart me-1" aria-hidden="true"/>
+                            <t t-esc="state.storeName"/>
+                        </span>
+                    </t>
+                    <button class="btn btn-primary" t-on-click="apply"
+                            t-att-disabled="state.applying || state.loading || !selectedItems.length">
+                        <t t-if="state.applying">Applying…</t>
+                        <t t-else="">Apply (<t t-esc="selectedCount"/>)</t>
+                    </button>
+                </div>
+            </div>
+
+            <div class="row g-3">
+                <div class="col-12 col-lg-8">
+                    <div class="card">
+                        <div class="card-body d-flex flex-column" style="height: 70vh;">
+                            <div class="mb-2">
+                                <div class="d-flex align-items-center justify-content-between">
+                                    <label class="form-label mb-0 d-flex align-items-center gap-2" title="Search">
+                                        <i class="fa fa-search text-muted" aria-hidden="true"/>
+                                    </label>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="form-check form-switch m-0">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   t-att-checked="state.hasBalanceOnly"
+                                                   t-on-change="onHasBalanceChange"/>
+                                            <label class="form-check-label small" title="Has balance (any)">
+                                                <i class="fa fa-cubes text-muted" aria-hidden="true"/>
+                                            </label>
+                                        </div>
+                                        <div class="form-check form-switch m-0">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   t-att-checked="state.hasPosBalanceOnly"
+                                                   t-on-change="onHasPosBalanceChange"/>
+                                            <label class="form-check-label small" title="Has balance in current store">
+                                                <i class="fa fa-shopping-cart text-muted" aria-hidden="true"/>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input class="form-control" placeholder="Type name/code…" t-on-input="onSearch"
+                                       t-on-keydown="onSearchKeydown"
+                                       t-ref="searchInput"/>
+                            </div>
+                            <div class="position-relative flex-grow-1" style="min-height: 0;">
+                                <div class="row row-cols-1 g-2 h-100 overflow-auto align-items-start align-content-start"
+                                     t-ref="cardsContainer">
+                                    <t t-foreach="state.products" t-as="p" t-key="p.id" t-foreach-index="idx">
+                                        <t t-call="ab_sales.ProductCard">
+                                            <t t-set="p" t-value="p"/>
+                                            <t t-set="idx" t-value="idx"/>
+                                            <t t-set="selectionIndex" t-value="state.selectionIndex"/>
+                                            <t t-set="qtyBuffer" t-value="state.qtyBuffer"/>
+                                            <t t-set="qtyBufferProductId" t-value="state.qtyBufferProductId"/>
+                                            <t t-set="onAdd" t-value="addProduct"/>
+                                            <t t-set="onOpenBalance" t-value="openStoresBalance"/>
+                                            <t t-set="formatPrice" t-value="formatPrice"/>
+                                            <t t-set="formatQty" t-value="formatQty"/>
+                                            <t t-set="productLabel" t-value="productLabel"/>
+                                        </t>
+                                    </t>
+                                </div>
+                                <t t-if="state.loading">
+                                    <div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+                                         style="background: rgba(255,255,255,0.65);">
+                                        <div class="text-muted">Loading…</div>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-lg-4">
+                    <div class="card">
+                        <div class="card-body d-flex flex-column" style="height: 70vh;">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <strong>Selected</strong>
+                                <span class="text-muted" t-esc="selectedCount"/>
+                            </div>
+                            <t t-if="!selectedItems.length">
+                                <div class="text-muted">Click products to add them.</div>
+                            </t>
+                            <t t-else="">
+                                <div class="list-group flex-grow-1 overflow-auto" style="min-height: 0;">
+                                    <t t-foreach="selectedItems" t-as="it" t-key="it.product.id">
+                                        <div class="list-group-item d-flex align-items-center justify-content-between">
+                                            <div class="me-2" style="min-width: 0;">
+                                                <div class="small text-truncate" t-esc="productLabel(it.product)"/>
+                                                <small class="text-muted" t-esc="it.product.code || ''"/>
+                                            </div>
+                                            <div class="btn-group">
+                                                <button class="btn btn-outline-secondary"
+                                                        t-on-click="() => this.dec(it)">-</button>
+                                                <button class="btn btn-outline-secondary disabled" t-esc="it.qty"/>
+                                                <button class="btn btn-outline-secondary"
+                                                        t-on-click="() => this.inc(it)">+</button>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

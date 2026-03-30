@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_hr_employee_view_form_effect_inherit" model="ir.ui.view">
+            <field name="name">ab_hr_employee_view_form_effect_inherit</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="inherit_id" ref="ab_hr.ab_hr_employee_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='job_occupied']" position="after">
+                    <page name="effects" string="Current Effects">
+                        <div class="o_row align-items-center">
+                            <div class="o_col-6 text-right">
+                                <button name="btn_add_effect" type="object" string="Add Effect" class="btn-primary"/>
+                            </div>
+                        </div>
+                        <field name="effects_wiz_ids"
+                               mode="list"
+                               context="{'tree_view_ref': 'ab_hr_effects.ab_hr_effect_wizard_view_tree_employee',
+                                         'sudo_wizard_create': True,
+                                         'default_employee_id': id}"
+                               options="{'no_create': True, 'no_edit': True}"/>
+                    </page>
+                    <page name="effects" string="Applied Effects">
+                        <field name="effects_ids"/>
+                    </page>
+                    <page string="Extra Effects Data">
+                        <div class="o_row align-items-center mb-2">
+                            <div class="o_col-3">
+                                <div class="o_form_label">Current Month Effects Status</div>
+                            </div>
+                            <div class="o_col-9">
+                                <button name="action_open_wizard_effects_by_status"
+                                        type="object"
+                                        string="Draft"
+                                        class="btn-secondary me-1"
+                                        context="{'wizard_status': 'draft'}"/>
+                                <button name="action_open_wizard_effects_by_status"
+                                        type="object"
+                                        string="Direct Review"
+                                        class="btn-secondary me-1"
+                                        context="{'wizard_status': 'direct_manager_review'}"/>
+                                <button name="action_open_wizard_effects_by_status"
+                                        type="object"
+                                        string="Upper Review"
+                                        class="btn-secondary me-1"
+                                        context="{'wizard_status': 'upper_manager_review'}"/>
+                                <button name="action_open_wizard_effects_by_status"
+                                        type="object"
+                                        string="Under Application"
+                                        class="btn-secondary me-1"
+                                        context="{'wizard_status': 'under_application'}"/>
+                                <button name="action_open_wizard_effects_by_status"
+                                        type="object"
+                                        string="Applied"
+                                        class="btn-secondary me-1"
+                                        context="{'wizard_status': 'applied'}"/>
+                                <button name="action_open_wizard_effects_by_status"
+                                        type="object"
+                                        string="Rejected"
+                                        class="btn-secondary me-1"
+                                        context="{'wizard_status': 'rejected'}"/>
+                                <button name="action_open_wizard_effects_by_status"
+                                        type="object"
+                                        string="Archived"
+                                        class="btn-secondary"
+                                        context="{'wizard_status': 'archived'}"/>
+                            </div>
+                        </div>
+                        <group col="2">
+                            <field name="attendance_time"/>
+                            <field name="attendance_out_time"/>
+                            <field name="basic_working_hour_number"/>
+                            <field name="weekly_day_off_number"/>
+                            <field name="day_off"
+                                   widget="many2many_tags"
+                                   context="{'show_effect_value_only': True}"
+                                   options="{'no_create': True, 'no_edit': True, 'no_open': True}"/>
+                            <field name="day_off_dates"
+                                   widget="many2many_tags"
+                                   context="{'show_effect_value_only': True}"
+                                   options="{'no_create': True, 'no_edit': True, 'no_open': True}"/>
+                            <field name="day_off_exist" invisible="1"/>
+                        </group>
+                        <group>
+                            <div class="o_row align-items-center">
+                                <div class="o_col-6">
+                                    <field name="delay_to_send_effect" readonly="1"/>
+                                </div>
+                                <div class="o_col-6 text-right">
+                                    <button name="action_toggle_delay_to_send_effect"
+                                            type="object"
+                                            class="btn-secondary"
+                                            string="Show Previous Month Dates"
+                                            invisible="delay_to_send_effect"/>
+                                    <button name="action_toggle_delay_to_send_effect"
+                                            type="object"
+                                            class="btn-secondary"
+                                            string="Hide Previous Month Dates"
+                                            invisible="not delay_to_send_effect"/>
+                                </div>
+                            </div>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>

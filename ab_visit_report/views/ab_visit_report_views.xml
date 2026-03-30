@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_visit_report_view_tree" model="ir.ui.view">
+            <field name="name">ab_visit_report_report.tree</field>
+            <field name="model">ab_visit_report_report</field>
+            <field name="arch" type="xml">
+                <list string="Visit Reports"
+                      decoration-success="status == 'submitted'"
+                      decoration-primary="status == 'saved'"
+                      decoration-muted="status == 'entry'">
+                    <field name="user_id"/>
+                    <field name="client_ip"/>
+                    <field name="visit_date"/>
+                    <field name="region_id"/>
+                    <field name="store_id"/>
+                    <field name="status"/>
+                    <field name="open_close_on_time"/>
+                    <field name="pharmacists_union_card"/>
+                    <field name="transfer_request_regular"/>
+                    <field name="monthly_inventory_commitment"/>
+                    <field name="customer_data_commitment_percent"/>
+                    <field name="cleanliness_floors_score"/>
+                    <field name="cleanliness_shelves_score"/>
+                    <field name="stock_order_score"/>
+                    <field name="bathroom_cleanliness_score"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_visit_report_view_form" model="ir.ui.view">
+            <field name="name">ab_visit_report_report.form</field>
+            <field name="model">ab_visit_report_report</field>
+            <field name="arch" type="xml">
+                <form string="Visit Report">
+                    <header>
+                        <button name="btn_submit" type="object" string="Submit"
+                                invisible="submitted"
+                                class="btn-primary"/>
+                        <button name="btn_reopen" type="object" string="Reopen"
+                                invisible="not submitted"
+                                groups="ab_visit_report.group_ab_visit_report_admin"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Submitted" bg_color="bg-success"
+                                invisible="status != 'submitted'"/>
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-primary"
+                                invisible="status != 'saved'"/>
+                        <widget name="web_ribbon" title="Entry" bg_color="bg-secondary"
+                                invisible="status != 'entry'"/>
+                        <field readonly="submitted" name="submitted" invisible="1"/>
+                        <group>
+                            <group>
+                                <field readonly="1" name="user_id"/>
+                                <field readonly="1" name="status" invisible="1"/>
+                                <field readonly="submitted" name="visit_date"/>
+                                <field readonly="submitted" name="missing_job_ids"
+                                       placeholder="Leave empty if there are no missing jobs"
+                                       widget="many2many_tags"/>
+
+                            </group>
+                            <group>
+                                <field readonly="submitted" name="client_ip"/>
+                                <field readonly="submitted" name="store_id"/>
+                                <field readonly="submitted" name="region_id"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Compliance">
+                                <group>
+                                    <field readonly="submitted" name="open_close_on_time" widget="boolean_toggle"/>
+                                    <field readonly="submitted" name="open_close_noncompliance_days"/>
+                                    <field readonly="submitted" name="pharmacists_union_card" widget="boolean_toggle"/>
+                                    <field readonly="submitted" name="pharmacists_union_card_notes"/>
+                                    <field readonly="submitted" class="wider-label" name="reserve_drugs_compliance"/>
+                                    <field readonly="submitted" name="transfer_request_regular"
+                                           widget="boolean_toggle"/>
+                                    <field readonly="submitted" name="monthly_inventory_commitment"
+                                           widget="boolean_toggle"/>
+                                    <field readonly="submitted" name="opening_balances_notes"/>
+                                    <field readonly="submitted" name="legal_documents_notes" invisible="1"/>
+                                    <field readonly="submitted" name="legal_document_notes"
+                                           widget="many2many_tags"/>
+                                    <field readonly="submitted" name="returns_without_reason_notes"/>
+                                    <field readonly="submitted" name="attendance_tampering_notes"/>
+                                </group>
+                            </page>
+                            <page string="Sales">
+                                <group>
+                                    <field readonly="submitted" name="sales_vs_last_year" class="wider-label"/>
+                                    <field readonly="submitted" name="sales_vs_prev_month"/>
+                                    <field readonly="submitted" name="delivery_orders_growth_last_year"
+                                           class="wider-label"/>
+                                    <field readonly="submitted" name="delivery_orders_growth_prev_month"/>
+                                    <field readonly="submitted" name="offers_sales_last_year"/>
+                                    <field readonly="submitted" name="offers_sales_prev_month"/>
+                                    <field readonly="submitted" name="avg_invoice_value_last_year"/>
+                                    <field readonly="submitted" name="avg_invoice_value_prev_month"/>
+                                    <field readonly="submitted" name="zero_drugs_3_months"/>
+                                    <field readonly="submitted" name="zero_cosmetics_3_months"/>
+                                    <field readonly="submitted" name="temporary_item_clearance_value"/>
+                                    <field readonly="submitted" name="high_value_returns_match"/>
+                                    <field readonly="submitted" name="customer_data_commitment_percent"/>
+                                    <field readonly="submitted" name="new_codes_count_percent"/>
+                                </group>
+                            </page>
+                            <page string="Operations">
+                                <group>
+                                    <field readonly="submitted" name="manager_visit_details" class="wider-label"/>
+                                    <field readonly="submitted" name="branch_maintenance_notes"/>
+                                    <field readonly="submitted" name="supplies_and_uniforms_notes" class="wider-label"/>
+                                    <field readonly="submitted" name="it_issues_notes"/>
+                                    <field readonly="submitted" name="customer_calls_response"
+                                           widget="boolean_toggle"/>
+                                    <field readonly="submitted" name="branches_response"
+                                           widget="boolean_toggle"/>
+                                    <field readonly="submitted" name="transfer_refusals_notes"/>
+                                    <field readonly="submitted" name="delivery_service_compliance"/>
+                                    <field readonly="submitted" name="cleanliness_floors_score"/>
+                                    <field readonly="submitted" name="cleanliness_shelves_score"/>
+                                    <field readonly="submitted" name="stock_order_score"/>
+                                    <field readonly="submitted" name="bathroom_cleanliness_score"/>
+                                </group>
+                            </page>
+
+                            <page string="Notes">
+                                <group>
+                                    <field readonly="submitted" name="column_40" nolabel="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_visit_report_view_search" model="ir.ui.view">
+            <field name="name">ab_visit_report_report.search</field>
+            <field name="model">ab_visit_report_report</field>
+            <field name="arch" type="xml">
+                <search string="Visit Reports">
+                    <field name="user_id"/>
+                    <field name="region_id"/>
+                    <field name="store_id"/>
+                    <field name="open_close_on_time" widget="boolean_toggle"/>
+                    <field name="transfer_request_regular" widget="boolean_toggle"/>
+                    <field name="monthly_inventory_commitment" widget="boolean_toggle"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_visit_report_action" model="ir.actions.act_window">
+            <field name="name">Visit Reports</field>
+            <field name="res_model">ab_visit_report_report</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_visit_report_view_search"/>
+        </record>
+
+        <record id="ab_visit_report_legal_document_notes_view_list" model="ir.ui.view">
+            <field name="name">ab_visit_report_legal_document_notes.list</field>
+            <field name="model">ab_visit_report_legal_document_notes</field>
+            <field name="arch" type="xml">
+                <list string="Legal Document Notes">
+                    <field name="name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_visit_report_legal_document_notes_view_form" model="ir.ui.view">
+            <field name="name">ab_visit_report_legal_document_notes.form</field>
+            <field name="model">ab_visit_report_legal_document_notes</field>
+            <field name="arch" type="xml">
+                <form string="Legal Document Note">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_visit_report_legal_document_notes_action" model="ir.actions.act_window">
+            <field name="name">Legal Document Notes</field>
+            <field name="res_model">ab_visit_report_legal_document_notes</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

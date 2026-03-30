@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_transfer_header_view_form" model="ir.ui.view">
+            <field name="name">ab_transfer_header_view_form</field>
+            <field name="model">ab_transfer_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_transfer_header_form">
+                    <header class="w-100">
+                        <button string="Send" type="object" name="btn_send_transfer" class="btn-info"
+                                invisible="status != 'prepending'"/>
+                        <button string="Receive" type="object" name="btn_receive_transfer" class="btn-success"
+                                invisible="status != 'pending'"/>
+                        <button string="Rejected All" type="object" name="btn_rejected_all_quantity" class="btn-danger"
+                                invisible="status != 'pending'"/>
+                        <button string="Receive Rejected Quantity" type="object" name="btn_receive_rejected_quantity"
+                                class="btn-warning" invisible="status != 'rejected'"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-dollar">
+                                <div class="o_field_widget o_stat_info mr4 ">
+                                    <span class="o_stat_text">Price:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_price"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-list-ol">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">Product:</span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_products"/>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-success"
+                                invisible="status != 'saved'"/>
+                        <widget name="web_ribbon" title="Pending" bg_color="bg-info"
+                                invisible="status != 'pending'"/>
+                        <widget name="web_ribbon" title="Rejected" bg_color="bg-danger"
+                                invisible="status != 'rejected'"/>
+                        <group col="4">
+                            <field name="store_id" readonly="number_of_products > 0"
+                                   domain="[('id','!=',to_store_id)]"/>
+                            <field name="to_store_id" readonly="status != 'prepending'"
+                                   domain="[('id','!=',store_id)]"/>
+                            <field name="transmitted_by" readonly="status != 'prepending'"/>
+                            <field name="delivery_id"
+                                   readonly="status != 'prepending'" invisible="transmitted_by != 'delivery'"/>
+                        </group>
+                        <field name="status" invisible="1" readonly="0"/>
+                        <field name="store_id" invisible="1" readonly="0"/>
+                        <notebook>
+                            <page string="Transfer Detail">
+                                <field name="line_ids"
+                                       context="{'tree_view_ref':'ab_transfer.ab_transfer_line_view_tree'}"
+                                       readonly="status in ['saved', 'rejected']"/>
+                            </page>
+                            <page string="Description">
+                                <group>
+                                    <field name="description" nolabel="1" placeholder="Write your feedback here"
+                                           readonly="status != 'prepending'"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_transfer_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_transfer_header_view_tree</field>
+            <field name="model">ab_transfer_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_transfer_header_tree">
+                    <field name="store_id"/>
+                    <field name="to_store_id"/>
+                    <field name="total_price"/>
+                    <field name="number_of_products"/>
+                    <field name="status" widget="badge" decoration-info="status=='pending'"
+                           decoration-danger="status=='rejected'" decoration-warning="status=='prepending'"
+                           decoration-success="status=='saved'"/>
+                    <field name="description"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_transfer_header_action" model="ir.actions.act_window">
+            <field name="name">Transfer</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_transfer_header</field>
+            <field name="context">{'uom_only_type': True}</field>
+            <field name="view_mode">list,form</field>
+        </record>
+        <menuitem id="ab_transfer_menu" name="Transfer" action="ab_transfer_header_action"
+                  parent="ab_product_source.menu_root" sequence="2"/>
+
+    </data>
+</odoo>

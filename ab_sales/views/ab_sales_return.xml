@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Tree View -->
+        <record id="ab_sales_return_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_sales_return_header_view_tree</field>
+            <field name="model">ab_sales_return_header</field>
+            <field name="arch" type="xml">
+                <list string="Sales Returns" multi_edit="1">
+                    <field name="store_id" optional="show"/>
+                    <field name="origin_header_id" optional="show"/>
+                    <field name="status" optional="show"/>
+                    <field name="total_return_value" optional="show"/>
+                    <field name="total_sales_net" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <!-- Form View -->
+        <record id="ab_sales_return_header_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_return_header_view_form</field>
+            <field name="model">ab_sales_return_header</field>
+            <field name="arch" type="xml">
+
+                <form string="Sales Return">
+                    <header>
+                        <button name="action_set_pending"
+                                type="object"
+                                string="Set Pending"
+                                class="btn-primary"
+                                invisible="status != 'prepending'"/>
+                        <!-- Push to E-Plus after confirmation -->
+                        <button name="action_push_to_eplus_return"
+                                type="object"
+                                string="Push to E-Plus"
+                                class="btn-success"
+                                confirm="Are you sure you want to push this return to E-Plus?"
+                                invisible="status == 'saved'"/>
+                    </header>
+
+                    <sheet>
+                        <field name="status" invisible="1"/>
+                        <widget name="web_ribbon" title="Pre-Pending" bg_color="bg-info"
+                                invisible="status != 'prepending'"/>
+
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-info"
+                                invisible="status != 'saved'"/>
+
+                        <group>
+                            <group>
+                                <field name="store_id" readonly="status == 'saved'"/>
+                                <field name="origin_header_id" readonly="status == 'saved'"/>
+                                <button name="action_load_lines"
+                                        type="object"
+                                        string="Load Lines"
+                                        class="btn-primary"
+                                        invisible="status == 'saved'"/>
+                                <button name="action_clear_lines"
+                                        type="object"
+                                        string="Clear Lines"
+                                        class="btn-danger"
+                                        invisible="status == 'saved'"/>
+
+                            </group>
+                            <group>
+                                <field name="total_return_qty" readonly="1"/>
+                                <field name="total_return_value" readonly="1"/>
+                                <field name="total_sales_net" readonly="1"/>
+                                <field name="sales_return_id" readonly="1"/>
+                                <field name="f_transaction_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="notes" colspan="4"/>
+                        </group>
+
+                        <notebook>
+                            <page name="Lines" string="Lines">
+                                <group>
+                                    <field name="line_ids" nolabel="1">
+                                        <list editable="bottom" create="0" delete="0">
+                                            <!-- Product -->
+                                            <field name="itm_eplus_id"
+                                                   force_save="1" optional="hide"/>
+                                            <field name="product_id" force_save="1"/>
+                                            <!-- B-Connect item code -->
+
+                                            <!-- Quantities -->
+                                            <field name="qty_sold" force_save="1" optional="show"/>
+                                            <field name="max_returnable_qty" force_save="1" optional="show"/>
+                                            <field name="max_returnable_source" optional="hide" force_save="1"/>
+                                            <field name="product_uom_category_id" optional="hide"/>
+                                            <field name="uom_id"
+                                                   force_save="1"
+                                                   domain="product_uom_category_id and [('category_id', '=', product_uom_category_id)] or [('id', '=', False)]"/>
+                                            <field name="qty_sold_source" optional="hide" force_save="1"/>
+                                            <field name="qty_str" force_save="1"/>
+                                            <field name="qty" force_save="1" optional="hide"/>
+                                            <field name="source_itm_unit" optional="hide" force_save="1"/>
+                                            <field name="source_uom_factor" optional="hide" force_save="1"/>
+                                            <field name="item_unit1_unit2" optional="hide" force_save="1"/>
+                                            <field name="item_unit1_unit3" optional="hide" force_save="1"/>
+
+                                            <!-- Prices -->
+                                            <field name="sell_price" force_save="1" optional="show"/>
+                                            <field name="cost" force_save="1" optional="hide"/>
+
+                                            <!-- Link keys -->
+                                            <field name="c_id" optional="hide" force_save="1"/>
+                                            <field name="std_id" optional="hide" force_save="1"/>
+                                            <field name="sth_id" optional="hide" force_save="1"/>
+                                            <field name="sto_id" optional="hide" force_save="1"/>
+
+                                            <!-- Computed value -->
+                                            <field name="line_value" optional="hide"/>
+                                            <field name="itm_nexist" optional="hide" force_save="1"/>
+                                        </list>
+                                    </field>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- Search View -->
+        <record id="ab_sales_return_header_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_return_header_view_search</field>
+            <field name="model">ab_sales_return_header</field>
+            <field name="arch" type="xml">
+                <search string="Sales Return Search">
+                    <field name="origin_header_id"/>
+                    <field name="store_id"/>
+                    <field name="status"/>
+                </search>
+            </field>
+        </record>
+
+        <!-- Pivot View -->
+        <record id="ab_sales_return_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_sales_return_header_view_pivot</field>
+            <field name="model">ab_sales_return_header</field>
+            <field name="arch" type="xml">
+                <pivot string="Sales Return Analysis">
+                    <field name="store_id" type="row"/>
+                    <field name="status" type="row"/>
+                    <field name="total_return_value" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <!-- Action -->
+        <record id="ab_sales_return_header_action" model="ir.actions.act_window">
+            <field name="name">Sales Return</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_return_header</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <record id="ab_sales_return_header_action_new" model="ir.actions.act_window">
+            <field name="name">Sales Return</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_return_header</field>
+            <field name="view_mode">form</field>
+            <field name="context">{'curr_target': 'new'}</field>
+            <field name="view_id" ref="ab_sales_return_header_view_form"/>
+            <field name="target">new</field>
+        </record>
+
+        <!-- Menu -->
+        <menuitem id="ab_sales_return_header_menu"
+                  name="Sales Return"
+                  parent="sales_menu_root"
+                  action="ab_sales_return_header_action"
+                  sequence="300"/>
+    </data>
+</odoo>

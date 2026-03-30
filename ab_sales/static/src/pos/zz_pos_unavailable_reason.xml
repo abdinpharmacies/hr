@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="ab_sales.PosAction" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_lines_table')]//td/div[@t-esc='line.product_name']"
+               position="after">
+            <t t-if="isUnavailableLine(line)">
+                <div class="mt-2 d-flex flex-column gap-1 ab_pos_line_unavailable_reason_panel">
+                    <select class="form-select form-select-sm ab_pos_line_unavailable_reason_select"
+                            t-att-value="line.unavailable_reason || ''"
+                            t-on-change="(ev) => updateLineUnavailableReason(line, ev.target.value)">
+                        <option class="ab_pos_line_unavailable_reason_option_placeholder" value="">Select unavailable reason...</option>
+                        <option class="ab_pos_line_unavailable_reason_option_not_transferred" value="not_transferred">Not transferred yet from main store</option>
+                        <option class="ab_pos_line_unavailable_reason_option_wrong_price" value="wrong_price">Wrong price in system</option>
+                        <option class="ab_pos_line_unavailable_reason_option_stocktaking_error" value="stocktaking_error">Stocktaking error</option>
+                        <option class="ab_pos_line_unavailable_reason_option_not_entered" value="not_entered">Not entered by data entry yet</option>
+                        <option class="ab_pos_line_unavailable_reason_option_promised_customer" value="promised_customer">Already told customer we will deliver product</option>
+                        <option class="ab_pos_line_unavailable_reason_option_other" value="other">Other (please explain)</option>
+                    </select>
+                    <t t-if="(line.unavailable_reason || '') === 'other'">
+                        <input class="form-control form-control-sm ab_pos_line_unavailable_reason_other_input"
+                               type="text"
+                               placeholder="Required details..."
+                               t-att-value="line.unavailable_reason_other || ''"
+                               t-on-input="(ev) => updateLineUnavailableReasonOther(line, ev.target.value)"/>
+                    </t>
+                </div>
+            </t>
+        </xpath>
+    </t>
+</templates>

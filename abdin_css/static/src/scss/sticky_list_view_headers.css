@@ -1,0 +1,32 @@
+.o_list_view .o_list_table thead {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+.table-responsive {
+    overflow: visible;
+}
+
+.o_list_view .table-responsive .table thead {
+    z-index: 1;
+}
+
+.o_list_renderer .o_list_table thead {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+}
+
+th {
+    /* background-color: rgb(250, 250, 250); */
+    background-color: transparent !important;
+    text-align: center;
+    top: 0;
+}
+
+td {
+    text-align: center;
+}
+
+

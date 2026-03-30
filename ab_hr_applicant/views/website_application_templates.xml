@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <template id="website_apply_form" name="Job Application Form">
+            <t t-call="website.layout">
+                <div class="container my-5 ab-apply-page">
+                    <div class="row justify-content-center">
+                        <div class="col-12 col-xl-10">
+
+                            <div class="mb-4 ab-apply-intro">
+                                <h2 class="mb-1">Job Application</h2>
+                                <div class="text-muted">Fill in the form below to submit your application.</div>
+                            </div>
+
+                            <t t-if="error">
+                                <div class="alert alert-danger">
+                                    <t t-esc="error"/>
+                                </div>
+                            </t>
+
+                            <form id="job_application_form" action="/jobs/apply/submit" method="post" class="card border-0 p-4 p-md-5 shadow-sm ab-apply-form">
+                                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                                <div class="row g-3 ab-apply-body">
+
+                                    <div class="col-12">
+                                        <div class="d-flex flex-wrap gap-2 ab-steps-track" id="application_steps_indicator">
+                                            <span class="badge rounded-pill text-bg-primary px-3 py-2 step-indicator" data-step="0">1. Personal Information</span>
+                                            <span class="badge rounded-pill text-bg-secondary px-3 py-2 step-indicator" data-step="1">2. Experience</span>
+                                            <span class="badge rounded-pill text-bg-secondary px-3 py-2 step-indicator" data-step="2">3. Courses</span>
+                                            <span class="badge rounded-pill text-bg-secondary px-3 py-2 step-indicator" data-step="3">4. Job Details</span>
+                                        </div>
+                                        <div class="small text-muted mt-2" id="application_step_counter">Step 1 of 4</div>
+                                        <div class="progress mt-2 ab-step-progress" role="progressbar" aria-label="Application step progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="25">
+                                            <div class="progress-bar" id="application_progress_bar" style="width: 25%"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 application-step" data-step="0">
+                                        <h5 class="mb-3 ab-step-title">Personal Information</h5>
+                                        <div class="row g-3">
+                                            <div class="col-12">
+                                                <section class="ab-info-section">
+                                                    <div class="ab-info-head">
+                                                        <div class="ab-info-index">01</div>
+                                                        <div>
+                                                            <h6 class="mb-1">Identity Information</h6>
+                                                            <div class="small text-muted">Personal and academic details.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-3 mt-1">
+                                                        <div class="col-md-8">
+                                                            <label class="form-label">Full Name (Arabic – 4 Words) *</label>
+                                                            <input class="form-control" name="name" required="required" pattern="^([\u0600-\u06FF]+(\s+|$)){4,}$" minlength="15" maxlength="500" title="Please enter a full name in Arabic with at least 4 words" t-att-value="post.get('name') if post else ''"/>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">National ID *</label>
+                                                            <input name="national_identity" class="form-control" required="required" inputmode="numeric" pattern="\d{14}" minlength="14" maxlength="14" title="National ID must be exactly 14 digits" t-att-value="post.get('national_identity') if post else ''"/>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Birth Date *</label>
+                                                            <input type="date" class="form-control" name="birth_date" required="required" t-att-max="max_birth_date" title="Age must be 18+" t-att-value="post.get('birth_date') if post else ''"/>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Gender *</label>
+                                                            <select class="form-select" name="gender" id="gender_select" required="required">
+                                                                <option value="">Choose...</option>
+                                                                <option value="male" t-att-selected="'selected' if (post and post.get('gender') == 'male') else None">Male</option>
+                                                                <option value="female" t-att-selected="'selected' if (post and post.get('gender') == 'female') else None">Female</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Military Status *</label>
+                                                            <select class="form-select" name="military_status" id="military_status_select" required="required">
+                                                                <option value="">Choose...</option>
+                                                                <option value="perform" t-att-selected="'selected' if (post and post.get('military_status') == 'perform') else None">Perform</option>
+                                                                <option value="did_not_perform" t-att-selected="'selected' if (post and post.get('military_status') == 'did_not_perform') else None">Did not perform</option>
+                                                                <option value="delayed" t-att-selected="'selected' if (post and post.get('military_status') == 'delayed') else None">Delayed</option>
+                                                                <option value="exempt" t-att-selected="'selected' if (post and post.get('military_status') == 'exempt') else None">Exempt</option>
+                                                                <option value="unrequired" t-att-selected="'selected' if (post and post.get('military_status') == 'unrequired') else None">Unrequired</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Religion *</label>
+                                                            <select class="form-select" name="religion" required="required">
+                                                                <option value="">Choose...</option>
+                                                                <option value="muslim" t-att-selected="'selected' if (post and post.get('religion') == 'muslim') else None">Muslim</option>
+                                                                <option value="christian" t-att-selected="'selected' if (post and post.get('religion') == 'christian') else None">Christian</option>
+                                                                <option value="jewish" t-att-selected="'selected' if (post and post.get('religion') == 'jewish') else None">Jewish</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Marital Status *</label>
+                                                            <select class="form-select" name="marital_status" required="required">
+                                                                <option value="">Choose...</option>
+                                                                <option value="single" t-att-selected="'selected' if (post and post.get('marital_status') == 'single') else None">Single</option>
+                                                                <option value="married" t-att-selected="'selected' if (post and post.get('marital_status') == 'married') else None">Married</option>
+                                                                <option value="divorced" t-att-selected="'selected' if (post and post.get('marital_status') == 'divorced') else None">Divorced</option>
+                                                                <option value="widower" t-att-selected="'selected' if (post and post.get('marital_status') == 'widower') else None">Widower</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Qualification *</label>
+                                                            <input class="form-control" name="qualification" pattern="^[\u0600-\u06FF\s]+$" minlength="5" maxlength="500" title="Please enter a valid Arabic qualification" required="required" t-att-value="post.get('qualification') if post else ''"/>
+                                                        </div>
+                                                        <div class="col-md-4">
+                                                            <label class="form-label">Graduate Date *</label>
+                                                            <input type="date" class="form-control" name="graduate_date" required="required" t-att-value="post.get('graduate_date') if post else ''"/>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </div>
+
+                                            <input type="hidden" name="nationality" t-att-value="post.get('nationality') if post else egypt.id"/>
+
+                                            <div class="col-12">
+                                                <section class="ab-info-section">
+                                                    <div class="ab-info-head">
+                                                        <div class="ab-info-index">02</div>
+                                                        <div>
+                                                            <h6 class="mb-1">Contact Information</h6>
+                                                            <div class="small text-muted">How we can reach you quickly.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-3 mt-1">
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Mobile *</label>
+                                                            <input name="mobile" class="form-control" required="required" inputmode="numeric" pattern="\d{11}" minlength="11" maxlength="11" title="Mobile number must be exactly 11 digits" t-att-value="post.get('mobile') if post else ''"/>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <label class="form-label">Email</label>
+                                                            <input class="form-control" name="email" type="email" inputmode="email" autocomplete="email" maxlength="120" pattern="^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$" title="Please enter a valid email address" t-att-value="post.get('email') if post else ''"/>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <section class="ab-info-section">
+                                                    <div class="ab-info-head">
+                                                        <div class="ab-info-index">03</div>
+                                                        <div>
+                                                            <h6 class="mb-1">Address Information</h6>
+                                                            <div class="small text-muted">Governorate, city, and full address details.</div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-3 mt-1 ab-location-row">
+                                                        <div class="col-6 col-md-5 ab-location-col">
+                                                            <label class="form-label">Governorate *</label>
+                                                            <select class="form-select" name="governorate_id" id="gov_select" required="required">
+                                                                <option value="">Choose...</option>
+                                                                <t t-foreach="govs" t-as="g">
+                                                                    <option t-att-value="g.id" t-att-selected="'selected' if (post and post.get('governorate_id') and post.get('governorate_id') == str(g.id)) else None">
+                                                                        <t t-esc="g.display_name"/>
+                                                                    </option>
+                                                                </t>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-6 col-md-7 ab-location-col">
+                                                            <label class="form-label">City *</label>
+                                                            <select class="form-select" name="city_id" id="city_select" required="required" t-att-data-selected-city="post.get('city_id') if post else ''">
+                                                                <option value="">Choose governorate first...</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <div class="col-12">
+                                                            <label class="form-label">Address *</label>
+                                                            <input class="form-control" name="address" pattern="^[\u0600-\u06FF\s]+$" minlength="5" maxlength="500" title="Please enter a valid Arabic address" required="required" t-att-value="post.get('address') if post else ''"/>
+                                                        </div>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 application-step d-none" data-step="1">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-2 ab-step-title">Experience</h5>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add_exp">Add</button>
+                                        </div>
+                                        <div class="small text-muted mb-2">Add your previous work experience records (optional).</div>
+
+                                        <div id="exp_container" class="mt-2">
+                                            <div class="row g-2 exp_row border rounded p-2 mb-2 ab-repeat-row">
+                                                <div class="col-md-4">
+                                                    <input class="form-control" name="exp_company[]" placeholder="Company"/>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input class="form-control" name="exp_title[]" placeholder="Job Title"/>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="date" class="form-control" name="exp_from[]" placeholder="From (YYYY-MM-DD)"/>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <input type="date" class="form-control" name="exp_to[]" placeholder="To (YYYY-MM-DD)"/>
+                                                </div>
+                                                <div class="col-md-1 d-grid">
+                                                    <button type="button" class="btn btn-outline-danger remove_row"><i class="fa fa-times" aria-hidden="true"/></button>
+                                                </div>
+                                                <div class="col-12">
+                                                    <input class="form-control" name="exp_reason[]" placeholder="Reason for leaving"/>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input class="form-control" name="exp_salary[]" placeholder="Salary"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 application-step d-none" data-step="2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <h5 class="mb-2 ab-step-title">Courses</h5>
+                                            <button type="button" class="btn btn-outline-primary btn-sm" id="add_course">Add</button>
+                                        </div>
+                                        <div class="small text-muted mb-2">List training courses and certifications (optional).</div>
+
+                                        <div id="course_container" class="mt-2">
+                                            <div class="row g-2 course_row border rounded p-2 mb-2 ab-repeat-row">
+                                                <div class="col-md-4">
+                                                    <input class="form-control" name="course_specialty[]" placeholder="Specialty"/>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <input class="form-control" name="course_org[]" placeholder="Organization"/>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input class="form-control" name="course_period[]" placeholder="Period"/>
+                                                </div>
+                                                <div class="col-md-1 d-grid">
+                                                    <button type="button" class="btn btn-outline-danger remove_row"><i class="fa fa-times" aria-hidden="true"/></button>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <input class="form-control" name="course_grade[]" placeholder="Grade"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 application-step d-none" data-step="3">
+                                        <h5 class="mb-3 ab-step-title">Job Details</h5>
+                                        <div class="row g-3">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Type *</label>
+                                                <select class="form-select" name="type_of_form" required="required">
+                                                    <option value="">Choose...</option>
+                                                    <option value="recruit" t-att-selected="'selected' if (post and post.get('type_of_form') == 'recruit') else None">Recruit</option>
+                                                    <option value="training" t-att-selected="'selected' if (post and post.get('type_of_form') == 'training') else None">Training</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-5">
+                                                <label class="form-label">Required Job *</label>
+                                                <select class="form-select" name="required_job_id" required="required">
+                                                    <option value="">Choose...</option>
+                                                    <t t-foreach="jobs" t-as="j">
+                                                        <option t-att-value="j.id" t-att-selected="'selected' if ((post and post.get('required_job_id') and post.get('required_job_id') == str(j.id)) or (selected_job_id and j.id == selected_job_id)) else None">
+                                                            <t t-esc="j.name"/>
+                                                        </option>
+                                                    </t>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label class="form-label">Expected Salary *</label>
+                                                <input type="number" class="form-control" name="expected_salary" required="required" min="0" max="100000" step="1" title="Maximum salary allowed is 100000" t-att-value="post.get('expected_salary') if post else ''"/>
+                                            </div>
+
+                                            <div class="col-12 mt-2">
+                                                <h6 class="mb-2">Preferred Work Shifts</h6>
+                                                <div class="d-flex flex-wrap gap-3">
+                                                    <label class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="morning" t-att-checked="'checked' if (not post or post.get('morning')) else None"/>
+                                                        <span class="form-check-label">Morning</span>
+                                                    </label>
+                                                    <label class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="evening" t-att-checked="'checked' if (not post or post.get('evening')) else None"/>
+                                                        <span class="form-check-label">Evening</span>
+                                                    </label>
+                                                    <label class="form-check">
+                                                        <input class="form-check-input" type="checkbox" name="after_midnight" t-att-checked="'checked' if (not post or post.get('after_midnight')) else None"/>
+                                                        <span class="form-check-label">After Midnight</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-12 mt-2">
+                                                <h6 class="mb-2">Human Verification</h6>
+                                                <div class="row g-2 align-items-center">
+                                                    <div class="col-md-5">
+                                                        <img id="captcha_image" src="/jobs/captcha/image" alt="Verification code" class="img-fluid border rounded p-2 bg-light ab-captcha-image"/>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label class="form-label d-none d-md-block">&#160;</label>
+                                                        <button type="button" class="btn btn-outline-secondary w-100 ab-captcha-refresh" id="refresh_captcha_btn">
+                                                            <i class="fa fa-refresh" aria-hidden="true"/>
+                                                            <span class="visually-hidden">Refresh CAPTCHA</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="col-md-5">
+                                                        <label class="form-label">Enter Code *</label>
+                                                        <input class="form-control" name="captcha_input" required="required" minlength="5" maxlength="5" pattern="\d{5}" inputmode="numeric" placeholder="5-digit code" title="Enter the 5-digit verification code from the image"/>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12 mt-4 d-flex justify-content-between align-items-center ab-step-nav">
+                                        <button type="button" class="btn btn-outline-secondary d-none" id="prev_step_btn">Previous</button>
+                                        <button type="button" class="btn btn-primary ms-auto" id="next_step_btn">Next</button>
+                                        <button class="btn btn-primary btn-lg d-none ms-auto" id="submit_step_btn" type="submit">Submit Application</button>
+                                    </div>
+
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+        <template id="website_apply_thanks" name="Application Thanks">
+            <t t-call="website.layout">
+                <div class="container my-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="alert alert-success shadow-sm">
+                تم استلام طلبك بنجاح ✅                                <br/>
+                شكراً لتقديمك، سيتم مراجعة البيانات والتواصل معك.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+
+    </data>
+</odoo>

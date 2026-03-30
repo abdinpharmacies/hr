@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_hr_applicant,access_ab_hr_applicant,model_ab_hr_application,base.group_system,1,1,1,1
+access_ab_hr_course,access_ab_hr_course,model_ab_hr_course,base.group_system,1,1,1,1
+access_ab_hr_experience,access_ab_hr_experience,model_ab_hr_experience,base.group_system,1,1,1,1
+access_ab_hr_interview,access_ab_hr_interview,model_ab_hr_interview,base.group_system,1,1,1,1
+access_ab_hr_interview_result_wizard,access_ab_hr_interview_result_wizard,model_ab_hr_interview_result_wizard,base.group_system,1,1,1,1
+access_ab_hr_job_post_user,access_ab_hr_job_post_user,model_ab_hr_job_post,base.group_system,1,1,1,1
+access_ab_required_job_user,access_ab_required_job_user,model_ab_required_job,base.group_system,1,1,1,1

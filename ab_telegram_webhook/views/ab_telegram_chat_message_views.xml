@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_telegram_chat_message_list" model="ir.ui.view">
+            <field name="name">ab.telegram.chat.message.list</field>
+            <field name="model">ab_telegram_chat_message</field>
+            <field name="arch" type="xml">
+                <list string="Telegram AI Chats" create="0" delete="0" default_order="last_message_datetime desc">
+                    <field name="last_message_datetime"/>
+                    <field name="session_status" widget="badge"/>
+                    <field name="full_name"/>
+                    <field name="linked_user_id"/>
+                    <field name="telegram_user_id"/>
+                    <field name="token_count"/>
+                    <field name="token_limit"/>
+                    <field name="close_reason"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_telegram_chat_message_search" model="ir.ui.view">
+            <field name="name">ab.telegram.chat.message.search</field>
+            <field name="model">ab_telegram_chat_message</field>
+            <field name="arch" type="xml">
+                <search string="Telegram AI Chats">
+                    <field name="full_name"/>
+                    <field name="linked_user_id"/>
+                    <field name="telegram_user_id"/>
+                    <field name="telegram_chat_id"/>
+                    <filter name="filter_open" string="Open" domain="[('session_status', '=', 'open')]"/>
+                    <filter name="filter_closed" string="Closed" domain="[('session_status', '=', 'closed')]"/>
+                    <separator string="Group By"/>
+                    <filter name="group_status" string="Session Status" context="{'group_by': 'session_status'}"/>
+                    <filter name="group_user" string="Linked User" context="{'group_by': 'linked_user_id'}"/>
+                    <filter name="group_day" string="Day" context="{'group_by': 'last_message_datetime:day'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_telegram_chat_message_form" model="ir.ui.view">
+            <field name="name">ab.telegram.chat.message.form</field>
+            <field name="model">ab_telegram_chat_message</field>
+            <field name="arch" type="xml">
+                <form string="Telegram AI Chat Session" create="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="session_status" widget="badge"/>
+                                <field name="session_uuid"/>
+                                <field name="token_count"/>
+                                <field name="token_limit"/>
+                                <field name="close_reason"/>
+                            </group>
+                            <group>
+                                <field name="started_at"/>
+                                <field name="last_message_datetime"/>
+                                <field name="linked_user_id"/>
+                            </group>
+                        </group>
+
+                        <group string="Telegram Profile">
+                            <group>
+                                <field name="full_name"/>
+                                <field name="username"/>
+                                <field name="phone"/>
+                                <field name="language_code"/>
+                            </group>
+                            <group>
+                                <field name="telegram_user_id"/>
+                                <field name="telegram_chat_id"/>
+                                <field name="chat_type"/>
+                            </group>
+                        </group>
+
+                        <group string="OpenAI Context JSON">
+                            <field name="openai_messages_json" nolabel="1" widget="json"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_telegram_chat_message" model="ir.actions.act_window">
+            <field name="name">Telegram AI Chats</field>
+            <field name="res_model">ab_telegram_chat_message</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_telegram_chat_message_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    OpenAI chat sessions will appear here.
+                </p>
+                <p>
+                    Each record is one context session with messages stored as JSON (user/assistant roles).
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_ab_telegram_webhook_root"
+                  name="Telegram Webhook"
+                  web_icon="ab_telegram_webhook,static/description/icon.png"
+                  groups="base.group_system"
+                  sequence="90"/>
+
+        <menuitem id="menu_ab_telegram_chat_message"
+                  name="AI Chats"
+                  parent="menu_ab_telegram_webhook_root"
+                  action="action_ab_telegram_chat_message"
+                  groups="base.group_system"
+                  sequence="10"/>
+    </data>
+</odoo>

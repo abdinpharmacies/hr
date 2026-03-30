@@ -1,0 +1,84 @@
+Session Summary (Odoo 19.0 / abdin_replica19)
+============================================
+
+Context
+-------
+- Odoo version: 19.0
+- DB: abdin_replica19
+- Addons path: ./replica_addons
+- Config: ./config/replica19.conf
+- Log: ./replica19.log
+
+What Was Built
+--------------
+1) `ab_pos` converted into a minimal working OWL “Ab POS (Simple)”
+   - Purpose: simple POS-like screen (stores/products/customers) and save into Abdin sales models.
+   - Backend: safe server API that ignores missing fields (production-safe filtering).
+   - Frontend: OWL client action + QWeb template in backend assets.
+   - Module trimmed from ~840 files (~32MB) to 11 files (~88KB).
+
+   Key files:
+   - replica_addons/ab_pos/__manifest__.py
+   - replica_addons/ab_pos/models/ab_pos_api.py  (get_stores/search_products/search_customers/create_sale)
+   - replica_addons/ab_pos/views/ab_pos_views.xml (menu + ir.actions.client)
+   - replica_addons/ab_pos/static/src/ab_pos_simple/ab_pos_action.js
+   - replica_addons/ab_pos/static/src/ab_pos_simple/ab_pos_action.xml
+   - replica_addons/ab_pos/security/ir.model.access.csv
+
+2) `ab_sales_header` Form: “Add Products” popup (OWL) to add many products quickly
+   - Button on `ab_sales_header` form header opens modal popup (client action target=new).
+   - Product search shows cards; click to add; quantities supported.
+   - Apply creates/updates `ab_sales_line` (qty_str) and sets sell_price = product.default_price.
+   - After Apply: recompute inventory on affected lines and refresh the form (without full reload).
+   - Hotkeys:
+     - From ab_sales_header form: F2 auto-saves (if needed) then opens popup.
+     - In popup:
+       - Up/Down: navigate product cards (1 column)
+       - Type digits/dot while card selected: builds qty “watermark” on card
+       - Enter on selected card: add that product with typed qty (or +1) and keep card focus
+       - Enter in search: Apply
+       - F2: if card selected -> focus search + select all; else -> Apply
+       - ArrowUp on first card -> focus search + select all
+
+   Key files:
+   - replica_addons/ab_sales/views/sales_header.xml
+     - Added form header button `action_open_add_products`
+   - replica_addons/ab_sales/models/ab_sales_header.py
+     - Added `action_open_add_products()` returning `ir.actions.client` tag `ab_sales.add_products` with `target: new`
+   - replica_addons/ab_sales/models/ab_sales_ui_api.py
+     - New TransientModel API: `search_products`, `apply_products`
+     - `apply_products`:
+       - create/update lines
+       - set `sell_price` to `ab_product.default_price` (when header not saved)
+       - call `lines._recompute_inventory_json()`
+   - replica_addons/ab_sales/security/ir.model.access.csv
+     - Added access for model_ab_sales_ui_api
+   - replica_addons/ab_sales/__manifest__.py
+     - Added assets:
+       - ab_sales/static/src/add_products/**/*.js
+       - ab_sales/static/src/add_products/**/*.xml
+   - replica_addons/ab_sales/static/src/add_products/add_products_action.js
+     - Popup UI logic, keyboard navigation, qty buffer/watermark, shortcut map + helper methods
+   - replica_addons/ab_sales/static/src/add_products/add_products_action.xml
+     - Popup layout (fixed height), 1-column cards, no Close button (uses dialog X), qty watermark
+   - replica_addons/ab_sales/static/src/add_products/form_hotkey_f2.js
+     - Patches FormController: F2 auto-save + open popup; refresh form on dialog close after Apply
+
+Key Fixes Along The Way (high level)
+------------------------------------
+- Fixed OWL template loading issues by declaring XML templates in `web.assets_backend`.
+- Fixed OWL handler context issues by calling `this.method()` from templates and binding methods.
+- Fixed template expression issues (e.g., `Number()` not available in QWeb ctx) by using JS helpers.
+- Ensured modal behavior for client actions: `static target = "new"` on the action component.
+- Prevented global hotkeys from swallowing digits in search input via dedicated input keydown handler.
+
+How To Rebuild/Upgrade (commands used)
+--------------------------------------
+- Upgrade module (example):
+  - server19/odoo/odoo-bin -c config/replica19.conf -d abdin_replica19 -u ab_sales --stop-after-init
+  - server19/odoo/odoo-bin -c config/replica19.conf -d abdin_replica19 -u ab_pos --stop-after-init
+
+Notes
+-----
+- If assets appear stale: open with `?debug=assets` and hard refresh; if needed clear site data for 127.0.0.1:4050.
+

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- odoo_tree -->
+        <record id="ab_product_card_view_tree" model="ir.ui.view">
+            <field name="name">ab_product_card_view_tree</field>
+            <field name="model">ab_product_card</field>
+            <field name="arch" type="xml">
+                <list string="ab_product_card_tree">
+                    <field name="is_favorite" widget="priority" nolabel="1"/>
+                    <field name="name"/>
+                    <!--                    <field name="product_ids" widget="many2many_tags" />-->
+                    <field name="company_id"/>
+                    <field name="groups_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="scientific_groups_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="usage_manner_id"/>
+                    <field name="effective_material"/>
+                    <field name="effective_material_conc" optional="hide"/>
+                    <field name="origin"/>
+                    <field name="allow_purchase"/>
+                    <field name="allow_sale"/>
+                    <field name="has_exp_date" optional="hide"/>
+                    <field name="is_medicine"/>
+                    <field name="is_service"/>
+                    <field name="is_freeze"/>
+                    <field name="is_narcotic"/>
+                    <field name="allow_discount"/>
+                    <field name="max_discount_percentage" string="Max Discount(%)"/>
+                    <field name="allow_print_name" optional="hide"/>
+                    <field name="allow_print_name" optional="hide"/>
+                    <field name="allow_print_name" optional="hide"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+        <!-- odoo_form -->
+        <record id="ab_product_card_view_form" model="ir.ui.view">
+            <field name="name">ab_product_card_view_form</field>
+            <field name="model">ab_product_card</field>
+            <field name="arch" type="xml">
+                <form string="ab_product_card_form">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="Product Name"/>
+                            <h1>
+                                <div class="d-flex">
+                                    <field name="is_favorite" widget="priority" class="mr-3"/>
+                                    <field class="text-break" name="name" placeholder="e.g. Cataflam"/>
+                                </div>
+                            </h1>
+                        </div>
+                        <div name="options" groups="base.group_user">
+                            <span class="d-inline-block">
+                                <field name="allow_sale"/>
+                                <label for="allow_sale"/>
+                            </span>
+                            <span class="d-inline-block">
+                                <field name="allow_purchase"/>
+                                <label for="allow_purchase"/>
+                            </span>
+                        </div>
+                        <notebook>
+                            <page string="General Information">
+                                <group col="4">
+                                    <field name="company_id"/>
+                                    <field name="groups_ids" widget="many2many_tags"/>
+                                    <field name="scientific_groups_ids" widget="many2many_tags"/>
+                                    <field name="usage_manner_id"/>
+                                    <field name="effective_material"/>
+                                    <field name="effective_material_conc"/>
+\                                    <field name="origin"/>
+                                    <field name="has_exp_date"/>
+                                    <field name="is_medicine"/>
+                                    <field name="is_service"/>
+                                    <field name="is_freeze"/>
+                                    <field name="is_narcotic"/>
+                                    <field name="allow_discount"/>
+                                    <field name="max_discount_percentage" string="Max Discount(%)"/>
+                                    <field name="allow_print_name"/>
+                                </group>
+                            </page>
+                            <page string="Sub Products">
+                                <field name="product_ids">
+                                    <list editable="bottom">
+                                        <field name="id"/>
+                                        <field name="unit_l_id" string="Large Unit"/>
+                                        <field name="unit_m_id" string="Medium Unit"
+                                               context="{'default_unit_size':'medium'}"/>
+                                        <field name="unit_s_id" string="Small Unit"
+                                               context="{'default_unit_size':'small'}"/>
+                                        <field name="allow_sale" widget="boolean_toggle"/>
+                                        <field name="allow_purchase" widget="boolean_toggle"/>
+                                        <field name="tag_ids" widget="many2many_tags"/>
+                                        <field name="barcode_ids" widget="many2many_tags"/>
+                                        <field name="code"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Description">
+                                <group>
+                                    <field name="description" nolabel="1" placeholder="Write your feedback here"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_product_card_action" model="ir.actions.act_window">
+            <field name="name">Product</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product_card</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

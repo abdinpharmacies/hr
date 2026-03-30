@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_inventory_adjust_line_view_tree" model="ir.ui.view">
+            <field name="name">ab_inventory_adjust_line_view_tree</field>
+            <field name="model">ab_inventory_adjust_line</field>
+            <field name="arch" type="xml">
+                <list string="ab_inventory_adjust_line_tree" create="0"
+                      multi_edit="1"
+                      delete="0" editable="top">
+                    <field name="code" optional="show" class="text-right"/>
+                    <field name="product_id" optional="show" class="text-right"/>
+                    <field name="c_id" string="C ID" optional="show"/>
+                    <field name="qty" string="Old Qty" optional="show"/>
+                    <field name="new_qty" optional="show"/>
+                    <field name="sell_price" optional="show"/>
+                    <field name="new_sell_price" optional="show"/>
+                    <field name="cost" optional="show"/>
+                    <field name="itm_expiry_date" string="Expiry Date" optional="show"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_inventory_adjust_line_view_form" model="ir.ui.view">
+            <field name="name">ab_inventory_adjust_line_view_form</field>
+            <field name="model">ab_inventory_adjust_line</field>
+            <field name="arch" type="xml">
+                <form string="ab_inventory_adjust_line_form">
+                    <sheet>
+                        <group>
+                            <field name="code"/>
+                            <field name="product_id"/>
+                            <field name="c_id" string="C ID"/>
+                            <field name="qty" string="Old Qty"/>
+                            <field name="new_qty"/>
+                            <field name="sell_price"/>
+                            <field name="new_sell_price"/>
+                            <field name="cost"/>
+                            <field name="itm_expiry_date" string="Expiry Date"/>
+                            <field name="create_uid"/>
+                            <field name="create_date"/>
+                            <field name="write_uid"/>
+                            <field name="write_date"/></group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_inventory_adjust_line_view_search" model="ir.ui.view">
+            <field name="name">ab_inventory_adjust_line_view_search</field>
+            <field name="model">ab_inventory_adjust_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_inventory_adjust_line_search">
+                    <field name="product_id"/>
+                    <field name="code"/>
+                    <field name="c_id" string="C ID"/>
+                    <field name="qty" string="Old Qty"/>
+                    <field name="new_qty"/>
+                    <field name="sell_price"/>
+                    <field name="new_sell_price"/>
+                    <field name="cost"/>
+                    <field name="itm_expiry_date" string="Expiry Date"/>
+                    <field name="create_uid"/>
+                    <field name="create_date"/>
+                    <field name="write_uid"/>
+                    <field name="write_date"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_inventory_adjust_line_view_pivot" model="ir.ui.view">
+            <field name="name">ab_inventory_adjust_line_view_pivot</field>
+            <field name="model">ab_inventory_adjust_line</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_inventory_adjust_line_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_inventory_adjust_line_action" model="ir.actions.act_window">
+            <field name="name">Ab inventory adjust line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_inventory_adjust_line</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_inventory_adjust_line_menu"
+                  name="Adjust Lines"
+                  parent="reports_sub_menu"
+                  action="ab_inventory_adjust_line_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

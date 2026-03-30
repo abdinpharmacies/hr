@@ -1,0 +1,396 @@
+.o_ab_sales_cashier {
+    --cashier-surface: #ffffff;
+    --cashier-surface-soft: #f5f8ff;
+    --cashier-border: #dbe3f0;
+    --cashier-primary: #1f6aa5;
+    --cashier-primary-soft: #e8f2fb;
+    --cashier-accent: #f2994a;
+    --cashier-danger: #d64545;
+    --cashier-ok: #1a9b67;
+    --cashier-shadow: 0 14px 34px rgba(23, 52, 89, 0.12);
+    --cashier-text: #193147;
+    --cashier-text-soft: #5f7288;
+    --cashier-bg: radial-gradient(circle at 0% 0%, #eef7ff 0%, #f9fbff 45%, #f3f8ff 100%);
+    min-height: calc(100vh - 32px);
+    height: calc(100vh - 32px);
+    padding: 14px;
+    background: var(--cashier-bg);
+    color: var(--cashier-text);
+    font-family: "Tajawal", "Segoe UI", sans-serif;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    overflow: hidden;
+}
+
+.ab_cashier_header {
+    background: linear-gradient(135deg, #0f5f99 0%, #267ca8 54%, #3f98ba 100%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 16px 18px;
+    box-shadow: var(--cashier-shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.ab_cashier_title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.ab_cashier_meta {
+    margin-top: 6px;
+    color: rgba(255, 255, 255, 0.92);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 0.9rem;
+}
+
+.ab_cashier_header_right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ab_cashier_header_right .btn {
+    white-space: nowrap;
+}
+
+.ab_cashier_clock {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.ab_cashier_connection {
+    border-radius: 999px;
+    padding: 6px 12px;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    white-space: nowrap;
+}
+
+.ab_cashier_connection.is-connected {
+    background: rgba(26, 155, 103, 0.22);
+}
+
+.ab_cashier_connection.is-disconnected {
+    background: rgba(214, 69, 69, 0.28);
+}
+
+.ab_cashier_body {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
+    gap: 12px;
+    grid-template-columns: minmax(340px, 410px) minmax(0, 1fr);
+    overflow: hidden;
+}
+
+.ab_cashier_left_panel,
+.ab_cashier_right_panel {
+    background: var(--cashier-surface);
+    border: 1px solid var(--cashier-border);
+    border-radius: 16px;
+    box-shadow: var(--cashier-shadow);
+    min-height: 0;
+    overflow: hidden;
+}
+
+.ab_cashier_left_panel {
+    display: flex;
+    flex-direction: column;
+}
+
+.ab_cashier_panel_head {
+    padding: 14px 14px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--cashier-border);
+}
+
+.ab_cashier_panel_head h3 {
+    margin: 0;
+    font-size: 1.02rem;
+    font-weight: 700;
+}
+
+.ab_cashier_panel_head small {
+    color: var(--cashier-text-soft);
+}
+
+.ab_cashier_filters {
+    padding: 12px 14px 8px;
+    display: grid;
+    gap: 8px;
+    border-bottom: 1px solid var(--cashier-border);
+}
+
+.ab_cashier_new_hint {
+    margin: 10px 14px 0;
+    border: 1px solid #b1d4f2;
+    background: var(--cashier-primary-soft);
+    color: #0f5687;
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+}
+
+.ab_cashier_invoice_list {
+    padding: 12px 14px 14px;
+    overflow: auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.ab_cashier_empty {
+    background: var(--cashier-surface-soft);
+    border: 1px dashed #bfd2e8;
+    border-radius: 12px;
+    padding: 18px 12px;
+    color: var(--cashier-text-soft);
+    text-align: center;
+}
+
+.ab_cashier_invoice_card {
+    appearance: none;
+    border: 1px solid var(--cashier-border);
+    border-radius: 12px;
+    background: #fff;
+    color: inherit;
+    padding: 10px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.ab_cashier_invoice_card:hover {
+    border-color: #7fb4e2;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(48, 99, 148, 0.16);
+}
+
+.ab_cashier_invoice_card.is-highlighted {
+    border-color: #8ab7de;
+}
+
+.ab_cashier_invoice_card.is-selected {
+    border-color: var(--cashier-primary);
+    box-shadow: 0 12px 24px rgba(31, 106, 165, 0.24);
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.ab_invoice_top,
+.ab_invoice_meta,
+.ab_invoice_bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+}
+
+.ab_invoice_customer {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.ab_invoice_customer small {
+    color: var(--cashier-text-soft);
+}
+
+.ab_cashier_right_panel {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    gap: 10px;
+}
+
+.ab_cashier_invoice_header {
+    border: 1px solid #cfe0f2;
+    background: linear-gradient(130deg, #f7fbff 0%, #f9fdff 100%);
+    border-radius: 12px;
+    padding: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.ab_cashier_invoice_header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.ab_cashier_summary_meta {
+    margin-top: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 14px;
+    color: var(--cashier-text-soft);
+    font-size: 0.92rem;
+}
+
+.ab_cashier_note {
+    margin: 8px 0 0;
+    color: #3d4d61;
+}
+
+.ab_cashier_snapshot_tools {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    color: var(--cashier-text-soft);
+}
+
+.ab_cashier_alert {
+    margin: 0;
+}
+
+.ab_cashier_lines_wrap {
+    flex: 1 1 auto;
+    min-height: 190px;
+    overflow: auto;
+    border: 1px solid var(--cashier-border);
+    border-radius: 12px;
+}
+
+.ab_cashier_lines_table {
+    margin: 0;
+}
+
+.ab_cashier_lines_table thead th {
+    position: sticky;
+    top: 0;
+    background: #e9f3fc;
+    color: #18344f;
+    z-index: 1;
+}
+
+.ab_line_name {
+    font-weight: 600;
+}
+
+.ab_cashier_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ab_cashier_actions .btn {
+    min-width: 190px;
+    font-weight: 700;
+}
+
+.ab_action_primary {
+    background: linear-gradient(135deg, #1c955f 0%, #26ad70 100%);
+    border-color: #1a8a58;
+}
+
+.ab_action_primary:hover,
+.ab_action_primary:focus {
+    background: linear-gradient(135deg, #187e51 0%, #219864 100%);
+    border-color: #176f48;
+}
+
+.ab_cashier_saved_state,
+.ab_cashier_empty_state {
+    flex: 1 1 auto;
+    min-height: 240px;
+    border: 1px dashed #c4d8ee;
+    border-radius: 12px;
+    background: var(--cashier-surface-soft);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 18px;
+    gap: 8px;
+}
+
+.ab_cashier_saved_state h3,
+.ab_cashier_empty_state h3 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.ab_cashier_saved_state p,
+.ab_cashier_empty_state p {
+    margin: 0;
+    color: var(--cashier-text-soft);
+}
+
+.ab_cashier_shortcuts {
+    border-radius: 12px;
+    background: #ecf3fb;
+    border: 1px solid #d4e3f3;
+    color: #3b566f;
+    padding: 8px 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+    .ab_cashier_body {
+        grid-template-columns: 1fr;
+    }
+
+    .ab_cashier_left_panel {
+        min-height: 360px;
+    }
+}
+
+@media (max-width: 700px) {
+    .o_ab_sales_cashier {
+        padding: 10px;
+    }
+
+    .ab_cashier_header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .ab_cashier_header_right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .ab_cashier_right_panel {
+        padding: 12px;
+    }
+
+    .ab_cashier_invoice_header {
+        flex-direction: column;
+    }
+
+    .ab_cashier_snapshot_tools {
+        align-items: flex-start;
+    }
+
+    .ab_cashier_actions .btn {
+        width: 100%;
+    }
+}

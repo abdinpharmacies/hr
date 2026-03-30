@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_inventory_action_transfer" model="ab_inventory_action">
+            <field name="name">Transfer</field>
+            <field name="set_status">pending_main</field>
+            <field name="store_direction">store</field>
+        </record>
+
+        <record id="ab_inventory_action_purchase" model="ab_inventory_action">
+            <field name="name">Purchase</field>
+            <field name="set_status">pending_main</field>
+            <field name="store_direction">store</field>
+        </record>
+    </data>
+</odoo>

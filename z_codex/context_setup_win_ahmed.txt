@@ -1,0 +1,46 @@
+I will give you my session context, take it as reference for current session:
+{
+  "project": {
+    "type": "Odoo Development",
+    "odoo_version": "19.0",
+    "database": "abdin_replica19"
+  },
+  "paths": {
+    "odoo_source": "./server/odoo",
+    "python": "./python/python.exe",
+    "addons": "./replica_addons",
+    "config_file": "./config/odoo.conf",
+    "log_file": "./odoo.log",
+    "codex_previous_sessions": "./replica_addons/z_codex/"
+  },
+  "environment": {
+    "os": "Microsoft Windows 10 Pro",
+    "python": "system python used by Odoo 19",
+    "deployment": "local development"
+  },
+  "custom_modules": {
+    "modules": [
+      "./replica_addons/ab_product/",
+      "./replica_addons/ab_store/",
+      "./replica_addons/ab_customer/",
+      "./replica_addons/ab_sales/",
+    ],
+    "models": [
+      "ab_product",
+      "ab_store",
+      "ab_sales_header",
+      "ab_sales_line",
+      "ab_customer"
+    ],
+    "naming_convention": "ab_*"
+  },
+  "development_preferences": {
+    "focus": [
+      "Modern OWL frontend",
+    ],
+    "style": {
+      "code": "explicit, readable, production-safe",
+      "answers": "practical, source-code-aware, no generic explanations"
+    }
+  }
+}

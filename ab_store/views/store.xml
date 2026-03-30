@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="store_view_tree" model="ir.ui.view">
+            <field name="name">store_view_tree</field>
+            <field name="model">ab_store</field>
+            <field name="arch" type="xml">
+                <list string="store_tree" multi_edit="1">
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="allow_purchase" optional="hide"/>
+                    <field name="allow_sale" optional="hide"/>
+                    <field name="location" optional="hide"/>
+                    <field name="telephone" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                    <field name="status" optional="hide"/>
+                    <field name="store_type" optional="hide"/>
+                    <field name="allow_replication" optional="hide"/>
+                    <field name="ip1" optional="hide"/>
+                    <field name="ip2" optional="hide"/>
+                    <field name="ip3" optional="hide"/>
+                    <field name="ip4" optional="hide"/>
+                    <field name="parent_id" optional="hide"/>
+                    <field name="max_trans_value" optional="show"/>
+                </list>
+            </field>
+        </record>
+        <record id="store_view_form" model="ir.ui.view">
+            <field name="name">store_view_form</field>
+            <field name="model">ab_store</field>
+            <field name="arch" type="xml">
+                <form string="store_form">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="Store Name"/>
+                            <h1>
+                                <div class="d-flex">
+                                    <field class="text-break" name="name" placeholder="e.g. Cairo Store"/>
+                                </div>
+                            </h1>
+                        </div>
+                        <div name="options" groups="base.group_user">
+                            <span class="d-inline-block">
+                                <field name="allow_sale"/>
+                                <label for="allow_sale"/>
+                            </span>
+                            <span class="d-inline-block">
+                                <field name="allow_purchase"/>
+                                <label for="allow_purchase"/>
+                            </span>
+                            <span class="d-inline-block">
+                                <field name="allow_transfer"/>
+                                <label for="allow_transfer"/>
+                            </span>
+                            <span class="d-inline-block">
+                                <field name="allow_replication"/>
+                                <label for="allow_replication"/>
+                            </span>
+                            <span class="d-inline-block">
+                                <field name="active"/>
+                                <label for="active"/>
+                            </span>
+                        </div>
+                        <group>
+                            <field name="max_trans_value"/>
+                        </group>
+                        <notebook>
+                            <page name="general" string="General">
+                                <group col="4">
+                                    <field name="location"/>
+                                    <field name="telephone"/>
+                                    <field name="code"/>
+                                    <field name="parent_id"/>
+                                    <field name="status"/>
+                                    <field name="store_type"/>
+                                </group>
+                            </page>
+                            <page name="ips" string="IPs">
+                                <group col="4">
+                                    <field name="ip1"/>
+                                    <field name="ip2"/>
+                                    <field name="ip3"/>
+                                    <field name="ip4"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_store_action" model="ir.actions.act_window">
+            <field name="name">store</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_store</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="ab_store_form_view_inherit" model="ir.ui.view">
+            <field name="name">ab_store_form_view_inherit</field>
+            <field name="model">ab_store</field>
+            <field name="inherit_id" ref="ab_store.store_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='ips']" position="inside">
+            <group groups="base.group_system,ab_store.see_stores_ips">
+                                    <field name="store_ips" nolabel="1">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="include"/>
+                                <button name="btn_include_exclude"
+                                        type="object"
+                                        groups="base.group_system"
+                                        string="Include"
+                                        invisible="include == True"
+                                        class="btn-success"/>
+                                <button name="btn_include_exclude"
+                                        type="object"
+                                        groups="base.group_system"
+                                        string="Exclude"
+                                        invisible="include == False"
+                                        class="btn-danger"/>
+                            </list>
+                        </field>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

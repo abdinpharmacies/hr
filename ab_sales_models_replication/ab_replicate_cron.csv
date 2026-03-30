@@ -1,0 +1,56 @@
+﻿Priority,Action Name,Model,Next Execution Date,Interval Number,Interval Unit,Active,Python Code
+5,ab_odoo_replication_1_user,ab_odoo_replication,2026-03-17 13:35:21,10,Minutes,TRUE,"# @formatter:off
+model.replicate_model('res.partner', replicate_all=True)
+model.replicate_model('res.users', extra_fields={'group_ids': 'many2many'})
+model.add_res_company_rel_for_all_users()"
+5,ab_odoo_replication_2_hr,ab_odoo_replication,2026-03-17 13:35:21,30,Minutes,TRUE,"# Group 2
+model.replicate_model('ab_costcenter')
+model.replicate_model('ab_store')
+model.replicate_model('ab_replica_db', extra_fields={'allowed_sales_store_ids': 'many2many'}, replicate_all=True)
+model.replicate_model('ab_hr_region')
+model.replicate_model('ab_hr_job')
+model.replicate_model('ab_hr_department')
+model.replicate_model('ab_hr_employee')
+model.replicate_model('ab_hr_job_occupied')"
+5,ab_odoo_replication_3_customer,ab_odoo_replication,2026-03-17 13:35:21,1,Hours,TRUE,"# Group 3
+model.replicate_model('ab_customer')
+
+"
+5,ab_odoo_replication_4_product,ab_odoo_replication,2026-03-17 13:35:21,1,Hours,TRUE,"# Group (4)
+model.replicate_model('ab_uom_type')
+model.replicate_model('ab_uom')
+
+model.replicate_model('ab_product_uom_category')
+model.replicate_model('ab_product_uom')
+model.replicate_model('ab_product_card')
+model.replicate_model('ab_product')
+model.replicate_model('ab_product_barcode', limit=10000,
+                     extra_fields={'product_ids': 'many2many'})
+
+"
+5,ab_odoo_replication_4_product__all,ab_odoo_replication,2026-03-18 01:00:21,1,Days,TRUE,"# Group (4)
+model.replicate_model('ab_uom_type')
+model.replicate_model('ab_uom')
+
+model.replicate_model('ab_product_uom_category')
+model.replicate_model('ab_product_uom')
+model.replicate_model('ab_product_card')
+model.replicate_model('ab_product', replicate_all=True)
+model.replicate_model('ab_product_barcode', limit=10000,
+                     extra_fields={'product_ids': 'many2many'})
+
+"
+5,ab_odoo_replication_5_contract,ab_odoo_replication,2026-03-17 13:35:21,1,Hours,TRUE,"# Group (4)
+model.replicate_model('ab_contract')
+
+"
+5,ab_odoo_replication_6_promo,ab_odoo_replication,2026-03-17 14:10:21,1,Hours,TRUE,"
+# @formatter:off
+model.replicate_model('ab_promo_program', limit=10000,replicate_all=True, 
+                     extra_fields={'product_ids': 'many2many', 
+                     'store_ids':'many2many',
+                     'replica_db_ids':'many2many'})
+# @formatter:on"
+5,ab_sales_inventory,ab_sales_inventory,2026-03-17 15:28:41,2,Hours,TRUE,model.btn_update_balance_total()
+5,ab_sales_inventory_per_pos,ab_sales_inventory,2026-03-17 13:53:32,4,Hours,TRUE,model.btn_update_balance_per_pos()
+5,ab_sales_sync_status,ab_sales_header,2026-03-17 13:38:03,5,Minutes,TRUE,model.cron_update_status_from_store()

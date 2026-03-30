@@ -1,0 +1,493 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_visit_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-02-23 10:33+0000\n"
+"PO-Revision-Date: 2026-02-23 10:33+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__customer_data_commitment_percent__100
+msgid "100%"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__customer_data_commitment_percent__50
+msgid "50%"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__customer_data_commitment_percent__70
+msgid "70%"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__active
+msgid "Active"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__attendance_tampering_notes
+msgid "Attendance manipulation notes"
+msgstr "ملاحظات التلاعب بالحضور والانصراف"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__avg_invoice_value_prev_month
+msgid "Average invoice value vs previous month"
+msgstr "متوسط قيمة الفاتورة مقارنة بالشهر السابق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__avg_invoice_value_last_year
+msgid "Average invoice value vs same month last year"
+msgstr "متوسط قيمة الفاتورة مقارنة بنفس الشهر العام السابق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__bathroom_cleanliness_score__bad
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_floors_score__bad
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_shelves_score__bad
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__stock_order_score__bad
+msgid "Bad"
+msgstr "سيئ"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__bathroom_cleanliness_score
+msgid "Bathroom cleanliness (if any)"
+msgstr "نظافة الحمام (إن وجد)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__open_close_on_time
+msgid "Branch complies with opening/closing times"
+msgstr "التزام الفرع بمواعيد الفتح والغلق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__branch_maintenance_notes
+msgid "Branch maintenance notes"
+msgstr "ملاحظات صيانة الفرع"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__transfer_refusals_notes
+msgid "Branches refusing transfers (actions)"
+msgstr "الفروع الرافضة للتحويلات (الإجراءات)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__client_ip
+msgid "Client Ip"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__column_40
+msgid "Column 40"
+msgstr "ملاحظات إضافية"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__legal_documents_notes__commercial_register
+msgid "Commercial Register"
+msgstr "سجل تجاري"
+
+#. module: ab_visit_report
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_form
+msgid "Compliance"
+msgstr "العمل وفق السياسات"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__zero_cosmetics_3_months
+msgid "Cosmetics zero items (3 months sales)"
+msgstr "أصفار التجميل (مبيعات 3 أشهر)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__customer_calls_response
+msgid "Customer calls/WhatsApp response"
+msgstr "الرد على مكالمات/واتساب العملاء"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__customer_data_commitment_percent
+msgid "Customer data coding compliance"
+msgstr ""
+"الالتزام بكتابة بيانات العملاء بشكل صحيح في ملاحظات الفواتير وفقا لنظام تكويد العملاء\n"
+"\n"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__open_close_noncompliance_days
+msgid "Days of non-compliance (if any)"
+msgstr "أيام عدم الالتزام (إن وجدت)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__delivery_service_compliance
+msgid "Delivery Service Compliance"
+msgstr "الالتزام برسوم خدمات التوصيل"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__delivery_orders_growth_prev_month
+msgid "Delivery orders growth vs previous month"
+msgstr "نمو طلبات التوصيل مقارنة بالشهر السابق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__delivery_orders_growth_last_year
+msgid "Delivery orders growth vs same month last year"
+msgstr "نمو طلبات التوصيل مقارنة بنفس الشهر العام السابق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__zero_drugs_3_months
+msgid "Drug zero items (3 months sales)"
+msgstr "أصفار الدواء (مبيعات 3 أشهر)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__legal_documents_notes__eda_records
+msgid "EDA records (drugs - toxins - formulations)"
+msgstr "دفاتر هيئة الدواء ( مخدرات - سموم - تركيبات)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__bathroom_cleanliness_score__excellent
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_floors_score__excellent
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_shelves_score__excellent
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__stock_order_score__excellent
+msgid "Excellent"
+msgstr "ممتاز"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__cleanliness_floors_score
+msgid "Floor cleanliness"
+msgstr "نظافة الأرضيات"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__bathroom_cleanliness_score__good
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_floors_score__good
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_shelves_score__good
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__stock_order_score__good
+msgid "Good"
+msgstr "جيد"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__high_value_returns_match
+msgid "High-value returns (500) match with system"
+msgstr "مطابقة مرتجعات عالية القيمة (500) مع النظام"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__it_issues_notes
+msgid "IT issues/maintenance notes"
+msgstr "ملاحظات أعطال/صيانة النظم"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__pharmacists_union_card_notes
+msgid "If not, mention shifts and actions"
+msgstr "في حال عدم التوفر، اذكر الشفتات والإجراء المتبع"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__legal_documents_notes
+msgid "Legal documents availability"
+msgstr "توافر المستندات القانونية"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__legal_documents_notes__license
+msgid "License"
+msgstr "صورة الرخصة"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__manager_visit_details
+msgid "Manager clinic visits (count and details)"
+msgstr "زيارات مدير الفرع للعيادات (العدد والتفاصيل)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__missing_job_ids
+msgid "Missing staff roles"
+msgstr "نواقص العمالة (الفئات)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__monthly_inventory_commitment
+msgid "Monthly inventory commitment"
+msgstr "الالتزام بالجرد الشهري"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__supplies_and_uniforms_notes
+msgid "Monthly supplies and uniforms/boxes availability"
+msgstr "توافر المهمات الشهرية والزي/الصناديق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__new_codes_count_percent
+msgid "New codes count and rate"
+msgstr ""
+"   \n"
+"عدد الأكواد الجديدة و نسبتها"
+
+#. module: ab_visit_report
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__offers_sales_prev_month
+msgid "Offers sales vs previous month"
+msgstr "مبيعات العروض مقارنة بالشهر السابق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__offers_sales_last_year
+msgid "Offers sales vs same month last year"
+msgstr "مبيعات العروض مقارنة بنفس الشهر العام السابق"
+
+#. module: ab_visit_report
+#. odoo-python
+#: code:addons/ab_visit_report/models/ab_visit_report.py:0
+msgid "Only admins can reopen submitted reports."
+msgstr "إعادة فتح التقرير مسموح للأدمن فقط!"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__opening_balances_notes
+msgid "Opening balances notes"
+msgstr "ملاحظات الأرصدة الافتتاحية"
+
+#. module: ab_visit_report
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_form
+msgid "Operations"
+msgstr "التشغيل"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__pharmacists_union_card
+msgid "Pharmacists with union card on shifts"
+msgstr "وجود صيادلة بكارنيه النقابة في الشفتات"
+
+#. module: ab_visit_report
+#. odoo-python
+#: code:addons/ab_visit_report/models/ab_visit_report.py:0
+msgid "Please fill in the following fields before posting: %s"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__region_id
+msgid "Region"
+msgstr "المنطقة"
+
+#. module: ab_visit_report
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_form
+msgid "Reopen"
+msgstr ""
+
+#. module: ab_visit_report
+#. odoo-python
+#: code:addons/ab_visit_report/models/ab_visit_report.py:0
+msgid "Report submitted successfully."
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__legal_documents_notes__required_seals
+msgid "Required Seals (pharmacy seal - toxins - expired)"
+msgstr "الأختام المطلوبة ( ختم الصيدلية - سموم - منتهي الصلاحية)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__reserve_drugs_compliance
+msgid "Reserve drugs compliance review by branch manager"
+msgstr ""
+"قيام مدير الفرع بمراجعة بيع أصناف ال    Reserve Drugs والتزام الفرع بشروط "
+"الصرف طبقا لتعليمات هيئة الدواء المصريه"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__branches_response
+msgid "Response to company branches"
+msgstr "الرد على فروع الشركة"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__returns_without_reason_notes__no_problem
+msgid "Returns are in good order"
+msgstr "المرتجعات سليمه"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__returns_without_reason_notes
+msgid "Returns without clear reason"
+msgstr "مرتجعات بدون سبب واضح"
+
+#. module: ab_visit_report
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_form
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__sales_vs_prev_month
+msgid "Sales vs previous month"
+msgstr "المبيعات مقارنة بالشهر السابق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__sales_vs_last_year
+msgid "Sales vs same month last year"
+msgstr "المبيعات مقارنة بنفس الشهر العام السابق"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__cleanliness_shelves_score
+msgid "Shelves/display cleanliness and order"
+msgstr "نظافة وترتيب الأرفف ومناطق العرض"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__stock_order_score
+msgid "Stock orderliness"
+msgstr "ترتيب المخزون"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_visit_report
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_form
+msgid "Submit"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__submitted
+msgid "Submitted"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__legal_documents_notes__tax_card
+msgid "Tax Card"
+msgstr "بطاقة ضريبية"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__legal_documents_notes__technical_drawing
+msgid "Technical Drawing"
+msgstr "أصل الرسم"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__temporary_item_clearance_value
+msgid "Temporary item clearance before visit (value if any)"
+msgstr "تصفية الصنف المؤقت قبل الزيارة (القيمة إن وجدت)"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__delivery_service_compliance__no
+msgid "The branch added extra services"
+msgstr "يضيف الفرع خدمات زيادة و تم تطبيق اللائحة على المخالف"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__reserve_drugs_compliance__the_branch_complies_to_the_dispensing_rules
+msgid "The branch complies to the dispensing rules"
+msgstr "الفرع ملتزم بشروط الصرف"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__delivery_service_compliance__yes
+msgid "The branch is compliant"
+msgstr "الفرع ملتزم"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__returns_without_reason_notes__there_are_problems
+msgid "There are some unclear returns, and they are currently under review"
+msgstr "يوجد بعض المرتجعات غير المفهومة و جاري المتابعه"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__opening_balances_notes__there_are_problems
+msgid "There are unrealistic opening balances and currently are under review"
+msgstr "تم ملاحظة وجود أرصدة افتتاحية غير منطقية و جاري مراجعتها"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__reserve_drugs_compliance__there_are_violations_in_dispensing_operation
+msgid "There are violations in the dispensing operation"
+msgstr ""
+"يوجد اصناف تم صرفها بدون الالتزام بضوابط الصرف و تم تنبيه الفرع و تم تطبيق "
+"اللائحة"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__opening_balances_notes__no_problem
+msgid "There is no problem in the opening balances"
+msgstr "لا توجد ارصدة افتتاحية بها مشاكل"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__transfer_request_regular
+msgid "Transfer requests done regularly"
+msgstr "تنفيذ طلبات التحويل بانتظام"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__legal_documents_notes__vat_certificate
+msgid "Vat Certificate"
+msgstr "شهادة القيمة المضافة"
+
+#. module: ab_visit_report
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__bathroom_cleanliness_score__very_good
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_floors_score__very_good
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__cleanliness_shelves_score__very_good
+#: model:ir.model.fields.selection,name:ab_visit_report.selection__ab_visit_report_report__stock_order_score__very_good
+msgid "Very Good"
+msgstr "جيد جدا"
+
+#. module: ab_visit_report
+#: model:ir.model.fields,field_description:ab_visit_report.field_ab_visit_report_report__visit_date
+msgid "Visit Date"
+msgstr "تاريخ الزيارة"
+
+#. module: ab_visit_report
+#. odoo-python
+#: code:addons/ab_visit_report/models/ab_visit_report.py:0
+#: model:ir.model,name:ab_visit_report.model_ab_visit_report_report
+#: model:ir.module.category,name:ab_visit_report.cat_ab_visit_report
+#: model:ir.ui.menu,name:ab_visit_report.ab_visit_report_menu_root
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_form
+msgid "Visit Report"
+msgstr "تقرير زيارة الفروع"
+
+#. module: ab_visit_report
+#: model:res.groups,name:ab_visit_report.group_ab_visit_report_admin
+msgid "Visit Report Admin"
+msgstr "مسؤول تقرير الزيارة"
+
+#. module: ab_visit_report
+#: model:res.groups,name:ab_visit_report.group_ab_visit_report_ro
+msgid "Visit Report Read Only"
+msgstr "قراءة فقط لتقرير الزيارة"
+
+#. module: ab_visit_report
+#: model:res.groups,name:ab_visit_report.group_ab_visit_report_user
+msgid "Visit Report User"
+msgstr ""
+
+#. module: ab_visit_report
+#: model:ir.actions.act_window,name:ab_visit_report.ab_visit_report_action
+#: model:ir.ui.menu,name:ab_visit_report.ab_visit_report_menu_reports
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_search
+#: model_terms:ir.ui.view,arch_db:ab_visit_report.ab_visit_report_view_tree
+msgid "Visit Reports"
+msgstr "تقارير زيارة الفروع"
+
+#. module: ab_visit_report
+#. odoo-python
+#: code:addons/ab_visit_report/models/ab_visit_report.py:0
+msgid "You cannot edit a submitted report!"
+msgstr "لا يمكنك تعديل تقرير تم ارساله بالفعل!"

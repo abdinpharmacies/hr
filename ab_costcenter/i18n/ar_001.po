@@ -1,0 +1,112 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_costcenter
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 13.0-20221003\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-12-01 11:20+0000\n"
+"PO-Revision-Date: 2022-12-01 11:20+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_costcenter
+#: model:ir.model,name:ab_costcenter.model_ab_costcenter
+msgid "Abdin Cost Centers"
+msgstr "مراكز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__bc_id
+msgid "Bc"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__code
+msgid "Code"
+msgstr "كود مركز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.actions.act_window,name:ab_costcenter.ab_costcenter_action
+#: model_terms:ir.ui.view,arch_db:ab_costcenter.ab_costcenter_search
+msgid "Cost Centers"
+msgstr "مراكز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__costcenter_code
+msgid "Costcenter Code"
+msgstr "كود مركز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__costcenter_type
+msgid "Costcenter Type"
+msgstr "نوع مركز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__hr_name
+msgid "Hr Name"
+msgstr "اسم الموظف الرسمي"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__name
+msgid "Name"
+msgstr "اسم مركز التكلفة"
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__official_name
+msgid "Official Name"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__special_id
+msgid "Special"
+msgstr ""
+
+#. module: ab_costcenter
+#: model:ir.model.fields,field_description:ab_costcenter.field_ab_costcenter__tel_no
+msgid "Tel No"
+msgstr "رقم التواصل"

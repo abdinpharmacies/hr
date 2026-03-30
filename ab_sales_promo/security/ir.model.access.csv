@@ -1,0 +1,3 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_promo_program_sales_manager,access_ab_promo_program_sales_manager,ab_promo_program.model_ab_promo_program,ab_sales.group_ab_sales_manager,1,1,1,0
+access_ab_promo_program_wizard_sales_manager,access_ab_promo_program_wizard_sales_manager,ab_promo_program.model_ab_promo_program_wizard,ab_sales.group_ab_sales_manager,1,1,1,1

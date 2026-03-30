@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record id="rule_ab_visit_report_report_user" model="ir.rule">
+            <field name="name">rule_ab_visit_report_report_</field>
+            <field name="model_id" ref="model_ab_visit_report_report"/>
+            <field name="groups" eval="[(4, ref('group_ab_visit_report_user'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_visit_report_report_read_all" model="ir.rule">
+            <field name="name">rule_ab_visit_report_report_all</field>
+            <field name="model_id" ref="model_ab_visit_report_report"/>
+            <field name="groups" eval="[(4, ref('group_ab_visit_report_ro'))]"/>
+            <field name="domain_force">['&amp;', ('submitted', '=', True), '|',
+                                        ('store_id', 'in', user.ab_department_ids.store_id.ids),
+                                        ('store_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_visit_report_report_admin" model="ir.rule">
+            <field name="name">rule_ab_visit_report_report_admin</field>
+            <field name="model_id" ref="model_ab_visit_report_report"/>
+            <field name="groups" eval="[(4, ref('group_ab_visit_report_admin'))]"/>
+            <field name="domain_force">[('submitted', '=', True)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="ab_website_layout_debrand_and_links"
+                  name="AB Website Debrand And Links"
+                  inherit_id="website.layout"
+                  priority="90">
+
+            <xpath expr="//meta[@name='generator']" position="replace">
+                <meta name="generator" content="Abdin Pharmacies"/>
+            </xpath>
+
+            <xpath expr="//t[@t-call='web.brand_promotion']" position="replace">
+                <t/>
+            </xpath>
+
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-2')]//ul/li[1]/a"
+                   position="attributes">
+                <attribute name="href">/</attribute>
+            </xpath>
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-2')]//ul/li[2]/a"
+                   position="attributes">
+                <attribute name="href">/about-us</attribute>
+            </xpath>
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-2')]//ul/li[3]/a"
+                   position="attributes">
+                <attribute name="href">/shop</attribute>
+            </xpath>
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-2')]//ul/li[4]/a"
+                   position="attributes">
+                <attribute name="href">/our-services</attribute>
+            </xpath>
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-2')]//ul/li[5]/a"
+                   position="attributes">
+                <attribute name="href">/privacy-policy</attribute>
+            </xpath>
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-2')]//ul/li[6]/a"
+                   position="attributes">
+                <attribute name="href">/privacy-policy</attribute>
+            </xpath>
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-2')]//ul/li[7]/a"
+                   position="attributes">
+                <attribute name="href">/contactus</attribute>
+            </xpath>
+
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-5')]/p" position="replace">
+                <p>
+                    Abdin Pharmacies provides trusted healthcare products and pharmacy
+                    services across Egypt.
+                </p>
+            </xpath>
+
+            <xpath expr="//footer[@id='bottom']//div[hasclass('col-lg-4')]//li[i[hasclass('fa-phone')]]/a"
+                   position="replace">
+                <a href="tel:19036">
+                    <span class="o_force_ltr">19036</span>
+                </a>
+            </xpath>
+
+            <xpath expr="//span[hasclass('o_footer_copyright_name')]" position="replace">
+                <span class="o_footer_copyright_name me-2 small">
+                    Copyright © Abdin Pharmacies
+                </span>
+            </xpath>
+        </template>
+    </data>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_tree_view_inherit" model="ir.ui.view">
+            <field name="name">ab_product_tree_view_inherit</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_tree"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="balance"/>
+                    <field name="has_balance" optional="hide"/>
+                    <button name="btn_get_stores_balance" type="object" icon="fa-anchor" class="btn-primary"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_product_search_view_inherit" model="ir.ui.view">
+            <field name="name">ab_product_search_view_inherit</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_search"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//field[last()]" position="after">
+                    <field name="has_balance"/>
+                    <field name="has_pos_balance"/>
+                    <filter name="filter_has_balance"
+                            string="Has Balance"
+                            domain="[('has_balance', '=',True)]"/>
+                    <filter name="filter_has_pos_balance"
+                            string="Has Store Balance"
+                            domain="[('has_pos_balance', '=',True)]"/>
+                </xpath>
+
+            </field>
+        </record>
+
+        <record id="ab_product_form_view_inherit" model="ir.ui.view">
+            <field name="name">ab_product_form_view_inherit</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
+            <field name="mode">extension</field>
+            <field name="arch" type="xml">
+                <xpath expr="//sheet/div" position="before">
+                    <div class="mb-5 w-100 h6 text-center">
+                        <button name="btn_get_stores_balance" type="object" string="Show Balance" class="btn-info btn-block"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+
+        <record id="ab_product.ab_product_action" model="ir.actions.act_window">
+            <field name="name">Products</field>
+            <field name="context">{'search_default_filter_has_balance': 1}</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_ab_product_balance_wizard_form" model="ir.ui.view">
+            <field name="name">ab.product.balance.wizard.form</field>
+            <field name="model">ab_product_balance_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Store Balances">
+                    <group>
+                        <field name="product_id" readonly="1"/>
+                    </group>
+                    <notebook>
+                        <page name="balance_html" string="Balance">
+                            <group>
+                                <field name="balance_html" nolabel="1" readonly="1"/>
+                            </group>
+                        </page>
+                    </notebook>
+                    <footer>
+                        <button string="Close" special="cancel" class="btn-primary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_product_balance_wizard" model="ir.actions.act_window">
+            <field name="name">Store Balances</field>
+            <field name="res_model">ab_product_balance_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_ab_product_balance_wizard_form"/>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+</odoo>

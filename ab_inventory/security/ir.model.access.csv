@@ -1,0 +1,14 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_inventory_process_admin,access_ab_inventory_process_admin,model_ab_inventory_process,base.group_system,1,1,1,1
+access_ab_inventory_admin,access_ab_inventory_admin,model_ab_inventory,base.group_system,1,1,1,1
+access_ab_inventory_header_user,access_ab_inventory_header_user,model_ab_inventory_header,base.group_user,1,0,0,0
+access_ab_inventory_header_sys,access_ab_inventory_header_sys,model_ab_inventory_header,base.group_system,1,1,1,1
+access_ab_product_source_pending_any,access_ab_product_source_pending_any,model_ab_product_source_pending,base.group_user,1,0,0,0
+access_ab_inventory_action_sys,access_ab_inventory_action_sys,model_ab_inventory_action,base.group_system,1,1,1,1
+access_ab_inventory_action_user,access_ab_inventory_action_user,model_ab_inventory_action,base.group_user,1,0,0,0
+
+
+
+
+
+

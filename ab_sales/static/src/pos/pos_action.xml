@@ -1,0 +1,974 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.PosAction">
+        <t t-if="!state.windowClosed">
+            <div t-attf-class="ab_pos_window_root o_ab_sales_pos_window #{state.windowMaximized ? 'is-maximized' : ''} #{state.windowMinimized ? 'is-minimized' : ''}"
+                 t-att-style="windowStyle()">
+            <div class="o_ab_sales_pos_window_header ab_pos_window_header" t-on-pointerdown="onWindowDragStart">
+                <div class="o_ab_sales_pos_window_title ab_pos_window_title">POS Sales Desk</div>
+                <div class="o_ab_sales_pos_window_controls ab_pos_window_controls">
+                    <button class="btn btn-light btn-sm ab_pos_ctrl_btn_save"
+                            type="button"
+                            title="Save settings"
+                            t-on-click="savePosUiSettings"
+                            t-att-disabled="state.posSettingsSaving">
+                        <i class="fa fa-save ab_pos_ctrl_icon_save" aria-hidden="true"/>
+                    </button>
+                    <button class="btn btn-light btn-sm ab_pos_ctrl_btn_fullscreen"
+                            type="button"
+                            title="Full Screen"
+                            t-on-click="toggleFullScreen">
+                        <i class="fa fa-expand ab_pos_ctrl_icon_fullscreen" aria-hidden="true"/>
+                    </button>
+                    <button class="btn btn-light btn-sm ab_pos_ctrl_btn_minimize"
+                            type="button"
+                            title="Minimize"
+                            t-on-click="toggleWindowMinimize">
+                        <i class="fa fa-window-minimize ab_pos_ctrl_icon_minimize" aria-hidden="true"/>
+                    </button>
+                    <button class="btn btn-light btn-sm ab_pos_ctrl_btn_maximize"
+                            type="button"
+                            title="Maximize"
+                            t-on-click="toggleWindowMaximize">
+                        <i class="fa fa-window-maximize ab_pos_ctrl_icon_maximize" aria-hidden="true"/>
+                    </button>
+                    <button class="btn btn-light btn-sm ab_pos_ctrl_btn_close"
+                            type="button"
+                            title="Close"
+                            t-on-click="closeWindow">
+                        <i class="fa fa-times ab_pos_ctrl_icon_close" aria-hidden="true"/>
+                    </button>
+                </div>
+            </div>
+                <div class="o_ab_sales_pos_window_body ab_pos_window_body">
+                <div class="o_ab_sales_pos_app ab_pos_app_shell">
+            <aside t-attf-class="ab_pos_sidebar o_ab_sales_pos_sidebar #{state.sidebarCollapsed ? 'is-collapsed' : ''}">
+                <div class="o_ab_sales_pos_sidebar_header ab_pos_sidebar_header">
+                    <div class="o_ab_sales_pos_sidebar_top ab_pos_sidebar_top">
+                        <div class="o_ab_sales_pos_brand ab_pos_sidebar_brand"/>
+                        <button class="btn btn-light o_ab_sales_pos_collapse_btn ab_pos_sidebar_btn_toggle"
+                                type="button"
+                                t-on-click="toggleSidebar"
+                                title="Toggle bills panel">
+                            <i class="ab_pos_sidebar_icon_toggle"
+                               t-att-class="state.sidebarCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-left'"
+                               aria-hidden="true"/>
+                        </button>
+                    </div>
+                    <button class="btn btn-primary o_ab_sales_pos_new_btn ab_pos_sidebar_btn_new_bill" type="button" t-on-click="openNewBillDialog">
+                        <span class="o_ab_sales_pos_new_text ab_pos_sidebar_btn_new_bill_text">New Bill</span>
+                        <span class="o_ab_sales_pos_new_icon ab_pos_sidebar_btn_new_bill_icon" aria-hidden="true">+</span>
+                    </button>
+                </div>
+
+                <div class="o_ab_sales_pos_list ab_pos_bill_list">
+                    <t t-if="!state.bills.length">
+                        <div class="o_ab_sales_pos_empty ab_pos_bill_list_empty">No cached bills yet.</div>
+                    </t>
+                    <t t-foreach="state.bills" t-as="bill" t-key="bill.id">
+                        <div class="ab_pos_bill_list_item o_ab_sales_pos_list_item"
+                             t-attf-class="#{bill.id == state.selectedId ? 'is-active' : ''}"
+                             t-on-click="() => selectBill(bill.id)">
+                            <span class="o_ab_sales_pos_bill_thumb ab_pos_bill_item_thumb" t-esc="bill.header.store_code or '-'"/>
+                            <div class="o_ab_sales_pos_list_top ab_pos_bill_item_top">
+                                <div class="o_ab_sales_pos_list_title ab_pos_bill_item_title">
+                                    <span class="o_ab_sales_pos_list_id ab_pos_bill_item_id">#<t t-esc="bill.local_number"/></span>
+                                    <span class="o_ab_sales_pos_list_status ab_pos_bill_item_status">Prepending</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-danger ab_pos_bill_item_btn_remove"
+                                        type="button"
+                                        t-on-click.stop="() => removeBill(bill.id)">
+                                    Remove
+                                </button>
+                            </div>
+                            <div class="o_ab_sales_pos_list_rows ab_pos_bill_item_rows">
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_store">
+                                    <span class="label ab_pos_bill_item_label_store">Store</span>
+                                    <span class="ab_pos_bill_item_value_store" t-esc="bill.header.store_name or '-'"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_customer">
+                                    <span class="label ab_pos_bill_item_label_customer">Customer</span>
+                                    <span class="ab_pos_bill_item_value_customer" t-esc="bill.header.customer_name or '-'"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_items">
+                                    <span class="label ab_pos_bill_item_label_items">Items</span>
+                                    <span class="ab_pos_bill_item_value_items" t-esc="bill.number_of_products"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_total">
+                                    <span class="label ab_pos_bill_item_label_total">Total</span>
+                                    <span class="ab_pos_bill_item_value_total" t-esc="formatPrice(bill.total_price)"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_net">
+                                    <span class="label ab_pos_bill_item_label_net">Net</span>
+                                    <span class="ab_pos_bill_item_value_net" t-esc="formatPrice(bill.total_net_amount)"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row ab_pos_bill_item_row_updated">
+                                    <span class="label ab_pos_bill_item_label_updated">Updated</span>
+                                    <span class="ab_pos_bill_item_value_updated" t-esc="formatDateTime(bill.updated_at)"/>
+                                </div>
+                                <div class="o_ab_sales_pos_list_row o_ab_sales_pos_list_desc ab_pos_bill_item_row_description">
+                                    <span class="label ab_pos_bill_item_label_description">Description</span>
+                                    <span class="ab_pos_bill_item_value_description" t-esc="bill.header.description or 'No description'"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </aside>
+                    <div class="o_ab_sales_pos_sidebar_resizer ab_pos_sidebar_resizer"
+                         role="separator"
+                         aria-orientation="vertical"
+                         t-on-pointerdown="onSidebarResizeStart"/>
+
+                    <main class="o_ab_sales_pos_main ab_pos_main_panel">
+                <t t-if="!currentBill">
+                    <div class="o_ab_sales_pos_blank ab_pos_blank_state">
+                        <div class="o_ab_sales_pos_blank_card ab_pos_blank_card">
+                            <h3 class="ab_pos_blank_title">No bill selected</h3>
+                            <p class="ab_pos_blank_message">Create a new cached bill or pick one from the left panel.</p>
+                            <button class="btn btn-primary ab_pos_blank_btn_create_bill" type="button" t-on-click="openNewBillDialog">
+                                Create Bill
+                            </button>
+                        </div>
+                    </div>
+                </t>
+                        <t t-else="">
+                    <div class="o_ab_sales_pos_topbar ab_pos_topbar">
+                        <div class="o_ab_sales_pos_top_main ab_pos_topbar_main">
+                            <div class="o_ab_sales_pos_top_fields ab_pos_topbar_fields">
+                                <div class="o_ab_sales_pos_top_row ab_pos_topbar_row">
+                                    <div class="o_ab_sales_pos_top_stack ab_pos_topbar_stack_store">
+                                        <div class="o_ab_sales_pos_top_group ab_pos_topbar_group_store">
+                                        <div class="o_ab_sales_pos_field_row ab_pos_store_field_row">
+                                            <ABMany2one
+                                                    relation="'ab_store'"
+                                                    value="storeValue()"
+                                                    onUpdate="onStoreM2OUpdate"
+                                                    placeholder="'Store...'"
+                                                    domain="() => storeDomain()"
+                                                    canCreate="false"
+                                                    canCreateEdit="false"
+                                                    canQuickCreate="false"
+                                                    canOpen="false"
+                                                    canWrite="true"
+                                                    string="'Store'"
+                                            />
+                                            <span class="o_ab_sales_pos_inline_label ab_pos_store_code_label">Code</span>
+                                            <span class="o_ab_sales_pos_inline_value ab_pos_store_code_value"
+                                                  t-esc="currentBill.header.store_code or '-'"/>
+                                            <button class="btn btn-sm btn-link ab_pos_store_btn_details"
+                                                    type="button"
+                                                    t-on-click="toggleStoreDetails">
+                                                Details
+                                            </button>
+                                        </div>
+                                            <t t-if="currentBill and currentBill.header and currentBill.header.store_id">
+                                            <div class="o_ab_sales_pos_store_status ab_pos_store_status">
+                                                <span class="badge text-bg-success ab_pos_store_status_online"
+                                                      t-if="state.storeOnline === true">Online</span>
+                                                <span class="badge text-bg-danger ab_pos_store_status_offline"
+                                                      t-if="state.storeOnline === false">Offline</span>
+                                            </div>
+                                        </t>
+                                            <t t-if="state.showStoreDetails">
+                                            <div class="o_ab_sales_pos_side_details ab_pos_store_details_panel">
+                                                <div class="o_ab_sales_pos_field ab_pos_store_details_code_field">
+                                                    <label class="ab_pos_store_details_code_label">Store Code</label>
+                                                    <div class="o_ab_sales_pos_readonly ab_pos_store_details_code_value"
+                                                         t-esc="currentBill.header.store_code or '-'"/>
+                                                </div>
+                                                <div class="o_ab_sales_pos_field ab_pos_store_details_ip_field">
+                                                    <label class="ab_pos_store_details_ip_label">Store IP</label>
+                                                    <div class="o_ab_sales_pos_readonly ab_pos_store_details_ip_value"
+                                                         t-esc="currentBill.header.store_ip or '-'"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        </div>
+                                    </div>
+                                    <div class="o_ab_sales_pos_top_stack o_ab_sales_pos_top_stack--right ab_pos_topbar_stack_customer">
+                                        <div class="o_ab_sales_pos_top_group o_ab_sales_pos_customer_group ab_pos_topbar_group_customer"
+                                             data-label="Customer">
+                                        <div class="o_ab_sales_pos_field_row ab_pos_customer_field_row"
+                                             t-ref="customerM2O"
+                                             t-on-input="onCustomerInput"
+                                             t-on-pointerdown="onCustomerPointerDown">
+                                            <ABMany2one
+                                                    relation="'ab_customer'"
+                                                    value="customerValue()"
+                                                    onUpdate="onCustomerM2OUpdate"
+                                                    placeholder="'Customer...'"
+                                                    domain="() => []"
+                                                    canCreate="false"
+                                                    canCreateEdit="false"
+                                                    canQuickCreate="false"
+                                                    canOpen="false"
+                                                    canWrite="true"
+                                                    string="'Customer'"
+                                            />
+                                            <button class="btn btn-outline-primary btn-sm o_ab_sales_pos_customer_add ab_pos_customer_btn_add"
+                                                    type="button"
+                                                    t-on-pointerdown="captureCustomerInput"
+                                                    t-on-click="openCustomerLookup">
+                                                Add
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm ab_pos_customer_btn_invoices"
+                                                    type="button"
+                                                    t-on-click="openCustomerInvoicesDialog"
+                                                    t-att-disabled="!activeCustomerPhone()">
+                                                All Invoices
+                                            </button>
+                                        </div>
+                                        <div class="o_ab_sales_pos_customer_line ab_pos_customer_info_line">
+                                            <span class="ab_pos_customer_info_phone" t-esc="currentBill.header.bill_customer_phone or currentBill.header.customer_phone or currentBill.header.customer_mobile or '-'"/>
+                                                <span class="sep ab_pos_customer_info_separator">|</span>
+                                                <span class="ab_pos_customer_info_address" t-esc="state.customerInsights and state.customerInsights.customer and state.customerInsights.customer.last_address or currentBill.header.bill_customer_address or currentBill.header.customer_address or '-'"/>
+                                        </div>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="o_ab_sales_pos_meta_column ab_pos_meta_column">
+                                <div class="o_ab_sales_pos_meta_block ab_pos_meta_block_items">
+                                    <span class="label ab_pos_meta_label_items">Items</span>
+                                    <span class="o_ab_sales_pos_readonly ab_pos_meta_value_items" t-esc="currentBill.number_of_products"/>
+                                </div>
+                                <div class="o_ab_sales_pos_meta_block ab_pos_meta_block_total">
+                                    <span class="label ab_pos_meta_label_total">Total</span>
+                                    <span class="o_ab_sales_pos_readonly ab_pos_meta_value_total"
+                                          t-esc="formatMoney2(currentBill.total_price)"/>
+                                </div>
+                                <div class="o_ab_sales_pos_meta_block ab_pos_meta_block_net">
+                                    <span class="label ab_pos_meta_label_net">Net</span>
+                                    <span class="o_ab_sales_pos_readonly ab_pos_meta_value_net"
+                                          t-esc="formatMoney2(currentBill.total_net_amount)"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="o_ab_sales_pos_top_actions ab_pos_top_actions">
+                            <div class="o_ab_sales_pos_action_stack ab_pos_action_stack_print">
+                                <button class="btn btn-outline-secondary o_ab_sales_pos_printer_btn ab_pos_btn_printer_settings"
+                                        type="button"
+                                        t-att-title="'Default printer: ' + (state.printerName || 'System dialog')"
+                                        t-on-click="openPrinterDialog">
+                                    <i class="fa fa-print ab_pos_btn_printer_settings_icon" aria-hidden="true"/>
+                                    <span class="ab_pos_btn_printer_settings_text">Printer</span>
+                                </button>
+                                <button class="btn btn-outline-primary ab_pos_btn_print_receipt"
+                                        type="button"
+                                        t-on-click="printReceipt">
+                                    <i class="fa fa-print ab_pos_btn_print_receipt_icon" aria-hidden="true"/>
+                                    <span class="ab_pos_btn_print_receipt_text">Print</span>
+                                </button>
+                            </div>
+                            <!--
+                                                        <span class="o_ab_sales_pos_printer_hint"
+                                                              t-esc="state.printerName ? ('Default: ' + state.printerName) : 'Default: system dialog'"/>
+                            -->
+                            <button class="btn btn-success ab_pos_btn_submit_bill"
+                                    type="button"
+                                    t-on-click="submitCurrentBill"
+                                    t-att-disabled="state.submitting">
+                                <i class="fa fa-paper-plane ab_pos_btn_submit_bill_icon" aria-hidden="true"/>
+                                <span class="ab_pos_btn_submit_bill_text">
+                                    <t t-if="state.submitting">Submitting...</t>
+                                </span>
+                            </button>
+                            <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button" t-on-click="removeCurrentBill">
+                                <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
+                            </button>
+                            <button class="btn btn-outline-secondary ab_pos_btn_open_invoices"
+                                    type="button"
+                                    t-on-click="openBillWizard">
+                                <i class="fa fa-list ab_pos_btn_open_invoices_icon" aria-hidden="true"/>
+                                <span class="ab_pos_btn_open_invoices_text">Invoices</span>
+                            </button>
+                        </div>
+                    </div>
+
+                            <div class="o_ab_sales_pos_layout ab_pos_layout_main">
+                        <section class="o_ab_sales_pos_card o_ab_sales_pos_product_panel ab_pos_section_products">
+                            <div class="o_ab_sales_pos_product_grid ab_pos_product_grid" t-ref="productGrid">
+                                <div class="o_ab_sales_pos_product_column ab_pos_product_column_search">
+                            <div class="o_ab_sales_pos_product_search ab_pos_product_search_panel">
+                                <label class="form-label mb-0 d-flex align-items-center gap-2 ab_pos_product_search_label" title="Search">
+                                    <i class="fa fa-search text-muted ab_pos_product_search_icon" aria-hidden="true"/>
+                                </label>
+                                <input class="form-control ab_pos_product_search_input"
+                                       placeholder="Type name/code..."
+                                       data-field="product_searchbar"
+                                       t-att-value="state.productQuery"
+                                       t-on-keydown="onProductSearchKeydown"
+                                       t-ref="searchInput"
+                                       t-on-input="onProductSearch"/>
+                                <t t-if="state.loadingProducts">
+                                    <span class="o_ab_sales_pos_loading ab_pos_product_loading">Loading...</span>
+                                </t>
+                                <span class="o_ab_sales_pos_search_count ab_pos_product_search_count"
+                                      t-esc="state.productResults.length"/>
+                                <div class="o_ab_sales_pos_product_filters ab_pos_product_filters">
+                                    <div class="form-check form-switch m-0 ab_pos_product_filter_any_balance">
+                                        <input class="form-check-input ab_pos_product_filter_any_balance_input"
+                                               type="checkbox"
+                                               t-att-checked="state.productHasBalanceOnly"
+                                               t-on-change="onProductHasBalanceChange"/>
+                                        <label class="form-check-label small ab_pos_product_filter_any_balance_label" title="Has balance (any)">
+                                            <i class="fa fa-cubes text-muted ab_pos_product_filter_any_balance_icon" aria-hidden="true"/>
+                                        </label>
+                                    </div>
+                                    <div class="form-check form-switch m-0 ab_pos_product_filter_store_balance">
+                                        <input class="form-check-input ab_pos_product_filter_store_balance_input"
+                                               type="checkbox"
+                                               t-att-checked="state.productHasPosBalanceOnly"
+                                               t-on-change="onProductHasPosBalanceChange"/>
+                                        <label class="form-check-label small ab_pos_product_filter_store_balance_label" title="Has balance in current store">
+                                            <i class="fa fa-shopping-cart text-muted ab_pos_product_filter_store_balance_icon" aria-hidden="true"/>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="o_ab_sales_pos_product_hint ab_pos_product_hint">
+                                <t t-if="!state.productQuery.trim() and activeCustomerPhone()">
+                                    <span class="badge text-bg-primary ab_pos_product_hint_badge_quick">Customer Quick Picks</span>
+                                </t>
+                                <t t-else="">
+                                    <span class="badge text-bg-light ab_pos_product_hint_badge_search">Search Results</span>
+                                </t>
+                                <t t-if="state.productQuery.trim() and pinnedResultsCount()">
+                                    <span class="badge text-bg-warning ab_pos_product_hint_badge_pinned"
+                                          t-esc="'Pinned: ' + pinnedResultsCount()"/>
+                                </t>
+                            </div>
+                                    <t t-if="state.productResults.length">
+                                <div class="o_ab_sales_pos_product_results row row-cols-1 g-2 ab_pos_product_cards"
+                                     t-ref="cardsContainer">
+                                    <t t-foreach="state.productResults" t-as="p" t-key="p.id" t-foreach-index="idx">
+                                        <t t-call="ab_sales.ProductCard">
+                                            <t t-set="p" t-value="p"/>
+                                            <t t-set="idx" t-value="idx"/>
+                                            <t t-set="selectionIndex" t-value="state.selectionIndex"/>
+                                            <t t-set="qtyBuffer" t-value="state.qtyBuffer"/>
+                                            <t t-set="qtyBufferProductId" t-value="state.qtyBufferProductId"/>
+                                            <t t-set="onAdd" t-value="addProductAndFocus"/>
+                                            <t t-set="onOpenBalance" t-value="openStoresBalance"/>
+                                            <t t-set="formatPrice" t-value="formatPrice"/>
+                                            <t t-set="formatQty" t-value="formatQty"/>
+                                            <t t-set="productLabel" t-value="productLabel"/>
+                                        </t>
+                                    </t>
+                                </div>
+                                    </t>
+                                    <t t-elif="!state.loadingProducts">
+                                        <div class="o_ab_sales_pos_products_empty ab_pos_product_empty_state">
+                                            <span class="text-muted ab_pos_product_empty_text">No products found.</span>
+                                        </div>
+                                    </t>
+                                </div>
+                                <div class="o_ab_sales_pos_column_resizer ab_pos_lines_resizer"
+                                     role="separator"
+                                     aria-orientation="vertical"
+                                     t-on-pointerdown="onResizeStart"/>
+                                <div class="o_ab_sales_pos_product_column o_ab_sales_pos_lines_panel ab_pos_product_column_lines">
+                            <div class="o_ab_sales_pos_lines_table ab_pos_lines_table_wrapper">
+                                <table class="table table-sm align-middle ab_pos_lines_table">
+                                    <thead class="ab_pos_lines_table_head">
+                                        <tr class="ab_pos_lines_head_row">
+                                            <th class="ab_pos_lines_head_product">Product</th>
+                                            <th class="ab_pos_lines_head_qty">Qty</th>
+                                            <th class="ab_pos_lines_head_uom">UoM</th>
+                                            <th class="ab_pos_lines_head_sell_price">Sell Price</th>
+                                            <th class="ab_pos_lines_head_prices">Prices</th>
+                                            <th class="ab_pos_lines_head_balance">Balance</th>
+                                            <th class="ab_pos_lines_head_net">Net</th>
+                                            <th class="ab_pos_lines_head_actions"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="ab_pos_lines_table_body">
+                                        <t t-if="!currentBill.lines.length">
+                                            <tr class="ab_pos_lines_empty_row">
+                                                <td colspan="8" class="text-center text-muted ab_pos_lines_empty_message">
+                                                    Add products to start building the bill.
+                                                </td>
+                                            </tr>
+                                        </t>
+                                        <t t-foreach="currentBill.lines" t-as="line" t-key="line.id">
+                                            <tr class="ab_pos_line_row"
+                                                t-att-data-line-id="line.id"
+                                                t-att-data-product-id="line.product_id"
+                                                t-att-class="(line.balance or 0) &lt;= 0 ? 'o_ab_sales_pos_line--no-balance' : ''">
+                                                <td class="ab_pos_line_cell_product">
+                                                    <div class="fw-semibold ab-smaller-text ab_pos_line_product_name" t-esc="line.product_name"/>
+                                                </td>
+                                                <td class="ab_pos_line_cell_qty">
+                                                    <input class="form-control form-control-sm ab_pos_line_qty_input"
+                                                           data-field="qty_str"
+                                                           t-att-value="line.qty_str"
+                                                           t-on-input="(ev) => updateLineQty(line, ev.target.value)"/>
+                                                </td>
+                                                <td class="ab_pos_line_cell_uom">
+                                                    <ABMany2one
+                                                            relation="'ab_product_uom'"
+                                                            value="lineUomValue(line)"
+                                                            onUpdate="(value) => onLineUomUpdate(line, value)"
+                                                            domain="() => line.uom_category_id ? [['category_id', '=', line.uom_category_id]] : [['id', '=', false]]"
+                                                            canCreate="false"
+                                                            canCreateEdit="false"
+                                                            canQuickCreate="false"
+                                                            canOpen="false"
+                                                            canWrite="true"
+                                                            string="'UoM'"
+                                                    />
+                                                </td>
+                                                <td class="ab_pos_line_cell_sell_price">
+                                                    <input class="form-control form-control-sm ab_pos_line_sell_price_input"
+                                                           inputmode="decimal"
+                                                           t-att-value="line.sell_price_str ?? line.sell_price"
+                                                           t-on-input="(ev) => updateLineSellPrice(line, ev.target.value)"/>
+                                                </td>
+                                                <td class="ab_pos_line_cell_prices">
+                                                    <div class="o_ab_sales_pos_price_badges ab_pos_line_price_badges">
+                                                        <t t-if="line.available_prices and line.available_prices.length">
+                                                            <t t-foreach="line.available_prices" t-as="p"
+                                                               t-key="p.price">
+                                                                <button type="button"
+                                                                        class="btn btn-outline-secondary o_ab_sales_pos_price_badge ab_pos_line_price_badge_btn"
+                                                                        t-attf-class="#{p.is_default ? 'btn-outline-primary' : 'btn-outline-secondary'}"
+                                                                        t-on-click="() => onAvailablePriceSelect(line, p.price)">
+                                                                    <span class="o_ab_sales_pos_badge_price ab_pos_line_price_badge_value"
+                                                                          t-esc="formatMoney2(p.price)"/>
+                                                                    <span class="o_ab_sales_pos_badge_sep ab_pos_line_price_badge_sep">:</span>
+                                                                    <span class="o_ab_sales_pos_badge_qty ab_pos_line_price_badge_qty"
+                                                                          t-esc="formatQty(p.qty)"/>
+                                                                </button>
+                                                            </t>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <span class="text-muted ab_pos_line_price_badge_empty">-</span>
+                                                        </t>
+                                                    </div>
+                                                </td>
+                                                <td class="ab_pos_line_cell_balance" t-esc="formatQty(line.balance)"/>
+                                                <td class="ab_pos_line_cell_net" t-esc="formatMoney2(line.net_amount)"/>
+                                                <td class="text-end ab_pos_line_cell_actions">
+                                                    <button class="btn btn-sm btn-outline-danger ab_pos_line_btn_remove"
+                                                            type="button"
+                                                            t-on-click="() => removeLine(line)">
+                                                        <i class="fa fa-trash ab_pos_line_btn_remove_icon" aria-hidden="true"/>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </t>
+            </main>
+        </div>
+    </div>
+                <div class="o_ab_sales_pos_window_resizer ab_pos_window_resizer"
+                     t-on-pointerdown="onWindowResizeStart"/>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="ab_sales.PosStoreDialog">
+        <Dialog title="'Select Store'" size="'md'">
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label">Store</label>
+                    <Many2One
+                            relation="'ab_store'"
+                            value="state.store"
+                            update="onStoreUpdate"
+                            domain="storeDomain"
+                            placeholder="'Select store...'"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="'Store'"
+                    />
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary" type="button" t-on-click="cancel">Cancel</button>
+                    <button class="btn btn-primary" type="button" t-on-click="confirm" t-att-disabled="!state.store">
+                        Create
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.PosCustomerLookupDialog">
+        <Dialog title="'Customer Lookup'" size="'md'">
+            <div class="o_ab_sales_pos_customer_dialog">
+                <div>
+                    <label class="form-label">Branch</label>
+                    <Many2One
+                            relation="'ab_store'"
+                            value="state.branch"
+                            update="onBranchUpdate"
+                            domain="branchDomain"
+                            placeholder="'Select branch...'"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="'Branch'"
+                    />
+                    <t t-if="state.errors.branch">
+                        <div class="text-danger small">Branch is required.</div>
+                    </t>
+                </div>
+                <div>
+                    <label class="form-label">Phone</label>
+                    <div class="input-group">
+                        <input t-ref="customerPhone"
+                               t-attf-class="form-control #{state.errors.phone ? 'is-invalid' : ''}"
+                               placeholder="01xxxxxxxxx"
+                               t-att-value="state.phone"
+                               t-on-input="onPhoneInput"
+                               t-on-keydown="onPhoneKeydown"/>
+                        <button class="btn btn-primary"
+                                type="button"
+                                t-on-click="search"
+                                t-att-disabled="state.loading">
+                            Search
+                        </button>
+                    </div>
+                </div>
+                <t t-if="state.message">
+                    <div class="alert alert-warning py-2 mb-0" t-esc="state.message"/>
+                </t>
+                <t t-if="state.mode == 'found' and state.customer">
+                    <div class="o_ab_sales_pos_customer_card">
+                        <div class="o_ab_sales_pos_customer_row">
+                            <span class="label">Name</span>
+                            <span t-esc="state.customer.name or '-'"/>
+                        </div>
+                        <div class="o_ab_sales_pos_customer_row">
+                            <span class="label">Phone</span>
+                            <span t-esc="state.customer.mobile_phone or '-'"/>
+                        </div>
+                        <div class="o_ab_sales_pos_customer_row">
+                            <span class="label">Tel</span>
+                            <span t-esc="state.customer.work_phone or '-'"/>
+                        </div>
+                        <div class="o_ab_sales_pos_customer_row">
+                            <span class="label">Address</span>
+                            <span t-esc="state.customer.address or '-'"/>
+                        </div>
+                        <div class="o_ab_sales_pos_customer_row">
+                            <span class="label">Code</span>
+                            <span t-esc="state.customer.code or '-'"/>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-secondary" type="button" t-on-click="close">Close</button>
+                        <button class="btn btn-success" type="button" t-on-click="useCustomer">Use</button>
+                    </div>
+                </t>
+                <t t-elif="state.mode == 'create'">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <label class="form-label">Name</label>
+                            <input t-attf-class="form-control #{state.errors.name ? 'is-invalid' : ''}"
+                                   t-att-value="state.name"
+                                   t-on-input="onNameInput"/>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Phone</label>
+                            <input t-attf-class="form-control #{state.errors.phone ? 'is-invalid' : ''}"
+                                   t-att-value="state.phone"
+                                   t-on-input="onPhoneInput"/>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label">Address</label>
+                            <input t-attf-class="form-control #{state.errors.address ? 'is-invalid' : ''}"
+                                   t-att-value="state.address"
+                                   t-on-input="onAddressInput"/>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-secondary" type="button" t-on-click="close">Cancel</button>
+                        <button class="btn btn-primary"
+                                type="button"
+                                t-on-click="create"
+                                t-att-disabled="state.loading or !state.branch">
+                            Create
+                        </button>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="d-flex justify-content-end gap-2">
+                        <button class="btn btn-secondary" type="button" t-on-click="close">Close</button>
+                    </div>
+                </t>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.PosAllInvoicesDialog">
+        <Dialog title="'All Invoices'" size="'xl'">
+            <div class="o_ab_sales_pos_last_invoice_dialog">
+                <div class="o_ab_sales_pos_all_invoices_tools">
+                    <div class="input-group">
+                        <input class="form-control"
+                               placeholder="Search by product name..."
+                               t-att-value="state.searchQuery"
+                               t-on-input="onSearchInput"/>
+                        <button class="btn btn-outline-primary" type="button" t-on-click="searchInvoices">
+                            Search
+                        </button>
+                        <button class="btn btn-outline-secondary" type="button" t-on-click="clearSearch">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <table class="table table-sm mb-2">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Invoice</th>
+                            <th>Branch</th>
+                            <th class="text-end">Lines</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-end">Net</th>
+                            <th class="text-end">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="filteredInvoices" t-as="inv" t-key="inv.id">
+                            <tr t-attf-class="#{selectedInvoice and selectedInvoice.id == inv.id ? 'o_ab_sales_pos_invoice_row--active' : ''}"
+                                t-on-click="() => selectInvoice(inv)">
+                                <td t-esc="formatDateTime(inv.date)"/>
+                                <td t-esc="inv.eplus_serial ? ('#' + inv.eplus_serial) : ('ID ' + inv.id)"/>
+                                <td t-esc="inv.store_code ? (inv.store_code + ' - ' + (inv.store_name || '')) : (inv.store_name || '-')"/>
+                                <td class="text-end" t-esc="inv.line_count || 0"/>
+                                <td class="text-end" t-esc="formatMoney2(inv.total)"/>
+                                <td class="text-end" t-esc="formatMoney2(inv.net_total)"/>
+                                <td class="text-end">
+                                    <button class="btn btn-outline-primary btn-sm"
+                                            type="button"
+                                            t-on-click.stop="() => addAll(inv)">
+                                        Add all items
+                                    </button>
+                                </td>
+                            </tr>
+                        </t>
+                        <t t-if="!filteredInvoices || !filteredInvoices.length">
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">No invoices found.</td>
+                            </tr>
+                        </t>
+                    </tbody>
+                </table>
+
+                <t t-if="selectedInvoice">
+                    <div class="o_ab_sales_pos_last_invoice_meta">
+                        <div><strong>Selected:</strong> <span t-esc="selectedInvoice.eplus_serial ? ('#' + selectedInvoice.eplus_serial) : ('ID ' + selectedInvoice.id)"/></div>
+                        <div><strong>Date:</strong> <span t-esc="formatDateTime(selectedInvoice.date)"/></div>
+                        <div><strong>Branch:</strong> <span t-esc="selectedInvoice.store_code ? (selectedInvoice.store_code + ' - ' + (selectedInvoice.store_name || '')) : (selectedInvoice.store_name || '-')"/></div>
+                        <div><strong>Net:</strong> <span t-esc="formatMoney2(selectedInvoice.net_total)"/></div>
+                    </div>
+                    <table class="table table-sm mb-2">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Code</th>
+                                <th class="text-end">Qty</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-end">Net</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="selectedInvoice.lines || []" t-as="line" t-key="line.line_id || line.product_id">
+                                <tr>
+                                    <td t-esc="line.product_name || '-'"/>
+                                    <td t-esc="line.product_code || ''"/>
+                                    <td class="text-end" t-esc="formatQty(line.qty)"/>
+                                    <td class="text-end" t-esc="formatMoney2(line.sell_price)"/>
+                                    <td class="text-end" t-esc="formatMoney2(line.net_amount)"/>
+                                </tr>
+                            </t>
+                            <t t-if="!selectedInvoice.lines || !selectedInvoice.lines.length">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">No items found in selected invoice.</td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </t>
+                <div class="o_ab_sales_pos_submit_footer">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="close">Close</button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.PosDuplicateTokenDialog">
+        <Dialog title="'Duplicate Token'" size="'lg'">
+            <div class="o_ab_sales_pos_duplicate_dialog">
+                <div class="alert alert-warning d-flex flex-column gap-1 mb-0">
+                    <strong>Duplicate token detected.</strong>
+                    <span t-esc="props.message || ''"/>
+                    <span class="small">Generate a new token to submit this bill.</span>
+                </div>
+
+                <div class="o_ab_sales_pos_duplicate_summary">
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <div class="o_ab_sales_pos_duplicate_card">
+                                <div class="label">Store</div>
+                                <div class="value"
+                                     t-esc="existing.store &amp;&amp; (existing.store.name || existing.store.code) || '-'"/>
+                                <div class="meta"
+                                     t-esc="existing.store &amp;&amp; existing.store.code ? ('Code: ' + existing.store.code) : ''"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="o_ab_sales_pos_duplicate_card">
+                                <div class="label">Customer</div>
+                                <div class="value" t-esc="existing.customer &amp;&amp; existing.customer.name || '-'"/>
+                                <div class="meta"
+                                     t-esc="existing.customer &amp;&amp; (existing.customer.phone || existing.customer.code) || ''"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="o_ab_sales_pos_duplicate_card">
+                                <div class="label">Invoice</div>
+                                <div class="value"
+                                     t-esc="existing.eplus_serial ? ('#' + existing.eplus_serial) : ('ID ' + (existing.id || '-'))"/>
+                                <div class="meta"
+                                     t-esc="existing.status ? ('Status: ' + existing.status) : ''"/>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="o_ab_sales_pos_duplicate_card">
+                                <div class="label">Created</div>
+                                <div class="value" t-esc="formatDateTime(existing.create_date)"/>
+                                <div class="meta"
+                                     t-esc="existing.totals ? ('Items: ' + (existing.totals.number_of_products || 0)) : ''"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="o_ab_sales_pos_duplicate_totals">
+                        <div class="o_ab_sales_pos_duplicate_total">
+                            <span class="label">Total</span>
+                            <span t-esc="formatMoney2(existing.totals &amp;&amp; existing.totals.total_price)"/>
+                        </div>
+                        <div class="o_ab_sales_pos_duplicate_total">
+                            <span class="label">Net</span>
+                            <span t-esc="formatMoney2(existing.totals &amp;&amp; existing.totals.total_net_amount)"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="o_ab_sales_pos_duplicate_lines">
+                    <div class="o_ab_sales_pos_section_title">Lines</div>
+                    <table class="table table-sm mb-1">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th class="text-end">Qty</th>
+                                <th class="text-end">Price</th>
+                                <th class="text-end">Net</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="existing.lines || []" t-as="line" t-key="line.id">
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold" t-esc="line.product_name || '-'"/>
+                                        <div class="text-muted small" t-esc="line.product_code || ''"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-esc="line.qty_str || formatQty(line.qty)"/>
+                                        <t t-if="line.uom_name">
+                                            <span class="text-muted small" t-esc="' ' + line.uom_name"/>
+                                        </t>
+                                    </td>
+                                    <td class="text-end" t-esc="formatMoney2(line.sell_price)"/>
+                                    <td class="text-end" t-esc="formatMoney2(line.net_amount)"/>
+                                </tr>
+                            </t>
+                            <t t-if="!existing.lines || !existing.lines.length">
+                                <tr>
+                                    <td colspan="4" class="text-muted text-center">No lines available.</td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                    <t t-if="existing.lines_truncated">
+                        <div class="text-muted small">
+                            <t t-esc="(existing.line_count || 0) - (existing.lines ? existing.lines.length : 0)"/>
+                            more lines not shown.
+                        </div>
+                    </t>
+                </div>
+
+                <div class="o_ab_sales_pos_submit_footer">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="cancel">Cancel</button>
+                    <button class="btn btn-warning"
+                            type="button"
+                            t-att-disabled="state.submitting"
+                            t-on-click="submitNewToken">
+                        Create new token &amp; submit
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.PosValidationDialog">
+        <Dialog title="props.title || 'Validation Error'" size="'md'">
+            <div class="o_ab_sales_pos_validation_dialog">
+                <div class="alert alert-danger d-flex flex-column gap-1 mb-0">
+                    <strong t-esc="props.title || 'Validation Error'"/>
+                    <span t-esc="props.message || ''"/>
+                    <span class="small">Please correct the data and try again.</span>
+                </div>
+                <div class="o_ab_sales_pos_submit_footer">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="close">Close</button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.PosSubmitDialog">
+        <Dialog title="'Customer &amp; Contract'" size="'lg'">
+            <div class="o_ab_sales_pos_submit_dialog">
+                <t t-if="state.hasCustomer or (props.bill and props.bill.header and props.bill.header.customer_id)">
+                    <div class="o_ab_sales_pos_submit_section">
+                        <div class="o_ab_sales_pos_section_title">Customer</div>
+                        <div class="row g-2">
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Name</label>
+                                <input class="form-control"
+                                       t-ref="billCustomerName"
+                                       t-att-value="state.bill_customer_name"
+                                       t-on-input="onBillCustomerNameInput"/>
+                            </div>
+                            <div class="col-12 col-md-4">
+                                <label class="form-label">Phone</label>
+                                <input class="form-control"
+                                       t-ref="billCustomerPhone"
+                                       t-att-value="state.bill_customer_phone"
+                                       t-on-input="onBillCustomerPhoneInput"/>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Address</label>
+                                <textarea class="form-control"
+                                          rows="2"
+                                          t-ref="billCustomerAddress"
+                                          t-att-value="state.bill_customer_address"
+                                          t-on-input="onBillCustomerAddressInput"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="o_ab_sales_pos_submit_section">
+                        <div class="o_ab_sales_pos_section_title">New Customer</div>
+                        <div class="row g-2">
+                                <div class="col-12 col-md-4">
+                                    <label class="form-label">Name</label>
+                                    <input t-ref="newCustomerName"
+                                           t-attf-class="form-control #{state.errors.new_customer_name ? 'is-invalid' : ''}"
+                                           t-att-value="state.new_customer_name"
+                                           t-on-input="onNewCustomerNameInput"/>
+                                </div>
+                            <div class="col-12 col-md-4">
+                                    <label class="form-label">Phone</label>
+                                <div class="input-group">
+                                        <input t-attf-class="form-control #{state.errors.new_customer_phone ? 'is-invalid' : ''}"
+                                               t-att-value="state.new_customer_phone"
+                                               t-on-input="onNewCustomerPhoneInput"/>
+                                    <button class="btn btn-outline-primary"
+                                            type="button"
+                                            t-on-click="openCustomerLookup">
+                                            Add
+                                        </button>
+                                    </div>
+                                </div>
+                            <div class="col-12 col-md-4">
+                                    <label class="form-label">Address</label>
+                                <input t-attf-class="form-control #{state.errors.new_customer_address ? 'is-invalid' : ''}"
+                                       t-att-value="state.new_customer_address"
+                                       t-on-input="onNewCustomerAddressInput"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <t t-if="props.bill and props.bill.header and props.bill.header.contract_id">
+                    <div class="o_ab_sales_pos_submit_section">
+                        <div class="o_ab_sales_pos_section_title">Insurance</div>
+                        <div class="row g-2">
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Insurance Name</label>
+                                <input t-ref="insuranceName"
+                                       t-attf-class="form-control #{state.errors.customer_insurance_name ? 'is-invalid' : ''}"
+                                       t-att-value="state.customer_insurance_name"
+                                       t-on-input="onInsuranceNameInput"/>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <label class="form-label">Insurance Number</label>
+                                <input t-attf-class="form-control #{state.errors.customer_insurance_number ? 'is-invalid' : ''}"
+                                       t-att-value="state.customer_insurance_number"
+                                       t-on-input="onInsuranceNumberInput"/>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+
+                <div class="o_ab_sales_pos_submit_section">
+                    <label class="form-label">ePlus Employee</label>
+                    <Many2One
+                            relation="'ab_hr_employee'"
+                            value="state.eplus_employee"
+                            update="onEmployeeUpdate"
+                            domain="employeeDomain"
+                            placeholder="'Select employee...'"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="'ePlus Employee'"
+                    />
+                </div>
+
+                <div class="o_ab_sales_pos_submit_section">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control"
+                              rows="3"
+                              t-ref="billDescription"
+                              t-att-value="state.description"
+                              t-on-input="onDescriptionInput"/>
+                </div>
+
+                <t t-if="state.message">
+                    <div class="o_ab_sales_pos_submit_message" t-esc="state.message"/>
+                </t>
+
+                <div class="o_ab_sales_pos_submit_footer">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="cancel">Back</button>
+                    <button class="btn btn-primary"
+                            type="button"
+                            t-att-disabled="state.submitting"
+                            t-on-click="submit">
+                        Submit (F10)
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+</templates>

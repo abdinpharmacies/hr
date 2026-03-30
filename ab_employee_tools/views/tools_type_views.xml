@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="employee_tools_inventory_move_increase_action" model="ir.actions.act_window">
+            <field name="name">Increase Quantity</field>
+            <field name="res_model">ab_employee_tools.inventory_move</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_movement_type': 'receive', 'default_type_id': active_id}</field>
+        </record>
+
+        <record id="employee_tools_inventory_move_decrease_action" model="ir.actions.act_window">
+            <field name="name">Decrease Quantity</field>
+            <field name="res_model">ab_employee_tools.inventory_move</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_movement_type': 'issue', 'default_type_id': active_id}</field>
+        </record>
+
+        <record id="tools_type_view_tree" model="ir.ui.view">
+            <field name="name">ab_employee_tools.tools_type.tree</field>
+            <field name="model">ab_employee_tools.tools_type</field>
+            <field name="arch" type="xml">
+                <list string="Tool Types" decoration-danger="qty_available == 0">
+                    <field name="name"/>
+                    <field name="price"/>
+                    <field name="qty_available" readonly="1"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="tools_type_view_form" model="ir.ui.view">
+            <field name="name">ab_employee_tools.tools_type.form</field>
+            <field name="model">ab_employee_tools.tools_type</field>
+            <field name="arch" type="xml">
+                <form string="Tool Type">
+                    <header>
+                        <button name="%(ab_employee_tools.employee_tools_inventory_move_increase_action)d" type="action"
+                                string="Increase" class="btn-primary"/>
+                        <button name="%(ab_employee_tools.employee_tools_inventory_move_decrease_action)d" type="action"
+                                string="Decrease" class="btn-secondary"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="price"/>
+                            <field name="qty_available" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="tools_type_action" model="ir.actions.act_window">
+            <field name="name">Tool Types</field>
+            <field name="res_model">ab_employee_tools.tools_type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

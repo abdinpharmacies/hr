@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="assets_backend" name="abdin_js assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/abdin_js/static/src/scss/abdin_js.scss"/>
+                <script type="text/javascript" src="/abdin_js/static/src/js/list_view.js"/>
+                <script type="text/javascript" src="/abdin_js/static/src/js/form_edit_on_click.js"/>
+                <script type="text/javascript" src="/abdin_js/static/src/js/web_refresher.js"/>
+                <script type="text/javascript" src="/abdin_js/static/src/js/html_table_sort.js"/>
+            </xpath>
+        </template>
+    </data>
+</odoo>

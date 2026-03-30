@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+
+        <record id="ab_hr_effect_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_effect_view_tree</field>
+            <field name="model">ab_hr_effect</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_effect_tree"
+                      multi_edit="1">
+
+                    <field name="active" invisible="1" readonly="1"/>
+                    <field name="id" class="text-muted" optional="hide"/>
+
+                    <field name="current_month_match"
+                           widget="boolean_toggle"
+                           invisible="1"/>
+                    <field name="accid" widget="badge"
+                           decoration-danger="job_status == 'inactive'"/>
+                    <field name="employee_id"/>
+                    <field name="job_id" readonly="1" optional="hide"/>
+                    <field name="job_title" readonly="1" optional="show"/>
+                    <field name="workplace" readonly="1" optional="show"/>
+                    <field name="supervision_type" optional="hide"/>
+                    <field name="entitlement_month" optional="hide"/>
+                    <field name="effect_type_id" widget="badge"/>
+                    <field name="effect_date" widget="badge" class="justify-content-center text-center"
+                           decoration-warning="current_month_match == True"/>
+                    <field name="monthly_weekly_vacancies" string="Previous Day Off" optional="hide"/>
+                    <field name="hour_value" optional="hide"/>
+                    <field name="second_hour_value" optional="hide"/>
+                    <field name="effect_weekday" optional="hide"/>
+                    <field name="effect_reason" optional="hide"/>
+                    <field name="effect_numerical_value" optional="hide"/>
+                    <field name="job_status" invisible="True"/>
+                    <field name="attached_file" optional="hide"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_effect_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_effect_view_form</field>
+            <field name="model">ab_hr_effect</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_effect_form">
+                    <sheet>
+                        <field name="job_status" invisible="1"/>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active"/>
+                        <field name="active" invisible="1"/>
+                        <field name="current_month_match" invisible="1"/>
+
+                        <header>
+                        </header>
+
+
+                        <field name="supervision_type" invisible="1"/>
+                        <group class="h1 text-muted text-center">
+                            <field name="accid"
+                                   readonly="1"
+                                   nolabel="1"
+                                   class="h1 text-muted"/>
+                        </group>
+                        <group class="h1 text-info text-center">
+                            <field name="employee_id" nolabel="1"/>
+                        </group>
+
+                        <group col="3" class="h2 text-center">
+                            <field name="job_id" nolabel="1"/>
+                        </group>
+                        <group rowspan="4" col="16" class="o_cell d-flex flex-column text-center h2">
+                            <field name="job_title" invisible="1"/>
+                            <field name="workplace" string="Workplace" nolabel="1" readonly="1"/>
+                        </group>
+                        <div>
+                            <div class="h2"
+                                 style="font-size: 20px; font-weight: bold; text-align: center; margin-bottom: 10px;">
+                                Basic Effect Data
+                            </div>
+                            <group col="4" class="o_cell d-flex flex-column justify-content-center text-center h2"
+                                   invisible="current_month_match">
+                                <field name="effect_type_id" string="Effect Type"/>
+
+                                <field name="effect_date" string="Effect Date"
+                                       class="text-muted" required="1"
+                                       style="display: flex; justify-content: center; width: 100%;"/>
+
+
+                            </group>
+                            <group col="4" class="o_cell d-flex flex-column justify-content-center text-center h2"
+                                   invisible="not current_month_match">
+                                <field name="effect_type_id" string="Effect Type"/>
+
+                                <field name="effect_date" string="Effect Date"
+                                       required="1"
+                                       class="text-warning"
+                                       style="display: flex; justify-content: center; width: 100%;"/>
+
+                            </group>
+
+                        </div>
+
+                        <div invisible="supervision_type != 'other'">
+                            <div>
+                                <div class="h2"
+                                     style="font-size: 18px; font-weight: bold; text-align: center; margin-bottom: 10px;">
+                                    Effect Details
+                                </div>
+                                <group col="10" class="o_cell d-flex flex-column text-center">
+                                    <field name="monthly_weekly_vacancies"/>
+                                    <field name="effect_numerical_value"/>
+                                    <field name="hour_value"/>
+                                    <field name="second_hour_value"/>
+                                    <field name="effect_weekday"/>
+
+                                </group>
+                            </div>
+                            <group col="4" string="Attachment and Effect Reason">
+                                <field name="attached_file"/>
+                                <field name="effect_reason" placeholder="Effect Reason"/>
+                            </group>
+                        </div>
+
+                        <div invisible="supervision_type == 'other'">
+                            <div>
+                                <div class="d-flex flex-wrap justify-content-center gap-6">
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="not monthly_weekly_vacancies">
+                                        <group col="2">
+                                            <field name="monthly_weekly_vacancies" string="Previous day off"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="effect_numerical_value == 0.0">
+                                        <group col="2">
+                                            <field name="effect_numerical_value"
+                                                   string="Numerical Value"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="(not hour_value or second_hour_value)">
+                                        <group col="2">
+                                            <field name="hour_value" string="Hour Value"/>
+                                        </group>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="not second_hour_value">
+                                        <group col="2">
+                                            <field name="hour_value" string="First Hour Value"/>
+                                        </group>
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="not second_hour_value">
+                                        <group col="2">
+                                            <field name="second_hour_value" string="Second Hour Value"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="not effect_weekday">
+                                        <group col="2">
+                                            <field name="effect_weekday" string="Week Day"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="not attached_file">
+                                        <group col="2">
+                                            <field name="attached_file" string="Attachment"/>
+                                        </group>
+                                    </div>
+
+                                    <div class="d-flex flex-column align-items-center justify-content-center"
+                                         invisible="not effect_reason">
+                                        <group col="2">
+                                            <field name="effect_reason" string="Effect Reason"/>
+                                        </group>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <group col="4" string="Create and Write Info">
+                            <field name="create_uid"/>
+                            <field name="create_date"/>
+                            <field name="write_uid"/>
+                            <field name="write_date"/>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_effect_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_effect_view_search</field>
+            <field name="model">ab_hr_effect</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_effect_search">
+                    <filter name="personal_effects"
+                            string="Personal Effects"
+                            domain="[('supervision_type','=','myself')]"/>
+
+
+                    <filter name="direct_subordinates_effects"
+                            string="Direct Subordinates"
+                            domain="[('supervision_type','=','direct')]"/>
+                    <filter name="indirect_subordinates_effects"
+                            string="Indirect Subordinates"
+                            domain="[('supervision_type','=','indirect')]"/>
+                    <filter name="indirect_to_subordinate_effects"
+                            string="Indirect To Subordinate"
+                            domain="[('supervision_type','=','indirect_to_subordinate')]"/>
+                    <filter name="workplace_manager_job_effects"
+                            string="Workplace Manager Job"
+                            domain="[('supervision_type','=','workplace_manager_job')]"/>
+                    <filter name="other_supervision_effects"
+                            string="Other"
+                            domain="[('supervision_type','=','other')]"/>
+                    <filter name="active_employees"
+                            string="Active Employees"
+                            domain="[('employee_id.active','=',True)]"/>
+                    <filter name="current_month_effects"
+                            string="Current Month"
+                            domain="[('current_month_match','=',True)]"/>
+
+                    <filter name="created_today"
+                            string="Created Today"
+                            domain="[('create_date', '>=', (context_today().strftime('%Y-%m-%d 00:00:00')))]"/>
+                    <filter name="updated_today"
+                            string="Updated Today"
+                            domain="[('write_date', '>=', (context_today().strftime('%Y-%m-%d 00:00:00')))]"/>
+
+
+                    <field name="employee_id" optional="show"/>
+                    <field name="accid" optional="show"/>
+                    <field name="job_id"/>
+                    <field name="job_title" optional="show"/>
+                    <field name="workplace" optional="show"/>
+                    <field name="supervision_type" optional="show"/>
+                    <field name="entitlement_month" optional="show"/>
+                    <field name="current_month_match" optional="show"/>
+                    <field name="effect_type_id" optional="show"/>
+                    <field name="effect_date" optional="show"/>
+                    <field name="monthly_weekly_vacancies" optional="show"/>
+                    <field name="effect_numerical_value" optional="hide"/>
+                    <field name="hour_value" optional="show"/>
+                    <field name="second_hour_value" optional="show"/>
+                    <field name="effect_weekday" optional="show"/>
+                    <field name="effect_reason" optional="hide"/>
+
+                </search>
+            </field>
+        </record>
+        <record id="ab_hr_effect_view_pivot" model="ir.ui.view">
+            <field name="name">ab_hr_effect_view_pivot</field>
+            <field name="model">ab_hr_effect</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_hr_effect_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_effect_action" model="ir.actions.act_window">
+            <field name="name">Payroll Effects</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_effect</field>
+            <field name="view_mode">list,form,pivot</field>
+
+        </record>
+
+        <menuitem id="ab_hr_effect_menu"
+                  name="Monthly Effects"
+                  parent="ab_hr_main_payroll_effects_menu"
+                  action="ab_hr_effect_action"
+                  sequence="50"/>
+
+
+    </data>
+</odoo>

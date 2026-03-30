@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.FormViewButtonsReturn"
+       t-inherit="web.FormView.Buttons"
+       t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o_form_button_save')]" position="replace">
+            <t t-if="model.root and model.root.resModel == 'ab_sales_return_header'">
+                <ViewButton
+                        t-if="model.root.isInEdition"
+                        record="model.root"
+                        string="'Push to E-Plus'"
+                        className="'btn-primary o_form_button_save'"
+                        clickParams="{'type': 'object', 'name': 'action_push_to_eplus_return'}"/>
+            </t>
+            <t t-else="">
+                <button t-if="model.root.isInEdition"
+                        type="button"
+                        class="btn btn-primary o_form_button_save"
+                        data-hotkey="s"
+                        t-on-click.stop="() => this.saveButtonClicked({closable: true})">
+                    Save
+                </button>
+            </t>
+        </xpath>
+    </t>
+</templates>

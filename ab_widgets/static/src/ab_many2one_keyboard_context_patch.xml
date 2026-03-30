@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_widgets.ABMany2oneKeyboardContextPatch"
+       t-inherit="ab_widgets.ABMany2one"
+       t-inherit-mode="extension">
+        <xpath expr="//Many2One" position="attributes">
+            <attribute name="context">keyboardMapContext</attribute>
+        </xpath>
+    </t>
+</templates>

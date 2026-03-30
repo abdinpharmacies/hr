@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_view_tree" model="ir.ui.view">
+            <field name="name">ab_product_view_tree</field>
+            <field name="model">ab_product</field>
+            <field name="arch" type="xml">
+                <list string="ab_product_tree">
+                    <field name="id" optional="hide"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="default_price"/>
+                    <field name="default_reference_price"/>
+                    <field name="default_cost" optional="hide"/>
+                    <field name="default_reference_cost" optional="hide"/>
+                    <field name="uom_category_id" optional="hide"/>
+                    <field name="uom_id" optional="hide"/>
+                    <!--                    <field name="unit_l_id" string="Large Unit" optional="hide"/>-->
+                    <!--                    <field name="unit_m_id" string="Medium Unit" context="{'default_unit_size':'medium'}" optional="hide"/>-->
+                    <!--                    <field name="unit_s_id" string="Small Unit" context="{'default_unit_size':'small'}" optional="hide"/>-->
+                    <field name="allow_sale" widget="boolean_toggle" optional="hide"/>
+                    <field name="allow_purchase" widget="boolean_toggle" optional="hide"/>
+                    <field name="tag_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="barcode_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="product_card_id" optional="hide"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_product_view_form" model="ir.ui.view">
+            <field name="name">ab_product_view_form</field>
+            <field name="model">ab_product</field>
+            <field name="arch" type="xml">
+                <form string="ab_product_form">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="product_card_name" placeholder="Product Name Without Units ..."/>
+                            </h1>
+                        </div>
+                        <group string="Product Basic">
+                            <field name="name"/>
+                            <field name="default_price"/>
+                            <field name="default_reference_price"/>
+                            <field name="default_cost"/>
+                            <field name="default_reference_cost"/>
+                        </group>
+                        <button name="btn_edit_product_main_data" type="object" icon="fa-edit"
+                                class="btn-primary"/>
+                        <group string="Product Details">
+                            <!--                            <field name="unit_l_id" string="Large Unit"/>-->
+                            <!--                            <field name="unit_m_id" string="Medium Unit" context="{'default_unit_size':'medium'}"/>-->
+                            <!--                            <field name="unit_s_id" string="Small Unit" context="{'default_unit_size':'small'}"/>-->
+
+                            <field name="u_s_num"/>
+                            <field name="u_s_name"/>
+                            <field name="uom_category_id"/>
+                            <field name="uom_id"/>
+                            <field name="allow_sale" widget="boolean_toggle"/>
+                            <field name="allow_purchase" widget="boolean_toggle"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                            <field name="barcode_ids" widget="many2many_tags"/>
+                            <field name="code"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_product_view_search" model="ir.ui.view">
+            <field name="name">ab_product_view_search</field>
+            <field name="model">ab_product</field>
+            <field name="arch" type="xml">
+                <search string="ab_product_search">
+                    <field name="product_search"/>
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="default_price"/>
+                    <field name="eplus_serial"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="ab_product_action" model="ir.actions.act_window">
+            <field name="name">Sub Products</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

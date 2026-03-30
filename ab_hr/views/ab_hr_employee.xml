@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_hr_employee_view_kanban" model="ir.ui.view">
+            <field name="name">ab_hr_employee_kanban</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <kanban>
+                    <field name="name"/>
+                    <field name="job_id"/>
+                    <field name="department_id"/>
+                    <field name="parent_id"/>
+                    <field name="accid"/>
+                    <field name="work_phone"/>
+                    <field name="work_email"/>
+                    <field name="address_text"/>
+                    <field name="hiring_date"/>
+                    <field name="issue_date"/>
+                    <field name="termination_date"/>
+                    <field name="is_working"/>
+                    <field name="supervision_type"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="d-flex flex-column justify-content-between w-100">
+                                <div class="d-flex justify-content-between">
+                                    <strong>
+                                        <field name="job_id" invisible="1"/>
+                                        <field name="is_working" invisible="1"/>
+                                        <t t-if="!(!record.is_working.raw_value)">
+                                            <div class="h4 text-success">
+                                                <field name="accid" placeholder="Code"/>
+                                            </div>
+                                        </t>
+                                        <t t-else="">
+                                            <div class="h4 text-danger">
+                                                <field name="accid" placeholder="Code"/>
+                                            </div>
+                                        </t>
+                                    </strong>
+                                    <div class="h6">
+                                        <field name="supervision_type" invisible="1"/>
+                                        <t t-if="!(!record.supervision_type.raw_value)">
+                                            <field name="supervision_type"
+                                                   widget="badge"
+                                                   decoration-info="supervision_type=='indirect'"
+                                                   decoration-warning="supervision_type=='other'"
+                                                   decoration-success="supervision_type=='direct'"
+                                                   decoration-danger="supervision_type=='myself'"
+                                                   placeholder="Supervision Type"/>
+                                        </t>
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-auto">
+                                    <div class="h4 text-info text-center">
+                                        <field name="name" placeholder="Employee's Name"/>
+                                    </div>
+                                    <div class="text-dark text-center pt-2">
+                                        <field name="job_id" placeholder="Main Job"/>
+                                        -
+                                        <field name="department_id" placeholder="Main Job"/>
+                                    </div>
+                                    <div class="h6 text-muted text-center">
+                                        <i class="fa fa-user"/>
+                                        <field name="parent_id" placeholder="Manager"/>
+                                        <i class="fa fa-user"/>
+                                    </div>
+                                    <div class="text-dark text-center pt-2">
+                                        <field name="work_phone" placeholder="Phone"/>
+                                    </div>
+                                    <div class="text-dark text-center pt-1">
+                                        <field name="work_email" placeholder="Email"/>
+                                    </div>
+                                    <div class="text-dark text-center font-italic pt-1 pb-2">
+                                        <small>
+                                            <field name="address_text" placeholder="Address"/>
+                                        </small>
+                                    </div>
+
+                                </div>
+
+                                <div class="d-flex justify-content-between">
+                                    <div class="text-success">
+                                        <small>
+                                            <field name="hiring_date"/>
+                                        </small>
+                                    </div>
+                                    <div class="text-warning">
+                                        <small>
+                                            <field name="issue_date"/>
+                                        </small>
+                                    </div>
+                                    <t t-if="!(!record.termination_date.raw_value)">
+                                        <div class="text-danger">
+                                            <small>
+                                                <field name="termination_date"/>
+                                            </small>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_employee_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_employee_view_tree</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_employee_tree">
+                    <field name="name" optional="show"/>
+                    <field name="costcenter_id" optional="show"/>
+                    <field name="mobile_phone" optional="show"/>
+                    <field name="work_email" optional="show"/>
+                    <field name="user_id" optional="show"/>
+                    <field name="work_phone" optional="show"/>
+                    <field name="cc_id" optional="show"/>
+                    <field name="accid" optional="show"/>
+                    <field name="barcode" optional="show"/>
+                    <field name="bc_id" optional="show"/>
+                    <field name="english_name" optional="show"/>
+                    <field name="religion" optional="show"/>
+                    <field name="gender" optional="show"/>
+                    <field name="identification_id" optional="show"/>
+                    <field name="birthday" optional="show"/>
+                    <field name="job_id" optional="show"/>
+                    <field name="department_id" optional="show"/>
+                    <field name="parent_department_id" optional="show"/>
+                    <field name="parent_id" optional="show"/>
+                    <field name="supervision_type" widget="badge" optional="show"/>
+                    <field name="is_working" optional="show"/>
+                    <field name="address_text" optional="show"/>
+                    <field name="active" optional="show"/>
+                    <field name="internal_working_employee" optional="show"/>
+
+
+                </list>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_employee_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_employee_view_form</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="arch" type="xml">
+                <form string="Employee">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active == True"/>
+                        <div>
+                            <field name="accid" class="h1 text-muted" nolabel="1"/>
+                        </div>
+
+                        <div class="oe_title">
+                            <field name="user_id" invisible="1"/>
+                            <h1 class="d-flex">
+                                <field name="name" default_focus="1" placeholder="Employee's Name" required="True"/>
+                                <a title="Chat" icon="fa-comments" href="#" class="ml8 o_employee_chat_btn"
+                                   invisible="not context.get('chat_icon') or user_id == False" role="button"><i
+                                        class="fa fa-comments"/></a>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="mobile_phone" widget="phone"/>
+                                <field name="work_phone" widget="phone"/>
+                                <field name="work_email" widget="email"/>
+                            </group>
+                            <group>
+                                <field name="job_id"/>
+                                <field name="department_id"/>
+                                <field name="manual_manager"
+                                       groups="ab_hr.group_ab_hr_co"
+                                       widget="boolean_toggle"/>
+                                <field name="parent_id"/>
+                                <field name="supervision_type" widget="badge" readonly="1"/>
+                                <field name="parent_department_id" optional="show"/>
+
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Main Data">
+                                <group>
+                                    <group string="Private Info">
+                                        <field name="costcenter_id"/>
+                                        <field name="english_name"/>
+                                        <field name="identification_id"/>
+                                        <field name="birthday"/>
+                                        <field name="religion"/>
+                                        <field name="gender"/>
+                                        <field name="address_text"/>
+                                        <field name="graduate"/>
+                                    </group>
+                                    <group string="Accounting Info">
+                                        <field name="khazna_subscription"/>
+                                        <field name="user_line_owner"/>
+                                        <field name="payment_name"/>
+                                        <field name="payment_no"/>
+                                    </group>
+                                    <group string="Account Settings">
+                                        <field name="user_id"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Jobs Occupied" name="job_occupied">
+                                <field name="job_occupied_ids"
+                                       context="{'allow_edit': '1'}"
+                                       mode="kanban" readonly="1"/>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="ab_hr.view_employee_form_spec" model="ir.ui.view">
+            <field name="name">ab_hr.view_employee_form_spec</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="inherit_id" ref="ab_hr.ab_hr_employee_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='job_occupied']" position="after">
+                    <page string="Documents"
+                          groups="ab_hr.group_ab_hr_personnel_spec,ab_hr.group_ab_hr_co,ab_hr.group_ab_hr_payroll_specialist">
+                        <group>
+                            <div class="text-right">
+                                <label for="is_docs_complete" string="Is Documents Complete"/>
+                                <field name="is_docs_complete"/>
+                            </div>
+                        </group>
+                        <group>
+                            <field name="emp_doc_status_ids"
+                                   context="{'allow_edit': '1'}"
+                                   nolabel="1" readonly="1"/>
+                        </group>
+                    </page>
+                    <page string="Insurance Info"
+                          groups="ab_hr.group_ab_hr_personnel_spec,ab_hr.group_ab_hr_co,ab_hr.group_ab_hr_payroll_specialist">
+                        <field name="insurance_info_ids"/>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <!-- Add to Employee_Form (History) Page-->
+        <record id="ab_hr.view_employee_form_history" model="ir.ui.view">
+            <field name="name">ab_hr.view_employee_form_history</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="inherit_id" ref="ab_hr.ab_hr_employee_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='job_occupied']" position="after">
+                    <page string="History" groups="ab_hr.group_ab_hr_co,ab_hr.group_ab_hr_payroll_specialist">
+                        <field name="emp_history_ids">
+                            <list>
+                                <field name="job_id" optional="show"/>
+                                <field name="old_job_title" optional="show"/>
+                                <field name="old_workplace" optional="show"/>
+                                <field name="territory" optional="show"/>
+                                <field name="action_type" optional="show"/>
+                                <field name="action_date" optional="show"/>
+                                <field name="issue_date" optional="hide"/>
+                                <field name="termination_date" optional="show"/>
+                                <field name="notes" optional="hide"/>
+                                <field name="alt_job_id" optional="show"/>
+                                <field name="new_job_title" optional="show"/>
+                                <field name="new_workplace" optional="show"/>
+                                <field name="workplace_region" optional="show"/>
+
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+
+        <record id="ab_hr_employee_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_employee_view_search</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_employee_search">
+                    <field name="name" string="Employee"
+                           filter_domain="['|', '|',
+                           ('name', 'ilike', self),
+                           ('mod_name', 'ilike', self),
+                           ('costcenter_id.code', '=ilike', self),
+                           ]"/>
+                    <field name="name" string="Any Employee Data"
+                           filter_domain="['|', '|','|',
+                           ('work_email', 'ilike', self),
+                           ('name', 'ilike', self),
+                           ('mod_name', 'ilike', self),
+                           ('costcenter_id.code', '=ilike', self),
+                           ]"/>
+                    <field name="department_id"/>
+                    <field name="job_id" string="Job Title"/>
+                    <field name="parent_id"/>
+
+                    <filter name="active_employees_only" string="Active Employees"
+                            domain="[('is_working','!=',False)]"/>
+                    <separator/>
+
+                    <filter name="supervision_type_direct" string="Direct Supervision"
+                            domain="[('supervision_type','=','direct')]"/>
+
+                    <filter name="supervision_type_indirect" string="Indirect Supervision"
+                            domain="[('supervision_type','=','indirect')]"/>
+
+                    <filter name="supervision_type_indirect_to_subordinate" string="Indirect To Subordinate"
+                            domain="[('supervision_type','=','indirect_to_subordinate')]"/>
+
+                    <filter name="supervision_type_myself" string="Myself"
+                            domain="[('supervision_type','=','myself')]"/>
+
+                    <searchpanel>
+                        <field name="department_id" icon="fa-users" select="multi"/>
+                    </searchpanel>
+                </search>
+            </field>
+        </record>
+        <record id="ab_hr_employee_view_pivot" model="ir.ui.view">
+            <field name="name">ab_hr_employee_view_pivot</field>
+            <field name="model">ab_hr_employee</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_hr_employee_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_employee_action" model="ir.actions.act_window">
+            <field name="name">Employees</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_employee</field>
+            <field name="view_mode">kanban,list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_hr_employee_menu"
+                  name="Employees"
+                  parent="ab_hr_employee_sub_menu"
+                  action="ab_hr_employee_action"
+                  sequence="10"/>
+
+
+    </data>
+</odoo>

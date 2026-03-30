@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.PosPrinterDialog">
+        <Dialog title="'Printer Settings'" size="'md'">
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label">Default Printer</label>
+                    <input class="form-control"
+                           t-att-value="state.printerName"
+                           t-on-input="onInput"
+                           placeholder="Printer name (label only)"/>
+                    <div class="form-text">
+                        The system print dialog opens on print. Choose the printer there.
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label">Receipt Header</label>
+                    <textarea class="form-control"
+                              rows="2"
+                              t-att-value="state.receiptHeader"
+                              t-on-input="onHeaderInput"
+                              placeholder="Header text (optional)"/>
+                </div>
+                <div>
+                    <label class="form-label">Receipt Footer</label>
+                    <textarea class="form-control"
+                              rows="2"
+                              t-att-value="state.receiptFooter"
+                              t-on-input="onFooterInput"
+                              placeholder="Footer text (optional)"/>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary" type="button" t-on-click="cancel">Cancel</button>
+                    <button class="btn btn-primary" type="button" t-on-click="save">Save Default</button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

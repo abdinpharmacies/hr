@@ -1,0 +1,5 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_contract_sys,access_ab_contract_sys,model_ab_contract,base.group_system,1,1,1,1
+access_ab_contract_product_origin_sys,access_ab_contract_product_origin_sys,model_ab_contract_product_origin,base.group_system,1,1,1,1
+access_ab_contract_manager,access_ab_contract_manager,model_ab_contract,ab_sales.group_ab_sales_manager,1,1,1,1
+access_ab_contract_product_origin_manager,access_ab_contract_product_origin_manager,model_ab_contract_product_origin,ab_sales.group_ab_sales_manager,1,1,1,1

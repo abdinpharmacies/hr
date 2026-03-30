@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_bill_wizard_action" model="ir.actions.client">
+            <field name="name">Bill Wizard</field>
+            <field name="tag">ab_sales.bill_wizard</field>
+        </record>
+
+        <menuitem id="ab_sales_bill_wizard_menu"
+                  name="Bill Wizard"
+                  parent="sales_menu_root"
+                  action="ab_sales_bill_wizard_action"
+                  sequence="2"
+                  groups="base.group_user"/>
+    </data>
+</odoo>
+

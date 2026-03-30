@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Sales header: add contract + show contract totals -->
+        <record id="ab_sales_header_view_form_inherit_contract" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_form_inherit_contract</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='current_customer']//group//field[@name='customer_id']" position="after">
+                    <field name="contract_id"
+                           readonly="status != 'prepending'"/>
+                    <field name="discount" readonly="1" invisible="contract_id == False"/>
+                    <field name="total_after_discount" readonly="1" invisible="contract_id == False"/>
+                    <field name="cust_pay" readonly="1" invisible="contract_id == False"/>
+                    <field name="company_pay" readonly="1" invisible="contract_id == False"/>
+                </xpath>
+
+                <xpath expr="//field[@name='line_ids']//list//field[@name='sell_price']" position="after">
+                    <field name="discount" optional="show" column_invisible="parent.contract_id == False"/>
+                    <field name="ab_contract_discount_amount" optional="hide" column_invisible="parent.contract_id == False"/>
+                    <field name="ab_customer_amount" optional="hide" column_invisible="parent.contract_id == False"/>
+                    <field name="ab_company_amount" optional="hide" column_invisible="parent.contract_id == False"/>
+                    <field name="ab_contract_net_amount" optional="hide" column_invisible="parent.contract_id == False"/>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Contract management (basic) -->
+        <record id="ab_contract_view_tree" model="ir.ui.view">
+            <field name="name">ab_contract_view_tree</field>
+            <field name="model">ab_contract</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="active"/>
+                    <field name="paid_percentage"/>
+                    <field name="paid_amount"/>
+                    <field name="discount_percentage_rule"/>
+                    <field name="max_bill_value"/>
+                    <field name="eplus_cust_id"/>
+                    <field name="eplus_cust_code"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_contract_view_form" model="ir.ui.view">
+            <field name="name">ab_contract_view_form</field>
+            <field name="model">ab_contract</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="active"/>
+                                <field name="eplus_cust_id"/>
+                                <field name="eplus_cust_code"/>
+                            </group>
+                            <group string="Copay">
+                                <field name="paid_percentage"/>
+                                <field name="paid_amount"/>
+                                <field name="discount_percentage_rule"/>
+                                <field name="max_bill_value"/>
+                            </group>
+                        </group>
+                        <group string="Default Discounts">
+                            <group>
+                                <field name="local_product_discount"/>
+                                <field name="imported_product_discount"/>
+                                <field name="special_import_product_discount"/>
+                            </group>
+                            <group>
+                                <field name="local_made_product_discount"/>
+                                <field name="other_product_discount"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_contract_action" model="ir.actions.act_window">
+            <field name="name">Contracts</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_contract</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="ab_contract_menu"
+                  name="Contracts"
+                  parent="ab_sales.config_sub_menu"
+                  action="ab_contract_action"
+                  sequence="10"/>
+
+        <record id="ab_contract_product_origin_view_tree" model="ir.ui.view">
+            <field name="name">ab_contract_product_origin_view_tree</field>
+            <field name="model">ab_contract_product_origin</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="contract_id"/>
+                    <field name="product_card_id"/>
+                    <field name="discount"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_contract_product_origin_view_form" model="ir.ui.view">
+            <field name="name">ab_contract_product_origin_view_form</field>
+            <field name="model">ab_contract_product_origin</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="contract_id"/>
+                            <field name="product_card_id"/>
+                            <field name="discount"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_contract_product_origin_action" model="ir.actions.act_window">
+            <field name="name">Contract Product Rules</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_contract_product_origin</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="ab_contract_product_origin_menu"
+                  name="Contract Product Rules"
+                  parent="ab_sales.config_sub_menu"
+                  action="ab_contract_product_origin_action"
+                  sequence="20"/>
+
+    </data>
+</odoo>

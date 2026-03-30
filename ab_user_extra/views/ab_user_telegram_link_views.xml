@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_user_telegram_link_list" model="ir.ui.view">
+            <field name="name">ab_user_telegram_link.list</field>
+            <field name="model">ab_user_telegram_link</field>
+            <field name="arch" type="xml">
+                <list string="Telegram User Links" default_order="write_date desc">
+                    <field name="telegram_user_id"/>
+                    <field name="telegram_chat_id"/>
+                    <field name="telegram_full_name"/>
+                    <field name="telegram_phone"/>
+                    <field name="telegram_language_code"/>
+                    <field name="status" widget="badge"/>
+                    <field name="user_id"/>
+                    <field name="login_email"/>
+                    <field name="pin"/>
+                    <field name="ai_context_token_limit"/>
+                    <field name="linked_at"/>
+                    <field name="last_verified_at"/>
+                    <field name="last_error"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_user_telegram_link_search" model="ir.ui.view">
+            <field name="name">ab_user_telegram_link.search</field>
+            <field name="model">ab_user_telegram_link</field>
+            <field name="arch" type="xml">
+                <search string="Telegram User Links">
+                    <field name="telegram_user_id"/>
+                    <field name="telegram_chat_id"/>
+                    <field name="telegram_full_name"/>
+                    <field name="telegram_phone"/>
+                    <field name="telegram_username"/>
+                    <field name="user_id"/>
+                    <field name="login_email"/>
+                    <field name="status"/>
+                    <filter name="filter_linked" string="Linked" domain="[('status', '=', 'linked')]"/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_user" string="Odoo User" context="{'group_by': 'user_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_user_telegram_link_form" model="ir.ui.view">
+            <field name="name">ab_user_telegram_link.form</field>
+            <field name="model">ab_user_telegram_link</field>
+            <field name="arch" type="xml">
+                <form string="Telegram User Link">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="telegram_user_id"/>
+                                <field name="telegram_chat_id"/>
+                                <field name="telegram_full_name"/>
+                                <field name="telegram_username"/>
+                                <field name="telegram_phone"/>
+                                <field name="telegram_language_code"/>
+                                <field name="status" widget="badge"/>
+                                <field name="last_error"/>
+                            </group>
+                            <group>
+                                <field name="user_id"/>
+                                <field name="login_email"/>
+                                <field name="pending_email"/>
+                                <field name="pin"/>
+                                <field name="ai_context_token_limit"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="pin_generated_at"/>
+                                <field name="linked_at"/>
+                            </group>
+                            <group>
+                                <field name="last_verified_at"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_user_telegram_link" model="ir.actions.act_window">
+            <field name="name">User Links</field>
+            <field name="res_model">ab_user_telegram_link</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_user_telegram_link_search"/>
+        </record>
+
+        <menuitem id="menu_ab_user_telegram_link"
+                  name="User Links"
+                  parent="ab_telegram_webhook.menu_ab_telegram_webhook_root"
+                  action="action_ab_user_telegram_link"
+                  groups="base.group_system"
+                  sequence="20"/>
+    </data>
+</odoo>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="ab_inventory_adjust_record_rule_no_delete_if_pending" model="ir.rule">
+            <field name="name">Prevent Delete if Status Pending</field>
+            <field name="model_id" ref="model_ab_inventory_adjust_header"/>
+            <field name="domain_force">[('status', '=', 'pending')]</field>
+            <field name="groups" eval="[(4, ref('ab_inventory_adjust.group_ab_inventory_adjust_user'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+    </data>
+</odoo>

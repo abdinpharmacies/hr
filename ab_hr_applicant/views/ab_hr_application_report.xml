@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- QWEB TEMPLATE -->
+        <template id="report_ab_hr_application">
+            <t t-call="web.html_container">
+                <t t-call="web.basic_layout" t-lang="'ar_001'">
+                    <style>
+                        @font-face {
+                            font-family: "Calibri";
+                            src: local("Calibri"), local("Carlito");
+                        }
+                        .o_report_layout,
+                        .o_report_layout * {
+                            font-family: "Calibri", "Carlito", "Noto Naskh Arabic", "Amiri", "Tahoma", "DejaVu Sans", sans-serif !important;
+                        }
+                        .app-report,
+                        .app-report * {
+                            font-family: "Calibri", "Carlito", "Noto Naskh Arabic", "Amiri", "Tahoma", "DejaVu Sans", sans-serif !important;
+                        }
+                        .app-report {
+                            font-size: 13px;
+                            line-height: 1.6;
+                            color: #1f2933;
+                            direction: rtl;
+                            text-align: right;
+                        }
+                        .app-header {
+                            border: 1px solid #d9e2ec;
+                            border-right: 4px solid #0f4c81;
+                            border-radius: 8px;
+                            padding: 10px 12px;
+                            margin-bottom: 14px;
+                            background: #f8fbff;
+                        }
+                        .app-title {font-size: 24px; font-weight: 700; margin: 0;}
+                        .app-subtitle {color: #4f5f73; margin-top: 3px; font-size: 12px;}
+                        .app-code {font-size: 17px; font-weight: 700; color: #0f4c81;}
+                        .section-title {
+                            margin: 16px 0 8px;
+                            padding: 5px 9px;
+                            font-size: 15px;
+                            font-weight: 700;
+                            color: #0f4c81;
+                            background: #edf4fb;
+                            border: 1px solid #d7e3f0;
+                            border-radius: 6px;
+                        }
+                        .summary-box {
+                            background: #f7fafc;
+                            border: 1px solid #d9e2ec;
+                            border-radius: 8px;
+                            padding: 10px 12px;
+                            margin-bottom: 10px;
+                        }
+                        .summary-label {color: #52606d; font-size: 11px;}
+                        .summary-value {font-weight: 700; font-size: 13px;}
+                        .tag {
+                            display: inline-block;
+                            padding: 3px 9px;
+                            border: 1px solid #cfd8e3;
+                            border-radius: 12px;
+                            margin-left: 5px;
+                            margin-bottom: 4px;
+                            font-size: 11px;
+                            font-weight: 600;
+                            background: #f6f9fc;
+                        }
+                        .empty-note {text-align: center; color: #7b8794; font-style: italic;}
+                        .app-table {
+                            margin-bottom: 10px;
+                            border: 1px solid #d9e2ec;
+                            border-radius: 8px;
+                            overflow: hidden;
+                        }
+                        .app-table > thead > tr > th {
+                            background: #eef3f8;
+                            color: #243447;
+                            font-size: 12px;
+                            font-weight: 700;
+                        }
+                        .app-table th, .app-table td {
+                            vertical-align: middle;
+                            border-color: #d9e2ec !important;
+                            padding: 6px 8px !important;
+                        }
+                        .app-table .cell-muted {color: #6f7a86;}
+                        .app-table .cell-num {text-align: center; white-space: nowrap;}
+                        .personal-data-table {
+                            table-layout: fixed;
+                            width: 100%;
+                        }
+                        .personal-data-table th,
+                        .personal-data-table td {
+                            text-align: right;
+                        }
+                        .personal-data-table th {
+                            width: 18%;
+                            background: #f8fbff;
+                        }
+                        .personal-data-table td {
+                            width: 32%;
+                        }
+                        .text-left {text-align: left;}
+                    </style>
+                    <t t-foreach="docs" t-as="o">
+                        <t t-set="o" t-value="o.with_context(lang='ar_001')"/>
+                        <t t-set="form_type_map" t-value="{'recruit': 'توظيف', 'training': 'تدريب'}"/>
+                        <t t-set="gender_map" t-value="{'male': 'ذكر', 'female': 'أنثى'}"/>
+                        <t t-set="religion_map" t-value="{'muslim': 'مسلم', 'christian': 'مسيحي', 'jewish': 'يهودي', 'undefined': 'غير محدد'}"/>
+                        <t t-set="marital_map" t-value="{'single': 'أعزب', 'married': 'متزوج', 'divorced': 'مطلق', 'widower': 'أرمل'}"/>
+                        <t t-set="military_map" t-value="{'perform': 'أدى الخدمة', 'did_not_perform': 'لم يؤد الخدمة', 'delayed': 'مؤجل', 'exempt': 'معفى', 'unrequired': 'غير مطلوب'}"/>
+                        <t t-set="action_map" t-value="{'accepted_job_offer': 'قبول عرض العمل', 'accepted_short_list': 'قبول القائمة المختصرة', 'accepted_waiting_list': 'قبول قائمة الانتظار', 'training': 'تدريب', 'advanced_training': 'تدريب متقدم', 'duplicated_training': 'تدريب مكرر', 're_appraisal_interview': 'مقابلة إعادة تقييم', 'archived': 'مؤرشف', 's_list': 'قائمة خاصة', 'rejected': 'مرفوض'}"/>
+                        <div class="page">
+                            <div class="app-report" lang="ar" dir="rtl">
+                                <div class="row app-header">
+                                    <div class="col-2">
+                                        <img t-if="o.env.company.logo_web" t-att-src="image_data_uri(o.env.company.logo_web)" style="max-height: 56px; max-width: 56px;" alt="شعار الشركة"/>
+                                    </div>
+                                    <div class="col-7">
+                                        <h2 class="app-title">استمارة تقديم</h2>
+                                        <div class="app-subtitle"><t t-esc="o.env.company.name or ''"/></div>
+                                        <div class="app-subtitle">تاريخ التقديم: <span t-field="o.create_date" t-options="{'widget': 'datetime'}"/></div>
+                                    </div>
+                                    <div class="col-3 text-left">
+                                        <div class="summary-label">كود الطلب</div>
+                                        <div class="app-code"><t t-esc="o.code or '-'"/></div>
+                                    </div>
+                                </div>
+
+                                <div class="row summary-box">
+                                    <div class="col-3">
+                                        <div class="summary-label">اسم المتقدم</div>
+                                        <div class="summary-value"><t t-esc="o.name or '-'"/></div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="summary-label">الرقم القومي</div>
+                                        <div class="summary-value"><t t-esc="o.national_identity or '-'"/></div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="summary-label">نوع الطلب</div>
+                                        <div class="summary-value"><t t-esc="form_type_map.get(o.type_of_form, '-')"/></div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="summary-label">الوظيفة المطلوبة</div>
+                                        <div class="summary-value"><t t-esc="o.required_job_id.name or '-'"/></div>
+                                    </div>
+                                </div>
+
+                                <div class="row summary-box">
+                                    <div class="col-3">
+                                        <div class="summary-label">الراتب المتوقع</div>
+                                        <div class="summary-value"><t t-esc="'{:,.0f}'.format(o.expected_salary) if o.expected_salary else '-'"/></div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="summary-label">خبرة سابقة بالشركة</div>
+                                        <div class="summary-value"><t t-esc="'نعم' if o.bconnect_experience else 'لا'"/></div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="summary-label">آخر إجراء</div>
+                                        <div class="summary-value"><t t-esc="action_map.get(o.last_action, '-')"/></div>
+                                    </div>
+                                </div>
+
+                                <h4 class="section-title">فترات العمل</h4>
+                                <div>
+                                    <span t-if="o.morning" class="tag">صباحي</span>
+                                    <span t-if="o.evening" class="tag">مسائي</span>
+                                    <span t-if="o.after_midnight" class="tag">بعد منتصف الليل</span>
+                                    <span t-if="not (o.morning or o.evening or o.after_midnight)" class="tag">غير محدد</span>
+                                </div>
+
+                                <h4 class="section-title">البيانات الشخصية ووسائل الاتصال</h4>
+                                <table class="table table-sm table-bordered app-table personal-data-table">
+                                    <tr>
+                                        <th>تاريخ الميلاد</th>
+                                        <td><span t-if="o.birth_date" t-field="o.birth_date" t-options="{'widget': 'date'}"/><t t-if="not o.birth_date">-</t></td>
+                                        <th>النوع</th>
+                                        <td><t t-esc="gender_map.get(o.gender, '-')"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>الديانة</th>
+                                        <td><t t-esc="religion_map.get(o.religion, '-')"/></td>
+                                        <th>الحالة الاجتماعية</th>
+                                        <td><t t-esc="marital_map.get(o.marital_status, '-')"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>الموقف من التجنيد</th>
+                                        <td><t t-esc="military_map.get(o.military_status, '-')"/></td>
+                                        <th>الجنسية</th>
+                                        <td><t t-esc="o.nationality.name or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>الموبايل</th>
+                                        <td><t t-esc="o.mobile or '-'"/></td>
+                                        <th>الهاتف الأرضي</th>
+                                        <td><t t-esc="o.telephone or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>البريد الإلكتروني</th>
+                                        <td><t t-esc="o.email or '-'"/></td>
+                                        <th>تاريخ التخرج</th>
+                                        <td><span t-if="o.graduate_date" t-field="o.graduate_date" t-options="{'widget': 'date'}"/><t t-if="not o.graduate_date">-</t></td>
+                                    </tr>
+                                    <tr>
+                                        <th>المحافظة</th>
+                                        <td><t t-esc="o.governorate_id.display_name or '-'"/></td>
+                                        <th>المدينة</th>
+                                        <td><t t-esc="o.city_id.display_name or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>العنوان</th>
+                                        <td colspan="3"><t t-esc="o.address or '-'"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th>المؤهل</th>
+                                        <td colspan="3"><t t-esc="o.qualification or '-'"/></td>
+                                    </tr>
+                                </table>
+
+                                <h4 class="section-title">الخبرات السابقة</h4>
+                                <table class="table table-sm table-bordered app-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="cell-num">م</th>
+                                            <th>الشركة</th>
+                                            <th>المسمى الوظيفي</th>
+                                            <th class="cell-num">من</th>
+                                            <th class="cell-num">إلى</th>
+                                            <th>سبب ترك العمل</th>
+                                            <th class="cell-num">الراتب</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.experience_ids" t-as="exp">
+                                            <td class="cell-num"><t t-esc="exp_index + 1"/></td>
+                                            <td><t t-esc="exp.company_name or '-'"/></td>
+                                            <td><t t-esc="exp.job_title or '-'"/></td>
+                                            <td class="cell-num"><span t-if="exp.starting_date" t-field="exp.starting_date" t-options="{'widget': 'date'}"/><t t-if="not exp.starting_date">-</t></td>
+                                            <td class="cell-num"><span t-if="exp.ending_date" t-field="exp.ending_date" t-options="{'widget': 'date'}"/><t t-if="not exp.ending_date">-</t></td>
+                                            <td><t t-esc="exp.reason_for_leaving or '-'"/></td>
+                                            <td class="cell-num"><t t-esc="'{:,.0f}'.format(exp.salary) if exp.salary else '-'"/></td>
+                                        </tr>
+                                        <tr t-if="not o.experience_ids">
+                                            <td colspan="7" class="empty-note">لا توجد بيانات خبرات سابقة.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <h4 class="section-title">الدورات التدريبية</h4>
+                                <table class="table table-sm table-bordered app-table">
+                                    <thead>
+                                        <tr>
+                                            <th class="cell-num">م</th>
+                                            <th>التخصص</th>
+                                            <th>الجهة</th>
+                                            <th>الفترة</th>
+                                            <th class="cell-num">التقدير</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr t-foreach="o.trainingcourses_ids" t-as="c">
+                                            <td class="cell-num"><t t-esc="c_index + 1"/></td>
+                                            <td><t t-esc="c.specialty or '-'"/></td>
+                                            <td><t t-esc="c.organization or '-'"/></td>
+                                            <td><t t-esc="c.time_period or '-'"/></td>
+                                            <td class="cell-num"><t t-esc="c.grade or '-'"/></td>
+                                        </tr>
+                                        <tr t-if="not o.trainingcourses_ids">
+                                            <td colspan="5" class="empty-note">لا توجد دورات تدريبية.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+            </t>
+        </template>
+
+        <!-- REPORT ACTION -->
+        <record id="action_report_ab_hr_application" model="ir.actions.report">
+            <field name="name">استمارة تقديم</field>
+            <field name="model">ab_hr_application</field>
+            <field name="report_type">qweb-pdf</field>
+            <field name="report_name">ab_hr_applicant.report_ab_hr_application</field>
+            <field name="report_file">ab_hr_applicant.report_ab_hr_application</field>
+            <field name="paperformat_id" ref="ab_hr_applicant.paperformat_ab_hr_application"/>
+            <field name="attachment_use">False</field>
+            <field name="attachment"></field>
+            <field name="print_report_name">'استمارة تقديم - %s' % (object.name)</field>
+            <field name="binding_model_id" ref="model_ab_hr_application"/>
+            <field name="binding_type">report</field>
+            <field name="binding_view_types">form</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="menu_root"
+                  name="Inventory Adjustment"
+                  web_icon="ab_inventory_adjust,static/description/icon.png"
+                  sequence="101"/>
+
+        <menuitem id="reports_sub_menu" name="Reports" parent="menu_root" sequence="100"/>
+
+        <menuitem id="products_menu"
+                  name="Products"
+                  parent="reports_sub_menu"
+                  action="ab_product.ab_product_action"
+                  sequence="100"/>
+
+        <menuitem id="ab_product_barcode_menu"
+                  name="Product Barcodes"
+                  parent="reports_sub_menu"
+                  action="ab_product.ab_product_barcode_action"
+                  sequence="101"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_department_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_department_view_tree</field>
+            <field name="model">ab_hr_department</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_department_tree" multi_edit="1">
+                    <field name="name"/>
+                    <field name="manager_id" optional="show"/>
+                    <field name="parent_id" optional="show"/>
+                    <field name="store_id" optional="hide"/>
+                    <field name="job_title_ids" optional="show" widget="many2many_tags"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_department_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_department_view_form</field>
+            <field name="model">ab_hr_department</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_department_form">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active == True"/>
+
+                        <group>
+                            <field name="name"/>
+                            <field name="manager_id"/>
+                            <field name="parent_id"/>
+                            <field name="job_title_ids" widget="many2many_tags"/>
+                            <field name="store_id"/>
+                            <field name="user_id"/>
+                        </group>
+                        <notebook>
+                            <page string="Operation Manpower">
+                                <field name="manpower_ids" readonly="1">
+                                    <list>
+                                        <field name="job_title"/>
+                                        <field name="territory"/>
+                                        <field name="op_manpower"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Occupied Jobs">
+                                <field name="occupied_job_ids"/>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_department_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_department_view_search</field>
+            <field name="model">ab_hr_department</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_department_search">
+                    <field name="name"/>
+                    <field name="manager_id"/>
+                    <field name="parent_id"/>
+                    <field name="store_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_hr_department_view_pivot" model="ir.ui.view">
+            <field name="name">ab_hr_department_view_pivot</field>
+            <field name="model">ab_hr_department</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_hr_department_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_department_action" model="ir.actions.act_window">
+            <field name="name">Departments</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_department</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_hr_department_menu"
+                  name="Edit Department Manpower"
+                  parent="manpower_root_menu"
+                  action="ab_hr_department_action"
+                  groups="ab_hr.group_ab_hr_co"
+                  sequence="100"/>
+
+        <menuitem id="ab_hr_department_config_menu"
+                  name="Departments"
+                  parent="config"
+                  action="ab_hr_department_action"
+                  sequence="100"/>
+
+    </data>
+</odoo>

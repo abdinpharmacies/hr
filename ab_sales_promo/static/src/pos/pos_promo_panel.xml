@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_promo.PosPromoPanel">
+        <div class="o_ab_sales_pos_promo_row">
+            <section class="o_ab_sales_pos_card o_ab_sales_pos_promo_panel">
+                <div class="o_ab_sales_pos_promo_header">
+                    <div class="o_ab_sales_pos_promo_list">
+                        <span class="o_ab_sales_pos_promo_label">Promotions</span>
+                        <t t-foreach="props.promo.available" t-as="promo" t-key="promo.id">
+                            <button type="button"
+                                    class="o_ab_sales_pos_promo_chip"
+                                    t-attf-class="#{chipClass(promo)}"
+                                    t-att-title="promo.rule_text or promo.display_name or promo.name"
+                                    t-on-click="() => props.onSelect and props.onSelect(promo)">
+                                <span class="name" t-esc="promo.display_name or promo.name"/>
+                                <span class="meta" t-esc="promo.rule_text or ''"/>
+                            </button>
+                        </t>
+                    </div>
+                    <div class="o_ab_sales_pos_promo_status">
+                        <span class="o_ab_sales_pos_promo_label">Status</span>
+                        <span t-attf-class="o_ab_sales_pos_promo_state #{statusClass()}"
+                              t-esc="statusLabel()"/>
+                        <button class="btn btn-outline-secondary btn-sm"
+                                type="button"
+                                t-on-click="() => props.onClear and props.onClear()"
+                                t-att-disabled="clearDisabled()">
+                            Clear
+                        </button>
+                    </div>
+                </div>
+                <t t-if="props.promo.message">
+                    <div class="o_ab_sales_pos_promo_hint">
+                        <i class="fa fa-info-circle" aria-hidden="true"/>
+                        <span t-esc="props.promo.message"/>
+                    </div>
+                </t>
+                <t t-if="props.promo.missing_qty and props.promo.missing_qty > 0">
+                    <div class="o_ab_sales_pos_promo_missing">
+                        <span>Missing</span>
+                        <strong t-esc="formatQty(props.promo.missing_qty)"/>
+                        <span>unit(s)</span>
+                    </div>
+                </t>
+            </section>
+        </div>
+    </t>
+</templates>

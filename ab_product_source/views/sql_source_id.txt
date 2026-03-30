@@ -1,0 +1,28 @@
+# ALL
+
+SELECT DISTINCT
+    ph.pth_id,
+    st.stnh_id,
+	st.st_from_store,
+    d.itm_id,
+	ic.itm_code,
+    d.c_id,
+    d.serial,
+	sh.sec_insert_date,
+	 DATEDIFF(HOUR, d.sec_insert_date, st.sec_insert_date) as diff_hours
+	FROM Store_Trans st
+    JOIN pur_trans_d d ON st.st_itm_id = d.itm_id
+                       AND d.c_id = st.st_c_id
+                       AND d.exp_date = st.st_itm_expiry
+	JOIN pur_trans_h ph on ph.pth_id=d.pth_id
+	JOIN Store_Trans_h sh on sh.stnh_id=st.stnh_id and sh.stnh_f_Sto_id=st.st_from_store
+	JOIN Item_Catalog ic on d.itm_id = ic.itm_id
+    WHERE  (1=1)
+--    AND DATEDIFF(HOUR, d.sec_insert_date, st.sec_insert_date) between 0 and 48
+	  AND DATEDIFF(HOUR, d.sec_insert_date, st.sec_insert_date) = 0
+	  AND st.st_from_store = ph.sto_id
+	  and d.sec_insert_date >= '2024-01-01' and ph.bill_status = '0'
+	  AND ph.pth_id=1046280
+	ORDER BY sh.sec_insert_date,ph.pth_id
+
+# GPT

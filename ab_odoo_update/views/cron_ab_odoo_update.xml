@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--@formatter:off-->
+    <data noupdate="1">
+        <record model="ir.cron" id="cron_ab_odoo_update">
+            <field name="name">cron_ab_odoo_update</field>
+            <field name="active">False</field>
+            <field name="model_id" ref="model_ab_odoo_update"/>
+            <field name="state">code</field>
+            <field name="code">
+# @formatter:off
+model.git_pull()
+model.restart_odoo_server()
+# @formatter:on
+            </field>
+        </record>
+        
+        <record model="ir.cron" id="cron_ab_odoo_update_upgrade">
+            <field name="name">cron_ab_odoo_update_upgrade</field>
+            <field name="active">False</field>
+            <field name="model_id" ref="model_ab_odoo_update"/>
+            <field name="state">code</field>
+            <field name="code">model.upgrade_module('ab_template')</field>
+        </record>
+
+    </data>
+    <!--@formatter:on-->
+</odoo>

@@ -1,0 +1,223 @@
+.o_ab_sales_bill_wizard {
+  height: 100%;
+  min-height: 88vh;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: radial-gradient(700px 380px at -12% -8%, rgba(13, 148, 136, 0.12), transparent 65%),
+  radial-gradient(700px 380px at 110% 0%, rgba(245, 158, 11, 0.12), transparent 65%),
+  #f6f8fb;
+}
+
+.o_ab_sales_bill_wizard_header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  border: 1px solid #e5e9f2;
+}
+
+.o_ab_sales_bill_wizard_title {
+  margin: 0;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.o_ab_sales_bill_wizard_subtitle {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.o_ab_sales_bill_wizard_filters {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(180px, 1fr) 180px 150px 150px auto;
+  gap: 10px;
+  align-items: end;
+}
+
+.o_ab_sales_bill_wizard_filter {
+  min-width: 0;
+}
+
+.o_ab_sales_bill_wizard_filter_actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.o_ab_sales_bill_wizard_filter_serial {
+  max-width: 220px;
+}
+
+.o_ab_sales_bill_wizard_filter_date {
+  max-width: 170px;
+}
+
+.o_ab_sales_bill_wizard_body {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.o_ab_sales_bill_wizard_list_panel,
+.o_ab_sales_bill_wizard_details_panel {
+  min-height: 0;
+  background: #ffffff;
+  border: 1px solid #e5e9f2;
+  border-radius: 14px;
+}
+
+.o_ab_sales_bill_wizard_list_panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.o_ab_sales_bill_wizard_list_head {
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #edf2f8;
+  font-weight: 700;
+}
+
+.o_ab_sales_bill_wizard_list {
+  padding: 8px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+.o_ab_sales_bill_wizard_pager {
+  border-top: 1px solid #edf2f8;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #475569;
+  font-size: 13px;
+}
+
+.o_ab_sales_bill_wizard_list_item {
+  width: 100%;
+  text-align: left;
+  border: 1px solid #e8edf5;
+  background: #f9fbff;
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  transition: all 0.15s ease;
+}
+
+.o_ab_sales_bill_wizard_list_item.is-active {
+  border-color: #0f766e;
+  background: #eefcf8;
+  box-shadow: 0 0 0 1px rgba(15, 118, 110, 0.2) inset;
+}
+
+.o_ab_sales_bill_wizard_list_row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.o_ab_sales_bill_wizard_list_row_muted {
+  color: #64748b;
+  font-size: 12px;
+}
+
+.o_ab_sales_bill_wizard_details_panel {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  overflow: hidden;
+  gap: 10px;
+}
+
+.o_ab_sales_bill_wizard_details_head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.o_ab_sales_bill_wizard_bill_number {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.o_ab_sales_bill_wizard_bill_meta_line {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  color: #475569;
+  margin-top: 5px;
+  font-size: 13px;
+}
+
+.o_ab_sales_bill_wizard_actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.o_ab_sales_bill_wizard_lines_wrap {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid #edf2f8;
+  border-radius: 10px;
+}
+
+.o_ab_sales_bill_wizard_lines_table {
+  margin-bottom: 0;
+}
+
+.o_ab_sales_bill_wizard_notes_box {
+  margin-top: auto;
+}
+
+.o_ab_sales_bill_wizard_empty {
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  min-height: 140px;
+}
+
+@media (max-width: 1100px) {
+  .o_ab_sales_bill_wizard_filters {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .o_ab_sales_bill_wizard_filter_serial,
+  .o_ab_sales_bill_wizard_filter_date {
+    max-width: none;
+  }
+
+  .o_ab_sales_bill_wizard_filter_actions {
+    grid-column: span 2;
+    justify-content: flex-end;
+  }
+
+  .o_ab_sales_bill_wizard_body {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(220px, 35vh) minmax(0, 1fr);
+  }
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_required_job_list_view" model="ir.ui.view">
+            <field name="name">ab.required.job.list</field>
+            <field name="model">ab_required_job</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="name"/>
+                    <field name="job_id"/>
+                    <field name="is_publish"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_required_job_form_view" model="ir.ui.view">
+            <field name="name">ab.required.job.form</field>
+            <field name="model">ab_required_job</field>
+            <field name="arch" type="xml">
+                <form string="Required Job">
+                    <sheet>
+                        <group>
+                            <field name="job_id" required="1"/>
+                            <field name="name" required="1"/>
+                            <field name="is_publish"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_required_job_action" model="ir.actions.act_window">
+            <field name="name">Required Jobs</field>
+            <field name="res_model">ab_required_job</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="ab_required_job_menu" name="Required Jobs" parent="ab_hr_application_menu" action="ab_required_job_action" sequence="5"/>
+
+    </data>
+</odoo>

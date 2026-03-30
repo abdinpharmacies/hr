@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+
+        <record model="ir.module.category" id="ab_sales_categ">
+            <field name="name">Abdin Sales</field>
+            <field name="description">Abdin Sales</field>
+            <field name="sequence">1</field>
+        </record>
+
+        <record model="res.groups.privilege" id="privilege_ab_sales">
+            <field name="name">Abdin Sales</field>
+            <field name="category_id" ref="ab_sales_categ"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_ab_sales_cashier" model="res.groups">
+            <field name="name">Cashier</field>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+            <field name="privilege_id" ref="privilege_ab_sales"/>
+        </record>
+
+        <record id="group_ab_sales_pharmacist" model="res.groups">
+            <field name="name">Pharmacist</field>
+            <field name="privilege_id" ref="privilege_ab_sales"/>
+        </record>
+
+
+        <record id="group_ab_sales_manager" model="res.groups">
+            <field name="name">Manager</field>
+            <field name="privilege_id" ref="privilege_ab_sales"/>
+            <!--            <field name="implied_ids" eval="[(4, ref('group_ab_sales_cashier'))]"/>-->
+        </record>
+
+        <record id="group_ab_sales_assistant" model="res.groups">
+            <field name="name">Assistant</field>
+            <field name="privilege_id" ref="privilege_ab_sales"/>
+            <!--            <field name="implied_ids" eval="[(4, ref('group_ab_sales_cashier'))]"/>-->
+        </record>
+
+        <record id="group_ab_sales_cosmetics" model="res.groups">
+            <field name="name">Cosmetics Salesman</field>
+            <field name="privilege_id" ref="privilege_ab_sales"/>
+            <!--            <field name="implied_ids" eval="[(4, ref('group_ab_sales_cashier'))]"/>-->
+        </record>
+
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids"
+                   eval="[
+                   (4, ref('ab_sales.group_ab_sales_cashier')),
+                    (4, ref('ab_sales.group_ab_sales_pharmacist')),
+                    (4, ref('ab_sales.group_ab_sales_manager')),
+                    ]"/>
+        </record>
+
+        <record id="group_call_center" model="res.groups">
+            <field name="name">Call Center</field>
+            <field name="privilege_id" ref="privilege_ab_sales"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+    </data>
+</odoo>

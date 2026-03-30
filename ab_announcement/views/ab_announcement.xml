@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_announcement_view_tree" model="ir.ui.view">
+            <field name="name">ab_announcement_view_tree</field>
+            <field name="model">ab_announcement</field>
+            <field name="arch" type="xml">
+                <list string="ab_announcement_tree" multi_edit="1">
+                    <field name="id" class="text-muted" optional="show"/>
+                    <field name="title" optional="show"/>
+                    <field name="subject" optional="show"/>
+                    <field name="issuer" optional="show"/>
+                    <field name="release_date" optional="show"/>
+                    <field name="announcement_type" optional="show"/>
+                    <field name="number" optional="show"/>
+                    <field name="attachment" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_announcement_view_form" model="ir.ui.view">
+            <field name="name">ab_announcement_view_form</field>
+            <field name="model">ab_announcement</field>
+            <field name="arch" type="xml">
+                <form string="ab_announcement_form">
+                    <header>
+                    </header>
+                    <sheet>
+                        <field name="is_posted" invisible="1"/>
+                        <widget name="web_ribbon" title="Posted" bg_color="bg-success"
+                                invisible="is_posted == False"/>
+
+                        <group>
+                            <field name="title"/>
+                            <field name="subject"/>
+                            <field name="issuer"/>
+                            <field name="release_date"/>
+                            <field name="announcement_type"/>
+                            <field name="number"
+                                   invisible="title != 'decree'"/>
+                            <field name="send_attachment" widget="boolean_toggle"/>
+
+                            <field name="announcement_link" invisible="1"/>
+                        </group>
+                        <notebook>
+                            <page name="attachment" string="Attachment">
+                                <group>
+                                    <field name="attachment" widget="pdf_viewer"/>
+                                </group>
+                            </page>
+                            <page name="subject_body" string="Announcement">
+                                <group>
+                                    <div class="ab-announcement-container text-center">
+                                        <field name="subject_body"
+                                               class="announcement-bg"
+                                               widget="html"/>
+                                    </div>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+        <record id="ab_announcement_view_search" model="ir.ui.view">
+            <field name="name">ab_announcement_view_search</field>
+            <field name="model">ab_announcement</field>
+            <field name="arch" type="xml">
+                <search string="ab_announcement_search">
+                    <field name="subject"/>
+                    <field name="issuer"/>
+                    <field name="release_date"/>
+                    <field name="announcement_type"/>
+                    <field name="number"/>
+                    <field name="attachment"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_announcement_view_pivot" model="ir.ui.view">
+            <field name="name">ab_announcement_view_pivot</field>
+            <field name="model">ab_announcement</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_announcement_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_announcement_action" model="ir.actions.act_window">
+            <field name="name">Announcements</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_announcement</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_announcement_menu"
+                  name="Announcements"
+                  parent="menu_root"
+                  action="ab_announcement_action"
+                  sequence="100"/>
+
+
+    </data>
+</odoo>

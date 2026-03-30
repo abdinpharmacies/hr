@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+            id="ab_sales_promo_sub_menu"
+            name="Promotions"
+            parent="ab_sales.sales_menu_root"
+            sequence="3"
+        />
+
+        <menuitem
+            id="ab_sales_promo_program_menu"
+            name="Promotion Programs"
+            parent="ab_sales_promo_sub_menu"
+            action="ab_promo_program.ab_promo_program_action"
+            sequence="10"
+        />
+
+        <menuitem
+            id="ab_sales_promo_wizard_menu"
+            name="Promotion Wizard"
+            parent="ab_sales_promo_sub_menu"
+            action="ab_promo_program.ab_promo_program_wizard_action"
+            sequence="20"
+        />
+    </data>
+</odoo>

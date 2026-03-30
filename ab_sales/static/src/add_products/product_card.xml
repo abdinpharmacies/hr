@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.ProductCard">
+        <div class="col">
+            <div role="button"
+                 style="cursor:pointer; height: 112px;"
+                 t-att-data-product-id="p.id"
+                 t-att-tabindex="idx == selectionIndex ? 0 : -1"
+                 t-attf-class="card position-relative o_ab_sales_product_card #{idx == selectionIndex ? 'border-primary shadow-sm' : ''}"
+                 t-on-click="() => onAdd ? onAdd(p) : null">
+                <t t-if="qtyBufferProductId == p.id and qtyBuffer">
+                    <!-- Watermark -->
+                    <span class="position-absolute top-50 start-50 translate-middle fw-bold text-success"
+                          style="z-index:10; opacity:0.5; font-size:42px; pointer-events:none; user-select:none; line-height:1;">
+                        <t t-esc="qtyBuffer"/>
+                    </span>
+                </t>
+                <div class="card-body p-2 h-100 d-flex flex-column justify-content-between">
+                    <!-- Top row: code (left) / POS balance (right - placeholder) -->
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="d-inline-flex align-items-center gap-1 text-muted"
+                             style="min-width: 0;">
+                            <i class="fa fa-barcode" aria-hidden="true"/>
+                            <small class="text-truncate" t-esc="p.code || ''"/>
+                        </div>
+                        <div class="d-inline-flex align-items-center gap-1 text-muted ab_pos_product_card_pos_balance">
+                            <t t-if="p.pos_balance !== undefined and p.pos_balance !== null">
+                                <small class="ab_pos_product_card_pos_balance_text" t-esc="formatQty(p.pos_balance)"/>
+                            </t>
+                            <i class="fa fa-shopping-cart ab_pos_product_card_pos_balance_icon" aria-hidden="true"
+                               title="Balance"/>
+                        </div>
+                    </div>
+                    <div class="d-flex align-items-center gap-1 flex-wrap">
+                        <t t-if="p.is_pinned">
+                            <span class="badge text-bg-warning">Pinned</span>
+                        </t>
+                        <t t-if="p.rank_source == 'frequent'">
+                            <span class="badge text-bg-primary">Frequent</span>
+                        </t>
+                        <t t-if="p.rank_source == 'recent'">
+                            <span class="badge text-bg-info">Recent</span>
+                        </t>
+                    </div>
+
+                    <!-- Center: name -->
+                    <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-center px-2"
+                         style="min-width: 0;">
+                        <div class="fw-bold small text-truncate w-100"
+                             t-esc="productLabel(p)"/>
+                        <small class="text-muted"
+                               t-if="(p.customer_order_count_3m || 0) > 0"
+                               t-esc="'3M orders: ' + (p.customer_order_count_3m || 0)"/>
+                    </div>
+
+                    <!-- Bottom row: price (left) / balance (right) -->
+                    <div class="d-flex justify-content-between align-items-end">
+                        <div class="d-inline-flex align-items-center gap-1">
+                            <i class="fa fa-tag text-muted" aria-hidden="true" title="Price"/>
+                            <span class="fw-semibold" t-esc="formatPrice(p.default_price)"/>
+                            <small class="text-muted">LE</small>
+                        </div>
+                        <div class="d-inline-flex align-items-center gap-1">
+                                    <button type="button"
+                                            class="btn p-0 border-0 bg-transparent d-inline-flex align-items-center gap-1 o_ab_sales_balance_btn"
+                                            t-on-click.stop="() => onOpenBalance ? onOpenBalance(p) : null"
+                                            title="Balance">
+                                <span style="cursor:pointer;"
+                                      t-attf-class="#{(p.balance || 0) > 0 ? 'fw-semibold text-success' : 'text-muted'}"
+                                      t-esc="formatQty(p.balance || 0)"/>
+                                        <i style="cursor:pointer;"
+                                           t-attf-class="#{(p.balance || 0) > 0 ? 'fa fa-cubes text-success' : 'fa fa-cubes text-muted'}"
+                                           aria-hidden="true"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

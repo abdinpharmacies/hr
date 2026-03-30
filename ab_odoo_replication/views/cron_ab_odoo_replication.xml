@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--@formatter:off-->
+    <data noupdate="1">
+        <record model="ir.cron" id="cron_ab_odoo_replication">
+            <field name="name">cron_ab_odoo_replication</field>
+            <field name="active">False</field>
+            <field name="model_id" ref="model_ab_odoo_replication"/>
+            <field name="state">code</field>
+            <field name="code">
+# @formatter:off
+model.replicate_model('res.partner')
+model.replicate_model('res.users', extra_fields={'groups_id': 'many2many'})
+model.add_res_company_rel_for_all_users()
+# Group (2)
+model.replicate_model('ab_costcenter')
+model.replicate_model('ab_store')
+model.replicate_model('ab_hr_region')
+model.replicate_model('ab_hr_job')
+model.replicate_model('ab_hr_department')
+model.replicate_model('ab_hr_employee')
+model.replicate_model('ab_hr_job_occupied')
+
+model.replicate_model('ab_customer')
+
+# Group (3)
+model.replicate_model('ab_product_company')
+model.replicate_model('ab_product_origin')
+model.replicate_model('ab_product_group')
+model.replicate_model('ab_usage_causes')
+model.replicate_model('ab_usage_manner')
+
+# Group (4)
+model.replicate_model('ab_uom_type')
+model.replicate_model('ab_uom')
+
+# Group (5)
+model.replicate_model('ab_product_card')
+model.replicate_model('ab_product')
+model.replicate_model('ab_product_barcode', limit=10000,
+                     extra_fields={'product_ids': 'many2many'})
+
+# @formatter:on
+            </field>
+        </record>
+
+    </data>
+    <!--@formatter:on-->
+</odoo>

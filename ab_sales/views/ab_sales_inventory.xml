@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_sales_inventory_view_list" model="ir.ui.view">
+            <field name="name">ab_sales_inventory_view_list</field>
+            <field name="model">ab_sales_inventory</field>
+            <field name="arch" type="xml">
+                <list string="ab_sales_inventory_list" multi_edit="1">
+                    <field name="store_id" optional="show"/>
+                    <field name="balance" optional="show"/>
+                    <field name="product_eplus_serial" optional="show"/>
+                    <field name="default_price" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_sales_inventory_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_inventory_view_form</field>
+            <field name="model">ab_sales_inventory</field>
+            <field name="arch" type="xml">
+                <form string="ab_sales_inventory_form">
+                    <sheet>
+                        <group>
+                            <!-- <field name=""/> -->
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_sales_inventory_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_inventory_view_search</field>
+            <field name="model">ab_sales_inventory</field>
+            <field name="arch" type="xml">
+                <search string="ab_sales_inventory_search">
+                    <!-- <field name=""/> -->
+                </search>
+            </field>
+        </record>
+        <record id="ab_sales_inventory_view_pivot" model="ir.ui.view">
+            <field name="name">ab_sales_inventory_view_pivot</field>
+            <field name="model">ab_sales_inventory</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_sales_inventory_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_sales_inventory_action" model="ir.actions.act_window">
+            <field name="name">Ab sales inventory</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_inventory</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_sales_inventory_menu"
+                  name="Inventory"
+                  parent="config_sub_menu"
+                  action="ab_sales_inventory_action"
+                  sequence="100"/>
+    </data>
+</odoo>

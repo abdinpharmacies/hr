@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_customer_view_tree" model="ir.ui.view">
+            <field name="name">ab_customer_view_tree</field>
+            <field name="model">ab_customer</field>
+            <field name="arch" type="xml">
+                <list string="ab_customer_tree" multi_edit="1">
+                    <field name="eplus_serial" optional="show"/>
+                    <field name="code" optional="show"/>
+                    <field name="name" optional="show"/>
+                    <field name="mobile_phone" optional="show"/>
+                    <field name="work_phone" optional="show"/>
+                    <field name="delivery_phone" optional="show"/>
+                    <field name="address" optional="show"/>
+                    <field name="default_store_id" optional="show"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_customer_view_form" model="ir.ui.view">
+            <field name="name">ab_customer_view_form</field>
+            <field name="model">ab_customer</field>
+            <field name="arch" type="xml">
+                <form string="ab_customer_form">
+                    <header>
+
+                    </header>
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-info"
+                                invisible="active == True"/>
+
+                        <group>
+                            <field name="eplus_serial"/>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="mobile_phone"/>
+                            <field name="work_phone"/>
+                            <field name="delivery_phone"/>
+                            <field name="address"/>
+                            <field name="default_store_id"/>
+                        </group>
+                        <!--
+                                                <group col="4" string="Authentication">
+                                                    <field name="user_code" required="1"/>
+                                                    <field name="password" password="1"/>
+                                                </group>
+                        -->
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_customer_kanban" model="ir.ui.view">
+            <field name="name">ab_customer_kanban</field>
+            <field name="model">ab_customer</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <kanban class="o_ab_hr_employee_kanban">
+                    <field name="id"/>
+                    <field name="active"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_hr_kanban_record">
+                                <div class="d-flex flex-column justify-content-between w-100">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>
+                                            <field name="active" invisible="1"/>
+                                            <t t-if="record.active.raw_value">
+                                                <div class="h4 text-success">
+                                                    <field name="code" placeholder="Code"/>
+                                                </div>
+                                            </t>
+                                            <t t-else="">
+                                                <div class="h4 text-danger">
+                                                    <field name="code" placeholder="Code"/>
+                                                </div>
+                                            </t>
+                                        </strong>
+                                        <strong>
+                                            <div class="h4 text-dark">
+                                                <field name="eplus_serial" placeholder="ePlus Serial"/>
+                                            </div>
+                                        </strong>
+                                    </div>
+
+                                    <div class="mb-auto">
+                                        <div class="h6 text-info text-center">
+                                            <field name="name" placeholder="Employee's Name"/>
+                                        </div>
+                                        <div class="h6 text-dark text-center">
+                                            <i class="fa fa-map-marker"/>
+                                            <field name="address" placeholder="Workplace"/>
+                                        </div>
+                                        <div class="h6 text-muted text-center">
+                                            <i class="fa fa-phone"/>
+                                            <field name="phones"/>
+                                        </div>
+                                        <div class="h6 text-muted text-center">
+                                            <i class="fa fa-anchor"/>
+                                            <field name="default_store_id"/>
+                                        </div>
+                                        <div class="h6 text-muted text-center">
+                                            <i class="fa fa-history"/>
+                                            <field name="eplus_create_date"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="text-success">
+                                            <small>
+                                                <!--       <field name=""/>-->
+                                            </small>
+                                        </div>
+                                        <div class="text-warning">
+                                            <small>
+                                                <!--        <field name=""/>-->
+                                            </small>
+                                        </div>
+                                        <div class="text-danger">
+                                            <small>
+                                                <!--        <field name=""/>-->
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="ab_customer_view_search" model="ir.ui.view">
+            <field name="name">ab_customer_view_search</field>
+            <field name="model">ab_customer</field>
+            <field name="arch" type="xml">
+                <search string="ab_customer_search">
+                    <field name="customer_search" string="Customer Fast Search"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="mobile_phone"/>
+                    <field name="work_phone"/>
+                    <field name="delivery_phone"/>
+                    <field name="address"/>
+                    <field name="default_store_id"/>
+                    <filter name="active_customers" string="Active Customers" domain="[('active', '=', True)]"/>
+                    <filter name="inactive_customers" string="Inactive Customers" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_customer_view_pivot" model="ir.ui.view">
+            <field name="name">ab_customer_view_pivot</field>
+            <field name="model">ab_customer</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_customer_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <!--
+                <record id="ab_customer_action" model="ir.actions.act_window">
+                    <field name="name">Customers</field>
+                    <field name="type">ir.actions.act_window</field>
+                    <field name="res_model">ab_customer</field>
+                    <field name="view_mode">kanban,list,form,pivot</field>
+                    <field name="context">{'from_ui': True}</field>
+
+                </record>
+        -->
+
+    </data>
+</odoo>

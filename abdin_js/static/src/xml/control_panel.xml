@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template>
+    <t
+            t-name="abdin_js.ControlPanel"
+            t-inherit="web.Legacy.ControlPanel"
+            t-inherit-mode="extension"
+            owl="1"
+    >
+        <xpath expr="//div[hasclass('o_cp_pager')]" position="before">
+            <div class="oe_cp_refresher text-right ml-auto" role="search" t-ref="refresher">
+                <Refresher t-props="props.pager"/>
+            </div>
+        </xpath>
+    </t>
+</template>

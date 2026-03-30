@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="menu_root"
+                  name="Announcements"
+                  web_icon="ab_announcement,static/description/icon.png"
+                  sequence="1"/>
+
+
+    </data>
+</odoo>

@@ -1,0 +1,366 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_employee_tools
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-03 06:48+0000\n"
+"PO-Revision-Date: 2026-03-03 06:48+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__qty_available
+msgid "Available Units"
+msgstr "الوحدات المتاحة"
+
+#. module: ab_employee_tools
+#. odoo-python
+#: code:addons/ab_employee_tools/models/employee_tools.py:0
+msgid "Cannot deliver tools to an employee with a termination date set."
+msgstr "لا يمكن تسليم أدوات لموظف تم تحديد تاريخ إنهاء الخدمة له!"
+
+#. module: ab_employee_tools
+#. odoo-python
+#: code:addons/ab_employee_tools/models/employee_tools_line.py:0
+msgid "Cannot modify tools lines for a terminated or delivered record."
+msgstr "لا يمكن التعديل لسطر تم تسليمه او تم تحديد إنهاء الخدمة الموظف المعني!"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__create_uid
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__create_uid
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__create_uid
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__create_date
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__create_date
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__create_date
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__date
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: ab_employee_tools
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Dates"
+msgstr "التواريخ"
+
+#. module: ab_employee_tools
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.tools_type_view_form
+msgid "Decrease"
+msgstr "تخفيض"
+
+#. module: ab_employee_tools
+#: model:ir.actions.act_window,name:ab_employee_tools.employee_tools_inventory_move_decrease_action
+msgid "Decrease Quantity"
+msgstr "نخفيض الكمية"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools__status__delivered
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__delivery_date
+msgid "Delivery Date"
+msgstr "تاريخ التسليم"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__department_id
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__display_name
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__display_name
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__display_name
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__display_name
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_hr_job_occupied__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__employee_id
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__employee_code
+msgid "Employee Code"
+msgstr "كود الموظف"
+
+#. module: ab_employee_tools
+#: model:ir.model,name:ab_employee_tools.model_ab_hr_job_occupied
+msgid "Employee Jobs"
+msgstr "الوظائف"
+
+#. module: ab_employee_tools
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Employee Tool"
+msgstr "أداة الموظف"
+
+#. module: ab_employee_tools
+#. odoo-python
+#: code:addons/ab_employee_tools/models/employee_tools.py:0
+#: model:ir.actions.act_window,name:ab_employee_tools.employee_tools_action
+#: model:ir.model,name:ab_employee_tools.model_ab_employee_tools_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__employee_tools_id
+#: model:ir.ui.menu,name:ab_employee_tools.ab_employee_tools_menu_root
+#: model:ir.ui.menu,name:ab_employee_tools.ab_employee_tools_menu_tools
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_tree
+msgid "Employee Tools"
+msgstr "أدوات الموظفين"
+
+#. module: ab_employee_tools
+#: model:res.groups,name:ab_employee_tools.group_ab_employee_tools_admin
+msgid "Employee Tools Admin"
+msgstr "مسؤول أدوات الموظفين"
+
+#. module: ab_employee_tools
+#: model:ir.model,name:ab_employee_tools.model_ab_employee_tools_inventory_move
+msgid "Employee Tools Inventory Move"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model,name:ab_employee_tools.model_ab_employee_tools_employee_tools_line
+msgid "Employee Tools Line"
+msgstr "بند أدوات الموظف"
+
+#. module: ab_employee_tools
+#: model:res.groups,name:ab_employee_tools.group_ab_employee_tools_ro
+msgid "Employee Tools Read Only"
+msgstr "أدوات الموظفين للقراءة فقط"
+
+#. module: ab_employee_tools
+#: model:res.groups,name:ab_employee_tools.group_ab_employee_tools_user
+msgid "Employee Tools User"
+msgstr "مستخدم أدوات الموظفين"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__id
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__id
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__id
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__id
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_hr_job_occupied__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_employee_tools
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.tools_type_view_form
+msgid "Increase"
+msgstr "زيادة"
+
+#. module: ab_employee_tools
+#: model:ir.actions.act_window,name:ab_employee_tools.employee_tools_inventory_move_increase_action
+msgid "Increase Quantity"
+msgstr "زيادة الكمية"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_inventory_move__movement_type__issue
+msgid "Issue"
+msgstr "تخفيض الكمية"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__job_id
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools_line__size__large
+msgid "Large"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__write_uid
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__write_uid
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__write_uid
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__write_date
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__write_date
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__write_date
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools_line__size__medium
+msgid "Medium"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__movement_type
+msgid "Movement Type"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__no_of_units
+msgid "No. of Units"
+msgstr "عدد الوحدات"
+
+#. module: ab_employee_tools
+#. odoo-python
+#: code:addons/ab_employee_tools/models/employee_tools_line.py:0
+msgid "No. of Units must be zero or positive."
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools__status__not_delivered
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Not Delivered"
+msgstr "لم يتم التسليم"
+
+#. module: ab_employee_tools
+#. odoo-python
+#: code:addons/ab_employee_tools/models/inventory_move.py:0
+msgid "Not enough available units for this tool type."
+msgstr "لا يوجد عدد كافي"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__notes
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__notes
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__price
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_tools_type__price
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_employee_tools
+#. odoo-python
+#: code:addons/ab_employee_tools/models/inventory_move.py:0
+msgid "Quantity must be zero or positive."
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__receipt_date_from_company
+msgid "Receipt Date From Company"
+msgstr "تاريخ الاستلام من الشركة"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_inventory_move__movement_type__receive
+msgid "Receive"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__size
+msgid "Size"
+msgstr "المقاس"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools_line__size__small
+msgid "Small"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_employee_tools
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__termination_date
+msgid "Termination Date"
+msgstr "تاريخ إنهاء الخدمة"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__termination_notified
+msgid "Termination Notified"
+msgstr "تم إخطار الإنهاء"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools_line__type_id
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__type_id
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.tools_type_view_form
+msgid "Tool Type"
+msgstr "نوع الأداة"
+
+#. module: ab_employee_tools
+#: model:ir.actions.act_window,name:ab_employee_tools.tools_type_action
+#: model:ir.ui.menu,name:ab_employee_tools.ab_employee_tools_menu_types
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.tools_type_view_tree
+msgid "Tool Types"
+msgstr "أنواع الأدوات"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_view_form
+msgid "Tools"
+msgstr "الأدوات"
+
+#. module: ab_employee_tools
+#: model:ir.ui.menu,name:ab_employee_tools.ab_employee_tools_menu_inventory
+msgid "Tools Inventory"
+msgstr "مخزون الأدوات"
+
+#. module: ab_employee_tools
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_inventory_move_view_form
+msgid "Tools Inventory Move"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.actions.act_window,name:ab_employee_tools.employee_tools_inventory_move_action
+#: model_terms:ir.ui.view,arch_db:ab_employee_tools.employee_tools_inventory_move_view_list
+msgid "Tools Inventory Moves"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model,name:ab_employee_tools.model_ab_employee_tools_tools_type
+msgid "Tools Type"
+msgstr "نوع الأدوات"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_employee_tools__user_id
+#: model:ir.model.fields,field_description:ab_employee_tools.field_ab_employee_tools_inventory_move__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools_line__size__x_large
+msgid "X-Large"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools_line__size__xx_large
+msgid "XX-Large"
+msgstr ""
+
+#. module: ab_employee_tools
+#: model:ir.model.fields.selection,name:ab_employee_tools.selection__ab_employee_tools_employee_tools_line__size__xxx_large
+msgid "XXX-Large"
+msgstr ""

@@ -1,0 +1,634 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_supplier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-31 12:34+0000\n"
+"PO-Revision-Date: 2024-01-31 12:34+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_compensation_action
+msgid "Ab supplier compensation"
+msgstr "تعويضات الموردين"
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_contact_action
+msgid "Ab supplier contact"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_discount_action
+msgid "Ab supplier discount"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_marketing_action
+msgid "Ab supplier marketing"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_note_action
+msgid "Ab supplier note"
+msgstr "ظ…ظ„ط§ط­ط¶ط§طھ ط§ظ„ظ…ظˆط±ط¯ظٹظ†"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__active
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__active
+msgid "Active"
+msgstr "ظ†ط´ط·"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__address
+msgid "Address"
+msgstr "ط§ظ„ط¹ظ†ظˆط§ظ†"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_compensation__compensation_payment_type__cash
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_bracket__start_day__cash
+msgid "Cash"
+msgstr "ظ†ظ‚ط¯ظٹ"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__closed
+msgid "Closed"
+msgstr "ظ…ط؛ظ„ظ‚"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__code
+msgid "Code"
+msgstr "ط§ظ„ظƒظˆط¯"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__compensation_payment_type
+msgid "Compensation Payment Type"
+msgstr "نوع دفع التعويضات"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__compensation_type
+msgid "Compensation Type"
+msgstr "نوع التعويضات"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__compensation_value
+msgid "Compensation Value"
+msgstr "قيمة التعويضات"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__cosmo
+msgid "Cosmetics"
+msgstr "طھط¬ظ…ظٹظ„"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__create_uid
+msgid "Created by"
+msgstr "ط§ظ†ط´ط¦ ط¨ظˆط§ط³ط·ط©"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__create_date
+msgid "Created on"
+msgstr "طھط§ط±ظٹط® ط§ظ„ط§ظ†ط´ط§ط،"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__credit_days
+msgid "Credit Days"
+msgstr "ط§ظٹط§ظ… ط§ظ„ط§ط¦طھظ…ط§ظ†"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__start_day
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__start_day
+msgid "Credit Type"
+msgstr "ظ†ظˆط¹ ط§ظ„ط§ط¦طھظ…ط§ظ†"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__current_credit
+msgid "Current Credit"
+msgstr "ط­ط¯ ط§ظ„ط§ط¦طھظ…ط§ظ† ط§ظ„ط­ط§ظ„ظٹ"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__deduction_month
+msgid "Deduction Month"
+msgstr "شهر الخصم"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__description
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "Description"
+msgstr "ط§ظ„ط´ط±ط­"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__discount
+msgid "Discount"
+msgstr "ظ†ط³ط¨ط© ط§ظ„ط®طµظ…"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__discount_value
+msgid "Discount Value"
+msgstr "قيمة الخصم"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__display_name
+msgid "Display Name"
+msgstr "ط§ظ„ظ…ط³ظ…ظٹ ط¹ظ„ظٹ ط¨ط±ظ†ط§ظ…ط¬ ط§ظ„ط§ظٹ ط¨ظ„ط§ط³"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__end_date
+msgid "End Date"
+msgstr "طھط§ط±ظٹط® ط§ظ„ط§ظ†طھظ‡ط§ط،"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_compensation__compensation_type__former
+msgid "Former"
+msgstr "مقدم"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_bracket__start_day__from_end_of_month
+msgid "From End Of Month"
+msgstr "ظ…ظ† ط§ظ‘ط®ط± ط§ظ„ط´ظ‡ط±"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_bracket__start_day__from_invoice_date
+msgid "From Invoice Date"
+msgstr "ظ…ظ† طھط§ط±ظٹط® ط§ظ„ظپط§طھظˆط±ط©"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_compensation__compensation_payment_type__goods
+msgid "Goods"
+msgstr "بضاعة"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__id
+msgid "ID"
+msgstr "ط¨ط·ط§ظ‚ط© ط§ظ„طھط¹ط±ظٹظپ"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__imp_cosmo
+msgid "Imported Cosmetics"
+msgstr "طھط¬ظ…ظٹظ„ ظ…ط³طھظˆط±ط¯"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__imp_med
+msgid "Imported Med"
+msgstr "ط¯ظˆط§ط، ظ…ط³طھظˆط±ط¯"
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "Information"
+msgstr "ظ…ط¹ظ„ظˆظ…ط§طھ"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note____last_update
+msgid "Last Modified on"
+msgstr "طھط§ط±ظٹط® ط§ظ‘ط®ط± طھط¹ط¯ظٹظ„"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__last_update_date
+msgid "Last Update Date"
+msgstr "طھط§ط±ظٹط® ط§ط®ط± طھط­ط¯ظٹط«"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__write_uid
+msgid "Last Updated by"
+msgstr "ط§ط®ط± طھط­ط¯ظٹط« ط¨ظˆط§ط³ط·ط©"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__write_date
+msgid "Last Updated on"
+msgstr "ط§ط®ط± طھط­ط¯ظٹط« ظپظٹ"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_compensation__compensation_type__later
+msgid "Later"
+msgstr "مؤخر"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__territory__lower_egypt
+msgid "Lower_Egypt"
+msgstr "ط§ظ„طµط¹ظٹط¯"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__max_credit
+msgid "Max Credit"
+msgstr "ط­ط¯ ط§ظ„ط³ط­ط¨"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__medical
+msgid "Medical"
+msgstr "ط£ط¯ظˆظٹظ‡"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__month_of_deduction
+msgid "Month Of Deduction"
+msgstr "شهر الخصم"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__month_of_sale
+msgid "Month Of Sale"
+msgstr "شهر البيع"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__name
+msgid "Name"
+msgstr "ط§ظ„ط§ط³ظ…"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__tax_type__non_tax_payment
+msgid "Non-tax Payment"
+msgstr "ط؛ظٹط± ط¶ط±ظٹط¨ظٹ"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__notes
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__offers_company
+msgid "Offers Company"
+msgstr "الشركة المقدمة للعروض"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_discount__start_day__on_local
+msgid "On Local"
+msgstr "علي المحلي"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_discount__start_day__on_total_claim
+msgid "On Total Claim"
+msgstr "علي المطالبة"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__other
+msgid "Other"
+msgstr "ط£ط®ط±ظٹ"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__parent_id
+msgid "Parent"
+msgstr "ط§ظ„ط´ط±ظƒط© ط§ظ„ط£ظ…"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__phone_1
+msgid "Phone 1"
+msgstr "ط±ظ‚ظ… ط§ظ„طھظٹظ„ظپظˆظ†"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__purchase_limit
+msgid "Purchase Limit"
+msgstr "ط­ط¯ ط§ظ„ط´ط±ط§ط،"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__reason_of_discount
+msgid "Reason Of Discount"
+msgstr "سبب الخصم"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__registration_number
+msgid "Registration Number"
+msgstr "ط±ظ‚ظ… ط§ظ„طھط³ط¬ظٹظ„"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__return_interval
+msgid "Return Interval"
+msgstr "ط§ظ…ظƒط§ظ†ظٹط© ط§ظ„ط§ط³طھط±ط¬ط§ط¹"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__section
+msgid "Section"
+msgstr "ط§ظ„ظ‚ط³ظ…"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_compensation__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_marketing__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__supplier_id
+msgid "Supplier"
+msgstr "ط§ط³ظ… ط§ظ„ظ…ظˆط±ط¯"
+
+#. module: ab_supplier
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_compensation_menu
+msgid "Supplier Compensation"
+msgstr "تعويضات الموردين"
+
+#. module: ab_supplier
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_contact_menu
+msgid "Supplier Contact"
+msgstr "ط¨ظٹط§ظ†ط§طھ ط§ظ„طھظˆط§طµظ„ ظ…ط¹ ط§ظ„ظ…ظˆط±ط¯ظٹظ†"
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_bracket_action
+msgid "Supplier Credit"
+msgstr "ط­ط¯ ط§ط¦طھظ…ط§ظ† ط§ظ„ظ…ظˆط±ط¯ظٹظ†"
+
+#. module: ab_supplier
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_marketing_menu
+msgid "Supplier Marketing"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__supplier_note_id
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_note_menu
+msgid "Supplier Note"
+msgstr "ظ…ظ„ط§ط­ط¸ط§طھ ط§ظ„ظ…ظˆط±ط¯ظٹظ†"
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_schedule_note_action
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_schedule_note_menu
+msgid "Supplier Schedule Note"
+msgstr "ظ…ظ„ط§ط­ط¸ط§طھ ظ…ط¬ط¯ظˆظ„ط© ظ„ظ„ظ…ظˆط±ط¯ظٹظ†"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__tax_type__tax_payment
+msgid "Tax Payment"
+msgstr "ط¶ط±ظٹط¨ظٹ"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__tax_type
+msgid "Tax Type"
+msgstr "ط·ط±ظٹظ‚ط© ط§ظ„ط³ط¯ط§ط¯"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__telephone
+msgid "Telephone"
+msgstr "ط±ظ‚ظ… ط§ظ„طھظ„ظٹظپظˆظ†"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__territory
+msgid "Territory"
+msgstr "ط§ظ„ظ‚ط·ط§ط¹"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__tax_type__through_supplier
+msgid "Through Supplier"
+msgstr "ط¨ظˆط§ط³ط·ط© ط§ظ„ظ…ظˆط±ط¯"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__territory__upper_egypt
+msgid "Upper Egypt"
+msgstr "ط§ظ„ظ‚ط§ظ‡ط±ط©"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__withdrawal_value
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__withdrawal_value
+msgid "Withdrawal Value"
+msgstr "ظ‚ظٹظ…ط© ط§ظ„ط³ط­ط¨"
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "Write your feedback here"
+msgstr "ط§ظƒطھط¨ طھط¹ظ„ظٹظ‚ظƒ ظ‡ظ†ط§"
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier
+msgid "ab_supplier"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.supplier_action_window
+msgid "ab_supplier window"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_compensation
+msgid "ab_supplier_compensation"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_compensation_view_form
+msgid "ab_supplier_compensation_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_compensation_view_pivot
+msgid "ab_supplier_compensation_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_compensation_view_search
+msgid "ab_supplier_compensation_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_compensation_view_tree
+msgid "ab_supplier_compensation_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_contact
+msgid "ab_supplier_contact"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_form
+msgid "ab_supplier_contact_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_pivot
+msgid "ab_supplier_contact_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_search
+msgid "ab_supplier_contact_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_tree
+msgid "ab_supplier_contact_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_bracket
+msgid "ab_supplier_bracket"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_form
+msgid "ab_supplier_bracket_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_pivot
+msgid "ab_supplier_bracket_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_search
+msgid "ab_supplier_bracket_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_tree
+msgid "ab_supplier_bracket_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_discount
+msgid "ab_supplier_discount"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_form
+msgid "ab_supplier_discount_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_pivot
+msgid "ab_supplier_discount_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_search
+msgid "ab_supplier_discount_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_tree
+msgid "ab_supplier_discount_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_marketing
+msgid "ab_supplier_marketing"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_marketing_view_form
+msgid "ab_supplier_marketing_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_marketing_view_pivot
+msgid "ab_supplier_marketing_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_marketing_view_search
+msgid "ab_supplier_marketing_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_marketing_view_tree
+msgid "ab_supplier_marketing_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_note
+msgid "ab_supplier_note"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_form
+msgid "ab_supplier_note_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_pivot
+msgid "ab_supplier_note_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_search
+msgid "ab_supplier_note_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_tree
+msgid "ab_supplier_note_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_schedule_note
+msgid "ab_supplier_schedule_note"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_form
+msgid "ab_supplier_schedule_note_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_pivot
+msgid "ab_supplier_schedule_note_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_search
+msgid "ab_supplier_schedule_note_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_tree
+msgid "ab_supplier_schedule_note_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "e.g. Ibn-Sina Pharma"
+msgstr "ظ…ط«ط§ظ„: ط´ط±ظƒط© ط§ط¨ظ† ط³ظٹظ†ط§ ظپط§ط±ظ…ط§"
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "supplier Name"
+msgstr "ط§ط³ظ… ط§ظ„ظ…ظˆط±ط¯"

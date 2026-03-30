@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_telegram_chat_message_system,access.ab.telegram.chat.message.system,model_ab_telegram_chat_message,base.group_system,1,1,1,1
+

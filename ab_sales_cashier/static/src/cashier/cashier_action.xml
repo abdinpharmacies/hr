@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.CashierAction">
+        <div class="o_ab_sales_cashier">
+            <header class="ab_cashier_header">
+                <div class="ab_cashier_header_left">
+                    <div class="ab_cashier_title">Cashier Window</div>
+                    <div class="ab_cashier_meta">
+                        <span>Branch: <t t-esc="state.branchName || '-'"/></span>
+                        <span>Store: <t t-esc="state.selectedStoreName || '-'"/></span>
+                        <span>Device: <t t-esc="state.deviceName || '-'"/></span>
+                    </div>
+                </div>
+                <div class="ab_cashier_header_right">
+                    <button class="btn btn-light btn-sm"
+                            type="button"
+                            t-on-click="openStoreDialog">
+                        Change Store
+                    </button>
+                    <button class="btn btn-outline-light btn-sm"
+                            type="button"
+                            t-on-click="openCloseCashierDialog">
+                        Close Cashier
+                    </button>
+                    <div class="ab_cashier_clock" t-esc="nowLabel"/>
+                    <div class="ab_cashier_connection" t-att-class="connectionClassName">
+                        <span t-esc="connectionLabel"/>
+                    </div>
+                </div>
+            </header>
+
+            <div class="ab_cashier_body">
+                <aside class="ab_cashier_left_panel">
+                    <div class="ab_cashier_panel_head">
+                        <div>
+                            <h3>فواتير معلّقة</h3>
+                            <small>إجمالي الفواتير: <t t-esc="state.pendingCount"/></small>
+                        </div>
+                        <button class="btn btn-outline-primary btn-sm"
+                                type="button"
+                                t-on-click="refreshListNow"
+                                t-att-disabled="state.refreshing">
+                            <t t-if="state.refreshing">...جاري التحديث</t>
+                            <t t-else="">تحديث القائمة</t>
+                        </button>
+                    </div>
+
+                    <div class="ab_cashier_filters">
+                        <input type="text"
+                               class="form-control"
+                               t-att-value="state.query"
+                               t-on-input="onSearchInput"
+                               placeholder="بحث برقم الفاتورة / اسم العميل / الموبايل"/>
+                        <select class="form-select" t-att-value="state.sortMode" t-on-change="onSortChange">
+                            <option value="all">الكل (الأحدث)</option>
+                            <option value="oldest">الأقدم أولاً</option>
+                            <option value="highest">الأعلى قيمة</option>
+                        </select>
+                    </div>
+
+                    <div class="ab_cashier_new_hint" t-if="state.newArrivalsCount &gt; 0">
+                        <span>وصلت <t t-esc="state.newArrivalsCount"/> فواتير جديدة</span>
+                        <button class="btn btn-sm btn-light"
+                                type="button"
+                                t-on-click="acknowledgeNewInvoices">
+                            عرض الجديد
+                        </button>
+                    </div>
+
+                    <div class="ab_cashier_invoice_list" t-att-data-version="state.listVersion">
+                        <t t-if="!state.selectedStoreId">
+                            <div class="ab_cashier_empty">
+                                <div>Select a store to load pending invoices.</div>
+                                <button class="btn btn-sm btn-primary mt-2"
+                                        type="button"
+                                        t-on-click="openStoreDialog">
+                                    Select Store
+                                </button>
+                            </div>
+                        </t>
+                        <t t-elif="state.loadingInitial">
+                            <div class="ab_cashier_empty">جاري تحميل الفواتير...</div>
+                        </t>
+                        <t t-elif="!visibleInvoices.length">
+                            <div class="ab_cashier_empty">لا توجد فواتير معلّقة مطابقة للبحث الحالي.</div>
+                        </t>
+                        <t t-else="">
+                            <t t-foreach="visibleInvoices" t-as="invoice" t-key="invoice.key">
+                                <button type="button"
+                                        t-att-data-invoice-key="invoice.key"
+                                        t-att-class="invoiceCardClass(invoice)"
+                                        t-on-click="onInvoiceCardClick">
+                                    <div class="ab_invoice_top">
+                                        <strong>#<t t-esc="invoice.invoiceNumber"/></strong>
+                                        <span class="badge text-bg-warning" t-if="invoice.documentType === 'sale'">معلّقة</span>
+                                        <span class="badge text-bg-info" t-else="">مرتجع معلّق</span>
+                                    </div>
+                                    <div class="ab_invoice_meta">
+                                        <span t-esc="invoice.createDateLabel"/>
+                                        <span t-if="isInvoiceNew(invoice.key)" class="badge text-bg-info">جديد</span>
+                                    </div>
+                                    <div class="ab_invoice_customer">
+                                        <span t-esc="invoice.customerName"/>
+                                        <small t-if="invoice.customerPhone" t-esc="invoice.customerPhone"/>
+                                    </div>
+                                    <div class="ab_invoice_bottom">
+                                        <span>الأصناف: <t t-esc="invoice.itemCount"/></span>
+                                        <strong><t t-esc="formatMoney(invoice.totalAmount)"/></strong>
+                                    </div>
+                                </button>
+                            </t>
+                        </t>
+                    </div>
+                </aside>
+
+                <section class="ab_cashier_right_panel">
+                    <t t-if="selectedInvoice">
+                        <div class="ab_cashier_invoice_header">
+                            <div>
+                                <h3 t-if="selectedInvoice.documentType === 'sale'">فاتورة رقم #<t t-esc="selectedInvoice.invoiceNumber"/></h3>
+                                <h3 t-else="">مرتجع رقم #<t t-esc="selectedInvoice.invoiceNumber"/></h3>
+                                <div class="ab_cashier_summary_meta">
+                                    <span>العميل: <t t-esc="selectedInvoice.customerName || '-'"/></span>
+                                    <span>الموبايل: <t t-esc="selectedInvoice.customerPhone || '-'"/></span>
+                                    <span>الإجمالي: <t t-esc="formatMoney(selectedInvoice.totalAmount)"/></span>
+                                    <span t-if="selectedInvoice.documentType === 'sale'">طريقة الدفع: <t t-esc="selectedInvoice.paymentMethod || '-'"/></span>
+                                </div>
+                                <p class="ab_cashier_note" t-if="selectedInvoice.note">
+                                    <strong>ملاحظة:</strong>
+                                    <t t-esc="selectedInvoice.note"/>
+                                </p>
+                            </div>
+                            <div class="ab_cashier_snapshot_tools">
+                                <small>Snapshot: <t t-esc="formatDateTime(selectedInvoice.capturedAt)"/></small>
+                                <button class="btn btn-outline-secondary btn-sm"
+                                        type="button"
+                                        t-on-click="refreshSelectedSnapshot"
+                                        t-att-disabled="state.loadingSnapshot or state.isSaving">
+                                    تحديث التفاصيل
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="alert alert-warning ab_cashier_alert"
+                             t-if="state.selectedStale">
+                            هذه الفاتورة لم تعد ضمن pending في الخلفية. يمكنك تحديث التفاصيل أو إلغاء الاختيار.
+                        </div>
+                        <div class="alert alert-danger ab_cashier_alert"
+                             t-if="state.saveError">
+                            <t t-esc="state.saveError"/>
+                        </div>
+
+                        <div class="ab_cashier_lines_wrap">
+                            <table class="table table-sm ab_cashier_lines_table">
+                                <thead>
+                                    <tr>
+                                        <th>الصنف</th>
+                                        <th>الكمية</th>
+                                        <th>الوحدة</th>
+                                        <th>السعر</th>
+                                        <th>الإجمالي</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="selectedInvoice.lines.length">
+                                        <tr t-foreach="selectedInvoice.lines" t-as="line" t-key="line.id">
+                                            <td>
+                                                <div class="ab_line_name"><t t-esc="line.productName"/></div>
+                                                <small t-if="line.productCode" t-esc="line.productCode"/>
+                                            </td>
+                                            <td t-esc="formatQty(line.qty)"/>
+                                            <td t-esc="line.uomName || '-'"/>
+                                            <td t-esc="formatMoney(line.sellPrice)"/>
+                                            <td t-esc="formatMoney(line.netAmount)"/>
+                                        </tr>
+                                    </t>
+                                    <t t-else="">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">لا توجد أصناف في الفاتورة.</td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="ab_cashier_actions">
+                            <button class="btn btn-success btn-lg ab_action_primary"
+                                    type="button"
+                                    t-on-click="saveSelectedInvoice"
+                                    t-att-disabled="state.isSaving or state.loadingSnapshot">
+                                <t t-if="state.isSaving">...جاري الحفظ</t>
+                                <t t-elif="selectedInvoice.documentType === 'return'">ترحيل المرتجع (F10)</t>
+                                <t t-else="">حفظ الفاتورة (F10)</t>
+                            </button>
+                            <button class="btn btn-outline-primary btn-lg"
+                                    type="button"
+                                    t-on-click="printReceipt"
+                                    t-att-disabled="state.isSaving or state.loadingSnapshot">
+                                طباعة Receipt (F9)
+                            </button>
+                            <button class="btn btn-outline-secondary btn-lg"
+                                    type="button"
+                                    t-on-click="clearSelection"
+                                    t-att-disabled="state.isSaving">
+                                إلغاء الاختيار (Esc)
+                            </button>
+                        </div>
+                    </t>
+
+                    <t t-elif="lastSavedInvoice">
+                        <div class="ab_cashier_saved_state">
+                            <h3 t-if="lastSavedInvoice.documentType === 'sale'">تم حفظ الفاتورة</h3>
+                            <h3 t-else="">تم ترحيل المرتجع</h3>
+                            <p>
+                                #<t t-esc="lastSavedInvoice.invoiceNumber"/> بحالة
+                                <span class="badge text-bg-success">محفوظة</span>
+                            </p>
+                            <div class="ab_cashier_actions">
+                                <button class="btn btn-outline-primary btn-lg"
+                                        type="button"
+                                        t-on-click="printReceipt">
+                                    طباعة Receipt
+                                </button>
+                                <button class="btn btn-outline-secondary btn-lg"
+                                        type="button"
+                                        t-on-click="refreshListNow">
+                                    رجوع للقائمة
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <div class="ab_cashier_empty_state">
+                            <h3>اختر فاتورة من القائمة</h3>
+                            <p>الاختيار الحالي لن يتغيّر تلقائيًا عند وصول فواتير جديدة.</p>
+                            <small t-if="state.lastSyncLabel">آخر مزامنة: <t t-esc="state.lastSyncLabel"/></small>
+                        </div>
+                    </t>
+                </section>
+            </div>
+
+            <footer class="ab_cashier_shortcuts">
+                <span>↑ ↓ للتنقل</span>
+                <span>Enter للاختيار</span>
+                <span>F10 للحفظ</span>
+                <span>F9 أو Ctrl+P للطباعة</span>
+                <span>Esc لإلغاء الاختيار</span>
+            </footer>
+        </div>
+    </t>
+
+    <t t-name="ab_sales.CashierStoreDialog">
+        <Dialog title="'Select Store'" size="'md'">
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label">Store</label>
+                    <Many2One
+                            relation="'ab_store'"
+                            value="state.store"
+                            update="onStoreUpdate"
+                            domain="storeDomain"
+                            placeholder="'Select store...'"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="'Store'"
+                    />
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary" type="button" t-on-click="cancel">Cancel</button>
+                    <button class="btn btn-primary" type="button" t-on-click="confirm" t-att-disabled="!state.store">
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.CashierWalletDialog">
+        <Dialog title="'Select Wallet'" size="'md'">
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label">Wallet</label>
+                    <select class="form-select" t-att-value="state.walletId" t-on-change="onWalletChange">
+                        <option t-foreach="props.wallets" t-as="wallet" t-key="wallet.id" t-att-value="wallet.id">
+                            <t t-esc="walletLabel(wallet)"/>
+                        </option>
+                    </select>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary" type="button" t-on-click="cancel">Cancel</button>
+                    <button class="btn btn-primary" type="button" t-on-click="saveWallet" t-att-disabled="!(props.wallets and props.wallets.length)">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

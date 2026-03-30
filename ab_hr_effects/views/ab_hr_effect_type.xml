@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_effect_type_view_tree" model="ir.ui.view">
+            <field name="name">ab_hr_effect_type_view_tree</field>
+            <field name="model">ab_hr_effect_type</field>
+            <field name="arch" type="xml">
+                <list string="ab_hr_effect_type_tree" limit="100">
+
+                    <field name="id" class="text-muted"/>
+                    <field name="name"/>
+                    <field name="is_basic_effect"
+                           string="Basic Effect"
+                           optional="hide"
+                           widget="boolean_toggle" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_hourly_effect"
+                           string="Hourly Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_dual_hour_effect"
+                           string="Dual Hour Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_attendance_time_effect"
+                           string="Attendance Time Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="weekly_day_off_number"
+                           string="Weekly Day Off Number"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="select_day_off_number"
+                           string="Select Day Off Number"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="basic_working_hour_number"
+                           string="Basic Working Hour Number"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_day_off_date"
+                           string="Day off date"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_paid_vacancy"
+                           string="Paid Vacancy"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="weekly_vacation_work_permit"
+                           string="Weekly Vacation Work Permit"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="change_day_off_date"
+                           string="Change Day-off Date"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_reason_required"
+                           string="Effect Reason"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="automated_effects_note"
+                           string="Effect Note"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_weekly_effect"
+                           string="Weekly Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_weekday_effect"
+                           string="Week Day Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_period"
+                           string="Periodic Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="monthly_max_effect"
+                           string="Maximum Monthly Limit"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="yearly_max_effect"
+                           string="Maximum yearly Limit"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="max_start_days_limit"
+                           string="Maximum Start Limit"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_number"
+                           string="Number Value Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="is_attachment_required"
+                           string="Attachment Required Effect"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+                    <field name="double_approval"
+                           string="Double Approval"
+                           widget="boolean_toggle"
+                           optional="hide" groups="ab_hr.group_ab_hr_manager"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_effect_type_view_form" model="ir.ui.view">
+            <field name="name">ab_hr_effect_type_view_form</field>
+            <field name="model">ab_hr_effect_type</field>
+            <field name="arch" type="xml">
+                <form string="ab_hr_effect_type_form">
+                    <sheet>
+                        <group>
+                            <field name="id" class="text-muted"/>
+
+                            <group col="4" string="Effect Basic Data">
+                                <field name="name"/>
+                                <field name="is_basic_effect"
+                                       string="Basic Effect"
+                                       widget="boolean_toggle" groups="ab_hr.group_ab_hr_manager"/>
+                            </group>
+
+                        </group>
+                        <notebook>
+
+                            <page string="Hour config">
+                                <group col="6">
+                                    <field name="is_hourly_effect"
+                                           string="Hourly Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="is_dual_hour_effect"
+                                           string="Dual Hour Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="is_attendance_time_effect"
+                                           string="Attendance Time Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                </group>
+                            </page>
+
+                            <page string="Day-off config">
+                                <group col="6" string="Day-off Effect Type">
+                                    <field name="weekly_day_off_number"
+                                           string="Weekly Day Off Number"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="select_day_off_number"
+                                           string="Select Day Off Number"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                </group>
+                                <group col="6" string="Day-off Date Type">
+                                    <field name="is_day_off_date"
+                                           string="Day off date"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="is_paid_vacancy"
+                                           string="Paid Vacancy"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="weekly_vacation_work_permit"
+                                           string="Weekly Vacation Work Permit"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="change_day_off_date"
+                                           string="Change Day-off Date"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                </group>
+                            </page>
+
+                            <page string="Notes config">
+                                <group col="4">
+                                    <field name="is_reason_required"
+                                           string="Effect Reason"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+
+                                    <field name="automated_effects_note"
+                                           string="Effect Note"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+
+                                </group>
+                            </page>
+
+                            <page string="Multi edit config">
+                                <group col="4">
+                                    <field name="is_weekly_effect"
+                                           string="Weekly Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="is_weekday_effect"
+                                           string="Week Day Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="is_period"
+                                           string="Periodic Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                </group>
+                            </page>
+
+                            <page string="Max limit config">
+                                <group col="4">
+                                    <field name="monthly_max_effect"
+                                           string="Maximum Monthly Limit"
+                                           groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                                    <field name="yearly_max_effect"
+                                           string="Maximum yearly Limit"
+                                           groups="ab_hr.group_ab_hr_payroll_reviewer"/>
+                                    <field name="max_start_days_limit"
+                                           string="Maximum Start Limit"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                </group>
+                            </page>
+                            <page string="Other">
+                                <group col="4">
+                                    <field name="is_attachment_required"
+                                           string="Attachment Required Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="double_approval"
+                                           string="Double Approval"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                </group>
+                            </page>
+                            <page string="Number config">
+                                <group col="4">
+                                    <field name="is_number"
+                                           string="Number Value Effect"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                    <field name="basic_working_hour_number"
+                                           string="Basic Working Hour Number"
+                                           widget="boolean_toggle"
+                                           groups="ab_hr.group_ab_hr_manager"/>
+                                </group>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_effect_type_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_effect_type_view_search</field>
+            <field name="model">ab_hr_effect_type</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_effect_type_search">
+
+                    <field name="name"/>
+
+                </search>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_effect_type_action" model="ir.actions.act_window">
+            <field name="name">Effects Action type</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_effect_type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="ab_hr_effect_type_menu"
+                  name="Effects Action Type"
+                  parent="ab_hr.config"
+                  action="ab_hr_effect_type_action"
+                  sequence="8"/>
+
+
+    </data>
+</odoo>

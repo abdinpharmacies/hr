@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_inventory_view_one2many_tree" model="ir.ui.view">
+            <field name="name">ab_inventory_view_one2many_tree</field>
+            <field name="model">ab_inventory</field>
+            <field name="mode">primary</field>
+            <field name="arch" type="xml">
+                <list editable="bottom" decoration-success="status=='saved'" decoration-info="status=='pending_main'" decoration-bf="status=='pending_store'">
+                    <field name="product_id"/>
+                    <field name="qty_in_source_unit"/>
+                    <field name="uom_id"/>
+                    <field name="price"/>
+                    <field name="unit_cost" optional="hide"/>
+                    <field name="unit_taxes_value" optional="hide"/>
+                    <field name="status"/>
+                    <field name="store_id"/>
+                    <field name="is_curr_store" invisible="1"/>
+                    <field name="is_store__eq__to_store" invisible="1"/>
+
+                    <button name="btn_send_or_reject" type="object" string="Send" class="btn-primary"
+                            invisible="((status in ['saved', 'pending_main'] or is_store__eq__to_store == True) or is_curr_store == False)"/>
+
+                    <button name="btn_send_or_reject" type="object" string="Reject" class="btn-danger"
+                            invisible="((status in ['saved', 'pending_main'] or is_store__eq__to_store == True) or is_curr_store == True)"/>
+
+                    <button name="btn_save" type="object" string="Save" class="btn-success"
+                            invisible="status != 'pending_store'"/>
+
+
+                    <button name="btn_pending_main_or_pending_store"
+                            type="object"
+                            string="To Store"
+                            class="btn-success"
+                            invisible="status != 'pending_main'"/>
+
+                    <button name="btn_pending_main_or_pending_store"
+                            type="object"
+                            string="To Main"
+                            class="btn-info"
+                            invisible="(is_store__eq__to_store != True or status != 'pending_store')"/>
+
+
+                </list>
+            </field>
+        </record>
+        <record id="ab_inventory_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_tree</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_inventory_header_tree" multi_edit="1">
+                    <field name="header_ref" optional="show"/>
+                    <field name="store_id" optional="show"/>
+                    <field name="to_store_id" optional="show"/>
+                    <field name="pending_main_count" class="text-center h6" optional="show" decoration-info="pending_main_count&gt;0"/>
+                    <field name="pending_store_count" class="text-center h6" optional="show" decoration-success="pending_store_count&gt;0"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_inventory_header_view_form" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_form</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_inventory_header_form">
+                    <header class="w-100">
+                        <button string="Send" type="object" name="btn_send_transfer" class="btn-info"/>
+                        <button string="Receive" type="object" name="btn_receive_transfer" class="btn-success"/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="store_id"/>
+                            <field name="to_store_id"/>
+                            <!--                            <field name="transmitted_by"/>-->
+                            <!--                            <field name="delivery_id"/>-->
+                            <field name="action_id"/>
+                            <field name="header_ref"/>
+                            <field name="pending_main_count"/>
+                            <field name="pending_store_count"/>
+                        </group>
+                        <group col="4">
+                            <button name="btn_open_header" type="object" string="Open Header" class="btn-primary"/>
+                        </group>
+                        <notebook>
+
+                            <page name="pending_line_ids" string="Pending Lines">
+                                <group>
+                                    <field name="pending_line_ids" nolabel="1"
+                                           context="{'tree_view_ref':'ab_inventory.ab_inventory_view_one2many_tree'}"/>
+                                </group>
+                            </page>
+                            <page name="line_ids" string="Lines">
+                                <group>
+                                    <field name="line_ids" nolabel="1" context="{'tree_view_ref':'ab_inventory.ab_inventory_view_one2many_tree'}"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_inventory_header_view_search" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_search</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_inventory_header_search">
+                    <field name="header_ref"/>
+                    <field name="store_id"/>
+                    <field name="has_pending_main"/>
+                    <field name="has_pending_store"/>
+                    <filter name="Has Pending Main (Max 1000 pending)" domain="[('has_pending_main','=',True)]"/>
+                    <filter name="Has Pending Store (Max 1000 pending)" domain="[('has_pending_store','=',True)]"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_inventory_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_inventory_header_view_pivot</field>
+            <field name="model">ab_inventory_header</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_inventory_header_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_inventory_header_action" model="ir.actions.act_window">
+            <field name="name">Pending Inventory</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_inventory_header</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_inventory_header_menu" name="Pending Inventory" groups="base.group_system" parent="menu_root" action="ab_inventory_header_action" sequence="100"/>
+
+    </data>
+</odoo>

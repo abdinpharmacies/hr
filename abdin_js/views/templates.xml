@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates>
+    <t t-name="abdin_js.records.Buttons">
+        <button type="button" class="btn btn-link o_chatter_button_new_message" title="Send a message">
+            Send message
+        </button>
+        <button t-if="logNoteButton" class="btn btn-link o_chatter_button_log_note"
+                title="Log a note. Followers will not be notified." disabled="disabled">
+            Log note
+        </button>
+    </t>
+</templates>

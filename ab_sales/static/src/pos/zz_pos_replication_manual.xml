@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.PosActionTopActionsLayoutPatch"
+       t-inherit="ab_sales.PosAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_top_actions')]/button[i[contains(@class, 'fa-paper-plane')]]" position="replace">
+            <div class="o_ab_sales_pos_action_stack o_ab_sales_pos_action_stack--submit ab_pos_action_stack_submit">
+                <button class="btn btn-success ab_pos_btn_submit_bill"
+                        type="button"
+                        t-on-click="submitCurrentBill"
+                        t-att-disabled="state.submitting">
+                    <i class="fa fa-paper-plane ab_pos_btn_submit_bill_icon" aria-hidden="true"/>
+                    <span class="ab_pos_btn_submit_bill_text">
+                        <t t-if="state.submitting">Submitting...</t>
+                    </span>
+                </button>
+                <button class="btn btn-outline-danger ab_pos_btn_remove_bill" type="button" t-on-click="removeCurrentBill">
+                    <i class="fa fa-trash ab_pos_btn_remove_bill_icon" aria-hidden="true"/>
+                </button>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_top_actions')]/button[i[contains(@class, 'fa-trash')]]" position="replace"/>
+
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_top_actions')]/button[i[contains(@class, 'fa-list')]]" position="replace">
+            <div class="o_ab_sales_pos_action_stack o_ab_sales_pos_action_stack--nav ab_pos_action_stack_nav">
+                <button class="btn btn-outline-secondary ab_pos_btn_open_invoices"
+                        type="button"
+                        t-on-click="openBillWizard">
+                    <i class="fa fa-list ab_pos_btn_open_invoices_icon" aria-hidden="true"/>
+                    <span class="ab_pos_btn_open_invoices_text">Invoices</span>
+                </button>
+                <button class="btn btn-outline-secondary ab_pos_btn_open_replication"
+                        type="button"
+                        t-on-click="openReplicationDialog">
+                    <i class="fa fa-refresh ab_pos_btn_open_replication_icon" aria-hidden="true"/>
+                    <span class="ab_pos_btn_open_replication_text">Replication</span>
+                </button>
+            </div>
+        </xpath>
+    </t>
+
+    <t t-name="ab_sales.PosReplicationDialog">
+        <Dialog title="'Replication Popup'" size="'lg'">
+            <div class="o_ab_sales_pos_submit_dialog">
+                <div class="o_ab_sales_pos_submit_section">
+                    <div class="o_ab_sales_pos_section_title">Active ab_odoo_replication Crons</div>
+
+                    <div class="mb-2 d-flex gap-2">
+                        <button class="btn btn-outline-secondary btn-sm"
+                                type="button"
+                                t-att-disabled="state.loading or state.running"
+                                t-on-click="loadCrons">
+                            Refresh
+                        </button>
+                        <button class="btn btn-primary btn-sm"
+                                type="button"
+                                t-att-disabled="state.loading or state.running or !state.selectedCronId"
+                                t-on-click="runSelected">
+                            Run Selected
+                        </button>
+                    </div>
+
+                    <div t-if="state.loading" class="text-muted">Loading active crons...</div>
+
+                    <table t-if="!state.loading" class="table table-sm mb-0">
+                        <thead>
+                            <tr>
+                                <th style="width: 32px;"></th>
+                                <th>Name</th>
+                                <th>User</th>
+                                <th>Next Call (UTC)</th>
+                                <th>Last Call (UTC)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="state.crons" t-as="cron" t-key="cron.id">
+                                <tr t-attf-class="#{state.selectedCronId == cron.id ? 'table-active' : ''}"
+                                    t-on-click="() => selectCron(cron.id)">
+                                    <td>
+                                        <input type="radio"
+                                               name="ab_replication_cron"
+                                               t-att-checked="state.selectedCronId == cron.id"
+                                               t-on-change="() => selectCron(cron.id)"/>
+                                    </td>
+                                    <td t-esc="cron.name or '-'"/>
+                                    <td t-esc="cron.user_name or '-'"/>
+                                    <td t-esc="cron.nextcall or '-'"/>
+                                    <td t-esc="cron.lastcall or '-'"/>
+                                </tr>
+                            </t>
+                            <t t-if="!state.crons.length">
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted">
+                                        No active ab_odoo_replication cron found.
+                                    </td>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+
+                    <t t-if="state.message">
+                        <div class="alert alert-info mt-2 mb-0" t-esc="state.message"/>
+                    </t>
+                </div>
+
+                <div class="o_ab_sales_pos_submit_footer">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="close">Close</button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

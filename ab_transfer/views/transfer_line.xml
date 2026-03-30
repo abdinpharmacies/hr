@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_transfer_line_view_tree" model="ir.ui.view">
+            <field name="name">ab_transfer_line_view_tree</field>
+            <field name="model">ab_transfer_line</field>
+            <field name="arch" type="xml">
+                <list editable="bottom" string="ab_transfer_line_view_tree">
+                    <field name="header_status" invisible="1"/>
+                    <field name="source_id_domain" invisible="1"/>
+                    <field name="uom_id_domain" invisible="1"/>
+                    <field name="qty_rejected" invisible="1"/>
+                    <field name="product_id" class="text-wrap" width="140px"
+                           readonly="header_status != 'prepending'"/>
+                    <field name="qty" string="Quantity" width="75px"
+                           readonly="header_status != 'prepending'"/>
+                    <field name="uom_id" domain="uom_id_domain" string="Unit" context="{'uom_only_type': 1}"
+                           options="{&quot;always_reload&quot;: True}" width="75px"
+                           readonly="header_status != 'prepending'"/>
+                    <field name="source_id" width="140px" domain="source_id_domain" string="Exp Date"
+                           readonly="header_status != 'prepending'"/>
+                    <field name="price" width="75px" string="Price"
+                           readonly="header_status != 'prepending'"/>
+                    <field name="balance" width="75px" readonly="header_status != 'prepending'"/>
+                    <field name="cost" width="75px" readonly="header_status != 'prepending'"/>
+                    <field name="qty_rejected" width="75px" readonly="header_status != 'pending'"/>
+                    <field name="rejected_reason" width="75px"
+                           readonly="(header_status != 'pending' or qty_rejected == 0)" required="qty_rejected != 0"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_transfer_line_action" model="ir.actions.act_window">
+            <field name="name">ab_transfer_line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_transfer_line</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

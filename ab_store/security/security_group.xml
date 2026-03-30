@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_login_ability" model="ir.module.category">
+            <field name="name">Login Ability</field>
+            <field name="sequence" eval="1"/>
+        </record>
+
+        <record id="ab_login_privilege" model="res.groups.privilege">
+            <field name="name">Login Ability</field>
+            <field name="category_id" ref="ab_login_ability"/>
+            <field name="sequence" eval="1"/>
+        </record>
+
+        <record id="ab_store_privilege_hidden" model="res.groups.privilege">
+            <field name="name">Ab Store Hidden</field>
+            <field name="category_id" ref="base.module_category_hidden"/>
+            <field name="sequence" eval="10"/>
+        </record>
+
+        <record id="ab_login_from_anywhere" model="res.groups">
+            <field name="name">Login From Anywhere</field>
+            <field name="privilege_id" ref="ab_login_privilege"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="see_stores_ips" model="res.groups">
+            <field name="name">See Stores IPs</field>
+            <field name="privilege_id" ref="ab_store_privilege_hidden"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+    </data>
+</odoo>

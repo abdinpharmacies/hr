@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="distribution_store_header_view_list" model="ir.ui.view">
+            <field name="name">distribution_store_header_view_list</field>
+            <field name="model">ab_distribution_store_header</field>
+            <field name="arch" type="xml">
+                <list string="Distribution Store Headers" multi_edit="1">
+                    <field name="customer_name"/>
+                    <field name="customer_phone" optional="hide"/>
+                    <field name="customer_address" optional="hide"/>
+                    <field name="reference" optional="hide"/>
+                    <field name="document_date" optional="hide"/>
+                    <field name="total_qty"/>
+                    <field name="total_amount"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="distribution_store_header_view_form" model="ir.ui.view">
+            <field name="name">distribution_store_header_view_form</field>
+            <field name="model">ab_distribution_store_header</field>
+            <field name="arch" type="xml">
+                <form string="Distribution Store">
+                    <header>
+                        <button name="action_print_invoice" type="object" string="Print" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <group col="4">
+                            <field name="customer_name"/>
+                            <field name="customer_phone"/>
+                            <field name="customer_address"/>
+                            <field name="reference"/>
+                            <field name="document_date"/>
+                            <field name="customer_note"/>
+                            <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                        </group>
+                        <notebook>
+                            <page name="lines" string="Lines">
+                                <field name="line_ids">
+                                    <list editable="bottom">
+                                        <field name="inventory_id"/>
+                                        <field name="product_id" readonly="1"/>
+                                        <field name="batch_number" readonly="1"/>
+                                        <field name="expiry_date" readonly="1"/>
+                                        <field name="balance" readonly="1"/>
+                                        <field name="qty"/>
+                                        <field name="customer_price" readonly="1"/>
+                                        <field name="line_total" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                        <group col="2">
+                            <field name="total_qty" readonly="1"/>
+                            <field name="total_amount" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_distribution_store_header" model="ir.actions.act_window">
+            <field name="name">Distribution Store</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_distribution_store_header</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

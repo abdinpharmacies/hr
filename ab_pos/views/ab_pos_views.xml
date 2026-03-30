@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="action_ab_pos_client" model="ir.actions.client">
+            <field name="name">Ab POS</field>
+            <field name="tag">ab_pos.action</field>
+        </record>
+
+        <menuitem
+            id="menu_ab_pos_root"
+            name="Ab POS"
+            action="action_ab_pos_client"
+            sequence="5"
+            groups="base.group_system"
+        />
+    </data>
+</odoo>

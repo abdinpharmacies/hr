@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_line_view_tree"
+                model="ir.ui.view">
+            <field name="name">ab_sales_line_view_tree</field>
+            <field name="model">ab_sales_line</field>
+            <field name="arch"
+                   type="xml">
+                <list string="ab_sales_line_tree" create="0" edit="0">
+                    <field name="id"/>
+                    <field name="header_id"/>
+                    <field name="product_id" decoration-danger="balance==0" class="text-wrap"
+                           context="{'pos_store_id': parent.store_id, 'search_default_filter_has_balance': 1, 'search_default_filter_has_pos_balance': 1}"
+                           width="300px"
+                    />
+                    <field name="product_code" width="50px" optional="show"/>
+                    <field name="qty_str" string="Quantity" width="75px"
+                    />
+                    <field name="product_uom_category_id" invisible="True"/>
+                    <field name="uom_id" width="80px"
+                           domain="product_uom_category_id and [('category_id', '=', product_uom_category_id)] or [('id', '=', False)]"/>
+                    <field name="qty" optional="hide"/>
+                    <field name="inventory_json" string="Source" width="75px" optional="hide"/>
+                    <field name="cost" width="50px" optional="hide"/>
+                    <field name="available_prices_html"/>
+                    <field name="inventory_table_html" width="75px" optional="hide"/>
+                    <field name="target_sell_price" optional="hide" width="75px"/>
+                    <field name="sell_price"/>
+                    <field name="balance" class="h6"
+                           decoration-success="balance>0"
+                           decoration-danger="balance==0"/>
+                    <field name="net_amount" optional="show"/>
+                    <field name="unavailable_reason" optional="show"/>
+                    <field name="unavailable_reason_other" optional="show"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_sales_line_action"
+                model="ir.actions.act_window">
+            <field name="name">Sales Details</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_line</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Wizard Form View -->
+        <record id="view_ab_promo_program_wizard_form" model="ir.ui.view">
+            <field name="name">ab.promo.program.wizard.form</field>
+            <field name="model">ab_promo_program_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Import Promotions from Excel">
+                    <group>
+                        <field name="from_excel" nolabel="1" colspan="4"
+                               placeholder="Paste Excel rows here (tab-separated)"/>
+                    </group>
+                    <footer>
+                        <button string="Add Promotions"
+                                type="object"
+                                name="btn_add_promos"
+                                class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_promo_program_wizard_action" model="ir.actions.act_window">
+            <field name="name"></field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_promo_program_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+    </data>
+
+</odoo>

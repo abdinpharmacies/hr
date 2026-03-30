@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <template id="abdin_assets_backend" name="abdin assets backend" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+                <link rel="stylesheet" href="/abdin_css/static/src/css/abdin.css"/>
+                <link rel="stylesheet" href="/abdin_css/static/src/css/abdin.scss"/>
+            </xpath>
+        </template>
+        <!--
+                <template id="abdin_assets_frontend" name="abdin assets frontend" inherit_id="web.assets_frontend">
+                    <xpath expr="." position="inside">
+                        <link rel="stylesheet" href="/abdin_css/static/src/css/abdin.css"/>
+                    </xpath>
+                </template>
+        -->
+    </data>
+</odoo>

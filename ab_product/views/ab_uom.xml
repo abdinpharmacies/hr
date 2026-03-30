@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_uom_view_tree"
+                model="ir.ui.view">
+            <field name="name">ab_uom_view_tree</field>
+            <field name="model">ab_uom</field>
+            <field name="arch"
+                   type="xml">
+                <list string="ab_uom_tree"
+                      editable="bottom">
+                    <field name="unit_no" />
+                    <field name="type_id" />
+                    <field name="unit_size" />
+                </list>
+            </field>
+        </record>
+        <record id="ab_uom_view_form"
+                model="ir.ui.view">
+            <field name="name">ab_uom_view_form</field>
+            <field name="model">ab_uom</field>
+            <field name="arch"
+                   type="xml">
+                <form string="ab_uom_form">
+                    <sheet>
+                        <group>
+                            <field name="unit_no" />
+                            <field name="type_id" />
+                            <field name="unit_size" />
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

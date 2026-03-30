@@ -1,0 +1,1199 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-12-04 12:59+0000\n"
+"PO-Revision-Date: 2025-12-04 12:59+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=(n==0?0:n==1?1:n==2?2:n%100>=3 && n%100<=10?3:n%100>=11 && n%100<=99?4:5);\n"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header_promo_inherit.py:0
+#, python-format
+msgid " and %s more..."
+msgstr " و%s المزيد..."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Cost:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        التكلفة:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Net:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        الصافي:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Percentage:\n"
+"                                    </span>\n"
+"                                    <span class=\"o_stat_text\">\n"
+"                                        Amount:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        النسبة:\n"
+"                                    </span>\n"
+"                                    <span class=\"o_stat_text\">\n"
+"                                        القيمة:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Product:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        المنتج:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Total:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        الإجمالي:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_product
+msgid "Abdin Product"
+msgstr "منتج عبدين"
+
+#. module: ab_sales
+#: model:ir.module.category,description:ab_sales.ab_sales_categ
+#: model:ir.module.category,name:ab_sales.ab_sales_categ
+msgid "Abdin Sales"
+msgstr "مبيعات عبدين"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تمييز استثناء النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_address
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "All 'New Customer' fields must set!"
+msgstr "يجب تعبئة جميع حقول «العميل الجديد»!"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__promised_customer
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__promised_customer
+msgid "Already told customer we will deliver product"
+msgstr "تم إبلاغ العميل مسبقًا بأننا سنسلم المنتج"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__amount_tax
+msgid "Amount Tax"
+msgstr "قيمة الضريبة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__amount_total
+msgid "Amount Total"
+msgstr "الإجمالي الكلي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__amount_untaxed
+msgid "Amount Untaxed"
+msgstr "الإجمالي بدون ضريبة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__applied_program_ids
+msgid "Applied Programs"
+msgstr "البرامج المطبقة"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_assistant
+msgid "Assistant"
+msgstr "مساعد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__balance
+msgid "Available Balance"
+msgstr "الرصيد المتاح"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__available_prices
+msgid "Available Prices"
+msgstr "الأسعار المتاحة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__available_program_ids
+msgid "Available Programs"
+msgstr "البرامج المتاحة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__balance
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__balance
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__inventory_table_html
+msgid "Batches (Unique)"
+msgstr "الدفعات (الفريدة)"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_header_action
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_header_cashier_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_header_menu
+msgid "Bills"
+msgstr "الفواتير"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_sales_header_cashier_menu
+msgid "Bills For Cashier"
+msgstr "فواتير أمين الصندوق"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_call_center
+msgid "Call Center"
+msgstr "مركز الاتصال"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid "Can not get data for multiple headers"
+msgstr "لا يمكن جلب البيانات لعدة رؤوس في نفس الوقت"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_cashier
+msgid "Cashier"
+msgstr "أمين الصندوق"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.config_sub_menu
+msgid "Configurations"
+msgstr "الإعدادات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Connection to E-Plus failed."
+msgstr "فشل الاتصال بنظام E-Plus."
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_cosmetics
+msgid "Cosmetics Salesman"
+msgstr "مندوب مبيعات مستحضرات التجميل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__cost
+msgid "Cost"
+msgstr "التكلفة"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid "Could not evaluate expression: %s"
+msgstr "تعذر تقييم التعبير: %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_uid
+msgid "Created by"
+msgstr "تم الإنشاء بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__currency_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Current Customer"
+msgstr "العميل الحالي"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid ""
+"Current sell store is not equal ePlus DB store!\n"
+"ePlus DB store is %s\n"
+"with serial %s"
+msgstr ""
+"المخزن الحالي للبيع لا يطابق المخزن المسجل في قاعدة بيانات E-Plus!\n"
+"مخزن قاعدة بيانات E-Plus هو %s\n"
+"برقم تسلسلي %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_id
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header_promo_inherit.py:0
+#, python-format
+msgid "Customer needs <b>%s</b> more unit(s) to unlock promotion <b>%s</b>."
+msgstr "العميل يحتاج إلى <b>%s</b> وحدة إضافية لتفعيل العرض الترويجي <b>%s</b>."
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_customer_action
+#: model:ir.ui.menu,name:ab_sales.ab_customer_menu
+msgid "Customers"
+msgstr "العملاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__disc_percent
+msgid "Disc Percent"
+msgstr "نسبة الخصم"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__discount_amount
+msgid "Discount Amount"
+msgstr "قيمة الخصم"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "E-Plus push failed: %s"
+msgstr "فشل الإرسال إلى E-Plus: %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_line__qty_str
+msgid "Enter arithmetic expression, e.g. 1/3, 2.5*4, 10-3, 2*1.25"
+msgstr "أدخل تعبيرًا حسابيًا، مثل 1/3 أو 2.5*4 أو 10-3 أو 2*1.25"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__push_state__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_line__unavailable_reason_other
+msgid "Explain in more detail if you chose 'Other'."
+msgstr "اشرح بمزيد من التفصيل إذا اخترت «أخرى»."
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid ""
+"Failed to get new STH ID (SCOPE_IDENTITY/@@IDENTITY/IDENT_CURRENT all "
+"returned NULL). Please check that sales_trans_h.sth_id is an IDENTITY "
+"column."
+msgstr ""
+"فشل في الحصول على رقم STH جديد (الدوال SCOPE_IDENTITY/@@IDENTITY/"
+"IDENT_CURRENT أعادت جميعها القيمة NULL). يرجى التحقق من أن الحقل "
+"sales_trans_h.sth_id هو حقل IDENTITY."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__has_balance
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_search_view_inherit
+msgid "Has Balance"
+msgstr "له رصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__has_message
+msgid "Has Message"
+msgstr "به رسائل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__header_id
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_exception_icon
+msgid "Icon"
+msgstr "أيقونة"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة تشير إلى نشاط استثنائي."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_needaction
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_unread
+msgid "If checked, new messages require your attention."
+msgstr "إذا تم التحديد، فهذا يعني أن هناك رسائل جديدة تتطلب انتباهك."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا تم التحديد، فهذا يعني أن هناك رسائل بها خطأ في التسليم."
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid "Invalid expression"
+msgstr "تعبير غير صحيح"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid "Invalid input"
+msgstr "إدخال غير صحيح"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Invalid quantity in a line (<= 0)."
+msgstr "كمية غير صالحة في أحد السطور (أقل من أو تساوي صفر)."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__inventory_json
+msgid "Inventory Json"
+msgstr "JSON المخزون"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__invoice_address
+msgid "Invoice Address"
+msgstr "عنوان الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__invoice_address_datalist
+msgid "Invoice Address Datalist"
+msgstr "قائمة بيانات عنوان الفاتورة"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Invoice must be in prepending status"
+msgstr "يجب أن تكون الفاتورة في حالة «قيد الإعداد»"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header_promo_inherit.py:0
+#, python-format
+msgid "Invoice qty(%s) - must not exceed %s"
+msgstr "كمية الفاتورة (%s) يجب ألا تتجاوز %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_ip
+msgid "Ip1"
+msgstr "عنوان IP1"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__is_closed
+msgid "Is Closed"
+msgstr "مغلقة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__is_delivery
+msgid "Is Delivery"
+msgstr "فاتورة توصيل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard____last_update
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header____last_update
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory____last_update
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line____last_update
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard____last_update
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line____last_update
+msgid "Last Modified on"
+msgstr "آخر تعديل في"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Line with missing product E-Plus serial."
+msgstr "سطر بدون رقم تسلسلي للمنتج في E-Plus."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Lines with no stock"
+msgstr "السطور التي ليس لها رصيد"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_unavailable_wizard_line
+msgid "Lines with zero / unavailable stock in sale"
+msgstr "سطور بيع ذات رصيد صفر أو غير متاح"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__line_ids
+msgid "Lines without stock"
+msgstr "السطور بدون رصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_main_attachment_id
+msgid "Main Attachment"
+msgstr "المرفق الرئيسي"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_manager
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_mobile
+msgid "Mobile"
+msgstr "الجوال"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "آخر موعد لنشاطي"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__need_qty_to_unlock_promo
+msgid "Need Qty To Unlock Promo"
+msgstr "الكمية المطلوبة لتفعيل العرض"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__net_amount
+msgid "Net Amount"
+msgstr "القيمة الصافية"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "New Customer"
+msgstr "عميل جديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__new_customer_address
+msgid "New Customer Address"
+msgstr "عنوان العميل الجديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__new_customer_name
+msgid "New Customer Name"
+msgstr "اسم العميل الجديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__new_customer_phone
+msgid "New Customer Phone"
+msgstr "هاتف العميل الجديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "آخر موعد للنشاط التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "No Stock Warning"
+msgstr "تحذير: لا يوجد رصيد"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "No lines to send."
+msgstr "لا توجد سطور لإرسالها."
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid "No matching stores found for this sell store"
+msgstr "لم يتم العثور على مخازن مطابقة لهذا المخزن للبيع"
+
+#. module: ab_sales
+#. openerp-web
+#: code:addons/ab_sales/static/src/js/ab_sales_renderer_list.js:0
+#, python-format
+msgid "No product"
+msgstr "لا يوجد منتج"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__push_state__none
+msgid "None"
+msgstr "لا شيء"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__not_entered
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__not_entered
+msgid "Not entered by data entry yet"
+msgstr "لم يتم إدخالها بعد بواسطة مدخل البيانات"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__not_transferred
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__not_transferred
+msgid "Not transferred yet from main store"
+msgstr "لم تُنقل بعد من المخزن الرئيسي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__number_of_products
+msgid "Number Of Products"
+msgstr "عدد المنتجات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_unread_counter
+msgid "Number of unread messages"
+msgstr "عدد الرسائل غير المقروءة"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid ""
+"Only digits and operators + - * / . are allowed in Qty.\n"
+"Invalid characters: %s"
+msgstr ""
+"يُسمح فقط بالأرقام والعوامل + - * / . في حقل الكمية.\n"
+"الأحرف غير المسموح بها: %s"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid ""
+"Only digits and operators + - * / . are allowed.\n"
+"Invalid characters: %s"
+msgstr ""
+"يُسمح فقط بالأرقام والعوامل + - * / . .\n"
+"الأحرف غير المسموح بها: %s"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header_promo_inherit.py:0
+#, python-format
+msgid "Only one promotion per each invoice"
+msgstr "عرض واحد فقط لكل فاتورة"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_product_inherit.py:0
+#, python-format
+msgid "Operation not supported"
+msgstr "العملية غير مدعومة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__unavailable_reason_other
+msgid "Other (details)"
+msgstr "أخرى (تفاصيل)"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__other
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__other
+msgid "Other (please explain)"
+msgstr "أخرى (يرجى الشرح)"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__unavailable_reason_other
+msgid "Other reason (details)"
+msgstr "سبب آخر (تفاصيل)"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_pharmacist
+msgid "Pharmacist"
+msgstr "صيدلي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_phone
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_sales
+#. openerp-web
+#: code:addons/ab_sales/static/src/js/ab_sales_renderer_list.js:0
+#, python-format
+msgid "Please choose a product first, then click Balance."
+msgstr "يرجى اختيار منتج أولاً، ثم الضغط على زر «الرصيد»."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Please choose a reason for each line you still want to sell."
+msgstr "يرجى اختيار سبب لكل سطر تريد بيعه رغم عدم وجود رصيد."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__prepending
+msgid "PrePending"
+msgstr "قيد الإعداد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__price
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__price_subtotal
+msgid "Price Subtotal"
+msgstr "إجمالي السعر الفرعي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__price_tax
+msgid "Price Tax"
+msgstr "ضريبة السعر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__available_prices_html
+msgid "Price:Balance"
+msgstr "السعر:الرصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_product_balance_wizard
+msgid "Product Balance Wizard"
+msgstr "معالج أرصدة المنتج"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__product_eplus_serial
+msgid "Product Eplus Serial"
+msgstr "الرقم التسلسلي للمنتج في E-Plus"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_product_menu
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_product_card_menu
+msgid "Products Cards"
+msgstr "بطاقات المنتجات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__products_not_exist
+msgid "Products Not Exist"
+msgstr "منتجات غير موجودة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__promo_discount_amount
+msgid "Promotion Discount"
+msgstr "خصم العرض الترويجي"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_promo_program_sub_menu
+msgid "Promotions"
+msgstr "العروض الترويجية"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_promo_program_menu
+msgid "Promotions Programs"
+msgstr "برامج العروض الترويجية"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_promo_program_wizard_menu
+msgid "Promotions Wizard"
+msgstr "معالج العروض الترويجية"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__push_message
+msgid "Push Message"
+msgstr "رسالة الإرسال"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__push_state
+msgid "Push State"
+msgstr "حالة الإرسال"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Pushed to E-Plus successfully (sth_id=%s)."
+msgstr "تم الإرسال إلى E-Plus بنجاح (sth_id=%s)."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__qty_str
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+#, python-format
+msgid "Qty expression must evaluate to a number."
+msgstr "يجب أن ينتج عن تعبير الكمية رقم."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__qty
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Reapply Promotion"
+msgstr "إعادة تطبيق العرض الترويجي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__unavailable_reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_unavailable_wizard
+msgid "Reason for selling products without stock"
+msgstr "سبب بيع المنتجات بدون رصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__unavailable_reason
+msgid "Reason for selling without stock"
+msgstr "سبب البيع بدون رصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__qty
+msgid "Requested Qty"
+msgstr "الكمية المطلوبة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__header_id
+msgid "Sale"
+msgstr "البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__line_id
+msgid "Sale Line"
+msgstr "سطر البيع"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.sales_menu_root
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Sales Detail"
+msgstr "تفاصيل المبيعات"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__saved
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Saved"
+msgstr "محفوظة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__sell_price
+msgid "Sell Price"
+msgstr "سعر البيع"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Sell without stock?"
+msgstr "البيع بدون رصيد؟"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Server %s may be offline"
+msgstr "قد يكون الخادم %s غير متصل"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_form_view_inherit
+msgid "Show Balance"
+msgstr "عرض الرصيد"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Show Stores Balance"
+msgstr "عرض أرصدة المخازن"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Some products have no stock in this store."
+msgstr "بعض المنتجات لا يوجد لها رصيد في هذا المخزن."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__status
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__header_status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"حالة مبنية على الأنشطة:\n"
+"متأخر: تاريخ الاستحقاق قد مضى بالفعل\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مُخطط: أنشطة مستقبلية."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__stocktaking_error
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__stocktaking_error
+msgid "Stocktaking error"
+msgstr "خطأ في الجرد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_id
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.action_ab_product_balance_wizard
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__balance_html
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+msgid "Store Balances"
+msgstr "أرصدة المخازن"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_code
+msgid "Store Code"
+msgstr "كود المخزن"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid "Store is required and must have an E-Plus serial."
+msgstr "المخزن مطلوب ويجب أن يحتوي على رقم تسلسلي في E-Plus."
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_store_menu
+msgid "Stores"
+msgstr "المخازن"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__push_state__success
+msgid "Success"
+msgstr "نجاح"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__target_sell_price
+msgid "Target Sell Price"
+msgstr "سعر البيع المستهدف"
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#, python-format
+msgid ""
+"This  product \n"
+"%(prod)s\n"
+" cannot be sold in fractional small units. Requested %(req).4f small units (qty=%(q).4f × factor=%(f).4f). Please adjust the quantity to a whole small unit."
+msgstr ""
+"هذا المنتج \n"
+"%(prod)s\n"
+" لا يمكن بيعه بوحدات صغيرة كسرية. الكمية المطلوبة %(req).4f وحدة صغيرة "
+"(الكمية=%(q).4f × معامل التحويل=%(f).4f). يرجى تعديل الكمية إلى عدد صحيح من "
+"الوحدات الصغيرة."
+
+#. module: ab_sales
+#: code:addons/ab_sales/models/ab_sales_header_promo_inherit.py:0
+#, python-format
+msgid "To apply promotion <b>%s</b>, add any discounted product: <i>%s</i>%s"
+msgstr "لتطبيق العرض الترويجي <b>%s</b>، أضف أي منتج مخفض: <i>%s</i>%s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__amount_total_after_promo
+msgid "Total After Promotion"
+msgstr "الإجمالي بعد العرض الترويجي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__balance
+msgid "Total Balance"
+msgstr "إجمالي الرصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__total_net_amount
+msgid "Total Net Amount"
+msgstr "إجمالي القيمة الصافية"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__total_price
+msgid "Total Price"
+msgstr "إجمالي السعر"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع نشاط الاستثناء على السجل."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_unread
+msgid "Unread Messages"
+msgstr "الرسائل غير المقروءة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr "عداد الرسائل غير المقروءة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__uom_id
+msgid "UoM"
+msgstr "وحدة القياس"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__uom_id_domain
+msgid "Uom Id Domain"
+msgstr "نطاق معرف وحدة القياس"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__wizard_id
+msgid "Wizard"
+msgstr "المعالج"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Write your feedback here"
+msgstr "اكتب ملاحظاتك هنا"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__wrong_price
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__wrong_price
+msgid "Wrong price in system"
+msgstr "سعر خاطئ في النظام"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "ab_sales_header"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "ab_sales_header_form"
+msgstr "ab_sales_header_form"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_cashier_tree
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_tree
+msgid "ab_sales_header_tree"
+msgstr "ab_sales_header_tree"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_inventory
+msgid "ab_sales_inventory"
+msgstr "ab_sales_inventory"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_line_action
+#: model:ir.model,name:ab_sales.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr "ab_sales_line"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_line_view_tree
+msgid "ab_sales_line_tree"
+msgstr "ab_sales_line_tree"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__line_ids
+msgid "details"
+msgstr "التفاصيل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__eplus_serial
+msgid "ePlus Serial"
+msgstr "الرقم التسلسلي في E-Plus"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_sales_line_menu
+msgid "sales details"
+msgstr "تفاصيل المبيعات"

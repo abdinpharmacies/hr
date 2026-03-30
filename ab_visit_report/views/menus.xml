@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+                id="ab_visit_report_menu_root"
+                name="Visit Report"
+                groups="ab_visit_report.group_ab_visit_report_admin,ab_visit_report.group_ab_visit_report_ro,ab_visit_report.group_ab_visit_report_user"
+                web_icon="ab_visit_report,static/description/icon.png"
+                sequence="10"
+        />
+        <menuitem
+                id="ab_visit_report_menu_reports"
+                name="Visit Reports"
+                parent="ab_visit_report_menu_root"
+                action="ab_visit_report_action"
+                groups="ab_visit_report.group_ab_visit_report_admin,ab_visit_report.group_ab_visit_report_ro,ab_visit_report.group_ab_visit_report_user"
+                sequence="10"
+        />
+        <menuitem
+                id="ab_visit_report_menu_legal_documents_note"
+                name="Legal Document Notes"
+                parent="ab_visit_report_menu_root"
+                action="ab_visit_report_legal_document_notes_action"
+                groups="ab_visit_report.group_ab_visit_report_admin"
+                sequence="20"
+        />
+
+    </data>
+</odoo>

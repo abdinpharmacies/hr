@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_application_list_view" model="ir.ui.view">
+            <field name="name">ab.hr.application.list</field>
+            <field name="model">ab_hr_application</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="national_identity"/>
+                    <field name="required_job_id"/>
+                    <field name="mobile"/>
+                    <field name="governorate_id"/>
+                    <field name="city_id"/>
+                    <field name="type_of_form"/>
+                    <field name="expected_salary"/>
+                    <field name="last_action" widget="badge" decoration-danger="last_action in ('rejected','s_list')" decoration-info="last_action in ('training','advanced_training','duplicated_training','re_appraisal_interview')" decoration-success="last_action in ('accepted_job_offer','accepted_short_list','accepted_waiting_list')" decoration-warning="last_action in ('archived')" />
+                    <field name="create_uid"/>
+                    <field name="create_date"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_application_form_view" model="ir.ui.view">
+            <field name="name">ab.hr.application.form</field>
+            <field name="model">ab_hr_application</field>
+            <field name="arch" type="xml">
+                <form string="Application">
+                    <sheet>
+                        <widget name="web_ribbon" title="Accepted-Job Offer" bg_color="text-bg-success" invisible="last_action != 'accepted_job_offer'"/>
+                        <widget name="web_ribbon" title="Accepted-Short List" bg_color="text-bg-success" invisible="last_action != 'accepted_short_list'"/>
+                        <widget name="web_ribbon" title="Accepted-Waiting List" bg_color="text-bg-success" invisible="last_action != 'accepted_waiting_list'"/>
+                        <widget name="web_ribbon" title="Training" bg_color="text-bg-info" invisible="last_action != 'training'"/>
+                        <widget name="web_ribbon" title="Advanced Training" bg_color="text-bg-info" invisible="last_action != 'advanced_training'"/>
+                        <widget name="web_ribbon" title="Duplicated Training" bg_color="text-bg-info" invisible="last_action != 'duplicated_training'"/>
+                        <widget name="web_ribbon" title="Re-Appraisal Interview" bg_color="text-bg-info" invisible="last_action != 're_appraisal_interview'"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-warning" invisible="last_action != 'archived'"/>
+                        <widget name="web_ribbon" title="S.List" bg_color="text-bg-danger" invisible="last_action != 's_list'"/>
+                        <widget name="web_ribbon" title="Rejected" bg_color="text-bg-danger" invisible="last_action != 'rejected'"/>
+                        <field name="last_action" invisible="1"/>
+                        <div class="oe_title">
+                            <h1 class="d-flex align-items-center gap-2">
+                                <field name="name" placeholder="Full name (4 parts)" class="o_text_overflow"/>
+                            </h1>
+                            <div class="text-muted">
+                                <span class="me-2">Code:</span>
+                                <field name="code" class="oe_inline"/>
+                            </div>
+                            <div class="text-muted">
+                                <span class="me-2">National ID:</span>
+                                <field name="national_identity" class="oe_inline"/>
+                            </div>
+                        </div>
+                        <group>
+                            <group string="Application">
+                                <field name="type_of_form"/>
+                                <field name="required_job_id"/>
+                                <field name="expected_salary"/>
+                                <field name="bconnect_experience"/>
+                            </group>
+                            <group string="Work Shifts">
+                                <field name="morning"/>
+                                <field name="evening"/>
+                                <field name="after_midnight"/>
+                            </group>
+                        </group>
+
+                        <notebook>
+                            <page string="Personal">
+                                <group>
+                                    <group string="Identity">
+                                        <field name="birth_date"/>
+                                        <field name="gender"/>
+                                        <field name="religion"/>
+                                        <field name="marital_status"/>
+                                        <field name="military_status"/>
+                                    </group>
+
+                                    <group string="Contact">
+                                        <field name="mobile"/>
+                                        <field name="telephone"/>
+                                        <field name="email" widget="email"/>
+                                        <field name="address"/>
+                                        <field name="governorate_id"/>
+                                        <field name="city_id" domain="[('state_id','=',governorate_id)]"/>
+                                    </group>
+                                </group>
+
+                                <group string="Education">
+                                    <field name="qualification"/>
+                                    <field name="nationality"/>
+                                    <field name="graduate_date"/>
+                                </group>
+                            </page>
+
+                            <page string="Experience">
+                                <field name="experience_ids">
+                                    <list editable="bottom">
+                                        <field name="company_name"/>
+                                        <field name="job_title"/>
+                                        <field name="starting_date"/>
+                                        <field name="ending_date"/>
+                                        <field name="reason_for_leaving"/>
+                                        <field name="salary"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <page string="Courses">
+                                <field name="trainingcourses_ids">
+                                    <list editable="bottom">
+                                        <field name="specialty"/>
+                                        <field name="organization"/>
+                                        <field name="time_period"/>
+                                        <field name="grade"/>
+                                    </list>
+                                </field>
+                            </page>
+
+                            <page string="Interviews">
+                                <field name="Interviews_ids">
+                                    <list editable="bottom">
+                                        <field name="interviewer_id"/>
+                                        <field name="interview_date"/>
+                                        <field name="active"/>
+                                        <field name="action"/>
+
+                                        <field name="store_id"/>
+
+                                        <field name="starting_date"/>
+
+                                        <field name="ending_date" />
+
+                                        <field name="from_hour" widget="float_time" />
+
+                                        <field name="to_hour" widget="float_time" />
+                                    </list>
+                                </field>
+                            </page>
+
+                        </notebook>
+                    </sheet>
+
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_application_kanban_view" model="ir.ui.view">
+            <field name="name">ab.hr.application.kanban</field>
+            <field name="model">ab_hr_application</field>
+            <field name="arch" type="xml">
+
+                <kanban class="o_kanban_small_column">
+                    <field name="name"/>
+                    <field name="required_job_id"/>
+                    <field name="mobile"/>
+                    <field name="email"/>
+                    <field name="last_action"/>
+
+                    <templates>
+                        <t t-name="card">
+                            <div class="o_kanban_card oe_kanban_global_click">
+
+                                <div class="o_kanban_card_header d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                        <div class="text-muted small">
+                                            <field name="required_job_id"/>
+                                        </div>
+                                    </div>
+
+                                    <t t-if="record.last_action.raw_value == 'accepted_job_offer'">
+                                        <span class="badge text-bg-success">Accepted-Job Offer</span>
+                                    </t>
+                                    <t t-if="record.last_action.raw_value == 'accepted_short_list'">
+                                        <span class="badge text-bg-success">Accepted-Short List</span>
+                                    </t>
+                                    <t t-if="record.last_action.raw_value == 'accepted_waiting_list'">
+                                        <span class="badge text-bg-success">Accepted-Waiting List</span>
+                                    </t>
+
+                                    <t t-if="record.last_action.raw_value == 'training'">
+                                        <span class="badge text-bg-info">Training</span>
+                                    </t>
+                                    <t t-if="record.last_action.raw_value == 'advanced_training'">
+                                        <span class="badge text-bg-primary">Advanced Training</span>
+                                    </t>
+                                    <t t-if="record.last_action.raw_value == 'duplicated_training'">
+                                        <span class="badge text-bg-info">Duplicated Training</span>
+                                    </t>
+
+                                    <t t-if="record.last_action.raw_value == 're_appraisal_interview'">
+                                        <span class="badge text-bg-purple">Re-Appraisal</span>
+                                    </t>
+
+                                    <t t-if="record.last_action.raw_value == 'archived'">
+                                        <span class="badge text-bg-warning">Archived</span>
+                                    </t>
+
+                                    <t t-if="record.last_action.raw_value == 's_list'">
+                                        <span class="badge text-bg-secondary">S.List</span>
+                                    </t>
+
+                                    <t t-if="record.last_action.raw_value == 'rejected'">
+                                        <span class="badge text-bg-danger">Rejected</span>
+                                    </t>
+                                </div>
+                                <div class="o_kanban_card_content mt-2">
+                                    <div t-if="record.mobile.value">
+                                        <i class="fa fa-phone me-1"/>
+                                        <t t-esc="record.mobile.value"/>
+                                    </div>
+                                    <div t-if="record.email.value">
+                                        <i class="fa fa-envelope me-1"/>
+                                        <t t-esc="record.email.value"/>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="ab_hr_application_search_view" model="ir.ui.view">
+            <field name="name">ab.hr.application.search</field>
+            <field name="model">ab_hr_application</field>
+            <field name="arch" type="xml">
+                <search string="Applications">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="national_identity"/>
+                    <field name="mobile"/>
+                    <field name="required_job_id"/>
+                    <field name="governorate_id"/>
+                    <field name="city_id"/>
+                    <field name="type_of_form"/>
+                    <field name="gender"/>
+                    <field name="marital_status"/>
+                    <field name="military_status"/>
+                    <field name="qualification"/>
+                    <field name="create_uid"/>
+
+                    <separator/>
+
+                    <filter name="filter_recruit" string="Recruit" domain="[('type_of_form','=','recruit')]"/>
+                    <filter name="filter_training" string="Training" domain="[('type_of_form','=','training')]"/>
+                    <filter name="filter_has_email" string="Has Email" domain="[('email','!=',False)]"/>
+                    <filter name="filter_bconnect" string="Bconnect Experience" domain="[('bconnect_experience','=',True)]"/>
+                    <filter name="filter_morning" string="Morning Shift" domain="[('morning','=',True)]"/>
+                    <filter name="filter_evening" string="Evening Shift" domain="[('evening','=',True)]"/>
+                    <filter name="filter_after_midnight" string="After Midnight Shift" domain="[('after_midnight','=',True)]"/>
+
+                    <group>
+                        <filter name="group_by_required_job" string="Required Job" context="{'group_by': 'required_job_id'}"/>
+                        <filter name="group_by_governorate" string="Governorate" context="{'group_by': 'governorate_id'}"/>
+                        <filter name="group_by_city" string="City" context="{'group_by': 'city_id'}"/>
+                        <filter name="group_by_type" string="Form Type" context="{'group_by': 'type_of_form'}"/>
+                        <filter name="group_by_gender" string="Gender" context="{'group_by': 'gender'}"/>
+                        <filter name="group_by_marital" string="Marital Status" context="{'group_by': 'marital_status'}"/>
+                        <filter name="group_by_military" string="Military Status" context="{'group_by': 'military_status'}"/>
+                        <filter name="group_by_creator" string="Created By" context="{'group_by': 'create_uid'}"/>
+                        <filter name="group_by_create_date" string="Created Date" context="{'group_by': 'create_date:day'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_application_action" model="ir.actions.act_window">
+            <field name="name">Applications</field>
+            <field name="res_model">ab_hr_application</field>
+            <field name="view_mode">list,form,kanban,graph,pivot</field>
+            <field name="search_view_id" ref="ab_hr_application_search_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Schedule interviews for applicants.
+                </p>
+            </field>
+        </record>
+        <menuitem id="ab_hr_application_menu" name="Applications" parent="ab_hr.menu_root"/>
+        <menuitem id="ab_hr_application" name="Applications" parent="ab_hr_application_menu" action="ab_hr_application_action"/>
+    </data>
+</odoo>

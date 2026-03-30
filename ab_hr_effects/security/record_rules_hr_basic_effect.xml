@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_hr_basic_effect_user" model="ir.rule">
+            <field name="name">ab_hr_basic_effect user access</field>
+            <field name="model_id" ref="model_ab_hr_basic_effect"/>
+            <field name="domain_force">[(1, '=', 1)] if (user.has_group('ab_hr.group_ab_hr_payroll_specialist') or user.has_group('ab_hr.group_ab_hr_co')) else (['|', ('employee_id.supervision_type', 'in', ['myself', 'direct', 'indirect', 'indirect_to_subordinate']), ('employee_id.job_id.access_history_user_ids', 'in', user.id)] if user.has_group('ab_hr.group_ab_hr_recruiter') else [('employee_id.supervision_type', 'in', ['myself', 'direct', 'indirect', 'indirect_to_subordinate'])])</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="rule_ab_hr_basic_effect_hr_all" model="ir.rule">
+            <field name="name">ab_hr_basic_effect hr access</field>
+            <field name="model_id" ref="model_ab_hr_basic_effect"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_payroll_specialist')),
+                                       (4, ref('ab_hr.group_ab_hr_co'))]"/>
+        </record>
+
+    </data>
+</odoo>

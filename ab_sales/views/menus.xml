@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="sales_menu_root" name="Sales" sequence="4" web_icon="ab_sales,static/description/icon.png"/>
+
+
+        <menuitem id="config_sub_menu" name="Configurations" parent="sales_menu_root" sequence="500"/>
+    </data>
+</odoo>

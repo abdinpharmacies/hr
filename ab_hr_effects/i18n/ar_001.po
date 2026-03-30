@@ -1,0 +1,1325 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_hr_effects
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"POT-Creation-Date: 2026-02-02 00:00+0000\n"
+"PO-Revision-Date: 2026-02-02 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_hr_effects
+msgid "A date or a weekly pattern is required to create the effect."
+msgstr "يجب تحديد تاريخ أو نمط أسبوعي لإنشاء المؤثر."
+
+#. module: ab_hr_effects
+msgid "A suitable time must be selected for this type of effect."
+msgstr "يجب اختيار وقت مناسب لهذا النوع من المؤثر."
+
+#. module: ab_hr_effects
+msgid "A suitable weekday must be selected for this type of effect."
+msgstr "يجب اختيار يوم أسبوع مناسب لهذا النوع من المؤثر."
+
+#. module: ab_hr_effects
+msgid "A valid date must be selected for this type of effect."
+msgstr "يجب اختيار تاريخ صحيح لهذا النوع من المؤثر."
+
+#. module: ab_hr_effects
+msgid "A valid number must be selected for this type of effect."
+msgstr "يجب اختيار رقم صحيح لهذا النوع من المؤثر."
+
+#. module: ab_hr_effects
+msgid "A valid numeric value must be selected for this type of effect."
+msgstr "يجب اختيار قيمة رقمية صحيحة لهذا النوع من المؤثر."
+
+#. module: ab_hr_effects
+msgid "Toggle Previous Month Dates"
+msgstr "تبديل عرض تواريخ الشهر السابق"
+
+#. module: ab_hr_effects
+msgid "You don't have the authority to disable -show previous month dates- for this job"
+msgstr "لا تملك صلاحية إيقاف عرض تواريخ الشهر السابق لهذه الوظيفة"
+
+#. module: ab_hr_effects
+msgid "You don't have the authority to enable -show previous month dates- for this job"
+msgstr "لا تملك صلاحية تفعيل عرض تواريخ الشهر السابق لهذه الوظيفة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "Active Employees"
+msgstr "موظفون نشطون"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+msgid "Add Effect"
+msgstr "إضافة مؤثر"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Add Payroll Effect"
+msgstr "إضافة مؤثر رواتب"
+
+#. module: ab_hr_effects
+msgid "Attendance Out Time"
+msgstr "ميعاد الانصراف"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_annual_leave
+msgid "Annual leave"
+msgstr "إجازة سنوي"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_basic_working_hour_number
+msgid "Basic Working Hour Number"
+msgstr "ساعات العمل طبقا للاتفاق"
+
+#. module: ab_hr_effects
+msgid "Show Previous Month Dates"
+msgstr "عرض تواريخ الشهر السابق"
+
+#. module: ab_hr_effects
+msgid "Hide Previous Month Dates"
+msgstr "إخفاء تواريخ الشهر السابق"
+
+#. module: ab_hr_effects
+msgid "Number config"
+msgstr "إعدادات الأرقام"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Applied"
+msgstr "مطبق"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_employee__effects_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+msgid "Applied Effects"
+msgstr "المؤثرات المطبقة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+msgid "Apply"
+msgstr "تطبيق"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__attached_file
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Attachment Required Effect"
+msgstr "مؤثر يتطلب مرفق"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Attachment and Effect Reason"
+msgstr "المرفقات وسبب المؤثر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__attendance_time
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Attendance Time"
+msgstr "وقت الحضور"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Attendance Time Effect"
+msgstr "مؤثر وقت الحضور"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Back to Draft"
+msgstr "إرجاع لمسودة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Basic Effect"
+msgstr "مؤثر أساسي"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Change Day-off Date"
+msgstr "تعديل تاريخ الإجازة"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_change_shift_time
+msgid "Change shift time"
+msgstr "تغيير ميعاد وردية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_change_weekly_day_off_date
+msgid "Change weekly day-off date"
+msgstr "تعديل تاريخ إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_compassionate_leave
+msgid "Compassionate Leave"
+msgstr "إجازة وفاة"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_month_count
+msgid "Count in Month"
+msgstr "العدد في الشهر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_payroll_year_count
+msgid "Count in Payroll Year"
+msgstr "العدد في سنة الرواتب"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Create and Write Info"
+msgstr "معلومات الإنشاء والتعديل"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+msgid "Created Today"
+msgstr "أُنشئ اليوم"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_employee__effects_wiz_ids
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+msgid "Current Effects"
+msgstr "المؤثرات الحالية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+msgid "Current Month"
+msgstr "الشهر الحالي"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__current_month_match
+msgid "Current Month Effect"
+msgstr "مؤثر الشهر الحالي"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Day off date"
+msgstr "تاريخ الإجازة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Day-off Date Type"
+msgstr "نوع تاريخ الإجازة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Day-off Effect Type"
+msgstr "نوع مؤثر الإجازة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Day-off config"
+msgstr "إعدادات الإجازة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Direct Manager Review"
+msgstr "مراجعة المدير المباشر"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+msgid "Direct Review"
+msgstr "مراجعة مباشرة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+msgid "Direct Subordinates"
+msgstr "مرؤوسون مباشرين"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "Direct Supervision"
+msgstr "إشراف مباشر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_type__double_approval
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Double Approval"
+msgstr "موافقة مزدوجة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Dual Hour Effect"
+msgstr "مؤثر بساعتين"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Effect"
+msgstr "المؤثر"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Effect Basic Data"
+msgstr "البيانات الأساسية للمؤثر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__effect_date
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_date
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Effect Date"
+msgstr "تاريخ المؤثر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__max_effects_info_html
+msgid "Effect Info"
+msgstr "معلومات المؤثر"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Effect Note"
+msgstr "ملاحظة المؤثر"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__effect_reason
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Effect Reason"
+msgstr "سبب المؤثر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_type_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_form
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__effect_type_id
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__effect_type_id
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_type_id
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Effect Type"
+msgstr "نوع المؤثر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__effect_value
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_form
+msgid "Effect Value"
+msgstr "قيمة المؤثر"
+
+#. module: ab_hr_effects
+msgid "Effect date must be within the allowed date range."
+msgstr "يجب أن يكون تاريخ المؤثر ضمن النطاق المسموح."
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_line_ids
+msgid "Effects"
+msgstr "المؤثرات"
+
+#. module: ab_hr_effects
+msgid "Effects Wizard (%s)"
+msgstr "معالج المؤثرات (%s)"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__employee_id
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__employee_id
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Employee Data"
+msgstr "بيانات الموظف"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__end_date
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "End Date"
+msgstr "تاريخ النهاية"
+
+#. module: ab_hr_effects
+msgid "End date must be within the allowed date range."
+msgstr "يجب أن يكون تاريخ النهاية ضمن النطاق المسموح."
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__entitlement_month
+msgid "Entitlement Month"
+msgstr "شهر الاستحقاق"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_examination_leave
+msgid "Examination Leave"
+msgstr "إجازة امتحانات"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_external_business_assignment
+msgid "External business assignment"
+msgstr "مأمورية عمل"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+msgid "Extra Effects Data"
+msgstr "بيانات مؤثرات إضافية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "FP Value"
+msgstr "قيمة البصمة"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_fifth_weekly_day_off_date
+msgid "Fifth weekly day off date"
+msgstr "تاريخ خامس إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "First Hour Value"
+msgstr "قيمة الساعة الأولى"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_first_weekly_day_off_date
+msgid "First weekly day off date"
+msgstr "تاريخ أول إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_fourth_weekly_day_off_date
+msgid "Fourth weekly day off date"
+msgstr "تاريخ رابع إجازة اسبوعية"
+
+#. module: ab_hr_effects
+msgid "HR Effects"
+msgstr "مؤثرات الموارد البشرية"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__hour_value
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__hour_value
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Hour Value"
+msgstr "قيمة الساعة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Hour config"
+msgstr "إعدادات الساعات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Hourly Effect"
+msgstr "مؤثر بالساعة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "In FP Value"
+msgstr "قيمة بصمة الدخول"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+msgid "Indirect Subordinates"
+msgstr "مرؤوسون غير مباشرين"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "Indirect Supervision"
+msgstr "إشراف غير مباشر"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "Indirect To Subordinate"
+msgstr "غير مباشر إلى مرؤوس"
+
+#. module: ab_hr_effects
+msgid "Invalid target state."
+msgstr "حالة الهدف غير صحيحة."
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__job_info_html
+msgid "Job Info"
+msgstr "معلومات الوظيفة"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__job_title
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__job_title
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_marriage_leave
+msgid "Marriage Leave"
+msgstr "إجازة زواج"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Max limit config"
+msgstr "إعدادات الحد الأقصى"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Maximum Monthly Limit"
+msgstr "الحد الأقصى الشهري"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Maximum Start Limit"
+msgstr "الحد الأقصى لبداية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Maximum yearly Limit"
+msgstr "الحد الأقصى السنوي"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Multi edit config"
+msgstr "إعدادات التعديل المتعدد"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "Myself"
+msgstr "شخصي"
+
+#. module: ab_hr_effects
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "New Day-off Date"
+msgstr "تاريخ الإجازة الجديد"
+
+#. module: ab_hr_effects
+msgid "No matching dates found for the effect."
+msgstr "لا توجد تواريخ مطابقة لهذا المؤثر."
+
+#. module: ab_hr_effects
+msgid "No status was provided."
+msgstr "لم يتم تحديد حالة."
+
+#. module: ab_hr_effects
+msgid "No target state was provided."
+msgstr "لم يتم تحديد حالة الهدف."
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "Notes config"
+msgstr "إعدادات الملاحظات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Number Value Effect"
+msgstr "مؤثر قيمة رقمية"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_numerical_value
+msgid "Numeric Value"
+msgstr "القيمة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Numerical Value"
+msgstr "قيمة رقمية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_official_holiday
+msgid "Official holiday"
+msgstr "إجازة رسمي"
+
+#. module: ab_hr_effects
+msgid "Operation not supported"
+msgstr "العملية غير مدعومة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "Other"
+msgstr "أخرى"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Out FP Value"
+msgstr "قيمة بصمة الخروج"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_overtime_hours
+msgid "Overtime hours"
+msgstr "ساعات إضافية بإذن"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Paid Vacancy"
+msgstr "إجازة مدفوعة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Payroll Effect"
+msgstr "مؤثر رواتب"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__periodic_effect
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Periodic Effect"
+msgstr "مؤثر دوري"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_two_hours_permission
+msgid "Permission for two hours"
+msgstr "إذن ساعتين"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+msgid "Personal Effects"
+msgstr "مؤثرات شخصية"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__monthly_weekly_vacancies
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_tree
+msgid "Previous Day Off"
+msgstr "الإجازة السابقة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Previous Day-Off Date"
+msgstr "تاريخ الإجازة السابق"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Previous day off"
+msgstr "الإجازة السابقة"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_reason
+msgid "Reason / Notes"
+msgstr "السبب / الملاحظات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_reward
+msgid "Reward"
+msgstr "مكافأة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Save and Close"
+msgstr "حفظ وإغلاق"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__second_hour_value
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__second_hour_value
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Second Hour Value"
+msgstr "قيمة الساعة الثانية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_second_weekly_day_off_date
+msgid "Second weekly day off date"
+msgstr "تاريخ ثاني إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Select Day Off Number"
+msgstr "اختيار رقم الإجازة الأسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_fingerprint_in
+msgid "Set or change fingerprint in"
+msgstr "تحديد أو تعديل بصمة حضور"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_fingerprint_out
+msgid "Set or change fingerprint out"
+msgstr "تحديد أو تعديل بصمة انصراف"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_fifth_weekly_day_off
+msgid "Set or change the fifth weekly day off"
+msgstr "تحديد أو تعديل خامس يوم إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_first_weekly_day_off
+msgid "Set or change the first weekly day off"
+msgstr "تحديد أو تعديل أول يوم إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_fourth_weekly_day_off
+msgid "Set or change the fourth weekly day off"
+msgstr "تحديد أو تعديل رابع يوم إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_general_attendance_time
+msgid "Set or change the general attendance time"
+msgstr "تحديد أو تعديل ميعاد الحضور العام"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_second_weekly_day_off
+msgid "Set or change the second weekly day off"
+msgstr "تحديد أو تعديل ثاني يوم إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_sixth_weekly_day_off
+msgid "Set or change the sixth weekly day off"
+msgstr "تحديد أو تعديل سادس يوم إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_third_weekly_day_off
+msgid "Set or change the third weekly day off"
+msgstr "تحديد أو تعديل ثالث يوم إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_set_or_change_weekly_day_off_number
+msgid "Set or change the weekly day off number"
+msgstr "تحديد أو تعديل عدد أيام الإجازة الاسبوعية"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_employee__delay_to_send_effect
+msgid "Show Previous Month Dates"
+msgstr "عرض تواريخ الشهر السابق"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_sick_leave
+msgid "Sick leave"
+msgstr "إجازة مرضي"
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_sixth_weekly_day_off_date
+msgid "Sixth weekly day off date"
+msgstr "تاريخ سادس إجازة اسبوعية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: ab_hr_effects
+msgid "The end date of the period cannot be earlier than the start date."
+msgstr "تاريخ نهاية الفترة لا يمكن أن يكون قبل تاريخ البداية."
+
+#. module: ab_hr_effects
+msgid "The same weekly day-off date cannot be selected more than once for the same job."
+msgstr "لا يمكن اختيار نفس تاريخ الإجازة الأسبوعية أكثر من مرة لنفس الوظيفة."
+
+#. module: ab_hr_effects
+msgid "The same weekly day-off day cannot be selected more than once for the same job."
+msgstr "لا يمكن اختيار نفس يوم الإجازة الأسبوعية أكثر من مرة لنفس الوظيفة."
+
+#. module: ab_hr_effects
+msgid "There are no dates need to be updated."
+msgstr "لا توجد تواريخ تحتاج إلى تحديث."
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_third_weekly_day_off_date
+msgid "Third weekly day off date"
+msgstr "تاريخ ثالث إجازة اسبوعية"
+
+#. module: ab_hr_effects
+msgid "This type of effect cannot be duplicated for the same job."
+msgstr "لا يمكن تكرار هذا النوع من المؤثر لنفس الوظيفة."
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Unarchive"
+msgstr "إلغاء الأرشفة"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Under Application"
+msgstr "تحت التطبيق"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+msgid "Updated Today"
+msgstr "تم تحديثه اليوم"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Upper Manager Review"
+msgstr "مراجعة المدير الأعلى"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_employee_view_form_effect_inherit
+msgid "Upper Review"
+msgstr "مراجعة عليا"
+
+#. module: ab_hr_effects
+msgid "User does not have authority for this action."
+msgstr "المستخدم لا يملك صلاحية لهذا الإجراء."
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postsave_readonly
+msgid "Values"
+msgstr "القيم"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Week Day"
+msgstr "يوم الأسبوع"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Week Day Effect"
+msgstr "مؤثر يوم الأسبوع"
+
+#. module: ab_hr_effects
+msgid "Week Day is required for this effect type."
+msgstr "يوم الأسبوع مطلوب لهذا النوع من المؤثرات."
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__effect_weekday
+msgid "WeekDay"
+msgstr "يوم الأسبوع"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_weekday
+msgid "Weekday"
+msgstr "يوم الأسبوع"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_type__weekly_day_off_integer
+msgid "Weekly Day Off (Int)"
+msgstr "رقم الإجازة الأسبوعية (عدد صحيح)"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_employee__weekly_day_off_integer
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__weekly_day_off_number
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Weekly Day Off Number"
+msgstr "رقم الإجازة الأسبوعية"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__weekly_effect
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__yearly_effect
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Weekly Effect"
+msgstr "مؤثر أسبوعي"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__monthly_weekly_vacancies
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Weekly Vacancies"
+msgstr "إجازات أسبوعية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "Weekly Vacation Work Permit"
+msgstr "تصريح عمل أثناء الإجازة الأسبوعية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Weekly day off number"
+msgstr "رقم الإجازة الأسبوعية"
+
+#. module: ab_hr_effects
+msgid "Weekly day off number "
+msgstr "رقم الإجازة الأسبوعية"
+
+#. module: ab_hr_effects
+msgid "Weekly days off must be selected in order: first, then second, and so on."
+msgstr "يجب اختيار الإجازات الأسبوعية بالترتيب: الأولى ثم الثانية وهكذا."
+
+#. module: ab_hr_effects
+#: model:ab_hr_effect_type,name:ab_hr_effects.ab_effect_type_work_permit_during_weekly_day_off
+msgid "Work Permit During Weekly Day Off"
+msgstr "عمل في إجازة اسبوعية بإذن"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__workplace
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__workplace
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "Workplace"
+msgstr "جهة العمل"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "Workplace Manager Job"
+msgstr "مدير جهة العمل"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.view_ab_hr_effect_wizard_form_postcreate
+msgid "Yearly Effect"
+msgstr "مؤثر سنوي"
+
+#. module: ab_hr_effects
+msgid "You cannot change all weekly day-off dates for a specific weekly day off when the total is 5 days."
+msgstr "لا يمكن تغيير جميع تواريخ الإجازة الأسبوعية لنفس الإجازة عندما يكون العدد 5 أيام."
+
+#. module: ab_hr_effects
+msgid "You cannot enter more than five weekly day-off dates."
+msgstr "لا يمكن إدخال أكثر من خمسة تواريخ إجازة أسبوعية."
+
+#. module: ab_hr_effects
+msgid "You cannot move from '%s' to '%s'."
+msgstr "لا يمكنك الانتقال من '%s' إلى '%s'."
+
+#. module: ab_hr_effects
+msgid "You don`t have the authority to add effect to this job"
+msgstr "لا تملك الصلاحية لإضافة مؤثر لهذه الوظيفة."
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_form
+msgid "ab_hr_basic_effect_form"
+msgstr "نموذج المؤثرات الأساسية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_pivot
+msgid "ab_hr_basic_effect_pivot"
+msgstr "تحليل المؤثرات الأساسية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_search
+msgid "ab_hr_basic_effect_search"
+msgstr "بحث المؤثرات الأساسية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_tree
+msgid "ab_hr_basic_effect_tree"
+msgstr "قائمة المؤثرات الأساسية"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+msgid "ab_hr_effect_form"
+msgstr "نموذج المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_pivot
+msgid "ab_hr_effect_pivot"
+msgstr "تحليل المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_search
+msgid "ab_hr_effect_search"
+msgstr "بحث المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_tree
+msgid "ab_hr_effect_tree"
+msgstr "قائمة المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_form
+msgid "ab_hr_effect_type_form"
+msgstr "نموذج أنواع المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_search
+msgid "ab_hr_effect_type_search"
+msgstr "بحث أنواع المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_type_view_tree
+msgid "ab_hr_effect_type_tree"
+msgstr "قائمة أنواع المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_search
+msgid "ab_hr_effect_wizard_search"
+msgstr "بحث معالج المؤثرات"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_wizard_view_tree_employee
+msgid "ab_hr_effect_wizard_tree"
+msgstr "قائمة معالج المؤثرات"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_type__automated_effects_note
+msgid "notes"
+msgstr "ملاحظات"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__effect_numerical_value
+msgid "Effect Numerical Value"
+msgstr "القيمة الرقمية للمؤثر"
+
+#. module: ab_hr_effects
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_effect_view_form
+#: model_terms:ir.ui.view,arch_db:ab_hr_effects.ab_hr_basic_effect_view_form
+msgid "Basic Effect Data"
+msgstr "بيانات المؤثر الأساسي"
+
+#. module: ab_hr_effects
+msgid "Effect Details"
+msgstr "تفاصيل المؤثر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__attached_file
+msgid "Attached File"
+msgstr "الملف المرفق"
+
+#. module: ab_hr_effects
+msgid "Payroll Effects"
+msgstr "مؤثرات الرواتب"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__accid
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__accid
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__accid
+msgid "ePlus Code"
+msgstr "كود إي بلس"
+
+#. module: ab_hr_effects
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_hr_effects
+msgid "Monthly Count"
+msgstr "العدد الشهري"
+
+#. module: ab_hr_effects
+msgid "Monthly Limit"
+msgstr "الحد الشهري"
+
+#. module: ab_hr_effects
+msgid "Yearly Count"
+msgstr "العدد السنوي"
+
+#. module: ab_hr_effects
+msgid "Yearly Limit"
+msgstr "الحد السنوي"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Effect Status"
+msgstr "حالة المؤثر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__supervision_type
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__supervision_type
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__supervision_type
+msgid "Supervision Type"
+msgstr "نوع الإشراف"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__workplace
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__job_id
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect_wizard__job_title
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_basic_effect__job_status
+#: model:ir.model.fields,field_description:ab_hr_effects.field_ab_hr_effect__job_status
+msgid "Job Status"
+msgstr "حالة الوظيفة"
+
+#. module: ab_hr_effects
+msgid "Monthly Effects"
+msgstr "المؤثرات الشهرية"
+
+#. module: ab_hr_effects
+msgid "Basic Effects"
+msgstr "المؤثرات الأساسية"
+
+#. module: ab_hr_effects
+msgid "Effects Wizard"
+msgstr "معالج المؤثرات"
+
+#. module: ab_hr_effects
+msgid "No limit"
+msgstr "بدون حد"
+
+#. module: ab_hr_effects
+msgid "Ab hr basic effects"
+msgstr "المؤثرات الأساسية للموارد البشرية"
+
+#. module: ab_hr_effects
+#: model:ir.ui.menu,name:ab_hr_effects.ab_hr_main_payroll_effects_menu
+msgid "HR Effects"
+msgstr "مؤثرات الموارد البشرية"
+
+#. module: ab_hr_effects
+#: model:ir.ui.menu,name:ab_hr_effects.ab_hr_effect_wizard_menu
+msgid "Effects Wizard"
+msgstr "معالج المؤثرات"
+
+#. module: ab_hr_effects
+#: model:ir.ui.menu,name:ab_hr_effects.ab_hr_effect_menu
+msgid "Monthly Effects"
+msgstr "المؤثرات الشهرية"
+
+#. module: ab_hr_effects
+#: model:ir.ui.menu,name:ab_hr_effects.ab_hr_basic_effect_menu
+msgid "Basic Effects"
+msgstr "المؤثرات الأساسية"
+
+#. module: ab_hr_effects
+#: model:ir.actions.act_window,name:ab_hr_effects.ab_hr_effect_action
+msgid "Payroll Effects"
+msgstr "مؤثرات الرواتب"
+
+#. module: ab_hr_effects
+#: model:ir.actions.act_window,name:ab_hr_effects.ab_hr_basic_effect_action
+msgid "Ab hr basic effects"
+msgstr "المؤثرات الأساسية للموارد البشرية"
+
+#. module: ab_hr_effects
+#: model:ir.actions.act_window,name:ab_hr_effects.ab_hr_effect_wizard_action
+msgid "Effects Wizard"
+msgstr "معالج المؤثرات"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,selection:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,selection:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Direct Manager Review"
+msgstr "مراجعة المدير المباشر"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,selection:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Upper Manager Review"
+msgstr "مراجعة المدير الأعلى"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,selection:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Under Application"
+msgstr "تحت التطبيق"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,selection:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Applied"
+msgstr "مطبق"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,selection:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_hr_effects
+#: model:ir.model.fields,selection:ab_hr_effects.field_ab_hr_effect_wizard__effect_status
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_hr_effects
+msgid "Current Month Effects Status"
+msgstr "حالة مؤثرات الشهر الحالي"
+
+#. module: ab_hr_effects
+msgid "Day Off"
+msgstr "يوم إجازة"
+
+#. module: ab_hr_effects
+msgid "Day Off Dates"
+msgstr "تواريخ أيام الإجازة"
+
+#. module: ab_hr_effects
+msgid "Day Off Exist"
+msgstr "وجود أيام إجازة"
+
+#. module: ab_hr_effects
+msgid "Direct Review"
+msgstr "مراجعة المدير المباشر"
+
+#. module: ab_hr_effects
+msgid "Upper Review"
+msgstr "مراجعة المدير الأعلى"
+#. module: ab_hr_effects
+msgid "Saturday"
+msgstr "السبت"
+
+#. module: ab_hr_effects
+msgid "Sunday"
+msgstr "الأحد"
+
+#. module: ab_hr_effects
+msgid "Monday"
+msgstr "الاثنين"
+
+#. module: ab_hr_effects
+msgid "Tuesday"
+msgstr "الثلاثاء"
+
+#. module: ab_hr_effects
+msgid "Wednesday"
+msgstr "الأربعاء"
+
+#. module: ab_hr_effects
+msgid "Thursday"
+msgstr "الخميس"
+
+#. module: ab_hr_effects
+msgid "Friday"
+msgstr "الجمعة"
+
+#. module: ab_hr_effects
+msgid "Direct Manager Review"
+msgstr "مراجعة المدير المباشر"
+
+#. module: ab_hr_effects
+msgid "Upper Manager Review"
+msgstr "مراجعة المدير الأعلى"
+
+#. module: ab_hr_effects
+msgid "Under Application"
+msgstr "تحت التطبيق"
+
+#. module: ab_hr_effects
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_hr_effects
+msgid "Applied"
+msgstr "مطبق"
+
+#. module: ab_hr_effects
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_hr_effects
+msgid "Archived"
+msgstr "مؤرشف"
+

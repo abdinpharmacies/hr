@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="employee_tools_view_tree" model="ir.ui.view">
+            <field name="name">ab_employee_tools_employee_tools.tree</field>
+            <field name="model">ab_employee_tools_employee_tools</field>
+            <field name="arch" type="xml">
+                <list string="Employee Tools">
+                    <field name="user_id"/>
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="status"/>
+                    <field name="delivery_date"/>
+                    <field name="receipt_date_from_company"/>
+                    <field name="termination_date"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="employee_tools_view_form" model="ir.ui.view">
+            <field name="name">ab_employee_tools_employee_tools.form</field>
+            <field name="model">ab_employee_tools_employee_tools</field>
+            <field name="arch" type="xml">
+                <form string="Employee Tool">
+                    <header>
+                        <button name="action_submit" type="object"
+                                string="Submit" class="btn-primary"
+                                invisible="status == 'delivered'"/>
+                    </header>
+                    <sheet>
+                        <field name="status" invisible="1"/>
+                        <widget name="web_ribbon" title="Delivered"
+                                invisible="status != 'delivered'"/>
+                        <widget name="web_ribbon" title="Not Delivered"
+                                invisible="status != 'not_delivered'"/>
+                        <group string="Employee" col="2">
+                            <group>
+                                <field name="user_id"/>
+                                <field name="employee_id"/>
+                                <field name="employee_code" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="department_id" readonly="1"/>
+                                <field name="job_id" readonly="1"/>
+                                <field name="termination_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Dates">
+                            <field name="delivery_date" class="oe_inline" style="width: 140px;"/>
+                            <field name="receipt_date_from_company" class="oe_inline" style="width: 140px;"/>
+                        </group>
+                        <notebook>
+                            <page string="Tools">
+                                <field name="line_ids" nolabel="1">
+                                    <list editable="bottom">
+                                        <field name="type_id"/>
+                                        <field name="no_of_units"/>
+                                        <field name="size"/>
+                                        <field name="price" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <group>
+
+                                    <field name="notes" nolabel="1"/>
+
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="employee_tools_action" model="ir.actions.act_window">
+            <field name="name">Employee Tools</field>
+            <field name="res_model">ab_employee_tools_employee_tools</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

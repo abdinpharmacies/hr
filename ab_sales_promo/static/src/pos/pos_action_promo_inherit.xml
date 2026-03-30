@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_promo.PosActionPromoInherit"
+       t-inherit="ab_sales.PosAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_topbar')]" position="after">
+            <t t-if="currentBill and currentBill.promo and currentBill.promo.available.length">
+                <AbSalesPosPromoPanel
+                    promo="currentBill.promo"
+                    onSelect="selectPromotion"
+                    onClear="clearPromotion"
+                />
+            </t>
+        </xpath>
+    </t>
+</templates>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_hr_interview_list_view" model="ir.ui.view">
+            <field name="name">ab_hr_interview_list</field>
+            <field name="model">ab_hr_interview</field>
+            <field name="arch" type="xml">
+                <list string="Interviews" default_order="interview_date desc">
+                    <field name="applicant_id"/>
+                    <field name="required_job_id" optional="show"/>
+                    <field name="interviewer_id"/>
+                    <field name="interview_date"/>
+                    <field name="action" widget="badge" decoration-danger="action in ('rejected','s_list')" decoration-info="action in ('training','advanced_training','duplicated_training','re_appraisal_interview')" decoration-success="action in ('accepted_job_offer','accepted_short_list','accepted_waiting_list')" decoration-warning="action in ('archived')"/>
+                    <field name="store_id" optional="show"/>
+                    <field name="starting_date" optional="hide"/>
+                    <field name="ending_date" optional="hide"/>
+                    <field name="from_hour" widget="float_time" optional="hide"/>
+                    <field name="to_hour" widget="float_time" optional="hide"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_interview_form_view" model="ir.ui.view">
+            <field name="name">ab_hr_interview_form</field>
+            <field name="model">ab_hr_interview</field>
+            <field name="arch" type="xml">
+                <form string="Schedule Interview">
+                    <header>
+                        <button name="action_interview_result_wizard" string="Register Result" type="object" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="applicant_id" placeholder="Applicant"/>
+                            </h1>
+                            <div class="text-muted">
+                                <span class="me-2">Schedule interview with:</span>
+                                <field name="interviewer_id" class="oe_inline"/>
+                            </div>
+                        </div>
+
+                        <group>
+                            <group string="Schedule">
+                                <!-- <field name="applicant_id" required="1"/>
+                                <field name="interviewer_id" required="1"/> -->
+                                <field name="required_job_id" readonly="1"/>
+                                <field name="interview_date" required="1"/>
+                                <!-- <field name="active"/> -->
+                            </group>
+                        </group>
+                        <group string="Result" invisible="1">
+                            <field name="action"/>
+                            <field name="store_id"/>
+                            <field name="starting_date"/>
+                            <field name="ending_date"/>
+                            <field name="from_hour"/>
+                            <field name="to_hour"/>
+                        </group>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_hr_interview_search_view" model="ir.ui.view">
+            <field name="name">ab_hr_interview_search</field>
+            <field name="model">ab_hr_interview</field>
+            <field name="arch" type="xml">
+                <search string="Interviews">
+
+                    <!-- Quick search -->
+                    <field name="applicant_id"/>
+                    <field name="interviewer_id"/>
+                    <field name="action"/>
+
+                    <separator/>
+
+                    <!-- Result filters -->
+                    <filter string="No Result" name="no_result" domain="[('action','=',False)]"/>
+
+                    <filter string="Has Result" name="has_result" domain="[('action','!=',False)]"/>
+
+                    <separator/>
+
+                    <!-- Active -->
+                    <filter string="Active" name="active" domain="[('active','=',True)]"/>
+
+                    <filter string="Archived" name="archived" domain="[('active','=',False)]"/>
+
+                    <separator/>
+                    <!-- Action filters -->
+                    <filter string="Accepted Job Offer" name="accepted_job_offer" domain="[('action','=','accepted_job_offer')]"/>
+                    <filter string="Accepted Short List" name="accepted_short_list" domain="[('action','=','accepted_short_list')]"/>
+                    <filter string="Accepted Waiting List" name="accepted_waiting_list" domain="[('action','=','accepted_waiting_list')]"/>
+                    <filter string="Rejected" name="rejected" domain="[('action','=','rejected')]"/>
+                    <filter string="Archived" name="archived" domain="[('action','=','archived')]"/>
+                    <filter string="Short List" name="s_list" domain="[('action','=','short_list')]"/>
+                    <filter string="Training" name="training" domain="[('action','=','training')]"/>
+                    <filter string="Advanced Training" name="advanced_training" domain="[('action','=','advanced_training')]"/>
+                    <filter string="Duplicated Training" name="duplicated_training" domain="[('action','=','duplicated_training')]"/>
+                    <filter string="Re-Appraisal Interview" name="re_appraisal_interview" domain="[('action','=','re_appraisal_interview')]"/>
+                    <separator/>
+
+                    <!-- Group By -->
+                    <group>
+                        <filter name="group_by_action" string="Result" context="{'group_by':'action'}"/>
+                        <filter name="group_by_interview_date" string="Interview Date" context="{'group_by':'interview_date'}"/>
+                        <filter name="group_by_interviewer" string="Interviewer" context="{'group_by':'interviewer_id'}"/>
+                        <filter name="group_by_applicant" string="Applicant" context="{'group_by':'applicant_id'}"/>
+                    </group>
+
+                </search>
+            </field>
+        </record>
+
+
+
+        <record id="ab_hr_interview_action_schedule" model="ir.actions.act_window">
+            <field name="name">Schedule Interviews</field>
+            <field name="res_model">ab_hr_interview</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_hr_interview_search_view"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Schedule interviews for applicants.
+                </p>
+            </field>
+        </record>
+
+        <menuitem id="ab_hr_interview_menu_schedule" name="Schedule Interviews" parent="ab_hr_application_menu" action="ab_hr_interview_action_schedule" sequence="30"/>
+    </data>
+</odoo>

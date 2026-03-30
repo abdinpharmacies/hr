@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.BillWizardPrintDialog">
+        <Dialog title="'Print Receipt'" size="'md'">
+            <div class="d-flex flex-column gap-3">
+                <div>
+                    <label class="form-label">Paper Size</label>
+                    <select class="form-select"
+                            t-att-value="state.printFormat"
+                            t-on-change="onFormatInput">
+                        <option value="a4">A4</option>
+                        <option value="pos_80mm">POS 80mm</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label">Printer</label>
+                    <div class="d-flex gap-2">
+                        <select class="form-select"
+                                t-att-value="state.printerId || 0"
+                                t-on-change="onPrinterInput">
+                            <option value="0">System dialog (choose on print)</option>
+                            <t t-foreach="state.availablePrinters || []" t-as="printer" t-key="printer.id">
+                                <option t-att-value="printer.id" t-esc="printer.label"/>
+                            </t>
+                        </select>
+                        <button class="btn btn-outline-secondary"
+                                type="button"
+                                t-att-disabled="state.loadingPrinters"
+                                t-on-click="refreshPrinters">
+                            Refresh
+                        </button>
+                        <t t-if="props.onDiscoverPrinters">
+                            <button class="btn btn-outline-primary"
+                                    type="button"
+                                    t-att-disabled="state.loadingPrinters"
+                                    t-on-click="discoverPrinters">
+                                Discover
+                            </button>
+                        </t>
+                    </div>
+                    <div class="form-text">
+                        Selected printer is saved as default for next print operations.
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-secondary" type="button" t-on-click="cancel">Cancel</button>
+                    <button class="btn btn-outline-info"
+                            type="button"
+                            t-att-disabled="state.saving"
+                            t-on-click="preview">
+                        Preview
+                    </button>
+                    <button class="btn btn-primary"
+                            type="button"
+                            t-att-disabled="state.saving"
+                            t-on-click="confirm">
+                        Print
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.BillWizardAction">
+        <div class="o_ab_sales_bill_wizard">
+            <div class="o_ab_sales_bill_wizard_header">
+                <div class="o_ab_sales_bill_wizard_title_block">
+                    <h3 class="o_ab_sales_bill_wizard_title">Bill Wizard</h3>
+                    <div class="o_ab_sales_bill_wizard_subtitle">
+                        <t t-if="!state.isSearch">Showing latest 20 pending/saved bills.</t>
+                        <t t-else="">Search result includes old bills too.</t>
+                    </div>
+                </div>
+                <div class="o_ab_sales_bill_wizard_filters">
+                    <div class="o_ab_sales_bill_wizard_filter">
+                        <label class="form-label mb-1">Product</label>
+                        <input class="form-control form-control-sm"
+                               t-ref="productSearchInput"
+                               type="text"
+                               placeholder="Code or part of product name"
+                               t-att-value="state.filters.productQuery"
+                               t-on-input="(ev) => onFilterInput('productQuery', ev)"
+                               t-on-keydown="onFilterKeydown"/>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_filter">
+                        <label class="form-label mb-1">Customer</label>
+                        <input class="form-control form-control-sm"
+                               type="text"
+                               placeholder="Phone, delivery phone, or name"
+                               t-att-value="state.filters.customerQuery"
+                               t-on-input="(ev) => onFilterInput('customerQuery', ev)"
+                               t-on-keydown="onFilterKeydown"/>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_serial">
+                        <label class="form-label mb-1">ePlus Serial (Exact)</label>
+                        <input class="form-control form-control-sm"
+                               type="text"
+                               placeholder="Exact serial"
+                               t-att-value="state.filters.eplusSerial"
+                               t-on-input="(ev) => onFilterInput('eplusSerial', ev)"
+                               t-on-keydown="onFilterKeydown"/>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_date">
+                        <label class="form-label mb-1">Start Date</label>
+                        <input class="form-control form-control-sm"
+                               type="date"
+                               t-att-value="state.filters.dateStart"
+                               t-on-input="(ev) => onFilterInput('dateStart', ev)"/>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_date">
+                        <label class="form-label mb-1">End Date</label>
+                        <input class="form-control form-control-sm"
+                               type="date"
+                               t-att-value="state.filters.dateEnd"
+                               t-on-input="(ev) => onFilterInput('dateEnd', ev)"/>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_filter_actions">
+                        <button class="btn btn-primary btn-sm" type="button" t-on-click="applyFilters">
+                            Search
+                        </button>
+                        <button class="btn btn-outline-secondary btn-sm" type="button" t-on-click="resetFilters">
+                            Reset
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="o_ab_sales_bill_wizard_body">
+                <div class="o_ab_sales_bill_wizard_list_panel">
+                    <div class="o_ab_sales_bill_wizard_list_head">
+                        <span>Bills</span>
+                        <span class="badge text-bg-light" t-esc="state.pagination.totalCount"/>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_list">
+                        <t t-if="state.loadingList">
+                            <div class="o_ab_sales_bill_wizard_empty">Loading bills...</div>
+                        </t>
+                        <t t-elif="!state.items.length">
+                            <div class="o_ab_sales_bill_wizard_empty">No bills found.</div>
+                        </t>
+                        <t t-else="">
+                            <t t-foreach="state.items" t-as="bill" t-key="bill.id">
+                                <button type="button"
+                                        class="o_ab_sales_bill_wizard_list_item"
+                                        t-att-class="bill.id === state.selectedId ? 'is-active' : ''"
+                                        t-on-click="() => selectBill(bill.id)">
+                                    <div class="o_ab_sales_bill_wizard_list_row">
+                                        <strong>#<t t-esc="bill.eplus_serial || bill.id"/></strong>
+                                        <div class="d-flex gap-1 align-items-center">
+                                            <span class="badge"
+                                                  t-att-class="bill.document_type === 'return' ? 'text-bg-danger' : 'text-bg-secondary'">
+                                                <t t-esc="bill.document_type === 'return' ? 'Return' : 'Sales'"/>
+                                            </span>
+                                            <span class="badge"
+                                                  t-att-class="bill.status === 'saved' ? 'text-bg-success' : 'text-bg-info'"
+                                                  t-esc="bill.status"/>
+                                        </div>
+                                    </div>
+                                    <div class="o_ab_sales_bill_wizard_list_row o_ab_sales_bill_wizard_list_row_muted">
+                                        <span t-esc="bill.store_name || '-'"/>
+                                        <span t-esc="formatDateTime(bill.create_date)"/>
+                                    </div>
+                                    <div class="o_ab_sales_bill_wizard_list_row o_ab_sales_bill_wizard_list_row_muted">
+                                        <span class="text-truncate" t-esc="bill.customer_name || '-'"/>
+                                    </div>
+                                    <div class="o_ab_sales_bill_wizard_list_row o_ab_sales_bill_wizard_list_row_muted">
+                                        <span>Products</span>
+                                        <span t-esc="bill.number_of_products || 0"/>
+                                    </div>
+                                </button>
+                            </t>
+                        </t>
+                    </div>
+                    <div class="o_ab_sales_bill_wizard_pager">
+                        <button class="btn btn-outline-secondary btn-sm"
+                                type="button"
+                                t-att-disabled="state.loadingList || state.pagination.page &lt;= 1"
+                                t-on-click="goToPreviousPage">
+                            Previous
+                        </button>
+                        <span>
+                            Page <t t-esc="state.pagination.page"/> / <t t-esc="state.pagination.pageCount"/>
+                        </span>
+                        <button class="btn btn-outline-secondary btn-sm"
+                                type="button"
+                                t-att-disabled="state.loadingList || state.pagination.page &gt;= state.pagination.pageCount"
+                                t-on-click="goToNextPage">
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+                <div class="o_ab_sales_bill_wizard_details_panel">
+                    <t t-if="state.loadingDetails">
+                        <div class="o_ab_sales_bill_wizard_empty">Loading details...</div>
+                    </t>
+                    <t t-elif="!state.details">
+                        <div class="o_ab_sales_bill_wizard_empty">Select a bill to see details.</div>
+                    </t>
+                    <t t-else="">
+                        <div class="o_ab_sales_bill_wizard_details_head">
+                            <div class="o_ab_sales_bill_wizard_details_meta">
+                                <div class="o_ab_sales_bill_wizard_bill_number">
+                                    Bill #<t t-esc="state.details.eplus_serial || state.details.id"/>
+                                </div>
+                                <div class="o_ab_sales_bill_wizard_bill_meta_line">
+                                    <span><i class="fa fa-calendar" aria-hidden="true"/> <t t-esc="formatDateTime(state.details.create_date)"/></span>
+                                    <span><i class="fa fa-building" aria-hidden="true"/> <t t-esc="state.details.store_name || '-'"/></span>
+                                    <span><i class="fa fa-user" aria-hidden="true"/> <t t-esc="state.details.customer_name || '-'"/></span>
+                                    <span><i class="fa fa-cubes" aria-hidden="true"/> <t t-esc="state.details.number_of_products || 0"/></span>
+                                    <span>
+                                        <span class="badge"
+                                              t-att-class="state.details.document_type === 'return' ? 'text-bg-danger' : 'text-bg-secondary'">
+                                            <t t-esc="state.details.document_type === 'return' ? 'Return' : 'Sales'"/>
+                                        </span>
+                                    </span>
+                                    <span><i class="fa fa-flag" aria-hidden="true"/> <t t-esc="state.details.status || ''"/></span>
+                                </div>
+                                <div class="o_ab_sales_bill_wizard_bill_meta_line">
+                                    <span><i class="fa fa-phone" aria-hidden="true"/> <t t-esc="state.details.customer_phone || '-'"/></span>
+                                    <span><i class="fa fa-map-marker" aria-hidden="true"/> <t t-esc="state.details.customer_address || '-'"/></span>
+                                    <span><i class="fa fa-user-circle" aria-hidden="true"/> <t t-esc="state.details.created_uid || '-'"/></span>
+                                </div>
+                            </div>
+                            <div class="o_ab_sales_bill_wizard_actions">
+                                <button class="btn btn-outline-primary btn-sm"
+                                        type="button"
+                                        t-on-click="printReceipt">
+                                    <i class="fa fa-print" aria-hidden="true"/> Print Receipt
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm"
+                                        type="button"
+                                        t-att-disabled="state.openingReturn || !state.details.can_return"
+                                        t-on-click="openReturn">
+                                    <i class="fa fa-undo" aria-hidden="true"/> Return
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="o_ab_sales_bill_wizard_lines_wrap">
+                            <table class="table table-sm table-hover o_ab_sales_bill_wizard_lines_table">
+                                <thead>
+                                    <tr>
+                                        <th>Code</th>
+                                        <th>Product</th>
+                                        <th class="text-end">Qty</th>
+                                        <th class="text-end">Price</th>
+                                        <th class="text-center">Sold Without Balance</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-if="!(state.details.lines || []).length">
+                                        <tr>
+                                            <td colspan="5" class="text-center text-muted">No lines.</td>
+                                        </tr>
+                                    </t>
+                                    <t t-foreach="state.details.lines || []" t-as="line" t-key="line.line_id">
+                                        <tr>
+                                            <td t-esc="line.product_code || ''"/>
+                                            <td>
+                                                <div class="fw-semibold" t-esc="line.product_name || ''"/>
+                                                <t t-if="line.unavailable_reason">
+                                                    <small class="text-danger">
+                                                        Unavailable: <t t-esc="line.unavailable_reason"/>
+                                                        <t t-if="line.unavailable_reason_other"> - <t t-esc="line.unavailable_reason_other"/></t>
+                                                    </small>
+                                                </t>
+                                            </td>
+                                            <td class="text-end" t-esc="formatMoney(line.qty)"/>
+                                            <td class="text-end" t-esc="formatMoney(line.sell_price)"/>
+                                            <td class="text-center">
+                                                <t t-if="line.sold_without_balance">
+                                                    <span class="text-danger fw-semibold">Sold without balance</span>
+                                                </t>
+                                                <t t-else="">-</t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="o_ab_sales_bill_wizard_notes_box">
+                            <label class="form-label mb-1">Extra Notes</label>
+                            <textarea class="form-control"
+                                      rows="3"
+                                      t-att-value="state.notesDraft"
+                                      t-on-input="(ev) => state.notesDraft = ev.target.value || ''"/>
+                            <div class="mt-2 d-flex justify-content-end">
+                                <button class="btn btn-primary btn-sm"
+                                        type="button"
+                                        t-att-disabled="state.savingNotes"
+                                        t-on-click="saveNotes">
+                                    Save Notes
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

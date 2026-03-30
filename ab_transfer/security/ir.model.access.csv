@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_transfer_header_admin,access_ab_transfer_header_admin,model_ab_transfer_header,base.group_system,1,1,1,1
+access_ab_transfer_line_admin,access_ab_transfer_line_admin,model_ab_transfer_line,base.group_system,1,1,1,1
+

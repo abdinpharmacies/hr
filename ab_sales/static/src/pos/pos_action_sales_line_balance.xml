@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-inherit="ab_sales.PosAction" t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_lines_table')]//td/div[@t-esc='line.product_name']"
+               position="after">
+            <div class="d-flex align-items-center justify-content-between gap-2 mt-1 w-100 ab_pos_line_balance_panel">
+                <button type="button"
+                        class="btn p-0 border-0 bg-transparent d-inline-flex align-items-center gap-1 o_ab_sales_balance_btn ab_pos_line_btn_open_store_balance"
+                        t-on-click.stop="() => line.product_id ? openStoresBalance({id: line.product_id}) : null"
+                        title="Balance">
+                    <i style="cursor:pointer;"
+                       class="ab_pos_line_btn_open_store_balance_icon"
+                       t-attf-class="#{(((line.balance_total !== undefined &amp;&amp; line.balance_total !== null) ? line.balance_total : line.balance) || 0) > 0 ? 'fa fa-cubes text-success' : 'text-muted'}"
+                       aria-hidden="true"/>
+                    <span style="cursor:pointer;"
+                          class="ab_pos_line_btn_open_store_balance_text"
+                          t-attf-class="#{(((line.balance_total !== undefined &amp;&amp; line.balance_total !== null) ? line.balance_total : line.balance) || 0) > 0 ? 'fw-semibold text-success' : 'text-muted'}"
+                          t-esc="formatQty(((line.balance_total !== undefined &amp;&amp; line.balance_total !== null) ? line.balance_total : line.balance) || 0)"/>
+                </button>
+                <span class="ab_pos_line_cell_code small text-muted text-center flex-grow-1 d-inline-flex align-items-center justify-content-center gap-1">
+                    <i class="fa fa-barcode" aria-hidden="true"/>
+                    <span t-esc="line.product_code || '-'"/>
+                </span>
+                <button type="button"
+                        class="btn p-0 border-0 bg-transparent d-inline-flex align-items-center gap-1 text-muted ab_pos_line_btn_refresh_pos_balance"
+                        t-on-click.stop="() => refreshLinePosBalance(line)"
+                        title="Balance">
+                    <span class="ab_pos_line_btn_refresh_pos_balance_text" t-esc="formatQty(((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : 0) || 0)"/>
+                    <i class="fa fa-shopping-cart ab_pos_line_btn_refresh_pos_balance_icon" aria-hidden="true" title="Balance"/>
+                </button>
+            </div>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_lines_table')]//tr[@t-att-data-line-id='line.id']"
+               position="attributes">
+            <attribute name="t-att-class">
+                (((line.pos_balance !== undefined &amp;&amp; line.pos_balance !== null) ? line.pos_balance : line.balance) || 0) &lt;= 0
+                        ? 'o_ab_sales_pos_line--no-balance'
+                        : ''
+            </attribute>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_lines_table')]//td[@t-esc='formatQty(line.balance)']"
+               position="replace">
+            <t/>
+        </xpath>
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_lines_table')]//th[normalize-space()='Balance']"
+               position="replace">
+            <t/>
+        </xpath>
+    </t>
+</templates>
