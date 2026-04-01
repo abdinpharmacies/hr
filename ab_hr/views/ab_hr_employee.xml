@@ -7,104 +7,167 @@
             <field name="model">ab_hr_employee</field>
             <field name="priority">10</field>
             <field name="arch" type="xml">
-                <kanban>
-                    <field name="name"/>
-                    <field name="job_id"/>
-                    <field name="department_id"/>
-                    <field name="parent_id"/>
-                    <field name="accid"/>
-                    <field name="work_phone"/>
-                    <field name="work_email"/>
-                    <field name="address_text"/>
-                    <field name="hiring_date"/>
-                    <field name="issue_date"/>
-                    <field name="termination_date"/>
-                    <field name="is_working"/>
-                    <field name="supervision_type"/>
-                    <templates>
-                        <t t-name="card">
-                            <div class="d-flex flex-column justify-content-between w-100">
-                                <div class="d-flex justify-content-between">
-                                    <strong>
-                                        <field name="job_id" invisible="1"/>
-                                        <field name="is_working" invisible="1"/>
-                                        <t t-if="!(!record.is_working.raw_value)">
-                                            <div class="h4 text-success">
-                                                <field name="accid" placeholder="Code"/>
-                                            </div>
-                                        </t>
-                                        <t t-else="">
-                                            <div class="h4 text-danger">
-                                                <field name="accid" placeholder="Code"/>
-                                            </div>
-                                        </t>
-                                    </strong>
-                                    <div class="h6">
-                                        <field name="supervision_type" invisible="1"/>
-                                        <t t-if="!(!record.supervision_type.raw_value)">
-                                            <field name="supervision_type"
-                                                   widget="badge"
-                                                   decoration-info="supervision_type=='indirect'"
-                                                   decoration-warning="supervision_type=='other'"
-                                                   decoration-success="supervision_type=='direct'"
-                                                   decoration-danger="supervision_type=='myself'"
-                                                   placeholder="Supervision Type"/>
-                                        </t>
-                                    </div>
+               <kanban class="o_ab_hr_employee_kanban">
+    <field name="name"/>
+    <field name="job_id"/>
+    <field name="department_id"/>
+    <field name="parent_id"/>
+    <field name="accid"/>
+    <field name="work_phone"/>
+    <field name="work_email"/>
+    <field name="address_text"/>
+    <field name="hiring_date"/>
+    <field name="issue_date"/>
+    <field name="termination_date"/>
+    <field name="is_working"/>
+    <field name="supervision_type"/>
+    <templates>
+        <t t-name="card">
+            <style>
+                .ab_emp_card {
+                    padding: 0 !important;
+                    border-radius: 12px !important;
+                    border: 1px solid #e9ecef;
+                    overflow: hidden;
+                    transition: box-shadow 0.2s ease, transform 0.2s ease;
+                }
+                .ab_emp_card:hover {
+                    transform: translateY(-3px);
+                    box-shadow: 0 8px 24px rgba(0,0,0,0.09) !important;
+                }
+                .ab_emp_avatar {
+                    width: 48px; height: 48px;
+                    border-radius: 50%;
+                    background: #EEEDFE;
+                    color: #3C3489;
+                    display: flex; align-items: center; justify-content: center;
+                    font-size: 15px; font-weight: 500;
+                    flex-shrink: 0;
+                }
+                .ab_emp_pill {
+                    display: inline-flex; align-items: center; gap: 5px;
+                    font-size: 11px; font-weight: 500;
+                    padding: 3px 10px; border-radius: 999px;
+                }
+                .ab_emp_pill .ab_dot {
+                    width: 6px; height: 6px;
+                    border-radius: 50%; background: currentColor;
+                }
+                .ab_emp_pill.active  { color: #0F6E56; background: #E1F5EE; }
+                .ab_emp_pill.inactive { color: #993C1D; background: #FAECE7; }
+                .ab_sup_badge {
+                    font-size: 11px; font-weight: 500;
+                    padding: 3px 9px; border-radius: 999px;
+                }
+                .ab_sup_direct   { color: #185FA5; background: #E6F1FB; }
+                .ab_sup_indirect { color: #3B6D11; background: #EAF3DE; }
+                .ab_sup_myself   { color: #993556; background: #FBEAF0; }
+                .ab_sup_other    { color: #633806; background: #FAEEDA; }
+                .ab_contact_row {
+                    display: flex; align-items: center; gap: 8px;
+                    font-size: 12px; color: #6b7280;
+                    overflow: hidden;
+                }
+                .ab_contact_row span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                .ab_contact_row svg { flex-shrink: 0; }
+            </style>
 
-                                </div>
+            <div class="oe_kanban_global_click ab_emp_card d-flex flex-column h-100">
 
-                                <div class="mb-auto">
-                                    <div class="h4 text-info text-center">
-                                        <field name="name" placeholder="Employee's Name"/>
-                                    </div>
-                                    <div class="text-dark text-center pt-2">
-                                        <field name="job_id" placeholder="Main Job"/>
-                                        -
-                                        <field name="department_id" placeholder="Main Job"/>
-                                    </div>
-                                    <div class="h6 text-muted text-center">
-                                        <i class="fa fa-user"/>
-                                        <field name="parent_id" placeholder="Manager"/>
-                                        <i class="fa fa-user"/>
-                                    </div>
-                                    <div class="text-dark text-center pt-2">
-                                        <field name="work_phone" placeholder="Phone"/>
-                                    </div>
-                                    <div class="text-dark text-center pt-1">
-                                        <field name="work_email" placeholder="Email"/>
-                                    </div>
-                                    <div class="text-dark text-center font-italic pt-1 pb-2">
-                                        <small>
-                                            <field name="address_text" placeholder="Address"/>
-                                        </small>
-                                    </div>
+                <!-- Top bar: status + employee code -->
+                <div class="d-flex justify-content-between align-items-center px-3 py-2" style="border-bottom: 0.5px solid rgba(0,0,0,0.08);">
+                    <t t-if="record.is_working.raw_value">
+                        <span class="ab_emp_pill active"><span class="ab_dot"/>Active</span>
+                    </t>
+                    <t t-else="">
+                        <span class="ab_emp_pill inactive"><span class="ab_dot"/>Inactive</span>
+                    </t>
+                    <span class="text-muted fw-medium" style="font-size:11px; letter-spacing:0.04em;">
+                        <field name="accid"/>
+                    </span>
+                </div>
 
-                                </div>
+                <!-- Avatar + Name / Job / Dept -->
+                <div class="d-flex align-items-center gap-3 px-3 py-3" style="border-bottom: 0.5px solid rgba(0,0,0,0.08);">
+                    <div class="ab_emp_avatar">
+                        <i class="fa fa-user"/>
+                    </div>
+                    <div style="min-width:0;">
+                        <div class="fw-medium text-truncate" style="font-size:15px; color: var(--color-text-primary, #111);">
+                            <field name="name"/>
+                        </div>
+                        <div class="text-truncate mt-1" style="font-size:12px; color:#6b7280;">
+                            <field name="job_id"/>
+                        </div>
+                        <div class="text-truncate" style="font-size:12px; color:#9ca3af;">
+                            <field name="department_id"/>
+                        </div>
+                    </div>
+                </div>
 
-                                <div class="d-flex justify-content-between">
-                                    <div class="text-success">
-                                        <small>
-                                            <field name="hiring_date"/>
-                                        </small>
-                                    </div>
-                                    <div class="text-warning">
-                                        <small>
-                                            <field name="issue_date"/>
-                                        </small>
-                                    </div>
-                                    <t t-if="!(!record.termination_date.raw_value)">
-                                        <div class="text-danger">
-                                            <small>
-                                                <field name="termination_date"/>
-                                            </small>
-                                        </div>
-                                    </t>
-                                </div>
-                            </div>
+                <!-- Contact info -->
+                <div class="d-flex flex-column gap-2 px-3 py-2" style="border-bottom: 0.5px solid rgba(0,0,0,0.08);">
+                    <t t-if="record.work_email.raw_value">
+                        <div class="ab_contact_row">
+                            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                                <rect x="2" y="3" width="12" height="10" rx="2" stroke="#9ca3af" stroke-width="1.4"/>
+                                <path d="M2 6l6 4 6-4" stroke="#9ca3af" stroke-width="1.4"/>
+                            </svg>
+                            <span><field name="work_email"/></span>
+                        </div>
+                    </t>
+                    <t t-if="record.work_phone.raw_value">
+                        <div class="ab_contact_row">
+                            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                                <path d="M3 3.5A1.5 1.5 0 014.5 2h.879a1 1 0 01.949.684l.674 2.02a1 1 0 01-.23 1.02L5.5 6.5s1 2 4 4l1.276-1.276a1 1 0 011.02-.23l2.02.674A1 1 0 0114 10.62V11.5A1.5 1.5 0 0112.5 13C6.701 13 3 9.299 3 3.5z" stroke="#9ca3af" stroke-width="1.4"/>
+                            </svg>
+                            <span><field name="work_phone"/></span>
+                        </div>
+                    </t>
+                    <div class="ab_contact_row">
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                            <circle cx="8" cy="6" r="3" stroke="#9ca3af" stroke-width="1.4"/>
+                            <path d="M2.5 14c0-3.038 2.462-5 5.5-5s5.5 1.962 5.5 5" stroke="#9ca3af" stroke-width="1.4" stroke-linecap="round"/>
+                        </svg>
+                        <t t-if="record.parent_id.raw_value">
+                            <span><field name="parent_id"/></span>
                         </t>
-                    </templates>
-                </kanban>
+                        <t t-else="">
+                            <span style="font-style:italic; color:#c0c0c0;">No manager</span>
+                        </t>
+                    </div>
+                </div>
+
+                <!-- Footer: dates + supervision badge -->
+                <div class="d-flex justify-content-between align-items-center px-3 py-2 mt-auto" style="background: rgba(0,0,0,0.02);">
+                    <div style="font-size:11px; color:#9ca3af;">
+                        <div class="fw-medium" style="color:#6b7280; margin-bottom:1px;">Hired</div>
+                        <field name="hiring_date"/>
+                    </div>
+                    <div style="font-size:11px; color:#9ca3af; text-align:center;">
+                        <div class="fw-medium" style="color:#6b7280; margin-bottom:1px;">Issued</div>
+                        <field name="issue_date"/>
+                    </div>
+                    <div>
+                        <t t-if="record.supervision_type.raw_value == 'direct'">
+                            <span class="ab_sup_badge ab_sup_direct">Direct</span>
+                        </t>
+                        <t t-elif="record.supervision_type.raw_value == 'indirect'">
+                            <span class="ab_sup_badge ab_sup_indirect">Indirect</span>
+                        </t>
+                        <t t-elif="record.supervision_type.raw_value == 'myself'">
+                            <span class="ab_sup_badge ab_sup_myself">Myself</span>
+                        </t>
+                        <t t-elif="record.supervision_type.raw_value">
+                            <span class="ab_sup_badge ab_sup_other"><field name="supervision_type"/></span>
+                        </t>
+                    </div>
+                </div>
+
+            </div>
+        </t>
+    </templates>
+</kanban>
             </field>
         </record>
 

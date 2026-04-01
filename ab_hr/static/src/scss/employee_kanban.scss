@@ -1,0 +1,257 @@
+.o_ab_hr_employee_kanban {
+    --ab-employee-border: #d7dee7;
+    --ab-employee-muted: #5f6c7b;
+    --ab-employee-soft: #f5f7fa;
+    --ab-employee-head: linear-gradient(135deg, #243447 0%, #31475e 100%);
+    --ab-employee-accent: #4f8cff;
+    --ab-employee-success: #138a5c;
+    --ab-employee-warning: #b7791f;
+    --ab-employee-danger: #c53030;
+
+    .o_kanban_record {
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+    }
+
+    .o_ab_hr_employee_card {
+        display: flex;
+        min-height: 100%;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--ab-employee-border);
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.07);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .o_ab_hr_employee_card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(37, 99, 235, 0.28);
+        box-shadow: 0 16px 30px rgba(15, 23, 42, 0.12);
+    }
+
+    .o_ab_hr_employee_card__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        padding: 18px 20px;
+        background: var(--ab-employee-head);
+    }
+
+    .o_ab_hr_employee_card__code_wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+    }
+
+    .o_ab_hr_employee_card__status_dot {
+        width: 10px;
+        height: 10px;
+        flex: 0 0 10px;
+        border-radius: 50%;
+        background: #94a3b8;
+        box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.16);
+    }
+
+    .o_ab_hr_employee_card__status_dot.is-active {
+        background: var(--ab-employee-success);
+        box-shadow: 0 0 0 4px rgba(19, 138, 92, 0.18);
+    }
+
+    .o_ab_hr_employee_card__status_dot.is-inactive {
+        background: var(--ab-employee-danger);
+        box-shadow: 0 0 0 4px rgba(197, 48, 48, 0.15);
+    }
+
+    .o_ab_hr_employee_card__code {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+    }
+
+    .o_ab_hr_employee_card__code i {
+        color: #cfe0ff;
+    }
+
+    .o_ab_hr_employee_card__badge .badge {
+        border-radius: 999px;
+        padding: 0.4rem 0.7rem;
+        font-weight: 600;
+        box-shadow: none;
+    }
+
+    .o_ab_hr_employee_card__body {
+        display: flex;
+        flex: 1 1 auto;
+        flex-direction: column;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .o_ab_hr_employee_card__identity {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-bottom: 16px;
+        border-bottom: 1px solid var(--ab-employee-border);
+    }
+
+    .o_ab_hr_employee_card__avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 56px;
+        height: 56px;
+        flex: 0 0 56px;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #edf4ff 0%, #d8e7ff 100%);
+        color: var(--ab-employee-accent);
+        font-size: 21px;
+    }
+
+    .o_ab_hr_employee_card__identity_text {
+        min-width: 0;
+    }
+
+    .o_ab_hr_employee_card__name {
+        margin-bottom: 5px;
+        font-size: 19px;
+        font-weight: 700;
+        color: #0f172a;
+        line-height: 1.3;
+    }
+
+    .o_ab_hr_employee_card__job {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--ab-employee-muted);
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .o_ab_hr_employee_card__meta,
+    .o_ab_hr_employee_card__contact {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+    }
+
+    .o_ab_hr_employee_card__meta_item,
+    .o_ab_hr_employee_card__contact_item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        padding: 12px 14px;
+        border: 1px solid #e9eef5;
+        border-radius: 12px;
+        background: var(--ab-employee-soft);
+        color: #243447;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .o_ab_hr_employee_card__meta_item i,
+    .o_ab_hr_employee_card__contact_item i {
+        width: 14px;
+        color: var(--ab-employee-accent);
+        text-align: center;
+        flex: 0 0 14px;
+    }
+
+    .o_ab_hr_employee_card__meta_item > span,
+    .o_ab_hr_employee_card__meta_item .o_field_widget,
+    .o_ab_hr_employee_card__contact_item > span,
+    .o_ab_hr_employee_card__contact_item .o_field_widget {
+        min-width: 0;
+        word-break: break-word;
+    }
+
+    .o_ab_hr_employee_card__contact_item.is-wide {
+        grid-column: span 2;
+    }
+
+    .o_ab_hr_employee_card__footer {
+        display: flex;
+        gap: 10px;
+        padding: 0 20px 20px;
+    }
+
+    .o_ab_hr_employee_card__date {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid var(--ab-employee-border);
+        border-radius: 12px;
+        background: #fafbfd;
+        flex: 1 1 0;
+    }
+
+    .o_ab_hr_employee_card__date i {
+        margin-top: 0;
+    }
+
+    .o_ab_hr_employee_card__date span,
+    .o_ab_hr_employee_card__date small {
+        display: block;
+        line-height: 1.35;
+    }
+
+    .o_ab_hr_employee_card__date span {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+
+    .o_ab_hr_employee_card__date small {
+        color: #0f172a;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .o_ab_hr_employee_card__date.is-success i,
+    .o_ab_hr_employee_card__date.is-success span {
+        color: var(--ab-employee-success);
+    }
+
+    .o_ab_hr_employee_card__date.is-warning i,
+    .o_ab_hr_employee_card__date.is-warning span {
+        color: var(--ab-employee-warning);
+    }
+
+    .o_ab_hr_employee_card__date.is-danger i,
+    .o_ab_hr_employee_card__date.is-danger span {
+        color: var(--ab-employee-danger);
+    }
+
+    @media (max-width: 767.98px) {
+        .o_ab_hr_employee_card__header,
+        .o_ab_hr_employee_card__identity {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .o_ab_hr_employee_card__meta,
+        .o_ab_hr_employee_card__contact {
+            grid-template-columns: 1fr;
+        }
+
+        .o_ab_hr_employee_card__contact_item.is-wide {
+            grid-column: auto;
+        }
+
+        .o_ab_hr_employee_card__footer {
+            flex-direction: column;
+        }
+    }
+}

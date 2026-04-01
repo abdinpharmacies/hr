@@ -18,7 +18,7 @@
     'category': 'Abdin',
     'version': '19.0.1.0.0',
     # any module necessary for this one to work correctly
-    'depends': ['base', 'mail', 'abdin_et', 'mail', 'ab_costcenter',
+    'depends': ['base', 'web', 'mail', 'abdin_et', 'mail', 'ab_costcenter',
                 'ab_store'],
 
     # always loaded
@@ -41,19 +41,11 @@
     "application": True,
     "installable": True,
     "auto_install": True,
-
-    'web.assets_backend': [
-        # 'ab_hr/static/src/scss/hr.scss',
-        # 'ab_hr/static/src/js/chat_mixin.js',
-        'ab_hr/static/src/js/hr_employee.js',
-        # 'ab_hr/static/src/js/language.js',
-        # 'ab_hr/static/src/js/m2x_avatar_employee.js',
-        # 'ab_hr/static/src/js/standalone_m2o_avatar_employee.js',
-        # 'ab_hr/static/src/js/user_menu.js',
-        # 'ab_hr/static/src/models/*/*.js',
-    ],
-    'web.assets_qweb': [
-        # 'ab_hr/static/src/xml/hr_templates.xml',
-    ],
+    "assets": {
+        "web.assets_backend": [
+            "ab_hr/static/src/js/hr_employee.js",
+            "ab_hr/static/src/scss/employee_kanban.scss",
+        ],
+    },
 
 }
