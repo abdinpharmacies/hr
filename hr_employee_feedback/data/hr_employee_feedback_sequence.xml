@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Complaint-specific sequence, e.g. CO00001. -->
+    <record id="seq_hr_employee_feedback_complaint" model="ir.sequence">
+        <field name="name">Employee Complaint</field>
+        <field name="code">hr.employee.feedback.complaint</field>
+        <field name="prefix">CO</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+    </record>
+
+    <!-- Suggestion-specific sequence, e.g. SU00001. -->
+    <record id="seq_hr_employee_feedback_suggestion" model="ir.sequence">
+        <field name="name">Employee Suggestion</field>
+        <field name="code">hr.employee.feedback.suggestion</field>
+        <field name="prefix">SU</field>
+        <field name="padding">5</field>
+        <field name="number_next">1</field>
+    </record>
+
+    <!-- Public issue identifier shown to users in list/form views. -->
+    <record id="seq_hr_employee_feedback_issue" model="ir.sequence">
+        <field name="name">Employee Feedback Issue ID</field>
+        <field name="code">hr.employee.feedback.issue</field>
+        <field name="prefix">ISS-</field>
+        <field name="padding">6</field>
+        <field name="number_next">1</field>
+    </record>
+</odoo>

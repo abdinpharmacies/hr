@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Optional report scaffold.
+        Kept intentionally minimal so future report templates can be added safely
+        without changing module structure or XML IDs.
+    -->
+</odoo>

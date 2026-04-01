@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Security model for employee feedback.
+        This file defines groups, access rules, and row-level visibility rules.
+    -->
+
+    <!--
+        Odoo 19 privilege layer:
+        1) category groups privileges in Settings UI
+        2) privilege stores access logic grouping
+        3) groups attach users to a privilege
+    -->
+    <record id="module_category_hr_employee_feedback" model="ir.module.category">
+        <field name="name">Human Resources / Employee Feedback</field>
+        <field name="sequence">25</field>
+    </record>
+
+    <!-- Base privilege used by standard feedback users. -->
+    <record id="privilege_employee_feedback_user" model="res.groups.privilege">
+        <field name="name">Employee Feedback User</field>
+        <field name="category_id" ref="hr_employee_feedback.module_category_hr_employee_feedback"/>
+    </record>
+
+    <!-- Manager privilege used for status-level processing. -->
+    <record id="privilege_employee_feedback_manager" model="res.groups.privilege">
+        <field name="name">Employee Feedback Manager</field>
+        <field name="category_id" ref="hr_employee_feedback.module_category_hr_employee_feedback"/>
+    </record>
+
+    <!-- Basic user group linked to the base privilege. -->
+    <record id="group_employee_feedback_user" model="res.groups">
+        <field name="name">Employee Feedback User</field>
+        <field name="privilege_id" ref="hr_employee_feedback.privilege_employee_feedback_user"/>
+    </record>
+
+    <!-- Manager group linked to manager privilege. -->
+    <record id="group_employee_feedback_manager" model="res.groups">
+        <field name="name">Employee Feedback Manager</field>
+        <field name="privilege_id" ref="hr_employee_feedback.privilege_employee_feedback_manager"/>
+        <field name="implied_ids" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_user'))]"/>
+    </record>
+
+    <!--
+        Integrate feedback access with the existing Abdin HR employee role.
+        Users who already belong to the basic HR data group automatically gain
+        employee-level access to this module, so the app appears in the UI
+        without a separate access-request step.
+    -->
+    <record id="ab_hr.group_ab_hr_basic_data" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_user'))]"/>
+    </record>
+
+    <!--
+        HR managers and administrators in Abdin HR should automatically inherit
+        the feedback manager role so they can review all complaints/suggestions
+        in the same database without manual group assignment.
+    -->
+    <record id="ab_hr.group_ab_hr_manager" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_manager'))]"/>
+    </record>
+
+    <record id="ab_hr.group_ab_hr_admin" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_manager'))]"/>
+    </record>
+
+    <record id="ab_hr.group_ab_hr_co" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_manager'))]"/>
+    </record>
+
+    <!--
+        Employee access profile:
+        - Can create and read own tickets
+        - Cannot edit existing records
+        - Cannot delete
+    -->
+    <record id="access_hr_employee_feedback_employee_xml" model="ir.model.access">
+        <field name="name">hr.employee.feedback.employee</field>
+        <field name="model_id" ref="model_hr_employee_feedback"/>
+        <field name="group_id" ref="hr_employee_feedback.group_employee_feedback_user"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <!--
+        Manager access profile:
+        - Can read and write
+        - Create/delete disabled
+        - Python write() enforces status-only updates
+    -->
+    <record id="access_hr_employee_feedback_manager_xml" model="ir.model.access">
+        <field name="name">hr.employee.feedback.manager</field>
+        <field name="model_id" ref="model_hr_employee_feedback"/>
+        <field name="group_id" ref="hr_employee_feedback.group_employee_feedback_manager"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="0"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <!--
+        Employees can view/create their own feedback.
+        Direct managers can also read tickets assigned to them as manager, which
+        supports line-manager visibility without granting global access.
+    -->
+    <record id="rule_employee_own_feedback" model="ir.rule">
+        <field name="name">Employee: own feedback only</field>
+        <field name="model_id" ref="model_hr_employee_feedback"/>
+        <field name="groups" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_user'))]"/>
+        <field name="domain_force">['|', ('employee_id.user_id', '=', user.id), ('manager_id.user_id', '=', user.id)]</field>
+    </record>
+
+    <!-- Managers can access all feedback records. -->
+    <record id="rule_manager_all_feedback" model="ir.rule">
+        <field name="name">Manager: all feedback</field>
+        <field name="model_id" ref="model_hr_employee_feedback"/>
+        <field name="groups" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+
+    <record id="rule_employee_own_feedback_followup" model="ir.rule">
+        <field name="name">Employee: own follow-up only</field>
+        <field name="model_id" ref="model_hr_employee_feedback_followup"/>
+        <field name="groups" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_user'))]"/>
+        <field name="domain_force">['|', ('feedback_id.employee_id.user_id', '=', user.id), ('feedback_id.manager_id.user_id', '=', user.id)]</field>
+    </record>
+
+    <record id="rule_manager_all_feedback_followup" model="ir.rule">
+        <field name="name">Manager: all feedback follow-up</field>
+        <field name="model_id" ref="model_hr_employee_feedback_followup"/>
+        <field name="groups" eval="[(4, ref('hr_employee_feedback.group_employee_feedback_manager'))]"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+    </record>
+</odoo>

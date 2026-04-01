@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Single combined entry point for both complaints and suggestions.
+        Users can filter by type from the search view instead of navigating two
+        separate menus.
+    -->
+
+    <record id="action_hr_employee_feedback_all" model="ir.actions.act_window">
+        <field name="name">Complaints &amp; Suggestions</field>
+        <field name="res_model">hr.employee.feedback</field>
+        <field name="view_mode">list,kanban,form</field>
+        <field name="search_view_id" ref="hr_employee_feedback.view_hr_employee_feedback_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Submit your first complaint or suggestion.
+            </p>
+        </field>
+    </record>
+
+    <record id="action_hr_employee_feedback_reports" model="ir.actions.act_window">
+        <field name="name">Issue Reports</field>
+        <field name="res_model">hr.employee.feedback</field>
+        <field name="view_mode">graph,pivot,list</field>
+        <field name="search_view_id" ref="hr_employee_feedback.view_hr_employee_feedback_search"/>
+    </record>
+
+    <menuitem id="menu_hr_employee_feedback_root"
+              name="Complaints &amp; Suggestions"
+              web_icon="hr,static/description/icon.png"
+              action="action_hr_employee_feedback_all"
+              sequence="90"/>
+
+    <menuitem id="menu_hr_employee_feedback_reports"
+              name="Reports"
+              parent="menu_hr_employee_feedback_root"
+              action="action_hr_employee_feedback_reports"
+              sequence="20"
+              groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+</odoo>

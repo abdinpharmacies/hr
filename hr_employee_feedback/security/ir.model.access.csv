@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_feedback_stage,hr.feedback.stage,model_hr_feedback_stage,base.group_user,1,0,0,0
+access_hr_employee_feedback_hr_user,hr.employee.feedback.hr_user,model_hr_employee_feedback,hr.group_hr_user,1,1,1,0
+access_hr_employee_feedback_hr_manager,hr.employee.feedback.hr_manager,model_hr_employee_feedback,hr.group_hr_manager,1,1,1,0
+access_hr_employee_feedback_system,hr.employee.feedback.system,model_hr_employee_feedback,base.group_system,1,1,1,1
+access_hr_employee_feedback_followup_user,hr.employee.feedback.followup.user,model_hr_employee_feedback_followup,hr_employee_feedback.group_employee_feedback_user,1,0,0,0
+access_hr_employee_feedback_followup_manager,hr.employee.feedback.followup.manager,model_hr_employee_feedback_followup,hr_employee_feedback.group_employee_feedback_manager,1,1,1,0
+access_hr_employee_feedback_followup_system,hr.employee.feedback.followup.system,model_hr_employee_feedback_followup,base.group_system,1,1,1,1

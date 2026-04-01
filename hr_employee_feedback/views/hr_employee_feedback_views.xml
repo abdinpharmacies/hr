@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Core views for feedback records:
+        - Trello-like Kanban grouped by stage
+        - Form for detailed handling and ticket history
+        - List for tabular operations
+        - Search for quick filtering/grouping
+    -->
+
+    <record id="view_hr_employee_feedback_kanban" model="ir.ui.view">
+        <field name="name">hr.employee.feedback.kanban</field>
+        <field name="model">hr.employee.feedback</field>
+        <field name="arch" type="xml">
+            <kanban class="o_hr_employee_feedback_kanban" default_group_by="stage_id" quick_create="false">
+                <!-- Fields preloaded for card rendering and quick context. -->
+                <field name="reference"/>
+                <field name="issue_uid"/>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="message_type"/>
+                <field name="priority"/>
+                <field name="manager_id"/>
+                <field name="stage_id"/>
+                <field name="days_open"/>
+                <field name="is_resolved"/>
+                <field name="progress_percent"/>
+                <field name="assigned_hr_user_id"/>
+                <field name="can_write_manager_reply"/>
+
+                <templates>
+                    <!-- Odoo 19 uses `card` as the kanban template name. -->
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click p-2">
+                            <!--
+                                Compact responsive card:
+                                - no technical reference on kanban cards
+                                - no priority on kanban cards
+                                - progress bar visible to everyone
+                            -->
+                            <div class="fw-bold text-truncate mb-2">
+                                <field name="name"/>
+                            </div>
+
+                            <div class="d-flex flex-wrap gap-1 mb-2">
+                                <field name="employee_id" widget="badge"/>
+                                <field name="message_type" widget="badge"/>
+                                <field name="days_open" widget="badge" decoration-info="days_open &gt; 5"/>
+                            </div>
+
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
+                                    <span><t t-out="record.progress_percent.raw_value or 0"/>%</span>
+                                </div>
+                                <div class="progress" style="height: 6px;">
+                                    <div class="progress-bar bg-info"
+                                         role="progressbar"
+                                         t-att-style="'width: %s%%' % (record.progress_percent.raw_value or 0)"
+                                         t-att-aria-valuenow="record.progress_percent.raw_value or 0"
+                                         aria-valuemin="0"
+                                         aria-valuemax="100"/>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center gap-2 small">
+                                <span class="text-truncate">
+                                    <field name="manager_id" widget="badge"/>
+                                </span>
+                                <field name="stage_id" widget="badge"/>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_feedback_form" model="ir.ui.view">
+        <field name="name">hr.employee.feedback.form</field>
+        <field name="model">hr.employee.feedback</field>
+        <field name="arch" type="xml">
+            <form string="Employee Feedback">
+                <sheet>
+                    <!--
+                        Status action buttons are shown only to status editors.
+                        Employees can still open records and read history through chatter.
+                    -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_mark_resolved" type="object"
+                                class="oe_stat_button" icon="fa-check"
+                                groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"
+                                invisible="is_resolved"/>
+                        <button name="action_reopen" type="object"
+                                class="oe_stat_button" icon="fa-undo"
+                                groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"
+                                invisible="not is_resolved"/>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="issue_uid" readonly="1"/>
+                            <field name="reference" readonly="1" groups="base.group_system"/>
+                            <!-- Ticket core fields become read-only once record exists. -->
+                            <field name="name" readonly="id"/>
+                            <!--
+                                Employee is always sourced from the logged-in
+                                user's ab_hr profile. Keep it read-only so the
+                                ticket owner is not reassigned from the form.
+                            -->
+                            <field name="employee_id" readonly="1"/>
+                            <field name="department_id" readonly="1"/>
+                            <field name="message_type" readonly="id"/>
+                            <!-- HR/Admin can select priority; employees only view after save. -->
+                            <field name="priority"
+                                   groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+                            <!--
+                                Description is only captured during initial submission.
+                                After save, users and managers follow the issue through
+                                the structured history instead of editing/reviewing the
+                                original free-text field directly.
+                            -->
+                            <field name="description" invisible="id"/>
+                        </group>
+                        <group>
+                            <!-- Only HR/Admin can choose ticket stage. -->
+                            <field name="stage_id"
+                                   groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+                            <!-- Employees cannot choose stage on create; they only see it after save. -->
+                            <field name="stage_id"
+                                   groups="hr_employee_feedback.group_employee_feedback_user"
+                                   readonly="1"
+                                   invisible="not id"/>
+                            <!--
+                                Manager is always derived from the employee's
+                                parent_id in ab_hr and therefore remains read-only.
+                            -->
+                            <field name="manager_id" readonly="1"/>
+                            <field name="assigned_hr_user_id"
+                                   readonly="1"
+                                   groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+                            <field name="days_open" readonly="1"/>
+                            <field name="date_submitted" readonly="1"/>
+                            <field name="date_last_stage_update" readonly="1"/>
+                            <field name="date_resolved" readonly="1"/>
+                            <field name="active" readonly="id"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Follow-Up History">
+                            <field name="followup_ids" readonly="1">
+                                <list create="0" delete="0">
+                                    <field name="create_date" string="Date"/>
+                                    <field name="user_id"/>
+                                    <field name="stage_id"/>
+                                    <field name="priority"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Manager Reply">
+                            <!--
+                                The action update is visible to all readers, but only
+                                the direct manager, assigned HR, or admin/HR roles can edit it.
+                            -->
+                            <field name="manager_reply"
+                                   readonly="not can_write_manager_reply"
+                                   placeholder="Provide response or action taken."/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_feedback_list" model="ir.ui.view">
+        <field name="name">hr.employee.feedback.list</field>
+        <field name="model">hr.employee.feedback</field>
+        <field name="arch" type="xml">
+            <!-- Odoo 19 uses <list> instead of deprecated <tree>. -->
+            <list default_order="date_submitted desc, id desc"
+                  decoration-success="is_resolved == True"
+                  decoration-danger="priority == 'urgent'">
+                <field name="issue_uid"/>
+                <field name="reference" groups="base.group_system"/>
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="message_type"/>
+                <field name="priority" widget="badge"
+                       groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"
+                       decoration-success="priority == 'low'"
+                       decoration-warning="priority == 'medium'"
+                       decoration-danger="priority in ['high', 'urgent']"/>
+                <field name="stage_id"/>
+                <field name="manager_id"/>
+                <field name="days_open"/>
+                <field name="date_submitted"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_feedback_search" model="ir.ui.view">
+        <field name="name">hr.employee.feedback.search</field>
+        <field name="model">hr.employee.feedback</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- Searchable fields for quick lookup. -->
+                <field name="name"/>
+                <field name="issue_uid"/>
+                <field name="employee_id"/>
+                <field name="department_id"/>
+                <field name="manager_id"/>
+                <field name="stage_id"/>
+                <field name="priority"
+                       groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+                <field name="message_type"/>
+
+                <!-- Predefined filters for common manager/employee use cases. -->
+                <filter string="My Feedback" name="my_feedback"
+                        domain="[('employee_id.user_id', '=', uid)]"/>
+                <filter string="Urgent" name="urgent"
+                        groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"
+                        domain="[('priority', '=', 'urgent')]"/>
+                <filter string="Open" name="open"
+                        domain="[('is_resolved', '=', False)]"/>
+                <filter string="Complaints" name="complaints"
+                        domain="[('message_type', '=', 'complaint')]"/>
+                <filter string="Suggestions" name="suggestions"
+                        domain="[('message_type', '=', 'suggestion')]"/>
+
+                <!-- Grouping helpers for kanban/list analytics (Odoo 19 style). -->
+                <separator/>
+                <filter string="Stage" name="group_stage" domain="[]" context="{'group_by': 'stage_id'}"/>
+                <filter string="Priority" name="group_priority"
+                        groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"
+                        domain="[]" context="{'group_by': 'priority'}"/>
+                <filter string="Employee" name="group_employee" domain="[]" context="{'group_by': 'employee_id'}"/>
+                <filter string="Type" name="group_type" domain="[]" context="{'group_by': 'message_type'}"/>
+
+                <searchpanel>
+                    <field name="message_type" select="multi"/>
+                    <field name="stage_id" select="multi"/>
+                    <field name="department_id" select="multi"/>
+                    <field name="manager_id" select="multi"
+                           groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+                    <field name="priority" select="multi"
+                           groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+                </searchpanel>
+            </search>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_feedback_graph" model="ir.ui.view">
+        <field name="name">hr.employee.feedback.graph</field>
+        <field name="model">hr.employee.feedback</field>
+        <field name="arch" type="xml">
+            <graph string="Issues Analysis" type="bar">
+                <field name="stage_id"/>
+                <field name="message_type"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="view_hr_employee_feedback_pivot" model="ir.ui.view">
+        <field name="name">hr.employee.feedback.pivot</field>
+        <field name="model">hr.employee.feedback</field>
+        <field name="arch" type="xml">
+            <pivot string="Issues Pivot">
+                <field name="stage_id" type="row"/>
+                <field name="message_type" type="col"/>
+                <field name="department_id" type="row"/>
+            </pivot>
+        </field>
+    </record>
+
+</odoo>
