@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="ab_request_management_menu_root"
+                  name="Request Management"
+                  sequence="10"
+                  groups="ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_readonly"/>
+
+        <menuitem id="ab_request_management_menu_tickets"
+                  name="Tickets"
+                  parent="ab_request_management_menu_root"
+                  action="ab_request_ticket_action"
+                  sequence="10"
+                  groups="ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_readonly"/>
+
+        <menuitem id="ab_request_management_menu_configuration"
+                  name="Configuration"
+                  parent="ab_request_management_menu_root"
+                  sequence="20"
+                  groups="ab_request_management.group_ab_request_management_manager"/>
+
+        <menuitem id="ab_request_management_menu_types"
+                  name="Request Types"
+                  parent="ab_request_management_menu_configuration"
+                  action="ab_request_type_action"
+                  sequence="10"
+                  groups="ab_request_management.group_ab_request_management_manager"/>
+    </data>
+</odoo>

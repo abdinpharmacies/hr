@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_request_management_ticket_user" model="ir.rule">
+            <field name="name">Request Ticket User Access</field>
+            <field name="model_id" ref="model_ab_request_ticket"/>
+            <field name="groups" eval="[(4, ref('group_ab_request_management_user'))]"/>
+            <field name="domain_force">['|', ('requester', '=', user.id), ('assigned_to', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_request_management_ticket_manager" model="ir.rule">
+            <field name="name">Request Ticket Manager Access</field>
+            <field name="model_id" ref="model_ab_request_ticket"/>
+            <field name="groups" eval="[(4, ref('group_ab_request_management_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_request_management_ticket_readonly" model="ir.rule">
+            <field name="name">Request Ticket Read Only Access</field>
+            <field name="model_id" ref="model_ab_request_ticket"/>
+            <field name="groups" eval="[(4, ref('group_ab_request_management_readonly'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</odoo>
