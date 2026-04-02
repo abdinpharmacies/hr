@@ -16,13 +16,20 @@ patch(FormController.prototype, {
         ) {
             const title = (root.data.name || "").trim();
             const description = (root.data.description || "").trim();
+            const hasLetters = /[A-Za-z\u0600-\u06FF]/;
+            const hasAnyDraft = Boolean(title || description);
             const hasPartialDraft = Boolean(title) !== Boolean(description);
-            if (hasPartialDraft) {
+            const hasInvalidNumericOnlyDraft =
+                hasAnyDraft &&
+                ((!title || !hasLetters.test(title)) || (!description || !hasLetters.test(description)));
+
+            if (hasPartialDraft || hasInvalidNumericOnlyDraft || !hasAnyDraft) {
+                const body = !hasAnyDraft
+                    ? _t("There is no valid issue content yet. Do you want to discard and return to the issues screen, or continue editing?")
+                    : _t("The issue draft is incomplete or invalid. Do you want to continue editing, or discard the draft and return to the issues screen?");
                 const shouldDiscard = await new Promise((resolve) => {
                     this.dialogService.add(ConfirmationDialog, {
-                        body: _t(
-                            "You entered only part of the issue details. Do you want to continue editing, or discard the draft and return to the issues screen?"
-                        ),
+                        body,
                         confirmLabel: _t("Discard Changes"),
                         cancelLabel: _t("Continue Editing"),
                         confirmClass: "btn-danger",

@@ -18,55 +18,107 @@
                 <field name="issue_uid"/>
                 <field name="name"/>
                 <field name="employee_id"/>
+                <field name="main_category_id"/>
+                <field name="sub_category_id"/>
                 <field name="message_type"/>
                 <field name="priority"/>
+                <field name="priority_color"/>
                 <field name="manager_id"/>
                 <field name="stage_id"/>
+                <field name="stage_state"/>
+                <field name="stage_color"/>
                 <field name="days_open"/>
                 <field name="is_resolved"/>
                 <field name="progress_percent"/>
                 <field name="assigned_hr_user_id"/>
-                <field name="can_write_manager_reply"/>
+                <field name="assignable_hr_user_ids"/>
+                <field name="current_assignee_name"/>
+                <field name="current_assignee_user_id"/>
+                <field name="date_last_stage_update"/>
+                <field name="escalation_state"/>
+                <field name="escalation_level"/>
+                <field name="escalation_color"/>
 
                 <templates>
                     <!-- Odoo 19 uses `card` as the kanban template name. -->
                     <t t-name="card">
-                        <div class="oe_kanban_global_click p-2">
+                        <div class="oe_kanban_global_click o_feedback_card">
                             <!--
                                 Compact responsive card:
                                 - no technical reference on kanban cards
                                 - no priority on kanban cards
                                 - progress bar visible to everyone
                             -->
-                            <div class="fw-bold text-truncate mb-2">
-                                <field name="name"/>
+                            <div class="d-flex justify-content-between align-items-start gap-2 mb-1">
+                                <div class="o_feedback_card_title text-truncate">
+                                    <field name="name"/>
+                                </div>
+                                <span class="badge text-bg-light flex-shrink-0">
+                                    <field name="issue_uid"/>
+                                </span>
                             </div>
 
-                            <div class="d-flex flex-wrap gap-1 mb-2">
-                                <field name="employee_id" widget="badge"/>
-                                <field name="message_type" widget="badge"/>
-                                <field name="days_open" widget="badge" decoration-info="days_open &gt; 5"/>
+                            <div class="d-flex flex-wrap gap-1 mb-1">
+                                <span class="badge text-bg-light">
+                                    <field name="message_type"/>
+                                </span>
+                                <span class="badge text-bg-secondary" t-if="record.main_category_id.value">
+                                    <t t-out="record.main_category_id.value"/>
+                                </span>
+                                <span class="badge text-bg-success" t-if="record.priority.raw_value == 'low'">
+                                    <field name="priority"/>
+                                </span>
+                                <span class="badge text-bg-info" t-if="record.priority.raw_value == 'medium'">
+                                    <field name="priority"/>
+                                </span>
+                                <span class="badge text-bg-warning" t-if="record.priority.raw_value == 'high'">
+                                    <field name="priority"/>
+                                </span>
+                                <span class="badge text-bg-danger" t-if="record.priority.raw_value == 'urgent'">
+                                    <field name="priority"/>
+                                </span>
                             </div>
 
-                            <div class="mb-2">
+                            <div class="o_feedback_progress mb-2">
                                 <div class="d-flex justify-content-between align-items-center small text-muted mb-1">
-                                    <span><t t-out="record.progress_percent.raw_value or 0"/>%</span>
+                                    <span class="badge text-bg-primary" t-if="record.stage_state.raw_value == 'under_review'">
+                                        <field name="stage_id"/>
+                                    </span>
+                                    <span class="badge text-bg-warning" t-if="record.stage_state.raw_value == 'in_progress'">
+                                        <field name="stage_id"/>
+                                    </span>
+                                    <span class="badge text-bg-success" t-if="record.stage_state.raw_value == 'resolved'">
+                                        <field name="stage_id"/>
+                                    </span>
+                                    <span class="badge text-bg-danger" t-if="record.stage_state.raw_value == 'rejected'">
+                                        <field name="stage_id"/>
+                                    </span>
+                                    <span><t t-out="(record.progress_percent and record.progress_percent.raw_value) or 0"/>%</span>
                                 </div>
                                 <div class="progress" style="height: 6px;">
-                                    <div class="progress-bar bg-info"
+                                    <div class="progress-bar"
                                          role="progressbar"
-                                         t-att-style="'width: %s%%' % (record.progress_percent.raw_value or 0)"
-                                         t-att-aria-valuenow="record.progress_percent.raw_value or 0"
+                                         t-attf-class="progress-bar #{'bg-primary' if record.stage_state.raw_value == 'under_review' else 'bg-warning' if record.stage_state.raw_value == 'in_progress' else 'bg-success' if record.stage_state.raw_value == 'resolved' else 'bg-danger'}"
+                                         t-att-style="'width: %s%%' % (((record.progress_percent and record.progress_percent.raw_value) or 0))"
+                                         t-att-aria-valuenow="(record.progress_percent and record.progress_percent.raw_value) or 0"
                                          aria-valuemin="0"
                                          aria-valuemax="100"/>
                                 </div>
                             </div>
 
-                            <div class="d-flex justify-content-between align-items-center gap-2 small">
-                                <span class="text-truncate">
-                                    <field name="manager_id" widget="badge"/>
-                                </span>
-                                <field name="stage_id" widget="badge"/>
+                            <div class="o_feedback_card_meta small text-muted">
+                                <div class="text-truncate">
+                                    <i class="fa fa-user me-1"/> <t t-out="record.current_assignee_name.value or '-'"/>
+                                </div>
+                                <div class="d-flex justify-content-between gap-2 mt-1">
+                                    <span><i class="fa fa-clock-o me-1"/> <field name="days_open"/>d</span>
+                                    <span t-if="record.escalation_state.raw_value == 'active'" class="badge text-bg-warning">
+                                        Esc L<t t-out="record.escalation_level.raw_value or 1"/>
+                                    </span>
+                                    <span t-if="record.escalation_state.raw_value == 'overdue'" class="badge text-bg-danger">
+                                        Overdue
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </t>
@@ -100,6 +152,9 @@
                         <group>
                             <field name="issue_uid" readonly="1"/>
                             <field name="reference" readonly="1" groups="base.group_system"/>
+                            <field name="current_assignee_name" readonly="1"/>
+                            <field name="escalation_level" readonly="1"/>
+                            <field name="escalation_state" readonly="1"/>
                             <!-- Ticket core fields become read-only once record exists. -->
                             <field name="name" readonly="id"/>
                             <!--
@@ -110,6 +165,8 @@
                             <field name="employee_id" readonly="1"/>
                             <field name="department_id" readonly="1"/>
                             <field name="message_type" readonly="id"/>
+                            <field name="main_category_id" readonly="id" invisible="message_type != 'complaint'"/>
+                            <field name="sub_category_id" readonly="id" invisible="message_type != 'complaint'"/>
                             <!-- HR/Admin can select priority; employees only view after save. -->
                             <field name="priority"
                                    groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
@@ -136,8 +193,11 @@
                             -->
                             <field name="manager_id" readonly="1"/>
                             <field name="assigned_hr_user_id"
-                                   readonly="1"
+                                   domain="[('id', 'in', assignable_hr_user_ids)]"
+                                   invisible="message_type != 'complaint'"
                                    groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
+                            <field name="sla_deadline_at" readonly="1"/>
+                            <field name="is_conflict_of_interest" readonly="1"/>
                             <field name="days_open" readonly="1"/>
                             <field name="date_submitted" readonly="1"/>
                             <field name="date_last_stage_update" readonly="1"/>
@@ -148,24 +208,31 @@
 
                     <notebook>
                         <page string="Follow-Up History">
-                            <field name="followup_ids" readonly="1">
+                            <field name="followup_ids" readonly="1"
+                                   invisible="can_write_manager_reply">
                                 <list create="0" delete="0">
                                     <field name="create_date" string="Date"/>
                                     <field name="user_id"/>
                                     <field name="stage_id"/>
-                                    <field name="priority"/>
                                     <field name="note"/>
                                 </list>
                             </field>
-                        </page>
-                        <page string="Manager Reply">
-                            <!--
-                                The action update is visible to all readers, but only
-                                the direct manager, assigned HR, or admin/HR roles can edit it.
-                            -->
-                            <field name="manager_reply"
-                                   readonly="not can_write_manager_reply"
-                                   placeholder="Provide response or action taken."/>
+                            <field name="followup_ids"
+                                   invisible="not can_write_manager_reply">
+                                <list editable="bottom" delete="0">
+                                    <field name="create_date" string="Date" readonly="1"/>
+                                    <field name="user_id" readonly="1"/>
+                                    <field name="stage_id" readonly="1"/>
+                                    <field name="note"/>
+                                </list>
+                                <form string="Follow-Up Update">
+                                    <group>
+                                        <field name="user_id" readonly="1"/>
+                                        <field name="stage_id" readonly="1"/>
+                                        <field name="note"/>
+                                    </group>
+                                </form>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>
@@ -184,17 +251,28 @@
                 <field name="issue_uid"/>
                 <field name="reference" groups="base.group_system"/>
                 <field name="name"/>
-                <field name="employee_id"/>
+                <field name="main_category_id" optional="hide"/>
+                <field name="sub_category_id" optional="hide"/>
                 <field name="message_type"/>
                 <field name="priority" widget="badge"
-                       groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"
                        decoration-success="priority == 'low'"
-                       decoration-warning="priority == 'medium'"
-                       decoration-danger="priority in ['high', 'urgent']"/>
-                <field name="stage_id"/>
-                <field name="manager_id"/>
+                       decoration-info="priority == 'medium'"
+                       decoration-warning="priority == 'high'"
+                       decoration-danger="priority == 'urgent'"/>
+                <field name="stage_id" widget="badge"
+                       decoration-info="stage_state == 'under_review'"
+                       decoration-warning="stage_state == 'in_progress'"
+                       decoration-success="stage_state == 'resolved'"
+                       decoration-danger="stage_state == 'rejected'"/>
+                <field name="current_assignee_name" optional="hide"/>
+                <field name="escalation_level" optional="hide"/>
+                <field name="escalation_state" widget="badge" optional="hide"
+                       decoration-warning="escalation_state == 'active'"
+                       decoration-danger="escalation_state == 'overdue'"
+                       decoration-success="escalation_state == 'none'"/>
                 <field name="days_open"/>
                 <field name="date_submitted"/>
+                <field name="date_last_stage_update" optional="hide"/>
             </list>
         </field>
     </record>
@@ -209,8 +287,13 @@
                 <field name="issue_uid"/>
                 <field name="employee_id"/>
                 <field name="department_id"/>
+                <field name="main_category_id"/>
+                <field name="sub_category_id"/>
                 <field name="manager_id"/>
+                <field name="current_assignee_name"/>
                 <field name="stage_id"/>
+                <field name="escalation_state"/>
+                <field name="escalation_level"/>
                 <field name="priority"
                        groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>
                 <field name="message_type"/>
@@ -236,10 +319,15 @@
                         domain="[]" context="{'group_by': 'priority'}"/>
                 <filter string="Employee" name="group_employee" domain="[]" context="{'group_by': 'employee_id'}"/>
                 <filter string="Type" name="group_type" domain="[]" context="{'group_by': 'message_type'}"/>
+                <filter string="Main Category" name="group_main_category" domain="[]" context="{'group_by': 'main_category_id'}"/>
+                <filter string="Escalation" name="group_escalation" domain="[]" context="{'group_by': 'escalation_state'}"/>
 
                 <searchpanel>
                     <field name="message_type" select="multi"/>
                     <field name="stage_id" select="multi"/>
+                    <field name="main_category_id" select="multi"/>
+                    <field name="sub_category_id" select="multi"/>
+                    <field name="escalation_state" select="multi"/>
                     <field name="department_id" select="multi"/>
                     <field name="manager_id" select="multi"
                            groups="hr_employee_feedback.group_employee_feedback_manager,ab_hr.group_ab_hr_manager,ab_hr.group_ab_hr_admin,ab_hr.group_ab_hr_co,base.group_system"/>

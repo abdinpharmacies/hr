@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!--
+        Periodic SLA escalation.
+        This keeps the existing workflow intact while ensuring overdue issues
+        move to the next reviewer without manual chasing.
+    -->
+    <record id="ir_cron_hr_employee_feedback_auto_escalation" model="ir.cron">
+        <field name="name">Employee Feedback: Auto Escalation</field>
+        <field name="model_id" ref="model_hr_employee_feedback"/>
+        <field name="state">code</field>
+        <field name="code">model._cron_auto_escalate_feedback()</field>
+        <field name="interval_number">30</field>
+        <field name="interval_type">minutes</field>
+        <field name="active">True</field>
+    </record>
+</odoo>

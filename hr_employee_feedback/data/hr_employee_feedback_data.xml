@@ -30,4 +30,215 @@
         <field name="is_final">True</field>
         <field name="color">4</field>
     </record>
+
+    <!--
+        Main issue categories and filtered subcategories.
+        Employees classify the issue once during submission; management then
+        works from history and action updates rather than re-editing the issue.
+    -->
+    <record id="category_administrative" model="hr.employee.feedback.category">
+        <field name="name">مشاكل إدارية وسوء إدارة</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="category_financial" model="hr.employee.feedback.category">
+        <field name="name">مشاكل مالية (مرتبات / بدلات / خصومات)</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="category_behavior" model="hr.employee.feedback.category">
+        <field name="name">مشاكل سلوك وتواصل</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="category_legal" model="hr.employee.feedback.category">
+        <field name="name">مشاكل قانونية ورقابية (خطيرة)</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="category_operations" model="hr.employee.feedback.category">
+        <field name="name">مشاكل تشغيل وأداء</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="category_hr_system" model="hr.employee.feedback.category">
+        <field name="name">مشاكل HR / نظام</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="category_other" model="hr.employee.feedback.category">
+        <field name="name">أخرى</field>
+        <field name="sequence">70</field>
+    </record>
+
+    <record id="subcategory_admin_arbitrariness" model="hr.employee.feedback.subcategory">
+        <field name="name">تعسف مديرين (منطقة / فرع)</field>
+        <field name="category_id" ref="hr_employee_feedback.category_administrative"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="subcategory_admin_decisions" model="hr.employee.feedback.subcategory">
+        <field name="name">قرارات بدون نقاش أو تحقيق</field>
+        <field name="category_id" ref="hr_employee_feedback.category_administrative"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="subcategory_admin_threat" model="hr.employee.feedback.subcategory">
+        <field name="name">تهديد بالفصل والجزاءات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_administrative"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="subcategory_admin_vacations" model="hr.employee.feedback.subcategory">
+        <field name="name">عدم عدالة في الإجازات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_administrative"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="subcategory_admin_transfer" model="hr.employee.feedback.subcategory">
+        <field name="name">نقل تعسفي بين الفروع</field>
+        <field name="category_id" ref="hr_employee_feedback.category_administrative"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="subcategory_admin_other" model="hr.employee.feedback.subcategory">
+        <field name="name">مشكلة إدارية أخرى</field>
+        <field name="category_id" ref="hr_employee_feedback.category_administrative"/>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="subcategory_fin_salary_delay" model="hr.employee.feedback.subcategory">
+        <field name="name">تأخير أو وقف المرتب</field>
+        <field name="category_id" ref="hr_employee_feedback.category_financial"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="subcategory_fin_discounts" model="hr.employee.feedback.subcategory">
+        <field name="name">خصومات غير مبررة</field>
+        <field name="category_id" ref="hr_employee_feedback.category_financial"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="subcategory_fin_deficit" model="hr.employee.feedback.subcategory">
+        <field name="name">تحميل موظفين عجز غير مسؤولين عنه</field>
+        <field name="category_id" ref="hr_employee_feedback.category_financial"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="subcategory_fin_promises" model="hr.employee.feedback.subcategory">
+        <field name="name">عدم تنفيذ وعود مالية</field>
+        <field name="category_id" ref="hr_employee_feedback.category_financial"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="subcategory_fin_allowances" model="hr.employee.feedback.subcategory">
+        <field name="name">ضعف بدل المواصلات / الإفطار</field>
+        <field name="category_id" ref="hr_employee_feedback.category_financial"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="subcategory_fin_other" model="hr.employee.feedback.subcategory">
+        <field name="name">مشكلة مالية أخرى</field>
+        <field name="category_id" ref="hr_employee_feedback.category_financial"/>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="subcategory_beh_style" model="hr.employee.feedback.subcategory">
+        <field name="name">أسلوب غير لائق من المديرين</field>
+        <field name="category_id" ref="hr_employee_feedback.category_behavior"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="subcategory_beh_insult" model="hr.employee.feedback.subcategory">
+        <field name="name">إهانة علنية</field>
+        <field name="category_id" ref="hr_employee_feedback.category_behavior"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="subcategory_beh_discrimination" model="hr.employee.feedback.subcategory">
+        <field name="name">تمييز أو تعنت شخصي</field>
+        <field name="category_id" ref="hr_employee_feedback.category_behavior"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="subcategory_beh_disputes" model="hr.employee.feedback.subcategory">
+        <field name="name">سوء إدارة الخلافات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_behavior"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="subcategory_beh_other" model="hr.employee.feedback.subcategory">
+        <field name="name">مشكلة سلوك أو تواصل أخرى</field>
+        <field name="category_id" ref="hr_employee_feedback.category_behavior"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="subcategory_legal_corruption" model="hr.employee.feedback.subcategory">
+        <field name="name">شبهة فساد</field>
+        <field name="category_id" ref="hr_employee_feedback.category_legal"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="subcategory_legal_investigations" model="hr.employee.feedback.subcategory">
+        <field name="name">التلاعب في التحقيقات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_legal"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="subcategory_legal_losses" model="hr.employee.feedback.subcategory">
+        <field name="name">توزيع خسائر على موظفين بدون عدالة</field>
+        <field name="category_id" ref="hr_employee_feedback.category_legal"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="subcategory_legal_coverup" model="hr.employee.feedback.subcategory">
+        <field name="name">محاولة التغطية على مخالفات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_legal"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="subcategory_legal_policy" model="hr.employee.feedback.subcategory">
+        <field name="name">مخالفات لسياسات الشركة</field>
+        <field name="category_id" ref="hr_employee_feedback.category_legal"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="subcategory_legal_other" model="hr.employee.feedback.subcategory">
+        <field name="name">مشكلة قانونية أو رقابية أخرى</field>
+        <field name="category_id" ref="hr_employee_feedback.category_legal"/>
+        <field name="sequence">60</field>
+    </record>
+
+    <record id="subcategory_ops_orders" model="hr.employee.feedback.subcategory">
+        <field name="name">ضعف الإدارة أدى لانخفاض الأوردرات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_operations"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="subcategory_ops_malfunctions" model="hr.employee.feedback.subcategory">
+        <field name="name">أعطال واتساب / تواصل العملاء</field>
+        <field name="category_id" ref="hr_employee_feedback.category_operations"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="subcategory_ops_errors" model="hr.employee.feedback.subcategory">
+        <field name="name">أخطاء متكررة في الأوردرات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_operations"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="subcategory_ops_distribution" model="hr.employee.feedback.subcategory">
+        <field name="name">سوء توزيع العمل</field>
+        <field name="category_id" ref="hr_employee_feedback.category_operations"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="subcategory_ops_other" model="hr.employee.feedback.subcategory">
+        <field name="name">مشكلة تشغيل أو أداء أخرى</field>
+        <field name="category_id" ref="hr_employee_feedback.category_operations"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="subcategory_hr_policy" model="hr.employee.feedback.subcategory">
+        <field name="name">عدم وضوح السياسات</field>
+        <field name="category_id" ref="hr_employee_feedback.category_hr_system"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="subcategory_hr_conflict" model="hr.employee.feedback.subcategory">
+        <field name="name">تضارب بين HR والمديرين</field>
+        <field name="category_id" ref="hr_employee_feedback.category_hr_system"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="subcategory_hr_mechanism" model="hr.employee.feedback.subcategory">
+        <field name="name">عدم وجود آلية شكوى فعالة</field>
+        <field name="category_id" ref="hr_employee_feedback.category_hr_system"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="subcategory_hr_delay" model="hr.employee.feedback.subcategory">
+        <field name="name">تأخير في الردود أو تجاهل</field>
+        <field name="category_id" ref="hr_employee_feedback.category_hr_system"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="subcategory_hr_other" model="hr.employee.feedback.subcategory">
+        <field name="name">أخرى HR or system issue</field>
+        <field name="category_id" ref="hr_employee_feedback.category_hr_system"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <record id="subcategory_other_general" model="hr.employee.feedback.subcategory">
+        <field name="name">أخرى not listed issue</field>
+        <field name="category_id" ref="hr_employee_feedback.category_other"/>
+        <field name="sequence">10</field>
+    </record>
 </odoo>

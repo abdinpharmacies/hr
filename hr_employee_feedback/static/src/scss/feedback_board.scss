@@ -1,0 +1,63 @@
+.o_hr_employee_feedback_kanban {
+    .o_kanban_renderer {
+        padding: 0.5rem;
+        overflow-x: auto;
+    }
+
+    .o_kanban_group {
+        min-width: 17rem;
+        max-width: 17rem;
+        margin-inline-end: 0.5rem;
+    }
+
+    .o_feedback_card {
+        padding: 0.6rem;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        background: #fff;
+    }
+
+    .o_feedback_card_title {
+        font-size: 0.92rem;
+        font-weight: 600;
+        line-height: 1.25;
+        max-height: 2.3rem;
+    }
+
+    .badge {
+        font-size: 0.7rem;
+        line-height: 1.1;
+        padding: 0.3rem 0.45rem;
+    }
+
+    .o_feedback_progress .progress {
+        border-radius: 999px;
+        background: #e9ecef;
+    }
+
+    .o_feedback_card_meta {
+        font-size: 0.76rem;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .o_hr_employee_feedback_kanban .o_kanban_group {
+        min-width: 15.5rem;
+        max-width: 15.5rem;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .o_hr_employee_feedback_kanban .o_kanban_renderer {
+        padding: 0.25rem;
+    }
+
+    .o_hr_employee_feedback_kanban .o_kanban_group {
+        min-width: calc(100vw - 2rem);
+        max-width: calc(100vw - 2rem);
+    }
+
+    .o_hr_employee_feedback_kanban .o_feedback_card {
+        padding: 0.5rem;
+    }
+}

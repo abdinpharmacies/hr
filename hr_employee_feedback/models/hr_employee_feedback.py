@@ -7,6 +7,7 @@ This file contains:
 """
 
 import re
+from datetime import timedelta
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
@@ -65,8 +66,23 @@ class HrEmployeeFeedback(models.Model):
     assigned_hr_user_id = fields.Many2one(
         'res.users',
         string='Assigned HR',
-        readonly=True,
         copy=False,
+        tracking=True,
+    )
+    assignable_hr_user_ids = fields.Many2many(
+        'res.users',
+        compute='_compute_assignable_hr_user_ids',
+        string='Assignable HR Users',
+    )
+    main_category_id = fields.Many2one(
+        'hr.employee.feedback.category',
+        string='Main Category',
+        tracking=True,
+    )
+    sub_category_id = fields.Many2one(
+        'hr.employee.feedback.subcategory',
+        string='Sub Category',
+        domain="[('category_id', '=', main_category_id)]",
         tracking=True,
     )
 
@@ -99,10 +115,59 @@ class HrEmployeeFeedback(models.Model):
         index=True,
         tracking=True,
     )
+    stage_state = fields.Selection(
+        [
+            ('under_review', 'Under Review'),
+            ('in_progress', 'In Progress'),
+            ('resolved', 'Resolved'),
+            ('rejected', 'Rejected'),
+        ],
+        string='Stage State',
+        compute='_compute_stage_state',
+        store=True,
+    )
+    escalation_state = fields.Selection(
+        [
+            ('none', 'No Escalation'),
+            ('active', 'Escalated'),
+            ('overdue', 'Overdue'),
+        ],
+        string='Escalation State',
+        default='none',
+        tracking=True,
+    )
+    escalation_level = fields.Integer(string='Escalation Level', default=1, tracking=True)
+    current_assignee_employee_id = fields.Many2one(
+        'ab_hr_employee',
+        string='Current Assignee Employee',
+        copy=False,
+        tracking=True,
+        index=True,
+    )
+    current_assignee_user_id = fields.Many2one(
+        'res.users',
+        string='Current Assignee User',
+        compute='_compute_current_assignee',
+        store=True,
+        index=True,
+    )
+    current_assignee_name = fields.Char(
+        string='Current Assignee',
+        compute='_compute_current_assignee',
+        store=True,
+    )
+    sla_deadline_at = fields.Datetime(string='SLA Deadline', copy=False, tracking=True)
+    is_conflict_of_interest = fields.Boolean(
+        string='Conflict Of Interest',
+        compute='_compute_is_conflict_of_interest',
+        store=True,
+    )
 
     # Priority color helper for kanban/list badge decorations.
     priority_color = fields.Integer(string='Priority Color', compute='_compute_priority_color')
     progress_percent = fields.Integer(string='Progress', compute='_compute_progress_percent')
+    stage_color = fields.Integer(string='Stage Color', compute='_compute_stage_color')
+    escalation_color = fields.Integer(string='Escalation Color', compute='_compute_escalation_color')
 
     # Timestamps.
     date_submitted = fields.Datetime(
@@ -129,6 +194,10 @@ class HrEmployeeFeedback(models.Model):
         string='Can Write Manager Reply',
         compute='_compute_can_write_manager_reply',
     )
+    can_view_manager_reply = fields.Boolean(
+        string='Can View Manager Reply',
+        compute='_compute_can_write_manager_reply',
+    )
     followup_ids = fields.One2many(
         'hr.employee.feedback.followup',
         'feedback_id',
@@ -148,6 +217,76 @@ class HrEmployeeFeedback(models.Model):
         }
         for record in self:
             record.priority_color = priority_colors.get(record.priority, 1)
+
+    @api.depends('stage_id', 'stage_state')
+    def _compute_stage_color(self):
+        """Keep stage color badges consistent across kanban/list/form."""
+        for record in self:
+            record.stage_color = record.stage_id.color or {
+                'under_review': 1,
+                'in_progress': 3,
+                'resolved': 2,
+                'rejected': 4,
+            }.get(record.stage_state, 1)
+
+    @api.depends('escalation_state', 'escalation_level')
+    def _compute_escalation_color(self):
+        """Expose escalation severity as a semantic color integer."""
+        for record in self:
+            if record.escalation_state == 'overdue':
+                record.escalation_color = 4
+            elif record.escalation_state == 'active':
+                record.escalation_color = 3 if record.escalation_level <= 2 else 4
+            else:
+                record.escalation_color = 2
+
+    @api.depends('stage_id')
+    def _compute_stage_state(self):
+        """Normalize stage XML IDs into stable technical keys."""
+        xmlid_map = {
+            self.env.ref('hr_employee_feedback.stage_under_review', raise_if_not_found=False): 'under_review',
+            self.env.ref('hr_employee_feedback.stage_in_progress', raise_if_not_found=False): 'in_progress',
+            self.env.ref('hr_employee_feedback.stage_resolved', raise_if_not_found=False): 'resolved',
+            self.env.ref('hr_employee_feedback.stage_rejected', raise_if_not_found=False): 'rejected',
+        }
+        for record in self:
+            record.stage_state = xmlid_map.get(record.stage_id)
+
+    @api.depends('current_assignee_employee_id', 'assigned_hr_user_id')
+    def _compute_current_assignee(self):
+        """Provide a single assignee surface for cards, lists, and activities."""
+        for record in self:
+            if record.current_assignee_employee_id and record.current_assignee_employee_id.user_id:
+                record.current_assignee_user_id = record.current_assignee_employee_id.user_id
+                record.current_assignee_name = record.current_assignee_employee_id.name
+            elif record.assigned_hr_user_id:
+                record.current_assignee_user_id = record.assigned_hr_user_id
+                record.current_assignee_name = record.assigned_hr_user_id.display_name
+            else:
+                record.current_assignee_user_id = False
+                record.current_assignee_name = False
+
+    @api.depends('message_type', 'main_category_id', 'manager_id', 'current_assignee_employee_id', 'assigned_hr_user_id')
+    def _compute_is_conflict_of_interest(self):
+        """Bypass direct manager review for sensitive complaint categories."""
+        sensitive_categories = {
+            self.env.ref('hr_employee_feedback.category_administrative', raise_if_not_found=False),
+            self.env.ref('hr_employee_feedback.category_behavior', raise_if_not_found=False),
+            self.env.ref('hr_employee_feedback.category_legal', raise_if_not_found=False),
+        }
+        sensitive_categories = {category.id for category in sensitive_categories if category}
+        for record in self:
+            direct_manager_conflict = (
+                record.message_type == 'complaint'
+                and record.main_category_id.id in sensitive_categories
+                and record.current_assignee_employee_id == record.manager_id
+            )
+            assigned_hr_conflict = (
+                record.assigned_hr_user_id
+                and record.manager_id.user_id
+                and record.assigned_hr_user_id == record.manager_id.user_id
+            )
+            record.is_conflict_of_interest = bool(direct_manager_conflict or assigned_hr_conflict)
 
     @api.depends('stage_id', 'stage_id.is_final')
     def _compute_is_resolved(self):
@@ -192,12 +331,31 @@ class HrEmployeeFeedback(models.Model):
         is_full_admin = current_user.has_group('base.group_system')
         is_hr_role = self._is_hr_or_admin_role()
         for record in self:
-            record.can_write_manager_reply = bool(
+            allowed = bool(
                 is_full_admin
                 or is_hr_role
                 or record.manager_id.user_id == current_user
                 or record.assigned_hr_user_id == current_user
             )
+            record.can_write_manager_reply = allowed
+            record.can_view_manager_reply = allowed
+
+    def _compute_assignable_hr_user_ids(self):
+        """Limit complaint assignee choices to manager/HR/admin users."""
+        ref = self.env.ref
+        group_xmlids = [
+            'hr_employee_feedback.group_employee_feedback_manager',
+            'ab_hr.group_ab_hr_manager',
+            'ab_hr.group_ab_hr_admin',
+            'ab_hr.group_ab_hr_co',
+            'hr.group_hr_user',
+            'hr.group_hr_manager',
+            'base.group_system',
+        ]
+        group_ids = [ref(xmlid).id for xmlid in group_xmlids if ref(xmlid, raise_if_not_found=False)]
+        allowed_users = self.env['res.users'].search([('group_ids', 'in', group_ids)]) if group_ids else self.env['res.users']
+        for record in self:
+            record.assignable_hr_user_ids = allowed_users
 
     @api.model
     def _default_stage(self):
@@ -224,6 +382,33 @@ class HrEmployeeFeedback(models.Model):
         """Default manager from the logged-in user's employee hierarchy."""
         employee = self._default_employee()
         return employee.parent_id
+
+    def _category_priority_defaults(self):
+        """Map main category to default priority and SLA hours.
+
+        The map keeps the current workflow intact while making serious issues
+        faster and more visible without additional user input.
+        """
+        return {
+            'hr_employee_feedback.category_administrative': ('high', 48),
+            'hr_employee_feedback.category_financial': ('high', 48),
+            'hr_employee_feedback.category_behavior': ('high', 48),
+            'hr_employee_feedback.category_legal': ('urgent', 24),
+            'hr_employee_feedback.category_operations': ('medium', 72),
+            'hr_employee_feedback.category_hr_system': ('medium', 72),
+            'hr_employee_feedback.category_other': ('medium', 96),
+        }
+
+    def _get_priority_and_sla(self, main_category, message_type):
+        """Return the default priority and SLA hours for the issue."""
+        if message_type == 'suggestion':
+            return 'low', 120
+        defaults = self._category_priority_defaults()
+        for xmlid, values in defaults.items():
+            category = self.env.ref(xmlid, raise_if_not_found=False)
+            if category and category == main_category:
+                return values
+        return 'medium', 72
 
     @api.model
     def _next_reference(self, message_type):
@@ -270,6 +455,140 @@ class HrEmployeeFeedback(models.Model):
         allowed = self._allowed_stages()
         return allowed or self.env['hr.feedback.stage'].search([], order='sequence, id')
 
+    def _get_hr_pool_users(self):
+        """Return a reusable ordered pool of HR/admin users for assignment fallback."""
+        xmlids = [
+            'ab_hr.group_ab_hr_manager',
+            'ab_hr.group_ab_hr_admin',
+            'ab_hr.group_ab_hr_co',
+            'hr.group_hr_manager',
+            'hr.group_hr_user',
+            'base.group_system',
+        ]
+        group_ids = [self.env.ref(xmlid).id for xmlid in xmlids if self.env.ref(xmlid, raise_if_not_found=False)]
+        return self.env['res.users'].search([('group_ids', 'in', group_ids), ('active', '=', True)], order='id')
+
+    def _get_department_manager(self, employee):
+        """Find the nearest department manager when the direct line manager is unavailable."""
+        department = employee.department_id
+        while department:
+            if department.manager_id and department.manager_id != employee:
+                return department.manager_id
+            department = department.parent_id
+        return self.env['ab_hr_employee']
+
+    def _is_manager_sensitive_issue(self):
+        """Complaints about management bypass the direct manager to avoid conflicts."""
+        self.ensure_one()
+        sensitive_xmlids = [
+            'hr_employee_feedback.category_administrative',
+            'hr_employee_feedback.category_behavior',
+            'hr_employee_feedback.category_legal',
+        ]
+        sensitive_ids = {
+            self.env.ref(xmlid).id
+            for xmlid in sensitive_xmlids
+            if self.env.ref(xmlid, raise_if_not_found=False)
+        }
+        return self.message_type == 'complaint' and self.main_category_id.id in sensitive_ids
+
+    def _get_routing_targets(self):
+        """Return ordered escalation targets using employee hierarchy and department fallbacks."""
+        self.ensure_one()
+        employee = self.employee_id
+        direct_manager = employee.parent_id if employee else self.env['ab_hr_employee']
+        department_manager = self._get_department_manager(employee) if employee else self.env['ab_hr_employee']
+        indirect_manager = direct_manager.parent_id if direct_manager else self.env['ab_hr_employee']
+        reviewer_chain = []
+        seen_employee_ids = set()
+        for level, reviewer in ((1, direct_manager), (2, department_manager), (2, indirect_manager)):
+            if reviewer and reviewer.user_id and reviewer.id != employee.id and reviewer.id not in seen_employee_ids:
+                reviewer_chain.append({'level': level, 'employee': reviewer, 'user': reviewer.user_id})
+                seen_employee_ids.add(reviewer.id)
+        hr_pool = self._get_hr_pool_users()
+        for index, user in enumerate(hr_pool[:2], start=3):
+            reviewer_chain.append({'level': index, 'employee': self.env['ab_hr_employee'], 'user': user})
+        return reviewer_chain
+
+    def _apply_assignment(self, target, reason=None):
+        """Persist assignment/escalation target and schedule work for that reviewer."""
+        self.ensure_one()
+        vals = {
+            'escalation_level': target['level'],
+            'current_assignee_employee_id': target['employee'].id if target['employee'] else False,
+            'assigned_hr_user_id': target['user'].id if target['level'] >= 3 and self.message_type == 'complaint' else False,
+            'escalation_state': 'active' if target['level'] > 1 else 'none',
+            'sla_deadline_at': fields.Datetime.now() + timedelta(hours=self._get_priority_and_sla(self.main_category_id, self.message_type)[1]),
+        }
+        secure_record = self.sudo()
+        secure_record.with_context(bypass_feedback_status_lock=True).write(vals)
+        action_reason = reason or _("Assignment updated.")
+        self.env['hr.employee.feedback.followup'].sudo().create({
+            'feedback_id': secure_record.id,
+            'note': _("%s Assigned to %s.") % (action_reason, target['user'].display_name),
+            'stage_id': secure_record.stage_id.id,
+            'priority': secure_record.priority,
+        })
+        secure_record._schedule_assignment_activity(target['user'])
+
+    def _schedule_assignment_activity(self, user):
+        """Keep one active TODO on the current assignee."""
+        self.ensure_one()
+        if not user:
+            return
+        todo = self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False)
+        if not todo:
+            return
+        existing = self.activity_ids.filtered(lambda a: a.user_id == user and a.activity_type_id == todo)
+        existing.unlink()
+        self.activity_schedule(
+            activity_type_id=todo.id,
+            summary=_("Issue Review"),
+            note=_("Please review issue %s and take the next action.") % (self.issue_uid or self.display_name),
+            user_id=user.id,
+            date_deadline=fields.Date.context_today(self),
+        )
+
+    def _initialize_routing(self):
+        """Set the initial assignee using the organizational routing source."""
+        for record in self:
+            targets = record._get_routing_targets()
+            if not targets:
+                continue
+            initial_target = targets[0]
+            if record._is_manager_sensitive_issue() and len(targets) > 1:
+                initial_target = targets[1]
+            record._apply_assignment(initial_target, reason=_("Initial routing."))
+
+    def _escalate_to_next_target(self, reason):
+        """Move the issue to the next valid reviewer in the routing chain."""
+        for record in self:
+            targets = record._get_routing_targets()
+            if not targets:
+                continue
+            current_level = record.escalation_level or 1
+            next_target = next((target for target in targets if target['level'] > current_level), False)
+            if next_target:
+                record._apply_assignment(next_target, reason=reason)
+            else:
+                record.with_context(bypass_feedback_status_lock=True).write({'escalation_state': 'overdue'})
+                record.env['hr.employee.feedback.followup'].sudo().create({
+                    'feedback_id': record.id,
+                    'note': _("%s No further escalation target was found.") % reason,
+                    'stage_id': record.stage_id.id,
+                    'priority': record.priority,
+                })
+
+    @api.model
+    def _cron_auto_escalate_feedback(self):
+        """Escalate overdue issues automatically based on SLA."""
+        overdue = self.search([
+            ('is_resolved', '=', False),
+            ('sla_deadline_at', '!=', False),
+            ('sla_deadline_at', '<=', fields.Datetime.now()),
+        ])
+        overdue._escalate_to_next_target(_("Automatic SLA escalation."))
+
     def _is_status_editor_role(self):
         """Return True for roles that are allowed to update status only.
 
@@ -313,6 +632,26 @@ class HrEmployeeFeedback(models.Model):
         for record in self:
             record.manager_id = record.employee_id.parent_id
 
+    @api.onchange('main_category_id')
+    def _onchange_main_category_id(self):
+        """Reset subcategory whenever the main category changes.
+
+        This avoids stale subcategory values after users switch the main axis of
+        the issue on the create form.
+        """
+        for record in self:
+            if record.sub_category_id and record.sub_category_id.category_id != record.main_category_id:
+                record.sub_category_id = False
+
+    @api.onchange('message_type')
+    def _onchange_message_type_reset_optional_fields(self):
+        """Clear complaint-only fields when the issue is a suggestion."""
+        for record in self:
+            if record.message_type == 'suggestion':
+                record.main_category_id = False
+                record.sub_category_id = False
+                record.assigned_hr_user_id = False
+
     @api.constrains('name', 'description')
     def _check_text_fields_have_letters(self):
         """Reject numeric-only titles/descriptions.
@@ -323,10 +662,36 @@ class HrEmployeeFeedback(models.Model):
         for record in self:
             title = (record.name or '').strip()
             description = (record.description or '').strip()
-            if title and not self._TEXT_WITH_LETTERS_PATTERN.search(title):
+            if not title:
+                raise ValidationError(_("Title is required."))
+            if not description:
+                raise ValidationError(_("Description is required."))
+            if not self._TEXT_WITH_LETTERS_PATTERN.search(title):
                 raise ValidationError(_("Title must contain letters, not only numbers or symbols."))
-            if description and not self._TEXT_WITH_LETTERS_PATTERN.search(description):
+            if not self._TEXT_WITH_LETTERS_PATTERN.search(description):
                 raise ValidationError(_("Description must contain letters, not only numbers or symbols."))
+
+    @api.constrains('main_category_id', 'sub_category_id')
+    def _check_sub_category_matches_main_category(self):
+        """Guarantee subcategory consistency at ORM level.
+
+        The view domain helps users in the UI, while this constraint prevents
+        invalid imports or RPC writes from linking a subcategory to the wrong
+        main category.
+        """
+        for record in self:
+            if (
+                record.main_category_id
+                and record.sub_category_id
+                and record.sub_category_id.category_id != record.main_category_id
+            ):
+                raise ValidationError(_("Sub Category must belong to the selected Main Category."))
+            if record.message_type == 'complaint' and not record.main_category_id:
+                raise ValidationError(_("Main Category is required for complaints."))
+            if record.message_type == 'complaint' and not record.sub_category_id:
+                raise ValidationError(_("Sub Category is required for complaints."))
+            if record.message_type == 'suggestion' and (record.main_category_id or record.sub_category_id or record.assigned_hr_user_id):
+                raise ValidationError(_("Suggestions cannot use complaint-only categorization or assigned HR fields."))
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -358,6 +723,20 @@ class HrEmployeeFeedback(models.Model):
             if not self._is_hr_or_admin_role():
                 vals['priority'] = 'medium'
 
+            category = self.env['hr.employee.feedback.category'].browse(vals.get('main_category_id')) if vals.get('main_category_id') else self.env['hr.employee.feedback.category']
+            default_priority, sla_hours = self._get_priority_and_sla(category, vals.get('message_type'))
+            if not vals.get('priority') or not self._is_hr_or_admin_role():
+                vals['priority'] = default_priority
+            vals.setdefault('sla_deadline_at', fields.Datetime.now() + timedelta(hours=sla_hours))
+            vals.setdefault('escalation_level', 1)
+            vals.setdefault('escalation_state', 'none')
+
+            # Suggestion workflow stays lightweight with no complaint-only fields.
+            if vals.get('message_type') == 'suggestion':
+                vals['main_category_id'] = False
+                vals['sub_category_id'] = False
+                vals['assigned_hr_user_id'] = False
+
         records = super().create(vals_list)
 
         # Safety net: keep tickets inside the fixed 4-stage workflow.
@@ -377,6 +756,7 @@ class HrEmployeeFeedback(models.Model):
                 'stage_id': record.stage_id.id,
                 'priority': record.priority,
             })
+        records._initialize_routing()
         return records
 
     def write(self, vals):
@@ -389,6 +769,8 @@ class HrEmployeeFeedback(models.Model):
         # Full admins keep unrestricted edit permission for testing/support.
         current_user = self.env.user
         is_full_admin = current_user.has_group('base.group_system')
+        if self.env.context.get('bypass_feedback_status_lock'):
+            return super().write(vals)
         if not self.env.context.get('bypass_feedback_status_lock') and not is_full_admin:
             for record in self:
                 if self._is_hr_or_admin_role():
@@ -411,6 +793,23 @@ class HrEmployeeFeedback(models.Model):
             if allowed_ids and vals.get('stage_id') not in allowed_ids:
                 raise UserError(_("Only the fixed workflow stages are allowed on tickets."))
             vals['date_last_stage_update'] = fields.Datetime.now()
+
+        if vals.get('message_type') == 'suggestion':
+            vals['main_category_id'] = False
+            vals['sub_category_id'] = False
+            vals['assigned_hr_user_id'] = False
+
+        if 'assigned_hr_user_id' in vals and vals.get('assigned_hr_user_id'):
+            vals['current_assignee_employee_id'] = False
+            vals['escalation_level'] = max(vals.get('escalation_level', 3), 3)
+            vals['escalation_state'] = 'active'
+
+        if 'main_category_id' in vals and not vals.get('priority'):
+            category = self.env['hr.employee.feedback.category'].browse(vals['main_category_id']) if vals['main_category_id'] else self.env['hr.employee.feedback.category']
+            default_priority, sla_hours = self._get_priority_and_sla(category, vals.get('message_type') or self[:1].message_type)
+            if not self._is_hr_or_admin_role():
+                vals['priority'] = default_priority
+            vals['sla_deadline_at'] = fields.Datetime.now() + timedelta(hours=sla_hours)
 
         under_review_stage = self.env.ref('hr_employee_feedback.stage_under_review', raise_if_not_found=False)
         in_progress_stage = self.env.ref('hr_employee_feedback.stage_in_progress', raise_if_not_found=False)
@@ -460,7 +859,7 @@ class HrEmployeeFeedback(models.Model):
             and any(key in vals for key in ('stage_id', 'priority', 'manager_reply'))
         ):
             for record in self:
-                if not record.assigned_hr_user_id:
+                if record.message_type == 'complaint' and not record.assigned_hr_user_id:
                     vals['assigned_hr_user_id'] = current_user.id
                     break
 
@@ -479,9 +878,13 @@ class HrEmployeeFeedback(models.Model):
             now_value = fields.Datetime.now()
             for record in self:
                 if record.stage_id.is_final and not record.date_resolved:
-                    record.date_resolved = now_value
+                    record.with_context(bypass_feedback_status_lock=True).write({
+                        'date_resolved': now_value,
+                        'escalation_state': 'none',
+                    })
+                    record.activity_ids.unlink()
                 elif not record.stage_id.is_final and record.date_resolved:
-                    record.date_resolved = False
+                    record.with_context(bypass_feedback_status_lock=True).write({'date_resolved': False})
 
         # Publish a concise timeline entry so employees can follow the process
         # without having edit permissions on the ticket.
@@ -508,6 +911,9 @@ class HrEmployeeFeedback(models.Model):
                         'priority': record.priority,
                     })
                     record.message_post(body="<br/>".join(updates), subtype_xmlid='mail.mt_note')
+        if any(key in vals for key in ('main_category_id', 'sub_category_id', 'manager_id', 'assigned_hr_user_id')):
+            for record in self.filtered(lambda rec: not rec.current_assignee_user_id):
+                record._initialize_routing()
         return result
 
     def action_mark_resolved(self):
@@ -573,6 +979,42 @@ class HrFeedbackStage(models.Model):
             record.color = int(record.color_label or 0)
 
 
+class HrEmployeeFeedbackCategory(models.Model):
+    """Top-level problem axis used during initial issue classification."""
+
+    _name = 'hr.employee.feedback.category'
+    _description = 'Employee Feedback Main Category'
+    _order = 'sequence, id'
+
+    name = fields.Char(required=True, translate=True)
+    sequence = fields.Integer(default=10)
+    active = fields.Boolean(default=True)
+    subcategory_ids = fields.One2many(
+        'hr.employee.feedback.subcategory',
+        'category_id',
+        string='Sub Categories',
+    )
+
+
+class HrEmployeeFeedbackSubcategory(models.Model):
+    """Detailed problem type under a main category."""
+
+    _name = 'hr.employee.feedback.subcategory'
+    _description = 'Employee Feedback Sub Category'
+    _order = 'category_id, sequence, id'
+
+    name = fields.Char(required=True, translate=True)
+    category_id = fields.Many2one(
+        'hr.employee.feedback.category',
+        string='Main Category',
+        required=True,
+        ondelete='cascade',
+        index=True,
+    )
+    sequence = fields.Integer(default=10)
+    active = fields.Boolean(default=True)
+
+
 class HrEmployeeFeedbackFollowup(models.Model):
     """Structured follow-up history for ticket processing.
 
@@ -604,3 +1046,26 @@ class HrEmployeeFeedbackFollowup(models.Model):
         string='Priority',
         readonly=True,
     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Default operational follow-up metadata from the parent issue.
+
+        Managers and HR users add free-text action notes through follow-up
+        history. The corresponding issue stage and priority are copied
+        automatically so the timeline stays readable without extra manual input.
+        """
+        for vals in vals_list:
+            feedback_id = vals.get('feedback_id')
+            if feedback_id:
+                feedback = self.env['hr.employee.feedback'].browse(feedback_id)
+                vals.setdefault('stage_id', feedback.stage_id.id)
+                vals.setdefault('priority', feedback.priority)
+        records = super().create(vals_list)
+        for record in records:
+            if record.note:
+                record.feedback_id.message_post(
+                    body=_("Follow-up update by %s: %s") % (record.user_id.display_name, record.note),
+                    subtype_xmlid='mail.mt_note',
+                )
+        return records
