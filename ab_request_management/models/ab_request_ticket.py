@@ -2,7 +2,8 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
-ASSIGNMENT_FIELDS = {"assigned_employee_id", "priority", "deadline"}
+ASSIGNMENT_FIELDS = {"assigned_employee_ids", "priority", "deadline"}
+NON_CLOSABLE_STATES = {"closed", "rejected"}
 
 
 class AbRequest(models.Model):
@@ -39,6 +40,7 @@ class AbRequest(models.Model):
     )
     requester_user_id = fields.Many2one(
         "res.users",
+        string="Requester User",
         related="requester_id.user_id",
         store=True,
     )
@@ -56,17 +58,29 @@ class AbRequest(models.Model):
     )
     manager_user_id = fields.Many2one(
         "res.users",
+        string="Manager User",
         related="manager_id.user_id",
         store=True,
     )
     assigned_employee_id = fields.Many2one(
         "ab_hr_employee",
-        domain="[('department_id', '=', department_id)]",
+        string="Primary Assigned Employee",
         ondelete="restrict",
+        tracking=True,
+        help="Legacy primary assignee kept for upgrade compatibility.",
+    )
+    assigned_employee_ids = fields.Many2many(
+        "ab_hr_employee",
+        "ab_request_ticket_assigned_employee_rel",
+        "request_id",
+        "employee_id",
+        string="Assigned Employees",
+        domain="[('department_id', '=', department_id)]",
         tracking=True,
     )
     assigned_user_id = fields.Many2one(
         "res.users",
+        string="Primary Assigned User",
         related="assigned_employee_id.user_id",
         store=True,
     )
@@ -105,6 +119,7 @@ class AbRequest(models.Model):
     can_assign = fields.Boolean(compute="_compute_access_flags")
     can_work_on_request = fields.Boolean(compute="_compute_access_flags")
     can_add_followup = fields.Boolean(compute="_compute_access_flags")
+    can_edit_assignment_details = fields.Boolean(compute="_compute_access_flags")
 
     _ab_request_name_uniq = models.Constraint(
         "UNIQUE(name)",
@@ -126,7 +141,7 @@ class AbRequest(models.Model):
     @api.depends(
         "requester_user_id",
         "manager_user_id",
-        "assigned_user_id",
+        "assigned_employee_ids",
         "request_type_id",
         "request_type_id.department_id",
         "request_type_id.department_id.manager_id",
@@ -140,15 +155,28 @@ class AbRequest(models.Model):
             record.is_request_admin = is_request_admin
             record.is_requester = record.requester_user_id == current_user
             record.is_department_manager = record._is_current_user_department_manager()
-            record.is_assigned_employee = record.assigned_user_id == current_user
+            record.is_assigned_employee = current_user in record._get_effective_assigned_users()
             record.can_assign = (record.is_department_manager or is_request_admin) and record.state == "scheduled"
             record.can_work_on_request = record.is_department_manager or record.is_assigned_employee or is_request_admin
             record.can_add_followup = record._can_current_user_add_followup()
+            record.can_edit_assignment_details = (
+                (record.is_department_manager or is_request_admin) and record.state not in NON_CLOSABLE_STATES
+            )
 
     def _is_current_user_department_manager(self):
         """Return whether the current user manages the request type department."""
         self.ensure_one()
         return self.request_type_id.department_id.manager_id.user_id == self.env.user
+
+    def _get_effective_assigned_employees(self):
+        """Return assigned employees, falling back to the legacy primary assignee."""
+        self.ensure_one()
+        return self.assigned_employee_ids or self.assigned_employee_id
+
+    def _get_effective_assigned_users(self):
+        """Return assigned users, falling back to the legacy primary assignee user."""
+        self.ensure_one()
+        return self._get_effective_assigned_employees().mapped("user_id") or self.assigned_user_id
 
     @api.constrains("request_type_id")
     def _check_request_type_manager(self):
@@ -157,23 +185,30 @@ class AbRequest(models.Model):
             if not record.request_type_id.manager_id:
                 raise ValidationError(_("The selected request type must have a department manager."))
 
-    @api.constrains("assigned_employee_id", "department_id")
+    @api.constrains("assigned_employee_ids", "department_id")
     def _check_assigned_employee_department(self):
         """Keep assignment scoped to the request department when possible."""
         for record in self:
-            if (
-                record.assigned_employee_id
-                and record.department_id
-                and record.assigned_employee_id.department_id
-                and record.assigned_employee_id.department_id != record.department_id
-            ):
-                raise ValidationError(_("The assigned employee must belong to the request department."))
+            invalid_employees = record._get_effective_assigned_employees().filtered(
+                lambda employee: employee.department_id and employee.department_id != record.department_id
+            )
+            if invalid_employees:
+                raise ValidationError(_("All assigned employees must belong to the request department."))
+
+    @api.constrains("deadline")
+    def _check_deadline_not_overdue(self):
+        """Ensure request deadlines are not set in the past."""
+        now = fields.Datetime.now()
+        for record in self:
+            if record.deadline and record.deadline < now:
+                raise ValidationError(_("Deadline cannot be in the past."))
 
     @api.model_create_multi
     def create(self, vals_list):
         """Create requests in under-review state and notify stakeholders."""
         prepared_vals_list = [self._prepare_create_vals(vals) for vals in vals_list]
         records = super().create(prepared_vals_list)
+        records._sync_primary_assignee()
         records._subscribe_request_partners()
         records._notify_request_created()
         return records
@@ -187,9 +222,18 @@ class AbRequest(models.Model):
         self._check_assignment_write(vals)
         self._check_state_write(vals)
         result = super().write(vals)
-        if {"request_type_id", "assigned_employee_id"} & set(vals):
+        if "assigned_employee_ids" in vals:
+            self._sync_primary_assignee()
+        if {"request_type_id", "assigned_employee_ids"} & set(vals):
             self._subscribe_request_partners()
         return result
+
+    def _sync_primary_assignee(self):
+        """Mirror the first assigned employee into the legacy primary field."""
+        for record in self:
+            primary_employee = record.assigned_employee_ids[:1]
+            if record.assigned_employee_id != primary_employee:
+                super(AbRequest, record).write({"assigned_employee_id": primary_employee.id or False})
 
     @api.model
     def _prepare_create_vals(self, vals):
@@ -201,6 +245,8 @@ class AbRequest(models.Model):
             raise ValidationError(_("Subject is required."))
         if not prepared_vals.get("description"):
             raise ValidationError(_("Description is required."))
+        self._validate_meaningful_text("subject", prepared_vals["subject"])
+        self._validate_meaningful_text("description", prepared_vals["description"])
         if not prepared_vals.get("requester_id"):
             requester_id = self._default_requester_id()
             if not requester_id:
@@ -212,7 +258,15 @@ class AbRequest(models.Model):
         request_type = self.env["ab.request.type"].browse(prepared_vals["request_type_id"])
         if not request_type.manager_id:
             raise ValidationError(_("The selected request type must have a department manager."))
+        if prepared_vals.get("deadline") and fields.Datetime.to_datetime(prepared_vals["deadline"]) < fields.Datetime.now():
+            raise ValidationError(_("Deadline cannot be in the past."))
         return prepared_vals
+
+    @api.model
+    def _validate_meaningful_text(self, field_label, value):
+        """Ensure text contains at least one alphabetic character."""
+        if not any(character.isalpha() for character in (value or "")):
+            raise ValidationError(_("%s must contain letters and cannot be only numbers or symbols.") % field_label.title())
 
     def _check_immutable_fields(self, vals):
         """Prevent edits to subject and description after creation."""
@@ -231,10 +285,8 @@ class AbRequest(models.Model):
         if self.env.context.get("allow_assignment_write") or not (ASSIGNMENT_FIELDS & set(vals)):
             return
         for record in self:
-            if not record._can_department_manager_assign():
-                raise UserError(_("Only the department manager or request admin can prepare assignment details."))
-            if record.state != "scheduled":
-                raise UserError(_("Assignment details can only be updated while the request is scheduled."))
+            if not record.can_edit_assignment_details:
+                raise UserError(_("Only the department manager or request admin can update assignees, deadline, or priority."))
 
     def _check_state_write(self, vals):
         """Force state changes through workflow actions."""
@@ -288,7 +340,7 @@ class AbRequest(models.Model):
             partners = (
                 record.requester_user_id.partner_id
                 | record.manager_user_id.partner_id
-                | record.assigned_user_id.partner_id
+                | record._get_effective_assigned_users().partner_id
             )
             if partners:
                 record.message_subscribe(partner_ids=partners.ids)
@@ -325,16 +377,19 @@ class AbRequest(models.Model):
     def _notify_assignment(self):
         """Notify the assigned employee after assignment."""
         for record in self:
-            if not record.assigned_user_id:
+            assigned_users = record._get_effective_assigned_users()
+            assigned_employees = record._get_effective_assigned_employees()
+            if not assigned_users:
                 continue
+            employee_names = ", ".join(assigned_employees.mapped("name"))
             body = _(
-                "Request %(request)s has been assigned to %(employee)s with %(priority)s priority."
+                "Request %(request)s has been assigned to %(employees)s with %(priority)s priority."
             ) % {
                 "request": record.name,
-                "employee": record.assigned_employee_id.name,
+                "employees": employee_names,
                 "priority": dict(self._fields["priority"].selection).get(record.priority, record.priority),
             }
-            record._post_notification(body, record.assigned_user_id.partner_id)
+            record._post_notification(body, assigned_users.partner_id)
 
     def _notify_requester_confirmation(self):
         """Notify the manager when requester feedback is submitted."""
@@ -373,8 +428,8 @@ class AbRequest(models.Model):
         for record in self:
             if record.state != "scheduled":
                 raise UserError(_("Only scheduled requests can be assigned."))
-            if not record.assigned_employee_id:
-                raise ValidationError(_("Please select an assigned employee before assigning the request."))
+            if not record._get_effective_assigned_employees():
+                raise ValidationError(_("Please select at least one assigned employee before assigning the request."))
             if not record.priority:
                 raise ValidationError(_("Please select a priority before assigning the request."))
             values = {
@@ -390,7 +445,7 @@ class AbRequest(models.Model):
         for record in self:
             if record.state != "scheduled":
                 raise UserError(_("Only scheduled requests can be moved to in progress."))
-            if not record.assigned_employee_id:
+            if not record._get_effective_assigned_employees():
                 raise ValidationError(_("The request must be assigned before it can start."))
             record.with_context(allow_state_write=True).write({"state": "in_progress"})
         return True

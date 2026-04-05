@@ -141,6 +141,12 @@ Python:
 - Python ≥ 3.10 required
 - Use virtual environments
 
+Naming:
+
+- Addon/module technical names must use underscores `_`
+- Do not use dots `.` in addon/module names
+- Example: `ab_request_management`, not `ab.request.management`
+
 7) Python / ORM Rules
 
 ---------------------

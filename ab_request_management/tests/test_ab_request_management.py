@@ -1,5 +1,7 @@
+from datetime import timedelta
 from unittest.mock import patch
 
+from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
@@ -18,12 +20,16 @@ class TestAbRequestManagement(TransactionCase):
         self.requester_user = self._create_user("Requester User", "requester_user_test", [self.request_user_group.id])
         self.manager_user = self._create_user("Manager User", "manager_user_test", [self.request_manager_group.id])
         self.assignee_user = self._create_user("Assignee User", "assignee_user_test", [self.request_user_group.id])
+        self.second_assignee_user = self._create_user(
+            "Second Assignee User", "second_assignee_user_test", [self.request_user_group.id]
+        )
         self.outsider_user = self._create_user("Outsider User", "outsider_user_test", [self.request_user_group.id])
         self.admin_user = self._create_user("Admin User", "admin_user_test", [self.request_admin_group.id])
 
         self.requester_employee = self._create_employee("Requester Employee", self.requester_user)
         self.manager_employee = self._create_employee("Manager Employee", self.manager_user)
         self.assignee_employee = self._create_employee("Assignee Employee", self.assignee_user)
+        self.second_assignee_employee = self._create_employee("Second Assignee Employee", self.second_assignee_user)
         self.outsider_employee = self._create_employee("Outsider Employee", self.outsider_user)
         self.admin_employee = self._create_employee("Admin Employee", self.admin_user)
 
@@ -36,6 +42,7 @@ class TestAbRequestManagement(TransactionCase):
         self.requester_employee.department_id = self.department.id
         self.manager_employee.department_id = self.department.id
         self.assignee_employee.department_id = self.department.id
+        self.second_assignee_employee.department_id = self.department.id
         self.admin_employee.department_id = self.department.id
         self.other_department = self.Departments.create({"name": "Finance"})
         self.outsider_employee.department_id = self.other_department.id
@@ -81,6 +88,24 @@ class TestAbRequestManagement(TransactionCase):
         self.assertEqual(request.requester_id, self.requester_employee)
         self.assertEqual(request.manager_id, self.manager_employee)
 
+    def test_subject_and_description_must_contain_letters(self):
+        with self.assertRaises(ValidationError):
+            self.env["ab.request"].with_user(self.requester_user).create(
+                {
+                    "subject": "123456",
+                    "description": "Valid description",
+                    "request_type_id": self.request_type.id,
+                }
+            )
+        with self.assertRaises(ValidationError):
+            self.env["ab.request"].with_user(self.requester_user).create(
+                {
+                    "subject": "Valid subject",
+                    "description": "@@@###",
+                    "request_type_id": self.request_type.id,
+                }
+            )
+
     def test_get_request_admin_partners_uses_implied_group_memberships(self):
         admin_partners = self.env["ab.request"]._get_request_admin_partners()
         self.assertIn(self.admin_user.partner_id, admin_partners)
@@ -92,13 +117,21 @@ class TestAbRequestManagement(TransactionCase):
         with self.assertRaises(UserError):
             request.with_user(self.manager_user).write({"description": "Changed"})
 
+    def test_deadline_cannot_be_in_the_past(self):
+        request = self._create_request()
+        past_deadline = fields.Datetime.to_string(fields.Datetime.now() - timedelta(days=1))
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+        with self.assertRaises(ValidationError):
+            request.with_user(self.manager_user).write({"deadline": past_deadline})
+
     def test_full_request_lifecycle(self):
         request = self._create_request()
         with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
             request.with_user(self.manager_user).action_approve()
             request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
                 {
-                    "assigned_employee_id": self.assignee_employee.id,
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id, self.second_assignee_employee.id])],
                     "priority": "high",
                 }
             )
@@ -109,6 +142,32 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.requester_user).action_mark_satisfied()
             request.with_user(self.assignee_user).action_close()
         self.assertEqual(request.state, "closed")
+        self.assertSetEqual(set(request.assigned_employee_ids.ids), {self.assignee_employee.id, self.second_assignee_employee.id})
+
+    def test_manager_can_edit_assignment_details_after_assignment(self):
+        request = self._create_request()
+        future_deadline = fields.Datetime.to_string(fields.Datetime.now() + timedelta(days=2))
+        updated_deadline = fields.Datetime.to_string(fields.Datetime.now() + timedelta(days=4))
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                    "priority": "medium",
+                    "deadline": future_deadline,
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            request.with_user(self.manager_user).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id, self.second_assignee_employee.id])],
+                    "priority": "high",
+                    "deadline": updated_deadline,
+                }
+            )
+        self.assertSetEqual(set(request.assigned_employee_ids.ids), {self.assignee_employee.id, self.second_assignee_employee.id})
+        self.assertEqual(request.priority, "high")
+        self.assertEqual(fields.Datetime.to_string(request.deadline), updated_deadline)
 
     def test_requester_can_add_followup_before_confirmation(self):
         request = self._create_request()
@@ -127,7 +186,7 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.manager_user).action_approve()
             request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
                 {
-                    "assigned_employee_id": self.assignee_employee.id,
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
                 }
             )
             request.with_user(self.manager_user).action_assign()
@@ -149,7 +208,7 @@ class TestAbRequestManagement(TransactionCase):
         with self.assertRaises(ValidationError):
             request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
                 {
-                    "assigned_employee_id": self.outsider_employee.id,
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id, self.outsider_employee.id])],
                 }
             )
 
@@ -159,7 +218,7 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.admin_user).action_approve()
             request.with_user(self.admin_user).with_context(allow_assignment_write=True).write(
                 {
-                    "assigned_employee_id": self.assignee_employee.id,
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id, self.second_assignee_employee.id])],
                     "priority": "high",
                 }
             )
@@ -175,6 +234,7 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.admin_user).action_close()
         self.assertEqual(request.state, "closed")
         self.assertEqual(followup.user_id, self.admin_user)
+        self.assertSetEqual(set(request.assigned_employee_ids.ids), {self.assignee_employee.id, self.second_assignee_employee.id})
 
     def test_admin_can_approve_when_admin_user_is_department_manager(self):
         self.department.manager_id = self.admin_employee.id
@@ -188,6 +248,22 @@ class TestAbRequestManagement(TransactionCase):
         self.assertEqual(self.env["ab.request"].with_user(self.outsider_user).search_count([("id", "=", request.id)]), 0)
         with self.assertRaises(AccessError):
             request.with_user(self.outsider_user).read(["subject"])
+
+    def test_any_assigned_employee_can_access_and_progress_request(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id, self.second_assignee_employee.id])],
+                    "priority": "high",
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+
+        self.assertEqual(self.env["ab.request"].with_user(self.second_assignee_user).search_count([("id", "=", request.id)]), 1)
+        request.with_user(self.second_assignee_user).action_request_confirmation()
+        self.assertEqual(request.state, "under_requester_confirmation")
 
     def test_request_type_requires_department_manager(self):
         unmanaged_department = self.Departments.create({"name": "No Manager"})

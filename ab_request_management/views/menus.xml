@@ -6,17 +6,24 @@
                   sequence="10"
                   groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
 
-        <menuitem id="ab_request_management_menu_requests"
-                  name="Requests"
+        <menuitem id="ab_request_management_menu_my_requests"
+                  name="My Requests"
                   parent="ab_request_management_menu_root"
-                  action="ab_request_action"
+                  action="ab_request_my_action"
                   sequence="10"
+                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
+
+        <menuitem id="ab_request_management_menu_assigned_requests"
+                  name="Assigned Requests"
+                  parent="ab_request_management_menu_root"
+                  action="ab_request_assigned_action"
+                  sequence="20"
                   groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
 
         <menuitem id="ab_request_management_menu_settings"
                   name="Settings"
                   parent="ab_request_management_menu_root"
-                  sequence="20"
+                  sequence="30"
                   groups="ab_request_management.group_ab_request_management_admin"/>
 
         <menuitem id="ab_request_management_menu_request_types"
