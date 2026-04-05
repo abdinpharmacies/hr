@@ -3,7 +3,7 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'abdin_telegram'],
+    'depends': ['base', 'mail', 'ab_hr'],
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',

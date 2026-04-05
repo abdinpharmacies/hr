@@ -4,26 +4,26 @@
         <menuitem id="ab_request_management_menu_root"
                   name="Request Management"
                   sequence="10"
-                  groups="ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_readonly"/>
+                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
 
-        <menuitem id="ab_request_management_menu_tickets"
-                  name="Tickets"
+        <menuitem id="ab_request_management_menu_requests"
+                  name="Requests"
                   parent="ab_request_management_menu_root"
-                  action="ab_request_ticket_action"
+                  action="ab_request_action"
                   sequence="10"
-                  groups="ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_readonly"/>
+                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
 
-        <menuitem id="ab_request_management_menu_configuration"
-                  name="Configuration"
+        <menuitem id="ab_request_management_menu_settings"
+                  name="Settings"
                   parent="ab_request_management_menu_root"
                   sequence="20"
-                  groups="ab_request_management.group_ab_request_management_manager"/>
+                  groups="ab_request_management.group_ab_request_management_admin"/>
 
-        <menuitem id="ab_request_management_menu_types"
+        <menuitem id="ab_request_management_menu_request_types"
                   name="Request Types"
-                  parent="ab_request_management_menu_configuration"
+                  parent="ab_request_management_menu_settings"
                   action="ab_request_type_action"
                   sequence="10"
-                  groups="ab_request_management.group_ab_request_management_manager"/>
+                  groups="ab_request_management.group_ab_request_management_admin"/>
     </data>
 </odoo>

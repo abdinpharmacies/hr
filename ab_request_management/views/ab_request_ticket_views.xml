@@ -1,92 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="ab_request_ticket_view_list" model="ir.ui.view">
-            <field name="name">ab_request_ticket.list</field>
-            <field name="model">ab_request_ticket</field>
+        <record id="ab_request_followup_view_list" model="ir.ui.view">
+            <field name="name">ab.request.followup.list</field>
+            <field name="model">ab.request.followup</field>
             <field name="arch" type="xml">
-                <list string="Request Tickets">
-                    <field name="ticket_number"/>
-                    <field name="title"/>
-                    <field name="request_type_id"/>
-                    <field name="requester"/>
-                    <field name="assigned_to"/>
-                    <field name="priority"/>
-                    <field name="stage"/>
-                    <field name="duration_days"/>
-                    <field name="expected_close_date"/>
-                    <field name="actual_close_date"/>
-                    <field name="create_date" optional="hide"/>
+                <list string="Follow-ups" create="0" delete="0" edit="0" default_order="date desc">
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="description"/>
                 </list>
             </field>
         </record>
 
-        <record id="ab_request_ticket_view_form" model="ir.ui.view">
-            <field name="name">ab_request_ticket.form</field>
-            <field name="model">ab_request_ticket</field>
+        <record id="ab_request_followup_view_form" model="ir.ui.view">
+            <field name="name">ab.request.followup.form</field>
+            <field name="model">ab.request.followup</field>
             <field name="arch" type="xml">
-                <form string="Request Ticket">
-                    <header>
-                        <button name="action_start_progress" type="object" string="Start Progress" class="btn-primary"
-                                invisible="stage != 'new' or not is_responsible_user"/>
-                        <button name="action_start_progress" type="object" string="Resume Progress" class="btn-primary"
-                                invisible="stage != 'add_notes' or not is_responsible_user"/>
-                        <button name="action_send_for_requester_confirmation" type="object"
-                                string="Send For Requester Confirmation" class="btn-primary"
-                                invisible="stage != 'in_progress' or not is_responsible_user"/>
-                        <button name="action_mark_satisfied" type="object" string="Mark Satisfied" class="btn-primary"
-                                invisible="stage != 'requester_confirmation' or not is_requester"/>
-                        <button name="action_add_notes" type="object" string="Add Notes" class="btn-secondary"
-                                invisible="stage != 'requester_confirmation' or not is_requester"/>
-                        <button name="action_close_by_dev" type="object" string="Close By Dev" class="btn-primary"
-                                invisible="stage != 'satisfied' or not is_responsible_user"/>
-                        <field name="stage" widget="statusbar" readonly="1"/>
-                    </header>
+                <form string="Follow-up">
                     <sheet>
-                        <field name="is_requester" invisible="1"/>
-                        <field name="is_responsible_user" invisible="1"/>
-                        <field name="is_request_manager" invisible="1"/>
-                        <widget name="web_ribbon" title="Closed"
-                                invisible="stage != 'closed_by_dev'"/>
-                        <group col="2">
-                            <group string="Request Details">
-                                <field name="ticket_number"/>
-                                <field name="title" readonly="stage == 'closed_by_dev'"/>
-                                <field name="request_type_id" readonly="stage == 'closed_by_dev'"/>
-                                <field name="priority" readonly="stage == 'closed_by_dev'"/>
-                                <field name="description" readonly="stage == 'closed_by_dev'"/>
-                            </group>
-                            <group string="Assignment">
-                                <field name="requester"/>
-                                <field name="assigned_to" readonly="stage == 'closed_by_dev'"/>
-                                <field name="requester_confirmation" readonly="1"/>
-                                <field name="active" invisible="1"/>
-                            </group>
+                        <group>
+                            <field name="request_id" readonly="1"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="date" readonly="1"/>
+                            <field name="description" readonly="1"/>
                         </group>
-                        <group string="Timeline" col="4">
-                            <field name="start_date" readonly="stage == 'closed_by_dev'"/>
-                            <field name="duration_days" readonly="stage == 'closed_by_dev'"/>
-                            <field name="expected_close_date" readonly="stage == 'closed_by_dev'"/>
-                            <field name="actual_close_date" readonly="1"/>
-                        </group>
-                        <notebook>
-                            <page string="Notes">
-                                <field name="notes" placeholder="Requester can add testing notes here before returning the ticket to development."
-                                       readonly="stage == 'closed_by_dev'"/>
-                            </page>
-                            <page string="Attachments">
-                                <field name="attachments" widget="many2many_binary" readonly="stage == 'closed_by_dev'"/>
-                            </page>
-                        </notebook>
                     </sheet>
                 </form>
             </field>
         </record>
 
-        <record id="ab_request_ticket_action" model="ir.actions.act_window">
-            <field name="name">Request Tickets</field>
-            <field name="res_model">ab_request_ticket</field>
+        <record id="ab_request_view_search" model="ir.ui.view">
+            <field name="name">ab.request.search</field>
+            <field name="model">ab.request</field>
+            <field name="arch" type="xml">
+                <search string="Requests">
+                    <field name="name"/>
+                    <field name="subject"/>
+                    <field name="request_type_id"/>
+                    <field name="requester_id"/>
+                    <field name="assigned_employee_id"/>
+                    <field name="department_id"/>
+                    <separator/>
+                    <filter name="filter_under_review" string="Under Review" domain="[('state', '=', 'under_review')]"/>
+                    <filter name="filter_in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                    <filter name="filter_closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                    <separator/>
+                    <filter name="group_department" string="Group by Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_type" string="Group by Type" context="{'group_by': 'request_type_id'}"/>
+                    <filter name="group_state" string="Group by State" context="{'group_by': 'state'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_request_view_list" model="ir.ui.view">
+            <field name="name">ab.request.list</field>
+            <field name="model">ab.request</field>
+            <field name="arch" type="xml">
+                <list string="Requests">
+                    <field name="name"/>
+                    <field name="subject"/>
+                    <field name="request_type_id"/>
+                    <field name="requester_id"/>
+                    <field name="manager_id"/>
+                    <field name="assigned_employee_id"/>
+                    <field name="priority"/>
+                    <field name="deadline"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_request_view_form" model="ir.ui.view">
+            <field name="name">ab.request.form</field>
+            <field name="model">ab.request</field>
+            <field name="arch" type="xml">
+                <form string="Request">
+                    <header>
+                        <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                                invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
+                        <button name="action_reject" type="object" string="Reject"
+                                invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
+                        <button name="action_assign" type="object" string="Assign" class="btn-primary"
+                                invisible="state != 'scheduled' or not can_assign"/>
+                        <button name="action_mark_in_progress" type="object" string="Mark In Progress" class="btn-primary"
+                                invisible="state != 'scheduled' or not can_work_on_request"/>
+                        <button name="action_request_confirmation" type="object" string="Request Confirmation" class="btn-primary"
+                                invisible="state != 'in_progress' or not can_work_on_request"/>
+                        <button name="action_mark_satisfied" type="object" string="Mark Satisfied" class="btn-primary"
+                                invisible="state != 'under_requester_confirmation' or not is_requester"/>
+                        <button name="action_request_changes" type="object" string="Request Changes"
+                                invisible="state != 'under_requester_confirmation' or not is_requester"/>
+                        <button name="action_close" type="object" string="Close" class="btn-primary"
+                                invisible="state not in ('satisfied', 'rejected') or not can_work_on_request"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="under_review,scheduled,in_progress,under_requester_confirmation,satisfied,rejected,closed"/>
+                    </header>
+                    <sheet>
+                        <field name="is_requester" invisible="1"/>
+                        <field name="is_department_manager" invisible="1"/>
+                        <field name="is_assigned_employee" invisible="1"/>
+                        <field name="is_request_admin" invisible="1"/>
+                        <field name="can_assign" invisible="1"/>
+                        <field name="can_work_on_request" invisible="1"/>
+                        <field name="can_add_followup" invisible="1"/>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_followups" type="object" class="oe_stat_button" icon="fa-list">
+                                <field name="followup_count" widget="statinfo" string="Follow-ups"/>
+                            </button>
+                        </div>
+                        <group col="2">
+                            <group string="Request Details">
+                                <field name="name" readonly="1"/>
+                                <field name="subject" readonly="id != False"/>
+                                <field name="request_type_id" readonly="id != False"/>
+                                <field name="description" readonly="id != False"/>
+                            </group>
+                            <group string="Ownership">
+                                <field name="requester_id" readonly="1"/>
+                                <field name="department_id" readonly="1"/>
+                                <field name="manager_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group col="2">
+                            <group string="Execution">
+                                <field name="assigned_employee_id"
+                                       domain="[('department_id', '=', department_id)]"
+                                       readonly="state != 'scheduled' or not can_assign"/>
+                                <field name="priority" readonly="state != 'scheduled' or not can_assign"/>
+                                <field name="deadline" readonly="state != 'scheduled' or not can_assign"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Follow-ups">
+                                <field name="followup_ids"
+                                       mode="list,form"
+                                       readonly="not can_add_followup"
+                                       context="{'default_request_id': id}">
+                                    <list string="Follow-ups" editable="bottom" default_order="date desc" create="1" delete="0" edit="0">
+                                        <field name="date" readonly="1"/>
+                                        <field name="user_id" readonly="1"/>
+                                        <field name="description"/>
+                                    </list>
+                                    <form string="Follow-up">
+                                        <group>
+                                            <field name="date" readonly="1"/>
+                                            <field name="user_id" readonly="1"/>
+                                            <field name="description"/>
+                                        </group>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_request_action" model="ir.actions.act_window">
+            <field name="name">Requests</field>
+            <field name="res_model">ab.request</field>
             <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_request_view_search"/>
         </record>
     </data>
 </odoo>
