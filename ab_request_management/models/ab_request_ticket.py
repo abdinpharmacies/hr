@@ -111,6 +111,12 @@ class AbRequest(models.Model):
     )
     followup_ids = fields.One2many("ab.request.followup", "request_id", string="Follow-ups")
     followup_count = fields.Integer(compute="_compute_followup_count")
+    assigned_employee_count = fields.Integer(compute="_compute_assigned_employee_count")
+    activity_count = fields.Integer(compute="_compute_activity_count")
+    is_overdue = fields.Boolean(compute="_compute_ui_state")
+    request_role_summary = fields.Char(compute="_compute_ui_state")
+    request_deadline_label = fields.Char(compute="_compute_ui_state")
+    request_ui_summary = fields.Char(compute="_compute_ui_state")
 
     is_requester = fields.Boolean(compute="_compute_access_flags")
     is_department_manager = fields.Boolean(compute="_compute_access_flags")
@@ -137,6 +143,16 @@ class AbRequest(models.Model):
         for record in self:
             record.followup_count = len(record.followup_ids)
 
+    @api.depends("assigned_employee_ids", "assigned_employee_id")
+    def _compute_assigned_employee_count(self):
+        for record in self:
+            record.assigned_employee_count = len(record._get_effective_assigned_employees())
+
+    @api.depends("activity_ids")
+    def _compute_activity_count(self):
+        for record in self:
+            record.activity_count = len(record.activity_ids)
+
     @api.depends_context("uid")
     @api.depends(
         "requester_user_id",
@@ -162,6 +178,57 @@ class AbRequest(models.Model):
             record.can_edit_assignment_details = (
                 (record.is_department_manager or is_request_admin) and record.state not in NON_CLOSABLE_STATES
             )
+
+    @api.depends_context("uid")
+    @api.depends(
+        "deadline",
+        "state",
+        "requester_user_id",
+        "manager_user_id",
+        "assigned_employee_ids",
+        "assigned_employee_id",
+        "followup_count",
+        "activity_count",
+        "assigned_employee_count",
+        "is_requester",
+        "is_department_manager",
+        "is_assigned_employee",
+        "is_request_admin",
+    )
+    def _compute_ui_state(self):
+        now = fields.Datetime.now()
+        state_labels = dict(self._fields["state"].selection)
+        for record in self:
+            role_labels = []
+            if record.is_request_admin:
+                role_labels.append(_("Admin"))
+            if record.is_department_manager:
+                role_labels.append(_("Department Manager"))
+            if record.is_assigned_employee:
+                role_labels.append(_("Assigned Employee"))
+            if record.is_requester:
+                role_labels.append(_("Requester"))
+            if not role_labels:
+                role_labels.append(_("Viewer"))
+
+            is_overdue = bool(
+                record.deadline
+                and record.state not in {"closed", "rejected", "satisfied"}
+                and record.deadline < now
+            )
+            record.is_overdue = is_overdue
+            record.request_role_summary = ", ".join(role_labels)
+            record.request_deadline_label = (
+                fields.Datetime.to_string(record.deadline) if record.deadline else _("No deadline planned")
+            )
+            record.request_ui_summary = _(
+                "%(state)s | %(assigned)s assignee(s) | %(followups)s follow-up(s) | %(activities)s activity(ies)"
+            ) % {
+                "state": state_labels.get(record.state, record.state),
+                "assigned": record.assigned_employee_count,
+                "followups": record.followup_count,
+                "activities": record.activity_count,
+            }
 
     def _is_current_user_department_manager(self):
         """Return whether the current user manages the request type department."""

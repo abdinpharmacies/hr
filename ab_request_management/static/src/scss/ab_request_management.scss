@@ -1,0 +1,593 @@
+.o_web_client {
+    --ab-request-state-under-review: #7b8794;
+    --ab-request-state-scheduled: #2f6fdd;
+    --ab-request-state-in-progress: #df7a22;
+    --ab-request-state-under-requester-confirmation: #7b4fd7;
+    --ab-request-state-satisfied: #2f8f57;
+    --ab-request-state-rejected: #cf4c4c;
+    --ab-request-state-closed: #96a1ad;
+    --ab-request-surface: #ffffff;
+    --ab-request-border: #d9e2ec;
+    --ab-request-text: #17324b;
+    --ab-request-text-muted: #61788e;
+    --ab-request-shadow-sm: 0 10px 24px rgba(18, 43, 67, 0.06);
+    --ab-request-shadow-md: 0 16px 38px rgba(18, 43, 67, 0.12);
+}
+
+.ab_request_state_dot {
+    width: 0.78rem;
+    height: 0.78rem;
+    display: inline-block;
+    border-radius: 999px;
+    background: var(--ab-request-state-closed);
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 14%, transparent);
+    color: var(--ab-request-state-closed);
+    flex: 0 0 auto;
+}
+
+.ab_request_state_dot_sm {
+    width: 0.6rem;
+    height: 0.6rem;
+}
+
+.ab_request_state_under_review {
+    background: var(--ab-request-state-under-review);
+    color: var(--ab-request-state-under-review);
+}
+
+.ab_request_state_scheduled {
+    background: var(--ab-request-state-scheduled);
+    color: var(--ab-request-state-scheduled);
+}
+
+.ab_request_state_in_progress {
+    background: var(--ab-request-state-in-progress);
+    color: var(--ab-request-state-in-progress);
+}
+
+.ab_request_state_under_requester_confirmation {
+    background: var(--ab-request-state-under-requester-confirmation);
+    color: var(--ab-request-state-under-requester-confirmation);
+}
+
+.ab_request_state_satisfied {
+    background: var(--ab-request-state-satisfied);
+    color: var(--ab-request-state-satisfied);
+}
+
+.ab_request_state_rejected {
+    background: var(--ab-request-state-rejected);
+    color: var(--ab-request-state-rejected);
+}
+
+.ab_request_state_closed {
+    background: var(--ab-request-state-closed);
+    color: var(--ab-request-state-closed);
+}
+
+.ab_request_state_pulse {
+    animation: ab_request_state_pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes ab_request_state_pulse {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 24%, transparent);
+    }
+    55% {
+        transform: scale(1.08);
+        box-shadow: 0 0 0 0.36rem color-mix(in srgb, currentColor 0%, transparent);
+    }
+}
+
+.ab_request_form {
+    .ab_request_sheet {
+        background:
+            radial-gradient(circle at top right, rgba(47, 111, 221, 0.07), transparent 24rem),
+            linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+        border-radius: 22px;
+        padding: 1.5rem 1.5rem 0.5rem;
+
+        .oe_button_box {
+            margin-bottom: 1rem;
+        }
+
+        .ab_request_title_block,
+        .ab_request_type_title_block {
+            margin-bottom: 1.5rem;
+        }
+
+        .ab_request_title_meta {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .ab_request_title_tag,
+        .ab_request_title_role {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.3rem 0.7rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .ab_request_title_tag {
+            background: #14324a;
+            color: #fff;
+        }
+
+        .ab_request_title_role {
+            background: #eef4f8;
+            color: #355068;
+        }
+
+        .ab_request_title_supporting {
+            max-width: 70rem;
+            line-height: 1.5;
+            font-size: 0.98rem;
+        }
+    }
+
+    .o_notebook {
+        margin-top: 1.25rem;
+    }
+
+    .o_form_renderer .o_inner_group {
+        gap: 1rem 1.25rem;
+    }
+
+    .o-mail-Chatter {
+        background: linear-gradient(180deg, #fcfdff 0%, #f4f8fb 100%);
+        border: 1px solid var(--ab-request-border);
+        border-radius: 22px;
+        box-shadow: var(--ab-request-shadow-sm);
+        overflow: hidden;
+        margin-top: 1.25rem;
+    }
+
+    .o-mail-Chatter-top {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(200, 213, 227, 0.8);
+        padding: 0 0.85rem;
+    }
+
+    .o-mail-Chatter-topbar {
+        gap: 0.35rem;
+        padding: 0.5rem 0;
+    }
+
+    .o-mail-Chatter-topbar .btn,
+    .o-mail-Followers-button,
+    .o-mail-Chatter-attachFiles {
+        border-radius: 999px;
+    }
+
+    .o-mail-Chatter-content {
+        padding: 0.75rem 0.9rem 1rem;
+    }
+
+    .o-mail-ActivityList,
+    .o-mail-ScheduledMessagesList {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--ab-request-border);
+        border-radius: 16px;
+        padding: 0.35rem 0.65rem 0.65rem;
+        margin-bottom: 0.9rem;
+    }
+
+    .o-mail-Message {
+        padding: 0.65rem 0.2rem 0.85rem 0;
+    }
+
+    .o-mail-Message:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        left: 1.45rem;
+        top: 3.3rem;
+        bottom: -0.25rem;
+        width: 1px;
+        background: linear-gradient(180deg, rgba(200, 213, 227, 0.95), rgba(200, 213, 227, 0));
+    }
+
+    .o-mail-Message-avatarContainer {
+        box-shadow: 0 0 0 4px #fff, 0 8px 18px rgba(18, 43, 67, 0.12);
+    }
+
+    .o-mail-Message-header {
+        gap: 0.45rem;
+        line-height: 1.35;
+        margin-bottom: 0.25rem;
+    }
+
+    .o-mail-Message-author {
+        color: var(--ab-request-text);
+        font-size: 0.92rem;
+    }
+
+    .o-mail-Message-date {
+        color: var(--ab-request-text-muted);
+        letter-spacing: 0.01em;
+    }
+
+    .o-mail-Message-body,
+    .o-mail-Message-richBody {
+        color: #264259;
+        line-height: 1.65;
+        font-size: 0.94rem;
+    }
+
+    .o-mail-Message-contentContainer {
+        padding-right: 0.35rem;
+    }
+
+    .o-mail-Message-content > .o-discuss-text-body,
+    .o-mail-Message-body.o-note,
+    .o-mail-Message-body.align-self-start {
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid rgba(217, 226, 236, 0.92);
+        border-radius: 18px;
+        box-shadow: 0 10px 24px rgba(18, 43, 67, 0.06);
+    }
+
+    .o-mail-Chatter-sendMessage.btn-primary,
+    .o-mail-Chatter-logNote.btn-primary {
+        box-shadow: 0 8px 18px rgba(47, 111, 221, 0.2);
+    }
+
+    .o-mail-Thread {
+        padding: 0.35rem 0.2rem 0;
+    }
+
+    .o-mail-Message-actions {
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid rgba(217, 226, 236, 0.92);
+        box-shadow: 0 10px 18px rgba(18, 43, 67, 0.08);
+        padding: 0.15rem;
+    }
+}
+
+.ab_request_summary_widget {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    gap: 0.9rem;
+    margin: 0.25rem 0 1.5rem;
+
+    .ab_request_summary_metric {
+        background: linear-gradient(180deg, #ffffff 0%, #f4f8fb 100%);
+        border: 1px solid var(--ab-request-border);
+        border-radius: 18px;
+        padding: 0.85rem 1rem;
+        min-height: 5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        box-shadow: var(--ab-request-shadow-sm);
+    }
+
+    .ab_request_summary_label {
+        color: var(--ab-request-text-muted);
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .ab_request_summary_value,
+    .ab_request_summary_badge {
+        color: var(--ab-request-text);
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    .ab_request_summary_badge {
+        display: inline-flex;
+        width: fit-content;
+        padding: 0.3rem 0.65rem;
+        border-radius: 999px;
+    }
+}
+
+.ab_request_state_badge,
+.ab_request_priority_badge {
+    &.ab_request_state_under_review {
+        background: color-mix(in srgb, var(--ab-request-state-under-review) 14%, white);
+        color: var(--ab-request-state-under-review);
+    }
+
+    &.ab_request_state_scheduled {
+        background: color-mix(in srgb, var(--ab-request-state-scheduled) 14%, white);
+        color: var(--ab-request-state-scheduled);
+    }
+
+    &.ab_request_state_in_progress {
+        background: color-mix(in srgb, var(--ab-request-state-in-progress) 14%, white);
+        color: var(--ab-request-state-in-progress);
+    }
+
+    &.ab_request_state_under_requester_confirmation {
+        background: color-mix(in srgb, var(--ab-request-state-under-requester-confirmation) 14%, white);
+        color: var(--ab-request-state-under-requester-confirmation);
+    }
+
+    &.ab_request_state_satisfied {
+        background: color-mix(in srgb, var(--ab-request-state-satisfied) 14%, white);
+        color: var(--ab-request-state-satisfied);
+    }
+
+    &.ab_request_state_rejected {
+        background: color-mix(in srgb, var(--ab-request-state-rejected) 14%, white);
+        color: var(--ab-request-state-rejected);
+    }
+
+    &.ab_request_state_closed {
+        background: color-mix(in srgb, var(--ab-request-state-closed) 14%, white);
+        color: var(--ab-request-state-closed);
+    }
+
+    &.ab_request_priority_low {
+        background: #e6f4ec;
+        color: #1f6f45;
+    }
+
+    &.ab_request_priority_medium,
+    &.ab_request_priority_unset {
+        background: #e8eff7;
+        color: #36536f;
+    }
+
+    &.ab_request_priority_high {
+        background: #fde7e5;
+        color: #a1281f;
+    }
+}
+
+.ab_request_section_grid {
+    margin-top: 0.5rem;
+}
+
+.ab_request_section {
+    border: 1px solid var(--ab-request-border);
+    border-radius: 18px;
+    padding: 1rem 1rem 0.5rem;
+    background: rgba(255, 255, 255, 0.88);
+    box-shadow: var(--ab-request-shadow-sm);
+}
+
+.ab_request_list {
+    .o_list_table {
+        --table-striped-bg: transparent;
+    }
+
+    .o_data_row {
+        transition: background-color 140ms ease, box-shadow 140ms ease;
+    }
+
+    .o_data_row:hover {
+        background: #f8fbfe;
+        box-shadow: inset 0 0 0 999px rgba(47, 111, 221, 0.025);
+    }
+
+    .o_list_number_th,
+    .o_data_cell:first-child {
+        width: 2.5rem;
+        text-align: center;
+    }
+
+    .ab_request_state_dot_widget {
+        display: inline-flex;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .ab_request_state_label_widget {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        color: var(--ab-request-text);
+    }
+
+    .o_badge {
+        font-weight: 600;
+        border-radius: 999px;
+        padding-inline: 0.7rem;
+    }
+}
+
+.ab_request_kanban {
+    .o_kanban_record {
+        border-radius: 20px;
+        transition: transform 120ms ease-out;
+        transform-origin: center;
+        cursor: pointer;
+    }
+
+    .o_kanban_record:hover {
+        transform: translateY(-2px);
+    }
+
+    .o_kanban_record:active {
+        transform: translateY(0) scale(0.97);
+    }
+
+    .o_kanban_record .ab_request_kanban_card {
+        border: 1px solid var(--ab-request-border);
+        border-left: 4px solid var(--ab-request-state-scheduled);
+        border-radius: 20px;
+        padding: 1rem;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(246, 249, 252, 0.98) 100%);
+        box-shadow: var(--ab-request-shadow-sm);
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+        transition: box-shadow 160ms ease, border-color 160ms ease, background-color 160ms ease;
+    }
+
+    .o_kanban_record:hover .ab_request_kanban_card {
+        box-shadow: var(--ab-request-shadow-md);
+    }
+
+    .o_kanban_record:active .ab_request_kanban_card {
+        box-shadow: 0 10px 20px rgba(18, 43, 67, 0.08);
+    }
+
+    .ab_request_overdue {
+        border-left-color: var(--ab-request-state-rejected);
+    }
+
+    .o_kanban_record.shadow {
+        opacity: 0.78;
+        transform: rotate(1deg) scale(0.985);
+    }
+
+    .o_kanban_group {
+        transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+        border-radius: 24px;
+        border: 1px solid transparent;
+    }
+
+    .o_kanban_group.o_kanban_hover {
+        background: linear-gradient(180deg, rgba(47, 111, 221, 0.05) 0%, rgba(47, 111, 221, 0.1) 100%);
+        border-color: rgba(47, 111, 221, 0.22);
+        box-shadow: inset 0 0 0 1px rgba(47, 111, 221, 0.08);
+    }
+
+    .ab_request_kanban_top,
+    .ab_request_kanban_footer,
+    .ab_request_followup_card_header {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .ab_request_kanban_identity {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .ab_request_ticket_number {
+        font-size: 0.78rem;
+        font-weight: 700;
+        color: #1d5d8f;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .ab_request_kanban_subject {
+        color: var(--ab-request-text);
+        line-height: 1.35;
+        font-size: 1.02rem;
+    }
+
+    .ab_request_kanban_meta,
+    .ab_request_kanban_people {
+        display: grid;
+        gap: 0.45rem;
+    }
+
+    .ab_request_kanban_meta {
+        color: var(--ab-request-text-muted);
+        font-size: 0.85rem;
+        grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    }
+
+    .ab_request_kanban_people {
+        grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+        gap: 0.8rem;
+    }
+
+    .ab_request_kanban_people > div {
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(217, 226, 236, 0.92);
+        border-radius: 14px;
+        padding: 0.65rem 0.75rem;
+        min-height: 4.2rem;
+    }
+
+    .ab_request_kanban_people .text-muted {
+        display: block;
+        margin-bottom: 0.2rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .ab_request_deadline,
+    .ab_request_kanban_metrics {
+        color: var(--ab-request-text-muted);
+        font-size: 0.84rem;
+    }
+
+    .ab_request_kanban_status {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 0.45rem;
+    }
+
+    .ab_request_state_chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.35rem 0.7rem;
+        border-radius: 999px;
+        font-size: 0.77rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        background: color-mix(in srgb, currentColor 12%, white);
+        color: var(--ab-request-state-closed);
+        border: 1px solid color-mix(in srgb, currentColor 18%, white);
+    }
+
+    .ab_request_state_chip .ab_request_state_dot {
+        width: 0.56rem;
+        height: 0.56rem;
+        box-shadow: none;
+    }
+
+    .ab_request_state_chip_label {
+        white-space: nowrap;
+    }
+}
+
+.ab_request_followup_kanban,
+.ab_request_followup_sheet,
+.ab_request_type_form {
+    .ab_request_followup_card {
+        border: 1px solid var(--ab-request-border);
+        border-radius: 18px;
+        padding: 0.85rem 1rem;
+        background: linear-gradient(180deg, #ffffff 0%, #f7fafc 100%);
+        box-shadow: var(--ab-request-shadow-sm);
+    }
+
+    .ab_request_followup_card_body {
+        margin-top: 0.65rem;
+        color: #22384d;
+        line-height: 1.5;
+        white-space: pre-wrap;
+    }
+}
+
+.ab_request_type_sheet {
+    .ab_request_section {
+        min-height: 11rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ab_request_state_pulse,
+    .ab_request_kanban .o_kanban_record,
+    .ab_request_kanban .o_kanban_record .ab_request_kanban_card,
+    .ab_request_list .o_data_row {
+        animation: none !important;
+        transition: none !important;
+    }
+}

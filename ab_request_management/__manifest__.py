@@ -1,9 +1,10 @@
 {
     'name': 'Request Management',
+    'version': '19.0.1.1.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'mail', 'ab_hr'],
+    'depends': ['base', 'mail', 'web', 'ab_hr'],
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',
@@ -13,4 +14,15 @@
         'views/ab_request_ticket_views.xml',
         'views/menus.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_request_management/static/src/js/ab_request_state_widgets.js',
+            'ab_request_management/static/src/js/ab_request_kanban_view.js',
+            'ab_request_management/static/src/js/ab_request_summary_widget.js',
+            'ab_request_management/static/src/xml/ab_request_state_widgets.xml',
+            'ab_request_management/static/src/xml/ab_request_summary_widget.xml',
+            'ab_request_management/static/src/scss/ab_request_management.scss',
+        ],
+    },
+    'installable': True,
 }
