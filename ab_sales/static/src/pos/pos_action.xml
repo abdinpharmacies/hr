@@ -919,7 +919,7 @@
                                        t-on-input="onInsuranceNameInput"/>
                             </div>
                             <div class="col-12 col-md-6">
-                                <label class="form-label">Insurance Number</label>
+                                <label class="form-label">Ticket Number</label>
                                 <input t-attf-class="form-control #{state.errors.customer_insurance_number ? 'is-invalid' : ''}"
                                        t-att-value="state.customer_insurance_number"
                                        t-on-input="onInsuranceNumberInput"/>
