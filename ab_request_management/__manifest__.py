@@ -21,6 +21,7 @@
             'ab_request_management/static/src/js/ab_request_summary_widget.js',
             'ab_request_management/static/src/xml/ab_request_state_widgets.xml',
             'ab_request_management/static/src/xml/ab_request_summary_widget.xml',
+            'ab_request_management/static/src/xml/ab_request_form_status_indicator.xml',
             'ab_request_management/static/src/scss/ab_request_management.scss',
         ],
     },

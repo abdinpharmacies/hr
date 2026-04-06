@@ -123,7 +123,7 @@
                       class="ab_request_list"
                       default_order="deadline asc, create_date desc">
                     <field name="is_overdue" column_invisible="True"/>
-                    <field name="state" string="" widget="ab_request_state_dot" optional="show"/>
+                    <field name="state" string="" widget="ab_request_state_dot" class="ab_request_status_dot_column" optional="show"/>
                     <field name="name" string="Request" optional="show"/>
                     <field name="subject" optional="show"/>
                     <field name="request_type_id" optional="show"/>
@@ -134,7 +134,7 @@
                     <field name="assigned_employee_count" string="Assignees" optional="hide"/>
                     <field name="priority" widget="badge" optional="show"/>
                     <field name="deadline" optional="show"/>
-                    <field name="state" widget="ab_request_state_label" optional="show"/>
+                    <field name="state" widget="ab_request_state_label" class="ab_request_status_column" optional="show"/>
                     <field name="followup_count" string="Follow-ups" optional="hide"/>
                     <field name="activity_count" string="Activities" optional="hide"/>
                     <field name="create_date" string="Created On" optional="hide"/>
@@ -161,7 +161,8 @@
                     <field name="is_overdue"/>
                     <templates>
                         <t t-name="card">
-                            <div t-attf-class="ab_request_kanban_card #{record.is_overdue.raw_value ? 'ab_request_overdue' : ''}">
+                            <div t-attf-class="ab_request_kanban_card ab_request_state_card_#{record.state.raw_value} #{record.is_overdue.raw_value ? 'ab_request_overdue' : ''}"
+                                 t-att-data-request-state="record.state.raw_value">
                                 <div class="ab_request_kanban_top">
                                     <div class="ab_request_kanban_identity">
                                         <span class="ab_request_ticket_number">
@@ -182,24 +183,26 @@
                                         <field name="priority" widget="badge"/>
                                     </div>
                                 </div>
-                                <div class="ab_request_kanban_meta">
-                                    <span>
-                                        <i class="fa fa-layer-group me-1"/>
-                                        <field name="request_type_id"/>
-                                    </span>
-                                    <span>
-                                        <i class="fa fa-building me-1"/>
-                                        <field name="department_id"/>
-                                    </span>
-                                </div>
-                                <div class="ab_request_kanban_people">
-                                    <div>
-                                        <span class="text-muted">Requester</span>
-                                        <strong><field name="requester_id"/></strong>
+                                <div class="ab_request_kanban_body">
+                                    <div class="ab_request_kanban_meta">
+                                        <span>
+                                            <i class="fa fa-layer-group me-1"/>
+                                            <field name="request_type_id"/>
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-building me-1"/>
+                                            <field name="department_id"/>
+                                        </span>
                                     </div>
-                                    <div>
-                                        <span class="text-muted">Assigned</span>
-                                        <strong><field name="assigned_employee_ids" widget="many2many_tags"/></strong>
+                                    <div class="ab_request_kanban_people">
+                                        <div class="ab_request_person_card">
+                                            <span class="text-muted">Requester</span>
+                                            <strong><field name="requester_id"/></strong>
+                                        </div>
+                                        <div class="ab_request_person_card">
+                                            <span class="text-muted">Assigned</span>
+                                            <strong><field name="assigned_employee_ids" widget="many2many_tags"/></strong>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="ab_request_kanban_footer">
@@ -208,10 +211,14 @@
                                         <field name="deadline"/>
                                     </span>
                                     <span class="ab_request_kanban_metrics">
-                                        <i class="fa fa-commenting-o me-1"/>
-                                        <field name="followup_count"/>
-                                        <i class="fa fa-tasks ms-2 me-1"/>
-                                        <field name="activity_count"/>
+                                        <span class="ab_request_metric_pill">
+                                            <i class="fa fa-commenting-o me-1"/>
+                                            <field name="followup_count"/>
+                                        </span>
+                                        <span class="ab_request_metric_pill">
+                                            <i class="fa fa-tasks me-1"/>
+                                            <field name="activity_count"/>
+                                        </span>
                                     </span>
                                 </div>
                             </div>

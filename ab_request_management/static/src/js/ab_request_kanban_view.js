@@ -5,6 +5,7 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { KanbanRenderer } from "@web/views/kanban/kanban_renderer";
 import { kanbanView } from "@web/views/kanban/kanban_view";
+import { onMounted, onPatched, onWillUnmount, useExternalListener, useState } from "@odoo/owl";
 
 const WORKFLOW_ACTIONS = {
     "under_review->scheduled": "action_approve",
@@ -22,6 +23,44 @@ export class AbRequestKanbanRenderer extends KanbanRenderer {
         super.setup();
         this.orm = useService("orm");
         this.notification = useService("notification");
+        this.ui = useState({
+            viewport: this.getViewport(),
+        });
+
+        useExternalListener(window, "resize", () => {
+            const nextViewport = this.getViewport();
+            if (nextViewport !== this.ui.viewport) {
+                this.ui.viewport = nextViewport;
+                this.applyViewportClass();
+            }
+        });
+
+        onMounted(() => this.applyViewportClass());
+        onPatched(() => this.applyViewportClass());
+        onWillUnmount(() => this.clearViewportClasses());
+    }
+
+    getViewport() {
+        if (window.innerWidth < 768) {
+            return "mobile";
+        }
+        if (window.innerWidth < 1200) {
+            return "tablet";
+        }
+        return "desktop";
+    }
+
+    clearViewportClasses() {
+        this.el?.classList.remove(
+            "ab_request_kanban_desktop",
+            "ab_request_kanban_tablet",
+            "ab_request_kanban_mobile"
+        );
+    }
+
+    applyViewportClass() {
+        this.clearViewportClasses();
+        this.el?.classList.add(`ab_request_kanban_${this.ui.viewport}`);
     }
 
     get canMoveRecords() {
