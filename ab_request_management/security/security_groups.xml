@@ -33,5 +33,9 @@
         <record id="base.group_system" model="res.groups">
             <field name="implied_ids" eval="[(4, ref('ab_request_management.group_ab_request_management_admin'))]"/>
         </record>
+
+        <record id="base.group_user" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('ab_request_management.group_ab_request_management_user'))]"/>
+        </record>
     </data>
 </odoo>
