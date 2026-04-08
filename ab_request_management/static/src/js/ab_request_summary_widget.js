@@ -14,12 +14,6 @@ const STATE_LABELS = {
     closed: "Closed",
 };
 
-const PRIORITY_LABELS = {
-    low: "Low",
-    medium: "Medium",
-    high: "High",
-};
-
 export class AbRequestSummaryWidget extends Component {
     static template = "ab_request_management_ab_request_summary_widget";
     static props = { ...standardFieldProps };
@@ -33,16 +27,8 @@ export class AbRequestSummaryWidget extends Component {
         return STATE_LABELS[this.request.state] || this.request.state || "Unknown";
     }
 
-    get priorityLabel() {
-        return PRIORITY_LABELS[this.request.priority] || this.request.priority || "Not Set";
-    }
-
     get stateClass() {
         return this.request.state || "unknown";
-    }
-
-    get priorityClass() {
-        return this.request.priority || "unset";
     }
 }
 

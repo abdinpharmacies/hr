@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -31,7 +31,7 @@ class AbRequestType(models.Model):
         """Ensure every request type belongs to a managed department."""
         for record in self:
             if not record.department_id.manager_id:
-                raise ValidationError(_("The selected department must have a manager."))
+                raise ValidationError(("The selected department must have a manager."))
 
     @api.model_create_multi
     def create(self, vals_list):

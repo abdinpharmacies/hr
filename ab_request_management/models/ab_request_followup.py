@@ -32,10 +32,7 @@ class AbRequestFollowup(models.Model):
         records = super().create(prepared_vals_list)
         for record in records:
             record.request_id.message_post(
-                body=_("Follow-up added by %(user)s:<br/>%(description)s") % {
-                    "user": record.user_id.name,
-                    "description": record.description,
-                },
+                body=record.description,
                 subtype_xmlid="mail.mt_note",
             )
         return records

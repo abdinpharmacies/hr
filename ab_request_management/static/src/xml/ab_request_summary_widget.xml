@@ -9,12 +9,6 @@
                 </span>
             </div>
             <div class="ab_request_summary_metric">
-                <span class="ab_request_summary_label">Priority</span>
-                <span t-attf-class="ab_request_summary_badge ab_request_priority_badge ab_request_priority_#{priorityClass}">
-                    <t t-out="priorityLabel"/>
-                </span>
-            </div>
-            <div class="ab_request_summary_metric">
                 <span class="ab_request_summary_label">Assignees</span>
                 <span class="ab_request_summary_value" t-out="request.assigned_employee_count or 0"/>
             </div>

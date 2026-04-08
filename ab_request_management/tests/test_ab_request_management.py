@@ -132,7 +132,6 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
                 {
                     "assigned_employee_ids": [(6, 0, [self.assignee_employee.id, self.second_assignee_employee.id])],
-                    "priority": "high",
                 }
             )
             request.with_user(self.manager_user).action_assign()
@@ -153,7 +152,6 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.manager_user).write(
                 {
                     "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
-                    "priority": "medium",
                     "deadline": future_deadline,
                 }
             )
@@ -161,12 +159,10 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.manager_user).write(
                 {
                     "assigned_employee_ids": [(6, 0, [self.assignee_employee.id, self.second_assignee_employee.id])],
-                    "priority": "high",
                     "deadline": updated_deadline,
                 }
             )
         self.assertSetEqual(set(request.assigned_employee_ids.ids), {self.assignee_employee.id, self.second_assignee_employee.id})
-        self.assertEqual(request.priority, "high")
         self.assertEqual(fields.Datetime.to_string(request.deadline), updated_deadline)
 
     def test_requester_can_add_followup_before_confirmation(self):

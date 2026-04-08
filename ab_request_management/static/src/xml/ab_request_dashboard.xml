@@ -36,7 +36,7 @@
                 </section>
 
                 <section class="ab_request_dashboard_cards">
-                    <button type="button" t-foreach="state.cards" t-as="card" t-key="card.key" class="ab_request_dashboard_card" t-on-click="() => openList(card.domain)">
+                    <button type="button" t-foreach="state.cards" t-as="card" t-key="card.key" class="ab_request_dashboard_card" t-on-click="() => this.openList(card.domain)">
                         <span class="ab_request_dashboard_card_icon" t-att-style="'--card-accent:' + card.accent">
                             <i t-att-class="card.icon"/>
                         </span>
@@ -102,7 +102,7 @@
                             <span class="text-muted">Last 5 requests</span>
                         </div>
                         <div t-if="state.recent.length" class="ab_request_recent_list">
-                            <button type="button" t-foreach="state.recent" t-as="item" t-key="item.id" class="ab_request_recent_item" t-on-click="() => openList([['id', '=', item.id]])">
+                            <button type="button" t-foreach="state.recent" t-as="item" t-key="item.id" class="ab_request_recent_item" t-on-click="() => this.openList([['id', '=', item.id]])">
                                 <div class="ab_request_recent_top">
                                     <strong t-out="item.name"/>
                                     <span t-attf-class="ab_request_state_badge ab_request_state_#{item.state}" t-out="item.stateLabel"/>

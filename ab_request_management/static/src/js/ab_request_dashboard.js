@@ -3,7 +3,7 @@
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
-import { Component, onWillStart, useState } from "@odoo/owl";
+import { Component, onWillStart, onMounted, useState } from "@odoo/owl";
 
 const DASHBOARD_STORAGE_KEY = "ab_request_management.dashboard.preferences";
 
@@ -47,7 +47,6 @@ export class AbRequestDashboard extends Component {
 
     setup() {
         this.orm = useService("orm");
-        this.action = useService("action");
         this.state = useState({
             loading: true,
             preferences: loadPreferences(),
@@ -212,18 +211,18 @@ export class AbRequestDashboard extends Component {
     }
 
     async openList(domain) {
-        await this.action.doAction({
+        await this.env.services.action.doAction({
             type: "ir.actions.act_window",
             name: "Requests",
             res_model: "ab.request",
-            views: [
-                [false, "list"],
-                [false, "kanban"],
-                [false, "form"],
-            ],
-            domain,
+            views: [[false, "list"], [false, "kanban"], [false, "form"]],
+            domain: domain,
             target: "current",
         });
+    }
+
+    onClickRecentItem(id) {
+        this.openList([["id", "=", id]]);
     }
 }
 

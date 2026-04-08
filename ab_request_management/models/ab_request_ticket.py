@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
-ASSIGNMENT_FIELDS = {"assigned_employee_ids", "priority", "deadline"}
+ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected"}
 
 
@@ -23,6 +23,7 @@ class AbRequest(models.Model):
         default="New",
     )
     subject = fields.Char(required=True, tracking=True)
+    link = fields.Char(string="Related Link", tracking=False)
     description = fields.Text(required=True)
     request_type_id = fields.Many2one(
         "ab.request.type",
@@ -84,15 +85,6 @@ class AbRequest(models.Model):
         related="assigned_employee_id.user_id",
         store=True,
     )
-    priority = fields.Selection(
-        [
-            ("low", "Low"),
-            ("medium", "Medium"),
-            ("high", "High"),
-        ],
-        default="medium",
-        tracking=True,
-    )
     deadline = fields.Datetime()
     state = fields.Selection(
         [
@@ -110,6 +102,13 @@ class AbRequest(models.Model):
         tracking=True,
     )
     followup_ids = fields.One2many("ab.request.followup", "request_id", string="Follow-ups")
+    attachment_ids = fields.Many2many(
+        "ir.attachment",
+        "ab_request_ticket_attachment_rel",
+        "request_id",
+        "attachment_id",
+        string="Attachments"
+    )
     followup_count = fields.Integer(compute="_compute_followup_count")
     assigned_employee_count = fields.Integer(compute="_compute_assigned_employee_count")
     activity_count = fields.Integer(compute="_compute_activity_count")
@@ -353,7 +352,7 @@ class AbRequest(models.Model):
             return
         for record in self:
             if not record.can_edit_assignment_details:
-                raise UserError(_("Only the department manager or request admin can update assignees, deadline, or priority."))
+                raise UserError(_("Only the department manager or request admin can update assignees or deadline."))
 
     def _check_state_write(self, vals):
         """Force state changes through workflow actions."""
@@ -450,11 +449,10 @@ class AbRequest(models.Model):
                 continue
             employee_names = ", ".join(assigned_employees.mapped("name"))
             body = _(
-                "Request %(request)s has been assigned to %(employees)s with %(priority)s priority."
+                "Request %(request)s has been assigned to %(employees)s."
             ) % {
                 "request": record.name,
                 "employees": employee_names,
-                "priority": dict(self._fields["priority"].selection).get(record.priority, record.priority),
             }
             record._post_notification(body, assigned_users.partner_id)
 
@@ -497,8 +495,6 @@ class AbRequest(models.Model):
                 raise UserError(_("Only scheduled requests can be assigned."))
             if not record._get_effective_assigned_employees():
                 raise ValidationError(_("Please select at least one assigned employee before assigning the request."))
-            if not record.priority:
-                raise ValidationError(_("Please select a priority before assigning the request."))
             values = {
                 "state": "in_progress",
             }
@@ -542,9 +538,14 @@ class AbRequest(models.Model):
         for record in self:
             if record.state != "under_requester_confirmation":
                 raise UserError(_("Only requests under requester confirmation can be sent back for changes."))
-            record.with_context(allow_state_write=True).write({"state": "in_progress"})
-            record._notify_requester_confirmation()
-        return True
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Request Changes"),
+            "res_model": "ab.request.followup.wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {"default_request_id": self.id},
+        }
 
     def action_close(self):
         """Close the request."""
@@ -567,4 +568,15 @@ class AbRequest(models.Model):
             "context": {
                 "default_request_id": self.id,
             },
+        }
+
+    def action_submit_request(self):
+        """Save the request and switch to view mode."""
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "res_model": "ab.request",
+            "res_id": self.id,
+            "view_mode": "form",
+            "target": "current",
         }

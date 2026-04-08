@@ -143,6 +143,69 @@
     .o_form_status_indicator .o_form_button_cancel:focus-visible {
         background: rgba(23, 50, 75, 0.06);
     }
+
+    .o_statusbar_buttons > .btn {
+        border-radius: 8px !important;
+    }
+}
+
+.ab_request_form {
+    .o_statusbar_status {
+        .o_statusbar_status_arrow {
+            .fa-lg {
+                color: #fff;
+            }
+        }
+    }
+}
+
+.o_form_view:has(.ab_request_form),
+.o_form_view_container:has(.ab_request_form) {
+    .o_form_sheet_bg {
+        padding: 1.5rem;
+    }
+
+    header .o_statusbar_status {
+        .o_arrow_button {
+            border-radius: 8px 0 0 8px;
+            padding: 6px 16px;
+            font-weight: 600;
+            color: #fff;
+            background: #6c757d;
+
+            &.btn-primary {
+                background: var(--ab-request-state-under-review, #7b8794);
+            }
+
+            &.ab_request_state_under_review {
+                background: var(--ab-request-state-under-review, #7b8794);
+            }
+
+            &.ab_request_state_scheduled {
+                background: var(--ab-request-state-scheduled, #2f6fdd);
+            }
+
+            &.ab_request_state_in_progress {
+                background: var(--ab-request-state-in-progress, #df7a22);
+            }
+
+            &.ab_request_state_under_requester_confirmation {
+                background: var(--ab-request-state-under-requester-confirmation, #7b4fd7);
+            }
+
+            &.ab_request_state_satisfied {
+                background: var(--ab-request-state-satisfied, #2f8f57);
+            }
+
+            &.ab_request_state_rejected {
+                background: var(--ab-request-state-rejected, #cf4c4c);
+            }
+
+            &.ab_request_state_closed {
+                background: var(--ab-request-state-closed, #96a1ad);
+            }
+        }
+    }
 }
 
 .ab_request_form {
@@ -151,7 +214,8 @@
             radial-gradient(circle at top right, rgba(47, 111, 221, 0.07), transparent 24rem),
             linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
         border-radius: 22px;
-        padding: 1.5rem 1.5rem 0.5rem;
+        padding: 2rem 2.5rem;
+        margin-bottom: 1.5rem;
 
         .oe_button_box {
             margin-bottom: 1rem;
@@ -196,36 +260,13 @@
             font-size: 0.98rem;
         }
 
-        .ab_request_user_minimal_form {
-            margin: 0 auto 1.25rem;
-            max-width: 52rem;
-            padding: 1.5rem;
-            border: 1px solid rgba(217, 226, 236, 0.92);
-            border-radius: 24px;
-            background:
-                radial-gradient(circle at top right, rgba(47, 111, 221, 0.09), transparent 18rem),
-                linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(247, 250, 253, 0.98) 100%);
-            box-shadow: 0 20px 46px rgba(18, 43, 67, 0.08);
-        }
 
-        .ab_request_user_minimal_form > .o_inner_group {
-            display: grid;
-            gap: 1rem;
-        }
-
-        .ab_request_user_minimal_form .o_form_label {
-            color: #23415d;
-            font-size: 0.88rem;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            margin-bottom: 0.28rem;
-        }
 
         .ab_request_user_minimal_form .o_field_widget,
         .ab_request_user_minimal_form .o_input,
         .ab_request_user_minimal_form textarea,
         .ab_request_user_minimal_form .o-autocomplete {
-            border-radius: 16px;
+            border-radius: 8px;
         }
 
         .ab_request_user_minimal_form input.o_input,
@@ -367,7 +408,7 @@
     }
 
     .o-mail-Chatter-content {
-        padding: 0.75rem 0.9rem 1rem;
+        padding: 1rem 1.2rem 1.25rem;
     }
 
     .o-mail-ActivityList,
@@ -375,12 +416,17 @@
         background: rgba(255, 255, 255, 0.9);
         border: 1px solid var(--ab-request-border);
         border-radius: 16px;
-        padding: 0.35rem 0.65rem 0.65rem;
-        margin-bottom: 0.9rem;
+        padding: 0.5rem 0.8rem 0.8rem;
+        margin-bottom: 1rem;
     }
 
     .o-mail-Message {
-        padding: 0.65rem 0.2rem 0.85rem 0;
+        padding: 0.8rem 0.3rem 1rem 0;
+    }
+
+    .o-mail-Message-body,
+    .o-mail-Message-richBody {
+        padding: 0.75rem 1rem;
     }
 
     .o-mail-Message:not(:last-child)::after {
@@ -546,34 +592,135 @@
         background: color-mix(in srgb, var(--ab-request-state-closed) 14%, white);
         color: var(--ab-request-state-closed);
     }
+}
 
-    &.ab_request_priority_low {
-        background: #e6f4ec;
-        color: #1f6f45;
-    }
+.ab_request_grid_container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
 
-    &.ab_request_priority_medium,
-    &.ab_request_priority_unset {
-        background: #e8eff7;
-        color: #36536f;
-    }
+.ab_request_grid_admin {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
 
-    &.ab_request_priority_high {
-        background: #fde7e5;
-        color: #a1281f;
+.ab_request_card {
+    background: #fff;
+    border: 1px solid rgba(217, 226, 236, 0.92);
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(18, 43, 67, 0.06);
+    overflow: hidden;
+}
+
+.ab_request_card_header {
+    background: linear-gradient(135deg, rgba(47, 111, 221, 0.08) 0%, rgba(47, 111, 221, 0.03) 100%);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(217, 226, 236, 0.6);
+}
+
+.ab_request_card_title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #14324a;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.ab_request_card_body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ab_request_grid_row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.ab_request_grid_row.ab_request_grid_3col {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.ab_request_grid_row.ab_request_grid_4col {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.ab_request_grid_cell {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ab_request_grid_cell.ab_request_grid_full {
+    grid-column: 1 / -1;
+}
+
+.ab_request_grid_cell label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #355068;
+}
+
+.ab_request_grid_cell .o_field_widget {
+    width: 100%;
+}
+
+.ab_request_grid_cell textarea.o_input {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.ab_request_grid_user_form .ab_request_grid_cell textarea.o_input {
+    min-height: 150px;
+}
+
+.ab_request_followup_container {
+    margin-top: 1rem;
+    padding: 1.5rem;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(217, 226, 236, 0.92);
+}
+
+@media (max-width: 1200px) {
+    .ab_request_grid_row.ab_request_grid_4col {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-.ab_request_section_grid {
-    margin-top: 0.5rem;
+@media (max-width: 992px) {
+    .ab_request_grid_row {
+        grid-template-columns: 1fr;
+    }
+
+    .ab_request_grid_row.ab_request_grid_3col,
+    .ab_request_grid_row.ab_request_grid_4col {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ab_request_grid_cell.ab_request_grid_full {
+        grid-column: 1;
+    }
 }
 
-.ab_request_section {
-    border: 1px solid var(--ab-request-border);
-    border-radius: 18px;
-    padding: 1rem 1rem 0.5rem;
-    background: rgba(255, 255, 255, 0.88);
-    box-shadow: var(--ab-request-shadow-sm);
+@media (max-width: 768px) {
+    .ab_request_grid_container {
+        gap: 1rem;
+    }
+
+    .ab_request_card_body {
+        padding: 1rem;
+    }
+
+    .ab_request_grid_row.ab_request_grid_3col,
+    .ab_request_grid_row.ab_request_grid_4col {
+        grid-template-columns: 1fr;
+    }
 }
 
 .ab_request_list {
@@ -1178,6 +1325,8 @@
         radial-gradient(circle at top left, rgba(47, 111, 221, 0.08), transparent 28rem),
         linear-gradient(180deg, #f6f9fc 0%, #eef4f8 100%);
     padding: 1.25rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 48px);
 }
 
 .ab_request_dashboard_shell {
@@ -1336,7 +1485,11 @@
 }
 
 .ab_request_dashboard_bar_chart,
-.ab_request_recent_list,
+.ab_request_recent_list {
+    display: grid;
+    gap: 0.8rem;
+}
+
 .ab_request_dashboard_legend {
     display: grid;
     gap: 0.8rem;
@@ -1528,7 +1681,7 @@
                 right: auto;
                 bottom: calc(100% + 0.55rem);
                 min-width: 13rem;
-                max-width: min(16rem, calc(100vw - 3rem));
+                max-width: 16rem;
             }
 
             .ab_request_user_minimal_tooltip::after {
