@@ -34,10 +34,23 @@ export class AbRequestStateLabelField extends AbRequestStateFieldBase {
     static template = "ab_request_management.AbRequestStateLabelField";
 }
 
+export class AbRequestSubjectStateField extends AbRequestStateFieldBase {
+    static template = "ab_request_management.AbRequestSubjectStateField";
+    static supportedTypes = ["char"];
+
+    get subject() {
+        return this.props.record.data[this.props.name] || "";
+    }
+}
+
 registry.category("fields").add("ab_request_state_dot", {
     component: AbRequestStateDotField,
 });
 
 registry.category("fields").add("ab_request_state_label", {
     component: AbRequestStateLabelField,
+});
+
+registry.category("fields").add("ab_request_subject_state", {
+    component: AbRequestSubjectStateField,
 });

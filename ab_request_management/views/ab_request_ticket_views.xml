@@ -125,7 +125,7 @@
                     <field name="is_overdue" column_invisible="True"/>
                     <field name="state" string="" widget="ab_request_state_dot" class="ab_request_status_dot_column" optional="show"/>
                     <field name="name" string="Request" optional="show"/>
-                    <field name="subject" optional="show"/>
+                    <field name="subject" widget="ab_request_subject_state" optional="show"/>
                     <field name="request_type_id" optional="show"/>
                     <field name="requester_id" optional="show"/>
                     <field name="department_id" optional="show"/>
@@ -149,6 +149,7 @@
                 <kanban class="ab_request_kanban" default_group_by="state" records_draggable="true" can_open="1" js_class="ab_request_kanban">
                     <field name="name"/>
                     <field name="subject"/>
+                    <field name="description"/>
                     <field name="request_type_id"/>
                     <field name="requester_id"/>
                     <field name="department_id"/>
@@ -156,6 +157,9 @@
                     <field name="priority"/>
                     <field name="deadline"/>
                     <field name="state"/>
+                    <field name="can_assign"/>
+                    <field name="can_work_on_request"/>
+                    <field name="is_requester"/>
                     <field name="followup_count"/>
                     <field name="activity_count"/>
                     <field name="is_overdue"/>
@@ -184,13 +188,21 @@
                                     </div>
                                 </div>
                                 <div class="ab_request_kanban_body">
+                                    <div class="ab_request_kanban_preview">
+                                        <span class="ab_request_hover_kicker">Preview</span>
+                                        <p><field name="description"/></p>
+                                        <div class="ab_request_kanban_preview_meta">
+                                            <span><i class="fa fa-clock-o me-1" title="Deadline"/> <field name="deadline"/></span>
+                                            <span><i class="fa fa-user me-1" title="Assigned employee"/> <field name="assigned_employee_ids" widget="many2many_tags"/></span>
+                                        </div>
+                                    </div>
                                     <div class="ab_request_kanban_meta">
                                         <span>
-                                            <i class="fa fa-layer-group me-1"/>
+                                            <i class="fa fa-layer-group me-1" title="Request type"/>
                                             <field name="request_type_id"/>
                                         </span>
                                         <span>
-                                            <i class="fa fa-building me-1"/>
+                                            <i class="fa fa-building me-1" title="Department"/>
                                             <field name="department_id"/>
                                         </span>
                                     </div>
@@ -207,16 +219,27 @@
                                 </div>
                                 <div class="ab_request_kanban_footer">
                                     <span t-attf-class="ab_request_deadline #{record.is_overdue.raw_value ? 'text-danger' : ''}">
-                                        <i class="fa fa-clock-o me-1"/>
+                                        <i class="fa fa-clock-o me-1" title="Deadline"/>
                                         <field name="deadline"/>
                                     </span>
+                                    <div class="ab_request_kanban_quick_actions">
+                                        <button t-if="record.can_assign.raw_value and record.state.raw_value === 'scheduled'" type="object" name="action_assign" class="btn btn-light btn-sm">
+                                            Assign
+                                        </button>
+                                        <button t-if="record.can_work_on_request.raw_value and record.state.raw_value === 'scheduled'" type="object" name="action_mark_in_progress" class="btn btn-primary btn-sm">
+                                            Start
+                                        </button>
+                                        <button t-if="record.can_work_on_request.raw_value and ['satisfied', 'rejected'].includes(record.state.raw_value)" type="object" name="action_close" class="btn btn-dark btn-sm">
+                                            Close
+                                        </button>
+                                    </div>
                                     <span class="ab_request_kanban_metrics">
                                         <span class="ab_request_metric_pill">
-                                            <i class="fa fa-commenting-o me-1"/>
+                                            <i class="fa fa-commenting-o me-1" title="Follow-ups"/>
                                             <field name="followup_count"/>
                                         </span>
                                         <span class="ab_request_metric_pill">
-                                            <i class="fa fa-tasks me-1"/>
+                                            <i class="fa fa-tasks me-1" title="Activities"/>
                                             <field name="activity_count"/>
                                         </span>
                                     </span>
@@ -266,13 +289,15 @@
                         <field name="request_role_summary" invisible="1"/>
                         <field name="request_deadline_label" invisible="1"/>
 
-                        <div class="oe_button_box" name="button_box">
+                        <div class="oe_button_box" name="button_box"
+                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
                             <button name="action_view_followups" type="object" class="oe_stat_button" icon="fa-list-alt">
                                 <field name="followup_count" widget="statinfo" string="Follow-ups"/>
                             </button>
                         </div>
 
-                        <div class="oe_title ab_request_title_block">
+                        <div class="oe_title ab_request_title_block"
+                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
                             <div class="ab_request_title_meta">
                                 <span class="ab_request_title_tag">
                                     <field name="name" readonly="1"/>
@@ -290,11 +315,34 @@
                             </div>
                         </div>
 
-                        <group>
+                        <group invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
                             <field name="request_ui_summary" widget="ab_request_summary" nolabel="1" readonly="1"/>
                         </group>
 
-                        <group col="2" class="ab_request_section_grid">
+                        <group string="Request Details"
+                               class="ab_request_user_minimal_form"
+                               invisible="is_request_admin or is_department_manager or is_assigned_employee">
+                            <field name="request_type_id"
+                                   readonly="id != False"
+                                   placeholder="Choose the request category that owns this ticket"/>
+                            <field name="description"
+                                   readonly="id != False"
+                                   placeholder="Describe the request, expected outcome, and any operational context the team should know"/>
+                            <div class="ab_request_user_minimal_info">
+                                <span class="ab_request_user_minimal_info_icon" tabindex="0" aria-label="Attachment information" role="note">
+                                    <i class="fa fa-info-circle" title="Attachment information"/>
+                                    <span class="ab_request_user_minimal_tooltip">
+                                        Add files from the chatter attachment button after opening or saving the request.
+                                    </span>
+                                </span>
+                            </div>
+                            <field name="subject"
+                                   string="Link"
+                                   placeholder="Paste a related reference link if needed"/>
+                        </group>
+
+                        <group col="2" class="ab_request_section_grid"
+                               invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
                             <group string="Request Details" class="ab_request_section">
                                 <field name="request_type_id" readonly="id != False" placeholder="Choose the request category that owns this ticket"/>
                                 <field name="description" readonly="id != False"
@@ -307,7 +355,8 @@
                             </group>
                         </group>
 
-                        <group col="2" class="ab_request_section_grid">
+                        <group col="2" class="ab_request_section_grid"
+                               invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
                             <group string="Execution" class="ab_request_section">
                                 <field name="assigned_employee_ids"
                                        widget="many2many_tags"
@@ -327,7 +376,7 @@
                             </group>
                         </group>
 
-                        <notebook>
+                        <notebook invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
                             <page string="Follow-up Timeline">
                                 <div class="text-muted mb-3">
                                     Follow-ups capture operational progress and requester feedback. Entries remain immutable after posting.

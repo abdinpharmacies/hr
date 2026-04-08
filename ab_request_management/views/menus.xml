@@ -6,6 +6,13 @@
                   sequence="10"
                   groups="base.group_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
 
+        <menuitem id="ab_request_management_menu_dashboard"
+                  name="Dashboard"
+                  parent="ab_request_management_menu_root"
+                  action="ab_request_dashboard_action"
+                  sequence="5"
+                  groups="base.group_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
+
         <menuitem id="ab_request_management_menu_my_requests"
                   name="My Requests"
                   parent="ab_request_management_menu_root"

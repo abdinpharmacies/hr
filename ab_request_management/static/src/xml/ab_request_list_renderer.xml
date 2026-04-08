@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_request_management.ListRendererRecordRow"
+       t-inherit="web.ListRenderer.RecordRow"
+       t-inherit-mode="extension">
+        <xpath expr="//td[@t-att-name='column.name'][@class='o_data_cell cursor-pointer']" position="inside">
+            <t t-if="column.name === 'request_type_id' and isAbRequestInlineCreate(record)">
+                <div class="ab_request_inline_create_actions" t-on-click.stop="() => {}">
+                    <button type="button" class="btn btn-primary ab_request_inline_save" t-on-click="(ev) => onAbRequestInlineSave(record, ev)">
+                        Save
+                    </button>
+                    <button type="button" class="btn btn-light ab_request_inline_discard" t-on-click="(ev) => onAbRequestInlineDiscard(record, ev)">
+                        Discard
+                    </button>
+                </div>
+            </t>
+        </xpath>
+    </t>
+
+    <t t-name="ab_request_management.ListViewEditableButtons"
+       t-inherit="web.ListView.EditableButtons"
+       t-inherit-mode="extension">
+        <xpath expr="//button[hasclass('o_list_button_save')]" position="attributes">
+            <attribute name="t-if">editedRecord and model.root.resModel !== 'ab.request'</attribute>
+        </xpath>
+        <xpath expr="//button[hasclass('o_list_button_discard')]" position="attributes">
+            <attribute name="t-if">editedRecord and model.root.resModel !== 'ab.request'</attribute>
+        </xpath>
+    </t>
+</templates>
