@@ -109,3 +109,29 @@ class AbSalesHeaderTotalInvoiceDiscount(models.Model):
                 max(0.0, float(totals.get("total_bill_net", 0.0)) - invoice_discount)
             )
         return totals
+
+    def _get_sales_trans_h_notice(self):
+        notice = super()._get_sales_trans_h_notice()
+        effective_discount = self._ab_contract_get_effective_total_invoice_discount(
+            total_after_discount=self.total_after_discount,
+            cust_pay=self.cust_pay,
+        )
+        if not effective_discount:
+            return notice
+
+        discount_note = f"total_disc_from_other:{self._to_2dec(effective_discount)}"
+        if not notice:
+            return discount_note
+        return f"{notice} {discount_note}"
+
+    def _insert_sales_trans_h(self, cur, totals, emp_code, pc_name, bill_typ):
+        effective_discount = self._ab_contract_get_effective_total_invoice_discount(
+            total_after_discount=totals.get("total_bill_after_disc", 0.0),
+            cust_pay=totals.get("total_bill_net", 0.0),
+        )
+        if not effective_discount:
+            return super()._insert_sales_trans_h(cur, totals, emp_code, pc_name, bill_typ)
+
+        eplus_totals = dict(totals)
+        eplus_totals["total_bill_after_disc"] = eplus_totals.get("total_bill", 0.0)
+        return super()._insert_sales_trans_h(cur, eplus_totals, emp_code, pc_name, bill_typ)
