@@ -383,10 +383,6 @@
                                                 <label for="deadline" string="Deadline"/>
                                                 <field name="deadline" readonly="not can_edit_assignment_details"/>
                                             </div>
-                                            <div class="ab_request_grid_cell">
-                                                <label for="link" string="Related Link"/>
-                                                <field name="link" readonly="id != False" widget="url"/>
-                                            </div>
                                         </div>
                                         <div class="ab_request_grid_row ab_request_grid_3col">
                                             <div class="ab_request_grid_cell">
