@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_pharmacy_delivery_assignment_wizard_form" model="ir.ui.view">
+            <field name="name">ab_pharmacy_delivery_assignment_wizard.form</field>
+            <field name="model">ab_pharmacy_delivery_assignment_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Change Pilot Status">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="pilot_id"/>
+                                <field name="target_status"/>
+                            </group>
+                            <group>
+                                <field name="current_order_number" readonly="1" invisible="target_status != 'free'"/>
+                                <field name="current_transaction_type" readonly="1" invisible="target_status != 'free'"/>
+                                <field name="current_branch_id" readonly="1" invisible="target_status != 'free'"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="order_number"
+                                   placeholder="Order number"
+                                   required="target_status == 'in_delivery'"
+                                   invisible="target_status != 'in_delivery'"/>
+                            <field name="transaction_type"
+                                   required="target_status == 'in_delivery'"
+                                   invisible="target_status != 'in_delivery'"/>
+                            <field name="branch_id"
+                                   required="target_status == 'in_delivery'"
+                                   invisible="target_status != 'in_delivery'"/>
+                            <field name="note" placeholder="Optional management notes."/>
+                        </group>
+                        <div class="alert alert-info" invisible="target_status != 'free'">
+                            The current open assignment will be completed and the pilot will return to Free.
+                        </div>
+                    </sheet>
+                    <footer>
+                        <button name="action_apply" type="object" string="Apply" class="btn-primary"/>
+                        <button string="Cancel" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
