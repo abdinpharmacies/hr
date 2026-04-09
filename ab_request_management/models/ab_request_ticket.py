@@ -24,6 +24,11 @@ class AbRequest(models.Model):
     )
     subject = fields.Char(required=True, tracking=True)
     link = fields.Char(string="Related Link", tracking=False)
+    link_ids = fields.One2many(
+        "ab.request.link",
+        "request_id",
+        string="Related Links",
+    )
     description = fields.Text(required=True)
     request_type_id = fields.Many2one(
         "ab.request.type",
@@ -250,6 +255,14 @@ class AbRequest(models.Model):
         for record in self:
             if not record.request_type_id.manager_id:
                 raise ValidationError(_("The selected request type must have a department manager."))
+
+    @api.constrains("link")
+    def _check_link_url(self):
+        """Validate that link is a valid URL if provided."""
+        for record in self:
+            if record.link:
+                if not record.link.startswith(("http://", "https://")):
+                    raise ValidationError(_("The Related Link must be a valid URL starting with http:// or https://"))
 
     @api.constrains("assigned_employee_ids", "department_id")
     def _check_assigned_employee_department(self):

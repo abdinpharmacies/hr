@@ -11,28 +11,6 @@
                             Track workload, approvals, execution flow, and recent movement from one responsive workspace.
                         </p>
                     </div>
-                    <div class="ab_request_dashboard_controls">
-                        <label>
-                            <span>Theme</span>
-                            <select t-model="state.preferences.chartTheme" t-on-change="() => updatePreference('chartTheme', state.preferences.chartTheme)">
-                                <option value="ocean">Ocean</option>
-                                <option value="ember">Ember</option>
-                                <option value="forest">Forest</option>
-                            </select>
-                        </label>
-                        <label class="form-check">
-                            <input class="form-check-input" type="checkbox" t-att-checked="state.preferences.showDepartments" t-on-change="(ev) => updatePreference('showDepartments', ev.target.checked)"/>
-                            <span class="form-check-label">Departments</span>
-                        </label>
-                        <label class="form-check">
-                            <input class="form-check-input" type="checkbox" t-att-checked="state.preferences.showStates" t-on-change="(ev) => updatePreference('showStates', ev.target.checked)"/>
-                            <span class="form-check-label">States</span>
-                        </label>
-                        <label class="form-check">
-                            <input class="form-check-input" type="checkbox" t-att-checked="state.preferences.showRecent" t-on-change="(ev) => updatePreference('showRecent', ev.target.checked)"/>
-                            <span class="form-check-label">Recent activity</span>
-                        </label>
-                    </div>
                 </section>
 
                 <section class="ab_request_dashboard_cards">
@@ -46,7 +24,7 @@
                 </section>
 
                 <section class="ab_request_dashboard_grid">
-                    <article t-if="state.preferences.showDepartments" class="ab_request_dashboard_panel">
+                    <article class="ab_request_dashboard_panel">
                         <div class="ab_request_dashboard_panel_head">
                             <h2>Requests per Department</h2>
                             <span class="text-muted">Live grouped workload</span>
@@ -68,7 +46,7 @@
                         </div>
                     </article>
 
-                    <article t-if="state.preferences.showStates" class="ab_request_dashboard_panel">
+                    <article class="ab_request_dashboard_panel">
                         <div class="ab_request_dashboard_panel_head">
                             <h2>Requests by State</h2>
                             <span class="text-muted">Workflow distribution</span>
@@ -96,7 +74,7 @@
                         </div>
                     </article>
 
-                    <article t-if="state.preferences.showRecent" class="ab_request_dashboard_panel ab_request_dashboard_recent">
+                    <article class="ab_request_dashboard_panel ab_request_dashboard_recent">
                         <div class="ab_request_dashboard_panel_head">
                             <h2>Recent Activity</h2>
                             <span class="text-muted">Last 5 requests</span>

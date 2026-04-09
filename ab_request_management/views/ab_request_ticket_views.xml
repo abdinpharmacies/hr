@@ -120,22 +120,23 @@
                       class="ab_request_list"
                       default_order="deadline asc, create_date desc">
                     <field name="is_overdue" column_invisible="True"/>
-                    <field name="state" string="" widget="ab_request_state_dot" class="ab_request_status_dot_column" optional="show"/>
+                    <field width="200px" name="state" widget="ab_request_state_label" class="ab_request_status_column" optional="show"/>
                     <field name="name" string="Request" optional="show"/>
-                    <field name="subject" widget="ab_request_subject_state" optional="show"/>
+                    <field name="subject" optional="show"/>
                     <field name="request_type_id" optional="show"/>
                     <field name="requester_id" optional="show"/>
                     <field name="department_id" optional="show"/>
                     <field name="manager_id" optional="hide"/>
                     <field name="deadline" optional="show"/>
-                    <field name="state" widget="ab_request_state_label" class="ab_request_status_column" optional="show"/>
                     <field name="followup_count" string="Follow-ups" optional="hide"/>
-                    <field name="activity_count" string="Activities" optional="hide"/>
+                    <field name="activity_count"
+                           string="Activities" optional="hide"/>
                     <field name="create_date" string="Created On" optional="hide"/>
                 </list>
             </field>
         </record>
 
+        <!--
         <record id="ab_request_view_kanban" model="ir.ui.view">
             <field name="name">ab.request.kanban</field>
             <field name="model">ab.request</field>
@@ -159,7 +160,7 @@
                     <templates>
                         <t t-name="card">
                             <div t-attf-class="ab_request_kanban_card ab_request_state_card_#{record.state.raw_value} #{record.is_overdue.raw_value ? 'ab_request_overdue' : ''}"
-                                 t-att-data-request-state="record.state.raw_value">
+                                  t-att-data-request-state="record.state.raw_value">
                                 <div class="ab_request_kanban_top">
                                     <div class="ab_request_kanban_identity">
                                         <span class="ab_request_ticket_number">
@@ -242,6 +243,7 @@
                 </kanban>
             </field>
         </record>
+        -->
 
         <record id="ab_request_view_form" model="ir.ui.view">
             <field name="name">ab.request.form</field>
@@ -249,6 +251,8 @@
             <field name="arch" type="xml">
                 <form string="Request" class="ab_request_form">
                     <header>
+                        <button name="action_submit_request" type="object" string="Submit Request" class="btn-success"
+                                invisible="id != False"/>
                         <button name="action_approve" type="object" string="Approve" class="btn-primary"
                                 invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
                         <button name="action_reject" type="object" string="Reject"
@@ -265,12 +269,28 @@
                                 invisible="state != 'under_requester_confirmation' or not is_requester"/>
                         <button name="action_close" type="object" string="Close Request" class="btn-primary"
                                 invisible="state not in ('satisfied', 'rejected') or not can_work_on_request"/>
-                        <button name="action_submit_request" type="object" string="Submit Request" class="btn-success"
-                                invisible="id != False"/>
                         <field name="state" widget="statusbar" class="ab_request_statusbar"
                                statusbar_visible="under_review,scheduled,in_progress,under_requester_confirmation,satisfied,rejected,closed"/>
                     </header>
                     <sheet class="ab_request_sheet">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_followups" type="object" class="oe_stat_button" icon="fa-list-alt"
+                                    invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                                <field name="followup_count" widget="statinfo" string="Follow-ups"/>
+                            </button>
+                            <button name="action_approve" type="object" class="oe_stat_button" icon="fa-check"
+                                    invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)">
+                                <span>Approve</span>
+                            </button>
+                            <button name="action_reject" type="object" class="oe_stat_button" icon="fa-times"
+                                    invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)">
+                                <span>Reject</span>
+                            </button>
+                            <button name="action_close" type="object" class="oe_stat_button" icon="fa-lock"
+                                    invisible="state not in ('satisfied', 'rejected') or not can_work_on_request">
+                                <span>Close</span>
+                            </button>
+                        </div>
                         <field name="is_requester" invisible="1"/>
                         <field name="is_department_manager" invisible="1"/>
                         <field name="is_assigned_employee" invisible="1"/>
@@ -282,13 +302,6 @@
                         <field name="is_overdue" invisible="1"/>
                         <field name="request_role_summary" invisible="1"/>
                         <field name="request_deadline_label" invisible="1"/>
-
-                        <div class="oe_button_box" name="button_box"
-                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
-                            <button name="action_view_followups" type="object" class="oe_stat_button" icon="fa-list-alt">
-                                <field name="followup_count" widget="statinfo" string="Follow-ups"/>
-                            </button>
-                        </div>
 
                         <div class="oe_title ab_request_title_block"
                              invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
@@ -316,15 +329,11 @@
                                                 <label for="request_type_id" string="Request Type"/>
                                                 <field name="request_type_id" readonly="id != False"/>
                                             </div>
-                                            <div class="ab_request_grid_cell">
-                                                <label for="link" string="Related Link"/>
-                                                <field name="link" widget="CopyClipboardTextField"/>
-                                            </div>
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="subject" string="Request Subject"/>
-                                                <field name="subject" placeholder="Summarize the request in one clear sentence"/>
+                                                <field name="subject" readonly="id != False" placeholder="Summarize the request in one clear sentence"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
@@ -337,6 +346,17 @@
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="attachment_ids" string="Attachments"/>
                                                 <field name="attachment_ids" widget="many2many_binary" readonly="id != False"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row" invisible="id == False">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="link_ids" string="Related Links"/>
+                                                <field name="link_ids" mode="list">
+                                                    <list editable="bottom" create="true" delete="true">
+                                                        <field name="name" placeholder="Link name (e.g., JIRA Ticket)"/>
+                                                        <field name="url" placeholder="https://..." widget="url"/>
+                                                    </list>
+                                                </field>
                                             </div>
                                         </div>
                                     </div>
@@ -365,7 +385,7 @@
                                             </div>
                                             <div class="ab_request_grid_cell">
                                                 <label for="link" string="Related Link"/>
-                                                <field name="link" widget="CopyClipboardTextField"/>
+                                                <field name="link" readonly="id != False" widget="url"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row ab_request_grid_3col">
@@ -393,13 +413,13 @@
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="subject" string="Subject"/>
-                                                <field name="subject"/>
+                                                <field name="subject" readonly="id != False"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="description" string="Description"/>
-                                                <field name="description" widget="text"/>
+                                                <field name="description" widget="text" readonly="id != False"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
@@ -419,6 +439,24 @@
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <field name="attachment_ids" widget="many2many_binary"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ab_request_card">
+                                    <div class="ab_request_card_header">
+                                        <span class="ab_request_card_title">Related Links</span>
+                                    </div>
+                                    <div class="ab_request_card_body">
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <field name="link_ids" mode="list">
+                                                    <list editable="bottom" create="true" delete="true">
+                                                        <field name="name" placeholder="Link name"/>
+                                                        <field name="url" placeholder="https://..." widget="url"/>
+                                                    </list>
+                                                </field>
                                             </div>
                                         </div>
                                     </div>
@@ -456,7 +494,7 @@
                             <page string="Follow-up Timeline">
                                 <div class="ab_request_followup_container">
                                     <field name="followup_ids"
-                                           mode="kanban,list,form"
+                                           mode="list,form"
                                            readonly="not can_add_followup"
                                            context="{'default_request_id': id}">
                                         <kanban class="ab_request_followup_kanban" quick_create="false" create="1" delete="0" edit="0">
@@ -508,7 +546,7 @@
         <record id="ab_request_my_action" model="ir.actions.act_window">
             <field name="name">My Requests</field>
             <field name="res_model">ab.request</field>
-            <field name="view_mode">list,kanban,form</field>
+            <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="domain">[('requester_user_id', '=', uid)]</field>
             <field name="context">{'search_default_filter_my_requests': 1, 'search_default_filter_open_requests': 1}</field>
@@ -525,7 +563,7 @@
         <record id="ab_request_assigned_action" model="ir.actions.act_window">
             <field name="name">Assigned Requests</field>
             <field name="res_model">ab.request</field>
-            <field name="view_mode">list,kanban,form</field>
+            <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="domain">['|', ('assigned_employee_ids.user_id', '=', uid), ('assigned_user_id', '=', uid)]</field>
             <field name="context">{'search_default_filter_assigned_requests': 1, 'search_default_filter_open_requests': 1}</field>
@@ -534,7 +572,7 @@
         <record id="ab_request_review_action" model="ir.actions.act_window">
             <field name="name">Review Queue</field>
             <field name="res_model">ab.request</field>
-            <field name="view_mode">kanban,list,form</field>
+            <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="domain">[('manager_user_id', '=', uid)]</field>
             <field name="context">{'search_default_filter_waiting_review': 1, 'search_default_group_state': 1}</field>
@@ -543,7 +581,7 @@
         <record id="ab_request_all_action" model="ir.actions.act_window">
             <field name="name">All Requests</field>
             <field name="res_model">ab.request</field>
-            <field name="view_mode">kanban,list,form</field>
+            <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="context">{'search_default_filter_open_requests': 1, 'search_default_group_state': 1}</field>
         </record>

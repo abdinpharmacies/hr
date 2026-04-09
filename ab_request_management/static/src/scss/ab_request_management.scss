@@ -150,6 +150,16 @@
 }
 
 .ab_request_form {
+    [data-name="state"].o_wrap_label,
+    .o_wrap_label[data-name="state"] {
+        display: none;
+    }
+
+    [data-name="state"]:not(.o_wrap_label) {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
     .o_statusbar_status {
         .o_statusbar_status_arrow {
             .fa-lg {
@@ -924,7 +934,11 @@
 .ab_request_kanban {
     .o_kanban_renderer {
         padding-bottom: 1rem;
-        overflow-x: clip;
+        overflow-x: auto;
+        overflow-y: hidden;
+        overscroll-behavior-x: contain;
+        scrollbar-width: thin;
+        -webkit-overflow-scrolling: touch;
     }
 
     .o_kanban_record {
@@ -986,6 +1000,10 @@
         transition: background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
         border-radius: 24px;
         border: 1px solid transparent;
+        flex: 0 0 20rem;
+        min-width: 20rem;
+        width: 20rem;
+        max-width: 20rem;
     }
 
     .o_kanban_group.o_kanban_hover {
@@ -1283,6 +1301,10 @@
         }
 
         .o_kanban_group {
+            flex: 1 1 auto;
+            width: 100%;
+            min-width: 0;
+            max-width: none;
             border-radius: 18px;
         }
 
@@ -1693,9 +1715,10 @@
 
     .ab_request_kanban {
         .o_kanban_group {
+            flex: 1 1 auto;
             min-width: 0;
             width: 100%;
-            max-width: 20rem;
+            max-width: none;
         }
     }
 

@@ -215,7 +215,7 @@ export class AbRequestDashboard extends Component {
             type: "ir.actions.act_window",
             name: "Requests",
             res_model: "ab.request",
-            views: [[false, "list"], [false, "kanban"], [false, "form"]],
+            views: [[false, "list"], [false, "form"]],
             domain: domain,
             target: "current",
         });
