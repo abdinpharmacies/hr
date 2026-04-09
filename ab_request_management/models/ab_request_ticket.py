@@ -287,6 +287,7 @@ class AbRequest(models.Model):
         """Create requests in under-review state and notify stakeholders."""
         prepared_vals_list = [self._prepare_create_vals(vals) for vals in vals_list]
         records = super().create(prepared_vals_list)
+        records._sync_attachments_to_request()
         records._sync_primary_assignee()
         records._subscribe_request_partners()
         records._notify_request_created()
@@ -301,11 +302,27 @@ class AbRequest(models.Model):
         self._check_assignment_write(vals)
         self._check_state_write(vals)
         result = super().write(vals)
+        if "attachment_ids" in vals:
+            self._sync_attachments_to_request()
         if "assigned_employee_ids" in vals:
             self._sync_primary_assignee()
         if {"request_type_id", "assigned_employee_ids"} & set(vals):
             self._subscribe_request_partners()
         return result
+
+    def _sync_attachments_to_request(self):
+        """Bind uploaded attachments to the request so all authorized users can access them."""
+        for record in self:
+            attachments = record.attachment_ids.sudo().filtered(
+                lambda attachment: not attachment.res_model or (
+                    attachment.res_model == record._name and attachment.res_id in (False, 0, record.id)
+                )
+            )
+            if attachments:
+                attachments.write({
+                    "res_model": record._name,
+                    "res_id": record.id,
+                })
 
     def _sync_primary_assignee(self):
         """Mirror the first assigned employee into the legacy primary field."""

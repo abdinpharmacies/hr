@@ -1,5 +1,6 @@
 /** @odoo-module **/
 
+import { _t } from "@web/core/l10n/translation";
 import { registry } from "@web/core/registry";
 import { user } from "@web/core/user";
 import { useService } from "@web/core/utils/hooks";
@@ -94,7 +95,7 @@ export class AbRequestDashboard extends Component {
         this.state.cards = [
             {
                 key: "my_requests",
-                label: "My Requests",
+                label: _t("My Requests"),
                 value: myRequests,
                 icon: "fa fa-inbox",
                 accent: "#2f6fdd",
@@ -102,7 +103,7 @@ export class AbRequestDashboard extends Component {
             },
             {
                 key: "pending_approval",
-                label: "Pending Approval",
+                label: _t("Pending Approval"),
                 value: pendingApproval,
                 icon: "fa fa-hourglass-half",
                 accent: "#7b8794",
@@ -110,7 +111,7 @@ export class AbRequestDashboard extends Component {
             },
             {
                 key: "in_progress",
-                label: "In Progress",
+                label: _t("In Progress"),
                 value: inProgress,
                 icon: "fa fa-gears",
                 accent: "#df7a22",
@@ -118,7 +119,7 @@ export class AbRequestDashboard extends Component {
             },
             {
                 key: "overdue",
-                label: "Overdue",
+                label: _t("Overdue"),
                 value: overdue,
                 icon: "fa fa-bell-o",
                 accent: "#cf4c4c",
@@ -132,7 +133,7 @@ export class AbRequestDashboard extends Component {
 
         this.state.departmentChart = byDepartment
             .map((item) => ({
-                label: item.department_id?.[1] || "Unassigned",
+                label: item.department_id?.[1] || _t("Unassigned"),
                 value: item.department_id_count,
             }))
             .filter((item) => item.value);
@@ -152,8 +153,8 @@ export class AbRequestDashboard extends Component {
             subject: record.subject,
             state: record.state,
             stateLabel: this.getStateLabel(record.state),
-            deadline: record.deadline || "No deadline planned",
-            requestType: record.request_type_id?.[1] || "No type",
+            deadline: record.deadline || _t("No deadline planned"),
+            requestType: record.request_type_id?.[1] || _t("No type"),
             assigneeCount: record.assigned_employee_ids?.length || 0,
         }));
 
@@ -188,14 +189,14 @@ export class AbRequestDashboard extends Component {
 
     getStateLabel(value) {
         return {
-            under_review: "Under Review",
-            scheduled: "Scheduled",
-            in_progress: "In Progress",
-            under_requester_confirmation: "Under Requester Confirmation",
-            satisfied: "Satisfied",
-            rejected: "Rejected",
-            closed: "Closed",
-        }[value] || value || "Unknown";
+            under_review: _t("Under Review"),
+            scheduled: _t("Scheduled"),
+            in_progress: _t("In Progress"),
+            under_requester_confirmation: _t("Under Requester Confirmation"),
+            satisfied: _t("Satisfied"),
+            rejected: _t("Rejected"),
+            closed: _t("Closed"),
+        }[value] || value || _t("Unknown");
     }
 
     savePreferences() {
@@ -213,7 +214,7 @@ export class AbRequestDashboard extends Component {
     async openList(domain) {
         await this.env.services.action.doAction({
             type: "ir.actions.act_window",
-            name: "Requests",
+            name: _t("Requests"),
             res_model: "ab.request",
             views: [[false, "list"], [false, "form"]],
             domain: domain,

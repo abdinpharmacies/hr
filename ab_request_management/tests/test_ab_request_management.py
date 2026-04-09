@@ -270,3 +270,27 @@ class TestAbRequestManagement(TransactionCase):
                     "department_id": unmanaged_department.id,
                 }
             )
+
+    def test_manager_can_read_request_attachments(self):
+        request = self._create_request()
+        attachment = self.env["ir.attachment"].with_user(self.requester_user).create(
+            {
+                "name": "spec.txt",
+                "datas": "dGVzdA==",
+                "mimetype": "text/plain",
+                "type": "binary",
+            }
+        )
+
+        request.with_user(self.requester_user).write(
+            {
+                "attachment_ids": [(4, attachment.id)],
+            }
+        )
+
+        self.assertEqual(attachment.res_model, "ab.request")
+        self.assertEqual(attachment.res_id, request.id)
+        self.assertEqual(
+            request.with_user(self.manager_user).mapped("attachment_ids.name"),
+            ["spec.txt"],
+        )
