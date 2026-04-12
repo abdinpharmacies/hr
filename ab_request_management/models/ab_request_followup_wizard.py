@@ -23,10 +23,12 @@ class AbRequestFollowupWizard(models.TransientModel):
     def action_add_followup(self):
         self.ensure_one()
         request = self.request_id
-        request.message_post(
+        message = request.message_post(
             body=self.description,
+            message_type="comment",
             subtype_xmlid="mail.mt_note",
         )
+        message.ab_is_followup_message = True
         request.with_context(allow_state_write=True).write({"state": "in_progress"})
         request._notify_requester_confirmation()
         return True

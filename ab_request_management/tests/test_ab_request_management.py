@@ -294,3 +294,148 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.manager_user).mapped("attachment_ids.name"),
             ["spec.txt"],
         )
+
+    def test_requester_cannot_update_attachments_after_request_is_processed(self):
+        request = self._create_request()
+        attachment = self.env["ir.attachment"].with_user(self.requester_user).create(
+            {
+                "name": "late-spec.txt",
+                "datas": "dGVzdA==",
+                "mimetype": "text/plain",
+                "type": "binary",
+            }
+        )
+
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+
+        with self.assertRaises(UserError):
+            request.with_user(self.requester_user).write(
+                {
+                    "attachment_ids": [(4, attachment.id)],
+                }
+            )
+
+    def test_manager_can_update_attachments_after_request_is_processed(self):
+        request = self._create_request()
+        attachment = self.env["ir.attachment"].with_user(self.manager_user).create(
+            {
+                "name": "manager-spec.txt",
+                "datas": "dGVzdA==",
+                "mimetype": "text/plain",
+                "type": "binary",
+            }
+        )
+
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+
+        request.with_user(self.manager_user).write(
+            {
+                "attachment_ids": [(4, attachment.id)],
+            }
+        )
+
+        self.assertEqual(attachment.res_model, "ab.request")
+        self.assertEqual(attachment.res_id, request.id)
+
+    def test_request_user_chatter_hides_system_messages_but_keeps_manual_and_followup(self):
+        request = self._create_request()
+        manual_message = request.with_user(self.requester_user).message_post(
+            body="Requester manual comment",
+            message_type="comment",
+            subtype_xmlid="mail.mt_comment",
+        )
+        self.env["ab.request.followup"].with_user(self.requester_user).create(
+            {
+                "request_id": request.id,
+                "description": "Requester follow-up note",
+            }
+        )
+        request.with_user(self.manager_user)._post_notification("System notification")
+        request.with_user(self.manager_user).with_context(allow_state_write=True).write({"state": "scheduled"})
+
+        followup_message = self.env["mail.message"].sudo().search(
+            [
+                ("model", "=", "ab.request"),
+                ("res_id", "=", request.id),
+                ("ab_is_followup_message", "=", True),
+            ],
+            limit=1,
+        )
+        system_notification = self.env["mail.message"].sudo().search(
+            [
+                ("model", "=", "ab.request"),
+                ("res_id", "=", request.id),
+                ("message_type", "=", "notification"),
+                ("body", "ilike", "System notification"),
+            ],
+            limit=1,
+        )
+        tracking_message = self.env["mail.message"].sudo().search(
+            [
+                ("model", "=", "ab.request"),
+                ("res_id", "=", request.id),
+                ("tracking_value_ids", "!=", False),
+            ],
+            limit=1,
+        )
+        mail_messages = self.env["mail.message"].with_user(self.requester_user)
+
+        self.assertTrue(mail_messages._ab_is_request_user_visible_message(manual_message))
+        self.assertTrue(mail_messages._ab_is_request_user_visible_message(followup_message.with_user(self.requester_user)))
+        self.assertFalse(mail_messages._ab_is_request_user_visible_message(system_notification.with_user(self.requester_user)))
+        if tracking_message:
+            self.assertFalse(mail_messages._ab_is_request_user_visible_message(tracking_message.with_user(self.requester_user)))
+
+    def test_manager_chatter_keeps_full_history(self):
+        request = self._create_request()
+        manual_message = request.with_user(self.requester_user).message_post(
+            body="Visible manual comment",
+            message_type="comment",
+            subtype_xmlid="mail.mt_comment",
+        )
+        self.env["ab.request.followup"].with_user(self.requester_user).create(
+            {
+                "request_id": request.id,
+                "description": "Visible follow-up note",
+            }
+        )
+        request.with_user(self.manager_user)._post_notification("Manager-visible notification")
+        request.with_user(self.manager_user).with_context(allow_state_write=True).write({"state": "scheduled"})
+
+        visible_messages = self.env["mail.message"].with_user(self.manager_user)._message_fetch(
+            None, thread=request
+        )["messages"]
+        visible_ids = set(visible_messages.ids)
+        followup_message = self.env["mail.message"].sudo().search(
+            [
+                ("model", "=", "ab.request"),
+                ("res_id", "=", request.id),
+                ("ab_is_followup_message", "=", True),
+            ],
+            limit=1,
+        )
+        system_notification = self.env["mail.message"].sudo().search(
+            [
+                ("model", "=", "ab.request"),
+                ("res_id", "=", request.id),
+                ("message_type", "=", "notification"),
+                ("body", "ilike", "Manager-visible notification"),
+            ],
+            limit=1,
+        )
+        tracking_message = self.env["mail.message"].sudo().search(
+            [
+                ("model", "=", "ab.request"),
+                ("res_id", "=", request.id),
+                ("tracking_value_ids", "!=", False),
+            ],
+            limit=1,
+        )
+
+        self.assertIn(manual_message.id, visible_ids)
+        self.assertIn(followup_message.id, visible_ids)
+        self.assertIn(system_notification.id, visible_ids)
+        if tracking_message:
+            self.assertIn(tracking_message.id, visible_ids)
