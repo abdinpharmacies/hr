@@ -105,6 +105,18 @@ msgid "Available Pilots"
 msgstr "المندوبون المتاحون"
 
 #. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Sort by sign-in time (FIFO)"
+msgstr "الترتيب حسب وقت الحضور (FIFO)"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Sort by total handled"
+msgstr "الترتيب حسب الإجمالي"
+
+#. module: ab_orders_management
 #: model_terms:ir.ui.view,arch_db:ab_orders_management.view_ab_pharmacy_delivery_branch_form
 msgid "Pilots Data"
 msgstr "بيانات المندوبين"
