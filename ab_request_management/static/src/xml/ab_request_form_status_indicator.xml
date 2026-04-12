@@ -4,7 +4,7 @@
        t-inherit="web.FormStatusIndicator"
        t-inherit-mode="extension">
         <xpath expr="//button[hasclass('o_form_button_save')]" position="replace">
-            <t t-if="props.model.root.resModel === 'ab.request'">
+            <t t-if="props.model.root.resModel === 'ab_request'">
                 <button
                     type="button"
                     class="o_form_button_save btn btn-primary ab_request_header_save"

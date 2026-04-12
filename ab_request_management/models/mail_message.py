@@ -29,7 +29,7 @@ class MailMessage(models.Model):
             around=around,
             limit=limit,
         )
-        if thread and thread._name == "ab.request" and self._ab_should_filter_request_chatter():
+        if thread and thread._name == "ab_request" and self._ab_should_filter_request_chatter():
             res["messages"] = res["messages"].filtered(self._ab_is_request_user_visible_message)
             if "count" in res:
                 res["count"] = len(res["messages"])

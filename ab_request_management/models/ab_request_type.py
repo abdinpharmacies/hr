@@ -3,7 +3,7 @@ from odoo.exceptions import ValidationError
 
 
 class AbRequestType(models.Model):
-    _name = "ab.request.type"
+    _name = "ab_request_type"
     _table = "ab_request_type"
     _description = "Request Type"
     _order = "name"

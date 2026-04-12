@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="ab_request_followup_wizard_form" model="ir.ui.view">
-            <field name="name">ab.request.followup.wizard.form</field>
-            <field name="model">ab.request.followup.wizard</field>
+            <field name="name">ab_request_followup_wizard.form</field>
+            <field name="model">ab_request_followup_wizard</field>
             <field name="arch" type="xml">
                 <form string="Request Changes">
                     <group>
@@ -24,7 +24,7 @@
 
         <record id="ab_request_followup_wizard_action" model="ir.actions.act_window">
             <field name="name">Request Changes</field>
-            <field name="res_model">ab.request.followup.wizard</field>
+            <field name="res_model">ab_request_followup_wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
         </record>

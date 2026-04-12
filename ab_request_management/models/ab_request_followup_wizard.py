@@ -2,11 +2,11 @@ from odoo import api, fields, models
 
 
 class AbRequestFollowupWizard(models.TransientModel):
-    _name = "ab.request.followup.wizard"
+    _name = "ab_request_followup_wizard"
     _description = "Request Follow-up Wizard"
 
     request_id = fields.Many2one(
-        "ab.request",
+        "ab_request",
         string="Request",
         required=True,
         default=lambda self: self._default_request_id(),
@@ -18,7 +18,7 @@ class AbRequestFollowupWizard(models.TransientModel):
     )
 
     def _default_request_id(self):
-        return self.env["ab.request"].browse(self._context.get("active_id"))
+        return self.env["ab_request"].browse(self._context.get("active_id"))
 
     def action_add_followup(self):
         self.ensure_one()

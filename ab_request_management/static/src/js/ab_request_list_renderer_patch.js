@@ -7,7 +7,7 @@ patch(ListRenderer.prototype, {
     isAbRequestInlineCreate(record) {
         return Boolean(
             record &&
-            record.resModel === "ab.request" &&
+            record.resModel === "ab_request" &&
             record.isNew &&
             this.props.list.editedRecord === record
         );

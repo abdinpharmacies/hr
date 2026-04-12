@@ -2,12 +2,12 @@ from odoo import api, fields, models
 
 
 class AbRequestLink(models.Model):
-    _name = "ab.request.link"
+    _name = "ab_request_link"
     _description = "Request Link"
     _order = "sequence, id"
 
     request_id = fields.Many2one(
-        "ab.request",
+        "ab_request",
         required=True,
         ondelete="cascade",
         index=True,
