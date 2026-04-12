@@ -57,8 +57,8 @@
                             </span>
                         </div>
                         <ul class="list-unstyled o_search_panel_category_value o_ab_pharmacy_delivery_sidebar_list">
-                            <t t-if="visibleSidebarAvailablePilots.length">
-                                <t t-foreach="visibleSidebarAvailablePilots" t-as="pilot" t-key="pilot.id">
+                            <t t-if="visibleSidebarAvailablePilotsSorted.length">
+                                <t t-foreach="visibleSidebarAvailablePilotsSorted" t-as="pilot" t-key="pilot.id">
                                     <li>
                                         <button type="button"
                                                 class="o_ab_pharmacy_delivery_sidebar_item"
@@ -113,13 +113,6 @@
                             <div class="o_ab_pharmacy_delivery_queue_header">
                                 <h3 class="d-flex align-items-center gap-2 mb-0">
                                     <t t-esc="availablePilotsLabel"/>
-                                    <button type="button"
-                                            class="btn btn-sm btn-outline-secondary o_ab_pharmacy_delivery_sort_button"
-                                            t-on-click="toggleAvailableSortDirection"
-                                            t-att-title="sortAvailablePilotsLabel"
-                                            t-att-aria-label="sortAvailablePilotsLabel">
-                                        <i t-att-class="state.availableSortDirection === 'asc' ? 'oi oi-fw oi-arrow-up' : 'oi oi-fw oi-arrow-down'"/>
-                                    </button>
                                 </h3>
                                 <span class="badge text-bg-success"><t t-esc="availablePilotsSorted.length"/></span>
                             </div>
