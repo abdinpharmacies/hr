@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_orders_management.PharmacyDeliveryDashboard">
+        <div class="o_ab_pharmacy_delivery_dashboard" t-att-class="state.sidebarOpen ? 'is-sidebar-open' : 'is-sidebar-collapsed'">
+            <aside class="o_search_panel flex-grow-0 flex-shrink-0 h-100 pb-5 bg-view overflow-auto position-relative pe-1 ps-3 o_ab_pharmacy_delivery_sidebar" t-att-class="state.sidebarOpen ? 'is-open' : 'is-collapsed'">
+                <div class="o_ab_pharmacy_delivery_sidebar_header">
+                    <strong t-if="state.sidebarOpen"><t t-esc="sidebarTitle"/></strong>
+                    <button type="button"
+                            class="btn btn-sm btn-outline-secondary o_ab_pharmacy_delivery_sidebar_toggle"
+                            t-on-click="toggleSidebar"
+                            t-att-title="sidebarToggleTitle"
+                            t-att-aria-label="sidebarToggleAriaLabel">
+                        <i class="oi oi-fw oi-panel-right fa-flip-horizontal"/>
+                    </button>
+                </div>
+                <t t-if="state.sidebarOpen">
+                    <div class="o_search_panel_section">
+                        <div class="o_search_panel_section_header">
+                            <span class="o_search_panel_category_title"><t t-esc="departmentsLabel"/></span>
+                        </div>
+                        <ul class="list-unstyled o_search_panel_category_value">
+                            <li>
+                                <button type="button"
+                                        class="o_ab_pharmacy_delivery_department_filter"
+                                        t-att-class="departmentFilterClass(0)"
+                                        t-on-click="() => selectDepartment(0)">
+                                    <span><t t-esc="allTargetDepartmentsLabel"/></span>
+                                </button>
+                            </li>
+                            <t t-foreach="state.payload.departments" t-as="department" t-key="department.id">
+                                <li>
+                                    <button type="button"
+                                            class="o_ab_pharmacy_delivery_department_filter"
+                                            t-att-class="departmentFilterClass(department.id)"
+                                            t-on-click="() => selectDepartment(department.id)">
+                                        <span t-esc="department.name"/>
+                                        <span class="badge rounded-pill text-bg-light" t-esc="department.pilot_count || 0"/>
+                                    </button>
+                                </li>
+                            </t>
+                        </ul>
+                    </div>
+                    <input type="text" class="form-control mb-2" t-att-placeholder="searchPlaceholder" t-att-value="state.query" t-on-input="onSearchInput"/>
+                    <div class="o_search_panel_section">
+                        <div class="o_search_panel_section_header">
+                            <span class="o_search_panel_category_title o_ab_pharmacy_delivery_sidebar_section_header">
+                                <label class="d-inline-flex align-items-center gap-2 mb-0">
+                                    <input type="checkbox"
+                                           class="form-check-input m-0"
+                                           t-att-checked="areAllVisibleSidebarPilotsSelected"
+                                           t-on-change="toggleSelectAllVisiblePilots"
+                                           t-att-title="selectAllPilotsLabel"
+                                           t-att-aria-label="selectAllPilotsAriaLabel"
+                                           t-att-disabled="!visibleSidebarAvailablePilots.length"/>
+                                    <span><t t-esc="availablePilotsSelectionLabel"/></span>
+                                </label>
+                            </span>
+                        </div>
+                        <ul class="list-unstyled o_search_panel_category_value o_ab_pharmacy_delivery_sidebar_list">
+                            <t t-if="visibleSidebarAvailablePilots.length">
+                                <t t-foreach="visibleSidebarAvailablePilots" t-as="pilot" t-key="pilot.id">
+                                    <li>
+                                        <button type="button"
+                                                class="o_ab_pharmacy_delivery_sidebar_item"
+                                                t-att-class="isPilotSelected(pilot.id) ? 'is-active' : ''"
+                                                t-on-click="() => togglePilotSelection(pilot.id)">
+                                            <span class="o_ab_pharmacy_delivery_status_dot" t-att-style="statusDotStyle(pilot.status)"></span>
+                                            <span class="o_ab_pharmacy_delivery_sidebar_item_text">
+                                                <strong t-esc="pilot.name"/>
+                                                <small t-esc="pilot.department_name"/>
+                                            </span>
+                                            <span class="o_ab_pharmacy_delivery_signin_order" t-if="pilot.sign_in_order"><t t-esc="pilot.sign_in_order"/></span>
+                                            <small t-esc="pilot.status_label"/>
+                                        </button>
+                                    </li>
+                                </t>
+                            </t>
+                            <t t-else="">
+                                <li class="text-muted"><t t-esc="noPilotsFoundLabel"/></li>
+                            </t>
+                        </ul>
+                    </div>
+                </t>
+            </aside>
+
+            <div class="o_ab_pharmacy_delivery_content">
+                <div class="o_ab_pharmacy_delivery_header">
+                    <div class="o_ab_pharmacy_delivery_header_meta">
+                        <h2><t t-esc="dashboardTitle"/></h2>
+                        <div class="text-muted"><t t-esc="branchFocusLabel"/> <t t-esc="selectedBranchLabel"/></div>
+                        <div class="text-muted"><t t-esc="departmentFocusLabel"/> <t t-esc="selectedDepartmentLabel"/></div>
+                    </div>
+                    <div class="o_ab_pharmacy_delivery_header_actions">
+                        <select class="form-select" t-on-change="onBranchChange" t-att-value="state.selectedBranchId">
+                            <option value="0"><t t-esc="allBranchesLabel"/></option>
+                            <t t-foreach="state.payload.branches" t-as="branch" t-key="branch.id">
+                                <option t-att-value="branch.id"><t t-esc="branch.name"/></option>
+                            </t>
+                        </select>
+                        <button type="button" class="btn btn-outline-primary" t-on-click="loadDashboard" t-att-disabled="state.loading">
+                            <t t-esc="refreshLabel"/>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="o_ab_pharmacy_delivery_main">
+                    <section class="o_ab_pharmacy_delivery_queues">
+                    <div class="o_ab_pharmacy_delivery_queue"
+                         t-att-class="queueDropClass('free')"
+                         t-on-dragover="(ev) => onQueueDragOver(ev, 'free')"
+                         t-on-dragleave="(ev) => onQueueDragLeave(ev, 'free')"
+                         t-on-drop="(ev) => onQueueDrop(ev, 'free')">
+                            <div class="o_ab_pharmacy_delivery_queue_header">
+                                <h3 class="d-flex align-items-center gap-2 mb-0">
+                                    <t t-esc="availablePilotsLabel"/>
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-secondary o_ab_pharmacy_delivery_sort_button"
+                                            t-on-click="toggleAvailableSortDirection"
+                                            t-att-title="sortAvailablePilotsLabel"
+                                            t-att-aria-label="sortAvailablePilotsLabel">
+                                        <i t-att-class="state.availableSortDirection === 'asc' ? 'oi oi-fw oi-arrow-up' : 'oi oi-fw oi-arrow-down'"/>
+                                    </button>
+                                </h3>
+                                <span class="badge text-bg-success"><t t-esc="availablePilotsSorted.length"/></span>
+                            </div>
+                            <div class="o_ab_pharmacy_delivery_queue_cards">
+                                <t t-if="availablePilotsSorted.length">
+                                    <t t-foreach="availablePilotsSorted" t-as="pilot" t-key="pilot.id">
+                                        <article class="o_ab_pharmacy_delivery_card"
+                                                 draggable="true"
+                                                 t-on-dragstart="() => onPilotDragStart(pilot.id)"
+                                                 t-on-dragend="onPilotDragEnd">
+                                            <div class="o_ab_pharmacy_delivery_card_head">
+                                                <span class="o_ab_pharmacy_delivery_status_dot" t-att-style="statusDotStyle(pilot.status)"></span>
+                                                <strong t-esc="pilot.name"/>
+                                            </div>
+                                            <div class="o_ab_pharmacy_delivery_card_meta">
+                                                <span t-esc="pilot.status_label"/>
+                                            </div>
+                                            <div class="o_ab_pharmacy_delivery_card_meta">
+                                                <span t-esc="pilot.department_name"/>
+                                                <span class="o_ab_pharmacy_delivery_signin_order" t-if="pilot.sign_in_order"><t t-esc="pilot.sign_in_order"/></span>
+                                            </div>
+                                            <div class="o_ab_pharmacy_delivery_card_counts">
+                                                <span><t t-esc="ordersLabel"/> <t t-esc="pilot.order_completed_count"/></span>
+                                                <span><t t-esc="deliveriesLabel"/> <t t-esc="pilot.delivery_completed_count"/></span>
+                                                <span><t t-esc="totalLabel"/> <t t-esc="pilot.daily_handle_count"/></span>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-primary" t-on-click="() => openPilotWizard(pilot)">
+                                                <t t-esc="changeStatusLabel"/>
+                                            </button>
+                                        </article>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <div class="o_ab_pharmacy_delivery_empty">
+                                        <t t-esc="state.selectedPilotIds &amp;&amp; !state.selectedPilotIds.length ? noPilotsSelectedLabel : noFreePilotsLabel"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="o_ab_pharmacy_delivery_queue"
+                             t-att-class="queueDropClass('in_delivery')"
+                             t-on-dragover="(ev) => onQueueDragOver(ev, 'in_delivery')"
+                             t-on-dragleave="(ev) => onQueueDragLeave(ev, 'in_delivery')"
+                             t-on-drop="(ev) => onQueueDrop(ev, 'in_delivery')">
+                            <div class="o_ab_pharmacy_delivery_queue_header">
+                                <h3><t t-esc="inDeliveryPilotsLabel"/></h3>
+                                <span class="badge text-bg-warning"><t t-esc="visibleInDeliveryPilots.length"/></span>
+                            </div>
+                            <div class="o_ab_pharmacy_delivery_queue_cards">
+                                <t t-if="visibleInDeliveryPilots.length">
+                                    <t t-foreach="visibleInDeliveryPilots" t-as="pilot" t-key="pilot.id">
+                                        <article class="o_ab_pharmacy_delivery_card is-in-delivery"
+                                                 draggable="true"
+                                                 t-on-dragstart="() => onPilotDragStart(pilot.id)"
+                                                 t-on-dragend="onPilotDragEnd">
+                                            <div class="o_ab_pharmacy_delivery_card_head">
+                                                <span class="o_ab_pharmacy_delivery_status_dot" t-att-style="statusDotStyle(pilot.status)"></span>
+                                                <strong t-esc="pilot.name"/>
+                                            </div>
+                                            <div class="o_ab_pharmacy_delivery_card_meta">
+                                                <span t-esc="pilot.status_label"/>
+                                            </div>
+                                            <div class="o_ab_pharmacy_delivery_card_meta">
+                                                <span t-esc="pilot.department_name"/>
+                                                <span class="o_ab_pharmacy_delivery_signin_order" t-if="pilot.sign_in_order"><t t-esc="pilot.sign_in_order"/></span>
+                                            </div>
+                                            <div class="o_ab_pharmacy_delivery_card_assignment" t-if="pilot.current_assignment">
+                                                <div><strong><t t-esc="orderFieldLabel"/></strong> <t t-esc="pilot.current_assignment.order_number"/></div>
+                                                <div><strong><t t-esc="typeFieldLabel"/></strong> <t t-esc="pilot.current_assignment.transaction_type_label"/></div>
+                                                <div><strong><t t-esc="branchFieldLabel"/></strong> <t t-esc="pilot.current_assignment.branch_name"/></div>
+                                            </div>
+                                            <div class="o_ab_pharmacy_delivery_card_counts">
+                                                <span><t t-esc="ordersLabel"/> <t t-esc="pilot.order_completed_count"/></span>
+                                                <span><t t-esc="deliveriesLabel"/> <t t-esc="pilot.delivery_completed_count"/></span>
+                                                <span><t t-esc="totalLabel"/> <t t-esc="pilot.daily_handle_count"/></span>
+                                            </div>
+                                            <button type="button" class="btn btn-sm btn-outline-primary" t-on-click="() => openPilotWizard(pilot)">
+                                                <t t-esc="closeChangeStatusLabel"/>
+                                            </button>
+                                        </article>
+                                    </t>
+                                </t>
+                                <t t-else="">
+                                    <div class="o_ab_pharmacy_delivery_empty">
+                                        <t t-esc="state.selectedPilotIds &amp;&amp; !state.selectedPilotIds.length ? noPilotsSelectedLabel : noDeliveryPilotsLabel"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
