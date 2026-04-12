@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_pharmacy_delivery_assignment_list" model="ir.ui.view">
+            <field name="name">ab_pharmacy_delivery_assignment.list</field>
+            <field name="model">ab_pharmacy_delivery_assignment</field>
+            <field name="arch" type="xml">
+                <list string="Assignments">
+                    <field name="order_number"/>
+                    <field name="pilot_id"/>
+                    <field name="branch_id"/>
+                    <field name="transaction_type"/>
+                    <field name="status"/>
+                    <field name="start_datetime"/>
+                    <field name="end_datetime"/>
+                    <field name="assigned_by_user_id"/>
+                    <field name="completed_by_pilot_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_pharmacy_delivery_assignment_form" model="ir.ui.view">
+            <field name="name">ab_pharmacy_delivery_assignment.form</field>
+            <field name="model">ab_pharmacy_delivery_assignment</field>
+            <field name="arch" type="xml">
+                <form string="Assignment">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="pilot_id"/>
+                                <field name="branch_id"/>
+                                <field name="order_number"/>
+                                <field name="transaction_type"/>
+                            </group>
+                            <group>
+                                <field name="status"/>
+                                <field name="start_datetime"/>
+                                <field name="end_datetime"/>
+                                <field name="assigned_by_user_id" readonly="1"/>
+                                <field name="completed_by_pilot_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="note" placeholder="Management notes, customer remarks, or handover details."/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_pharmacy_delivery_assignment" model="ir.actions.act_window">
+            <field name="name">Assignments</field>
+            <field name="res_model">ab_pharmacy_delivery_assignment</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

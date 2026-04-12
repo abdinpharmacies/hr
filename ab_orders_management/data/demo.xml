@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="user_delivery_manager_demo" model="res.users">
+            <field name="name">Delivery Manager Demo</field>
+            <field name="login">delivery_manager_demo</field>
+            <field name="email">delivery_manager_demo@example.com</field>
+            <field name="password">demo123</field>
+            <field name="groups_id" eval="[(6, 0, [ref('ab_orders_management.group_ab_pharmacy_delivery_manager')])]"/>
+        </record>
+
+        <record id="branch_luxor_1" model="ab_pharmacy_delivery_branch">
+            <field name="name">الاقصر - الفرع 1</field>
+            <field name="user_ids" eval="[(4, ref('ab_orders_management.user_delivery_manager_demo'))]"/>
+        </record>
+        <record id="branch_luxor_2" model="ab_pharmacy_delivery_branch">
+            <field name="name">الاقصر - الفرع 2</field>
+            <field name="user_ids" eval="[(4, ref('ab_orders_management.user_delivery_manager_demo'))]"/>
+        </record>
+        <record id="branch_luxor_3" model="ab_pharmacy_delivery_branch">
+            <field name="name">الاقصر - الفرع 3</field>
+            <field name="user_ids" eval="[(4, ref('ab_orders_management.user_delivery_manager_demo'))]"/>
+        </record>
+
+        <record id="pilot_1" model="ab_pharmacy_delivery_pilot">
+            <field name="name">مندوب توصيل 1</field>
+            <field name="branch_id" ref="branch_luxor_1"/>
+            <field name="status">free</field>
+        </record>
+        <record id="pilot_2" model="ab_pharmacy_delivery_pilot">
+            <field name="name">مندوب توصيل 2</field>
+            <field name="branch_id" ref="branch_luxor_2"/>
+            <field name="status">free</field>
+        </record>
+        <record id="pilot_3" model="ab_pharmacy_delivery_pilot">
+            <field name="name">مندوب توصيل 3</field>
+            <field name="branch_id" ref="branch_luxor_3"/>
+            <field name="status">free</field>
+        </record>
+    </data>
+</odoo>
