@@ -174,18 +174,34 @@ export class AbRequestDashboard extends Component {
     }
 
     get donutSegments() {
-        let offset = 0;
-        return this.state.stateChart.map((item) => {
-            const fraction = item.value / this.state.stateTotal;
-            const segment = {
-                ...item,
-                dasharray: `${fraction * 100} ${100 - fraction * 100}`,
-                dashoffset: -offset,
-            };
-            offset += fraction * 100;
-            return segment;
-        });
-    }
+    const data = this.state.stateChart || [];
+    const total = data.reduce((sum, item) => sum + item.value, 0);
+
+    if (!total) return [];
+
+    const radius = 15.9155;
+    const circumference = 2 * Math.PI * radius;
+
+    let offset = 0;
+
+    return data.map((item, index) => {
+        const value = item.value || 0;
+        const fraction = value / total;
+
+        const dash = fraction * circumference;
+
+        const segment = {
+            key: item.key || index,
+            color: item.color || this.palette[index % this.palette.length],
+            dasharray: `${dash} ${circumference}`,
+            dashoffset: -offset,
+        };
+
+        offset += dash;
+
+        return segment;
+    });
+}
 
     getStateLabel(value) {
         return {

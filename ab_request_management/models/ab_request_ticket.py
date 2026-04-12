@@ -301,6 +301,7 @@ class AbRequest(models.Model):
         self._check_immutable_fields(vals)
         self._check_assignment_write(vals)
         self._check_state_write(vals)
+        self._check_attachment_write(vals)
         result = super().write(vals)
         if "attachment_ids" in vals:
             self._sync_attachments_to_request()
@@ -389,6 +390,17 @@ class AbRequest(models.Model):
         if self.env.context.get("allow_state_write") or "state" not in vals:
             return
         raise UserError(_("State changes must be performed through the workflow buttons."))
+
+    def _check_attachment_write(self, vals):
+        """Allow requester attachment updates only while under review, without limiting manager/admin access."""
+        if "attachment_ids" not in vals:
+            return
+        for record in self:
+            if record.is_request_admin or record.is_department_manager:
+                continue
+            if record.is_requester and record.state == "under_review":
+                continue
+            raise UserError(_("Attachments can only be updated by the requester while the request is under review."))
 
     def _can_department_manager_assign(self):
         """Return whether the current user can approve, reject, or assign the request."""

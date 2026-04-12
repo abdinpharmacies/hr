@@ -345,7 +345,8 @@
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="attachment_ids" string="Attachments"/>
-                                                <field name="attachment_ids" widget="many2many_binary" readonly="id != False"/>
+                                                <field name="attachment_ids" widget="many2many_binary"
+                                                       readonly="id != False and (not is_requester or state != 'under_review')"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row" invisible="id == False">
@@ -486,8 +487,8 @@
                             </div>
                         </div>
 
-                        <notebook invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
-                            <page string="Follow-up Timeline">
+                        <notebook>
+                            <page string="Follow-ups">
                                 <div class="ab_request_followup_container">
                                     <field name="followup_ids"
                                            mode="list,form"

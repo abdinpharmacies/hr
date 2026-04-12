@@ -31,10 +31,12 @@ class AbRequestFollowup(models.Model):
         prepared_vals_list = [self._prepare_vals(vals) for vals in vals_list]
         records = super().create(prepared_vals_list)
         for record in records:
-            record.request_id.message_post(
+            message = record.request_id.message_post(
                 body=record.description,
+                message_type="comment",
                 subtype_xmlid="mail.mt_note",
             )
+            message.ab_is_followup_message = True
         return records
 
     def write(self, vals):
