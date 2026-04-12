@@ -931,7 +931,7 @@ msgstr ""
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Request Subject"
-msgstr "وضوع الطلب"
+msgstr "موضوع الطلب"
 
 #. module: ab_request_management
 #: model:ir.model,name:ab_request_management.model_ab_request_type
