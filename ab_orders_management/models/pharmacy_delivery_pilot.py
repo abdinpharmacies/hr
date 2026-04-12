@@ -42,6 +42,12 @@ class AbPharmacyDeliveryPilot(models.Model):
         ondelete="restrict",
         index=True,
     )
+    hr_department_id = fields.Many2one(
+        "ab_hr_department",
+        string="Department",
+        ondelete="set null",
+        index=True,
+    )
     branch_id = fields.Many2one(
         "ab_pharmacy_delivery_branch",
         required=True,
@@ -65,12 +71,6 @@ class AbPharmacyDeliveryPilot(models.Model):
     hr_job_id = fields.Many2one(
         "ab_hr_job",
         related="hr_employee_id.job_id",
-        store=True,
-        readonly=True,
-    )
-    hr_department_id = fields.Many2one(
-        "ab_hr_department",
-        related="hr_employee_id.department_id",
         store=True,
         readonly=True,
     )
@@ -186,6 +186,52 @@ class AbPharmacyDeliveryPilot(models.Model):
             for index, pilot in enumerate(ordered, start=1):
                 pilot.sign_in_order = index
 
+    @api.onchange("hr_employee_id")
+    def _onchange_hr_employee_id(self):
+        for pilot in self:
+            if pilot.hr_employee_id:
+                pilot.hr_department_id = pilot.hr_employee_id.department_id
+
+    @api.onchange("branch_id")
+    def _onchange_branch_id(self):
+        for pilot in self:
+            if pilot.branch_id and pilot.branch_id.hr_department_id:
+                pilot.hr_department_id = pilot.branch_id.hr_department_id
+
+    @api.model
+    def _prepare_employee_department_vals(self, vals):
+        vals = dict(vals)
+        employee_id = vals.get("hr_employee_id")
+        if employee_id:
+            employee = self.env["ab_hr_employee"].browse(employee_id)
+            if employee.exists():
+                vals["hr_department_id"] = employee.department_id.id or False
+        elif not vals.get("hr_department_id") and vals.get("branch_id"):
+            branch = self.env["ab_pharmacy_delivery_branch"].browse(vals["branch_id"])
+            if branch.exists():
+                vals["hr_department_id"] = branch.hr_department_id.id or False
+        return vals
+
+    @api.model
+    def default_get(self, fields_list):
+        defaults = super().default_get(fields_list)
+        branch_id = self.env.context.get("default_branch_id")
+        if branch_id and not defaults.get("hr_department_id"):
+            branch = self.env["ab_pharmacy_delivery_branch"].browse(branch_id)
+            if branch.exists() and branch.hr_department_id:
+                defaults["hr_department_id"] = branch.hr_department_id.id
+        return defaults
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        prepared_vals_list = [self._prepare_employee_department_vals(vals) for vals in vals_list]
+        return super().create(prepared_vals_list)
+
+    def write(self, vals):
+        if "hr_employee_id" in vals:
+            vals = self._prepare_employee_department_vals(vals)
+        return super().write(vals)
+
     @api.depends("assignment_ids.start_datetime", "sign_in_datetime")
     def _compute_daily_handle_count(self):
         Assignment = self.env["ab_pharmacy_delivery_assignment"]
@@ -234,9 +280,13 @@ class AbPharmacyDeliveryPilot(models.Model):
         return selection.get(value, value)
 
     @api.model
+    def _is_excluded_target_department(self, department):
+        return bool(department and "هاجر" in (department.name or ""))
+
+    @api.model
     def _get_target_departments(self):
         Department = self.env["ab_hr_department"]
-        return Department.search(
+        departments = Department.search(
             [
                 "|",
                 ("name", "ilike", "الاقصر"),
@@ -244,6 +294,7 @@ class AbPharmacyDeliveryPilot(models.Model):
             ],
             order="name, id",
         )
+        return departments.filtered(lambda department: not self._is_excluded_target_department(department))
 
     @api.model
     def _get_hr_delivery_employee_domain(self, department_id=False):
@@ -268,16 +319,18 @@ class AbPharmacyDeliveryPilot(models.Model):
         updated_count = 0
         for employee in employees:
             department = employee.department_id
-            if not department:
+            if not department or self._is_excluded_target_department(department):
                 continue
             branch = Branch._get_or_create_from_department(department)
             pilot = self.search([("hr_employee_id", "=", employee.id)], limit=1)
             vals = {
                 "branch_id": branch.id,
+                "hr_department_id": branch.hr_department_id.id or employee.department_id.id,
             }
             if pilot:
                 if not pilot.name:
                     vals["name"] = employee.name
+                vals["hr_employee_id"] = employee.id
                 pilot.write(vals)
                 updated_count += 1
             else:
@@ -286,6 +339,13 @@ class AbPharmacyDeliveryPilot(models.Model):
                 vals["status"] = "free"
                 self.create(vals)
                 created_count += 1
+        fallback_branch = Branch.search([("name", "ilike", "فرع العوامية الاقصر")], limit=1)
+        excluded_branches = Branch.search([("name", "ilike", "فرع هاجر"), ("hr_department_id.name", "ilike", "هاجر")])
+        if fallback_branch and excluded_branches:
+            excluded_pilots = self.search([("branch_id", "in", excluded_branches.ids)])
+            if excluded_pilots:
+                excluded_pilots.write({"branch_id": fallback_branch.id})
+            excluded_branches.unlink()
         return {
             "created_count": created_count,
             "updated_count": updated_count,

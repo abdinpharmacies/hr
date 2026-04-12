@@ -55,6 +55,13 @@ class AbPharmacyDeliveryAssignment(models.Model):
         readonly=True,
         ondelete="restrict",
     )
+    completed_by_pilot_id = fields.Many2one(
+        "ab_pharmacy_delivery_pilot",
+        string="Completed By",
+        related="pilot_id",
+        readonly=True,
+        store=True,
+    )
 
     _uniq_assignment_order = models.Constraint(
         "UNIQUE(branch_id, order_number, transaction_type)",

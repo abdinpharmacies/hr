@@ -207,6 +207,10 @@
     min-height: 0;
     overflow: auto;
     padding-right: 4px;
+
+    li + li {
+        margin-top: 8px;
+    }
 }
 
 .o_ab_pharmacy_delivery_department_filter {
@@ -291,6 +295,15 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 12px;
+}
+
+.o_ab_pharmacy_delivery_sort_button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .o_ab_pharmacy_delivery_queue_cards {

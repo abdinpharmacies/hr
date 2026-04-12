@@ -8,7 +8,9 @@
                 <list string="Pilots">
                     <field name="name"/>
                     <field name="pilot_code"/>
-                    <field name="hr_department_id"/>
+                    <field name="hr_department_id"
+                           domain="['|', ('name', 'ilike', 'الاقصر'), ('parent_id.name', 'ilike', 'الاقصر')]"
+                           options="{'no_create': True, 'no_create_edit': True}"/>
                     <field name="sign_in_datetime"/>
                     <field name="sign_in_order"/>
                     <field name="daily_handle_count"/>
@@ -36,7 +38,9 @@
                                 <field name="sign_in_datetime"/>
                                 <field name="sign_in_order" readonly="1"/>
                                 <field name="daily_handle_count" readonly="1"/>
-                                <field name="hr_department_id" readonly="1"/>
+                                <field name="hr_department_id"
+                                       domain="['|', ('name', 'ilike', 'الاقصر'), ('parent_id.name', 'ilike', 'الاقصر')]"
+                                       options="{'no_create': True, 'no_create_edit': True}"/>
                                 <field name="hr_parent_department_id" readonly="1"/>
                                 <field name="hr_job_id" readonly="1"/>
                                 <field name="branch_id"/>

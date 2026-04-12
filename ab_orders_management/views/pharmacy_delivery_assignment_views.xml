@@ -14,7 +14,7 @@
                     <field name="start_datetime"/>
                     <field name="end_datetime"/>
                     <field name="assigned_by_user_id"/>
-                    <field name="completed_by_user_id"/>
+                    <field name="completed_by_pilot_id"/>
                 </list>
             </field>
         </record>
@@ -37,7 +37,7 @@
                                 <field name="start_datetime"/>
                                 <field name="end_datetime"/>
                                 <field name="assigned_by_user_id" readonly="1"/>
-                                <field name="completed_by_user_id" readonly="1"/>
+                                <field name="completed_by_pilot_id" readonly="1"/>
                             </group>
                         </group>
                         <group>

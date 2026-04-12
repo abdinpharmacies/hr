@@ -27,11 +27,13 @@
                         </group>
                         <notebook>
                             <page string="Pilots">
-                                <field name="pilot_ids">
+                                <field name="pilot_ids" context="{'default_branch_id': id, 'default_hr_department_id': hr_department_id}">
                                     <list editable="bottom">
                                         <field name="name"/>
                                         <field name="pilot_code"/>
-                                        <field name="hr_department_id"/>
+                                        <field name="hr_department_id"
+                                               domain="['|', ('name', 'ilike', 'الاقصر'), ('parent_id.name', 'ilike', 'الاقصر')]"
+                                               options="{'no_create': True, 'no_create_edit': True}"/>
                                         <field name="shift"/>
                                         <field name="sign_in_datetime"/>
                                         <field name="sign_in_order" readonly="1"/>
@@ -43,7 +45,9 @@
                                 <field name="related_branch_ids" readonly="1">
                                     <list>
                                         <field name="name"/>
-                                        <field name="hr_department_id"/>
+                                        <field name="hr_department_id"
+                                               domain="['|', ('name', 'ilike', 'الاقصر'), ('parent_id.name', 'ilike', 'الاقصر')]"
+                                               options="{'no_create': True, 'no_create_edit': True}"/>
                                         <field name="pilot_count"/>
                                         <field name="assignment_count"/>
                                     </list>
