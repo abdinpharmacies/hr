@@ -349,7 +349,7 @@
                                                        readonly="id != False and (not is_requester or state != 'under_review')"/>
                                             </div>
                                         </div>
-                                        <div class="ab_request_grid_row" invisible="id == False">
+                                        <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="link_ids" string="Related Links"/>
                                                 <field name="link_ids" mode="list">
