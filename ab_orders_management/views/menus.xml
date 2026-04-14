@@ -5,6 +5,7 @@
                   name="Pharmacy Delivery"
                   action="action_ab_pharmacy_delivery_dashboard"
                   sequence="25"
+                  web_icon="ab_orders_management,static/description/icon.png"
                   groups="ab_orders_management.group_ab_pharmacy_delivery_manager"/>
 
         <menuitem id="menu_ab_pharmacy_delivery_branch"
