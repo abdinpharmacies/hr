@@ -291,8 +291,17 @@ class AbRequest(models.Model):
     @api.model
     def _default_requester_id(self):
         """Return the current employee linked to the current user."""
-        employee = self.env.user.ab_employee_ids[:1]
-        return employee.id
+        return self._get_requester_employee_id()
+
+    @api.model
+    def _get_requester_employee_id(self):
+        """Resolve the employee to use as requester for the current user."""
+        user = self.env.user
+        employee = getattr(user, "employee_id", False)
+        if employee:
+            return employee.id
+        employee = user.ab_employee_ids[:1]
+        return employee.id if employee else False
 
     @api.depends("followup_ids")
     def _compute_followup_count(self):
@@ -497,9 +506,9 @@ class AbRequest(models.Model):
         self._validate_meaningful_text("subject", prepared_vals["subject"])
         self._validate_meaningful_text("description", prepared_vals["description"])
         if not prepared_vals.get("requester_id"):
-            requester_id = self._default_requester_id()
+            requester_id = self._get_requester_employee_id()
             if not requester_id:
-                raise ValidationError(_("The current user is not linked to an employee."))
+                raise UserError(_("User must be linked to an employee"))
             prepared_vals["requester_id"] = requester_id
         prepared_vals["state"] = "under_review"
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
