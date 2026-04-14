@@ -14,7 +14,6 @@
 
         <record id="group_ab_request_management_user" model="res.groups">
             <field name="name">Request User</field>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="privilege_id" ref="privilege_ab_request_management"/>
         </record>
 

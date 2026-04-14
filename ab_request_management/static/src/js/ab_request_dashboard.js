@@ -66,26 +66,26 @@ export class AbRequestDashboard extends Component {
         this.state.loading = true;
         const nowIso = new Date().toISOString().slice(0, 19).replace("T", " ");
         const [myRequests, pendingApproval, inProgress, overdue, byDepartment, byState, recent] = await Promise.all([
-            this.orm.searchCount("ab.request", [["requester_user_id", "=", user.userId]]),
-            this.orm.searchCount("ab.request", [
+            this.orm.searchCount("ab_request", [["requester_user_id", "=", user.userId]]),
+            this.orm.searchCount("ab_request", [
                 ["state", "=", "under_review"],
                 ["manager_user_id", "=", user.userId],
             ]),
-            this.orm.searchCount("ab.request", [["state", "=", "in_progress"]]),
-            this.orm.searchCount("ab.request", [
+            this.orm.searchCount("ab_request", [["state", "=", "in_progress"]]),
+            this.orm.searchCount("ab_request", [
                 ["deadline", "!=", false],
                 ["deadline", "<", nowIso],
                 ["state", "not in", ["closed", "rejected", "satisfied"]],
             ]),
             this.orm.call(
-                "ab.request",
+                "ab_request",
                 "read_group",
                 [[], ["department_id"], ["department_id"]],
                 { orderby: "department_id" }
             ),
-            this.orm.call("ab.request", "read_group", [[], ["state"], ["state"]]),
+            this.orm.call("ab_request", "read_group", [[], ["state"], ["state"]]),
             this.orm.searchRead(
-                "ab.request",
+                "ab_request",
                 [],
                 ["name", "subject", "state", "request_type_id", "deadline", "assigned_employee_ids"],
                 { limit: 5, order: "create_date desc, id desc" }
@@ -231,7 +231,7 @@ export class AbRequestDashboard extends Component {
         await this.env.services.action.doAction({
             type: "ir.actions.act_window",
             name: _t("Requests"),
-            res_model: "ab.request",
+            res_model: "ab_request",
             views: [[false, "list"], [false, "form"]],
             domain: domain,
             target: "current",

@@ -2,6 +2,7 @@ import math
 
 from odoo import fields, models, api
 from odoo.tools.translate import _
+from odoo.tools import config
 from odoo.exceptions import UserError
 from .ab_sales_header import PARAM_STR
 import logging
@@ -62,6 +63,14 @@ class InventoryEplus(models.Model):
             WHERE store_id IS NULL AND balance > 0
         """)
 
+    def _get_available_bconnect_server(self, port=1433):
+        """Return the first reachable BConnect server or False for background syncs."""
+        candidates = [config.get("bconnect_ip1"), config.get("bconnect_ip2")]
+        for server in candidates:
+            if server and self.is_port_open(server, port=port):
+                return server
+        return False
+
     def btn_update_balance_total(self):
         eInv = self.env['ab_sales_inventory'].sudo()
 
@@ -77,7 +86,12 @@ class InventoryEplus(models.Model):
                 for i in range(0, len(seq), size):
                     yield seq[i:i + size]
 
-            with self.connect_eplus(param_str=PARAM_STR, charset='CP1256') as conn:
+            server = self._get_available_bconnect_server()
+            if not server:
+                _logger.warning("Inventory total sync skipped: all BConnect servers are offline.")
+                return
+
+            with self.connect_eplus(server=server, param_str=PARAM_STR, charset='CP1256') as conn:
                 with conn.cursor() as crx:
                     totals_by_product = {}
                     # SQL Server has a 2100-parameter limit; keep some margin.
@@ -149,7 +163,12 @@ class InventoryEplus(models.Model):
                 yield seq[i:i + size]
 
         try:
-            with self.connect_eplus(param_str=PARAM_STR, charset='CP1256') as conn:
+            server = self._get_available_bconnect_server()
+            if not server:
+                _logger.warning("Inventory per-store sync skipped: all BConnect servers are offline.")
+                return
+
+            with self.connect_eplus(server=server, param_str=PARAM_STR, charset='CP1256') as conn:
                 with conn.cursor() as crx:
                     for store, store_eplus_serial in store_pairs:
                         try:

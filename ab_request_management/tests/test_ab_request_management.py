@@ -47,7 +47,7 @@ class TestAbRequestManagement(TransactionCase):
         self.other_department = self.Departments.create({"name": "Finance"})
         self.outsider_employee.department_id = self.other_department.id
 
-        self.request_type = self.env["ab.request.type"].sudo().create(
+        self.request_type = self.env["ab_request_type"].sudo().create(
             {
                 "name": "System Access",
                 "department_id": self.department.id,
@@ -74,7 +74,7 @@ class TestAbRequestManagement(TransactionCase):
 
     def _create_request(self):
         with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
-            return self.env["ab.request"].with_user(self.requester_user).create(
+            return self.env["ab_request"].with_user(self.requester_user).create(
                 {
                     "subject": "Access to reporting dashboard",
                     "description": "Request access for quarterly review.",
@@ -90,7 +90,7 @@ class TestAbRequestManagement(TransactionCase):
 
     def test_subject_and_description_must_contain_letters(self):
         with self.assertRaises(ValidationError):
-            self.env["ab.request"].with_user(self.requester_user).create(
+            self.env["ab_request"].with_user(self.requester_user).create(
                 {
                     "subject": "123456",
                     "description": "Valid description",
@@ -98,7 +98,7 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
         with self.assertRaises(ValidationError):
-            self.env["ab.request"].with_user(self.requester_user).create(
+            self.env["ab_request"].with_user(self.requester_user).create(
                 {
                     "subject": "Valid subject",
                     "description": "@@@###",
@@ -107,7 +107,7 @@ class TestAbRequestManagement(TransactionCase):
             )
 
     def test_get_request_admin_partners_uses_implied_group_memberships(self):
-        admin_partners = self.env["ab.request"]._get_request_admin_partners()
+        admin_partners = self.env["ab_request"]._get_request_admin_partners()
         self.assertIn(self.admin_user.partner_id, admin_partners)
 
     def test_subject_and_description_are_immutable(self):
@@ -168,7 +168,7 @@ class TestAbRequestManagement(TransactionCase):
     def test_requester_can_add_followup_before_confirmation(self):
         request = self._create_request()
         with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
-            followup = self.env["ab.request.followup"].with_user(self.requester_user).create(
+            followup = self.env["ab_request_followup"].with_user(self.requester_user).create(
                 {
                     "request_id": request.id,
                     "description": "Please prioritize this request.",
@@ -190,7 +190,7 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.requester_user).action_mark_satisfied()
             request.with_user(self.assignee_user).action_close()
         with self.assertRaises(UserError):
-            self.env["ab.request.followup"].with_user(self.requester_user).create(
+            self.env["ab_request_followup"].with_user(self.requester_user).create(
                 {
                     "request_id": request.id,
                     "description": "This should not be allowed after closing.",
@@ -219,7 +219,7 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
             request.with_user(self.admin_user).action_assign()
-            followup = self.env["ab.request.followup"].with_user(self.admin_user).create(
+            followup = self.env["ab_request_followup"].with_user(self.admin_user).create(
                 {
                     "request_id": request.id,
                     "description": "Admin follow-up.",
@@ -241,7 +241,7 @@ class TestAbRequestManagement(TransactionCase):
 
     def test_record_rules_hide_unrelated_requests(self):
         request = self._create_request()
-        self.assertEqual(self.env["ab.request"].with_user(self.outsider_user).search_count([("id", "=", request.id)]), 0)
+        self.assertEqual(self.env["ab_request"].with_user(self.outsider_user).search_count([("id", "=", request.id)]), 0)
         with self.assertRaises(AccessError):
             request.with_user(self.outsider_user).read(["subject"])
 
@@ -257,14 +257,14 @@ class TestAbRequestManagement(TransactionCase):
             )
             request.with_user(self.manager_user).action_assign()
 
-        self.assertEqual(self.env["ab.request"].with_user(self.second_assignee_user).search_count([("id", "=", request.id)]), 1)
+        self.assertEqual(self.env["ab_request"].with_user(self.second_assignee_user).search_count([("id", "=", request.id)]), 1)
         request.with_user(self.second_assignee_user).action_request_confirmation()
         self.assertEqual(request.state, "under_requester_confirmation")
 
     def test_request_type_requires_department_manager(self):
         unmanaged_department = self.Departments.create({"name": "No Manager"})
         with self.assertRaises(ValidationError):
-            self.env["ab.request.type"].sudo().create(
+            self.env["ab_request_type"].sudo().create(
                 {
                     "name": "Invalid Type",
                     "department_id": unmanaged_department.id,
@@ -288,7 +288,7 @@ class TestAbRequestManagement(TransactionCase):
             }
         )
 
-        self.assertEqual(attachment.res_model, "ab.request")
+        self.assertEqual(attachment.res_model, "ab_request")
         self.assertEqual(attachment.res_id, request.id)
         self.assertEqual(
             request.with_user(self.manager_user).mapped("attachment_ids.name"),
@@ -336,7 +336,7 @@ class TestAbRequestManagement(TransactionCase):
             }
         )
 
-        self.assertEqual(attachment.res_model, "ab.request")
+        self.assertEqual(attachment.res_model, "ab_request")
         self.assertEqual(attachment.res_id, request.id)
 
     def test_request_user_chatter_hides_system_messages_but_keeps_manual_and_followup(self):
@@ -346,7 +346,7 @@ class TestAbRequestManagement(TransactionCase):
             message_type="comment",
             subtype_xmlid="mail.mt_comment",
         )
-        self.env["ab.request.followup"].with_user(self.requester_user).create(
+        self.env["ab_request_followup"].with_user(self.requester_user).create(
             {
                 "request_id": request.id,
                 "description": "Requester follow-up note",
@@ -357,7 +357,7 @@ class TestAbRequestManagement(TransactionCase):
 
         followup_message = self.env["mail.message"].sudo().search(
             [
-                ("model", "=", "ab.request"),
+                ("model", "=", "ab_request"),
                 ("res_id", "=", request.id),
                 ("ab_is_followup_message", "=", True),
             ],
@@ -365,7 +365,7 @@ class TestAbRequestManagement(TransactionCase):
         )
         system_notification = self.env["mail.message"].sudo().search(
             [
-                ("model", "=", "ab.request"),
+                ("model", "=", "ab_request"),
                 ("res_id", "=", request.id),
                 ("message_type", "=", "notification"),
                 ("body", "ilike", "System notification"),
@@ -374,7 +374,7 @@ class TestAbRequestManagement(TransactionCase):
         )
         tracking_message = self.env["mail.message"].sudo().search(
             [
-                ("model", "=", "ab.request"),
+                ("model", "=", "ab_request"),
                 ("res_id", "=", request.id),
                 ("tracking_value_ids", "!=", False),
             ],
@@ -395,7 +395,7 @@ class TestAbRequestManagement(TransactionCase):
             message_type="comment",
             subtype_xmlid="mail.mt_comment",
         )
-        self.env["ab.request.followup"].with_user(self.requester_user).create(
+        self.env["ab_request_followup"].with_user(self.requester_user).create(
             {
                 "request_id": request.id,
                 "description": "Visible follow-up note",
@@ -410,7 +410,7 @@ class TestAbRequestManagement(TransactionCase):
         visible_ids = set(visible_messages.ids)
         followup_message = self.env["mail.message"].sudo().search(
             [
-                ("model", "=", "ab.request"),
+                ("model", "=", "ab_request"),
                 ("res_id", "=", request.id),
                 ("ab_is_followup_message", "=", True),
             ],
@@ -418,7 +418,7 @@ class TestAbRequestManagement(TransactionCase):
         )
         system_notification = self.env["mail.message"].sudo().search(
             [
-                ("model", "=", "ab.request"),
+                ("model", "=", "ab_request"),
                 ("res_id", "=", request.id),
                 ("message_type", "=", "notification"),
                 ("body", "ilike", "Manager-visible notification"),
@@ -427,7 +427,7 @@ class TestAbRequestManagement(TransactionCase):
         )
         tracking_message = self.env["mail.message"].sudo().search(
             [
-                ("model", "=", "ab.request"),
+                ("model", "=", "ab_request"),
                 ("res_id", "=", request.id),
                 ("tracking_value_ids", "!=", False),
             ],

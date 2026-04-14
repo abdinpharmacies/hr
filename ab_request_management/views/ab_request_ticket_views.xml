@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="ab_request_followup_view_list" model="ir.ui.view">
-            <field name="name">ab.request.followup.list</field>
-            <field name="model">ab.request.followup</field>
+            <field name="name">ab_request_followup.list</field>
+            <field name="model">ab_request_followup</field>
             <field name="arch" type="xml">
                 <list string="Follow-ups" create="0" delete="0" edit="0" default_order="date desc" class="ab_request_followup_list">
                     <field name="date" string="Logged On"/>
@@ -14,8 +14,8 @@
         </record>
 
         <record id="ab_request_followup_view_kanban" model="ir.ui.view">
-            <field name="name">ab.request.followup.kanban</field>
-            <field name="model">ab.request.followup</field>
+            <field name="name">ab_request_followup.kanban</field>
+            <field name="model">ab_request_followup</field>
             <field name="arch" type="xml">
                 <kanban class="ab_request_followup_kanban" create="0" delete="0" edit="0" default_group_by="">
                     <field name="date"/>
@@ -43,8 +43,8 @@
         </record>
 
         <record id="ab_request_followup_view_form" model="ir.ui.view">
-            <field name="name">ab.request.followup.form</field>
-            <field name="model">ab.request.followup</field>
+            <field name="name">ab_request_followup.form</field>
+            <field name="model">ab_request_followup</field>
             <field name="arch" type="xml">
                 <form string="Follow-up">
                     <sheet class="ab_request_followup_sheet">
@@ -69,8 +69,8 @@
         </record>
 
         <record id="ab_request_view_search" model="ir.ui.view">
-            <field name="name">ab.request.search</field>
-            <field name="model">ab.request</field>
+            <field name="name">ab_request.search</field>
+            <field name="model">ab_request</field>
             <field name="arch" type="xml">
                 <search string="Requests">
                     <field name="name" string="Request Number"/>
@@ -113,8 +113,8 @@
         </record>
 
         <record id="ab_request_view_list" model="ir.ui.view">
-            <field name="name">ab.request.list</field>
-            <field name="model">ab.request</field>
+            <field name="name">ab_request.list</field>
+            <field name="model">ab_request</field>
             <field name="arch" type="xml">
                 <list string="Requests"
                       class="ab_request_list"
@@ -138,8 +138,8 @@
 
         <!--
         <record id="ab_request_view_kanban" model="ir.ui.view">
-            <field name="name">ab.request.kanban</field>
-            <field name="model">ab.request</field>
+            <field name="name">ab_request.kanban</field>
+            <field name="model">ab_request</field>
             <field name="arch" type="xml">
                 <kanban class="ab_request_kanban" default_group_by="state" records_draggable="true" can_open="1" js_class="ab_request_kanban">
                     <field name="name"/>
@@ -246,8 +246,8 @@
         -->
 
         <record id="ab_request_view_form" model="ir.ui.view">
-            <field name="name">ab.request.form</field>
-            <field name="model">ab.request</field>
+            <field name="name">ab_request.form</field>
+            <field name="model">ab_request</field>
             <field name="arch" type="xml">
                 <form string="Request" class="ab_request_form">
                     <header>
@@ -349,7 +349,7 @@
                                                        readonly="id != False and (not is_requester or state != 'under_review')"/>
                                             </div>
                                         </div>
-                                        <div class="ab_request_grid_row" invisible="id == False">
+                                        <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="link_ids" string="Related Links"/>
                                                 <field name="link_ids" mode="list">
@@ -542,7 +542,7 @@
 
         <record id="ab_request_my_action" model="ir.actions.act_window">
             <field name="name">My Requests</field>
-            <field name="res_model">ab.request</field>
+            <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="domain">[('requester_user_id', '=', uid)]</field>
@@ -559,7 +559,7 @@
 
         <record id="ab_request_assigned_action" model="ir.actions.act_window">
             <field name="name">Assigned Requests</field>
-            <field name="res_model">ab.request</field>
+            <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="domain">['|', ('assigned_employee_ids.user_id', '=', uid), ('assigned_user_id', '=', uid)]</field>
@@ -568,7 +568,7 @@
 
         <record id="ab_request_review_action" model="ir.actions.act_window">
             <field name="name">Review Queue</field>
-            <field name="res_model">ab.request</field>
+            <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="domain">[('manager_user_id', '=', uid)]</field>
@@ -577,7 +577,7 @@
 
         <record id="ab_request_all_action" model="ir.actions.act_window">
             <field name="name">All Requests</field>
-            <field name="res_model">ab.request</field>
+            <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
             <field name="context">{'search_default_filter_open_requests': 1, 'search_default_group_state': 1}</field>

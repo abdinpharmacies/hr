@@ -1,13 +1,59 @@
+from psycopg2 import sql
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected"}
+LEGACY_MODEL_RENAMES = {
+    "ab.request": "ab_request",
+    "ab.request.followup": "ab_request_followup",
+    "ab.request.followup.wizard": "ab_request_followup_wizard",
+    "ab.request.link": "ab_request_link",
+    "ab.request.type": "ab_request_type",
+}
+LEGACY_MODEL_REFERENCE_COLUMNS = (
+    ("ir_model_data", "model"),
+    ("ir_model_fields", "relation"),
+    ("ir_model_fields", "model"),
+    ("ir_attachment", "res_model"),
+    ("mail_message", "model"),
+    ("mail_followers", "res_model"),
+    ("mail_activity", "res_model"),
+    ("mail_activity_plan", "res_model"),
+    ("mail_activity_schedule", "res_model"),
+    ("mail_activity_type", "res_model"),
+    ("ir_act_window", "res_model"),
+    ("ir_act_client", "res_model"),
+    ("ir_act_report_xml", "model"),
+    ("ir_ui_view", "model"),
+    ("ir_filters", "model_id"),
+    ("ir_exports", "resource"),
+    ("mail_template", "model"),
+    ("sms_template", "model"),
+    ("mail_compose_message", "model"),
+    ("mail_scheduled_message", "model"),
+    ("mail_message_subtype", "res_model"),
+    ("mail_followers_edit", "res_model"),
+    ("base_import_import", "res_model"),
+    ("base_import_mapping", "res_model"),
+    ("privacy_lookup_wizard_line", "res_model"),
+    ("res_users_settings_embedded_action", "res_model"),
+    ("sms_composer", "res_model"),
+    ("snailmail_letter", "model"),
+)
+LEGACY_IR_MODEL_METADATA_FK_COLUMNS = {
+    ("ir_model_fields", "model_id"),
+    ("ir_model_constraint", "model"),
+    ("ir_model_relation", "model"),
+    ("ir_model_inherit", "model_id"),
+    ("ir_model_inherit", "parent_id"),
+}
 
 
 class AbRequest(models.Model):
-    _name = "ab.request"
+    _name = "ab_request"
     _table = "ab_request_ticket"
     _description = "Request"
     _inherit = ["mail.thread", "mail.activity.mixin"]
@@ -25,13 +71,13 @@ class AbRequest(models.Model):
     subject = fields.Char(required=True, tracking=True)
     link = fields.Char(string="Related Link", tracking=False)
     link_ids = fields.One2many(
-        "ab.request.link",
+        "ab_request_link",
         "request_id",
         string="Related Links",
     )
     description = fields.Text(required=True)
     request_type_id = fields.Many2one(
-        "ab.request.type",
+        "ab_request_type",
         required=True,
         ondelete="restrict",
         tracking=True,
@@ -106,7 +152,7 @@ class AbRequest(models.Model):
         copy=False,
         tracking=True,
     )
-    followup_ids = fields.One2many("ab.request.followup", "request_id", string="Follow-ups")
+    followup_ids = fields.One2many("ab_request_followup", "request_id", string="Follow-ups")
     attachment_ids = fields.Many2many(
         "ir.attachment",
         "ab_request_ticket_attachment_rel",
@@ -135,6 +181,112 @@ class AbRequest(models.Model):
         "UNIQUE(name)",
         "Request number must be unique.",
     )
+
+    def init(self):
+        """Migrate persisted references from legacy dotted model names."""
+        self._cleanup_legacy_model_metadata()
+        self._migrate_legacy_model_references()
+
+    @api.model
+    def _migrate_legacy_model_references(self):
+        cr = self.env.cr
+        for table_name, column_name in LEGACY_MODEL_REFERENCE_COLUMNS:
+            if not self._column_exists(table_name, column_name):
+                continue
+            for old_model, new_model in LEGACY_MODEL_RENAMES.items():
+                cr.execute(
+                    sql.SQL("UPDATE {table} SET {column} = %s WHERE {column} = %s").format(
+                        table=sql.Identifier(table_name),
+                        column=sql.Identifier(column_name),
+                    ),
+                    (new_model, old_model),
+                )
+
+    @api.model
+    def _cleanup_legacy_model_metadata(self):
+        cr = self.env.cr
+        for old_model, new_model in LEGACY_MODEL_RENAMES.items():
+            old_id = self._get_ir_model_id(old_model)
+            if not old_id:
+                continue
+
+            new_id = self._get_ir_model_id(new_model)
+            if not new_id:
+                cr.execute("UPDATE ir_model SET model = %s WHERE id = %s", (new_model, old_id))
+                continue
+
+            # New metadata rows already exist. Drop stale legacy metadata and repoint any
+            # remaining foreign keys before removing the obsolete ir.model record.
+            self._delete_legacy_ir_model_metadata(old_id, old_model)
+            self._repoint_ir_model_foreign_keys(old_id, new_id)
+            cr.execute("DELETE FROM ir_model WHERE id = %s", (old_id,))
+
+    @api.model
+    def _delete_legacy_ir_model_metadata(self, model_id, model_name):
+        cr = self.env.cr
+        if self._column_exists("ir_model_fields", "model_id"):
+            cr.execute("DELETE FROM ir_model_fields WHERE model_id = %s OR model = %s", (model_id, model_name))
+        if self._column_exists("ir_model_constraint", "model"):
+            cr.execute("DELETE FROM ir_model_constraint WHERE model = %s", (model_id,))
+        if self._column_exists("ir_model_relation", "model"):
+            cr.execute("DELETE FROM ir_model_relation WHERE model = %s", (model_id,))
+        if self._column_exists("ir_model_inherit", "model_id"):
+            cr.execute("DELETE FROM ir_model_inherit WHERE model_id = %s OR parent_id = %s", (model_id, model_id))
+
+    @api.model
+    def _repoint_ir_model_foreign_keys(self, old_id, new_id):
+        cr = self.env.cr
+        for table_name, column_name in self._get_ir_model_fk_columns():
+            if (table_name, column_name) in LEGACY_IR_MODEL_METADATA_FK_COLUMNS:
+                continue
+            cr.execute(
+                sql.SQL("UPDATE {table} SET {column} = %s WHERE {column} = %s").format(
+                    table=sql.Identifier(table_name),
+                    column=sql.Identifier(column_name),
+                ),
+                (new_id, old_id),
+            )
+
+    @api.model
+    def _get_ir_model_fk_columns(self):
+        self.env.cr.execute(
+            """
+            SELECT tc.table_name, kcu.column_name
+              FROM information_schema.table_constraints tc
+              JOIN information_schema.key_column_usage kcu
+                ON tc.constraint_name = kcu.constraint_name
+               AND tc.table_schema = kcu.table_schema
+              JOIN information_schema.constraint_column_usage ccu
+                ON ccu.constraint_name = tc.constraint_name
+               AND ccu.table_schema = tc.table_schema
+             WHERE tc.constraint_type = 'FOREIGN KEY'
+               AND ccu.table_name = 'ir_model'
+               AND ccu.column_name = 'id'
+               AND tc.table_schema = 'public'
+             ORDER BY tc.table_name, kcu.column_name
+            """
+        )
+        return self.env.cr.fetchall()
+
+    @api.model
+    def _get_ir_model_id(self, model_name):
+        self.env.cr.execute("SELECT id FROM ir_model WHERE model = %s", (model_name,))
+        row = self.env.cr.fetchone()
+        return row[0] if row else None
+
+    @api.model
+    def _column_exists(self, table_name, column_name):
+        self.env.cr.execute(
+            """
+            SELECT 1
+              FROM information_schema.columns
+             WHERE table_schema = 'public'
+               AND table_name = %s
+               AND column_name = %s
+            """,
+            (table_name, column_name),
+        )
+        return bool(self.env.cr.fetchone())
 
     @api.model
     def _default_requester_id(self):
@@ -352,7 +504,7 @@ class AbRequest(models.Model):
         prepared_vals["state"] = "under_review"
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
             prepared_vals["name"] = self.env["ir.sequence"].sudo().next_by_code(REQUEST_SEQUENCE_CODE) or "New"
-        request_type = self.env["ab.request.type"].browse(prepared_vals["request_type_id"])
+        request_type = self.env["ab_request_type"].browse(prepared_vals["request_type_id"])
         if not request_type.manager_id:
             raise ValidationError(_("The selected request type must have a department manager."))
         if prepared_vals.get("deadline") and fields.Datetime.to_datetime(prepared_vals["deadline"]) < fields.Datetime.now():
@@ -583,7 +735,7 @@ class AbRequest(models.Model):
         return {
             "type": "ir.actions.act_window",
             "name": _("Request Changes"),
-            "res_model": "ab.request.followup.wizard",
+            "res_model": "ab_request_followup_wizard",
             "view_mode": "form",
             "target": "new",
             "context": {"default_request_id": self.id},
@@ -604,7 +756,7 @@ class AbRequest(models.Model):
         return {
             "type": "ir.actions.act_window",
             "name": _("Follow-ups"),
-            "res_model": "ab.request.followup",
+            "res_model": "ab_request_followup",
             "view_mode": "list,form",
             "domain": [("request_id", "=", self.id)],
             "context": {
@@ -617,7 +769,7 @@ class AbRequest(models.Model):
         self.ensure_one()
         return {
             "type": "ir.actions.act_window",
-            "res_model": "ab.request",
+            "res_model": "ab_request",
             "res_id": self.id,
             "view_mode": "form",
             "target": "current",

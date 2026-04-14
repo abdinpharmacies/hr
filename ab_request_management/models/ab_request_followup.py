@@ -3,12 +3,12 @@ from odoo.exceptions import ValidationError
 
 
 class AbRequestFollowup(models.Model):
-    _name = "ab.request.followup"
+    _name = "ab_request_followup"
     _description = "Request Follow-up"
     _order = "date desc, id desc"
 
     request_id = fields.Many2one(
-        "ab.request",
+        "ab_request",
         required=True,
         ondelete="cascade",
         index=True,
@@ -26,7 +26,7 @@ class AbRequestFollowup(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         """Create follow-ups with request-level permission checks."""
-        requests = self.env["ab.request"].browse([vals["request_id"] for vals in vals_list if vals.get("request_id")])
+        requests = self.env["ab_request"].browse([vals["request_id"] for vals in vals_list if vals.get("request_id")])
         requests._check_followup_creation_rights()
         prepared_vals_list = [self._prepare_vals(vals) for vals in vals_list]
         records = super().create(prepared_vals_list)

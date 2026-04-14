@@ -104,7 +104,7 @@ export class AbRequestKanbanRenderer extends KanbanRenderer {
 
         this.toggleProcessing(dataRecordId, true);
         try {
-            await this.orm.call("ab.request", workflowAction, [[record.resId]]);
+            await this.orm.call("ab_request", workflowAction, [[record.resId]]);
             await this.props.list.model.load();
         } catch (error) {
             await this.props.list.model.load();
