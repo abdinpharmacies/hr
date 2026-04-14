@@ -32,4 +32,5 @@
         ],
     },
     'installable': True,
+    'icon': '/ab_request_management/static/description/1.svg'
 }
