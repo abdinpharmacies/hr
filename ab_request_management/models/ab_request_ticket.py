@@ -168,6 +168,21 @@ class AbRequest(models.Model):
             if not self._column_exists(table_name, column_name):
                 continue
             for old_model, new_model in LEGACY_MODEL_RENAMES.items():
+                if table_name == "ir_model":
+                    cr.execute(
+                        """
+                        UPDATE ir_model
+                           SET model = %s
+                         WHERE model = %s
+                           AND NOT EXISTS (
+                               SELECT 1
+                                 FROM ir_model existing_model
+                                WHERE existing_model.model = %s
+                           )
+                        """,
+                        (new_model, old_model, new_model),
+                    )
+                    continue
                 cr.execute(
                     sql.SQL("UPDATE {table} SET {column} = %s WHERE {column} = %s").format(
                         table=sql.Identifier(table_name),
