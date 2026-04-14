@@ -7,18 +7,10 @@
 <!--                  groups="base.group_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
 
         <menuitem id="ab_request_management_menu_root"
-<<<<<<< HEAD
                   name="Request Management"
                   sequence="10"
+                  web_icon="ab_request_management,static/description/1.svg"
                   groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
-=======
-          name="Request Management"
-          sequence="10"
-          web_icon="ab_request_management,static/description/1.svg"
-          groups="base.group_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
-
-
->>>>>>> ba0715d224393cbcbb346266edf8bd728faf2085
 
         <menuitem id="ab_request_management_menu_dashboard"
                   name="Dashboard"
