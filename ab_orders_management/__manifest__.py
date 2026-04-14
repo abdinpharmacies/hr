@@ -6,6 +6,7 @@
     "summary": "Manage pharmacy delivery pilots, branches, and assignments",
     "depends": ["base", "web", "ab_hr"],
     "application": True,
+    "icon": "ab_orders_management/static/description/icon.png",
     "data": [
         "security/groups.xml",
         "security/ir.model.access.csv",
@@ -20,7 +21,7 @@
     "demo": [
         "data/demo.xml",
     ],
-    "author": "OpenAI",
+    "author": "Alhassan Hossny",
     "assets": {
         "web.assets_backend": [
             "ab_orders_management/static/src/js/**/*.js",
