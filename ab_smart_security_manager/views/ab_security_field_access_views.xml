@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="ab_security_field_access_view_list" model="ir.ui.view">
+            <field name="name">ab_security_field_access.list</field>
+            <field name="model">ab_security_field_access</field>
+            <field name="arch" type="xml">
+                <list string="Field Permissions">
+                    <field name="role_id"/>
+                    <field name="field_id"/>
+                    <field name="field_type"/>
+                    <field name="relation_model_name" optional="hide"/>
+                    <field name="can_view"/>
+                    <field name="can_edit"/>
+                    <field name="warning_message" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_security_field_access_view_search" model="ir.ui.view">
+            <field name="name">ab_security_field_access.search</field>
+            <field name="model">ab_security_field_access</field>
+            <field name="arch" type="xml">
+                <search string="Field Permissions">
+                    <field name="role_id"/>
+                    <field name="field_id"/>
+                    <field name="field_model_name"/>
+                    <filter name="filter_custom_models" string="Custom Models" domain="[('field_model_name', '=like', 'ab_%')]"/>
+                    <filter name="filter_hide_technical" string="Hide Technical" domain="[('model_is_technical', '=', False)]"/>
+                    <filter name="filter_business_models" string="Business Models" domain="[('model_is_business', '=', True)]"/>
+                    <filter name="filter_relational" string="Relational Fields" domain="[('field_type', 'in', ['many2one', 'one2many', 'many2many'])]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_security_field_access_view_form" model="ir.ui.view">
+            <field name="name">ab_security_field_access.form</field>
+            <field name="model">ab_security_field_access</field>
+            <field name="arch" type="xml">
+                <form string="Field Permission">
+                    <sheet>
+                        <group col="2">
+                            <group>
+                                <field name="role_id"/>
+                                <field name="field_id"/>
+                                <field name="field_type" readonly="1"/>
+                                <field name="relation_model_name" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="can_view"/>
+                                <field name="can_edit"/>
+                                <field name="warning_message" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_security_field_access_action" model="ir.actions.act_window">
+            <field name="name">Field Permissions</field>
+            <field name="res_model">ab_security_field_access</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_security_field_access_view_search"/>
+            <field name="context">{'search_default_filter_custom_models': 1}</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,333 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_smart_security_manager
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-15 07:00+0000\n"
+"PO-Revision-Date: 2026-04-15 07:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+#. module: ab_smart_security_manager
+#: model:ir.module.category,name:ab_smart_security_manager.category_ab_smart_security_manager
+#: model:ir.module.module,shortdesc:ab_smart_security_manager.module_ab_smart_security_manager
+#: model:res.groups.privilege,name:ab_smart_security_manager.privilege_ab_smart_security_manager
+#: model:ir.ui.menu,name:ab_smart_security_manager.ab_smart_security_manager_menu_root
+msgid "Smart Security Manager"
+msgstr "إدارة الأمان الذكية"
+
+#. module: ab_smart_security_manager
+#: model:ir.module.module,summary:ab_smart_security_manager.module_ab_smart_security_manager
+msgid "Dynamic role, ACL, and field security management"
+msgstr "إدارة ديناميكية للأدوار وصلاحيات الوصول وحقول الأمان"
+
+#. module: ab_smart_security_manager
+#: model:res.groups,name:ab_smart_security_manager.group_ab_smart_security_manager_admin
+msgid "Smart Security Manager Admin"
+msgstr "مسؤول إدارة الأمان الذكية"
+
+#. module: ab_smart_security_manager
+#: model:ir.actions.act_window,name:ab_smart_security_manager.ab_security_role_action
+#: model:ir.ui.menu,name:ab_smart_security_manager.ab_smart_security_manager_menu_roles
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_list
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_search
+msgid "Roles"
+msgstr "الأدوار"
+
+#. module: ab_smart_security_manager
+#: model:ir.actions.act_window,name:ab_smart_security_manager.ab_security_model_access_action
+#: model:ir.ui.menu,name:ab_smart_security_manager.ab_smart_security_manager_menu_model_permissions
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_model_access_view_list
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_model_access_view_search
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_form
+msgid "Model Permissions"
+msgstr "صلاحيات النماذج"
+
+#. module: ab_smart_security_manager
+#: model:ir.actions.act_window,name:ab_smart_security_manager.ab_security_field_access_action
+#: model:ir.ui.menu,name:ab_smart_security_manager.ab_smart_security_manager_menu_field_permissions
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_list
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_search
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_form
+msgid "Field Permissions"
+msgstr "صلاحيات الحقول"
+
+#. module: ab_smart_security_manager
+#: model:ir.actions.act_window,name:ab_smart_security_manager.ab_security_user_role_assignment_action
+#: model:ir.ui.menu,name:ab_smart_security_manager.ab_smart_security_manager_menu_user_roles
+msgid "User Role Assignment"
+msgstr "إسناد الأدوار للمستخدمين"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_res_users_view_form_inherit_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_res_users__ab_role_ids
+msgid "Smart Security Roles"
+msgstr "أدوار الأمان الذكية"
+
+#. module: ab_smart_security_manager
+#: model:ir.model,name:ab_smart_security_manager.model_ab_security_role
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_form
+msgid "Security Role"
+msgstr "دور الأمان"
+
+#. module: ab_smart_security_manager
+#: model:ir.model,name:ab_smart_security_manager.model_ab_security_model_access
+msgid "Smart Security Model Access"
+msgstr "صلاحيات نموذج الأمان الذكي"
+
+#. module: ab_smart_security_manager
+#: model:ir.model,name:ab_smart_security_manager.model_ab_security_field_access
+msgid "Smart Security Field Access"
+msgstr "صلاحيات حقل الأمان الذكي"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__active
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__active
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_model_access_view_search
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__group_id
+msgid "Group"
+msgstr "المجموعة"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__parent_role_id
+msgid "Parent Role"
+msgstr "الدور الأب"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__inherited
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_search
+msgid "Inherited"
+msgstr "موروث"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__user_ids
+msgid "Users"
+msgstr "المستخدمون"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__model_access_ids
+msgid "Model Access"
+msgstr "صلاحيات النموذج"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__field_access_ids
+msgid "Field Access"
+msgstr "صلاحيات الحقل"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_role__managed_group
+msgid "Managed Group"
+msgstr "مجموعة مُدارة"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__role_id
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__role_id
+msgid "Role"
+msgstr "الدور"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__model_id
+msgid "Model"
+msgstr "النموذج"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__model_name
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__field_model_name
+msgid "Model Name"
+msgstr "اسم النموذج"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__model_display_name
+msgid "Model Label"
+msgstr "عنوان النموذج"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__perm_read
+msgid "Read Access"
+msgstr "صلاحية القراءة"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__perm_write
+msgid "Write Access"
+msgstr "صلاحية التعديل"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__perm_create
+msgid "Create Access"
+msgstr "صلاحية الإنشاء"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__perm_unlink
+msgid "Delete Access"
+msgstr "صلاحية الحذف"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__model_is_technical
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__model_is_technical
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_search
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_model_access_view_search
+msgid "Hide Technical"
+msgstr "إخفاء النماذج التقنية"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__model_is_business
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__model_is_business
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_search
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_model_access_view_search
+msgid "Business Models"
+msgstr "نماذج الأعمال"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_model_access__managed_access_id
+msgid "Generated ACLs"
+msgstr "صلاحيات ACL المُنشأة"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_model_access_view_form
+msgid "Model Permission"
+msgstr "صلاحية النموذج"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_model_access_view_search
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_search
+msgid "Custom Models"
+msgstr "النماذج المخصصة"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__field_id
+msgid "Field"
+msgstr "الحقل"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__field_name
+msgid "Field Name"
+msgstr "اسم الحقل"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__field_label
+msgid "Field Label"
+msgstr "عنوان الحقل"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__field_type
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_search
+msgid "Field Type"
+msgstr "نوع الحقل"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__relation_model_name
+msgid "Related Model"
+msgstr "النموذج المرتبط"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__can_view
+msgid "Can View"
+msgstr "يمكن العرض"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__can_edit
+msgid "Can Edit"
+msgstr "يمكن التعديل"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ab_security_field_access__warning_message
+msgid "Warning Message"
+msgstr "رسالة التحذير"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_form
+msgid "Field Permission"
+msgstr "صلاحية الحقل"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_field_access_view_search
+msgid "Relational Fields"
+msgstr "الحقول العلائقية"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_res_groups__ab_security_managed
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ir_model_access__ab_security_managed
+msgid "Managed By Smart Security Manager"
+msgstr "مُدار بواسطة إدارة الأمان الذكية"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_res_groups__ab_security_role_id
+msgid "Smart Security Role"
+msgstr "دور الأمان الذكي"
+
+#. module: ab_smart_security_manager
+#: model:ir.model.fields,field_description:ab_smart_security_manager.field_ir_model_access__ab_security_model_access_id
+msgid "Security Model Access Source"
+msgstr "مصدر صلاحية النموذج"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_form
+msgid "Apply Permissions"
+msgstr "تطبيق الصلاحيات"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_form
+msgid "Duplicate Role"
+msgstr "نسخ الدور"
+
+#. module: ab_smart_security_manager
+#: model_terms:ir.ui.view,arch_db:ab_smart_security_manager.ab_security_role_view_form
+msgid "Inherit Role"
+msgstr "توريث الدور"
+
+#. module: ab_smart_security_manager
+#. odoo-python
+#: code:addons/ab_smart_security_manager/models/ab_security_role.py:0
+msgid "Copy of %s"
+msgstr "نسخة من %s"
+
+#. module: ab_smart_security_manager
+#. odoo-python
+#: code:addons/ab_smart_security_manager/models/ab_security_role.py:0
+msgid "Inherited from %s"
+msgstr "موروث من %s"
+
+#. module: ab_smart_security_manager
+#. odoo-python
+#: code:addons/ab_smart_security_manager/models/ab_security_field_access.py:0
+msgid "A field cannot be editable if it is not viewable."
+msgstr "لا يمكن أن يكون الحقل قابلاً للتعديل إذا لم يكن قابلاً للعرض."
+
+#. module: ab_smart_security_manager
+#: model:ir.model.constraint,message:ab_smart_security_manager.constraint_ab_security_role_group_unique
+msgid "Each security role must be linked to a unique group."
+msgstr "يجب ربط كل دور أمان بمجموعة فريدة."
+
+#. module: ab_smart_security_manager
+#: model:ir.model.constraint,message:ab_smart_security_manager.constraint_ab_security_model_access_role_model_unique
+msgid "A role can only have one managed ACL line per model."
+msgstr "يمكن لكل دور أن يملك سطر ACL مُدارًا واحدًا فقط لكل نموذج."
+
+#. module: ab_smart_security_manager
+#: model:ir.model.constraint,message:ab_smart_security_manager.constraint_ab_security_field_access_role_field_unique
+msgid "A role can only have one managed field access line per field."
+msgstr "يمكن لكل دور أن يملك سطر صلاحية حقل مُدارًا واحدًا فقط لكل حقل."
+
+#. module: ab_smart_security_manager
+#. odoo-python
+#: code:addons/ab_smart_security_manager/models/ab_security_field_access.py:0
+msgid "Relation metadata is missing; the field is treated as a plain field."
+msgstr "بيانات العلاقة غير موجودة، وسيتم التعامل مع الحقل كحقل عادي."

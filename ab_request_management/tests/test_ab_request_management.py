@@ -261,6 +261,12 @@ class TestAbRequestManagement(TransactionCase):
         request.with_user(self.second_assignee_user).action_request_confirmation()
         self.assertEqual(request.state, "under_requester_confirmation")
 
+    def test_internal_users_receive_request_access_groups(self):
+        self.assertIn(self.request_user_group, self.requester_user.group_ids)
+        self.assertIn(self.request_user_group, self.assignee_user.group_ids)
+        self.assertIn(self.request_user_group, self.outsider_user.group_ids)
+        self.assertIn(self.request_manager_group, self.manager_user.group_ids)
+
     def test_request_type_requires_department_manager(self):
         unmanaged_department = self.Departments.create({"name": "No Manager"})
         with self.assertRaises(ValidationError):

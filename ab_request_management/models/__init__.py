@@ -4,3 +4,4 @@ from . import ab_request_followup
 from . import ab_request_followup_wizard
 from . import ab_request_link
 from . import mail_message
+from . import res_users

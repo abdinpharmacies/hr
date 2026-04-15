@@ -5,6 +5,7 @@
     'category': 'AbdinSupplyChain',
     'application': True,
     'depends': ['base', 'mail', 'web', 'ab_hr'],
+    'post_init_hook': 'post_init_hook',
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',
