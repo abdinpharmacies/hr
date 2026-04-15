@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_contract_view_form_total_invoice_discount" model="ir.ui.view">
+            <field name="name">ab.contract.view.form.total.invoice.discount</field>
+            <field name="model">ab_contract</field>
+            <field name="inherit_id" ref="ab_sales_contract.ab_contract_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='max_bill_value']" position="after">
+                    <field name="allow_total_invoice_discount"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_sales_header_view_form_total_invoice_discount" model="ir.ui.view">
+            <field name="name">ab.sales.header.view.form.total.invoice.discount</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales_contract.ab_sales_header_view_form_inherit_contract"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='current_customer']//group//field[@name='contract_id']" position="after">
+                    <field name="contract_allow_total_invoice_discount" invisible="1"/>
+                    <field name="total_invoice_discount"
+                           readonly="status != 'prepending'"
+                           invisible="contract_id == False or contract_allow_total_invoice_discount == False"/>
+                </xpath>
+
+                <xpath expr="//page[@name='current_customer']//group//field[@name='discount']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='current_customer']//group//field[@name='total_after_discount']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='current_customer']//group//field[@name='cust_pay']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//page[@name='current_customer']//group//field[@name='company_pay']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

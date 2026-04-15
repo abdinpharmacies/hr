@@ -518,26 +518,6 @@ class AbPharmacyDeliveryPilot(models.Model):
                 }
             )
 
-        free_pilots = [
-            pilot
-            for pilot in pilot_payload
-            if pilot["status"] == "free"
-        ]
-        fifo_available_pilots = sorted(
-            [pilot for pilot in free_pilots if pilot["sign_in_datetime"]]
-            or free_pilots,
-            key=lambda x: (
-                x["sign_in_datetime"] or "",
-                x["sign_in_order"] or 999999,
-                x["name"] or "",
-            ),
-        )
-        in_delivery_pilots = [
-            pilot
-            for pilot in pilot_payload
-            if pilot["status"] == "in_delivery"
-        ]
-
         return {
             "branches": branch_payload,
             "selected_branch_id": selected_branch_id or 0,
@@ -552,16 +532,23 @@ class AbPharmacyDeliveryPilot(models.Model):
             ],
             "selected_department_id": selected_department_id,
             "pilots": pilot_payload,
-            "available_pilots": fifo_available_pilots,
-            "available_pilots_fifo": fifo_available_pilots,
+            "available_pilots": sorted(
+                [
+                    pilot
+                    for pilot in pilot_payload
+                    if pilot["status"] == "free" and pilot["sign_in_datetime"]
+                ]
+                or [pilot for pilot in pilot_payload if pilot["status"] == "free"],
+                key=lambda x: (x["sign_in_order"] or 999999, x["name"]),
+            ),
             "in_delivery_pilots": sorted(
                 [
                     pilot
-                    for pilot in in_delivery_pilots
-                    if pilot["sign_in_datetime"]
+                    for pilot in pilot_payload
+                    if pilot["status"] == "in_delivery" and pilot["sign_in_datetime"]
                 ]
-                or in_delivery_pilots,
-                key=lambda x: (x["sign_in_datetime"] or "", x["sign_in_order"] or 999999, x["name"] or ""),
+                or [pilot for pilot in pilot_payload if pilot["status"] == "in_delivery"],
+                key=lambda x: (x["sign_in_order"] or 999999, x["name"]),
             ),
             "totals": {
                 "pilot_count": len(pilot_payload),

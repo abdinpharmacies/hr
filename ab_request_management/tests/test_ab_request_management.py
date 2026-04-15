@@ -1,6 +1,5 @@
 from datetime import timedelta
 from unittest.mock import patch
-from lxml import etree
 
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -26,7 +25,8 @@ class TestAbRequestManagement(TransactionCase):
         )
         self.outsider_user = self._create_user("Outsider User", "outsider_user_test", [self.request_user_group.id])
         self.admin_user = self._create_user("Admin User", "admin_user_test", [self.request_admin_group.id])
-        self.no_employee_user = self._create_user("No Employee User", "no_employee_user_test", [self.request_user_group.id])
+        self.no_employee_user = self._create_user("No Employee User", "no_employee_user_test",
+                                                  [self.request_user_group.id])
 
         self.requester_employee = self._create_employee("Requester Employee", self.requester_user)
         self.manager_employee = self._create_employee("Manager Employee", self.manager_user)
@@ -87,13 +87,13 @@ class TestAbRequestManagement(TransactionCase):
     def test_request_creation_sets_under_review_and_manager(self):
         request = self._create_request()
         self.assertEqual(request.state, "under_review")
-        self.assertEqual(request.requester_id, self.requester_employee)
+        self.assertEqual(request.employee_id, self.requester_employee)
         self.assertEqual(request.manager_id, self.manager_employee)
 
     def test_request_creation_requires_current_user_employee(self):
         with self.assertRaisesRegex(
-            UserError,
-            "You cannot create a request because you are not linked to an employee.",
+            ValidationError,
+            "You must be linked to an employee to use the Request system.",
         ):
             self.env["ab_request"].with_user(self.no_employee_user).create(
                 {
@@ -105,22 +105,12 @@ class TestAbRequestManagement(TransactionCase):
 
     def test_request_form_open_is_blocked_without_employee(self):
         with self.assertRaisesRegex(
-            UserError,
-            "You cannot create a request because you are not linked to an employee.",
+            ValidationError,
+            "You must be linked to an employee to use the Request system.",
         ):
             self.env["ab_request"].with_user(self.no_employee_user).default_get(
-                ["subject", "description", "request_type_id", "requester_id"]
+                ["subject", "description", "request_type_id", "employee_id", "user_id"]
             )
-
-    def test_request_views_disable_create_without_employee(self):
-        list_view = self.env["ab_request"].with_user(self.no_employee_user).get_view(view_type="list")
-        form_view = self.env["ab_request"].with_user(self.no_employee_user).get_view(view_type="form")
-
-        list_root = etree.fromstring(list_view["arch"])
-        form_root = etree.fromstring(form_view["arch"])
-
-        self.assertEqual(list_root.get("create"), "false")
-        self.assertEqual(form_root.get("create"), "false")
 
     def test_subject_and_description_must_contain_letters(self):
         with self.assertRaises(ValidationError):
@@ -175,7 +165,8 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.requester_user).action_mark_satisfied()
             request.with_user(self.assignee_user).action_close()
         self.assertEqual(request.state, "closed")
-        self.assertSetEqual(set(request.assigned_employee_ids.ids), {self.assignee_employee.id, self.second_assignee_employee.id})
+        self.assertSetEqual(set(request.assigned_employee_ids.ids),
+                            {self.assignee_employee.id, self.second_assignee_employee.id})
 
     def test_manager_can_edit_assignment_details_after_assignment(self):
         request = self._create_request()
@@ -196,7 +187,8 @@ class TestAbRequestManagement(TransactionCase):
                     "deadline": updated_deadline,
                 }
             )
-        self.assertSetEqual(set(request.assigned_employee_ids.ids), {self.assignee_employee.id, self.second_assignee_employee.id})
+        self.assertSetEqual(set(request.assigned_employee_ids.ids),
+                            {self.assignee_employee.id, self.second_assignee_employee.id})
         self.assertEqual(fields.Datetime.to_string(request.deadline), updated_deadline)
 
     def test_requester_can_add_followup_before_confirmation(self):
@@ -264,7 +256,8 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.admin_user).action_close()
         self.assertEqual(request.state, "closed")
         self.assertEqual(followup.user_id, self.admin_user)
-        self.assertSetEqual(set(request.assigned_employee_ids.ids), {self.assignee_employee.id, self.second_assignee_employee.id})
+        self.assertSetEqual(set(request.assigned_employee_ids.ids),
+                            {self.assignee_employee.id, self.second_assignee_employee.id})
 
     def test_admin_can_approve_when_admin_user_is_department_manager(self):
         self.department.manager_id = self.admin_employee.id
@@ -275,7 +268,8 @@ class TestAbRequestManagement(TransactionCase):
 
     def test_record_rules_hide_unrelated_requests(self):
         request = self._create_request()
-        self.assertEqual(self.env["ab_request"].with_user(self.outsider_user).search_count([("id", "=", request.id)]), 0)
+        self.assertEqual(self.env["ab_request"].with_user(self.outsider_user).search_count([("id", "=", request.id)]),
+                         0)
         with self.assertRaises(AccessError):
             request.with_user(self.outsider_user).read(["subject"])
 
@@ -291,7 +285,8 @@ class TestAbRequestManagement(TransactionCase):
             )
             request.with_user(self.manager_user).action_assign()
 
-        self.assertEqual(self.env["ab_request"].with_user(self.second_assignee_user).search_count([("id", "=", request.id)]), 1)
+        self.assertEqual(
+            self.env["ab_request"].with_user(self.second_assignee_user).search_count([("id", "=", request.id)]), 1)
         request.with_user(self.second_assignee_user).action_request_confirmation()
         self.assertEqual(request.state, "under_requester_confirmation")
 
@@ -417,10 +412,13 @@ class TestAbRequestManagement(TransactionCase):
         mail_messages = self.env["mail.message"].with_user(self.requester_user)
 
         self.assertTrue(mail_messages._ab_is_request_user_visible_message(manual_message))
-        self.assertTrue(mail_messages._ab_is_request_user_visible_message(followup_message.with_user(self.requester_user)))
-        self.assertFalse(mail_messages._ab_is_request_user_visible_message(system_notification.with_user(self.requester_user)))
+        self.assertTrue(
+            mail_messages._ab_is_request_user_visible_message(followup_message.with_user(self.requester_user)))
+        self.assertFalse(
+            mail_messages._ab_is_request_user_visible_message(system_notification.with_user(self.requester_user)))
         if tracking_message:
-            self.assertFalse(mail_messages._ab_is_request_user_visible_message(tracking_message.with_user(self.requester_user)))
+            self.assertFalse(
+                mail_messages._ab_is_request_user_visible_message(tracking_message.with_user(self.requester_user)))
 
     def test_manager_chatter_keeps_full_history(self):
         request = self._create_request()

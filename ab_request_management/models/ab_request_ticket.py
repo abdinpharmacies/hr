@@ -1,57 +1,13 @@
-from psycopg2 import sql
 from lxml import etree
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected"}
-LEGACY_MODEL_RENAMES = {
-    "ab.request": "ab_request",
-    "ab.request.followup": "ab_request_followup",
-    "ab.request.followup.wizard": "ab_request_followup_wizard",
-    "ab.request.link": "ab_request_link",
-    "ab.request.type": "ab_request_type",
-}
-LEGACY_MODEL_REFERENCE_COLUMNS = (
-    ("ir_model_data", "model"),
-    ("ir_model_fields", "relation"),
-    ("ir_model_fields", "model"),
-    ("ir_attachment", "res_model"),
-    ("mail_message", "model"),
-    ("mail_followers", "res_model"),
-    ("mail_activity", "res_model"),
-    ("mail_activity_plan", "res_model"),
-    ("mail_activity_schedule", "res_model"),
-    ("mail_activity_type", "res_model"),
-    ("ir_act_window", "res_model"),
-    ("ir_act_client", "res_model"),
-    ("ir_act_report_xml", "model"),
-    ("ir_ui_view", "model"),
-    ("ir_filters", "model_id"),
-    ("ir_exports", "resource"),
-    ("mail_template", "model"),
-    ("sms_template", "model"),
-    ("mail_compose_message", "model"),
-    ("mail_scheduled_message", "model"),
-    ("mail_message_subtype", "res_model"),
-    ("mail_followers_edit", "res_model"),
-    ("base_import_import", "res_model"),
-    ("base_import_mapping", "res_model"),
-    ("privacy_lookup_wizard_line", "res_model"),
-    ("res_users_settings_embedded_action", "res_model"),
-    ("sms_composer", "res_model"),
-    ("snailmail_letter", "model"),
-)
-LEGACY_IR_MODEL_METADATA_FK_COLUMNS = {
-    ("ir_model_fields", "model_id"),
-    ("ir_model_constraint", "model"),
-    ("ir_model_relation", "model"),
-    ("ir_model_inherit", "model_id"),
-    ("ir_model_inherit", "parent_id"),
-}
-REQUEST_EMPLOYEE_LINK_ERROR = "You cannot create a request because you are not linked to an employee."
+REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the Request system."
+REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
 
 class AbRequest(models.Model):
@@ -84,20 +40,18 @@ class AbRequest(models.Model):
         ondelete="restrict",
         tracking=True,
     )
-    requester_id = fields.Many2one(
+
+    user_id = fields.Many2one("res.users", readonly=True, default=lambda self: self.env.user)
+
+    employee_id = fields.Many2one(
         "ab_hr_employee",
         required=True,
         readonly=True,
-        default=lambda self: self._default_requester_id(),
+        default=lambda self: self._default_employee_id(),
         ondelete="restrict",
         tracking=True,
     )
-    requester_user_id = fields.Many2one(
-        "res.users",
-        string="Requester User",
-        related="requester_id.user_id",
-        store=True,
-    )
+
     department_id = fields.Many2one(
         "ab_hr_department",
         related="request_type_id.department_id",
@@ -121,7 +75,6 @@ class AbRequest(models.Model):
         string="Primary Assigned Employee",
         ondelete="restrict",
         tracking=True,
-        help="Legacy primary assignee kept for upgrade compatibility.",
     )
     assigned_employee_ids = fields.Many2many(
         "ab_hr_employee",
@@ -179,165 +132,46 @@ class AbRequest(models.Model):
     can_add_followup = fields.Boolean(compute="_compute_access_flags")
     can_edit_assignment_details = fields.Boolean(compute="_compute_access_flags")
 
-    _ab_request_name_uniq = models.Constraint(
-        "UNIQUE(name)",
-        "Request number must be unique.",
-    )
-
-    def init(self):
-        """Migrate persisted references from legacy dotted model names."""
-        self._cleanup_legacy_model_metadata()
-        self._migrate_legacy_model_references()
+    _ab_request_name_uniq = models.Constraint("UNIQUE(name)", "Request number must be unique.")
 
     @api.model
-    def _migrate_legacy_model_references(self):
-        cr = self.env.cr
-        for table_name, column_name in LEGACY_MODEL_REFERENCE_COLUMNS:
-            if not self._column_exists(table_name, column_name):
-                continue
-            for old_model, new_model in LEGACY_MODEL_RENAMES.items():
-                if table_name == "ir_model":
-                    cr.execute(
-                        """
-                        UPDATE ir_model
-                           SET model = %s
-                         WHERE model = %s
-                           AND NOT EXISTS (
-                               SELECT 1
-                                 FROM ir_model existing_model
-                                WHERE existing_model.model = %s
-                           )
-                        """,
-                        (new_model, old_model, new_model),
-                    )
-                    continue
-                cr.execute(
-                    sql.SQL("UPDATE {table} SET {column} = %s WHERE {column} = %s").format(
-                        table=sql.Identifier(table_name),
-                        column=sql.Identifier(column_name),
-                    ),
-                    (new_model, old_model),
-                )
-
-    @api.model
-    def _cleanup_legacy_model_metadata(self):
-        cr = self.env.cr
-        for old_model, new_model in LEGACY_MODEL_RENAMES.items():
-            old_id = self._get_ir_model_id(old_model)
-            if not old_id:
-                continue
-
-            new_id = self._get_ir_model_id(new_model)
-            if not new_id:
-                cr.execute("UPDATE ir_model SET model = %s WHERE id = %s", (new_model, old_id))
-                continue
-
-            # New metadata rows already exist. Drop stale legacy metadata and repoint any
-            # remaining foreign keys before removing the obsolete ir.model record.
-            self._delete_legacy_ir_model_metadata(old_id, old_model)
-            self._repoint_ir_model_foreign_keys(old_id, new_id)
-            cr.execute("DELETE FROM ir_model WHERE id = %s", (old_id,))
-
-    @api.model
-    def _delete_legacy_ir_model_metadata(self, model_id, model_name):
-        cr = self.env.cr
-        if self._column_exists("ir_model_fields", "model_id"):
-            cr.execute("DELETE FROM ir_model_fields WHERE model_id = %s OR model = %s", (model_id, model_name))
-        if self._column_exists("ir_model_constraint", "model"):
-            cr.execute("DELETE FROM ir_model_constraint WHERE model = %s", (model_id,))
-        if self._column_exists("ir_model_relation", "model"):
-            cr.execute("DELETE FROM ir_model_relation WHERE model = %s", (model_id,))
-        if self._column_exists("ir_model_inherit", "model_id"):
-            cr.execute("DELETE FROM ir_model_inherit WHERE model_id = %s OR parent_id = %s", (model_id, model_id))
-
-    @api.model
-    def _repoint_ir_model_foreign_keys(self, old_id, new_id):
-        cr = self.env.cr
-        for table_name, column_name in self._get_ir_model_fk_columns():
-            if (table_name, column_name) in LEGACY_IR_MODEL_METADATA_FK_COLUMNS:
-                continue
-            cr.execute(
-                sql.SQL("UPDATE {table} SET {column} = %s WHERE {column} = %s").format(
-                    table=sql.Identifier(table_name),
-                    column=sql.Identifier(column_name),
-                ),
-                (new_id, old_id),
-            )
-
-    @api.model
-    def _get_ir_model_fk_columns(self):
-        self.env.cr.execute(
-            """
-            SELECT tc.table_name, kcu.column_name
-              FROM information_schema.table_constraints tc
-              JOIN information_schema.key_column_usage kcu
-                ON tc.constraint_name = kcu.constraint_name
-               AND tc.table_schema = kcu.table_schema
-              JOIN information_schema.constraint_column_usage ccu
-                ON ccu.constraint_name = tc.constraint_name
-               AND ccu.table_schema = tc.table_schema
-             WHERE tc.constraint_type = 'FOREIGN KEY'
-               AND ccu.table_name = 'ir_model'
-               AND ccu.column_name = 'id'
-               AND tc.table_schema = 'public'
-             ORDER BY tc.table_name, kcu.column_name
-            """
-        )
-        return self.env.cr.fetchall()
-
-    @api.model
-    def _get_ir_model_id(self, model_name):
-        self.env.cr.execute("SELECT id FROM ir_model WHERE model = %s", (model_name,))
-        row = self.env.cr.fetchone()
-        return row[0] if row else None
-
-    @api.model
-    def _column_exists(self, table_name, column_name):
-        self.env.cr.execute(
-            """
-            SELECT 1
-              FROM information_schema.columns
-             WHERE table_schema = 'public'
-               AND table_name = %s
-               AND column_name = %s
-            """,
-            (table_name, column_name),
-        )
-        return bool(self.env.cr.fetchone())
-
-    @api.model
-    def _default_requester_id(self):
-        """Return the current employee linked to the current user."""
-        return self._get_requester_employee_id()
+    def _default_employee_id(self):
+        """Return the current user's employee or block access to the request system."""
+        return self._get_requester_employee_id_or_raise()
 
     @api.model
     def _get_requester_employee_id(self):
         """Resolve the employee to use as requester for the current user."""
-        user = self.env.user
-        employee = getattr(user, "employee_id", False)
-        if employee:
-            return employee.id
-        employee = user.ab_employee_ids[:1]
-        return employee.id if employee else False
+        employee = self.env["ab_hr_employee"].sudo().search([("user_id", "=", self.env.user.id)], limit=1)
+        return employee.id
 
     @api.model
-    def _get_current_user_requester_id_or_raise(self):
-        """Return the current user's employee id or block request creation clearly."""
-        requester_id = self._get_requester_employee_id()
-        if not requester_id:
-            raise UserError(_(REQUEST_EMPLOYEE_LINK_ERROR))
-        return requester_id
+    def _get_requester_employee_id_or_raise(self):
+        """Return the requester employee id or raise a clear user-facing error."""
+        employee_id = self._get_requester_employee_id()
+        if not employee_id:
+            raise ValidationError(_(REQUEST_EMPLOYEE_LINK_ERROR))
+        return employee_id
 
     @api.model
-    def _current_user_can_create_request(self):
-        """Return whether the current user is linked to an employee."""
-        return bool(self._get_requester_employee_id())
+    def default_get(self, fields_list):
+        """Show a clear message when the current user is not linked to an employee."""
+        defaults = super().default_get(fields_list)
+        if "user_id" in fields_list and not self.env.context.get("default_user_id"):
+            defaults["user_id"] = self.env.user.id
+        if not self.env.context.get("default_employee_id") and (
+                self.env.context.get("params", {}).get("view_type") == "form" or "employee_id" in fields_list
+        ):
+            defaults["employee_id"] = self._get_requester_employee_id_or_raise()
+        return defaults
 
     @api.model
     def get_view(self, view_id=None, view_type="form", **options):
-        """Hide create entry points for users who are not linked to an employee."""
+        """Disable create entry points when the current user is not linked to an employee."""
         result = super().get_view(view_id=view_id, view_type=view_type, **options)
-        if view_type not in {"list", "form", "kanban"} or self._current_user_can_create_request():
+        if view_type not in {"list", "form", "kanban"}:
+            return result
+        if self._get_requester_employee_id():
             return result
 
         arch = result.get("arch")
@@ -368,7 +202,7 @@ class AbRequest(models.Model):
 
     @api.depends_context("uid")
     @api.depends(
-        "requester_user_id",
+        "user_id",
         "manager_user_id",
         "assigned_employee_ids",
         "request_type_id",
@@ -382,7 +216,7 @@ class AbRequest(models.Model):
         is_request_admin = current_user.has_group("ab_request_management.group_ab_request_management_admin")
         for record in self:
             record.is_request_admin = is_request_admin
-            record.is_requester = record.requester_user_id == current_user
+            record.is_requester = record.user_id == current_user
             record.is_department_manager = record._is_current_user_department_manager()
             record.is_assigned_employee = current_user in record._get_effective_assigned_users()
             record.can_assign = (record.is_department_manager or is_request_admin) and record.state == "scheduled"
@@ -396,7 +230,7 @@ class AbRequest(models.Model):
     @api.depends(
         "deadline",
         "state",
-        "requester_user_id",
+        "user_id",
         "manager_user_id",
         "assigned_employee_ids",
         "assigned_employee_id",
@@ -449,12 +283,12 @@ class AbRequest(models.Model):
         return self.request_type_id.department_id.manager_id.user_id == self.env.user
 
     def _get_effective_assigned_employees(self):
-        """Return assigned employees, falling back to the legacy primary assignee."""
+        """Return assigned employees, falling back to the primary assignee."""
         self.ensure_one()
         return self.assigned_employee_ids or self.assigned_employee_id
 
     def _get_effective_assigned_users(self):
-        """Return assigned users, falling back to the legacy primary assignee user."""
+        """Return assigned users, falling back to the primary assignee user."""
         self.ensure_one()
         return self._get_effective_assigned_employees().mapped("user_id") or self.assigned_user_id
 
@@ -491,15 +325,14 @@ class AbRequest(models.Model):
             if record.deadline and record.deadline < now:
                 raise ValidationError(_("Deadline cannot be in the past."))
 
-    @api.model
-    def default_get(self, fields_list):
-        """Block opening a new request form for users without an employee."""
-        defaults = super().default_get(fields_list)
-        if not self.env.context.get("default_requester_id") and (
-            self.env.context.get("params", {}).get("view_type") == "form" or "requester_id" in fields_list
-        ):
-            defaults["requester_id"] = self._get_current_user_requester_id_or_raise()
-        return defaults
+    @api.constrains("user_id", "employee_id")
+    def _check_request_owner_employee(self):
+        """Ensure every request belongs to the creator's linked employee."""
+        for record in self:
+            if not record.employee_id:
+                raise ValidationError(_(REQUEST_EMPLOYEE_LINK_ERROR))
+            if record.employee_id.user_id != record.user_id:
+                raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -534,9 +367,8 @@ class AbRequest(models.Model):
         """Bind uploaded attachments to the request so all authorized users can access them."""
         for record in self:
             attachments = record.attachment_ids.sudo().filtered(
-                lambda attachment: not attachment.res_model or (
-                    attachment.res_model == record._name and attachment.res_id in (False, 0, record.id)
-                )
+                lambda attachment: not attachment.res_model
+                or (attachment.res_model == record._name and attachment.res_id in (False, 0, record.id))
             )
             if attachments:
                 attachments.write({
@@ -545,7 +377,7 @@ class AbRequest(models.Model):
                 })
 
     def _sync_primary_assignee(self):
-        """Mirror the first assigned employee into the legacy primary field."""
+        """Keep the primary assignee in sync with the first assigned employee."""
         for record in self:
             primary_employee = record.assigned_employee_ids[:1]
             if record.assigned_employee_id != primary_employee:
@@ -555,26 +387,28 @@ class AbRequest(models.Model):
     def _prepare_create_vals(self, vals):
         """Normalize incoming values before request creation."""
         prepared_vals = dict(vals or {})
-        current_requester_id = self._get_current_user_requester_id_or_raise()
+        current_employee_id = self._default_employee_id()
         prepared_vals["subject"] = (prepared_vals.get("subject") or "").strip()
         prepared_vals["description"] = (prepared_vals.get("description") or "").strip()
+        prepared_vals["user_id"] = self.env.user.id
         if not prepared_vals.get("subject"):
             raise ValidationError(_("Subject is required."))
         if not prepared_vals.get("description"):
             raise ValidationError(_("Description is required."))
         self._validate_meaningful_text("subject", prepared_vals["subject"])
         self._validate_meaningful_text("description", prepared_vals["description"])
-        if not prepared_vals.get("requester_id"):
-            prepared_vals["requester_id"] = current_requester_id
-        if not prepared_vals.get("requester_id"):
-            raise UserError(_(REQUEST_EMPLOYEE_LINK_ERROR))
+        if not prepared_vals.get("employee_id"):
+            prepared_vals["employee_id"] = current_employee_id
+        elif prepared_vals["employee_id"] != current_employee_id:
+            raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
         prepared_vals["state"] = "under_review"
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
             prepared_vals["name"] = self.env["ir.sequence"].sudo().next_by_code(REQUEST_SEQUENCE_CODE) or "New"
         request_type = self.env["ab_request_type"].browse(prepared_vals["request_type_id"])
         if not request_type.manager_id:
             raise ValidationError(_("The selected request type must have a department manager."))
-        if prepared_vals.get("deadline") and fields.Datetime.to_datetime(prepared_vals["deadline"]) < fields.Datetime.now():
+        if prepared_vals.get("deadline") and fields.Datetime.to_datetime(
+                prepared_vals["deadline"]) < fields.Datetime.now():
             raise ValidationError(_("Deadline cannot be in the past."))
         return prepared_vals
 
@@ -585,12 +419,18 @@ class AbRequest(models.Model):
             raise ValidationError(_("%s must contain letters and cannot be only numbers or symbols.") % field_label.title())
 
     def _check_immutable_fields(self, vals):
-        """Prevent edits to subject and description after creation."""
-        immutable_fields = {"subject", "description"}
+        """Prevent edits to subject, description, requester user, and requester employee after creation."""
+        immutable_fields = {"subject", "description", "user_id", "employee_id"}
         if not immutable_fields & set(vals):
             return
         for record in self:
             for field_name in immutable_fields & set(vals):
+                if field_name in {"user_id", "employee_id"}:
+                    new_value = vals.get(field_name) or False
+                    current_value = record[field_name].id or False
+                    if new_value != current_value:
+                        raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
+                    continue
                 new_value = (vals.get(field_name) or "").strip()
                 current_value = (record[field_name] or "").strip()
                 if new_value != current_value:
@@ -665,7 +505,7 @@ class AbRequest(models.Model):
         """Subscribe requester, manager, and assigned employee to chatter."""
         for record in self:
             partners = (
-                record.requester_user_id.partner_id
+                record.user_id.partner_id
                 | record.manager_user_id.partner_id
                 | record._get_effective_assigned_users().partner_id
             )
@@ -697,7 +537,7 @@ class AbRequest(models.Model):
                 "Request %(request)s has been created by %(requester)s and is waiting for review."
             ) % {
                 "request": record.name,
-                "requester": record.requester_id.name,
+                "requester": record.employee_id.name,
             }
             record._post_notification(body, partners)
 
@@ -725,7 +565,7 @@ class AbRequest(models.Model):
             body = _(
                 "Requester %(requester)s has updated request %(request)s."
             ) % {
-                "requester": record.requester_id.name,
+                "requester": record.employee_id.name,
                 "request": record.name,
             }
             record._post_notification(body, record.manager_user_id.partner_id)
@@ -795,6 +635,7 @@ class AbRequest(models.Model):
 
     def action_request_changes(self):
         """Return the request to in-progress after requester feedback."""
+        self.ensure_one()
         self._check_requester()
         for record in self:
             if record.state != "under_requester_confirmation":

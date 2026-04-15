@@ -4,7 +4,9 @@ Technical documentation for the Odoo module `ab_request_management`.
 
 ## Overview
 
-`ab_request_management` implements an internal request workflow on top of Odoo mail/chatter. It allows employees to submit requests, routes them to the responsible department manager, supports assignment to one or more employees, tracks immutable follow-ups, and exposes list/dashboard views for daily operations.
+`ab_request_management` implements an internal request workflow on top of Odoo mail/chatter. It allows employees to
+submit requests, routes them to the responsible department manager, supports assignment to one or more employees, tracks
+immutable follow-ups, and exposes list/dashboard views for daily operations.
 
 The module depends on:
 
@@ -30,7 +32,7 @@ Core fields:
 - `subject`: immutable after creation
 - `description`: immutable after creation
 - `request_type_id`: request category linked to a department
-- `requester_id`: current employee linked to the logged-in user
+- `employee_id`: current employee linked to the logged-in user
 - `department_id`: related from the selected request type
 - `manager_id`: related department manager
 - `assigned_employee_ids`: current assignees
@@ -95,7 +97,8 @@ Important behavior:
 
 Transient model: `ab.request.followup.wizard`
 
-Implemented in [ab_request_followup_wizard.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_followup_wizard.py).
+Implemented
+in [ab_request_followup_wizard.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_followup_wizard.py).
 
 Purpose:
 
@@ -115,7 +118,9 @@ Request states:
 6. `rejected`
 7. `closed`
 
-State transitions are implemented in [ab_request_ticket.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_ticket.py) and enforced through button actions rather than direct writes.
+State transitions are implemented
+in [ab_request_ticket.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_ticket.py) and enforced
+through button actions rather than direct writes.
 
 Typical lifecycle:
 
@@ -134,7 +139,8 @@ Alternative path:
 
 ## Business Rules
 
-Validated in [ab_request_ticket.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_ticket.py) and [ab_request_type.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_type.py).
+Validated in [ab_request_ticket.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_ticket.py)
+and [ab_request_type.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_type.py).
 
 Key rules:
 
@@ -154,7 +160,8 @@ Compatibility note:
 
 ## Roles and Security
 
-Security groups are defined in [security_groups.xml](/opt/odoo19/custom-addons/ab_request_management/security/security_groups.xml).
+Security groups are defined
+in [security_groups.xml](/opt/odoo19/custom-addons/ab_request_management/security/security_groups.xml).
 
 Available groups:
 
@@ -169,7 +176,8 @@ Inheritance:
 - `base.group_system` implies request admin
 - `base.group_user` implies request user
 
-Record rules are defined in [record_rules.xml](/opt/odoo19/custom-addons/ab_request_management/security/record_rules.xml).
+Record rules are defined
+in [record_rules.xml](/opt/odoo19/custom-addons/ab_request_management/security/record_rules.xml).
 
 Access model summary:
 
@@ -217,7 +225,8 @@ Main menus:
 - Settings
 - Request Types
 
-Backend assets are loaded from the module `static/` folder and include custom JavaScript widgets, XML templates, and SCSS for:
+Backend assets are loaded from the module `static/` folder and include custom JavaScript widgets, XML templates, and
+SCSS for:
 
 - dashboard rendering
 - request state widgets
@@ -226,7 +235,8 @@ Backend assets are loaded from the module `static/` folder and include custom Ja
 
 ## Automated Tests
 
-The module includes transactional tests in [test_ab_request_management.py](/opt/odoo19/custom-addons/ab_request_management/tests/test_ab_request_management.py).
+The module includes transactional tests
+in [test_ab_request_management.py](/opt/odoo19/custom-addons/ab_request_management/tests/test_ab_request_management.py).
 
 Covered scenarios include:
 

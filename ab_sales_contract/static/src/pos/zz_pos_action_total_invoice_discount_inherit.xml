@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_contract.PosActionTotalInvoiceDiscountInherit"
+       t-inherit="ab_sales.PosAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_contract_group')]/div[contains(@class, 'o_ab_sales_pos_field_row')]" position="after">
+            <div class="o_ab_sales_pos_field_row"
+                 t-if="currentBill and currentBill.header and currentBill.header.contract_id and currentBill.header.contract_allow_total_invoice_discount">
+                <label class="form-label mb-1">Total Invoice Discount</label>
+                <input class="form-control"
+                       type="number"
+                       min="0"
+                       step="0.01"
+                       t-att-value="currentBill.header.total_invoice_discount || 0"
+                       t-on-input="onTotalInvoiceDiscountInput"/>
+            </div>
+        </xpath>
+    </t>
+</templates>

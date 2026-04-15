@@ -973,7 +973,7 @@ msgstr "يجب أن يكون نوع الطلب فريدًا داخل كل قسم
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
-#: model:ir.model.fields,field_description:ab_request_management.field_ab_request__requester_id
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request__employee_id
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Requester"
 msgstr "مقدم الطلب"
@@ -985,7 +985,7 @@ msgid "Requester %(requester)s has updated request %(request)s."
 msgstr "قام مقدم الطلب %(requester)s بتحديث الطلب %(request)s."
 
 #. module: ab_request_management
-#: model:ir.model.fields,field_description:ab_request_management.field_ab_request__requester_user_id
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request__user_id
 msgid "Requester User"
 msgstr "مستخدم مقدم الطلب"
 

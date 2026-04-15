@@ -1,10 +1,10 @@
 /** @odoo-module **/
 
-import { _t } from "@web/core/l10n/translation";
-import { registry } from "@web/core/registry";
-import { user } from "@web/core/user";
-import { useService } from "@web/core/utils/hooks";
-import { Component, onWillStart, onMounted, useState } from "@odoo/owl";
+import {_t} from "@web/core/l10n/translation";
+import {registry} from "@web/core/registry";
+import {user} from "@web/core/user";
+import {useService} from "@web/core/utils/hooks";
+import {Component, onWillStart, onMounted, useState} from "@odoo/owl";
 
 const DASHBOARD_STORAGE_KEY = "ab_request_management.dashboard.preferences";
 
@@ -66,7 +66,7 @@ export class AbRequestDashboard extends Component {
         this.state.loading = true;
         const nowIso = new Date().toISOString().slice(0, 19).replace("T", " ");
         const [myRequests, pendingApproval, inProgress, overdue, byDepartment, byState, recent] = await Promise.all([
-            this.orm.searchCount("ab_request", [["requester_user_id", "=", user.userId]]),
+            this.orm.searchCount("ab_request", [["user_id", "=", user.userId]]),
             this.orm.searchCount("ab_request", [
                 ["state", "=", "under_review"],
                 ["manager_user_id", "=", user.userId],
@@ -81,14 +81,14 @@ export class AbRequestDashboard extends Component {
                 "ab_request",
                 "read_group",
                 [[], ["department_id"], ["department_id"]],
-                { orderby: "department_id" }
+                {orderby: "department_id"}
             ),
             this.orm.call("ab_request", "read_group", [[], ["state"], ["state"]]),
             this.orm.searchRead(
                 "ab_request",
                 [],
                 ["name", "subject", "state", "request_type_id", "deadline", "assigned_employee_ids"],
-                { limit: 5, order: "create_date desc, id desc" }
+                {limit: 5, order: "create_date desc, id desc"}
             ),
         ]);
 
@@ -99,7 +99,7 @@ export class AbRequestDashboard extends Component {
                 value: myRequests,
                 icon: "fa fa-inbox",
                 accent: "#2f6fdd",
-                domain: [["requester_user_id", "=", user.userId]],
+                domain: [["user_id", "=", user.userId]],
             },
             {
                 key: "pending_approval",
@@ -174,34 +174,34 @@ export class AbRequestDashboard extends Component {
     }
 
     get donutSegments() {
-    const data = this.state.stateChart || [];
-    const total = data.reduce((sum, item) => sum + item.value, 0);
+        const data = this.state.stateChart || [];
+        const total = data.reduce((sum, item) => sum + item.value, 0);
 
-    if (!total) return [];
+        if (!total) return [];
 
-    const radius = 15.9155;
-    const circumference = 2 * Math.PI * radius;
+        const radius = 15.9155;
+        const circumference = 2 * Math.PI * radius;
 
-    let offset = 0;
+        let offset = 0;
 
-    return data.map((item, index) => {
-        const value = item.value || 0;
-        const fraction = value / total;
+        return data.map((item, index) => {
+            const value = item.value || 0;
+            const fraction = value / total;
 
-        const dash = fraction * circumference;
+            const dash = fraction * circumference;
 
-        const segment = {
-            key: item.key || index,
-            color: item.color || this.palette[index % this.palette.length],
-            dasharray: `${dash} ${circumference}`,
-            dashoffset: -offset,
-        };
+            const segment = {
+                key: item.key || index,
+                color: item.color || this.palette[index % this.palette.length],
+                dasharray: `${dash} ${circumference}`,
+                dashoffset: -offset,
+            };
 
-        offset += dash;
+            offset += dash;
 
-        return segment;
-    });
-}
+            return segment;
+        });
+    }
 
     getStateLabel(value) {
         return {
