@@ -1,16 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="ab_request_type_view_search" model="ir.ui.view">
+            <field name="name">ab_request_type.search</field>
+            <field name="model">ab_request_type</field>
+            <field name="arch" type="xml">
+                <search string="Request Types">
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="manager_id"/>
+                    <separator/>
+                    <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_manager" string="Manager" context="{'group_by': 'manager_id'}"/>
+                </search>
+            </field>
+        </record>
+
         <record id="ab_request_type_view_list" model="ir.ui.view">
             <field name="name">ab_request_type.list</field>
             <field name="model">ab_request_type</field>
             <field name="arch" type="xml">
-                <list string="Request Types">
-                    <field name="name"/>
-                    <field name="code"/>
-                    <field name="active"/>
-                    <field name="create_uid" optional="hide"/>
-                    <field name="create_date" optional="hide"/>
+                <list string="Request Types" class="ab_request_type_list" default_order="name asc">
+                    <field name="name" optional="show"/>
+                    <field name="department_id" optional="show"/>
+                    <field name="manager_id" optional="show"/>
                 </list>
             </field>
         </record>
@@ -19,15 +32,26 @@
             <field name="name">ab_request_type.form</field>
             <field name="model">ab_request_type</field>
             <field name="arch" type="xml">
-                <form string="Request Type">
-                    <sheet>
-                        <group col="2">
-                            <group>
-                                <field name="name"/>
-                                <field name="code"/>
+                <form string="Request Type" class="ab_request_type_form">
+                    <sheet class="ab_request_type_sheet">
+                        <div class="oe_title ab_request_type_title_block">
+                            <label for="name" string="Request Type"/>
+                            <h1>
+                                <field name="name" placeholder="Example: System Access, Procurement, Maintenance"/>
+                            </h1>
+                            <div class="text-muted">
+                                Each request type belongs to one department and automatically inherits that department's manager.
+                            </div>
+                        </div>
+                        <group col="2" class="ab_request_section_grid">
+                            <group string="Configuration" class="ab_request_section">
+                                <field name="department_id" placeholder="Choose the department that owns this request type"/>
                             </group>
-                            <group>
-                                <field name="active"/>
+                            <group string="Approval Routing" class="ab_request_section">
+                                <field name="manager_id" readonly="1"/>
+                                <div class="text-muted">
+                                    The manager is derived from the selected department and remains read-only here.
+                                </div>
                             </group>
                         </group>
                     </sheet>
@@ -39,6 +63,7 @@
             <field name="name">Request Types</field>
             <field name="res_model">ab_request_type</field>
             <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_request_type_view_search"/>
         </record>
     </data>
 </odoo>

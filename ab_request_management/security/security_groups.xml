@@ -3,35 +3,38 @@
     <data>
         <record id="category_ab_request_management" model="ir.module.category">
             <field name="name">Request Management</field>
-            <field name="sequence" eval="1"/>
+            <field name="sequence" eval="25"/>
         </record>
 
         <record id="privilege_ab_request_management" model="res.groups.privilege">
             <field name="name">Request Management</field>
             <field name="category_id" ref="category_ab_request_management"/>
-            <field name="sequence" eval="10"/>
+            <field name="sequence" eval="25"/>
         </record>
 
         <record id="group_ab_request_management_user" model="res.groups">
             <field name="name">Request User</field>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
             <field name="privilege_id" ref="privilege_ab_request_management"/>
         </record>
 
         <record id="group_ab_request_management_manager" model="res.groups">
-            <field name="name">Request Manager</field>
+            <field name="name">Department Manager</field>
             <field name="implied_ids" eval="[(4, ref('ab_request_management.group_ab_request_management_user'))]"/>
             <field name="privilege_id" ref="privilege_ab_request_management"/>
         </record>
 
-        <record id="group_ab_request_management_readonly" model="res.groups">
-            <field name="name">Request Read Only</field>
-            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <record id="group_ab_request_management_admin" model="res.groups">
+            <field name="name">Request Admin</field>
+            <field name="implied_ids" eval="[(4, ref('ab_request_management.group_ab_request_management_manager'))]"/>
             <field name="privilege_id" ref="privilege_ab_request_management"/>
         </record>
 
         <record id="base.group_system" model="res.groups">
-            <field name="implied_ids" eval="[(4, ref('ab_request_management.group_ab_request_management_manager'))]"/>
+            <field name="implied_ids" eval="[(4, ref('ab_request_management.group_ab_request_management_admin'))]"/>
+        </record>
+
+        <record id="base.group_user" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('ab_request_management.group_ab_request_management_user'))]"/>
         </record>
     </data>
 </odoo>
