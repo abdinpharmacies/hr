@@ -1,4 +1,5 @@
 from psycopg2 import sql
+from lxml import etree
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
@@ -50,6 +51,7 @@ LEGACY_IR_MODEL_METADATA_FK_COLUMNS = {
     ("ir_model_inherit", "model_id"),
     ("ir_model_inherit", "parent_id"),
 }
+REQUEST_EMPLOYEE_LINK_ERROR = "You cannot create a request because you are not linked to an employee."
 
 
 class AbRequest(models.Model):
@@ -318,6 +320,37 @@ class AbRequest(models.Model):
         employee = user.ab_employee_ids[:1]
         return employee.id if employee else False
 
+    @api.model
+    def _get_current_user_requester_id_or_raise(self):
+        """Return the current user's employee id or block request creation clearly."""
+        requester_id = self._get_requester_employee_id()
+        if not requester_id:
+            raise UserError(_(REQUEST_EMPLOYEE_LINK_ERROR))
+        return requester_id
+
+    @api.model
+    def _current_user_can_create_request(self):
+        """Return whether the current user is linked to an employee."""
+        return bool(self._get_requester_employee_id())
+
+    @api.model
+    def get_view(self, view_id=None, view_type="form", **options):
+        """Hide create entry points for users who are not linked to an employee."""
+        result = super().get_view(view_id=view_id, view_type=view_type, **options)
+        if view_type not in {"list", "form", "kanban"} or self._current_user_can_create_request():
+            return result
+
+        arch = result.get("arch")
+        if not arch:
+            return result
+
+        root = etree.fromstring(arch)
+        root.set("create", "false")
+        if view_type == "form":
+            root.set("edit", "false")
+        result["arch"] = etree.tostring(root, encoding="unicode")
+        return result
+
     @api.depends("followup_ids")
     def _compute_followup_count(self):
         for record in self:
@@ -458,6 +491,16 @@ class AbRequest(models.Model):
             if record.deadline and record.deadline < now:
                 raise ValidationError(_("Deadline cannot be in the past."))
 
+    @api.model
+    def default_get(self, fields_list):
+        """Block opening a new request form for users without an employee."""
+        defaults = super().default_get(fields_list)
+        if not self.env.context.get("default_requester_id") and (
+            self.env.context.get("params", {}).get("view_type") == "form" or "requester_id" in fields_list
+        ):
+            defaults["requester_id"] = self._get_current_user_requester_id_or_raise()
+        return defaults
+
     @api.model_create_multi
     def create(self, vals_list):
         """Create requests in under-review state and notify stakeholders."""
@@ -512,6 +555,7 @@ class AbRequest(models.Model):
     def _prepare_create_vals(self, vals):
         """Normalize incoming values before request creation."""
         prepared_vals = dict(vals or {})
+        current_requester_id = self._get_current_user_requester_id_or_raise()
         prepared_vals["subject"] = (prepared_vals.get("subject") or "").strip()
         prepared_vals["description"] = (prepared_vals.get("description") or "").strip()
         if not prepared_vals.get("subject"):
@@ -521,10 +565,9 @@ class AbRequest(models.Model):
         self._validate_meaningful_text("subject", prepared_vals["subject"])
         self._validate_meaningful_text("description", prepared_vals["description"])
         if not prepared_vals.get("requester_id"):
-            requester_id = self._get_requester_employee_id()
-            if not requester_id:
-                raise UserError(_("User must be linked to an employee"))
-            prepared_vals["requester_id"] = requester_id
+            prepared_vals["requester_id"] = current_requester_id
+        if not prepared_vals.get("requester_id"):
+            raise UserError(_(REQUEST_EMPLOYEE_LINK_ERROR))
         prepared_vals["state"] = "under_review"
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
             prepared_vals["name"] = self.env["ir.sequence"].sudo().next_by_code(REQUEST_SEQUENCE_CODE) or "New"
