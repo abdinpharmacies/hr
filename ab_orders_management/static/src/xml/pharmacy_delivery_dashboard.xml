@@ -113,19 +113,12 @@
                             <div class="o_ab_pharmacy_delivery_queue_header">
                                 <h3 class="d-flex align-items-center gap-2 mb-0">
                                     <t t-esc="availablePilotsLabel"/>
-                                    <button type="button"
-                                            class="btn btn-sm btn-outline-secondary o_ab_pharmacy_delivery_sort_button"
-                                            t-on-click="toggleAvailableSortDirection"
-                                            t-att-title="sortAvailablePilotsLabel"
-                                            t-att-aria-label="sortAvailablePilotsLabel">
-                                        <i t-att-class="state.availableSortDirection === 'asc' ? 'oi oi-fw oi-arrow-up' : 'oi oi-fw oi-arrow-down'"/>
-                                    </button>
                                 </h3>
-                                <span class="badge text-bg-success"><t t-esc="availablePilotsSorted.length"/></span>
+                                <span class="badge text-bg-success"><t t-esc="visibleAvailablePilots.length"/></span>
                             </div>
                             <div class="o_ab_pharmacy_delivery_queue_cards">
-                                <t t-if="availablePilotsSorted.length">
-                                    <t t-foreach="availablePilotsSorted" t-as="pilot" t-key="pilot.id">
+                                <t t-if="visibleAvailablePilots.length">
+                                    <t t-foreach="visibleAvailablePilots" t-as="pilot" t-key="pilot.id">
                                         <article class="o_ab_pharmacy_delivery_card"
                                                  draggable="true"
                                                  t-on-dragstart="() => onPilotDragStart(pilot.id)"

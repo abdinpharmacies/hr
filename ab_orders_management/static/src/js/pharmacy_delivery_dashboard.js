@@ -52,7 +52,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
             selectedBranchId: 0,
             selectedDepartmentId: 0,
             selectedPilotIds: null,
-            availableSortDirection: "desc",
             draggedPilotId: 0,
             dropTargetStatus: "",
             query: "",
@@ -140,21 +139,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
         });
     }
 
-    get availablePilotsSorted() {
-        const pilots = [...this.visibleAvailablePilots];
-        const direction = this.state.availableSortDirection === "asc" ? 1 : -1;
-        return pilots.sort((left, right) => {
-            const leftTotal = left.daily_handle_count || 0;
-            const rightTotal = right.daily_handle_count || 0;
-            if (leftTotal !== rightTotal) {
-                return (leftTotal - rightTotal) * direction;
-            }
-            return String(left.name || "").localeCompare(String(right.name || ""), undefined, {
-                sensitivity: "base",
-            });
-        });
-    }
-
     get ordersLabel() {
         return _t("Orders:");
     }
@@ -205,12 +189,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     get availablePilotsSelectionLabel() {
         return _t("Select All");
-    }
-
-    get sortAvailablePilotsLabel() {
-        return this.state.availableSortDirection === "asc"
-            ? _t("Sort by total descending")
-            : _t("Sort by total ascending");
     }
 
     get selectAllPilotsLabel() {
@@ -358,10 +336,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
         } else {
             this.state.selectedPilotIds = [];
         }
-    }
-
-    toggleAvailableSortDirection() {
-        this.state.availableSortDirection = this.state.availableSortDirection === "asc" ? "desc" : "asc";
     }
 
     onSearchInput(ev) {

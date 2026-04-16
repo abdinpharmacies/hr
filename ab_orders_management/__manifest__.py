@@ -4,6 +4,7 @@
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "summary": "Manage pharmacy delivery pilots, branches, and assignments",
+    "icon": "ab_orders_management/static/description/icon.svg",
     "depends": ["base", "web", "ab_hr"],
     "application": True,
     "data": [
