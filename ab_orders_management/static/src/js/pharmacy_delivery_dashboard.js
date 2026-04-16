@@ -20,6 +20,26 @@ const TYPE_LABELS = {
     order: _t("Client Order"),
 };
 
+const FIFO_FALLBACK = "9999-12-31 23:59:59";
+
+function sortPilotsBySignInTime(pilots) {
+    return [...pilots].sort((left, right) => {
+        const leftTime = left.sign_in_datetime || FIFO_FALLBACK;
+        const rightTime = right.sign_in_datetime || FIFO_FALLBACK;
+        if (leftTime !== rightTime) {
+            return String(leftTime).localeCompare(String(rightTime));
+        }
+        const leftOrder = left.sign_in_order || 999999;
+        const rightOrder = right.sign_in_order || 999999;
+        if (leftOrder !== rightOrder) {
+            return leftOrder - rightOrder;
+        }
+        return String(left.name || "").localeCompare(String(right.name || ""), undefined, {
+            sensitivity: "base",
+        });
+    });
+}
+
 export class AbPharmacyDeliveryDashboard extends Component {
     static template = "ab_orders_management.PharmacyDeliveryDashboard";
 
@@ -52,7 +72,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
             selectedBranchId: 0,
             selectedDepartmentId: 0,
             selectedPilotIds: null,
-            availableSortDirection: "desc",
             draggedPilotId: 0,
             dropTargetStatus: "",
             query: "",
@@ -61,6 +80,7 @@ export class AbPharmacyDeliveryDashboard extends Component {
                 departments: [],
                 pilots: [],
                 available_pilots: [],
+                available_pilots_fifo: [],
                 in_delivery_pilots: [],
                 totals: {},
             },
@@ -124,7 +144,7 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     get visibleSidebarAvailablePilots() {
         const query = String(this.state.query || "").trim().toLowerCase();
-        const pilots = this.state.payload.available_pilots || [];
+        const pilots = this.state.payload.available_pilots_fifo || this.state.payload.available_pilots || [];
         if (!query) {
             return pilots;
         }
@@ -140,19 +160,12 @@ export class AbPharmacyDeliveryDashboard extends Component {
         });
     }
 
+    get visibleSidebarAvailablePilotsSorted() {
+        return sortPilotsBySignInTime(this.visibleSidebarAvailablePilots);
+    }
+
     get availablePilotsSorted() {
-        const pilots = [...this.visibleAvailablePilots];
-        const direction = this.state.availableSortDirection === "asc" ? 1 : -1;
-        return pilots.sort((left, right) => {
-            const leftTotal = left.daily_handle_count || 0;
-            const rightTotal = right.daily_handle_count || 0;
-            if (leftTotal !== rightTotal) {
-                return (leftTotal - rightTotal) * direction;
-            }
-            return String(left.name || "").localeCompare(String(right.name || ""), undefined, {
-                sensitivity: "base",
-            });
-        });
+        return sortPilotsBySignInTime(this.visibleAvailablePilots);
     }
 
     get ordersLabel() {
@@ -205,12 +218,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     get availablePilotsSelectionLabel() {
         return _t("Select All");
-    }
-
-    get sortAvailablePilotsLabel() {
-        return this.state.availableSortDirection === "asc"
-            ? _t("Sort by total descending")
-            : _t("Sort by total ascending");
     }
 
     get selectAllPilotsLabel() {
@@ -300,7 +307,7 @@ export class AbPharmacyDeliveryDashboard extends Component {
             }
             this.state.selectedDepartmentId = payload.selected_department_id || 0;
             if (this.state.selectedPilotIds === null) {
-                this.state.selectedPilotIds = (payload.available_pilots || []).map((pilot) => pilot.id);
+                this.state.selectedPilotIds = (payload.available_pilots_fifo || payload.available_pilots || []).map((pilot) => pilot.id);
             } else {
                 const validIds = new Set((payload.pilots || []).map((pilot) => pilot.id));
                 this.state.selectedPilotIds = this.state.selectedPilotIds.filter((pilotId) => validIds.has(pilotId));
@@ -358,10 +365,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
         } else {
             this.state.selectedPilotIds = [];
         }
-    }
-
-    toggleAvailableSortDirection() {
-        this.state.availableSortDirection = this.state.availableSortDirection === "asc" ? "desc" : "asc";
     }
 
     onSearchInput(ev) {

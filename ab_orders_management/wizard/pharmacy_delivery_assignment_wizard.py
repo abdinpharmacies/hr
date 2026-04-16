@@ -14,8 +14,8 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
     )
     target_status = fields.Selection(
         [
-            ("free", _("Available")),
-            ("in_delivery", _("In Delivery")),
+            ("free", "Available"),
+            ("in_delivery", "In Delivery"),
         ],
         required=True,
         default="in_delivery",
@@ -23,8 +23,8 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
     current_order_number = fields.Char(readonly=True)
     current_transaction_type = fields.Selection(
         [
-            ("delivery", _("Transaction Delivery")),
-            ("order", _("Client Order")),
+            ("delivery", "Transaction Delivery"),
+            ("order", "Client Order"),
         ],
         readonly=True,
     )
@@ -35,8 +35,8 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
     order_number = fields.Char()
     transaction_type = fields.Selection(
         [
-            ("delivery", _("Transaction Delivery")),
-            ("order", _("Client Order")),
+            ("delivery", "Transaction Delivery"),
+            ("order", "Client Order"),
         ],
     )
     branch_id = fields.Many2one(
