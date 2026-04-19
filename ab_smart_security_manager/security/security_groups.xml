@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="category_ab_smart_security_manager" model="ir.module.category">
+            <field name="name">Smart Security Manager</field>
+            <field name="sequence">15</field>
+        </record>
+
+        <record id="privilege_ab_smart_security_manager" model="res.groups.privilege">
+            <field name="name">Smart Security Manager</field>
+            <field name="category_id" ref="category_ab_smart_security_manager"/>
+            <field name="sequence">15</field>
+        </record>
+
+        <record id="group_ab_smart_security_manager_admin" model="res.groups">
+            <field name="name">Smart Security Manager Admin</field>
+            <field name="privilege_id" ref="privilege_ab_smart_security_manager"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('ab_smart_security_manager.group_ab_smart_security_manager_admin'))]"/>
+        </record>
+    </data>
+</odoo>
