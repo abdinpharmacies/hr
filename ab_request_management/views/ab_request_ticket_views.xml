@@ -1,0 +1,608 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_request_followup_view_list" model="ir.ui.view">
+            <field name="name">ab_request_followup.list</field>
+            <field name="model">ab_request_followup</field>
+            <field name="arch" type="xml">
+                <list string="Follow-ups" create="0" delete="0" edit="0" default_order="date desc"
+                      class="ab_request_followup_list">
+                    <field name="date" string="Logged On"/>
+                    <field name="user_id" string="Author"/>
+                    <field name="description"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_request_followup_view_kanban" model="ir.ui.view">
+            <field name="name">ab_request_followup.kanban</field>
+            <field name="model">ab_request_followup</field>
+            <field name="arch" type="xml">
+                <kanban class="ab_request_followup_kanban" create="0" delete="0" edit="0" default_group_by="">
+                    <field name="date"/>
+                    <field name="user_id"/>
+                    <field name="description"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="o_kanban_record ab_request_followup_card">
+                                <div class="ab_request_followup_card_header">
+                                    <strong>
+                                        <field name="user_id"/>
+                                    </strong>
+                                    <span class="text-muted">
+                                        <field name="date"/>
+                                    </span>
+                                </div>
+                                <div class="ab_request_followup_card_body">
+                                    <field name="description"/>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="ab_request_followup_view_form" model="ir.ui.view">
+            <field name="name">ab_request_followup.form</field>
+            <field name="model">ab_request_followup</field>
+            <field name="arch" type="xml">
+                <form string="Follow-up">
+                    <sheet class="ab_request_followup_sheet">
+                        <div class="text-muted mb-3">
+                            Timeline entries are immutable after creation to preserve a reliable request history.
+                        </div>
+                        <group col="2">
+                            <group>
+                                <field name="request_id" readonly="1"/>
+                                <field name="user_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="date" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description" readonly="1" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_request_view_search" model="ir.ui.view">
+            <field name="name">ab_request.search</field>
+            <field name="model">ab_request</field>
+            <field name="arch" type="xml">
+                <search string="Requests">
+                    <field name="name" string="Request Number"/>
+                    <field name="subject"/>
+                    <field name="request_type_id"/>
+                    <field name="employee_id"/>
+                    <field name="assigned_employee_ids" widget="many2many_tags"/>
+                    <field name="department_id"/>
+                    <field name="manager_id"/>
+                    <field name="deadline"/>
+
+                    <separator/>
+                    <filter name="filter_my_requests" string="My Requests" domain="[('user_id', '=', uid)]"/>
+                    <filter name="filter_assigned_requests" string="Assigned to Me"
+                            domain="['|', ('assigned_employee_ids.user_id', '=', uid), ('assigned_user_id', '=', uid)]"/>
+                    <filter name="filter_waiting_review" string="Waiting for My Review"
+                            domain="[('state', '=', 'under_review'), ('manager_user_id', '=', uid)]"/>
+                    <separator/>
+                    <filter name="filter_open_requests" string="Open Requests"
+                            domain="[('state', 'in', ['under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied'])]"/>
+                    <filter name="filter_closed_requests" string="Closed Requests"
+                            domain="[('state', 'in', ['closed', 'rejected'])]"/>
+                    <filter name="filter_overdue" string="Overdue"
+                            domain="[('deadline', '!=', False), ('deadline', '&lt;', context_today()), ('state', 'not in', ['closed', 'rejected', 'satisfied'])]"/>
+                    <separator/>
+                    <filter name="filter_under_review" string="Under Review" domain="[('state', '=', 'under_review')]"/>
+                    <filter name="filter_scheduled" string="Scheduled" domain="[('state', '=', 'scheduled')]"/>
+                    <filter name="filter_in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                    <filter name="filter_confirmation" string="Awaiting Requester Confirmation"
+                            domain="[('state', '=', 'under_requester_confirmation')]"/>
+                    <filter name="filter_satisfied" string="Satisfied" domain="[('state', '=', 'satisfied')]"/>
+
+                    <separator/>
+                    <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_type" string="Request Type" context="{'group_by': 'request_type_id'}"/>
+                    <filter name="group_assignee" string="Assigned Employee"
+                            context="{'group_by': 'assigned_employee_ids'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_request_view_list" model="ir.ui.view">
+            <field name="name">ab_request.list</field>
+            <field name="model">ab_request</field>
+            <field name="arch" type="xml">
+                <list string="Requests"
+                      class="ab_request_list"
+                      default_order="deadline asc, create_date desc">
+                    <field name="is_overdue" column_invisible="True"/>
+                    <field width="200px" name="state" widget="ab_request_state_label" class="ab_request_status_column"
+                           optional="show"/>
+                    <field name="name" string="Request" optional="show"/>
+                    <field name="subject" optional="show"/>
+                    <field name="request_type_id" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="department_id" optional="show"/>
+                    <field name="manager_id" optional="hide"/>
+                    <field name="deadline" optional="show"/>
+                    <field name="followup_count" string="Follow-ups" optional="hide"/>
+                    <field name="activity_count"
+                           string="Activities" optional="hide"/>
+                    <field name="create_date" string="Created On" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <!--
+        <record id="ab_request_view_kanban" model="ir.ui.view">
+            <field name="name">ab_request.kanban</field>
+            <field name="model">ab_request</field>
+            <field name="arch" type="xml">
+                <kanban class="ab_request_kanban" default_group_by="state" records_draggable="true" can_open="1" js_class="ab_request_kanban">
+                    <field name="name"/>
+                    <field name="subject"/>
+                    <field name="description"/>
+                    <field name="request_type_id"/>
+                    <field name="employee_id"/>
+                    <field name="department_id"/>
+                    <field name="assigned_employee_ids"/>
+                    <field name="deadline"/>
+                    <field name="state"/>
+                    <field name="can_assign"/>
+                    <field name="can_work_on_request"/>
+                    <field name="is_requester"/>
+                    <field name="followup_count"/>
+                    <field name="activity_count"/>
+                    <field name="is_overdue"/>
+                    <templates>
+                        <t t-name="card">
+                            <div t-attf-class="ab_request_kanban_card ab_request_state_card_#{record.state.raw_value} #{record.is_overdue.raw_value ? 'ab_request_overdue' : ''}"
+                                  t-att-data-request-state="record.state.raw_value">
+                                <div class="ab_request_kanban_top">
+                                    <div class="ab_request_kanban_identity">
+                                        <span class="ab_request_ticket_number">
+                                            <field name="name"/>
+                                        </span>
+                                        <strong class="ab_request_kanban_subject">
+                                            <field name="subject"/>
+                                        </strong>
+                                    </div>
+                                    <div class="ab_request_kanban_status">
+                                        <span t-attf-class="ab_request_state_chip ab_request_state_#{record.state.raw_value} #{record.is_overdue.raw_value ? 'ab_request_state_pulse' : ''}"
+                                              t-att-title="record.state.value">
+                                            <span class="ab_request_state_dot"/>
+                                            <span class="ab_request_state_chip_label">
+                                                <field name="state"/>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="ab_request_kanban_body">
+                                    <div class="ab_request_kanban_preview">
+                                        <span class="ab_request_hover_kicker">Preview</span>
+                                        <p><field name="description"/></p>
+                                        <div class="ab_request_kanban_preview_meta">
+                                            <span><i class="fa fa-clock-o me-1" title="Deadline"/> <field name="deadline"/></span>
+                                            <span><i class="fa fa-user me-1" title="Assigned employee"/> <field name="assigned_employee_ids" widget="many2many_tags"/></span>
+                                        </div>
+                                    </div>
+                                    <div class="ab_request_kanban_meta">
+                                        <span>
+                                            <i class="fa fa-layer-group me-1" title="Request type"/>
+                                            <field name="request_type_id"/>
+                                        </span>
+                                        <span>
+                                            <i class="fa fa-building me-1" title="Department"/>
+                                            <field name="department_id"/>
+                                        </span>
+                                    </div>
+                                    <div class="ab_request_kanban_people">
+                                        <div class="ab_request_person_card">
+                                            <span class="text-muted">Requester</span>
+                                            <strong><field name="employee_id"/></strong>
+                                        </div>
+                                        <div class="ab_request_person_card">
+                                            <span class="text-muted">Assigned</span>
+                                            <strong><field name="assigned_employee_ids" widget="many2many_tags"/></strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ab_request_kanban_footer">
+                                    <span t-attf-class="ab_request_deadline #{record.is_overdue.raw_value ? 'text-danger' : ''}">
+                                        <i class="fa fa-clock-o me-1" title="Deadline"/>
+                                        <field name="deadline"/>
+                                    </span>
+                                    <div class="ab_request_kanban_quick_actions">
+                                        <button t-if="record.can_assign.raw_value and record.state.raw_value === 'scheduled'" type="object" name="action_assign" class="btn btn-light btn-sm">
+                                            Assign
+                                        </button>
+                                        <button t-if="record.can_work_on_request.raw_value and record.state.raw_value === 'scheduled'" type="object" name="action_mark_in_progress" class="btn btn-primary btn-sm">
+                                            Start
+                                        </button>
+                                        <button t-if="record.can_work_on_request.raw_value and ['satisfied', 'rejected'].includes(record.state.raw_value)" type="object" name="action_close" class="btn btn-dark btn-sm">
+                                            Close
+                                        </button>
+                                    </div>
+                                    <span class="ab_request_kanban_metrics">
+                                        <span class="ab_request_metric_pill">
+                                            <i class="fa fa-commenting-o me-1" title="Follow-ups"/>
+                                            <field name="followup_count"/>
+                                        </span>
+                                        <span class="ab_request_metric_pill">
+                                            <i class="fa fa-tasks me-1" title="Activities"/>
+                                            <field name="activity_count"/>
+                                        </span>
+                                    </span>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+        -->
+
+        <record id="ab_request_view_form" model="ir.ui.view">
+            <field name="name">ab_request.form</field>
+            <field name="model">ab_request</field>
+            <field name="arch" type="xml">
+                <form string="Request" class="ab_request_form">
+                    <header>
+                        <button name="action_submit_request" type="object" string="Submit Request" class="btn-success"
+                                invisible="id != False"/>
+                        <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                                invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
+                        <button name="action_reject" type="object" string="Reject"
+                                invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
+                        <button name="action_assign" type="object" string="Assign" class="btn-primary"
+                                invisible="state != 'scheduled' or not can_assign"/>
+                        <button name="action_mark_in_progress" type="object" string="Start Work"
+                                invisible="state != 'scheduled' or not can_work_on_request"/>
+                        <button name="action_request_confirmation" type="object" string="Send for Confirmation"
+                                class="btn-primary"
+                                invisible="state != 'in_progress' or not can_work_on_request"/>
+                        <button name="action_mark_satisfied" type="object" string="Confirm Satisfaction"
+                                class="btn-primary"
+                                invisible="state != 'under_requester_confirmation' or not is_requester"/>
+                        <button name="action_request_changes" type="object" string="Request Changes"
+                                invisible="state != 'under_requester_confirmation' or not is_requester"/>
+                        <button name="action_close" type="object" string="Close Request" class="btn-primary"
+                                invisible="state not in ('satisfied', 'rejected') or not can_work_on_request"/>
+                        <field name="state" widget="statusbar" class="ab_request_statusbar"
+                               statusbar_visible="under_review,scheduled,in_progress,under_requester_confirmation,satisfied,rejected,closed"/>
+                    </header>
+                    <sheet class="ab_request_sheet">
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_followups" type="object" class="oe_stat_button" icon="fa-list-alt"
+                                    invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                                <field name="followup_count" widget="statinfo" string="Follow-ups"/>
+                            </button>
+                            <button name="action_approve" type="object" class="oe_stat_button" icon="fa-check"
+                                    invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)">
+                                <span>Approve</span>
+                            </button>
+                            <button name="action_reject" type="object" class="oe_stat_button" icon="fa-times"
+                                    invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)">
+                                <span>Reject</span>
+                            </button>
+                            <button name="action_close" type="object" class="oe_stat_button" icon="fa-lock"
+                                    invisible="state not in ('satisfied', 'rejected') or not can_work_on_request">
+                                <span>Close</span>
+                            </button>
+                        </div>
+                        <field name="is_requester" invisible="1"/>
+                        <field name="is_department_manager" invisible="1"/>
+                        <field name="is_assigned_employee" invisible="1"/>
+                        <field name="is_request_admin" invisible="1"/>
+                        <field name="can_assign" invisible="1"/>
+                        <field name="can_work_on_request" invisible="1"/>
+                        <field name="can_add_followup" invisible="1"/>
+                        <field name="can_edit_assignment_details" invisible="1"/>
+                        <field name="is_overdue" invisible="1"/>
+                        <field name="request_role_summary" invisible="1"/>
+                        <field name="request_deadline_label" invisible="1"/>
+
+                        <div class="oe_title ab_request_title_block"
+                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                            <div class="ab_request_title_meta">
+                                <span class="ab_request_title_tag">
+                                    <field name="name" readonly="1"/>
+                                </span>
+                                <span class="ab_request_title_role">
+                                    <field name="request_role_summary" readonly="1"/>
+                                </span>
+                            </div>
+                            <label for="subject" string="Request Subject"/>
+                            <h1>
+                                <field name="subject" readonly="id != False"
+                                       placeholder="Summarize the business request in one clear sentence"/>
+                            </h1>
+                        </div>
+
+                        <div class="ab_request_grid_container">
+                            <!-- USER CREATE FORM -->
+                            <div class="ab_request_grid_user_form"
+                                 invisible="is_request_admin or is_department_manager or is_assigned_employee">
+                                <div class="ab_request_card">
+                                    <div class="ab_request_card_body">
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell">
+                                                <label for="request_type_id" string="Request Type"/>
+                                                <field name="request_type_id" readonly="id != False"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="employee_id" string="Requester"/>
+                                                <field name="employee_id" readonly="1"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="subject" string="Request Subject"/>
+                                                <field name="subject" readonly="id != False"
+                                                       placeholder="Summarize the request in one clear sentence"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="description" string="Description"/>
+                                                <field name="description" readonly="id != False" widget="text"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="attachment_ids" string="Attachments"/>
+                                                <field name="attachment_ids" widget="many2many_binary"
+                                                       readonly="id != False and (not is_requester or state != 'under_review')"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="link_ids" string="Related Links"/>
+                                                <field name="link_ids" mode="list">
+                                                    <list editable="bottom" create="true" delete="true">
+                                                        <field name="name" placeholder="Link name (e.g., JIRA Ticket)"/>
+                                                        <field name="url" placeholder="https://..." widget="url"/>
+                                                    </list>
+                                                </field>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- ADMIN/MANAGER VIEW -->
+                            <div class="ab_request_grid_admin"
+                                 invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                                <div class="ab_request_card">
+                                    <div class="ab_request_card_header">
+                                        <span class="ab_request_card_title">Request Info</span>
+                                    </div>
+                                    <div class="ab_request_card_body">
+                                        <div class="ab_request_grid_row ab_request_grid_4col">
+                                            <div class="ab_request_grid_cell">
+                                                <label for="name" string="Request #"/>
+                                                <field name="name" readonly="1"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="request_type_id" string="Type"/>
+                                                <field name="request_type_id" readonly="id != False"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="deadline" string="Deadline"/>
+                                                <field name="deadline" readonly="not can_edit_assignment_details"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row ab_request_grid_3col">
+                                            <div class="ab_request_grid_cell">
+                                                <label for="employee_id" string="Requester"/>
+                                                <field name="employee_id" readonly="id != False"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="department_id" string="Department"/>
+                                                <field name="department_id" readonly="1"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="manager_id" string="Manager"/>
+                                                <field name="manager_id" readonly="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ab_request_card">
+                                    <div class="ab_request_card_header">
+                                        <span class="ab_request_card_title">Request Details</span>
+                                    </div>
+                                    <div class="ab_request_card_body">
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="subject" string="Subject"/>
+                                                <field name="subject" readonly="id != False"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="description" string="Description"/>
+                                                <field name="description" widget="text" readonly="id != False"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="assigned_employee_ids" string="Assigned Employees"/>
+                                                <field name="assigned_employee_ids" widget="many2many_tags"
+                                                       readonly="not can_edit_assignment_details"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ab_request_card">
+                                    <div class="ab_request_card_header">
+                                        <span class="ab_request_card_title">Attachments</span>
+                                    </div>
+                                    <div class="ab_request_card_body">
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <field name="attachment_ids" widget="many2many_binary"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ab_request_card">
+                                    <div class="ab_request_card_header">
+                                        <span class="ab_request_card_title">Related Links</span>
+                                    </div>
+                                    <div class="ab_request_card_body">
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <field name="link_ids" mode="list">
+                                                    <list editable="bottom" create="true" delete="true">
+                                                        <field name="name" placeholder="Link name"/>
+                                                        <field name="url" placeholder="https://..." widget="url"/>
+                                                    </list>
+                                                </field>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="ab_request_card">
+                                    <div class="ab_request_card_header">
+                                        <span class="ab_request_card_title">Audit and Timeline</span>
+                                    </div>
+                                    <div class="ab_request_card_body">
+                                        <div class="ab_request_grid_row ab_request_grid_4col">
+                                            <div class="ab_request_grid_cell">
+                                                <label for="create_date" string="Created"/>
+                                                <field name="create_date" readonly="1"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="write_date" string="Updated"/>
+                                                <field name="write_date" readonly="1"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="activity_count" string="Activities"/>
+                                                <field name="activity_count" readonly="1"/>
+                                            </div>
+                                            <div class="ab_request_grid_cell">
+                                                <label for="followup_count" string="Follow-ups"/>
+                                                <field name="followup_count" readonly="1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <notebook>
+                            <page string="Follow-ups">
+                                <div class="ab_request_followup_container">
+                                    <field name="followup_ids"
+                                           mode="list,form"
+                                           readonly="not can_add_followup"
+                                           context="{'default_request_id': id}">
+                                        <kanban class="ab_request_followup_kanban" quick_create="false" create="1"
+                                                delete="0" edit="0">
+                                            <field name="date"/>
+                                            <field name="user_id"/>
+                                            <field name="description"/>
+                                            <templates>
+                                                <t t-name="card">
+                                                    <div class="o_kanban_record ab_request_followup_card">
+                                                        <div class="ab_request_followup_card_header">
+                                                            <strong><field name="user_id"/></strong>
+                                                            <span class="text-muted"><field name="date"/></span>
+                                                        </div>
+                                                        <div class="ab_request_followup_card_body">
+                                                            <field name="description"/>
+                                                        </div>
+                                                    </div>
+                                                </t>
+                                            </templates>
+                                        </kanban>
+                                        <list string="Follow-ups" editable="bottom" default_order="date desc" create="1"
+                                              delete="0" edit="0">
+                                            <field name="date" readonly="1"/>
+                                            <field name="user_id" readonly="1"/>
+                                            <field name="description"
+                                                   placeholder="Add a concise, factual progress update or requester note"/>
+                                        </list>
+                                        <form string="Follow-up">
+                                            <sheet class="ab_request_followup_sheet">
+                                                <group col="2">
+                                                    <group>
+                                                        <field name="date" readonly="1"/>
+                                                        <field name="user_id" readonly="1"/>
+                                                    </group>
+                                                </group>
+                                                <group>
+                                                    <field name="description"
+                                                           placeholder="Add a concise, factual progress update or requester note"/>
+                                                </group>
+                                            </sheet>
+                                        </form>
+                                    </field>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_request_my_action" model="ir.actions.act_window">
+            <field name="name">My Requests</field>
+            <field name="res_model">ab_request</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_request_view_search"/>
+            <field name="domain">[('user_id', '=', uid)]</field>
+            <field name="context">{'search_default_filter_my_requests': 1,
+                                   'search_default_filter_open_requests': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create your first request.
+                </p>
+                <p>
+                    Requests move through review, execution, requester confirmation, and closure while preserving a
+                    complete timeline.
+                </p>
+            </field>
+        </record>
+
+        <record id="ab_request_assigned_action" model="ir.actions.act_window">
+            <field name="name">Assigned Requests</field>
+            <field name="res_model">ab_request</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_request_view_search"/>
+            <field name="domain">['|', ('assigned_employee_ids.user_id', '=', uid),
+                                  ('assigned_user_id', '=', uid)]</field>
+            <field name="context">{'search_default_filter_assigned_requests': 1,
+                                   'search_default_filter_open_requests': 1}</field>
+        </record>
+
+        <record id="ab_request_review_action" model="ir.actions.act_window">
+            <field name="name">Review Queue</field>
+            <field name="res_model">ab_request</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_request_view_search"/>
+            <field name="domain">[('manager_user_id', '=', uid)]</field>
+            <field name="context">{'search_default_filter_waiting_review': 1, 'search_default_group_state': 1}</field>
+        </record>
+
+        <record id="ab_request_all_action" model="ir.actions.act_window">
+            <field name="name">All Requests</field>
+            <field name="res_model">ab_request</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_request_view_search"/>
+            <field name="context">{'search_default_filter_open_requests': 1, 'search_default_group_state': 1}</field>
+        </record>
+    </data>
+</odoo>

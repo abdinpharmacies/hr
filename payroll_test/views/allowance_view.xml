@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Allowance Type View -->
+    <record id="view_allowance_type_tree" model="ir.ui.view">
+        <field name="name">daily.hours.allowance.type.tree</field>
+        <field name="model">daily.hours.allowance.type</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="calculation_type"/>
+                <field name="default_amount"/>
+            </list>
+        </field>
+    </record>
+
+    <menuitem id="menu_allowance_type"
+              name="أنواع البدلات"
+              parent="menu_payroll_config"
+              action="action_allowance_type"
+              sequence="20"/>
+
+    <!-- Seeding Data -->
+    <record id="allowance_type_transport" model="daily.hours.allowance.type">
+        <field name="name">بدل انتقال</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+    <record id="allowance_type_housing" model="daily.hours.allowance.type">
+        <field name="name">بدل سكن</field>
+        <field name="calculation_type">fixed</field>
+    </record>
+    <record id="allowance_type_overtime" model="daily.hours.allowance.type">
+        <field name="name">بدل سهر</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+    <record id="allowance_type_extra_load" model="daily.hours.allowance.type">
+        <field name="name">بدل أعباء إضافية</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+    <record id="allowance_type_alienation" model="daily.hours.allowance.type">
+        <field name="name">بدل اغتراب</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+    <record id="allowance_type_management" model="daily.hours.allowance.type">
+        <field name="name">بدل إدارة</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+    <record id="allowance_type_rarity" model="daily.hours.allowance.type">
+        <field name="name">بدل ندرة</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+    <record id="allowance_type_gas" model="daily.hours.allowance.type">
+        <field name="name">بدل بنزين</field>
+        <field name="calculation_type">custom</field>
+    </record>
+    <record id="allowance_type_arabism" model="daily.hours.allowance.type">
+        <field name="name">بدل العروبة</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+    <record id="allowance_type_callcenter" model="daily.hours.allowance.type">
+        <field name="name">بدل كول سنتر</field>
+        <field name="calculation_type">prorated</field>
+    </record>
+</odoo>

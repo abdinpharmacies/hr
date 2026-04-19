@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_request_management_ab_request_summary_widget">
+        <div class="ab_request_summary_widget">
+            <div class="ab_request_summary_metric">
+                <span class="ab_request_summary_label">Workflow Stage</span>
+                <span t-attf-class="ab_request_summary_badge ab_request_state_badge ab_request_state_#{stateClass}">
+                    <t t-out="stateLabel"/>
+                </span>
+            </div>
+            <div class="ab_request_summary_metric">
+                <span class="ab_request_summary_label">Assignees</span>
+                <span class="ab_request_summary_value" t-out="request.assigned_employee_count or 0"/>
+            </div>
+            <div class="ab_request_summary_metric">
+                <span class="ab_request_summary_label">Follow-ups</span>
+                <span class="ab_request_summary_value" t-out="request.followup_count or 0"/>
+            </div>
+            <div class="ab_request_summary_metric">
+                <span class="ab_request_summary_label">Activities</span>
+                <span class="ab_request_summary_value" t-out="request.activity_count or 0"/>
+            </div>
+            <div class="ab_request_summary_metric">
+                <span class="ab_request_summary_label">Deadline</span>
+                <span t-attf-class="ab_request_summary_value #{request.is_overdue ? 'text-danger fw-semibold' : ''}">
+                    <t t-out="request.request_deadline_label"/>
+                </span>
+            </div>
+        </div>
+    </t>
+</templates>

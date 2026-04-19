@@ -1,0 +1,331 @@
+# Arabic translations for payroll_test
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+
+#. module: payroll_test
+msgid "Payroll Rule Systems"
+msgstr "أنظمة قواعد الرواتب"
+
+#. module: payroll_test
+msgid "Payroll Rule System"
+msgstr "نظام قواعد الرواتب"
+
+#. module: payroll_test
+msgid "Confirm Policy"
+msgstr "اعتماد السياسة وتفعيلها"
+
+#. module: payroll_test
+msgid "Reset to Draft"
+msgstr "إعادة للمراجعة"
+
+#. module: payroll_test
+msgid "Employee Code"
+msgstr "كود الموظف"
+
+#. module: payroll_test
+msgid "Daily Working Hours"
+msgstr "ساعات العمل اليومية"
+
+#. module: payroll_test
+msgid "Scheduled Start Time"
+msgstr "موعد الحضور العام (ساعة)"
+
+#. module: payroll_test
+msgid "Hourly Basic Wage"
+msgstr "أجر الساعة (أساسي)"
+
+#. module: payroll_test
+msgid "Hourly Allowances"
+msgstr "أجر الساعة (بدلات)"
+
+#. module: payroll_test
+msgid "Extra Allowances"
+msgstr "بدلات إضافية"
+
+#. module: payroll_test
+msgid "Delivery Staff"
+msgstr "طاقم التوصيل"
+
+#. module: payroll_test
+msgid "Sector"
+msgstr "القطاع"
+
+#. module: payroll_test
+msgid "Social Insurance"
+msgstr "التأمين الاجتماعي"
+
+#. module: payroll_test
+msgid "Health Insurance"
+msgstr "التأمين الصحي"
+
+#. module: payroll_test
+msgid "Syndicate Fund"
+msgstr "صندوق الزمالة"
+
+#. module: payroll_test
+msgid "Payroll Policy"
+msgstr "سياسة الرواتب"
+
+#. module: payroll_test
+msgid "Payroll Type"
+msgstr "نوع النظام"
+
+#. module: payroll_test
+msgid "First Weekly Off"
+msgstr "يوم الإجازة الأول"
+
+#. module: payroll_test
+msgid "Second Weekly Off"
+msgstr "يوم الإجازة الثاني"
+
+#. module: payroll_test
+msgid "Agreed Salary"
+msgstr "راتب الاتفاق"
+
+#. module: payroll_test
+msgid "Payroll Periods"
+msgstr "فترات الرواتب"
+
+#. module: payroll_test
+msgid "Payroll Period"
+msgstr "فترة راتب"
+
+#. module: payroll_test
+msgid "Salary Structures"
+msgstr "هياكل الرواتب"
+
+#. module: payroll_test
+msgid "Salary Structure"
+msgstr "هيكل الراتب"
+
+#. module: payroll_test
+msgid "Attendance Records"
+msgstr "سجلات الحضور"
+
+#. module: payroll_test
+msgid "Attendance Record"
+msgstr "سجل حضور"
+
+#. module: payroll_test
+msgid "Deductions"
+msgstr "الخصومات"
+
+#. module: payroll_test
+msgid "Deduction"
+msgstr "خصم"
+
+#. module: payroll_test
+msgid "Payslips"
+msgstr "قسائم الرواتب"
+
+#. module: payroll_test
+msgid "Payslip"
+msgstr "قسيمة راتب"
+
+#. module: payroll_test
+msgid "Allowance Types"
+msgstr "أنواع البدلات"
+
+#. module: payroll_test
+msgid "Employees"
+msgstr "الموظفين"
+
+#. module: payroll_test
+msgid "Payroll Periods"
+msgstr "فترات الرواتب"
+
+#. module: payroll_test
+msgid "Salary Structures"
+msgstr "هياكل الرواتب"
+
+#. module: payroll_test
+msgid "Attendance Records"
+msgstr "سجلات الحضور"
+
+#. module: payroll_test
+msgid "Deductions"
+msgstr "الخصومات"
+
+#. module: payroll_test
+msgid "Payslips"
+msgstr "قسائم الرواتب"
+
+#. module: payroll_test
+msgid "Import Attendance (.xlsx)"
+msgstr "رفع ملف البصمات (.xlsx)"
+
+#. module: payroll_test
+msgid "Import Excel Rules"
+msgstr "رفع معادلات من إكسل"
+
+#. module: payroll_test
+msgid "Rule Systems"
+msgstr "أنظمة القواعد"
+
+#. module: payroll_test
+msgid "Payroll Accounting"
+msgstr "نظام حسابات المرتبات"
+
+#. module: payroll_test
+msgid "Employees"
+msgstr "الموظفين"
+
+#. module: payroll_test
+msgid "Attendance"
+msgstr "الحضور"
+
+#. module: payroll_test
+msgid "Payroll"
+msgstr "الرواتب"
+
+#. module: payroll_test
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: payroll_test
+msgid "Import (.xlsx)"
+msgstr "رفع بصمات (.xlsx)"
+
+#. module: payroll_test
+msgid "Calculated Hours"
+msgstr "الساعات المحسوبة"
+
+#. module: payroll_test
+msgid "Absence & Permissions"
+msgstr "الغياب والأذونات"
+
+#. module: payroll_test
+msgid "Violations"
+msgstr "المخالفات"
+
+#. module: payroll_test
+msgid "Payslips"
+msgstr "قسائم الرواتب"
+
+#. module: payroll_test
+msgid "Payslip"
+msgstr "قسيمة راتب"
+
+#. module: payroll_test
+msgid "Prepare Records"
+msgstr "تجهيز السجل"
+
+#. module: payroll_test
+msgid "Calculate Payroll"
+msgstr "احتساب الراتب"
+
+#. module: payroll_test
+msgid "Daily Attendance (Interactive)"
+msgstr "سجل الحضور اليومي (التفاعلي)"
+
+#. module: payroll_test
+msgid "Record"
+msgstr "السجل"
+
+#. module: payroll_test
+msgid "Account Summary"
+msgstr "ملخص الحسابات (التفاصيل)"
+
+#. module: payroll_test
+msgid "Earnings"
+msgstr "الاستحقاقات"
+
+#. module: payroll_test
+msgid "Salary & Allowances"
+msgstr "الراتب والبدلات"
+
+#. module: payroll_test
+msgid "Extra Allowances"
+msgstr "البدلات الإضافية"
+
+#. module: payroll_test
+msgid "Overtime & Bonuses"
+msgstr "الوقت الإضافي والمكافآت"
+
+#. module: payroll_test
+msgid "Deductions"
+msgstr "الخصومات"
+
+#. module: payroll_test
+msgid "Payroll Periods"
+msgstr "فترات الرواتب"
+
+#. module: payroll_test
+msgid "Payroll Period"
+msgstr "فترة راتب"
+
+#. module: payroll_test
+msgid "Deductions"
+msgstr "الخصومات"
+
+#. module: payroll_test
+msgid "Deduction"
+msgstr "خصم راتب"
+
+#. module: payroll_test
+msgid "Payroll Accounting"
+msgstr "نظام حسابات المرتبات"
+
+#. module: payroll_test
+msgid "Identity & Job Settings"
+msgstr "إعدادات الهوية والوظيفة"
+
+#. module: payroll_test
+msgid "Payroll Settings"
+msgstr "إعدادات احتساب الراتب"
+
+#. module: payroll_test
+msgid "Insurance & Deductions"
+msgstr "التأمينات والخصومات"
+
+#. module: payroll_test
+msgid "Weekly Off Days"
+msgstr "الإجازات الأسبوعية"
+
+#. module: payroll_test
+msgid "Salary Summary"
+msgstr "ملخص الراتب"
+
+#. module: payroll_test
+msgid "Fixed Extra Allowances"
+msgstr "البدلات الإضافية الثابتة"
+
+#. module: payroll_test
+msgid "Salary Structures"
+msgstr "هياكل الرواتب"
+
+#. module: payroll_test
+msgid "Salary Structure"
+msgstr "هيكل الراتب"
+
+#. module: payroll_test
+msgid "Basic Allowances"
+msgstr "البدلات الأساسية"
+
+#. module: payroll_test
+msgid "Penalties (Fingerprint)"
+msgstr "الجزاءات (نسيان البصمة)"
+
+#. module: payroll_test
+msgid "Day & Hour Value"
+msgstr "قيمة اليوم والساعة"
+
+#. module: payroll_test
+msgid "Day Value"
+msgstr "قيمة اليوم"
+
+#. module: payroll_test
+msgid "Hour Value"
+msgstr "قيمة الساعة"
+
+#. module: payroll_test
+msgid "Payroll Rule Systems"
+msgstr "أنظمة قواعد الرواتب"
+
+#. module: payroll_test
+msgid "Payroll Rule System"
+msgstr "نظام قواعد الرواتب"

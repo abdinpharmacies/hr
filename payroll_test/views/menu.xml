@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Main Menu -->
+    <menuitem id="menu_daily_hours_root" 
+              name="Payroll Accounting" 
+              sequence="10" 
+              web_icon="hr,static/description/icon.png"/>
+
+    <!-- Employees Menu -->
+    <menuitem id="menu_daily_hours_employees" 
+              name="Employees" 
+              parent="menu_daily_hours_root" 
+              action="action_employee_daily_hours" 
+              sequence="1"/>
+
+    <!-- Attendance Menu -->
+    <menuitem id="menu_daily_hours_attendance" 
+              name="Attendance" 
+              parent="menu_daily_hours_root" 
+              sequence="2"/>
+               
+    <menuitem id="menu_daily_hours_attendance_records" 
+              name="Attendance Records" 
+              parent="menu_daily_hours_attendance" 
+              action="action_daily_hours_attendance" 
+              sequence="1"/>
+
+    <menuitem id="menu_daily_hours_attendance_import" 
+              name="Import Attendance (.xlsx)" 
+              parent="menu_daily_hours_attendance" 
+              action="action_attendance_import" 
+              sequence="2"/>
+
+    <!-- Payroll Menu -->
+    <menuitem id="menu_daily_hours_payroll" 
+              name="Payroll" 
+              parent="menu_daily_hours_root" 
+              sequence="3"/>
+               
+    <menuitem id="menu_daily_hours_payroll_period" 
+              name="Payroll Periods" 
+              parent="menu_daily_hours_payroll" 
+              action="action_daily_hours_payroll_period" 
+              sequence="1"/>
+               
+    <menuitem id="menu_daily_hours_salary_structure" 
+              name="Salary Structures" 
+              parent="menu_daily_hours_payroll" 
+              action="action_daily_hours_salary_structure" 
+              sequence="2"/>
+               
+    <menuitem id="menu_daily_hours_deduction" 
+              name="Deductions" 
+              parent="menu_daily_hours_payroll" 
+              action="action_daily_hours_deduction" 
+              sequence="3"/>
+               
+    <menuitem id="menu_daily_hours_payslip" 
+              name="Payslips" 
+              parent="menu_daily_hours_payroll" 
+              action="action_daily_hours_payslip" 
+              sequence="4"/>
+
+    <!-- Configuration Menu -->
+    <menuitem id="menu_payroll_config"
+              name="Configuration"
+              parent="menu_daily_hours_root"
+              sequence="100"/>
+
+    <menuitem id="menu_payroll_rule_system" 
+              name="Rule Systems" 
+              parent="menu_payroll_config" 
+              action="action_payroll_rule_system" 
+              sequence="10"/>
+
+    <menuitem id="menu_payroll_excel_import" 
+              name="Import Excel Rules" 
+              parent="menu_payroll_config" 
+              action="action_payroll_excel_import_wizard" 
+              sequence="20"/>
+
+    <menuitem id="menu_allowance_type" 
+              name="Allowance Types" 
+              parent="menu_payroll_config" 
+              action="action_allowance_type" 
+              sequence="30"/>
+</odoo>

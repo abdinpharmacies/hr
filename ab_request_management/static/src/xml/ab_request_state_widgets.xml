@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_request_management.AbRequestStateDotField">
+        <div class="ab_request_state_dot_widget" t-att-title="label" t-att-aria-label="label" role="img">
+            <span
+                t-attf-class="ab_request_state_dot ab_request_state_#{stateClass} #{isOverdue ? 'ab_request_state_pulse' : ''}"
+            />
+        </div>
+    </t>
+
+    <t t-name="ab_request_management.AbRequestStateLabelField">
+        <div t-attf-class="ab_request_state_label_widget ab_request_state_#{stateClass}">
+            <span class="ab_request_state_label_marker">
+                <span
+                    t-attf-class="ab_request_state_dot ab_request_state_dot_sm ab_request_state_#{stateClass} #{isOverdue ? 'ab_request_state_pulse' : ''}"
+                />
+            </span>
+            <span class="ab_request_state_label_text">
+                <t t-out="label"/>
+            </span>
+        </div>
+    </t>
+
+    <t t-name="ab_request_management.AbRequestSubjectStateField">
+        <div class="ab_request_subject_state_widget">
+            <span class="ab_request_subject_state_text" t-att-title="subject">
+                <t t-out="subject"/>
+            </span>
+            <span t-attf-class="ab_request_subject_state_badge ab_request_state_#{stateClass}">
+                <span t-attf-class="ab_request_state_dot ab_request_state_dot_sm ab_request_state_#{stateClass} #{isOverdue ? 'ab_request_state_pulse' : ''}"/>
+                <span class="ab_request_subject_state_badge_text">
+                    <t t-out="label"/>
+                </span>
+            </span>
+            <span t-if="isOverdue" class="ab_request_subject_overdue_badge">
+                Overdue
+            </span>
+        </div>
+    </t>
+</templates>

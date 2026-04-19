@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Employee Action -->
+    <record id="action_employee_daily_hours" model="ir.actions.act_window">
+        <field name="name">Employees</field>
+        <field name="res_model">ab_hr_employee</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Payroll Period Action -->
+    <record id="action_daily_hours_payroll_period" model="ir.actions.act_window">
+        <field name="name">Payroll Periods</field>
+        <field name="res_model">daily.hours.payroll.period</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Salary Structure Action -->
+    <record id="action_daily_hours_salary_structure" model="ir.actions.act_window">
+        <field name="name">Salary Structures</field>
+        <field name="res_model">daily.hours.salary.structure</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Attendance Action -->
+    <record id="action_daily_hours_attendance" model="ir.actions.act_window">
+        <field name="name">Attendance Records</field>
+        <field name="res_model">daily.hours.attendance</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Deduction Action -->
+    <record id="action_daily_hours_deduction" model="ir.actions.act_window">
+        <field name="name">Deductions</field>
+        <field name="res_model">daily.hours.deduction</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Payslip Action -->
+    <record id="action_daily_hours_payslip" model="ir.actions.act_window">
+        <field name="name">Payslips</field>
+        <field name="res_model">daily.hours.payslip</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Allowance Type Action -->
+    <record id="action_allowance_type" model="ir.actions.act_window">
+        <field name="name">Allowance Types</field>
+        <field name="res_model">daily.hours.allowance.type</field>
+        <field name="view_mode">list</field>
+    </record>
+
+    <!-- Attendance Import Action -->
+    <record id="action_attendance_import" model="ir.actions.act_window">
+        <field name="name">Import Attendance (.xlsx)</field>
+        <field name="res_model">daily.hours.attendance.import</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Payroll Excel Import Action -->
+    <record id="action_payroll_excel_import_wizard" model="ir.actions.act_window">
+        <field name="name">Import Excel Rules</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">payroll.excel.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- Payroll Rule System Action -->
+    <record id="action_payroll_rule_system" model="ir.actions.act_window">
+        <field name="name">Rule Systems</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">payroll.rule.system</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

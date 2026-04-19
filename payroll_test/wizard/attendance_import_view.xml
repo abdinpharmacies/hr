@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_attendance_import_form" model="ir.ui.view">
+        <field name="name">daily.hours.attendance.import.form</field>
+        <field name="model">daily.hours.attendance.import</field>
+        <field name="arch" type="xml">
+            <form string="رفع ملف البصمات">
+                <sheet>
+                    <group>
+                        <field name="file" filename="file_name" options="{'bin_size': false}"/>
+                        <field name="file_name" invisible="1"/>
+                    </group>
+                    <footer>
+                        <button name="action_import" string="رفع وتحديث" type="object" class="btn-primary"/>
+                        <button string="إلغاء" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
