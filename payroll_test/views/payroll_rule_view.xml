@@ -25,7 +25,7 @@
                 <sheet>
                     <div class="oe_title">
                         <h1>
-                            <field name="name" placeholder="مثلاً: نظام الساعات اليومية"/>
+                            <field name="name" placeholder="e.g. Daily Hours System"/>
                         </h1>
                     </div>
                     <group>
@@ -36,19 +36,18 @@
 
                     <!-- AI Communication Box -->
                     <div style="background: #f0f4ff; border: 2px dashed #1a73e8; border-radius: 12px; padding: 16px; margin-bottom: 16px;">
-                        <h3 style="margin: 0 0 8px 0; color: #1a73e8;">🤖 تواصل مع المحرك الذكي</h3>
+                        <h3 style="margin: 0 0 8px 0; color: #1a73e8;">AI Communication</h3>
                         <p style="margin: 0 0 8px 0; color: #555; font-size: 13px;">
-                            اكتب هنا أي تعليمات أو تصحيحات تريد إبلاغها للمحرك (مثلاً: "عمود القيمة هو صافي الراتب"، أو "نظام هذا الشيت يعتمد على اليوم وليس الساعة").
-                            ثم ارفع الملف مرة أخرى وسيأخذ المحرك تعليماتك بعين الاعتبار.
+                            Enter any instructions or corrections for the AI engine here.
                         </p>
-                        <field name="user_instructions" placeholder="اكتب تعليماتك هنا للمحرك الذكي..." style="min-height: 80px;"/>
+                        <field name="user_instructions" placeholder="Enter instructions here..." style="min-height: 80px;"/>
                     </div>
 
                     <notebook>
-                        <page string="📊 تحليل السياسة (AI Report)" name="policy">
+                        <page string="AI Policy Analysis" name="policy">
                             <field name="policy_narrative" widget="html" options="{'style-inline': true}"/>
                         </page>
-                        <page string="⚙️ القواعد والمعادلات" name="rules">
+                        <page string="Rules and Equations" name="rules">
                             <field name="rule_ids">
                                 <list editable="bottom">
                                     <field name="sequence" widget="handle"/>

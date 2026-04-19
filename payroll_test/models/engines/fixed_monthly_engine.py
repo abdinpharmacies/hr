@@ -28,7 +28,7 @@ class FixedMonthlyEngine(BasePayrollEngine):
         day_basic = basic_salary / days
         day_allowances = (total_basic_allowances + extra_allowances) / days
         
-        hours = self.employee.working_hours_per_day or 8.0
+        hours = self.employee.daily_working_hours or 8.0
         hour_basic = day_basic / hours
         hour_allowances_basic = (total_basic_allowances / days) / hours
         

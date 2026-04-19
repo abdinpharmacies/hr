@@ -9,31 +9,31 @@ class DailyHoursPayslip(models.Model):
     employee_id = fields.Many2one('ab_hr_employee', string='Employee', required=True)
     period_id = fields.Many2one('daily.hours.payroll.period', string='Payroll Period', required=True)
     
-    salary_basic = fields.Float(string='الراتب الأساسي', readonly=True)
-    allowances_basic_four = fields.Float(string='البدلات الأساسية', readonly=True)
-    attendance_percentage = fields.Float(string='نسبة الحضور (%)', readonly=True)
-    agreement_salary = fields.Float(string='راتب الاتفاق', readonly=True)
-    
-    extra_allowances = fields.Float(string='إجمالي البدلات الإضافية', readonly=True)
-    extra_allowances_fixed = fields.Float(string='بدلات إضافية ثابتة', readonly=True)
-    extra_allowances_prorated = fields.Float(string='بدلات إضافية تناسبية', readonly=True)
-    extra_allowances_custom = fields.Float(string='بدلات إضافية مخصصة', readonly=True)
-    
-    penalty_late_arrival = fields.Float(string='جزاء تأخير', readonly=True)
-    penalty_unauthorized_shift = fields.Float(string='جزاء تغيير وردية', readonly=True)
-    penalty_shortage_hours = fields.Float(string='خصم نقص الساعات', readonly=True)
-    penalty_forget_fingerprint = fields.Float(string='جزاء نسيان البصمة', readonly=True)
-    
-    earning_grace_period_overtime = fields.Float(string='إضافي فترة سماح', readonly=True)
-    earning_authorized_overtime = fields.Float(string='إضافي بإذن', readonly=True)
-    earning_two_hour_permission = fields.Float(string='تعويض إذن ساعتين', readonly=True)
-    earning_manual_bonus = fields.Float(string='مكافآت (يدوي)')
-    
-    attendance_ids = fields.One2many('daily.hours.attendance', 'payslip_id', string='سجل الحضور اليومي')
-    
-    total_earnings = fields.Float(string='إجمالي الاستحقاقات', readonly=True)
-    total_deductions = fields.Float(string='إجمالي الخصومات', readonly=True)
-    net_salary = fields.Float(string='الصافي للتسديد', readonly=True)
+    salary_basic = fields.Float(string='Basic Salary', readonly=True)
+    allowances_basic_four = fields.Float(string='Basic Allowances', readonly=True)
+    attendance_percentage = fields.Float(string='Attendance (%)', readonly=True)
+    agreement_salary = fields.Float(string='Agreement Salary', readonly=True)
+
+    extra_allowances = fields.Float(string='Total Extra Allowances', readonly=True)
+    extra_allowances_fixed = fields.Float(string='Fixed Extra Allowances', readonly=True)
+    extra_allowances_prorated = fields.Float(string='Prorated Extra Allowances', readonly=True)
+    extra_allowances_custom = fields.Float(string='Custom Extra Allowances', readonly=True)
+
+    penalty_late_arrival = fields.Float(string='Late Arrival Penalty', readonly=True)
+    penalty_unauthorized_shift = fields.Float(string='Unauthorized Shift Penalty', readonly=True)
+    penalty_shortage_hours = fields.Float(string='Shortage Hours Penalty', readonly=True)
+    penalty_forget_fingerprint = fields.Float(string='Forgot Fingerprint Penalty', readonly=True)
+
+    earning_grace_period_overtime = fields.Float(string='Grace Period Overtime', readonly=True)
+    earning_authorized_overtime = fields.Float(string='Authorized Overtime', readonly=True)
+    earning_two_hour_permission = fields.Float(string='Two Hour Permission', readonly=True)
+    earning_manual_bonus = fields.Float(string='Manual Bonus')
+
+    attendance_ids = fields.One2many('daily.hours.attendance', 'payslip_id', string='Daily Attendance')
+
+    total_earnings = fields.Float(string='Total Earnings', readonly=True)
+    total_deductions = fields.Float(string='Total Deductions', readonly=True)
+    net_salary = fields.Float(string='Net Salary', readonly=True)
 
     def _get_engine(self):
         self.ensure_one()
@@ -43,9 +43,9 @@ class DailyHoursPayslip(models.Model):
     def _compute_name(self):
         for record in self:
             if record.employee_id and record.period_id:
-                record.name = f"قسيمة راتب {record.employee_id.name} - {record.period_id.name}"
+                record.name = f"Payslip {record.employee_id.name} - {record.period_id.name}"
             else:
-                record.name = "قسيمة جديدة"
+                record.name = 'قسيمة جديدة' if record.env.lang == 'ar_001' else 'New Payslip'
 
     def action_prepare_attendances(self):
         from datetime import timedelta

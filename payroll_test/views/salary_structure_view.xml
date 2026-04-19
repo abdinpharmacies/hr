@@ -38,7 +38,7 @@
                         </group>
                     </group>
                     <notebook>
-<page string="Basic Allowances">
+                        <page string="Basic Allowances" name="basic_allowances">
                             <group>
                                 <field name="allowance_nature_of_work"/>
                                 <field name="allowance_performance"/>
@@ -47,7 +47,7 @@
                                 <field name="total_basic_allowances"/>
                             </group>
                         </page>
-                        <page string="Extra Allowances">
+                        <page string="Extra Allowances" name="extra_allowances">
                             <group>
                                 <field name="extra_allowances_fixed"/>
                                 <field name="extra_allowances_prorated"/>
@@ -55,13 +55,13 @@
                                 <field name="extra_allowances"/>
                             </group>
                         </page>
-                        <page string="Penalties (Fingerprint)">
+                        <page string="Penalties (Fingerprint)" name="penalties">
                             <group>
                                 <field name="forget_fingerprint_count"/>
                                 <field name="forget_fingerprint_penalty" widget="monetary" decoration-danger="forget_fingerprint_penalty > 0"/>
                             </group>
                         </page>
-                        <page string="Day and Hour Value">
+                        <page string="Day and Hour Value" name="day_hour_value">
                             <group>
                                 <group string="Day Value">
                                     <field name="day_basic"/>
@@ -72,34 +72,6 @@
                                     <field name="hour_basic"/>
                                     <field name="hour_allowances"/>
                                     <field name="hour_total"/>
-                                </group>
-                            </group>
-                        </page>
-                        <page string="البدلات الإضافية">
-                            <group>
-                                <field name="extra_allowances_fixed"/>
-                                <field name="extra_allowances_prorated"/>
-                                <field name="extra_allowances_custom"/>
-                                <field name="extra_allowances" class="oe_subtotal_footer_separator"/>
-                            </group>
-                        </page>
-                        <page string="الجزاءات (نسيان البصمة)">
-                            <group>
-                                <field name="forget_fingerprint_count"/>
-                                <field name="forget_fingerprint_penalty" widget="monetary" decoration-danger="forget_fingerprint_penalty > 0"/>
-                            </group>
-                        </page>
-                        <page string="قيمة اليوم والساعة">
-                            <group>
-                                <group string="قيمة اليوم">
-                                    <field name="day_basic"/>
-                                    <field name="day_allowances"/>
-                                    <field name="day_total" class="oe_subtotal_footer_separator"/>
-                                </group>
-                                <group string="قيمة الساعة">
-                                    <field name="hour_basic"/>
-                                    <field name="hour_allowances"/>
-                                    <field name="hour_total" class="oe_subtotal_footer_separator"/>
                                 </group>
                             </group>
                         </page>

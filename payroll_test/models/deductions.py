@@ -4,22 +4,22 @@ class DailyHoursDeduction(models.Model):
     _name = 'daily.hours.deduction'
     _description = 'Payroll Deductions'
 
-    name = fields.Char(string='الاسم', compute='_compute_name')
+    name = fields.Char(string='Name', compute='_compute_name')
     employee_id = fields.Many2one('ab_hr_employee', string='Employee', required=True)
     period_id = fields.Many2one('daily.hours.payroll.period', string='Payroll Period', required=True)
-    
-    absence_deduction_basic = fields.Float(string='خصم غياب (أساسي)', compute='_compute_deductions', store=True)
-    absence_deduction_allowances = fields.Float(string='خصم غياب (بدلات)', compute='_compute_deductions', store=True)
-    delay_deduction = fields.Float(string='خصم تأخير', compute='_compute_deductions', store=True)
-    total_deductions = fields.Float(string='إجمالي الخصومات', compute='_compute_total', store=True)
+
+    absence_deduction_basic = fields.Float(string='Absence Deduction (Basic)', compute='_compute_deductions', store=True)
+    absence_deduction_allowances = fields.Float(string='Absence Deduction (Allowances)', compute='_compute_deductions', store=True)
+    delay_deduction = fields.Float(string='Delay Deduction', compute='_compute_deductions', store=True)
+    total_deductions = fields.Float(string='Total Deductions', compute='_compute_total', store=True)
 
     @api.depends('employee_id', 'period_id')
     def _compute_name(self):
         for record in self:
             if record.employee_id and record.period_id:
-                record.name = f"خصومات {record.employee_id.name} - {record.period_id.name}"
+                record.name = f"Deductions for {record.employee_id.name} - {record.period_id.name}"
             else:
-                record.name = "خصومات جديدة"
+                record.name = 'خصم جديد' if record.env.lang == 'ar_001' else 'New Deduction'
 
     @api.depends('employee_id', 'period_id')
     def _compute_deductions(self):

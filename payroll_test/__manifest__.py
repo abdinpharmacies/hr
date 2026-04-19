@@ -1,8 +1,8 @@
 {
-    'name': 'نظام حسابات المرتبات (Payroll Accounting Module)',
-    'version': '1.1',
+    'name': 'Payroll Accounting System',
+    'version': '1.2',
     'category': 'Human Resources',
-    'summary': 'إدارة المرتبات والحضور بنظم احتساب متعددة',
+    'summary': 'Multi-system payroll and attendance management',
     'depends': ['base', 'hr', 'ab_hr'],
     'data': [
         'security/ir.model.access.csv',

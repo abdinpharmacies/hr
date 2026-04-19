@@ -33,7 +33,7 @@
                             <field name="absence_deduction_basic"/>
                             <field name="absence_deduction_allowances"/>
                             <field name="delay_deduction"/>
-                            <field name="total_deductions" class="oe_subtotal_footer_separator"/>
+                            <field name="total_deductions"/>
                         </group>
                     </group>
                 </sheet>

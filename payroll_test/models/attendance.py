@@ -5,44 +5,43 @@ class DailyHoursAttendance(models.Model):
     _name = 'daily.hours.attendance'
     _description = 'Attendance'
     _order = 'date desc, check_in_time desc'
-    
+
     employee_id = fields.Many2one('ab_hr_employee', string='Employee', required=True)
     date = fields.Date(string='Date', required=True, default=fields.Date.context_today)
-    day_name = fields.Char(string='اليوم', compute='_compute_day_name', store=True)
-    payslip_id = fields.Many2one('daily.hours.payslip', string='إيصال الراتب המربوط', ondelete='set null')
-    
-    check_in_time = fields.Datetime(string='وقت الحضور')
-    check_out_time = fields.Datetime(string='وقت الانصراف')
-    
-    branch_code = fields.Char(string='كود الفرع')
-    branch_name = fields.Char(string='اسم الفرع')
-    
-    # Authorizations and Overrides
-    authorized_shift_change = fields.Boolean(string='تغيير وردية بإذن', default=False)
-    manual_shift_start = fields.Float(string='موعد الحضور الجديد (بإذن)', help='يجب أن يكون الفرق ساعة أو أكثر عن الموعد الأساسي')
-    authorized_two_hour_permission = fields.Boolean(string='إذن ساعتين', default=False)
-    authorized_overtime = fields.Boolean(string='احتساب إضافي بإذن', default=False)
-    
-    is_unauthorized_shift = fields.Boolean(string='تغيير وردية بدون إذن (مخالفة)', compute='_compute_shift_penalties', store=True)
-    is_late_arrival = fields.Boolean(string='تأخير (أكثر من 30 دقيقة)', compute='_compute_shift_penalties', store=True)
-    
-    shortage_minutes = fields.Float(string='دقائق النقص', compute='_compute_hours', store=True)
-    extra_minutes = fields.Float(string='دقائق إضافية', compute='_compute_hours', store=True)
-    
-    attendance_status = fields.Selection([
-        ('normal', 'طبيعي'),
-        ('forget_checkout', 'نسيان بصمة انصراف'),
-    ], string='حالة البصمة', default='normal', required=True)
-    
-    working_hours = fields.Float(string='ساعات العمل', compute='_compute_hours', store=True)
-    extra_hours = fields.Float(string='ساعات إضافية', compute='_compute_hours', store=True)
-    delay_hours = fields.Float(string='ساعات تأخير', compute='_compute_hours', store=True)
-    absence_days = fields.Float(string='أيام الغياب', compute='_compute_absence', store=True)
+    day_name = fields.Char(string='Day Name', compute='_compute_day_name', store=True)
+    payslip_id = fields.Many2one('daily.hours.payslip', string='Payslip', ondelete='set null')
 
-    @api.depends('check_in_time', 'check_out_time', 'employee_id.working_hours_per_day', 'attendance_status')
+    check_in_time = fields.Datetime(string='Check In Time')
+    check_out_time = fields.Datetime(string='Check Out Time')
+
+    branch_code = fields.Char(string='Branch Code')
+    branch_name = fields.Char(string='Branch Name')
+
+    authorized_shift_change = fields.Boolean(string='Authorized Shift Change', default=False)
+    manual_shift_start = fields.Float(string='Manual Shift Start', help='Difference must be at least 1 hour from the scheduled time')
+    authorized_two_hour_permission = fields.Boolean(string='Two Hour Permission', default=False)
+    authorized_overtime = fields.Boolean(string='Authorized Overtime', default=False)
+
+    is_unauthorized_shift = fields.Boolean(string='Unauthorized Shift Change', compute='_compute_shift_penalties', store=True)
+    is_late_arrival = fields.Boolean(string='Late Arrival', compute='_compute_shift_penalties', store=True)
+
+    shortage_minutes = fields.Float(string='Shortage Minutes', compute='_compute_hours', store=True)
+    extra_minutes = fields.Float(string='Extra Minutes', compute='_compute_hours', store=True)
+
+    attendance_status = fields.Selection([
+        ('normal', 'Normal'),
+        ('forget_checkout', 'Forgot Check-out'),
+    ], string='Attendance Status', default='normal', required=True)
+
+    working_hours = fields.Float(string='Working Hours', compute='_compute_hours', store=True)
+    extra_hours = fields.Float(string='Extra Hours', compute='_compute_hours', store=True)
+    delay_hours = fields.Float(string='Delay Hours', compute='_compute_hours', store=True)
+    absence_days = fields.Float(string='Absence Days', compute='_compute_absence', store=True)
+
+    @api.depends('check_in_time', 'check_out_time', 'employee_id.daily_working_hours', 'attendance_status')
     def _compute_hours(self):
         for record in self:
-            required_hours = record.employee_id.working_hours_per_day or 8.0
+            required_hours = record.employee_id.daily_working_hours or 8.0
             
             if record.check_in_time:
                 if record.attendance_status == 'forget_checkout':
@@ -79,7 +78,7 @@ class DailyHoursAttendance(models.Model):
                 record.delay_hours = 0.0
                 record.shortage_minutes = 0.0
 
-    @api.depends('check_in_time', 'employee_id.shift_scheduled_start', 'authorized_shift_change', 'manual_shift_start')
+    @api.depends('check_in_time', 'employee_id.shift_start_time', 'authorized_shift_change', 'manual_shift_start')
     def _compute_shift_penalties(self):
         for record in self:
             record.is_unauthorized_shift = False
@@ -90,7 +89,7 @@ class DailyHoursAttendance(models.Model):
                 
             # Convert check_in time to float hours directly (simplification, assuming check in is in employee timezone)
             check_in_hour = record.check_in_time.hour + record.check_in_time.minute / 60.0
-            scheduled_start = record.employee_id.shift_scheduled_start or 8.0
+            scheduled_start = record.employee_id.shift_start_time or 8.0
             
             active_start = scheduled_start
             
@@ -118,18 +117,18 @@ class DailyHoursAttendance(models.Model):
 
     @api.depends('date')
     def _compute_day_name(self):
-        days_ar = {
-            0: 'الاثنين (Monday)',
-            1: 'الثلاثاء (Tuesday)',
-            2: 'الأربعاء (Wednesday)',
-            3: 'الخميس (Thursday)',
-            4: 'الجمعة (Friday)',
-            5: 'السبت (Saturday)',
-            6: 'الأحد (Sunday)'
+        days_en = {
+            0: 'Monday',
+            1: 'Tuesday',
+            2: 'Wednesday',
+            3: 'Thursday',
+            4: 'Friday',
+            5: 'Saturday',
+            6: 'Sunday'
         }
         for record in self:
             if record.date:
-                record.day_name = days_ar.get(record.date.weekday(), '')
+                record.day_name = days_en.get(record.date.weekday(), '')
             else:
                 record.day_name = ''
     def _compute_absence(self):

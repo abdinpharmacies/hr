@@ -5,18 +5,19 @@ class DailyHoursPayrollPeriod(models.Model):
     _name = 'daily.hours.payroll.period'
     _description = 'Payroll Period'
 
-    name = fields.Char(string='اسم الفترة', compute='_compute_name')
-    start_date = fields.Date(string='تاريخ البداية', required=True)
-    end_date = fields.Date(string='تاريخ النهاية', required=True)
-    total_working_days = fields.Integer(string='أيام العمل المطلوبة (افتراضي)', compute='_compute_working_days', store=True)
+    name = fields.Char(string='Name', compute='_compute_name')
+    start_date = fields.Date(string='Start Date', required=True)
+    end_date = fields.Date(string='End Date', required=True)
+    total_working_days = fields.Integer(string='Required Working Days', compute='_compute_working_days', store=True)
 
     @api.depends('start_date', 'end_date')
     def _compute_name(self):
         for record in self:
             if record.start_date and record.end_date:
-                record.name = f"من {record.start_date} إلى {record.end_date}"
+                record.name = f"From {record.start_date} to {record.end_date}"
             else:
-                record.name = "فترة جديدة"
+                lang = record.env.lang
+                record.name = 'فترة جديدة' if lang == 'ar_001' else 'New Period'
 
     @api.depends('start_date', 'end_date')
     def _compute_working_days(self):

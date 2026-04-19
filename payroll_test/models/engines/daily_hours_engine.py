@@ -13,7 +13,7 @@ class DailyHoursEngine(BasePayrollEngine):
         ])
 
     def _get_extra_allowances_breakdown(self):
-        extra_allowances = self.employee.extra_allowances_ids
+        extra_allowances = self.employee.extra_allowance_ids if hasattr(self.employee, 'extra_allowance_ids') else self.env['daily.hours.extra.allowance']
         fixed_val = sum(extra_allowances.filtered(lambda a: a.calculation_type == 'fixed').mapped('amount'))
         prorated_base = sum(extra_allowances.filtered(lambda a: a.calculation_type == 'prorated').mapped('amount'))
         custom_base = sum(extra_allowances.filtered(lambda a: a.calculation_type == 'custom').mapped('amount'))
@@ -25,9 +25,9 @@ class DailyHoursEngine(BasePayrollEngine):
 
     def _build_metrics(self, required_days, attendances):
         required_days = required_days or 0
-        contractual_hours = self.employee.working_hours_per_day or 0.0
-        hourly_basic = self.employee.hourly_rate_basic or 0.0
-        hourly_allowances = self.employee.hourly_rate_allowances or 0.0
+        contractual_hours = self.employee.daily_working_hours or 0.0
+        hourly_basic = self.employee.hourly_basic_rate or 0.0
+        hourly_allowances = self.employee.hourly_allowance_rate or 0.0
 
         total_absence = sum(attendances.mapped('absence_days'))
         attendance_days = max(required_days - total_absence, 0.0)
@@ -153,8 +153,8 @@ class DailyHoursEngine(BasePayrollEngine):
                 required_days = self.record.working_days_in_period or 0
             elif self.period and hasattr(self.period, 'calculate_days_required'):
                 required_days = self.period.calculate_days_required(
-                    emp.weekly_off_day_1,
-                    emp.weekly_off_day_2,
+                    emp.weekly_off_1,
+                    emp.weekly_off_2,
                 )
 
             summary = self._calculate_attendance_financials(required_days, self._get_period_attendances())
@@ -183,7 +183,7 @@ class DailyHoursEngine(BasePayrollEngine):
         day_basic = basic_salary / days
         day_allowances = (total_basic_allowances + extra_allowances) / days
 
-        hours = self.employee.working_hours_per_day or 1
+        hours = self.employee.daily_working_hours or 1
         hour_basic = day_basic / hours
         hour_allowances_basic = (total_basic_allowances / days) / hours
 

@@ -40,8 +40,8 @@ class BasePayrollEngine:
             'period': self.period,
             'env': self.env,
             # Context Variables (Smart Mapping)
-            'agreement_salary': getattr(self.record, 'agreement_salary', self.employee.agreement_salary),
-            'contractual_hours': self.employee.working_hours_per_day,
+'agreement_salary': getattr(self.record, 'agreement_salary', self.employee.computed_daily_rate),
+            'contractual_hours': self.employee.daily_working_hours,
             'worked_hours': getattr(self.record, 'working_hours', 0.0),
             'absence_days': getattr(self.record, 'absence_days', 0.0),
         })

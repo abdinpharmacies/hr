@@ -1,331 +1,887 @@
-# Arabic translations for payroll_test
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * payroll_test
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server\n"
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-19 09:00+0000\n"
+"PO-Revision-Date: 2026-04-19 09:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ar\n"
 
 #. module: payroll_test
-msgid "Payroll Rule Systems"
-msgstr "أنظمة قواعد الرواتب"
+#: model:ir.actions.act_window,name:payroll_test.action_employee_daily_hours
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_employees
+msgid "Employees"
+msgstr "الموظفين"
 
 #. module: payroll_test
-msgid "Payroll Rule System"
-msgstr "نظام قواعد الرواتب"
-
-#. module: payroll_test
-msgid "Confirm Policy"
-msgstr "اعتماد السياسة وتفعيلها"
-
-#. module: payroll_test
-msgid "Reset to Draft"
-msgstr "إعادة للمراجعة"
-
-#. module: payroll_test
-msgid "Employee Code"
-msgstr "كود الموظف"
-
-#. module: payroll_test
-msgid "Daily Working Hours"
-msgstr "ساعات العمل اليومية"
-
-#. module: payroll_test
-msgid "Scheduled Start Time"
-msgstr "موعد الحضور العام (ساعة)"
-
-#. module: payroll_test
-msgid "Hourly Basic Wage"
-msgstr "أجر الساعة (أساسي)"
-
-#. module: payroll_test
-msgid "Hourly Allowances"
-msgstr "أجر الساعة (بدلات)"
-
-#. module: payroll_test
-msgid "Extra Allowances"
-msgstr "بدلات إضافية"
-
-#. module: payroll_test
-msgid "Delivery Staff"
-msgstr "طاقم التوصيل"
-
-#. module: payroll_test
-msgid "Sector"
-msgstr "القطاع"
-
-#. module: payroll_test
-msgid "Social Insurance"
-msgstr "التأمين الاجتماعي"
-
-#. module: payroll_test
-msgid "Health Insurance"
-msgstr "التأمين الصحي"
-
-#. module: payroll_test
-msgid "Syndicate Fund"
-msgstr "صندوق الزمالة"
-
-#. module: payroll_test
-msgid "Payroll Policy"
-msgstr "سياسة الرواتب"
-
-#. module: payroll_test
-msgid "Payroll Type"
-msgstr "نوع النظام"
-
-#. module: payroll_test
-msgid "First Weekly Off"
-msgstr "يوم الإجازة الأول"
-
-#. module: payroll_test
-msgid "Second Weekly Off"
-msgstr "يوم الإجازة الثاني"
-
-#. module: payroll_test
-msgid "Agreed Salary"
-msgstr "راتب الاتفاق"
-
-#. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_daily_hours_payroll_period
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_payroll_period
 msgid "Payroll Periods"
 msgstr "فترات الرواتب"
 
 #. module: payroll_test
-msgid "Payroll Period"
-msgstr "فترة راتب"
-
-#. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_daily_hours_salary_structure
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_salary_structure
 msgid "Salary Structures"
 msgstr "هياكل الرواتب"
 
 #. module: payroll_test
-msgid "Salary Structure"
-msgstr "هيكل الراتب"
-
-#. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_daily_hours_attendance
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_attendance_records
 msgid "Attendance Records"
 msgstr "سجلات الحضور"
 
 #. module: payroll_test
-msgid "Attendance Record"
-msgstr "سجل حضور"
-
-#. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_daily_hours_deduction
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_deduction
 msgid "Deductions"
 msgstr "الخصومات"
 
 #. module: payroll_test
-msgid "Deduction"
-msgstr "خصم"
-
-#. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_daily_hours_payslip
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_payslip
 msgid "Payslips"
 msgstr "قسائم الرواتب"
 
 #. module: payroll_test
-msgid "Payslip"
-msgstr "قسيمة راتب"
-
-#. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_allowance_type
+#: model:ir.ui.menu,name:payroll_test.menu_allowance_type
 msgid "Allowance Types"
 msgstr "أنواع البدلات"
 
 #. module: payroll_test
-msgid "Employees"
-msgstr "الموظفين"
-
-#. module: payroll_test
-msgid "Payroll Periods"
-msgstr "فترات الرواتب"
-
-#. module: payroll_test
-msgid "Salary Structures"
-msgstr "هياكل الرواتب"
-
-#. module: payroll_test
-msgid "Attendance Records"
-msgstr "سجلات الحضور"
-
-#. module: payroll_test
-msgid "Deductions"
-msgstr "الخصومات"
-
-#. module: payroll_test
-msgid "Payslips"
-msgstr "قسائم الرواتب"
-
-#. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_attendance_import
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_attendance_import
 msgid "Import Attendance (.xlsx)"
-msgstr "رفع ملف البصمات (.xlsx)"
+msgstr "استيراد الحضور (.xlsx)"
 
 #. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_payroll_excel_import_wizard
+#: model:ir.ui.menu,name:payroll_test.menu_payroll_excel_import
 msgid "Import Excel Rules"
-msgstr "رفع معادلات من إكسل"
+msgstr "استيراد من إكسل"
 
 #. module: payroll_test
+#: model:ir.actions.act_window,name:payroll_test.action_payroll_rule_system
+#: model:ir.ui.menu,name:payroll_test.menu_payroll_rule_system
 msgid "Rule Systems"
 msgstr "أنظمة القواعد"
 
 #. module: payroll_test
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_root
 msgid "Payroll Accounting"
 msgstr "نظام حسابات المرتبات"
 
 #. module: payroll_test
-msgid "Employees"
-msgstr "الموظفين"
-
-#. module: payroll_test
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_attendance
 msgid "Attendance"
 msgstr "الحضور"
 
 #. module: payroll_test
+#: model:ir.ui.menu,name:payroll_test.menu_daily_hours_payroll
 msgid "Payroll"
 msgstr "الرواتب"
 
 #. module: payroll_test
+#: model:ir.ui.menu,name:payroll_test.menu_payroll_config
 msgid "Configuration"
 msgstr "الإعدادات"
 
 #. module: payroll_test
-msgid "Import (.xlsx)"
-msgstr "رفع بصمات (.xlsx)"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__employee_id
+msgid "Employee"
+msgstr "الموظف"
 
 #. module: payroll_test
-msgid "Calculated Hours"
-msgstr "الساعات المحسوبة"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__date
+msgid "Date"
+msgstr "التاريخ"
 
 #. module: payroll_test
-msgid "Absence & Permissions"
-msgstr "الغياب والأذونات"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__day_name
+msgid "Day Name"
+msgstr "اسم اليوم"
 
 #. module: payroll_test
-msgid "Violations"
-msgstr "المخالفات"
-
-#. module: payroll_test
-msgid "Payslips"
-msgstr "قسائم الرواتب"
-
-#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__payslip_id
 msgid "Payslip"
-msgstr "قسيمة راتب"
+msgstr "قسيمة الراتب"
 
 #. module: payroll_test
-msgid "Prepare Records"
-msgstr "تجهيز السجل"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__check_in_time
+msgid "Check In Time"
+msgstr "وقت الحضور"
 
 #. module: payroll_test
-msgid "Calculate Payroll"
-msgstr "احتساب الراتب"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__check_out_time
+msgid "Check Out Time"
+msgstr "وقت الانصراف"
 
 #. module: payroll_test
-msgid "Daily Attendance (Interactive)"
-msgstr "سجل الحضور اليومي (التفاعلي)"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__branch_code
+msgid "Branch Code"
+msgstr "كود الفرع"
 
 #. module: payroll_test
-msgid "Record"
-msgstr "السجل"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__branch_name
+msgid "Branch Name"
+msgstr "اسم الفرع"
 
 #. module: payroll_test
-msgid "Account Summary"
-msgstr "ملخص الحسابات (التفاصيل)"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__authorized_shift_change
+msgid "Authorized Shift Change"
+msgstr "تغيير وردية بإذن"
 
 #. module: payroll_test
-msgid "Earnings"
-msgstr "الاستحقاقات"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__manual_shift_start
+msgid "Manual Shift Start"
+msgstr "موعد الحضور الجديد"
 
 #. module: payroll_test
-msgid "Salary & Allowances"
-msgstr "الراتب والبدلات"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__authorized_two_hour_permission
+msgid "Two Hour Permission"
+msgstr "إذن ساعتين"
 
 #. module: payroll_test
-msgid "Extra Allowances"
-msgstr "البدلات الإضافية"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__authorized_overtime
+msgid "Authorized Overtime"
+msgstr "احتساب إضافي بإذن"
 
 #. module: payroll_test
-msgid "Overtime & Bonuses"
-msgstr "الوقت الإضافي والمكافآت"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__is_unauthorized_shift
+msgid "Unauthorized Shift Change"
+msgstr "تغيير وردية بدون إذن"
 
 #. module: payroll_test
-msgid "Deductions"
-msgstr "الخصومات"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__is_late_arrival
+msgid "Late Arrival"
+msgstr "تأخير"
 
 #. module: payroll_test
-msgid "Payroll Periods"
-msgstr "فترات الرواتب"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__shortage_minutes
+msgid "Shortage Minutes"
+msgstr "دقائق النقص"
 
 #. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__extra_minutes
+msgid "Extra Minutes"
+msgstr "دقائق إضافية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__attendance_status
+msgid "Attendance Status"
+msgstr "حالة البصمة"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__daily_hours_attendance__attendance_status__normal
+msgid "Normal"
+msgstr "طبيعي"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__daily_hours_attendance__attendance_status__forget_checkout
+msgid "Forgot Check-out"
+msgstr "نسيان بصمة انصراف"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__working_hours
+msgid "Working Hours"
+msgstr "ساعات العمل"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__extra_hours
+msgid "Extra Hours"
+msgstr "ساعات إضافية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__delay_hours
+msgid "Delay Hours"
+msgstr "ساعات التأخير"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_attendance__absence_days
+msgid "Absence Days"
+msgstr "أيام الغياب"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__period_id
 msgid "Payroll Period"
-msgstr "فترة راتب"
+msgstr "فترة الراتب"
 
 #. module: payroll_test
-msgid "Deductions"
-msgstr "الخصومات"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__absence_deduction_basic
+msgid "Absence Deduction (Basic)"
+msgstr "خصم غياب أساسي"
 
 #. module: payroll_test
-msgid "Deduction"
-msgstr "خصم راتب"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__absence_deduction_allowances
+msgid "Absence Deduction (Allowances)"
+msgstr "خصم غياب البدلات"
 
 #. module: payroll_test
-msgid "Payroll Accounting"
-msgstr "نظام حسابات المرتبات"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__delay_deduction
+msgid "Delay Deduction"
+msgstr "خصم التأخير"
 
 #. module: payroll_test
-msgid "Identity & Job Settings"
-msgstr "إعدادات الهوية والوظيفة"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__total_deductions
+msgid "Total Deductions"
+msgstr "إجمالي الخصومات"
 
 #. module: payroll_test
-msgid "Payroll Settings"
-msgstr "إعدادات احتساب الراتب"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payroll_period__start_date
+msgid "Start Date"
+msgstr "تاريخ البداية"
 
 #. module: payroll_test
-msgid "Insurance & Deductions"
-msgstr "التأمينات والخصومات"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payroll_period__end_date
+msgid "End Date"
+msgstr "تاريخ النهاية"
 
 #. module: payroll_test
-msgid "Weekly Off Days"
-msgstr "الإجازات الأسبوعية"
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payroll_period__total_working_days
+msgid "Required Working Days"
+msgstr "أيام العمل المطلوبة"
 
 #. module: payroll_test
-msgid "Salary Summary"
-msgstr "ملخص الراتب"
+#: model:ir.model.fields,field_description:payroll_test.field_payroll_rule_system__name
+msgid "System Name"
+msgstr "اسم النظام"
 
 #. module: payroll_test
-msgid "Fixed Extra Allowances"
-msgstr "البدلات الإضافية الثابتة"
+#: model:ir.model.fields.selection,name:payroll_test.selection__payroll_rule_system__state__draft
+msgid "Draft"
+msgstr "مسودة"
 
 #. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__payroll_rule_system__state__confirmed
+msgid "Confirmed"
+msgstr "معتمد"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__payroll_rule_system__policy_type__daily_hours
+msgid "Daily Hours System"
+msgstr "نظام ساعات يومية"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__payroll_rule_system__policy_type__fixed_monthly
+msgid "Fixed Monthly System"
+msgstr "نظام شهري ثابت"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__payroll_rule_system__policy_type__mixed
+msgid "Mixed/Custom System"
+msgstr "نظام مختلط"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_allowance_type__name
+msgid "Allowance Name"
+msgstr "اسم البدلة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_allowance_type__calculation_type
+msgid "Calculation Type"
+msgstr "نوع الحساب"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__daily_hours_allowance_type__calculation_type__prorated
+msgid "Prorated"
+msgstr "تناسبي"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__daily_hours_allowance_type__calculation_type__fixed
+msgid "Fixed"
+msgstr "ثابت"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__daily_hours_allowance_type__calculation_type__custom
+msgid "Custom"
+msgstr "مخصص"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_allowance_type__default_amount
+msgid "Default Amount"
+msgstr "المبلغ الافتراضي"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_ab_hr_employee__daily_working_hours
+msgid "Daily Working Hours"
+msgstr "ساعات العمل اليومية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_ab_hr_employee__shift_start_time
+msgid "Shift Start Time"
+msgstr "موعد بداية الوردية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_ab_hr_employee__hourly_basic_rate
+msgid "Hourly Basic Rate"
+msgstr "السعر الأساسي بالساعة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_ab_hr_employee__hourly_allowance_rate
+msgid "Hourly Allowance Rate"
+msgstr "سعر البدلات بالساعة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_ab_hr_employee__payroll_rule_system_id
+msgid "Payroll Rule System"
+msgstr "نظام قواعد الرواتب"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__payroll_type__daily_hours
+msgid "Daily Hours System"
+msgstr "نظام ساعات يومية"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__payroll_type__monthly
+msgid "Fixed Monthly System"
+msgstr "نظام شهري ثابت"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__payroll_type__daily_wage
+msgid "Daily Wage System"
+msgstr "نظام أجر يومي"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__payroll_type__hybrid
+msgid "Hybrid System"
+msgstr "نظام مختلط"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__weekly_off_1__0
+msgid "Monday"
+msgstr "الإثنين"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__weekly_off_1__1
+msgid "Tuesday"
+msgstr "الثلاثاء"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__weekly_off_1__2
+msgid "Wednesday"
+msgstr "الأربعاء"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__weekly_off_1__3
+msgid "Thursday"
+msgstr "الخميس"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__weekly_off_1__4
+msgid "Friday"
+msgstr "الجمعة"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__weekly_off_1__5
+msgid "Saturday"
+msgstr "السبت"
+
+#. module: payroll_test
+#: model:ir.model.fields.selection,name:payroll_test.selection__ab_hr_employee__weekly_off_1__6
+msgid "Sunday"
+msgstr "الأحد"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__name
+msgid "Structure Name"
+msgstr "اسم الهيكل"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__basic_salary
+msgid "Basic Salary"
+msgstr "الراتب الأساسي"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__working_days_in_period
+msgid "Working Days"
+msgstr "أيام العمل"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__allowance_nature_of_work
+msgid "Nature of Work (30%)"
+msgstr "بدل طبيعة العمل (30%)"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__allowance_performance
+msgid "Performance (30%)"
+msgstr "بدل إنجاز (30%)"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__allowance_cost_of_living
+msgid "Cost of Living (20%)"
+msgstr "بدل غلاء المعيشة (20%)"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__allowance_dedication
+msgid "Dedication (20%)"
+msgstr "بدل إخلاص (20%)"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__total_basic_allowances
+msgid "Total Basic Allowances"
+msgstr "إجمالي البدلات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__extra_allowances
+msgid "Total Extra Allowances"
+msgstr "إجمالي البدلات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__extra_allowances_fixed
+msgid "Fixed Allowances"
+msgstr "بدلات ثابتة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__extra_allowances_prorated
+msgid "Prorated Allowances"
+msgstr "بدلات تناسبية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__extra_allowances_custom
+msgid "Custom Allowances"
+msgstr "بدلات مخصصة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__attendance_percentage
+msgid "Attendance (%)"
+msgstr "نسبة الحضور (%)"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__agreement_salary
+msgid "Agreed Salary"
+msgstr "راتب الاتفاق"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__penalty_late_arrival
+msgid "Late Arrival Penalty"
+msgstr "جزاء التأخير"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__penalty_unauthorized_shift
+msgid "Unauthorized Shift Penalty"
+msgstr "جزاء تغيير الوردية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__penalty_shortage_hours
+msgid "Shortage Hours Penalty"
+msgstr "خصم نقص الساعات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__earning_grace_period_overtime
+msgid "Grace Period Overtime"
+msgstr "إضافي فترة السماح"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__earning_authorized_overtime
+msgid "Authorized Overtime"
+msgstr "إضافي بإذن"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__earning_two_hour_permission
+msgid "Two Hour Permission"
+msgstr "تعويض إذن ساعتين"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__earning_manual_bonus
+msgid "Manual Bonus"
+msgstr "مكافآت يدوية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__day_basic
+msgid "Day Basic"
+msgstr "قيمة اليوم"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__day_allowances
+msgid "Day Allowances"
+msgstr "قيمة اليوم للبدلات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__day_total
+msgid "Day Total"
+msgstr "إجمالي اليوم"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__hour_basic
+msgid "Hour Basic"
+msgstr "قيمة الساعة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__hour_allowances
+msgid "Hour Allowances"
+msgstr "قيمة الساعة للبدلات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__hour_total
+msgid "Hour Total"
+msgstr "إجمالي الساعة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__forget_fingerprint_count
+msgid "Forget Fingerprint Count"
+msgstr "عدد نسيان البصمة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_salary_structure__forget_fingerprint_penalty
+msgid "Forget Fingerprint Penalty"
+msgstr "جزاء نسيان البصمة"
+
+#. module: payroll_test
+#: model:ir.model.fields,help:payroll_test.field_daily_hours_attendance__manual_shift_start
+msgid "Difference must be at least 1 hour from the scheduled time"
+msgstr "يجب أن يكون الفرق ساعة أو أكثر عن الموعد الأساسي"
+
+#. module: payroll_test
+#: model:ir.model.fields,help:payroll_test.field_payroll_rule_item__code
+msgid "Used in other equations"
+msgstr "يستخدم هذا الكود داخل المعادلات الأخرى"
+
+#. module: payroll_test
+#: constraint:payroll_test.payroll_rule_item
+msgid "Code must be unique within the system!"
+msgstr "الكود البرمجي يجب أن يكون فريداً داخل النظام الواحد!"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_tree
 msgid "Salary Structures"
 msgstr "هياكل الرواتب"
 
 #. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_form
 msgid "Salary Structure"
 msgstr "هيكل الراتب"
 
 #. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_form
 msgid "Basic Allowances"
 msgstr "البدلات الأساسية"
 
 #. module: payroll_test
-msgid "Penalties (Fingerprint)"
-msgstr "الجزاءات (نسيان البصمة)"
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_form
+msgid "Extra Allowances"
+msgstr "البدلات الإضافية"
 
 #. module: payroll_test
-msgid "Day & Hour Value"
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_form
+msgid "Penalties (Fingerprint)"
+msgstr "الجزاءات (بصمة)"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_form
+msgid "Day and Hour Value"
 msgstr "قيمة اليوم والساعة"
 
 #. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_form
 msgid "Day Value"
 msgstr "قيمة اليوم"
 
 #. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_salary_structure_form
 msgid "Hour Value"
 msgstr "قيمة الساعة"
 
 #. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_tree
+msgid "Payslips"
+msgstr "قسائم الرواتب"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Payslip"
+msgstr "قسيمة الراتب"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Prepare Records"
+msgstr "تحضير السجلات"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Calculate Payroll"
+msgstr "احتساب الراتب"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Daily Attendance (Interactive)"
+msgstr "الحضور اليومي"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Account Summary"
+msgstr "ملخص الحساب"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Earnings"
+msgstr "الاستحقاقات"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Salary and Allowances"
+msgstr "الراتب والبدلات"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Extra Allowances"
+msgstr "البدلات الإضافية"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Overtime and Bonuses"
+msgstr "الاضافي والمكافآت"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Deductions"
+msgstr "الخصومات"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_daily_hours_payslip_form
+msgid "Record"
+msgstr "سجل"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__period_id
+msgid "Payroll Period"
+msgstr "فترة الراتب"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__salary_basic
+msgid "Basic Salary"
+msgstr "الراتب الأساسي"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__allowances_basic_four
+msgid "Basic Allowances"
+msgstr "البدلات الأساسية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__attendance_percentage
+msgid "Attendance (%)"
+msgstr "نسبة الحضور (%)"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__agreement_salary
+msgid "Agreement Salary"
+msgstr "راتب الاتفاق"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__extra_allowances
+msgid "Total Extra Allowances"
+msgstr "إجمالي البدلات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__extra_allowances_fixed
+msgid "Fixed Extra Allowances"
+msgstr "بدلات ثابتة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__extra_allowances_prorated
+msgid "Prorated Extra Allowances"
+msgstr "بدلات تناسبية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__extra_allowances_custom
+msgid "Custom Extra Allowances"
+msgstr "بدلات مخصصة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__penalty_late_arrival
+msgid "Late Arrival Penalty"
+msgstr "جزاء التأخير"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__penalty_unauthorized_shift
+msgid "Unauthorized Shift Penalty"
+msgstr "جزاء تغيير الوردية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__penalty_shortage_hours
+msgid "Shortage Hours Penalty"
+msgstr "خصم نقص الساعات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__penalty_forget_fingerprint
+msgid "Forgot Fingerprint Penalty"
+msgstr "جزاء نسيان البصمة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__earning_grace_period_overtime
+msgid "Grace Period Overtime"
+msgstr "إضافي فترة السماح"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__earning_authorized_overtime
+msgid "Authorized Overtime"
+msgstr "إضافي بإذن"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__earning_two_hour_permission
+msgid "Two Hour Permission"
+msgstr "تعويض إذن ساعتين"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__earning_manual_bonus
+msgid "Manual Bonus"
+msgstr "مكافآت يدوية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__attendance_ids
+msgid "Daily Attendance"
+msgstr "سجل الحضور"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__total_earnings
+msgid "Total Earnings"
+msgstr "إجمالي الاستحقاقات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__total_deductions
+msgid "Total Deductions"
+msgstr "إجمالي الخصومات"
+
+#. module: payroll_test
+#: code:addons/payroll_test/models/payslip.py:0
+msgid "New Payslip"
+msgstr "قسيمة جديدة"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_tree
 msgid "Payroll Rule Systems"
 msgstr "أنظمة قواعد الرواتب"
 
 #. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
 msgid "Payroll Rule System"
 msgstr "نظام قواعد الرواتب"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
+msgid "Confirm Policy"
+msgstr "تأكيد السياسة"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
+msgid "Reset to Draft"
+msgstr "إعادة للمسودة"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
+msgid "AI Policy Analysis"
+msgstr "تحليل السياسة بالذكاء الاصطناعي"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
+msgid "Rules and Equations"
+msgstr "القواعد والمعادلات"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
+msgid "AI Communication"
+msgstr "تواصل مع المحرك"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
+msgid "e.g. Daily Hours System"
+msgstr "مثال: نظام الساعات اليومية"
+
+#. module: payroll_test
+#: model_terms:ir.ui.view,arch_db:payroll_test.view_payroll_rule_system_form
+msgid "Enter instructions here..."
+msgstr "اكتب تعليماتك هنا..."
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payslip__net_salary
+msgid "Net Salary"
+msgstr "الصافي"
+
+#. module: payroll_test
+#: code:addons/payroll_test/models/payroll_period.py:0
+msgid "New Period"
+msgstr "فترة جديدة"
+
+#. module: payroll_test
+#: code:addons/payroll_test/models/deductions.py:0
+msgid "New Deduction"
+msgstr "خصم جديد"
+
+#. module: payroll_test
+#: code:addons/payroll_test/models/salary_structure.py:0
+msgid "New Structure"
+msgstr "هيكل جديد"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payroll_period__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payroll_period__start_date
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payroll_period__end_date
+msgid "End Date"
+msgstr "تاريخ النهاية"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_payroll_period__total_working_days
+msgid "Required Working Days"
+msgstr "أيام العمل المطلوبة"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__period_id
+msgid "Payroll Period"
+msgstr "فترة الراتب"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__absence_deduction_basic
+msgid "Absence Deduction (Basic)"
+msgstr "خصم غياب أساسي"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__absence_deduction_allowances
+msgid "Absence Deduction (Allowances)"
+msgstr "خصم غياب البدلات"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__delay_deduction
+msgid "Delay Deduction"
+msgstr "خصم التأخير"
+
+#. module: payroll_test
+#: model:ir.model.fields,field_description:payroll_test.field_daily_hours_deduction__total_deductions
+msgid "Total Deductions"
+msgstr "إجمالي الخصومات"
+
