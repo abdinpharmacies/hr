@@ -150,6 +150,8 @@ class AbRequest(models.Model):
         """Return the requester employee id or raise a clear user-facing error."""
         employee_id = self._get_requester_employee_id()
         if not employee_id:
+            if self.env.user.has_group("ab_request_management.group_ab_request_management_admin"):
+                return False
             raise ValidationError(_(REQUEST_EMPLOYEE_LINK_ERROR))
         return employee_id
 
@@ -171,7 +173,7 @@ class AbRequest(models.Model):
         result = super().get_view(view_id=view_id, view_type=view_type, **options)
         if view_type not in {"list", "form", "kanban"}:
             return result
-        if self._get_requester_employee_id():
+        if self.env.user.has_group("ab_request_management.group_ab_request_management_admin") or self._get_requester_employee_id():
             return result
 
         arch = result.get("arch")
@@ -487,8 +489,10 @@ class AbRequest(models.Model):
     def _can_current_user_add_followup(self):
         """Return whether the current user can add follow-ups on this request."""
         self.ensure_one()
-        if self.is_department_manager or self.is_assigned_employee or self.is_request_admin:
-            return self.state in {"scheduled", "in_progress", "under_requester_confirmation", "satisfied"}
+        if self.is_request_admin:
+            return self.state != "closed"
+        if self.is_department_manager or self.is_assigned_employee:
+            return self.state in {"under_review", "scheduled", "in_progress", "under_requester_confirmation", "satisfied"}
         if self.is_requester:
             return self.state not in {"rejected", "closed"}
         return False
