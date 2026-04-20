@@ -183,7 +183,7 @@ msgstr "ترتيب المندوب"
 #. module: ab_orders_management
 #: model:ir.model.fields,field_description:ab_orders_management.field_ab_pharmacy_delivery_pilot__daily_handle_count
 msgid "Daily Orders/Deliveries Count"
-msgstr "عدد الطلبات/التوصيلات اليومي"
+msgstr "عدد الطلبات/التحويلات اليومي"
 
 #. module: ab_orders_management
 #: model_terms:ir.ui.view,arch_db:ab_orders_management.view_ab_pharmacy_delivery_assignment_wizard_form
@@ -222,7 +222,7 @@ msgstr "إغلاق / تغيير الحالة"
 #. module: ab_orders_management
 #: model:ir.model.fields,field_description:ab_orders_management.field_ab_pharmacy_delivery_assignment__completed_by_user_id
 msgid "Completed By"
-msgstr "أُنجز بواسطة"
+msgstr "تم بواسطة"
 
 #. module: ab_orders_management
 #. odoo-python
@@ -265,7 +265,7 @@ msgstr "نوع العملية الحالي"
 #. odoo-javascript
 #: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
 msgid "Deliveries:"
-msgstr "عمليات التوصيل:"
+msgstr "عمليات التحويل:"
 
 #. module: ab_orders_management
 #. odoo-javascript
@@ -288,12 +288,12 @@ msgstr "طلب تحويل"
 #. module: ab_orders_management
 #: model:ir.model.fields,field_description:ab_orders_management.field_ab_pharmacy_delivery_pilot__delivery_assigned_count
 msgid "Delivery Assigned Count"
-msgstr "عدد التوصيلات المسندة"
+msgstr "عدد التحويلات المسندة"
 
 #. module: ab_orders_management
 #: model:ir.model.fields,field_description:ab_orders_management.field_ab_pharmacy_delivery_pilot__delivery_completed_count
 msgid "Delivery Completed Count"
-msgstr "عدد التوصيلات المنجزة"
+msgstr "عدد التحويلات المنجزة"
 
 #. module: ab_orders_management
 #: model:ir.model.fields,field_description:ab_orders_management.field_ab_pharmacy_delivery_pilot__hr_department_id
