@@ -92,8 +92,8 @@ class TestAbRequestManagement(TransactionCase):
 
     def test_request_creation_requires_current_user_employee(self):
         with self.assertRaisesRegex(
-                UserError,
-                "You cannot create a request because you are not linked to an employee.",
+            ValidationError,
+            "You must be linked to an employee to use the Request system.",
         ):
             self.env["ab_request"].with_user(self.no_employee_user).create(
                 {
@@ -101,6 +101,15 @@ class TestAbRequestManagement(TransactionCase):
                     "description": "Request access for quarterly review.",
                     "request_type_id": self.request_type.id,
                 }
+            )
+
+    def test_request_form_open_is_blocked_without_employee(self):
+        with self.assertRaisesRegex(
+            ValidationError,
+            "You must be linked to an employee to use the Request system.",
+        ):
+            self.env["ab_request"].with_user(self.no_employee_user).default_get(
+                ["subject", "description", "request_type_id", "employee_id", "user_id"]
             )
 
     def test_subject_and_description_must_contain_letters(self):

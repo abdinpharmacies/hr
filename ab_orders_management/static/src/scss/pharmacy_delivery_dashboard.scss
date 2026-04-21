@@ -1,5 +1,5 @@
 .o_ab_pharmacy_delivery_dashboard {
-    padding: 18px;
+    padding: 12px;
     background:
         radial-gradient(circle at top left, rgba(47, 111, 221, 0.10), transparent 34%),
         radial-gradient(circle at top right, rgba(223, 122, 34, 0.10), transparent 28%),
@@ -10,7 +10,7 @@
     display: grid;
     grid-template-rows: 1fr;
     grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
-    gap: 16px;
+    gap: 0;
     transition: grid-template-columns 0.2s ease;
 }
 
@@ -23,6 +23,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    padding-left: 8px;
 }
 
 .o_ab_pharmacy_delivery_header {
@@ -125,7 +126,7 @@
     min-height: 0;
     display: flex;
     flex-direction: column;
-    padding: 0.25rem 0.75rem 0 0.75rem !important;
+    padding: 10px !important;
     margin: 0 !important;
     bottom: 0 !important;
     transition: width 0.2s ease, padding 0.2s ease;
@@ -163,7 +164,7 @@
 }
 
 .o_ab_pharmacy_delivery_sidebar.is-collapsed {
-    width: 60px;
+    width: max-content !important;
     padding-left: 8px !important;
     padding-right: 8px !important;
 }
@@ -339,6 +340,13 @@
     background: #f8fafc;
     border: 1px dashed rgba(102, 112, 133, 0.24);
     border-radius: 12px;
+}
+.o_search_panel{
+    width: 100%;
+}
+
+strong{
+    font-weight: 200;
 }
 
 @media (max-width: 1100px) {

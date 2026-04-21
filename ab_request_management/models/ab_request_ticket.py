@@ -1,10 +1,13 @@
+from lxml import etree
+
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import ValidationError
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected"}
-REQUEST_EMPLOYEE_LINK_ERROR = "You cannot create a request because you are not linked to an employee."
+REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the Request system."
+REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
 
 class AbRequest(models.Model):
@@ -44,7 +47,7 @@ class AbRequest(models.Model):
         "ab_hr_employee",
         required=True,
         readonly=True,
-        default=lambda self: self._get_requester_employee_id_or_raise(),
+        default=lambda self: self._default_employee_id(),
         ondelete="restrict",
         tracking=True,
     )
@@ -91,6 +94,7 @@ class AbRequest(models.Model):
     deadline = fields.Datetime()
     state = fields.Selection(
         [
+            ("draft", "Draft"),
             ("under_review", "Under Review"),
             ("scheduled", "Scheduled"),
             ("in_progress", "In Progress"),
@@ -99,7 +103,7 @@ class AbRequest(models.Model):
             ("rejected", "Rejected"),
             ("closed", "Closed"),
         ],
-        default="under_review",
+        default="draft",
         required=True,
         copy=False,
         tracking=True,
@@ -132,6 +136,11 @@ class AbRequest(models.Model):
     _ab_request_name_uniq = models.Constraint("UNIQUE(name)", "Request number must be unique.")
 
     @api.model
+    def _default_employee_id(self):
+        """Return the current user's employee or block access to the request system."""
+        return self._get_requester_employee_id_or_raise()
+
+    @api.model
     def _get_requester_employee_id(self):
         """Resolve the employee to use as requester for the current user."""
         employee = self.env["ab_hr_employee"].sudo().search([("user_id", "=", self.env.user.id)], limit=1)
@@ -142,18 +151,42 @@ class AbRequest(models.Model):
         """Return the requester employee id or raise a clear user-facing error."""
         employee_id = self._get_requester_employee_id()
         if not employee_id:
-            raise UserError(_(REQUEST_EMPLOYEE_LINK_ERROR))
+            if self.env.user.has_group("ab_request_management.group_ab_request_management_admin"):
+                return False
+            raise ValidationError(_(REQUEST_EMPLOYEE_LINK_ERROR))
         return employee_id
 
     @api.model
     def default_get(self, fields_list):
         """Show a clear message when the current user is not linked to an employee."""
         defaults = super().default_get(fields_list)
+        if "user_id" in fields_list and not self.env.context.get("default_user_id"):
+            defaults["user_id"] = self.env.user.id
         if not self.env.context.get("default_employee_id") and (
-            self.env.context.get("params", {}).get("view_type") == "form" or "employee_id" in fields_list
+                self.env.context.get("params", {}).get("view_type") == "form" or "employee_id" in fields_list
         ):
             defaults["employee_id"] = self._get_requester_employee_id_or_raise()
         return defaults
+
+    @api.model
+    def get_view(self, view_id=None, view_type="form", **options):
+        """Disable create entry points when the current user is not linked to an employee."""
+        result = super().get_view(view_id=view_id, view_type=view_type, **options)
+        if view_type not in {"list", "form", "kanban"}:
+            return result
+        if self.env.user.has_group("ab_request_management.group_ab_request_management_admin") or self._get_requester_employee_id():
+            return result
+
+        arch = result.get("arch")
+        if not arch:
+            return result
+
+        root = etree.fromstring(arch)
+        root.set("create", "false")
+        if view_type == "form":
+            root.set("edit", "false")
+        result["arch"] = etree.tostring(root, encoding="unicode")
+        return result
 
     @api.depends("followup_ids")
     def _compute_followup_count(self):
@@ -295,6 +328,15 @@ class AbRequest(models.Model):
             if record.deadline and record.deadline < now:
                 raise ValidationError(_("Deadline cannot be in the past."))
 
+    @api.constrains("user_id", "employee_id")
+    def _check_request_owner_employee(self):
+        """Ensure every request belongs to the creator's linked employee."""
+        for record in self:
+            if not record.employee_id:
+                raise ValidationError(_(REQUEST_EMPLOYEE_LINK_ERROR))
+            if record.employee_id.user_id != record.user_id:
+                raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
+
     @api.model_create_multi
     def create(self, vals_list):
         """Create requests in under-review state and notify stakeholders."""
@@ -303,7 +345,7 @@ class AbRequest(models.Model):
         records._sync_attachments_to_request()
         records._sync_primary_assignee()
         records._subscribe_request_partners()
-        records._notify_request_created()
+        records.filtered(lambda r: r.state != 'draft')._notify_request_created()
         return records
 
     def write(self, vals):
@@ -348,9 +390,10 @@ class AbRequest(models.Model):
     def _prepare_create_vals(self, vals):
         """Normalize incoming values before request creation."""
         prepared_vals = dict(vals or {})
-        current_employee_id = self._get_requester_employee_id_or_raise()
+        current_employee_id = self._default_employee_id()
         prepared_vals["subject"] = (prepared_vals.get("subject") or "").strip()
         prepared_vals["description"] = (prepared_vals.get("description") or "").strip()
+        prepared_vals["user_id"] = self.env.user.id
         if not prepared_vals.get("subject"):
             raise ValidationError(_("Subject is required."))
         if not prepared_vals.get("description"):
@@ -359,9 +402,9 @@ class AbRequest(models.Model):
         self._validate_meaningful_text("description", prepared_vals["description"])
         if not prepared_vals.get("employee_id"):
             prepared_vals["employee_id"] = current_employee_id
-        if not prepared_vals.get("employee_id"):
-            raise UserError(_(REQUEST_EMPLOYEE_LINK_ERROR))
-        prepared_vals["state"] = "under_review"
+        elif prepared_vals["employee_id"] != current_employee_id:
+            raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
+        prepared_vals["state"] = "draft"
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
             prepared_vals["name"] = self.env["ir.sequence"].sudo().next_by_code(REQUEST_SEQUENCE_CODE) or "New"
         request_type = self.env["ab_request_type"].browse(prepared_vals["request_type_id"])
@@ -379,12 +422,20 @@ class AbRequest(models.Model):
             raise ValidationError(_("%s must contain letters and cannot be only numbers or symbols.") % field_label.title())
 
     def _check_immutable_fields(self, vals):
-        """Prevent edits to subject and description after creation."""
-        immutable_fields = {"subject", "description"}
+        """Prevent edits to subject, description, requester user, and requester employee after creation."""
+        immutable_fields = {"subject", "description", "user_id", "employee_id"}
         if not immutable_fields & set(vals):
             return
         for record in self:
+            if record.state == 'draft':
+                continue
             for field_name in immutable_fields & set(vals):
+                if field_name in {"user_id", "employee_id"}:
+                    new_value = vals.get(field_name) or False
+                    current_value = record[field_name].id or False
+                    if new_value != current_value:
+                        raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
+                    continue
                 new_value = (vals.get(field_name) or "").strip()
                 current_value = (record[field_name] or "").strip()
                 if new_value != current_value:
@@ -441,8 +492,10 @@ class AbRequest(models.Model):
     def _can_current_user_add_followup(self):
         """Return whether the current user can add follow-ups on this request."""
         self.ensure_one()
-        if self.is_department_manager or self.is_assigned_employee or self.is_request_admin:
-            return self.state in {"scheduled", "in_progress", "under_requester_confirmation", "satisfied"}
+        if self.is_request_admin:
+            return self.state != "closed"
+        if self.is_department_manager or self.is_assigned_employee:
+            return self.state in {"under_review", "scheduled", "in_progress", "under_requester_confirmation", "satisfied"}
         if self.is_requester:
             return self.state not in {"rejected", "closed"}
         return False
@@ -627,8 +680,11 @@ class AbRequest(models.Model):
         }
 
     def action_submit_request(self):
-        """Save the request and switch to view mode."""
+        """Submit the request for review."""
         self.ensure_one()
+        if self.state == 'draft':
+            self.with_context(allow_state_write=True).write({'state': 'under_review'})
+            self._notify_request_created()
         return {
             "type": "ir.actions.act_window",
             "res_model": "ab_request",

@@ -14,8 +14,8 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
     )
     target_status = fields.Selection(
         [
-            ("free", "Available"),
-            ("in_delivery", "In Delivery"),
+            ("free", _("Available")),
+            ("in_delivery", _("In Delivery")),
         ],
         required=True,
         default="in_delivery",
@@ -23,8 +23,8 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
     current_order_number = fields.Char(readonly=True)
     current_transaction_type = fields.Selection(
         [
-            ("delivery", "Transaction Delivery"),
-            ("order", "Client Order"),
+            ("delivery", _("Transaction Delivery")),
+            ("order", _("Client Order")),
         ],
         readonly=True,
     )
@@ -35,8 +35,8 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
     order_number = fields.Char()
     transaction_type = fields.Selection(
         [
-            ("delivery", "Transaction Delivery"),
-            ("order", "Client Order"),
+            ("delivery", _("Transaction Delivery")),
+            ("order", _("Client Order")),
         ],
     )
     branch_id = fields.Many2one(
@@ -54,14 +54,12 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
                 values.setdefault("pilot_id", pilot.id)
                 values.setdefault("target_status", "free" if pilot.status == "in_delivery" else "in_delivery")
                 values.setdefault("branch_id", pilot.branch_id.id)
-                assignment = pilot._get_open_assignment()
-                if assignment:
-                    values.setdefault("current_order_number", assignment.order_number)
-                    values.setdefault("current_transaction_type", assignment.transaction_type)
-                    values.setdefault("current_branch_id", assignment.branch_id.id)
-                    values.setdefault("order_number", assignment.order_number)
-                    values.setdefault("transaction_type", assignment.transaction_type)
-                    values.setdefault("branch_id", assignment.branch_id.id)
+                if pilot.status == "in_delivery":
+                    assignment = pilot._get_open_assignment()
+                    if assignment:
+                        values.setdefault("current_order_number", assignment.order_number)
+                        values.setdefault("current_transaction_type", assignment.transaction_type)
+                        values.setdefault("current_branch_id", assignment.branch_id.id)
         return values
 
     @api.onchange("pilot_id")

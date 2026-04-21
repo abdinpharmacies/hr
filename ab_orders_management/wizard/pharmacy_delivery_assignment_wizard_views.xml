@@ -13,27 +13,17 @@
                                 <field name="target_status"/>
                             </group>
                             <group>
-                                <field name="current_order_number" readonly="1" invisible="target_status != 'free'"/>
-                                <field name="current_transaction_type" readonly="1" invisible="target_status != 'free'"/>
-                                <field name="current_branch_id" readonly="1" invisible="target_status != 'free'"/>
+                                <field name="current_order_number" readonly="1"/>
+                                <field name="current_transaction_type" readonly="1"/>
+                                <field name="current_branch_id" readonly="1"/>
                             </group>
                         </group>
                         <group>
-                            <field name="order_number"
-                                   placeholder="Order number"
-                                   required="target_status == 'in_delivery'"
-                                   invisible="target_status != 'in_delivery'"/>
-                            <field name="transaction_type"
-                                   required="target_status == 'in_delivery'"
-                                   invisible="target_status != 'in_delivery'"/>
-                            <field name="branch_id"
-                                   required="target_status == 'in_delivery'"
-                                   invisible="target_status != 'in_delivery'"/>
+                            <field name="order_number" placeholder="Order number"/>
+                            <field name="transaction_type"/>
+                            <field name="branch_id"/>
                             <field name="note" placeholder="Optional management notes."/>
                         </group>
-                        <div class="alert alert-info" invisible="target_status != 'free'">
-                            The current open assignment will be completed and the pilot will return to Free.
-                        </div>
                     </sheet>
                     <footer>
                         <button name="action_apply" type="object" string="Apply" class="btn-primary"/>

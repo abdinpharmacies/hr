@@ -6,7 +6,7 @@
             <field name="name">rule_ab_request_user_crud</field>
             <field name="model_id" ref="model_ab_request"/>
             <field name="groups" eval="[(4, ref('group_ab_request_management_user'))]"/>
-            <field name="domain_force">[('user_id', 'in', user.ab_employee_ids.user_id.ids)]</field>
+            <field name="domain_force">[('user_id', 'in', user.ab_employee_ids.user_id.ids)] if user.ab_employee_ids else [(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
@@ -20,7 +20,7 @@
             <field name="groups" eval="[(4, ref('ab_request_management.group_ab_request_management_user'))]"/>
             <field name="domain_force">['|', '|', ('user_id', '=', user.id),
                                         ('assigned_employee_ids.user_id', '=', user.id),
-                                        ('assigned_user_id', '=', user.id)]</field>
+                                        ('assigned_user_id', '=', user.id)] if user.ab_employee_ids else [(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
@@ -31,7 +31,7 @@
             <field name="name">Department Manager Requests</field>
             <field name="model_id" ref="model_ab_request"/>
             <field name="groups" eval="[(4, ref('ab_request_management.group_ab_request_management_manager'))]"/>
-            <field name="domain_force">[('manager_user_id', '=', user.id)]</field>
+            <field name="domain_force">[('manager_user_id', '=', user.id)] if user.ab_employee_ids else [(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
@@ -55,7 +55,7 @@
             <field name="groups" eval="[(4, ref('ab_request_management.group_ab_request_management_user'))]"/>
             <field name="domain_force">['|', '|', ('request_id.user_id', '=', user.id),
                                         ('request_id.assigned_employee_ids.user_id', '=', user.id),
-                                        ('request_id.assigned_user_id', '=', user.id)]</field>
+                                        ('request_id.assigned_user_id', '=', user.id)] if user.ab_employee_ids else [(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>
@@ -66,7 +66,7 @@
             <field name="name">Department Manager Follow-ups</field>
             <field name="model_id" ref="model_ab_request_followup"/>
             <field name="groups" eval="[(4, ref('ab_request_management.group_ab_request_management_manager'))]"/>
-            <field name="domain_force">[('request_id.manager_user_id', '=', user.id)]</field>
+            <field name="domain_force">[('request_id.manager_user_id', '=', user.id)] if user.ab_employee_ids else [(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>

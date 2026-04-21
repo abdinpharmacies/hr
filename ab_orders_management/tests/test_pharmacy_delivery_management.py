@@ -187,20 +187,3 @@ class TestPharmacyDeliveryManagement(TransactionCase):
         second_data = next((pilot for pilot in payload["pilots"] if pilot["id"] == second_pilot.id), None)
         self.assertTrue(second_data)
         self.assertEqual(second_data["sign_in_order"], 2)
-
-    def test_dashboard_payload_sorts_available_pilots_by_fifo_and_total(self):
-        first_sign_in = fields.Datetime.now()
-        second_sign_in = first_sign_in + timedelta(hours=1)
-        third_sign_in = first_sign_in + timedelta(hours=2)
-
-        fifo_pilot = self.env["ab_pharmacy_delivery_pilot"].sudo().create(
-            {
-                "name": "FIFO Pilot",
-                "branch_id": self.branch_allowed.id,
-                "pilot_code": "FIFO-1",
-                "sign_in_datetime": first_sign_in,
-            }
-        )
-        payload = self.env["ab_pharmacy_delivery_pilot"].get_dashboard_payload(self.branch_allowed.id)
-        fifo_ids = [pilot["id"] for pilot in payload["available_pilots_fifo"]]
-        self.assertEqual(fifo_ids, [fifo_pilot.id, self.pilot_allowed.id])

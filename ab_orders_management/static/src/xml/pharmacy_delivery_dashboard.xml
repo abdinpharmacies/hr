@@ -57,8 +57,8 @@
                             </span>
                         </div>
                         <ul class="list-unstyled o_search_panel_category_value o_ab_pharmacy_delivery_sidebar_list">
-                            <t t-if="visibleSidebarAvailablePilotsSorted.length">
-                                <t t-foreach="visibleSidebarAvailablePilotsSorted" t-as="pilot" t-key="pilot.id">
+                            <t t-if="visibleSidebarAvailablePilots.length">
+                                <t t-foreach="visibleSidebarAvailablePilots" t-as="pilot" t-key="pilot.id">
                                     <li>
                                         <button type="button"
                                                 class="o_ab_pharmacy_delivery_sidebar_item"
@@ -114,11 +114,11 @@
                                 <h3 class="d-flex align-items-center gap-2 mb-0">
                                     <t t-esc="availablePilotsLabel"/>
                                 </h3>
-                                <span class="badge text-bg-success"><t t-esc="availablePilotsSorted.length"/></span>
+                                <span class="badge text-bg-success"><t t-esc="visibleAvailablePilots.length"/></span>
                             </div>
                             <div class="o_ab_pharmacy_delivery_queue_cards">
-                                <t t-if="availablePilotsSorted.length">
-                                    <t t-foreach="availablePilotsSorted" t-as="pilot" t-key="pilot.id">
+                                <t t-if="visibleAvailablePilots.length">
+                                    <t t-foreach="visibleAvailablePilots" t-as="pilot" t-key="pilot.id">
                                         <article class="o_ab_pharmacy_delivery_card"
                                                  draggable="true"
                                                  t-on-dragstart="() => onPilotDragStart(pilot.id)"
