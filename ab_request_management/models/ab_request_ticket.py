@@ -94,6 +94,7 @@ class AbRequest(models.Model):
     deadline = fields.Datetime()
     state = fields.Selection(
         [
+            ("draft", "Draft"),
             ("under_review", "Under Review"),
             ("scheduled", "Scheduled"),
             ("in_progress", "In Progress"),
@@ -102,7 +103,7 @@ class AbRequest(models.Model):
             ("rejected", "Rejected"),
             ("closed", "Closed"),
         ],
-        default="under_review",
+        default="draft",
         required=True,
         copy=False,
         tracking=True,
@@ -344,7 +345,7 @@ class AbRequest(models.Model):
         records._sync_attachments_to_request()
         records._sync_primary_assignee()
         records._subscribe_request_partners()
-        records._notify_request_created()
+        records.filtered(lambda r: r.state != 'draft')._notify_request_created()
         return records
 
     def write(self, vals):
@@ -403,7 +404,7 @@ class AbRequest(models.Model):
             prepared_vals["employee_id"] = current_employee_id
         elif prepared_vals["employee_id"] != current_employee_id:
             raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
-        prepared_vals["state"] = "under_review"
+        prepared_vals["state"] = "draft"
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
             prepared_vals["name"] = self.env["ir.sequence"].sudo().next_by_code(REQUEST_SEQUENCE_CODE) or "New"
         request_type = self.env["ab_request_type"].browse(prepared_vals["request_type_id"])
@@ -426,6 +427,8 @@ class AbRequest(models.Model):
         if not immutable_fields & set(vals):
             return
         for record in self:
+            if record.state == 'draft':
+                continue
             for field_name in immutable_fields & set(vals):
                 if field_name in {"user_id", "employee_id"}:
                     new_value = vals.get(field_name) or False
@@ -677,8 +680,11 @@ class AbRequest(models.Model):
         }
 
     def action_submit_request(self):
-        """Save the request and switch to view mode."""
+        """Submit the request for review."""
         self.ensure_one()
+        if self.state == 'draft':
+            self.with_context(allow_state_write=True).write({'state': 'under_review'})
+            self._notify_request_created()
         return {
             "type": "ir.actions.act_window",
             "res_model": "ab_request",

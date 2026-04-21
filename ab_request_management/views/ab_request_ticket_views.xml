@@ -91,12 +91,13 @@
                             domain="[('state', '=', 'under_review'), ('manager_user_id', '=', uid)]"/>
                     <separator/>
                     <filter name="filter_open_requests" string="Open Requests"
-                            domain="[('state', 'in', ['under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied'])]"/>
+                            domain="[('state', 'in', ['draft', 'under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied'])]"/>
                     <filter name="filter_closed_requests" string="Closed Requests"
                             domain="[('state', 'in', ['closed', 'rejected'])]"/>
                     <filter name="filter_overdue" string="Overdue"
                             domain="[('deadline', '!=', False), ('deadline', '&lt;', context_today()), ('state', 'not in', ['closed', 'rejected', 'satisfied'])]"/>
                     <separator/>
+                    <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                     <filter name="filter_under_review" string="Under Review" domain="[('state', '=', 'under_review')]"/>
                     <filter name="filter_scheduled" string="Scheduled" domain="[('state', '=', 'scheduled')]"/>
                     <filter name="filter_in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
@@ -255,7 +256,7 @@
                 <form string="Request" class="ab_request_form">
                     <header>
                         <button name="action_submit_request" type="object" string="Submit Request" class="btn-success"
-                                invisible="id != False"/>
+                                invisible="state != 'draft'"/>
                         <button name="action_approve" type="object" string="Approve" class="btn-primary"
                                 invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
                         <button name="action_reject" type="object" string="Reject"
@@ -275,7 +276,7 @@
                         <button name="action_close" type="object" string="Close Request" class="btn-primary"
                                 invisible="state not in ('satisfied', 'rejected') or not can_work_on_request"/>
                         <field name="state" widget="statusbar" class="ab_request_statusbar"
-                               statusbar_visible="under_review,scheduled,in_progress,under_requester_confirmation,satisfied,rejected,closed"/>
+                               statusbar_visible="draft,under_review,scheduled,in_progress,under_requester_confirmation,satisfied,rejected,closed"/>
                     </header>
                     <sheet class="ab_request_sheet">
                         <div class="oe_button_box" name="button_box">
@@ -320,7 +321,7 @@
                             </div>
                             <label for="subject" string="Request Subject"/>
                             <h1>
-                                <field name="subject" readonly="id != False"
+                                <field name="subject" readonly="state != 'draft'"
                                        placeholder="Summarize the business request in one clear sentence"/>
                             </h1>
                         </div>
@@ -334,7 +335,7 @@
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell">
                                                 <label for="request_type_id" string="Request Type"/>
-                                                <field name="request_type_id" readonly="id != False"/>
+                                                <field name="request_type_id" readonly="state != 'draft'"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
                                                 <label for="employee_id" string="Requester"/>
@@ -344,14 +345,14 @@
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="subject" string="Request Subject"/>
-                                                <field name="subject" readonly="id != False"
+                                                <field name="subject" readonly="state != 'draft'"
                                                        placeholder="Summarize the request in one clear sentence"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="description" string="Description"/>
-                                                <field name="description" readonly="id != False" widget="text"/>
+                                                <field name="description" readonly="state != 'draft'" widget="text"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
@@ -391,7 +392,7 @@
                                             </div>
                                             <div class="ab_request_grid_cell">
                                                 <label for="request_type_id" string="Type"/>
-                                                <field name="request_type_id" readonly="id != False"/>
+                                                <field name="request_type_id" readonly="state != 'draft'"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
                                                 <label for="deadline" string="Deadline"/>
@@ -401,7 +402,7 @@
                                         <div class="ab_request_grid_row ab_request_grid_3col">
                                             <div class="ab_request_grid_cell">
                                                 <label for="employee_id" string="Requester"/>
-                                                <field name="employee_id" readonly="id != False"/>
+                                                <field name="employee_id" readonly="state != 'draft'"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
                                                 <label for="department_id" string="Department"/>
@@ -423,13 +424,13 @@
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="subject" string="Subject"/>
-                                                <field name="subject" readonly="id != False"/>
+                                                <field name="subject" readonly="state != 'draft'"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="description" string="Description"/>
-                                                <field name="description" widget="text" readonly="id != False"/>
+                                                <field name="description" widget="text" readonly="state != 'draft'"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
