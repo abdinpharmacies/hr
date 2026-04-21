@@ -4,6 +4,7 @@
         <menuitem id="ab_quality_assurance_root_menu"
                   name="Quality Assurance"
                   sequence="35"
+                  web_icon="ab_quality_assurance,static/description/icon.svg"
                   groups="ab_quality_assurance.group_ab_quality_assurance_member,ab_quality_assurance.group_ab_quality_assurance_manager,ab_quality_assurance.group_ab_quality_assurance_admin"/>
 
         <menuitem id="ab_quality_assurance_visit_menu"

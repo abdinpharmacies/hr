@@ -144,7 +144,7 @@
                                        domain="[('name', '=like', 'فرع%')]"/>
                                 <field name="department_manager_id" readonly="1"/>
                                 <field name="visit_date" readonly="state == 'submitted'"/>
-                                <field name="employee_id" readonly="state == 'submitted'"/>
+                                <field name="employee_id" readonly="state == 'submitted'" invisible="not id"/>
                                 <field name="section_count" readonly="1"/>
                                 <field name="earned_total_score" readonly="1"/>
                                 <field name="max_total_score" readonly="1"/>

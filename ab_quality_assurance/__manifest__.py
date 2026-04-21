@@ -5,6 +5,7 @@
     "category": "Operations",
     "application": True,
     "depends": ["base", "web", "ab_hr"],
+    "icon": "ab_quality_assurance/static/description/icon.svg",
     "data": [
         "security/ir.model.access.csv",
         "security/security_groups.xml",
