@@ -20,6 +20,26 @@ const TYPE_LABELS = {
     order: _t("Client Order"),
 };
 
+const STORAGE_KEY = "ab_orders_pilot_data";
+
+function saveToLocalStorage(data) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.warn("Failed to save to localStorage:", e);
+    }
+}
+
+function loadFromLocalStorage() {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+        console.warn("Failed to load from localStorage:", e);
+        return null;
+    }
+}
+
 export class AbPharmacyDeliveryDashboard extends Component {
     static template = "ab_orders_management.PharmacyDeliveryDashboard";
 
@@ -29,23 +49,21 @@ export class AbPharmacyDeliveryDashboard extends Component {
         this.notification = useService("notification");
         this.loadDashboard = this.loadDashboard.bind(this);
         this.onBranchChange = this.onBranchChange.bind(this);
-        this.onDepartmentChange = this.onDepartmentChange.bind(this);
         this.selectDepartment = this.selectDepartment.bind(this);
-        this.onSearchInput = this.onSearchInput.bind(this);
         this.toggleSidebar = this.toggleSidebar.bind(this);
-        this.selectPilot = this.selectPilot.bind(this);
-        this.togglePilotSelection = this.togglePilotSelection.bind(this);
-        this.selectAllVisiblePilots = this.selectAllVisiblePilots.bind(this);
         this.openPilotWizard = this.openPilotWizard.bind(this);
         this.onPilotDragStart = this.onPilotDragStart.bind(this);
         this.onPilotDragEnd = this.onPilotDragEnd.bind(this);
         this.onQueueDragOver = this.onQueueDragOver.bind(this);
         this.onQueueDragLeave = this.onQueueDragLeave.bind(this);
         this.onQueueDrop = this.onQueueDrop.bind(this);
-        this.departmentFilterClass = this.departmentFilterClass.bind(this);
         this.queueDropClass = this.queueDropClass.bind(this);
-        this.statusClassName = this.statusClassName.bind(this);
         this.statusDotStyle = this.statusDotStyle.bind(this);
+        this.toggleSortByAttendance = this.toggleSortByAttendance.bind(this);
+        this.toggleSortByDeliveries = this.toggleSortByDeliveries.bind(this);
+        this.openAddOrderWizard = this.openAddOrderWizard.bind(this);
+        this.closeAddOrderModal = this.closeAddOrderModal.bind(this);
+        this.submitAddOrder = this.submitAddOrder.bind(this);
         this.state = useState({
             loading: true,
             sidebarOpen: true,
@@ -54,7 +72,18 @@ export class AbPharmacyDeliveryDashboard extends Component {
             selectedPilotIds: null,
             draggedPilotId: 0,
             dropTargetStatus: "",
-            query: "",
+            sortByAttendance: false,
+            sortByDeliveries: null,
+            addOrderModalOpen: false,
+            addOrderPilot: null,
+            addOrderForm: {
+                order_number: "",
+                transaction_type: "delivery",
+                branch_id: 0,
+                note: "",
+            },
+            addOrderErrors: {},
+            addOrderSubmitting: false,
             payload: {
                 branches: [],
                 departments: [],
@@ -86,15 +115,31 @@ export class AbPharmacyDeliveryDashboard extends Component {
     }
 
     get allTargetDepartmentsLabel() {
-        return _t("All target departments");
+        return _t("All departments");
     }
 
-    get searchPlaceholder() {
-        return _t("Search by any word: pilot, order, department, branch");
+    get allBranchesLabel() {
+        return _t("All branches");
+    }
+
+    get refreshLabel() {
+        return _t("Refresh");
+    }
+
+    get dashboardTitle() {
+        return _t("Pharmacy Delivery Management");
+    }
+
+    get branchesLabel() {
+        return _t("Branches");
+    }
+
+    get allTargetDepartmentsLabel() {
+        return _t("All departments");
     }
 
     get noPilotsFoundLabel() {
-        return _t("No pilots found for the current filter.");
+        return _t("No pilots found.");
     }
 
     get dashboardTitle() {
@@ -115,6 +160,33 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     get refreshLabel() {
         return _t("Refresh");
+    }
+
+    get sortByLabel() {
+        return _t("Sort by deliveries");
+    }
+
+    get sortOffLabel() {
+        return _t("OFF");
+    }
+
+    get sortOnLabel() {
+        return _t("ON");
+    }
+
+    get deliveriesIconClass() {
+        const sortMode = this.state.sortByDeliveries;
+        if (sortMode === "asc") {
+            return "oi oi-arrow-up";
+        }
+        if (sortMode === "desc") {
+            return "oi oi-arrow-down";
+        }
+        return "oi oi-minus";
+    }
+
+    get activePilotsCount() {
+        return (this.state.payload.available_pilots || []).length;
     }
 
     get availablePilotsLabel() {
@@ -180,7 +252,59 @@ export class AbPharmacyDeliveryDashboard extends Component {
     }
 
     get closeChangeStatusLabel() {
-        return _t("Close / change status");
+        return _t("Close");
+    }
+
+    get addOrderModalTitle() {
+        return _t("Add Additional Order");
+    }
+
+    get addOrderPilotName() {
+        return this.state.addOrderPilot?.name || "";
+    }
+
+    get addOrderOrderNumberLabel() {
+        return _t("Order Number");
+    }
+
+    get addOrderOrderNumberPlaceholder() {
+        return _t("Enter order number (numbers only)");
+    }
+
+    get addOrderTypeLabel() {
+        return _t("Transaction Type");
+    }
+
+    get addOrderDeliveryTypeLabel() {
+        return _t("Transaction Delivery");
+    }
+
+    get addOrderClientTypeLabel() {
+        return _t("Client Order");
+    }
+
+    get addOrderBranchLabel() {
+        return _t("Branch");
+    }
+
+    get addOrderNoteLabel() {
+        return _t("Notes");
+    }
+
+    get addOrderNotePlaceholder() {
+        return _t("Optional notes");
+    }
+
+    get addOrderCancelLabel() {
+        return _t("Cancel");
+    }
+
+    get addOrderSubmitLabel() {
+        return _t("Add Order");
+    }
+
+    get addAnotherOrderLabel() {
+        return _t("Add Another Order");
     }
 
     get noDeliveryPilotsLabel() {
@@ -234,19 +358,61 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     get scopedPilots() {
         let pilots = this.filteredPilots;
-        if (Array.isArray(this.state.selectedPilotIds)) {
-            const selectedIds = new Set(this.state.selectedPilotIds);
-            pilots = pilots.filter((pilot) => selectedIds.has(pilot.id));
-        }
         return pilots;
     }
 
     get visibleAvailablePilots() {
-        return this.scopedPilots.filter((pilot) => pilot.status === "free");
+        const pilots = this.scopedPilots.filter((pilot) => pilot.status === "free");
+        return this.sortPilots(pilots);
     }
 
     get visibleInDeliveryPilots() {
-        return this.scopedPilots.filter((pilot) => pilot.status === "in_delivery");
+        const pilots = this.scopedPilots.filter((pilot) => pilot.status === "in_delivery");
+        return this.sortPilots(pilots);
+    }
+
+    sortPilots(pilots) {
+        const sortByAttendance = this.state.sortByAttendance;
+        const sortByDeliveries = this.state.sortByDeliveries;
+        return pilots.sort((a, b) => {
+            if (sortByDeliveries === "asc") {
+                const deliveriesA = a.delivery_completed_count || 0;
+                const deliveriesB = b.delivery_completed_count || 0;
+                if (deliveriesA !== deliveriesB) {
+                    return deliveriesA - deliveriesB;
+                }
+            }
+            if (sortByDeliveries === "desc") {
+                const deliveriesA = a.delivery_completed_count || 0;
+                const deliveriesB = b.delivery_completed_count || 0;
+                if (deliveriesA !== deliveriesB) {
+                    return deliveriesB - deliveriesA;
+                }
+            }
+            if (sortByAttendance) {
+                const orderA = a.sign_in_order || 999999;
+                const orderB = b.sign_in_order || 999999;
+                if (orderA !== orderB) {
+                    return orderA - orderB;
+                }
+            }
+            return String(a.name || "").localeCompare(String(b.name || ""));
+        });
+    }
+
+    toggleSortByAttendance() {
+        this.state.sortByAttendance = !this.state.sortByAttendance;
+    }
+
+    toggleSortByDeliveries() {
+        const current = this.state.sortByDeliveries;
+        if (current === null) {
+            this.state.sortByDeliveries = "desc";
+        } else if (current === "desc") {
+            this.state.sortByDeliveries = "asc";
+        } else {
+            this.state.sortByDeliveries = null;
+        }
     }
 
     get selectedBranchLabel() {
@@ -265,8 +431,9 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     async loadDashboard() {
         this.state.loading = true;
+        let payload = null;
         try {
-            const payload = await this.orm.call("ab_pharmacy_delivery_pilot", "get_dashboard_payload", [
+            payload = await this.orm.call("ab_pharmacy_delivery_pilot", "get_dashboard_payload", [
                 this.state.selectedBranchId || false,
                 this.state.selectedDepartmentId || false,
             ]);
@@ -278,16 +445,60 @@ export class AbPharmacyDeliveryDashboard extends Component {
             }
             this.state.selectedDepartmentId = payload.selected_department_id || 0;
             if (this.state.selectedPilotIds === null) {
-                this.state.selectedPilotIds = (payload.available_pilots || []).map((pilot) => pilot.id);
+                this.state.selectedPilotIds = (payload.pilots || []).map((pilot) => pilot.id);
             } else {
                 const validIds = new Set((payload.pilots || []).map((pilot) => pilot.id));
                 this.state.selectedPilotIds = this.state.selectedPilotIds.filter((pilotId) => validIds.has(pilotId));
             }
+            this.saveToStorage();
         } catch (error) {
-            this.notification.add(error?.message || _t("Failed to load dashboard."), { type: "danger" });
+            console.warn("Failed to load from server, using offline data:", error);
+            const storedData = this.loadFromStorage();
+            if (storedData && storedData.pilots && storedData.pilots.length > 0) {
+                this.state.payload = {
+                    branches: storedData.branches || [],
+                    departments: storedData.departments || [],
+                    pilots: storedData.pilots || [],
+                    available_pilots: storedData.pilots.filter(p => p.status === "free") || [],
+                    selected_branch_id: storedData.selectedBranchId || 0,
+                    selected_branch_name: storedData.selectedBranchName || "",
+                    selected_department_id: storedData.selectedDepartmentId || 0,
+                };
+                this.state.selectedBranchId = storedData.selectedBranchId || 0;
+                this.state.selectedDepartmentId = storedData.selectedDepartmentId || 0;
+                this.state.selectedPilotIds = (storedData.pilots || []).map(p => p.id);
+                this.notification.add(_t("Offline mode - showing cached data"), { type: "warning" });
+            } else {
+                this.notification.add(error?.message || _t("Failed to load dashboard."), { type: "danger" });
+            }
         } finally {
             this.state.loading = false;
         }
+    }
+
+    saveToStorage() {
+        const data = {
+            selectedBranchId: this.state.selectedBranchId,
+            selectedBranchName: this.state.payload.selected_branch_name || "",
+            selectedDepartmentId: this.state.selectedDepartmentId,
+            pilots: this.state.payload.pilots || [],
+            branches: this.state.payload.branches || [],
+            departments: this.state.payload.departments || [],
+            timestamp: Date.now(),
+        };
+        saveToLocalStorage(data);
+    }
+
+    loadFromStorage() {
+        const stored = loadFromLocalStorage();
+        if (stored && stored.pilots && stored.pilots.length > 0) {
+            const age = Date.now() - (stored.timestamp || 0);
+            const maxAge = 24 * 60 * 60 * 1000;
+            if (age < maxAge) {
+                return stored;
+            }
+        }
+        return null;
     }
 
     async onBranchChange(ev) {
@@ -365,6 +576,65 @@ export class AbPharmacyDeliveryDashboard extends Component {
         } catch (error) {
             this.notification.add(error?.message || _t("Failed to open the status wizard."), { type: "danger" });
         }
+    }
+
+    openAddOrderWizard(pilot) {
+        this.state.addOrderModalOpen = true;
+        this.state.addOrderPilot = pilot;
+        this.state.addOrderForm = {
+            order_number: "",
+            transaction_type: "delivery",
+            branch_id: pilot.branch_id || 0,
+            note: "",
+        };
+        this.state.addOrderErrors = {};
+    }
+
+    closeAddOrderModal() {
+        this.state.addOrderModalOpen = false;
+        this.state.addOrderPilot = null;
+        this.state.addOrderErrors = {};
+    }
+
+    submitAddOrder() {
+        const errors = {};
+        const orderNum = String(this.state.addOrderForm.order_number || "").trim();
+        if (!orderNum) {
+            errors.order_number = _t("Order number is required.");
+        } else if (!/^\d+$/.test(orderNum)) {
+            errors.order_number = _t("Order number must contain only numbers.");
+        }
+        if (Object.keys(errors).length > 0) {
+            this.state.addOrderErrors = errors;
+            return;
+        }
+        const pilot = this.state.addOrderPilot;
+        if (!pilot) {
+            return;
+        }
+        this.state.addOrderSubmitting = true;
+        (async () => {
+            try {
+                await this.orm.call(
+                    "ab_pharmacy_delivery_pilot",
+                    "action_add_additional_assignment",
+                    [
+                        pilot.id,
+                        orderNum,
+                        this.state.addOrderForm.transaction_type,
+                        this.state.addOrderForm.branch_id || false,
+                        String(this.state.addOrderForm.note || "").trim() || false,
+                    ]
+                );
+                this.notification.add(_t("Additional order added successfully."), { type: "success" });
+                this.closeAddOrderModal();
+                await this.loadDashboard();
+            } catch (error) {
+                this.notification.add(error?.message || _t("Failed to add additional order."), { type: "danger" });
+            } finally {
+                this.state.addOrderSubmitting = false;
+            }
+        })();
     }
 
     onPilotDragStart(pilotId) {

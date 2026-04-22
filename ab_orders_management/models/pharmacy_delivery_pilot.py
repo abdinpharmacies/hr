@@ -402,16 +402,64 @@ class AbPharmacyDeliveryPilot(models.Model):
         self.status = "in_delivery"
         return assignment
 
+    def action_add_additional_assignment(self, order_number, transaction_type, branch_id, note=False):
+        self.ensure_one()
+        if self.status != "in_delivery":
+            raise UserError(_("Only pilots with 'In Delivery' status can add additional orders."))
+        if not order_number:
+            raise UserError(_("Order number is required."))
+        branch = self.branch_id
+        if branch_id:
+            branch = self.env["ab_pharmacy_delivery_branch"].browse(branch_id)
+            if not branch.exists():
+                branch = self.branch_id
+        assignment = self.env["ab_pharmacy_delivery_assignment"].create(
+            {
+                "pilot_id": self.id,
+                "branch_id": branch.id,
+                "order_number": order_number,
+                "transaction_type": transaction_type,
+                "status": "assigned",
+                "start_datetime": fields.Datetime.now(),
+                "note": note or "",
+            }
+        )
+        return assignment
+
     def action_finish_delivery(self, note=False):
         self.ensure_one()
         assignment = self._get_open_assignment()
         if not assignment:
-            # Allow managers to recover inconsistent status states without blocking UI flow.
             self.status = "free"
             return False
         assignment.action_mark_done(note=note)
         self.status = "free"
         return assignment
+
+    def action_finish_delivery_all(self, note=False):
+        self.ensure_one()
+        if self.status != "in_delivery":
+            return False
+        assignments = self.env["ab_pharmacy_delivery_assignment"].search(
+            [("pilot_id", "=", self.id), ("status", "=", "assigned")],
+            order="start_datetime asc, id asc",
+        )
+        if not assignments:
+            self.status = "free"
+            return False
+        end_datetime = fields.Datetime.now()
+        for assignment in assignments:
+            assignment_note = note or ""
+            if assignment.note:
+                assignment_note = f"{assignment.note}\n{note or ''}"
+            assignment.write({
+                "status": "done",
+                "end_datetime": end_datetime,
+                "completed_by_user_id": self.env.uid,
+                "note": assignment_note.strip() if assignment_note.strip() else False,
+            })
+        self.status = "free"
+        return True
 
     @api.model
     def get_dashboard_payload(self, branch_id=False, department_id=False):
@@ -457,9 +505,26 @@ class AbPharmacyDeliveryPilot(models.Model):
             order="start_datetime desc, id desc",
         )
         open_assignment_map = {}
+        all_assignments_map = {}
         for assignment in open_assignments:
-            if assignment.pilot_id.id not in open_assignment_map:
-                open_assignment_map[assignment.pilot_id.id] = assignment
+            pilot_id = assignment.pilot_id.id
+            if pilot_id not in open_assignment_map:
+                open_assignment_map[pilot_id] = assignment
+            if pilot_id not in all_assignments_map:
+                all_assignments_map[pilot_id] = []
+            all_assignments_map[pilot_id].append({
+                "id": assignment.id,
+                "order_number": assignment.order_number,
+                "transaction_type": assignment.transaction_type,
+                "transaction_type_label": self._get_translated_selection_label(
+                    "ab_pharmacy_delivery_assignment",
+                    "transaction_type",
+                    assignment.transaction_type,
+                ),
+                "branch_name": assignment.branch_id.name,
+                "start_datetime": fields.Datetime.to_string(assignment.start_datetime),
+                "note": assignment.note or "",
+            })
 
         branch_payload = [
             {
@@ -473,6 +538,7 @@ class AbPharmacyDeliveryPilot(models.Model):
         pilot_payload = []
         for pilot in pilots:
             open_assignment = open_assignment_map.get(pilot.id)
+            all_assignments = all_assignments_map.get(pilot.id, [])
             status_label = self._get_translated_selection_label(
                 "ab_pharmacy_delivery_pilot",
                 "status",
@@ -515,6 +581,7 @@ class AbPharmacyDeliveryPilot(models.Model):
                     }
                     if open_assignment
                     else False,
+                    "assignments": all_assignments,
                 }
             )
 

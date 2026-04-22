@@ -78,6 +78,10 @@
     border-left-color: #2f8f57;
 }
 
+.o_ab_pharmacy_delivery_card{
+            border-radius: 14px;
+}
+
 .o_ab_pharmacy_delivery_summary_card.is-in-delivery {
     border-left-color: #df7a22;
 }
@@ -302,7 +306,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 12px;
-    max-height: 62vh;
+    max-height: 80vh;
     overflow: auto;
     padding-right: 2px;
 }
@@ -349,6 +353,15 @@ strong{
     font-weight: 200;
 }
 
+.o_ab_pharmacy_delivery_queues{
+        height: -webkit-fill-available;
+        margin-bottom: 0;
+    }
+
+.o_ab_pharmacy_delivery_queue{
+    margin-bottom: 0 !important;
+}
+
 @media (max-width: 1100px) {
     .o_ab_pharmacy_delivery_dashboard,
     .o_ab_pharmacy_delivery_queues {
@@ -358,4 +371,5 @@ strong{
     .o_ab_pharmacy_delivery_sidebar {
         width: 100%;
     }
+
 }
