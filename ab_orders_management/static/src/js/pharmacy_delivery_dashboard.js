@@ -20,6 +20,26 @@ const TYPE_LABELS = {
     order: _t("Client Order"),
 };
 
+const STORAGE_KEY = "ab_orders_pilot_data";
+
+function saveToLocalStorage(data) {
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch (e) {
+        console.warn("Failed to save to localStorage:", e);
+    }
+}
+
+function loadFromLocalStorage() {
+    try {
+        const stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : null;
+    } catch (e) {
+        console.warn("Failed to load from localStorage:", e);
+        return null;
+    }
+}
+
 export class AbPharmacyDeliveryDashboard extends Component {
     static template = "ab_orders_management.PharmacyDeliveryDashboard";
 
@@ -144,6 +164,14 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     get sortByLabel() {
         return _t("Sort by deliveries");
+    }
+
+    get sortOffLabel() {
+        return _t("OFF");
+    }
+
+    get sortOnLabel() {
+        return _t("ON");
     }
 
     get deliveriesIconClass() {
@@ -330,10 +358,6 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     get scopedPilots() {
         let pilots = this.filteredPilots;
-        if (Array.isArray(this.state.selectedPilotIds)) {
-            const selectedIds = new Set(this.state.selectedPilotIds);
-            pilots = pilots.filter((pilot) => selectedIds.has(pilot.id));
-        }
         return pilots;
     }
 
@@ -407,8 +431,9 @@ export class AbPharmacyDeliveryDashboard extends Component {
 
     async loadDashboard() {
         this.state.loading = true;
+        let payload = null;
         try {
-            const payload = await this.orm.call("ab_pharmacy_delivery_pilot", "get_dashboard_payload", [
+            payload = await this.orm.call("ab_pharmacy_delivery_pilot", "get_dashboard_payload", [
                 this.state.selectedBranchId || false,
                 this.state.selectedDepartmentId || false,
             ]);
@@ -420,16 +445,60 @@ export class AbPharmacyDeliveryDashboard extends Component {
             }
             this.state.selectedDepartmentId = payload.selected_department_id || 0;
             if (this.state.selectedPilotIds === null) {
-                this.state.selectedPilotIds = (payload.available_pilots || []).map((pilot) => pilot.id);
+                this.state.selectedPilotIds = (payload.pilots || []).map((pilot) => pilot.id);
             } else {
                 const validIds = new Set((payload.pilots || []).map((pilot) => pilot.id));
                 this.state.selectedPilotIds = this.state.selectedPilotIds.filter((pilotId) => validIds.has(pilotId));
             }
+            this.saveToStorage();
         } catch (error) {
-            this.notification.add(error?.message || _t("Failed to load dashboard."), { type: "danger" });
+            console.warn("Failed to load from server, using offline data:", error);
+            const storedData = this.loadFromStorage();
+            if (storedData && storedData.pilots && storedData.pilots.length > 0) {
+                this.state.payload = {
+                    branches: storedData.branches || [],
+                    departments: storedData.departments || [],
+                    pilots: storedData.pilots || [],
+                    available_pilots: storedData.pilots.filter(p => p.status === "free") || [],
+                    selected_branch_id: storedData.selectedBranchId || 0,
+                    selected_branch_name: storedData.selectedBranchName || "",
+                    selected_department_id: storedData.selectedDepartmentId || 0,
+                };
+                this.state.selectedBranchId = storedData.selectedBranchId || 0;
+                this.state.selectedDepartmentId = storedData.selectedDepartmentId || 0;
+                this.state.selectedPilotIds = (storedData.pilots || []).map(p => p.id);
+                this.notification.add(_t("Offline mode - showing cached data"), { type: "warning" });
+            } else {
+                this.notification.add(error?.message || _t("Failed to load dashboard."), { type: "danger" });
+            }
         } finally {
             this.state.loading = false;
         }
+    }
+
+    saveToStorage() {
+        const data = {
+            selectedBranchId: this.state.selectedBranchId,
+            selectedBranchName: this.state.payload.selected_branch_name || "",
+            selectedDepartmentId: this.state.selectedDepartmentId,
+            pilots: this.state.payload.pilots || [],
+            branches: this.state.payload.branches || [],
+            departments: this.state.payload.departments || [],
+            timestamp: Date.now(),
+        };
+        saveToLocalStorage(data);
+    }
+
+    loadFromStorage() {
+        const stored = loadFromLocalStorage();
+        if (stored && stored.pilots && stored.pilots.length > 0) {
+            const age = Date.now() - (stored.timestamp || 0);
+            const maxAge = 24 * 60 * 60 * 1000;
+            if (age < maxAge) {
+                return stored;
+            }
+        }
+        return null;
     }
 
     async onBranchChange(ev) {

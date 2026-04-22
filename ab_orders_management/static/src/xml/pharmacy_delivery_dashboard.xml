@@ -67,7 +67,7 @@
                                     <h3 class="mb-0"><t t-esc="availablePilotsLabel"/></h3>
                                     <div class="d-flex align-items-center gap-2">
                                         <button type="button" class="btn btn-sm" t-att-class="state.sortByAttendance ? 'btn-success' : 'btn-outline-secondary'" t-on-click="toggleSortByAttendance" title="Sort by attendance">
-                                            <i class="oi oi-clock"/> <span class="small"><t t-if="state.sortByAttendance">ON</t><t t-else="">OFF</t></span>
+                                            <i class="oi oi-clock"/> <span class="small" t-if="state.sortByAttendance" t-esc="sortOnLabel"/><span class="small" t-else="" t-esc="sortOffLabel"/>
                                         </button>
                                         <button type="button" class="btn btn-sm" t-att-class="state.sortByDeliveries !== null ? 'btn-warning' : 'btn-outline-secondary'" t-on-click="toggleSortByDeliveries" title="Sort by deliveries">
                                             <i t-attf-class="{{ deliveriesIconClass }}"/>

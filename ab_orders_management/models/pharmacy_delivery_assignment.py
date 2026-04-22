@@ -57,7 +57,7 @@ class AbPharmacyDeliveryAssignment(models.Model):
     )
     completed_by_pilot_id = fields.Many2one(
         "ab_pharmacy_delivery_pilot",
-        string="Completed By",
+        string="Pilot Name",
         related="pilot_id",
         readonly=True,
         store=True,
