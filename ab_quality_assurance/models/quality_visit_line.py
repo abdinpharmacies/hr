@@ -42,6 +42,8 @@ class AbQualityAssuranceVisitLine(models.Model):
     @api.onchange("score")
     def _onchange_score(self):
         for record in self:
+            if record.score > 10:
+                record.score = 10
             if record.score < 0:
                 record.score = 0.0
                 return {
@@ -65,6 +67,8 @@ class AbQualityAssuranceVisitLine(models.Model):
     @api.constrains("score", "max_score")
     def _check_score_range(self):
         for record in self:
+            if record.score > 10:
+                raise ValidationError(_("Score cannot exceed 10."))
             if record.score < 0:
                 raise ValidationError(_("Standard score cannot be negative."))
             if record.max_score and record.score > record.max_score:

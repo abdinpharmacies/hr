@@ -162,3 +162,4 @@ class TestAbQualityAssurance(TransactionCase):
                     "department_id": self.non_branch_department.id,
                 }
             )
+
