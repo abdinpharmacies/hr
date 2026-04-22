@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_quality_assurance_visit_section_view_form" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_visit_section.form</field>
+            <field name="model">ab_quality_assurance_visit_section</field>
+            <field name="arch" type="xml">
+                <form string="Visit Review Section" create="false" delete="false">
+                    <sheet>
+                        <field name="visit_id" invisible="1"/>
+                        <field name="section_id" invisible="1"/>
+                        <div class="o_qa_visit_summary_card">
+                            <div class="o_qa_visit_summary_header">
+                                <field name="name" readonly="1"/>
+                            </div>
+                            <group col="3">
+                                <field name="earned_score" readonly="1"/>
+                                <field name="max_score" readonly="1"/>
+                                <field name="percentage" readonly="1"/>
+                            </group>
+                        </div>
+                        <field name="visit_line_ids" readonly="visit_id.state == 'submitted'">
+                            <list editable="bottom" create="false" delete="false">
+                                <field name="visit_section_id" column_invisible="1"/>
+                                <field name="visit_id" column_invisible="1"/>
+                                <field name="section_id" column_invisible="1"/>
+                                <field name="standard_id" column_invisible="1"/>
+                                <field name="sequence" widget="handle"/>
+                                <field name="title" readonly="1"/>
+                                <field name="max_score" readonly="1"/>
+                                <field name="score"/>
+                                <field name="percentage" readonly="1"/>
+                                <field name="attachment" widget="binary" filename="attachment_name"/>
+                                <field name="attachment_name" optional="hide"/>
+                                <field name="has_attachment" optional="show" readonly="1"/>
+                            </list>
+                            <form string="Visit Standard Score" create="false" delete="false">
+                                <sheet>
+                                    <field name="visit_id" invisible="1"/>
+                                    <field name="visit_section_id" invisible="1"/>
+                                    <field name="section_id" invisible="1"/>
+                                    <field name="standard_id" invisible="1"/>
+                                    <group>
+                                        <group>
+                                            <field name="section_id" readonly="1"/>
+                                            <field name="title" readonly="1"/>
+                                            <field name="max_score" readonly="1"/>
+                                            <field name="percentage" readonly="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="score" readonly="visit_id.state == 'submitted'"/>
+                                            <field name="has_attachment" readonly="1"/>
+                                        </group>
+                                    </group>
+                                    <group>
+                                        <field name="attachment" filename="attachment_name" readonly="visit_id.state == 'submitted'"/>
+                                        <field name="attachment_name" invisible="1"/>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_visit_line_view_form" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_visit_line.form</field>
+            <field name="model">ab_quality_assurance_visit_line</field>
+            <field name="arch" type="xml">
+                <form string="Visit Standard Score">
+                    <sheet>
+                        <field name="visit_id" invisible="1"/>
+                        <field name="visit_section_id" invisible="1"/>
+                        <field name="section_id" invisible="1"/>
+                        <field name="standard_id" invisible="1"/>
+                        <group>
+                            <group>
+                                <field name="section_id" readonly="1"/>
+                                <field name="title" readonly="1"/>
+                                <field name="max_score" readonly="1"/>
+                                <field name="percentage" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="score" readonly="visit_id.state == 'submitted'"/>
+                                <field name="has_attachment" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="attachment" filename="attachment_name" readonly="visit_id.state == 'submitted'"/>
+                            <field name="attachment_name" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_visit_view_list" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_visit.list</field>
+            <field name="model">ab_quality_assurance_visit</field>
+            <field name="arch" type="xml">
+                <list string="Quality Visits" decoration-success="state == 'submitted'">
+                    <field name="name"/>
+                    <field name="visit_date"/>
+                    <field name="department_id"/>
+                    <field name="employee_id"/>
+                    <field name="section_count"/>
+                    <field name="earned_total_score"/>
+                    <field name="max_total_score"/>
+                    <field name="total_percentage"/>
+                    <field name="state"/>
+                    <button name="action_export_pdf" type="object" icon="fa-file-pdf-o" title="Download PDF"/>
+                    <button name="action_export_xlsx" type="object" icon="fa-file-excel-o" title="Download Sheet"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_visit_view_form" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_visit.form</field>
+            <field name="model">ab_quality_assurance_visit</field>
+            <field name="arch" type="xml">
+                <form string="Quality Visit">
+                    <header>
+                        <button name="action_export_pdf" type="object" string="PDF" icon="fa-file-pdf-o" class="btn-secondary" invisible="not id"/>
+                        <button name="action_export_xlsx" type="object" string="Sheet" icon="fa-file-excel-o" class="btn-secondary" invisible="not id"/>
+                        <button name="action_submit_visit" type="object" string="Submit Visit"
+                                class="btn-primary"
+                                invisible="state != 'draft'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted"/>
+                    </header>
+                    <sheet>
+                        <widget name="web_ribbon" title="Submitted" bg_color="bg-success" invisible="state != 'submitted'"/>
+                        <field name="user_id" invisible="1"/>
+                        <field name="state" invisible="1"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <div class="o_qa_visit_summary_card">
+                            <div class="o_qa_visit_summary_header">Visit Summary</div>
+                            <group col="4">
+                                <field name="department_id" readonly="state == 'submitted'"
+                                       domain="[('name', '=like', 'فرع%')]"/>
+                                <field name="department_manager_id" readonly="1"/>
+                                <field name="visit_date" readonly="state == 'submitted'"/>
+                                <field name="employee_id" readonly="state == 'submitted'" invisible="not id"/>
+                                <field name="section_count" readonly="1"/>
+                                <field name="earned_total_score" readonly="1"/>
+                                <field name="max_total_score" readonly="1"/>
+                                <field name="total_percentage" readonly="1"/>
+                                <field name="submitted_at" readonly="1" invisible="state != 'submitted'"/>
+                            </group>
+                        </div>
+                        <notebook>
+                            <page string="Sections">
+                                <field name="visit_section_ids" readonly="state == 'submitted'">
+                                    <list create="false" delete="false" open_form_view="True">
+                                        <field name="section_id" column_invisible="1"/>
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name" string="Section" readonly="1"/>
+                                        <field name="earned_score" readonly="1"/>
+                                        <field name="max_score" readonly="1"/>
+                                        <field name="percentage" readonly="1"/>
+                                    </list>
+                                    <form string="Visit Review Section" create="false" delete="false">
+                                        <sheet>
+                                            <field name="visit_id" invisible="1"/>
+                                            <field name="section_id" invisible="1"/>
+                                            <div class="o_qa_visit_summary_card">
+                                                <div class="o_qa_visit_summary_header">
+                                                    <field name="name" readonly="1"/>
+                                                </div>
+                                                <group col="3">
+                                                    <field name="earned_score" readonly="1"/>
+                                                    <field name="max_score" readonly="1"/>
+                                                    <field name="percentage" readonly="1"/>
+                                                </group>
+                                            </div>
+                                            <field name="visit_line_ids" readonly="visit_id.state == 'submitted'">
+                                                <list editable="bottom" create="false" delete="false">
+                                                    <field name="visit_section_id" column_invisible="1"/>
+                                                    <field name="visit_id" column_invisible="1"/>
+                                                    <field name="section_id" column_invisible="1"/>
+                                                    <field name="standard_id" column_invisible="1"/>
+                                                    <field name="sequence" widget="handle"/>
+                                                    <field name="title" readonly="1"/>
+                                                    <field name="max_score" readonly="1"/>
+                                                    <field name="score"/>
+                                                    <field name="percentage" readonly="1"/>
+                                                    <field name="attachment" widget="binary" filename="attachment_name"/>
+                                                    <field name="attachment_name" optional="hide"/>
+                                                    <field name="has_attachment" optional="show" readonly="1"/>
+                                                </list>
+                                                <form string="Visit Standard Score" create="false" delete="false">
+                                                    <sheet>
+                                                        <field name="visit_id" invisible="1"/>
+                                                        <field name="visit_section_id" invisible="1"/>
+                                                        <field name="section_id" invisible="1"/>
+                                                        <field name="standard_id" invisible="1"/>
+                                                        <group>
+                                                            <group>
+                                                                <field name="section_id" readonly="1"/>
+                                                                <field name="title" readonly="1"/>
+                                                                <field name="max_score" readonly="1"/>
+                                                                <field name="percentage" readonly="1"/>
+                                                            </group>
+                                                            <group>
+                                                                <field name="score" readonly="visit_id.state == 'submitted'"/>
+                                                                <field name="has_attachment" readonly="1"/>
+                                                            </group>
+                                                        </group>
+                                                        <group>
+                                                            <field name="attachment" filename="attachment_name" readonly="visit_id.state == 'submitted'"/>
+                                                            <field name="attachment_name" invisible="1"/>
+                                                        </group>
+                                                    </sheet>
+                                                </form>
+                                            </field>
+                                        </sheet>
+                                    </form>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_visit_view_search" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_visit.search</field>
+            <field name="model">ab_quality_assurance_visit</field>
+            <field name="arch" type="xml">
+                <search string="Quality Visits">
+                    <field name="name"/>
+                    <field name="department_id"/>
+                    <field name="employee_id"/>
+                    <field name="visit_date"/>
+                    <separator/>
+                    <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="filter_submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                    <separator/>
+                    <filter name="group_by_department" string="Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_by_employee" string="Performer" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_visit_action" model="ir.actions.act_window">
+            <field name="name">Visits</field>
+            <field name="res_model">ab_quality_assurance_visit</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_quality_assurance_visit_view_search"/>
+        </record>
+    </data>
+</odoo>

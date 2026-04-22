@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_quality_assurance_standard_view_list" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_standard.list</field>
+            <field name="model">ab_quality_assurance_standard</field>
+            <field name="arch" type="xml">
+                <list string="Section Standards" default_order="section_id, sequence, id" editable="bottom" multi_edit="1" open_form_view="True">
+                    <field name="active" widget="boolean_toggle"/>
+                    <field name="sequence" widget="handle"/>
+                    <field name="section_id"/>
+                    <field name="title"/>
+                    <field name="max_score"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_standard_view_form" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_standard.form</field>
+            <field name="model">ab_quality_assurance_standard</field>
+            <field name="arch" type="xml">
+                <form string="Section Standard">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="sequence"/>
+                                <field name="section_id"/>
+                                <field name="title"/>
+                            </group>
+                            <group>
+                                <field name="max_score"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_standard_view_search" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_standard.search</field>
+            <field name="model">ab_quality_assurance_standard</field>
+            <field name="arch" type="xml">
+                <search string="Section Standards">
+                    <field name="title"/>
+                    <field name="section_id"/>
+                    <separator/>
+                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="filter_inactive" string="Archived" domain="[('active', '=', False)]"/>
+                    <separator/>
+                    <filter name="group_by_section" string="Section" context="{'group_by': 'section_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_standard_action" model="ir.actions.act_window">
+            <field name="name">Standards</field>
+            <field name="res_model">ab_quality_assurance_standard</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_quality_assurance_standard_view_search"/>
+            <field name="context">{'search_default_filter_active': 1}</field>
+        </record>
+    </data>
+</odoo>
