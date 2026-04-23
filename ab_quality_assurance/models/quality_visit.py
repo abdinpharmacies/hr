@@ -143,8 +143,11 @@ class AbQualityAssuranceVisit(models.Model):
                 raise ValidationError(_("Please set the performer before submitting the visit."))
             if not record.visit_section_ids:
                 raise ValidationError(_("There are no configured sections to evaluate in this visit."))
-            if not record.visit_section_ids.mapped("visit_line_ids"):
+            visit_lines = record.visit_section_ids.mapped("visit_line_ids")
+            if not visit_lines:
                 raise ValidationError(_("The configured sections do not contain active standards yet."))
+            if any(line.score is False or line.score <= 0 or line.score > 10 for line in visit_lines):
+                raise ValidationError(_("You must add value only between 1 and 10."))
             record._validate_visit_sections()
             record.with_context(allow_submitted_visit_write=True).write(
                 {
@@ -200,7 +203,7 @@ class AbQualityAssuranceVisit(models.Model):
                 {
                     "sequence": standard.sequence,
                     "standard_id": standard.id,
-                    "score": 0.0,
+                    "score": False,
                 }
             )
             for standard in standards

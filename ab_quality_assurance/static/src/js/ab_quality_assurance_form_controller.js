@@ -3,7 +3,9 @@
 import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { patch } from "@web/core/utils/patch";
+import { useService } from "@web/core/utils/hooks";
 import { X2ManyFieldDialog } from "@web/views/fields/relational_utils";
+import { FloatField } from "@web/views/fields/float/float_field";
 import { FormController } from "@web/views/form/form_controller";
 
 function isQualityVisitForm(controller) {
@@ -142,11 +144,41 @@ function isQualityVisitDialog(dialog) {
     );
 }
 
+function isQualityScoreField(field) {
+    return (
+        field.props?.record?.resModel === "ab_quality_assurance_visit_line" &&
+        field.props?.name === "score"
+    );
+}
+
 patch(X2ManyFieldDialog.prototype, {
     setup() {
         super.setup(...arguments);
         if (isQualityVisitDialog(this)) {
             this.canCreate = false;
         }
+    },
+});
+
+patch(FloatField.prototype, {
+    setup() {
+        super.setup(...arguments);
+        this.notificationService = useService("notification");
+    },
+
+    parse(value) {
+        const parsedValue = super.parse(...arguments);
+        if (!isQualityScoreField(this) || value === "" || value === false || value === null) {
+            return parsedValue;
+        }
+
+        if (Number.isNaN(parsedValue) || parsedValue <= 0 || parsedValue > 10) {
+            this.notificationService.add(_t("You must add value only between 1 and 10."), {
+                type: "danger",
+            });
+            throw new Error("Invalid quality score");
+        }
+
+        return parsedValue;
     },
 });
