@@ -12,8 +12,8 @@ class AbQualityAssuranceVisit(models.Model):
 
     name = fields.Char(required=True, readonly=True, copy=False, default="New")
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user, readonly=True)
-    employee_id = fields.Many2one("ab_hr_employee", required=False, ondelete="restrict", string="Visited By")
-    department_id = fields.Many2one("ab_hr_department", required=False, ondelete="restrict", index=True)
+    employee_id = fields.Many2one("ab_hr_employee", required=True, ondelete="restrict", string="Visited By")
+    department_id = fields.Many2one("ab_hr_department", required=True, ondelete="restrict", index=True)
     department_manager_id = fields.Many2one(
         "ab_hr_employee",
         related="department_id.manager_id",
@@ -153,7 +153,6 @@ class AbQualityAssuranceVisit(models.Model):
                 }
             )
         return True
-
 
     def action_export_pdf(self):
         self.ensure_one()
