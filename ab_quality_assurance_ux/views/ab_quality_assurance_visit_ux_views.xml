@@ -79,7 +79,7 @@
     </record>
 
     <record id="ab_quality_assurance.ab_quality_assurance_visit_action" model="ir.actions.act_window">
-        <field name="view_mode">kanban,list,form</field>
+        <field name="view_mode">list,kanban,form</field>
     </record>
 
     <!-- Improved Form View -->
@@ -197,7 +197,7 @@
     <record id="action_ab_quality_assurance_visit_drafts" model="ir.actions.act_window">
         <field name="name">My Draft Visits</field>
         <field name="res_model">ab_quality_assurance_visit</field>
-        <field name="view_mode">kanban,list,form</field>
+        <field name="view_mode">list,kanban,form</field>
         <field name="domain">[('state', '=', 'draft'), ('user_id', '=', uid)]</field>
         <field name="context">{'default_state': 'draft'}</field>
         <field name="help" type="html">

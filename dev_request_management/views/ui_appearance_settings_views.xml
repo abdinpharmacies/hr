@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ui_appearance_settings_list" model="ir.ui.view">
+        <field name="name">ui.appearance.settings.list</field>
+        <field name="model">ui.appearance.settings</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="scope"/>
+                <field name="user_id"/>
+                <field name="theme_mode"/>
+                <field name="preset_theme"/>
+                <field name="background_type"/>
+                <field name="card_style"/>
+                <field name="active"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_ui_appearance_settings_form" model="ir.ui.view">
+        <field name="name">ui.appearance.settings.form</field>
+        <field name="model">ui.appearance.settings</field>
+        <field name="arch" type="xml">
+            <form class="o_ui_appearance_settings_form o_dev_request_theme_scope">
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="scope"/>
+                            <field name="user_id" invisible="scope != 'user'"/>
+                            <field name="theme_mode"/>
+                            <field name="preset_theme"/>
+                            <field name="active"/>
+                        </group>
+                        <group>
+                            <field name="enable_animations"/>
+                            <field name="enable_hover_effects"/>
+                            <field name="auto_dark_mode"/>
+                            <field name="kanban_density"/>
+                            <field name="card_style"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Colors">
+                            <group>
+                                <field name="primary_color"/>
+                                <field name="secondary_color"/>
+                                <field name="accent_color"/>
+                                <field name="text_color"/>
+                            </group>
+                        </page>
+                        <page string="Background">
+                            <group>
+                                <field name="background_type"/>
+                                <field name="background_color" invisible="background_type != 'solid'"/>
+                                <field name="background_gradient" invisible="background_type != 'gradient'"/>
+                                <field name="background_image_url" invisible="background_type != 'image'"/>
+                                <field name="background_image" filename="background_image_filename" invisible="background_type != 'image'"/>
+                                <field name="background_image_opacity" invisible="background_type != 'image'"/>
+                                <field name="background_image_blur" invisible="background_type != 'image'"/>
+                                <field name="background_image_size" invisible="background_type != 'image'"/>
+                                <field name="enable_parallax" invisible="background_type != 'image'"/>
+                            </group>
+                        </page>
+                        <page string="Cards &amp; Layout">
+                            <group>
+                                <field name="card_style"/>
+                                <field name="card_border_radius"/>
+                                <field name="kanban_density"/>
+                            </group>
+                        </page>
+                        <page string="Typography">
+                            <group>
+                                <field name="font_family"/>
+                                <field name="font_size_base"/>
+                            </group>
+                        </page>
+                        <page string="Advanced">
+                            <group>
+                                <field name="custom_css" placeholder="Add scoped CSS overrides for Development Requests views only"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ui_appearance_settings" model="ir.actions.act_window">
+        <field name="name">Appearance Settings</field>
+        <field name="res_model">ui.appearance.settings</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_global_scope': 1}</field>
+    </record>
+</odoo>

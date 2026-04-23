@@ -1,0 +1,54 @@
+.o_development_request_kanban .o_dev_request_card {
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.o_development_request_kanban .o_dev_request_card_top_bar {
+    height: 6px;
+    width: 100%;
+}
+
+.o_development_request_kanban .o_dev_request_green .o_dev_request_card_top_bar {
+    background: #3ca34d;
+}
+
+.o_development_request_kanban .o_dev_request_yellow .o_dev_request_card_top_bar {
+    background: #d9b310;
+}
+
+.o_development_request_kanban .o_dev_request_light_blue .o_dev_request_card_top_bar {
+    background: #4fb3d9;
+}
+
+.o_development_request_kanban .o_dev_request_dark_blue .o_dev_request_card_top_bar {
+    background: #1e4f8c;
+}
+
+.o_development_request_kanban .o_dev_request_red .o_dev_request_card_top_bar {
+    background: #d64545;
+}
+
+.o_development_request_kanban .o_dev_request_orange .o_dev_request_card_top_bar {
+    background: #e67e22;
+}
+
+.o_development_request_kanban .o_dev_request_pink .o_dev_request_card_top_bar {
+    background: #e86fa5;
+}
+
+.o_development_request_kanban .o_dev_request_overdue {
+    box-shadow: 0 0 0 2px rgba(214, 69, 69, 0.18);
+}
+
+.o_development_request_kanban .o_dev_request_progress {
+    background: #edf1f5;
+    border-radius: 999px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.o_development_request_kanban .o_dev_request_progress_bar {
+    background: linear-gradient(90deg, #1e4f8c, #4fb3d9);
+    height: 100%;
+    border-radius: 999px;
+}

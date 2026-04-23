@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_development_request_root" name="Development Requests" sequence="10"
+        groups="dev_request_management.group_development_request_user,dev_request_management.group_development_request_developer,dev_request_management.group_development_request_lead,dev_request_management.group_development_request_admin"/>
+
+    <menuitem id="menu_development_request_requests" name="Requests" parent="menu_development_request_root"
+        action="dev_request_management.action_development_request" sequence="10"/>
+
+    <menuitem id="menu_development_request_board" name="Overview Board" parent="menu_development_request_root"
+        action="dev_request_management.action_development_request_board" sequence="20"
+        groups="dev_request_management.group_development_request_developer,dev_request_management.group_development_request_lead,dev_request_management.group_development_request_admin"/>
+
+    <menuitem id="menu_development_request_reporting" name="Analytics" parent="menu_development_request_root"
+        action="dev_request_management.action_development_request_reporting" sequence="30"
+        groups="dev_request_management.group_development_request_lead,dev_request_management.group_development_request_admin"/>
+
+    <menuitem id="menu_development_request_configuration" name="Configuration" parent="menu_development_request_root"
+        sequence="90" groups="dev_request_management.group_development_request_admin"/>
+
+    <record id="action_development_request_stages" model="ir.actions.act_window">
+        <field name="name">Stages</field>
+        <field name="res_model">development.request.stage</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_development_request_teams" model="ir.actions.act_window">
+        <field name="name">Teams</field>
+        <field name="res_model">development.request.team</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_development_request_categories" model="ir.actions.act_window">
+        <field name="name">Categories</field>
+        <field name="res_model">development.request.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="action_development_request_followups" model="ir.actions.act_window">
+        <field name="name">Follow-ups</field>
+        <field name="res_model">development.request.followup</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="menu_development_request_stages_action" name="Stages" parent="menu_development_request_configuration"
+        action="dev_request_management.action_development_request_stages" sequence="10"/>
+    <menuitem id="menu_development_request_teams_action" name="Teams" parent="menu_development_request_configuration"
+        action="dev_request_management.action_development_request_teams" sequence="20"/>
+    <menuitem id="menu_development_request_categories_action" name="Tags" parent="menu_development_request_configuration"
+        action="dev_request_management.action_development_request_categories" sequence="30"/>
+    <menuitem id="menu_development_request_followups_action" name="Follow-up Log" parent="menu_development_request_configuration"
+        action="dev_request_management.action_development_request_followups" sequence="40"/>
+    <menuitem id="menu_ui_appearance_settings_action" name="Appearance Settings" parent="menu_development_request_configuration"
+        action="dev_request_management.action_ui_appearance_settings" sequence="50"
+        groups="dev_request_management.group_development_request_admin,dev_request_management.group_development_request_ui_customizer"/>
+</odoo>
