@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ui_appearance_settings_default_global" model="ui.appearance.settings">
+        <field name="name">Global Development Requests Theme</field>
+        <field name="scope">global</field>
+        <field name="theme_mode">light</field>
+        <field name="preset_theme">default</field>
+        <field name="primary_color">#1e4f8c</field>
+        <field name="secondary_color">#f4f7fb</field>
+        <field name="accent_color">#2e9cca</field>
+        <field name="text_color">#1f2937</field>
+        <field name="background_type">solid</field>
+        <field name="background_color">#eef4fb</field>
+        <field name="background_gradient">linear-gradient(135deg, #eef4fb 0%, #dfeaf7 100%)</field>
+        <field name="background_image_opacity">0.2</field>
+        <field name="background_image_blur">0</field>
+        <field name="background_image_size">cover</field>
+        <field name="card_style">shadowed</field>
+        <field name="card_border_radius">14</field>
+        <field name="font_family">Inter, 'Segoe UI', sans-serif</field>
+        <field name="font_size_base">14</field>
+        <field name="kanban_density">normal</field>
+        <field name="enable_animations">True</field>
+        <field name="enable_hover_effects">True</field>
+    </record>
+</odoo>

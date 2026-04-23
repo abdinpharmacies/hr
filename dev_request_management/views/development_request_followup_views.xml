@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_development_request_followup_list" model="ir.ui.view">
+        <field name="name">development.request.followup.list</field>
+        <field name="model">development.request.followup</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="followup_date"/>
+                <field name="request_id"/>
+                <field name="user_id"/>
+                <field name="summary"/>
+                <field name="next_action"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_development_request_followup_form" model="ir.ui.view">
+        <field name="name">development.request.followup.form</field>
+        <field name="model">development.request.followup</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="request_id"/>
+                            <field name="followup_date"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="summary"/>
+                            <field name="next_action"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="decision"/>
+                        <field name="note"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
