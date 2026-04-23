@@ -6,6 +6,186 @@ This document serves as a general reference for all custom-addons modules in the
 
 ---
 
+## Development Approach (MUST FOLLOW)
+
+### Module Template Structure
+
+All new modules MUST follow the `ab_template` structure:
+
+```
+module_name/
+├── __manifest__.py
+├── __init__.py
+├── models/
+│   ├── __init__.py
+│   └── [model_files].py
+├── views/
+│   └── [view_files].xml
+├── security/
+│   ├── security_groups.xml
+│   ├── record_rules.xml
+│   └── ir.model.access.csv
+└── static/
+    └── description/
+        └── icon.png
+```
+
+### Author
+
+All modules: `author="Alhassan Hossny"`
+
+### Manifest Data Order (CRITICAL)
+
+The `data` array in `__manifest__.py` MUST follow this exact order:
+
+```python
+'data': [
+    'security/security_groups.xml',        # 1. Groups & Categories
+    'security/record_rules.xml',       # 2. Record Rules
+    'security/ir.model.access.csv',   # 3. Access Control
+    'views/menus.xml',                 # 4. Menus
+    # ... rest of views/models files last
+],
+```
+
+**Why this order matters:**
+- Groups must exist before record rules reference them
+- Groups must exist before ir.model.access.csv assigns permissions
+- Record rules must exist before menus load views
+- Avoids foreign key / missing reference errors during install
+
+### Reference: ab_template Manifest Example
+
+```python
+# __manifest__.py
+{
+    'name': 'ab_template',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'AbdinSupplyChain',
+    'author': 'Alhassan Hossny',
+    'application': True,
+    'depends': ['base', ],
+    'data': [
+        'security/security_groups.xml',
+        'security/record_rules.xml',
+        'security/ir.model.access.csv',
+        'views/menus.xml',
+    ],
+    'installable': True,
+}
+```
+
+### Reference: ab_template Init Files
+
+```python
+# __init__.py
+from . import models
+
+# models/__init__.py
+# (empty or import model files)
+```
+
+### Reference: ab_template Security Groups
+
+```xml
+<!-- security/security_groups.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Categories, Privileges, Groups defined here -->
+    </data>
+</odoo>
+```
+
+### Reference: ab_template ir.model.access.csv
+
+```csv
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+</csv>
+```
+
+### Reference: ab_template Menus
+
+```xml
+<!-- views/menus.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Menu structure -->
+    </data>
+</odoo>
+```
+
+---
+
+### Development Rules
+
+1. **NO hooks in database** - Do not create hooks, triggers, or database modifications
+2. **NO editing other modules** - Only modify the module being developed
+3. **NO cross-module hooks** - Do not use `env.ref()` to create records in other modules
+4. **Self-contained modules** - Each module must work independently
+5. **Incremental security** - Define groups/privileges first, assign permissions later
+6. **Test before production** - Verify security assignments work correctly
+
+### Key Anti-Patterns to Avoid
+
+| Anti-Pattern | Problem | Solution |
+|--------------|---------|----------|
+| Editing other modules | Conflicts, overwrites during updates | Create own module |
+| Database hooks/triggers | Opaque, hard to debug | Use Odoo ORM |
+| `env.ref()` for other modules | Tight coupling | Own security files |
+| Out-of-order data loading | Missing foreign key errors | Follow data order |
+| Raw SQL in constraints | Incompatible with multi-company | Use ORM |
+
+### Python Model Structure
+
+```python
+from odoo import fields, models
+
+
+class ModuleModel(models.Model):
+    _name = 'module.model'
+    _description = 'Description'
+
+    name = fields.Char(string='Name', required=True)
+
+    # Odoo 19 constraints style
+    _uniq_name = models.Constraint(
+        'UNIQUE(name)',
+        'Name must be unique.',
+    )
+```
+
+### Security Files Structure
+
+**security_groups.xml** - Categories, Privileges, Groups:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Category -->
+        <record id="module_category_name" model="ir.module.category">
+            <field name="name">Module Name</field>
+        </record>
+        
+        <!-- Group -->
+        <record id="group_name" model="res.groups">
+            <field name="name">Name</field>
+            <field name="category_id" ref="module_category_name"/>
+        </record>
+    </data>
+</odoo>
+```
+
+**ir.model.access.csv** format:
+```
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_model_user,model.model,group_name,1,1,1,1,1
+```
+
+---
+
 ## Module Inventory
 
 ### Core Business Modules (ab_*)
@@ -262,4 +442,7 @@ import { ... } from "@web/...";
 
 - **Branch**: dev (main development branch)
 - **Target**: Odoo 19.0
+- **Author**: Alhassan Hossny (all new modules)
+- **Template**: ab_template structure (MUST follow)
+- **Data Order**: security_groups.xml → record_rules.xml → ir.model.access.csv → menus → views
 - **Focus**: Start with critical issues first (_sql_constraints, legacy JS)
