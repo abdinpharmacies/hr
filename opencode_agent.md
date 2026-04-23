@@ -1,89 +1,448 @@
-# OpenCode Agent Reference - ab_orders_management
+# OpenCode Agent Reference - Odoo 19 Development
 
-## Module Overview
-- **Module Name**: ab_orders_management
-- **Version**: 19.0.1.0.0
-- **Depends**: base, web, ab_hr
+## Overview
 
-## Models (3 main models)
+This document serves as a general reference for all custom-addons modules in the Odoo 19 development environment.
 
-### 1. ab_pharmacy_delivery_branch
-- **Model**: `ab_pharmacy_delivery_branch`
-- **File**: `models/pharmacy_delivery_branch.py`
-- **Fields**:
-  - `name` (char, required)
-  - `hr_department_id` (Many2one to ab_hr_department)
-  - `user_ids` (Many2many res.users)
-  - `pilot_ids` (One2many to ab_pharmacy_delivery_pilot)
-  - `assignment_ids` (One2many to ab_pharmacy_delivery_assignment)
-  - `pilot_count`, `assignment_count` (computed)
-- **Constraints**: UNIQUE(name), UNIQUE(hr_department_id)
+---
 
-### 2. ab_pharmacy_delivery_pilot
-- **Model**: `ab_pharmacy_delivery_pilot`
-- **File**: `models/pharmacy_delivery_pilot.py`
-- **Fields**:
-  - `name` (char, required)
-  - `pilot_code` (char)
-  - `shift` (char)
-  - `status` (selection: free, in_delivery)
-  - `hr_employee_id` (Many2one to ab_hr_employee)
-  - `hr_department_id` (Many2one to ab_hr_department)
-  - `branch_id` (Many2one to ab_pharmacy_delivery_branch, required)
-  - `sign_in_datetime`, `sign_in_date`, `sign_in_order` (datetime/date/int)
-  - Count fields: delivery_assigned_count, delivery_completed_count, order_assigned_count, order_completed_count, handled_item_count
-- **Constraints**: UNIQUE(name, branch_id), UNIQUE(hr_employee_id)
-- **Key Methods**:
-  - `action_sync_pilots_from_hr()` - Sync pilots from HR employees
-  - `get_dashboard_payload()` - Get dashboard data
-  - `action_start_delivery()`, `action_finish_delivery()`
-  - `action_add_additional_assignment()` - Add additional order for pilot in delivery
-  - `_sync_status_from_assignments()`
-  - `_get_default_branch()` - Get default branch "فرع التلفزيون الاقصر"
+## Development Approach (MUST FOLLOW)
 
-### 3. ab_pharmacy_delivery_assignment
-- **Model**: `ab_pharmacy_delivery_assignment`
-- **File**: `models/pharmacy_delivery_assignment.py`
-- **Fields**:
-  - `pilot_id` (Many2one to ab_pharmacy_delivery_pilot, required)
-  - `branch_id` (Many2one to ab_pharmacy_delivery_branch, required)
-  - `order_number` (char, required)
-  - `transaction_type` (selection: delivery, order)
-  - `status` (selection: assigned, done, cancelled)
-  - `start_datetime`, `end_datetime` (datetime)
-  - `assigned_by_user_id`, `completed_by_user_id` (Many2one res.users)
-- **Constraint**: UNIQUE(branch_id, order_number, transaction_type)
-- **Key Methods**:
-  - `action_mark_done()`, `action_cancel()`
+### Module Template Structure
 
-## Wizard
-- **File**: `wizard/pharmacy_delivery_assignment_wizard.py`
-- **Model**: `ab_pharmacy_delivery_assignment_wizard`
+All new modules MUST follow the `ab_template` structure:
 
-## Views (XML)
-- `views/pharmacy_delivery_branch_views.xml`
-- `views/pharmacy_delivery_pilot_views.xml`
-- `views/pharmacy_delivery_assignment_views.xml`
-- `views/pharmacy_delivery_dashboard_views.xml`
-- `views/menus.xml`
-- `wizard/pharmacy_delivery_assignment_wizard_views.xml`
+```
+module_name/
+├── __manifest__.py
+├── __init__.py
+├── models/
+│   ├── __init__.py
+│   └── [model_files].py
+├── views/
+│   └── [view_files].xml
+├── security/
+│   ├── security_groups.xml
+│   ├── record_rules.xml
+│   └── ir.model.access.csv
+└── static/
+    └── description/
+        └── icon.png
+```
 
-## Security
-- `security/groups.xml`
-- `security/ir.model.access.csv`
-- `security/record_rules.xml`
+### Author
 
-## Naming Conventions
-- Model names: `ab_<name>` (e.g., `ab_pharmacy_delivery_pilot`)
-- Table names follow: `ab_pharmacy_delivery_assignment`
-- XML IDs: `ab_orders_management.<name>`
+All modules: `author="Alhassan Hossny"`
 
-## Odoo 19.0 Key Differences
+### Manifest Data Order (CRITICAL)
+
+The `data` array in `__manifest__.py` MUST follow this exact order:
+
+```python
+'data': [
+    'security/security_groups.xml',        # 1. Groups & Categories
+    'security/record_rules.xml',       # 2. Record Rules
+    'security/ir.model.access.csv',   # 3. Access Control
+    'views/menus.xml',                 # 4. Menus
+    # ... rest of views/models files last
+],
+```
+
+**Why this order matters:**
+- Groups must exist before record rules reference them
+- Groups must exist before ir.model.access.csv assigns permissions
+- Record rules must exist before menus load views
+- Avoids foreign key / missing reference errors during install
+
+### Reference: ab_template Manifest Example
+
+```python
+# __manifest__.py
+{
+    'name': 'ab_template',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'AbdinSupplyChain',
+    'author': 'Alhassan Hossny',
+    'application': True,
+    'depends': ['base', ],
+    'data': [
+        'security/security_groups.xml',
+        'security/record_rules.xml',
+        'security/ir.model.access.csv',
+        'views/menus.xml',
+    ],
+    'installable': True,
+}
+```
+
+### Reference: ab_template Init Files
+
+```python
+# __init__.py
+from . import models
+
+# models/__init__.py
+# (empty or import model files)
+```
+
+### Reference: ab_template Security Groups
+
+```xml
+<!-- security/security_groups.xml -->
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Categories, Privileges, Groups defined here -->
+    </data>
+</odoo>
+```
+
+### Reference: ab_template ir.model.access.csv
+
+```csv
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+</csv>
+```
+
+### Reference: ab_template Menus
+
+```xml
+<!-- views/menus.xml -->
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Menu structure -->
+    </data>
+</odoo>
+```
+
+---
+
+### Development Rules
+
+1. **NO hooks in database** - Do not create hooks, triggers, or database modifications
+2. **NO editing other modules** - Only modify the module being developed
+3. **NO cross-module hooks** - Do not use `env.ref()` to create records in other modules
+4. **Self-contained modules** - Each module must work independently
+5. **Incremental security** - Define groups/privileges first, assign permissions later
+6. **Test before production** - Verify security assignments work correctly
+
+### Key Anti-Patterns to Avoid
+
+| Anti-Pattern | Problem | Solution |
+|--------------|---------|----------|
+| Editing other modules | Conflicts, overwrites during updates | Create own module |
+| Database hooks/triggers | Opaque, hard to debug | Use Odoo ORM |
+| `env.ref()` for other modules | Tight coupling | Own security files |
+| Out-of-order data loading | Missing foreign key errors | Follow data order |
+| Raw SQL in constraints | Incompatible with multi-company | Use ORM |
+
+### Python Model Structure
+
+```python
+from odoo import fields, models
+
+
+class ModuleModel(models.Model):
+    _name = 'module.model'
+    _description = 'Description'
+
+    name = fields.Char(string='Name', required=True)
+
+    # Odoo 19 constraints style
+    _uniq_name = models.Constraint(
+        'UNIQUE(name)',
+        'Name must be unique.',
+    )
+```
+
+### Security Files Structure
+
+**security_groups.xml** - Categories, Privileges, Groups:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <!-- Category -->
+        <record id="module_category_name" model="ir.module.category">
+            <field name="name">Module Name</field>
+        </record>
+        
+        <!-- Group -->
+        <record id="group_name" model="res.groups">
+            <field name="name">Name</field>
+            <field name="category_id" ref="module_category_name"/>
+        </record>
+    </data>
+</odoo>
+```
+
+**ir.model.access.csv** format:
+```
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_model_user,model.model,group_name,1,1,1,1,1
+```
+
+---
+
+## Module Inventory
+
+### Core Business Modules (ab_*)
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| ab_announcement | Ready | |
+| ab_base_models_inherit | Ready | Base inheritance module |
+| ab_cities | Ready | |
+| ab_contract | Needs review | Has `_sql_constraints` issues |
+| ab_costcenter | Needs review | Legacy JS detected |
+| ab_customer | Ready | |
+| ab_data_from_excel | Ready | Excel import functionality |
+| ab_distribution_store | Ready | |
+| ab_eplus_collect_customers | Ready | |
+| ab_eplus_connect | Ready | |
+| ab_eplus_replication_contract | Ready | |
+| ab_employee_tools | Ready | |
+| ab_hr | Ready | Core HR module |
+| ab_hr_applicant | Ready | |
+| ab_hr_effects | Ready | |
+| ab_hr_org_chart | Needs review | Legacy JS: `odoo.define` |
+| ab_inventory | Needs review | Uses `self._cr` |
+| ab_inventory_adjust | Needs review | Legacy JS, uses `self._cr` |
+| ab_odoo_connect | Ready | |
+| ab_odoo_replication | Ready | |
+| ab_odoo_replication_upload | Ready | |
+| ab_odoo_update | Ready | |
+| ab_orders_management | Ready | |
+| ab_pos | Ready | |
+| ab_product | Ready | |
+| ab_product_source | Ready | |
+| ab_promo_program | Ready | |
+| ab_quality_assurance | Ready | |
+| ab_quality_assurance_ux | Ready | |
+| ab_request_management | Ready | |
+| ab_sales | Needs review | Uses `self._cr` |
+| ab_sales_cashier | Ready | |
+| ab_sales_contract | **CRITICAL** | Uses `_sql_constraints` |
+| ab_sales_models_replication | Ready | |
+| ab_sales_promo | Ready | |
+| ab_smart_security_manager | Ready | |
+| ab_store | Ready | |
+| ab_supplier | Ready | |
+| ab_template | Ready | |
+| ab_transfer | Needs review | Uses `self._cr` |
+| ab_user_extra | Ready | |
+| ab_visit_report | Ready | |
+| ab_wan | Ready | |
+| ab_website | Ready | |
+
+### Infrastructure/Utility Modules
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| abdin_css | Ready | |
+| abdin_disable_text_wrap | Ready | |
+| abdin_et | Ready | |
+| abdin_js | **CRITICAL** | 14 files use legacy `odoo.define` |
+| abdin_telegram | Ready | |
+| ab_widgets | Ready | |
+| ab_whatsapp_api | Needs review | Uses `self._cr` |
+| ab_telegram_webhook | Ready | |
+
+### Third-Party / Muk Modules
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| muk_web_appsbar | Ready | |
+| muk_web_chatter | Ready | |
+| muk_web_colors | Ready | |
+| muk_web_dialog | Ready | |
+| muk_web_group | Ready | |
+| muk_web_refresh | Ready | |
+| muk_web_theme | Ready | |
+
+### Queue Job Modules
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| queue_job | Ready | |
+| integration_queue_job | Ready | |
+
+### Other Modules
+
+| Module | Status | Notes |
+|--------|--------|-------|
+| auto_backup | Ready | |
+| auto_logout_idle_user_odoo | Ready | |
+| auth_session_timeout | Ready | |
+| hr_employee_permissions | Ready | |
+| payroll_test | **CRITICAL** | Uses `_sql_constraints` |
+
+---
+
+## Odoo 19 Compatibility Issues
+
+### CRITICAL: _sql_constraints (Must Fix)
+
+Odoo 19 requires `models.Constraint` instead of `_sql_constraints`.
+
+| Module | File | Issue |
+|--------|------|-------|
+| ab_sales_contract | models/ab_contract_product_origin.py | Line 12: `_sql_constraints` |
+| payroll_test | models/payroll_rule.py | Line 38: `_sql_constraints` |
+
+**Fix Required:**
+```python
+# Odoo 17/18 (old)
+_sql_constraints = [
+    ('unique_name', 'unique(name)', 'Name must be unique.')
+]
+
+# Odoo 19 (new)
+_uniq_name = models.Constraint(
+    'UNIQUE(name)',
+    'Name must be unique.',
+)
+```
+
+### HIGH: Legacy JavaScript (odoo.define)
+
+22 files use deprecated `odoo.define()`. Must convert to ES modules.
+
+#### abdin_js (14 files - CRITICAL)
+- static/src/js/xxx_form_edit_on_click.js
+- static/src/js/xxx_html_table_sort_js_pure.js
+- static/src/js/xxx_html_table_sort_working.js
+- static/src/js/xxx_web_refresher.js
+- static/src/js/urgent_save_firefox_fix.js
+- static/src/js/xxx_save_record_auto.js
+- static/src/js/xxx_one2many_widget_autosave.js
+- static/src/js/list_view.js
+- static/src/js/html_table_sort.js
+- static/src/js/add_equal_ilike_to_filter_menu.js
+- static/src/js/eastern_to_western_numbers.js
+- static/src/js/abdin_date_widget.js
+- static/src/js/fix_tabindex_in_odoo_15.js
+
+#### ab_inventory_adjust (8 files)
+- static/src/js/helper_functions.js
+- static/src/js/odoo_barcode_one2many.js
+- static/src/js/get_inventory_details.js
+- static/src/js/barcode_list_view.js
+- static/src/js/odoo_barcode_one2many_try1.js
+- static/src/js/override_enter_key_abstract_field.js
+
+#### Other modules
+- ab_hr_org_chart/static/src/js/hr_org_chart.js
+- ab_costcenter/static/src/js/archive_security.js
+
+**Fix Required:**
+```javascript
+// Old (deprecated)
+odoo.define('module.name', function (require) { ... });
+
+// New (Odoo 17+)
+/** @odoo-module **/
+import { ... } from "@web/...";
+```
+
+### MEDIUM: Direct Cursor Access (self._cr)
+
+These modules use `self._cr` which should be replaced with `self.env.cr`:
+
+| Module | File | Lines |
+|--------|------|-------|
+| ab_transfer | models/transfer_line.py | 90, 98, 111, 117 |
+| ab_inventory | models/ab_product_source_pending.py | 42 |
+| ab_inventory_adjust | models/ab_inventory_adjust_header_push.py | 132 |
+| ab_sales | models/ab_sales_ui_api_replication_inherit.py | 92 |
+| ab_whatsapp_api | models/whatsapp_service.py | 1063, 1125, 1216, 1282, 1457 |
+| auto_backup | models/db_backup.py | 30 |
+
+**Fix Required:**
+```python
+# Old
+self._cr.execute("SELECT ...")
+
+# New
+self.env.cr.execute("SELECT ...")
+```
+
+### LOW: Manifest Version Format
+
+All modules use `'19.0.1.0.0'` instead of `'19.0'`. This is cosmetic but not an error.
+
+---
+
+## Odoo 19 Development Rules
+
+### XML Views
+
 - Use `<list>` instead of `<tree>` for list views
-- Use `models.Constraint` instead of `_sql_constraints`
-- Use boolean expressions in XML instead of `attrs`
-- Use ES modules for JavaScript (`@odoo-module`)
-- Register assets in `__manifest__.py`
+- Use `invisible="field_a == 4"` instead of `attrs="{'invisible': [...]}"`
 
-## Related Modules (dependencies)
-- `ab_hr` - For HR employee/department integration
+### Python/ORM
+
+- Use recordsets: `self.env['model'].search(...)`
+- Use `mapped()`, `filtered()`, `sorted()` on recordsets
+- Use `self.env.cr` instead of `self._cr`
+- Use `self.env.uid` instead of `self._uid`
+- Use `self.env.context` instead of `self._context`
+
+### Constraints
+
+```python
+# Odoo 19 style
+_uniq_name = models.Constraint(
+    'UNIQUE(name)',
+    'Name must be unique.',
+)
+```
+
+### Domains
+
+```python
+# Odoo 19 style
+from odoo import fields
+domain = fields.Domain('name', '=', 'abc')
+```
+
+### JavaScript
+
+```javascript
+/** @odoo-module **/
+import { ... } from "@web/...";
+```
+
+### Security (res.groups.privilege Layer)
+
+```xml
+<!-- 1. Category -->
+<record id="module_category_xxx" model="ir.module.category">
+    <field name="name">Module Name</field>
+</record>
+
+<!-- 2. Privilege -->
+<record id="privilege_xxx_access" model="res.groups.privilege">
+    <field name="name">Access</field>
+    <field name="category_id" ref="module_category_xxx"/>
+</record>
+
+<!-- 3. Group -->
+<record id="group_xxx_user" model="res.groups">
+    <field name="name">Users</field>
+    <field name="privilege_id" ref="privilege_xxx_access"/>
+</record>
+```
+
+---
+
+## Session Development Notes
+
+- **Branch**: dev (main development branch)
+- **Target**: Odoo 19.0
+- **Author**: Alhassan Hossny (all new modules)
+- **Template**: ab_template structure (MUST follow)
+- **Data Order**: security_groups.xml → record_rules.xml → ir.model.access.csv → menus → views
+- **Focus**: Start with critical issues first (_sql_constraints, legacy JS)
