@@ -71,7 +71,7 @@ class AbQualityAssuranceVisitSection(models.Model):
                 {
                     "sequence": standard.sequence,
                     "standard_id": standard.id,
-                    "score": 0.0,
+                    "score": False,
                 }
             )
             for standard in standards

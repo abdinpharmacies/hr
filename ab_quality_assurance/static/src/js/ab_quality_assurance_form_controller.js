@@ -3,22 +3,13 @@
 import { _t } from "@web/core/l10n/translation";
 import { ConfirmationDialog } from "@web/core/confirmation_dialog/confirmation_dialog";
 import { patch } from "@web/core/utils/patch";
+import { useService } from "@web/core/utils/hooks";
 import { X2ManyFieldDialog } from "@web/views/fields/relational_utils";
+import { FloatField } from "@web/views/fields/float/float_field";
 import { FormController } from "@web/views/form/form_controller";
 
 function isQualityVisitForm(controller) {
     return controller.props.resModel === "ab_quality_assurance_visit";
-}
-
-function isSubmittedVisit(controller) {
-    return controller.model?.root?.data?.state === "submitted";
-}
-
-async function saveQualityVisitDraft(controller) {
-    return controller.save({
-        reload: false,
-        onError: (error, options) => controller.onSaveError(error, options, true),
-    });
 }
 
 function buildScoreSummary(record) {
@@ -73,12 +64,10 @@ function buildScoreSummary(record) {
 
 patch(FormController.prototype, {
     beforeVisibilityChange() {
-        if (!isQualityVisitForm(this) || isSubmittedVisit(this)) {
-            return super.beforeVisibilityChange(...arguments);
+        if (isQualityVisitForm(this)) {
+            return;
         }
-        if (document.visibilityState === "hidden" && this.formInDialog === 0) {
-            return saveQualityVisitDraft(this);
-        }
+        return super.beforeVisibilityChange(...arguments);
     },
 
     async beforeLeave({ forceLeave } = {}) {
@@ -86,22 +75,34 @@ patch(FormController.prototype, {
             return super.beforeLeave(...arguments);
         }
 
-        if (isSubmittedVisit(this)) {
-            return super.beforeLeave(...arguments);
+        const dirty = await this.model.root.isDirty();
+        if (!dirty || forceLeave) {
+            return;
         }
 
-        if (this.model.root.dirty && !forceLeave) {
-            return saveQualityVisitDraft(this);
-        }
+        return new Promise((resolve) => {
+            this.dialogService.add(ConfirmationDialog, {
+                title: _t("Discard Unsaved Visit Changes"),
+                body: _t("This visit form does not autosave. Leaving now will discard your unsaved changes."),
+                confirmLabel: _t("Discard Changes"),
+                confirmClass: "btn-danger",
+                confirm: async () => {
+                    await this.model.root.discard();
+                    resolve(true);
+                },
+                cancelLabel: _t("Stay"),
+                cancel: () => resolve(false),
+            });
+        });
     },
 
     async beforeUnload(ev) {
-        if (!isQualityVisitForm(this) || isSubmittedVisit(this)) {
+        if (!isQualityVisitForm(this)) {
             return super.beforeUnload(...arguments);
         }
 
-        const succeeded = await this.model.root.urgentSave();
-        if (!succeeded) {
+        const dirty = await this.model.root.isDirty();
+        if (dirty) {
             ev.preventDefault();
             ev.returnValue = _t("Unsaved changes");
         }
@@ -143,11 +144,41 @@ function isQualityVisitDialog(dialog) {
     );
 }
 
+function isQualityScoreField(field) {
+    return (
+        field.props?.record?.resModel === "ab_quality_assurance_visit_line" &&
+        field.props?.name === "score"
+    );
+}
+
 patch(X2ManyFieldDialog.prototype, {
     setup() {
         super.setup(...arguments);
         if (isQualityVisitDialog(this)) {
             this.canCreate = false;
         }
+    },
+});
+
+patch(FloatField.prototype, {
+    setup() {
+        super.setup(...arguments);
+        this.notificationService = useService("notification");
+    },
+
+    parse(value) {
+        const parsedValue = super.parse(...arguments);
+        if (!isQualityScoreField(this) || value === "" || value === false || value === null) {
+            return parsedValue;
+        }
+
+        if (Number.isNaN(parsedValue) || parsedValue <= 0 || parsedValue > 10) {
+            this.notificationService.add(_t("You must add value only between 1 and 10."), {
+                type: "danger",
+            });
+            throw new Error("Invalid quality score");
+        }
+
+        return parsedValue;
     },
 });

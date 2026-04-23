@@ -8,15 +8,20 @@
                 <form string="Change Pilot Status">
                     <sheet>
                         <group>
-                            <field name="pilot_id"/>
-                            <field name="target_status"/>
-                        </group>
-                        <group invisible="target_status != 'in_delivery'">
-                            <field name="order_number" placeholder="Enter order number (numbers only)"/>
-                            <field name="transaction_type"/>
-                            <field name="branch_id"/>
+                            <group>
+                                <field name="pilot_id"/>
+                                <field name="target_status"/>
+                            </group>
+                            <group>
+                                <field name="current_order_number" readonly="1"/>
+                                <field name="current_transaction_type" readonly="1"/>
+                                <field name="current_branch_id" readonly="1"/>
+                            </group>
                         </group>
                         <group>
+                            <field name="order_number" placeholder="Order number"/>
+                            <field name="transaction_type"/>
+                            <field name="branch_id"/>
                             <field name="note" placeholder="Optional management notes."/>
                         </group>
                     </sheet>

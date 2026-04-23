@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+                <menuitem id="menu_root" name="Abdin Root" sequence="4" web_icon="ab_abdin,static/description/icon.png"/>
+
+    </data>
+</odoo>

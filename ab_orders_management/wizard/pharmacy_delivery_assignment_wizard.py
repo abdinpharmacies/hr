@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import UserError
 
 
 class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
@@ -20,7 +20,19 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
         required=True,
         default="in_delivery",
     )
-    order_number = fields.Char(string="Order Number")
+    current_order_number = fields.Char(readonly=True)
+    current_transaction_type = fields.Selection(
+        [
+            ("delivery", _("Transaction Delivery")),
+            ("order", _("Client Order")),
+        ],
+        readonly=True,
+    )
+    current_branch_id = fields.Many2one(
+        "ab_pharmacy_delivery_branch",
+        readonly=True,
+    )
+    order_number = fields.Char()
     transaction_type = fields.Selection(
         [
             ("delivery", _("Transaction Delivery")),
@@ -42,6 +54,12 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
                 values.setdefault("pilot_id", pilot.id)
                 values.setdefault("target_status", "free" if pilot.status == "in_delivery" else "in_delivery")
                 values.setdefault("branch_id", pilot.branch_id.id)
+                if pilot.status == "in_delivery":
+                    assignment = pilot._get_open_assignment()
+                    if assignment:
+                        values.setdefault("current_order_number", assignment.order_number)
+                        values.setdefault("current_transaction_type", assignment.transaction_type)
+                        values.setdefault("current_branch_id", assignment.branch_id.id)
         return values
 
     @api.onchange("pilot_id")
@@ -60,17 +78,6 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
         for wizard in self:
             if wizard.target_status == "in_delivery" and wizard.pilot_id:
                 wizard.branch_id = wizard.branch_id or wizard.pilot_id.branch_id
-            elif wizard.target_status == "free":
-                wizard.order_number = False
-                wizard.transaction_type = False
-                wizard.branch_id = False
-
-    @api.constrains("order_number")
-    def _check_order_number(self):
-        for wizard in self:
-            if wizard.order_number:
-                if not wizard.order_number.isdigit():
-                    raise ValidationError(_("Order number must contain only numbers."))
 
     def action_apply(self):
         self.ensure_one()
@@ -79,8 +86,6 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
         if self.target_status == "in_delivery":
             if not self.order_number:
                 raise UserError(_("Order number is required."))
-            if not self.order_number.isdigit():
-                raise UserError(_("Order number must contain only numbers."))
             if not self.transaction_type:
                 raise UserError(_("Transaction type is required."))
             if not self.branch_id:
@@ -93,5 +98,5 @@ class AbPharmacyDeliveryAssignmentWizard(models.TransientModel):
             )
         else:
             if self.pilot_id.status == "in_delivery":
-                self.pilot_id.action_finish_delivery_all(note=self.note)
+                self.pilot_id.action_finish_delivery(note=self.note)
         return {"type": "ir.actions.act_window_close"}

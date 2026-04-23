@@ -12,8 +12,8 @@ class AbQualityAssuranceVisit(models.Model):
 
     name = fields.Char(required=True, readonly=True, copy=False, default="New")
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user, readonly=True)
-    employee_id = fields.Many2one("ab_hr_employee", required=False, ondelete="restrict", string="Visited By")
-    department_id = fields.Many2one("ab_hr_department", required=False, ondelete="restrict", index=True)
+    employee_id = fields.Many2one("ab_hr_employee", required=True, ondelete="restrict", string="Visited By")
+    department_id = fields.Many2one("ab_hr_department", required=True, ondelete="restrict", index=True)
     department_manager_id = fields.Many2one(
         "ab_hr_employee",
         related="department_id.manager_id",
@@ -143,8 +143,11 @@ class AbQualityAssuranceVisit(models.Model):
                 raise ValidationError(_("Please set the performer before submitting the visit."))
             if not record.visit_section_ids:
                 raise ValidationError(_("There are no configured sections to evaluate in this visit."))
-            if not record.visit_section_ids.mapped("visit_line_ids"):
+            visit_lines = record.visit_section_ids.mapped("visit_line_ids")
+            if not visit_lines:
                 raise ValidationError(_("The configured sections do not contain active standards yet."))
+            if any(line.score is False or line.score <= 0 or line.score > 10 for line in visit_lines):
+                raise ValidationError(_("You must add value only between 1 and 10."))
             record._validate_visit_sections()
             record.with_context(allow_submitted_visit_write=True).write(
                 {
@@ -153,7 +156,6 @@ class AbQualityAssuranceVisit(models.Model):
                 }
             )
         return True
-
 
     def action_export_pdf(self):
         self.ensure_one()
@@ -201,7 +203,7 @@ class AbQualityAssuranceVisit(models.Model):
                 {
                     "sequence": standard.sequence,
                     "standard_id": standard.id,
-                    "score": 0.0,
+                    "score": False,
                 }
             )
             for standard in standards
