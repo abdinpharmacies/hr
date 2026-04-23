@@ -706,13 +706,13 @@
     .ab_request_grid_cell .o_input,
     .ab_request_grid_cell .o-autocomplete--input,
     .ab_request_grid_cell .o-autocomplete input,
-    .ab_request_grid_cell .o-autocomplete--dropdown-menu,
     .ab_request_grid_cell .o_select_menu,
     .ab_request_grid_cell .o_field_many2many_selection .o_input_dropdown,
     .ab_request_grid_cell .o_field_widget[name="attachment_ids"] .o_input {
         border: 1px solid rgba(203, 216, 228, 0.98);
         border-radius: 14px;
         background: linear-gradient(180deg, #ffffff 0%, #f8fbfe 100%);
+        padding-inline: 0.9rem;
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.88);
         transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease, transform 140ms ease;
     }

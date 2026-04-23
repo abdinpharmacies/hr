@@ -21,6 +21,13 @@ class AbRequestType(models.Model):
         readonly=True,
     )
 
+    category_id = fields.Many2one('ab_request_category')
+    question_ids = fields.One2many(
+        "ab_request_type_question",
+        "request_type_id",
+        string="Questions",
+    )
+
     _ab_request_type_name_department_uniq = models.Constraint(
         "UNIQUE(name, department_id)",
         "Request type must be unique per department.",

@@ -12,6 +12,7 @@ class TestAbRequestManagement(TransactionCase):
         self.Users = self.env["res.users"].sudo().with_context(no_reset_password=True)
         self.Employees = self.env["ab_hr_employee"].sudo()
         self.Departments = self.env["ab_hr_department"].sudo()
+        self.RequestCategories = self.env["ab_request_category"].sudo()
         self.group_user = self.env.ref("base.group_user")
         self.request_user_group = self.env.ref("ab_request_management.group_ab_request_management_user")
         self.request_manager_group = self.env.ref("ab_request_management.group_ab_request_management_manager")
@@ -48,11 +49,21 @@ class TestAbRequestManagement(TransactionCase):
         self.admin_employee.department_id = self.department.id
         self.other_department = self.Departments.create({"name": "Finance"})
         self.outsider_employee.department_id = self.other_department.id
+        self.request_category = self.RequestCategories.create({"name": "IT Requests"})
+        self.other_request_category = self.RequestCategories.create({"name": "HR Requests"})
 
         self.request_type = self.env["ab_request_type"].sudo().create(
             {
                 "name": "System Access",
                 "department_id": self.department.id,
+                "category_id": self.request_category.id,
+            }
+        )
+        self.other_request_type = self.env["ab_request_type"].sudo().create(
+            {
+                "name": "Leave Request",
+                "department_id": self.department.id,
+                "category_id": self.other_request_category.id,
             }
         )
 
@@ -83,6 +94,16 @@ class TestAbRequestManagement(TransactionCase):
                     "request_type_id": self.request_type.id,
                 }
             )
+
+    def _create_request_question(self, request_type, question, is_required=False, sequence=10):
+        return self.env["ab_request_type_question"].sudo().create(
+            {
+                "request_type_id": request_type.id,
+                "question": question,
+                "is_required": is_required,
+                "sequence": sequence,
+            }
+        )
 
     def test_request_creation_sets_under_review_and_manager(self):
         request = self._create_request()
@@ -299,6 +320,77 @@ class TestAbRequestManagement(TransactionCase):
                     "department_id": unmanaged_department.id,
                 }
             )
+
+    def test_request_type_category_syncs_from_selected_type(self):
+        request = self.env["ab_request"].new({"request_type_id": self.request_type.id})
+        request._onchange_request_type_id()
+        self.assertEqual(request.request_category_id, self.request_category)
+
+    def test_category_filter_limits_available_request_types(self):
+        request = self.env["ab_request"].new({"request_category_id": self.request_category.id})
+        request._compute_available_request_type_ids()
+
+        available_ids = set(request.available_request_type_ids.ids)
+        self.assertIn(self.request_type.id, available_ids)
+        self.assertNotIn(self.other_request_type.id, available_ids)
+
+    def test_category_change_clears_mismatched_request_type(self):
+        request = self.env["ab_request"].new(
+            {
+                "request_category_id": self.other_request_category.id,
+                "request_type_id": self.request_type.id,
+            }
+        )
+        request._onchange_request_category_id()
+        self.assertFalse(request.request_type_id)
+
+    def test_request_creation_syncs_category_from_request_type(self):
+        request = self.env["ab_request"].with_user(self.requester_user).create(
+            {
+                "subject": "Mismatch category",
+                "description": "Request type should match category.",
+                "request_category_id": self.other_request_category.id,
+                "request_type_id": self.request_type.id,
+            }
+        )
+        self.assertEqual(request.request_category_id, self.request_category)
+
+    def test_request_creation_syncs_question_answers_from_request_type(self):
+        first_question = self._create_request_question(self.request_type, "What access do you need?", True, 5)
+        second_question = self._create_request_question(self.request_type, "Who approved this request?", False, 10)
+
+        request = self._create_request()
+
+        self.assertListEqual(
+            request.question_answer_ids.sorted(lambda answer: (answer.sequence, answer.id)).mapped("question_id.id"),
+            [first_question.id, second_question.id],
+        )
+
+    def test_required_question_answers_block_request_submission(self):
+        self._create_request_question(self.request_type, "What access do you need?", True)
+        request = self._create_request()
+        request.with_context(allow_state_write=True).write({"state": "draft"})
+
+        with self.assertRaises(ValidationError):
+            request.with_user(self.requester_user).action_submit_request()
+
+    def test_request_submission_accepts_answered_required_questions(self):
+        required_question = self._create_request_question(self.request_type, "What access do you need?", True)
+        optional_question = self._create_request_question(self.request_type, "Anything else to note?", False, 20)
+        request = self._create_request()
+        request.with_context(allow_state_write=True).write({"state": "draft"})
+
+        request.with_user(self.requester_user).question_answer_ids.filtered(
+            lambda answer: answer.question_id == required_question
+        ).write({"answer": "Need reporting dashboard access."})
+        request.with_user(self.requester_user).question_answer_ids.filtered(
+            lambda answer: answer.question_id == optional_question
+        ).write({"answer": ""})
+
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.requester_user).action_submit_request()
+
+        self.assertEqual(request.state, "under_review")
 
     def test_manager_can_read_request_attachments(self):
         request = self._create_request()

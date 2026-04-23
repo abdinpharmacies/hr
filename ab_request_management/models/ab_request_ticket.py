@@ -1,7 +1,9 @@
 from lxml import etree
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
+from odoo.fields import Command
 from odoo.exceptions import ValidationError
+from odoo.tools.translate import _
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
@@ -34,6 +36,15 @@ class AbRequest(models.Model):
         string="Related Links",
     )
     description = fields.Text(required=True)
+    request_category_id = fields.Many2one(
+        "ab_request_category",
+        string="Category",
+        tracking=True,
+    )
+    available_request_type_ids = fields.Many2many(
+        "ab_request_type",
+        compute="_compute_available_request_type_ids",
+    )
     request_type_id = fields.Many2one(
         "ab_request_type",
         required=True,
@@ -42,11 +53,19 @@ class AbRequest(models.Model):
     )
 
     user_id = fields.Many2one("res.users", readonly=True, default=lambda self: self.env.user)
+    requester_user_id = fields.Many2one("res.users")
 
     employee_id = fields.Many2one(
         "ab_hr_employee",
         required=True,
         readonly=True,
+        default=lambda self: self._default_employee_id(),
+        ondelete="restrict",
+        tracking=True,
+    )
+
+    requester_id = fields.Many2one(
+        "ab_hr_employee",
         default=lambda self: self._default_employee_id(),
         ondelete="restrict",
         tracking=True,
@@ -116,6 +135,11 @@ class AbRequest(models.Model):
         "attachment_id",
         string="Attachments"
     )
+    question_answer_ids = fields.One2many(
+        "ab_request_question_answer",
+        "request_id",
+        string="Question Answers",
+    )
     followup_count = fields.Integer(compute="_compute_followup_count")
     assigned_employee_count = fields.Integer(compute="_compute_assigned_employee_count")
     activity_count = fields.Integer(compute="_compute_activity_count")
@@ -174,7 +198,8 @@ class AbRequest(models.Model):
         result = super().get_view(view_id=view_id, view_type=view_type, **options)
         if view_type not in {"list", "form", "kanban"}:
             return result
-        if self.env.user.has_group("ab_request_management.group_ab_request_management_admin") or self._get_requester_employee_id():
+        if self.env.user.has_group(
+                "ab_request_management.group_ab_request_management_admin") or self._get_requester_employee_id():
             return result
 
         arch = result.get("arch")
@@ -192,6 +217,18 @@ class AbRequest(models.Model):
     def _compute_followup_count(self):
         for record in self:
             record.followup_count = len(record.followup_ids)
+
+    @api.depends("request_category_id", "request_type_id")
+    def _compute_available_request_type_ids(self):
+        request_types = self.env["ab_request_type"].search([], order="name")
+        for record in self:
+            category = record.request_category_id or record.request_type_id.category_id
+            if category:
+                record.available_request_type_ids = request_types.filtered(
+                    lambda request_type: request_type.category_id == category
+                )
+            else:
+                record.available_request_type_ids = request_types
 
     @api.depends("assigned_employee_ids", "assigned_employee_id")
     def _compute_assigned_employee_count(self):
@@ -226,7 +263,7 @@ class AbRequest(models.Model):
             record.can_work_on_request = record.is_department_manager or record.is_assigned_employee or is_request_admin
             record.can_add_followup = record._can_current_user_add_followup()
             record.can_edit_assignment_details = (
-                (record.is_department_manager or is_request_admin) and record.state not in NON_CLOSABLE_STATES
+                    (record.is_department_manager or is_request_admin) and record.state not in NON_CLOSABLE_STATES
             )
 
     @api.depends_context("uid")
@@ -274,11 +311,11 @@ class AbRequest(models.Model):
             record.request_ui_summary = _(
                 "%(state)s | %(assigned)s assignee(s) | %(followups)s follow-up(s) | %(activities)s activity(ies)"
             ) % {
-                "state": state_labels.get(record.state, record.state),
-                "assigned": record.assigned_employee_count,
-                "followups": record.followup_count,
-                "activities": record.activity_count,
-            }
+                                            "state": state_labels.get(record.state, record.state),
+                                            "assigned": record.assigned_employee_count,
+                                            "followups": record.followup_count,
+                                            "activities": record.activity_count,
+                                        }
 
     def _is_current_user_department_manager(self):
         """Return whether the current user manages the request type department."""
@@ -301,6 +338,17 @@ class AbRequest(models.Model):
         for record in self:
             if not record.request_type_id.manager_id:
                 raise ValidationError(_("The selected request type must have a department manager."))
+
+    @api.constrains("request_category_id", "request_type_id")
+    def _check_request_type_category(self):
+        """Keep the selected type aligned with the chosen category."""
+        for record in self:
+            if (
+                record.request_category_id
+                and record.request_type_id
+                and record.request_type_id.category_id != record.request_category_id
+            ):
+                raise ValidationError(_("The selected request type must belong to the selected category."))
 
     @api.constrains("link")
     def _check_link_url(self):
@@ -337,11 +385,25 @@ class AbRequest(models.Model):
             if record.employee_id.user_id != record.user_id:
                 raise ValidationError(_(REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR))
 
+    @api.onchange("request_category_id")
+    def _onchange_request_category_id(self):
+        for record in self:
+            if record.request_type_id and record.request_type_id.category_id != record.request_category_id:
+                record.request_type_id = False
+            record.question_answer_ids = record._build_question_answer_commands()
+
+    @api.onchange("request_type_id")
+    def _onchange_request_type_id(self):
+        for record in self:
+            record.request_category_id = record.request_type_id.category_id
+            record.question_answer_ids = record._build_question_answer_commands()
+
     @api.model_create_multi
     def create(self, vals_list):
         """Create requests in under-review state and notify stakeholders."""
         prepared_vals_list = [self._prepare_create_vals(vals) for vals in vals_list]
         records = super().create(prepared_vals_list)
+        records._sync_question_answers()
         records._sync_attachments_to_request()
         records._sync_primary_assignee()
         records._subscribe_request_partners()
@@ -353,11 +415,14 @@ class AbRequest(models.Model):
         if not vals:
             return super().write(vals)
 
+        vals = self._prepare_request_category_vals(vals)
         self._check_immutable_fields(vals)
         self._check_assignment_write(vals)
         self._check_state_write(vals)
         self._check_attachment_write(vals)
         result = super().write(vals)
+        if "request_type_id" in vals:
+            self._sync_question_answers()
         if "attachment_ids" in vals:
             self._sync_attachments_to_request()
         if "assigned_employee_ids" in vals:
@@ -366,12 +431,42 @@ class AbRequest(models.Model):
             self._subscribe_request_partners()
         return result
 
+    def _build_question_answer_commands(self):
+        self.ensure_one()
+        commands = [Command.clear()]
+        if not self.request_type_id:
+            return commands
+        answers_by_question = {
+            answer.question_id.id: answer.answer
+            for answer in self.question_answer_ids
+            if answer.question_id
+        }
+        for question in self.request_type_id.question_ids.sorted(lambda item: (item.sequence, item.id)):
+            commands.append(
+                Command.create(
+                    {
+                        "question_id": question.id,
+                        "answer": answers_by_question.get(question.id) or False,
+                    }
+                )
+            )
+        return commands
+
+    def _sync_question_answers(self):
+        for record in self:
+            super(AbRequest, record).write(
+                {
+                    "question_answer_ids": record._build_question_answer_commands(),
+                }
+            )
+
     def _sync_attachments_to_request(self):
         """Bind uploaded attachments to the request so all authorized users can access them."""
         for record in self:
             attachments = record.attachment_ids.sudo().filtered(
                 lambda attachment: not attachment.res_model
-                or (attachment.res_model == record._name and attachment.res_id in (False, 0, record.id))
+                                   or (attachment.res_model == record._name and attachment.res_id in (False, 0,
+                                                                                                      record.id))
             )
             if attachments:
                 attachments.write({
@@ -389,7 +484,7 @@ class AbRequest(models.Model):
     @api.model
     def _prepare_create_vals(self, vals):
         """Normalize incoming values before request creation."""
-        prepared_vals = dict(vals or {})
+        prepared_vals = self._prepare_request_category_vals(vals)
         current_employee_id = self._default_employee_id()
         prepared_vals["subject"] = (prepared_vals.get("subject") or "").strip()
         prepared_vals["description"] = (prepared_vals.get("description") or "").strip()
@@ -416,10 +511,21 @@ class AbRequest(models.Model):
         return prepared_vals
 
     @api.model
+    def _prepare_request_category_vals(self, vals):
+        prepared_vals = dict(vals or {})
+        request_type_id = prepared_vals.get("request_type_id")
+        if not request_type_id:
+            return prepared_vals
+        request_type = self.env["ab_request_type"].browse(request_type_id)
+        prepared_vals["request_category_id"] = request_type.category_id.id or False
+        return prepared_vals
+
+    @api.model
     def _validate_meaningful_text(self, field_label, value):
         """Ensure text contains at least one alphabetic character."""
         if not any(character.isalpha() for character in (value or "")):
-            raise ValidationError(_("%s must contain letters and cannot be only numbers or symbols.") % field_label.title())
+            raise ValidationError(
+                _("%s must contain letters and cannot be only numbers or symbols.") % field_label.title())
 
     def _check_immutable_fields(self, vals):
         """Prevent edits to subject, description, requester user, and requester employee after creation."""
@@ -481,7 +587,8 @@ class AbRequest(models.Model):
         """Validate actions reserved for the manager, request admin, or assigned employee."""
         for record in self:
             if not record.can_work_on_request:
-                raise UserError(_("Only the assigned employee, department manager, or request admin can perform this action."))
+                raise UserError(
+                    _("Only the assigned employee, department manager, or request admin can perform this action."))
 
     def _check_requester(self):
         """Validate actions reserved for the requester."""
@@ -495,7 +602,8 @@ class AbRequest(models.Model):
         if self.is_request_admin:
             return self.state != "closed"
         if self.is_department_manager or self.is_assigned_employee:
-            return self.state in {"under_review", "scheduled", "in_progress", "under_requester_confirmation", "satisfied"}
+            return self.state in {"under_review", "scheduled", "in_progress", "under_requester_confirmation",
+                                  "satisfied"}
         if self.is_requester:
             return self.state not in {"rejected", "closed"}
         return False
@@ -506,15 +614,16 @@ class AbRequest(models.Model):
             if not record._can_current_user_add_followup():
                 if record.is_requester:
                     raise UserError(_("The requester cannot add follow-ups on rejected or closed requests."))
-                raise UserError(_("Only the assigned employee, department manager, or request admin can add follow-ups."))
+                raise UserError(
+                    _("Only the assigned employee, department manager, or request admin can add follow-ups."))
 
     def _subscribe_request_partners(self):
         """Subscribe requester, manager, and assigned employee to chatter."""
         for record in self:
             partners = (
-                record.user_id.partner_id
-                | record.manager_user_id.partner_id
-                | record._get_effective_assigned_users().partner_id
+                    record.user_id.partner_id
+                    | record.manager_user_id.partner_id
+                    | record._get_effective_assigned_users().partner_id
             )
             if partners:
                 record.message_subscribe(partner_ids=partners.ids)
@@ -543,9 +652,9 @@ class AbRequest(models.Model):
             body = _(
                 "Request %(request)s has been created by %(requester)s and is waiting for review."
             ) % {
-                "request": record.name,
-                "requester": record.employee_id.name,
-            }
+                       "request": record.name,
+                       "requester": record.employee_id.name,
+                   }
             record._post_notification(body, partners)
 
     def _notify_assignment(self):
@@ -559,9 +668,9 @@ class AbRequest(models.Model):
             body = _(
                 "Request %(request)s has been assigned to %(employees)s."
             ) % {
-                "request": record.name,
-                "employees": employee_names,
-            }
+                       "request": record.name,
+                       "employees": employee_names,
+                   }
             record._post_notification(body, assigned_users.partner_id)
 
     def _notify_requester_confirmation(self):
@@ -572,9 +681,9 @@ class AbRequest(models.Model):
             body = _(
                 "Requester %(requester)s has updated request %(request)s."
             ) % {
-                "requester": record.employee_id.name,
-                "request": record.name,
-            }
+                       "requester": record.employee_id.name,
+                       "request": record.name,
+                   }
             record._post_notification(body, record.manager_user_id.partner_id)
 
     def action_approve(self):
@@ -683,6 +792,7 @@ class AbRequest(models.Model):
         """Submit the request for review."""
         self.ensure_one()
         if self.state == 'draft':
+            self._check_required_question_answers()
             self.with_context(allow_state_write=True).write({'state': 'under_review'})
             self._notify_request_created()
         return {
@@ -692,3 +802,17 @@ class AbRequest(models.Model):
             "view_mode": "form",
             "target": "current",
         }
+
+    def _check_required_question_answers(self):
+        for record in self:
+            record._sync_question_answers()
+            answers_by_question = {
+                answer.question_id.id: (answer.answer or "").strip()
+                for answer in record.question_answer_ids
+                if answer.question_id
+            }
+            missing_questions = record.request_type_id.question_ids.filtered(
+                lambda question: question.is_required and not answers_by_question.get(question.id)
+            )
+            if missing_questions:
+                raise ValidationError(_("Please answer all required request questions before submitting the request."))
