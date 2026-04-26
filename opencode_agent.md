@@ -138,6 +138,16 @@ id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
 | Out-of-order data loading | Missing foreign key errors | Follow data order |
 | Raw SQL in constraints | Incompatible with multi-company | Use ORM |
 
+### Python/ORM (from AGENTS.md)
+
+- **REQUIRED**: Use `record.env.cr`, `record.env.uid`, `record.env.context`
+- **FORBIDDEN**: `record._cr`, `record._uid`, `record._context`, `odoo.osv`
+- Always use recordsets
+- Use `mapped()`, `filtered()`, `sorted()` on recordsets
+- Must support multi-recordsets
+- Must call `super()` in overrides
+- No side effects in loops
+
 ### Python Model Structure
 
 ```python
@@ -375,12 +385,24 @@ All modules use `'19.0.1.0.0'` instead of `'19.0'`. This is cosmetic but not an 
 
 ---
 
-## Odoo 19 Development Rules
+## Odoo 19 Development Rules (from AGENTS.md)
 
-### XML Views
+### Development Strategy Order (IMPORTANT)
+
+1. **Python models and logic** - First
+2. **Security (ACLs + record rules)** - Second  
+3. **XML views, actions, menus** - Third
+4. **Data (sequences, defaults)** - Fourth
+5. **Tests** - Fifth
+
+### XML Views (from AGENTS.md)
 
 - Use `<list>` instead of `<tree>` for list views
+- Use `<kanban>` with `t-name="card"` (not `kanban-box`)
 - Use `invisible="field_a == 4"` instead of `attrs="{'invisible': [...]}"`
+- Always use view inheritance
+- Avoid positional XPath, use stable anchors
+- All UI defined in XML
 
 ### Python/ORM
 
@@ -446,3 +468,77 @@ import { ... } from "@web/...";
 - **Template**: ab_template structure (MUST follow)
 - **Data Order**: security_groups.xml → record_rules.xml → ir.model.access.csv → menus → views
 - **Focus**: Start with critical issues first (_sql_constraints, legacy JS)
+
+---
+
+## AGENTS.md Reference (Odoo 19 Official Guide)
+
+This section is a quick reference from AGENTS.md - the authoritative source for Odoo 19 development.
+
+### Views (XML)
+
+| Odoo 17 | Odoo 19 |
+|---------|---------|
+| `<tree>` | `<list>` |
+| `t-name="kanban-box"` | `t-name="card"` |
+| `attrs="{'invisible': [...]}"` | `invisible="field == value"` |
+
+### Constraints
+
+| Odoo 17 | Odoo 19 |
+|---------|---------|
+| `_sql_constraints` | `models.Constraint` |
+
+### JavaScript
+
+| Odoo 17 | Odoo 19 |
+|---------|---------|
+| `odoo.define(...)` | `/** @odoo-module **/ import from "@web/..."` |
+
+### Forbidden APIs
+
+- `record._cr` → use `record.env.cr`
+- `record._uid` → use `record.env.uid`
+- `record._context` → use `record.env.context`
+- `odoo.osv` → use new ORM
+
+### Security Layer (Odoo 19)
+
+```
+1. ir.module.category (Group)
+2. res.groups.privilege (Logic层)
+3. res.groups (User Layer)
+```
+
+### Development Strategy Order
+
+1. Python models and logic
+2. Security (ACLs + record rules)
+3. XML views, actions, menus
+4. Data (sequences, defaults)
+5. Tests
+
+### Testing Requirements
+
+- Minimum 1 business rule test
+- Minimum 1 access/record rule test (if applicable)
+
+### Manifest Load Order
+
+```
+security/ir.model.access.csv
+security/*.xml
+data/*.xml
+views/*.xml
+wizard/*.xml
+report/*.xml
+```
+
+### AI Agent Rules
+
+- Not refactor unrelated files
+- Not rename XML IDs unless instructed
+- Make smallest valid diff
+- Reject deprecated APIs
+
+---
