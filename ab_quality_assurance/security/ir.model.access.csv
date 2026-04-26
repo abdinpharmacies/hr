@@ -1,7 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ab_quality_assurance_section_user,ab_quality_assurance.section.user,model_ab_quality_assurance_section,base.group_user,1,1,1,1
-access_ab_quality_assurance_standard_user,ab_quality_assurance.standard.user,model_ab_quality_assurance_standard,base.group_user,1,1,1,1
-access_ab_quality_assurance_visit_user,ab_quality_assurance.visit.user,model_ab_quality_assurance_visit,base.group_user,1,1,1,1
-access_ab_quality_assurance_visit_section_user,ab_quality_assurance.visit.section.user,model_ab_quality_assurance_visit_section,base.group_user,1,1,1,1
-access_ab_quality_assurance_visit_line_user,ab_quality_assurance.visit.line.user,model_ab_quality_assurance_visit_line,base.group_user,1,1,1,1
-access_ab_quality_assurance_department_dashboard_user,ab_quality_assurance.department.dashboard.user,model_ab_quality_assurance_department_dashboard,base.group_user,1,0,0,0
