@@ -308,13 +308,11 @@
                         <field name="is_overdue" invisible="1"/>
                         <field name="request_role_summary" invisible="1"/>
                         <field name="request_deadline_label" invisible="1"/>
+                        <field name="available_request_type_ids" invisible="1"/>
 
                         <div class="oe_title ab_request_title_block"
                              invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
                             <div class="ab_request_title_meta">
-                                <span class="ab_request_title_tag">
-                                    <field name="name" readonly="1"/>
-                                </span>
                                 <span class="ab_request_title_role">
                                     <field name="request_role_summary" readonly="1"/>
                                 </span>
@@ -334,12 +332,14 @@
                                     <div class="ab_request_card_body">
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell">
-                                                <label for="request_type_id" string="Request Type"/>
-                                                <field name="request_type_id" readonly="state != 'draft'"/>
+                                                <label for="request_category_id" string="Category"/>
+                                                <field name="request_category_id" readonly="state != 'draft'"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
-                                                <label for="employee_id" string="Requester"/>
-                                                <field name="employee_id" readonly="1"/>
+                                                <label for="request_type_id" string="Request Type"/>
+                                                <field name="request_type_id"
+                                                       readonly="state != 'draft'"
+                                                       domain="[('id', 'in', available_request_type_ids)]"/>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
@@ -353,6 +353,18 @@
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="description" string="Description"/>
                                                 <field name="description" readonly="state != 'draft'" widget="text"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="question_answer_ids" string="Request Questions"/>
+                                                <field name="question_answer_ids" readonly="state != 'draft'">
+                                                    <list editable="bottom" create="0" delete="0">
+                                                        <field name="question" readonly="1"/>
+                                                        <field name="is_required" readonly="1"/>
+                                                        <field name="answer" placeholder="Answer"/>
+                                                    </list>
+                                                </field>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">
@@ -385,25 +397,23 @@
                                         <span class="ab_request_card_title">Request Info</span>
                                     </div>
                                     <div class="ab_request_card_body">
-                                        <div class="ab_request_grid_row ab_request_grid_4col">
+                                        <div class="ab_request_grid_row ab_request_grid_3col">
                                             <div class="ab_request_grid_cell">
-                                                <label for="name" string="Request #"/>
-                                                <field name="name" readonly="1"/>
+                                                <label for="request_category_id" string="Category"/>
+                                                <field name="request_category_id" readonly="state != 'draft'"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
                                                 <label for="request_type_id" string="Type"/>
-                                                <field name="request_type_id" readonly="state != 'draft'"/>
+                                                <field name="request_type_id"
+                                                       readonly="state != 'draft'"
+                                                       domain="[('id', 'in', available_request_type_ids)]"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
                                                 <label for="deadline" string="Deadline"/>
                                                 <field name="deadline" readonly="not can_edit_assignment_details"/>
                                             </div>
                                         </div>
-                                        <div class="ab_request_grid_row ab_request_grid_3col">
-                                            <div class="ab_request_grid_cell">
-                                                <label for="employee_id" string="Requester"/>
-                                                <field name="employee_id" readonly="state != 'draft'"/>
-                                            </div>
+                                        <div class="ab_request_grid_row ab_request_grid_2col">
                                             <div class="ab_request_grid_cell">
                                                 <label for="department_id" string="Department"/>
                                                 <field name="department_id" readonly="1"/>
@@ -431,6 +441,18 @@
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="description" string="Description"/>
                                                 <field name="description" widget="text" readonly="state != 'draft'"/>
+                                            </div>
+                                        </div>
+                                        <div class="ab_request_grid_row">
+                                            <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <label for="question_answer_ids" string="Request Questions"/>
+                                                <field name="question_answer_ids" readonly="1">
+                                                    <list create="0" delete="0" edit="0">
+                                                        <field name="question" readonly="1"/>
+                                                        <field name="is_required" readonly="1"/>
+                                                        <field name="answer" readonly="1"/>
+                                                    </list>
+                                                </field>
                                             </div>
                                         </div>
                                         <div class="ab_request_grid_row">

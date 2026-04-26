@@ -1310,3 +1310,64 @@ msgstr ""
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "request_id"
 msgstr ""
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request__request_category_id
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
+msgid "Category"
+msgstr "الفئة"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_form
+msgid "Choose the category that owns this request type"
+msgstr "اختر الفئة التي ينتمي إليها نوع الطلب هذا"
+
+#. module: ab_request_management
+#: model:ir.model,name:ab_request_management.model_ab_request_question_answer
+msgid "Request Question Answer"
+msgstr "إجابة سؤال الطلب"
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request__question_answer_ids
+msgid "Question Answers"
+msgstr "إجابات الأسئلة"
+
+#. module: ab_request_management
+#: model:ir.model,name:ab_request_management.model_ab_request_type_question
+msgid "Request Type Question"
+msgstr "سؤال نوع الطلب"
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_type__question_ids
+msgid "Questions"
+msgstr "الأسئلة"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
+msgid "Request Questions"
+msgstr "أسئلة الطلب"
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_question_answer__question
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_type_question__question
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_form
+msgid "Question"
+msgstr "السؤال"
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_question_answer__is_required
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_type_question__is_required
+msgid "Required Answer"
+msgstr "إجابة مطلوبة"
+
+#. module: ab_request_management
+#. odoo-python
+#: code:addons/ab_request_management/models/ab_request_question_answer.py:0
+msgid "The selected answer question must belong to the request type."
+msgstr "يجب أن ينتمي السؤال المحدد للإجابة إلى نوع الطلب."
+
+#. module: ab_request_management
+#. odoo-python
+#: code:addons/ab_request_management/models/ab_request_ticket.py:0
+msgid "Please answer all required request questions before submitting the request."
+msgstr "يرجى الإجابة على جميع أسئلة الطلب المطلوبة قبل إرسال الطلب."
