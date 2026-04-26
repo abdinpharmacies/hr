@@ -361,6 +361,7 @@
                                                 <field name="question_answer_ids" readonly="state != 'draft'">
                                                     <list editable="bottom" create="0" delete="0">
                                                         <field name="question" readonly="1"/>
+                                                        <field name="question_id" invisible="1" column_invisible="1"/>
                                                         <field name="is_required" readonly="1"/>
                                                         <field name="answer" placeholder="Answer"/>
                                                     </list>
@@ -446,11 +447,12 @@
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
                                                 <label for="question_answer_ids" string="Request Questions"/>
-                                                <field name="question_answer_ids" readonly="1">
-                                                    <list create="0" delete="0" edit="0">
+                                                <field name="question_answer_ids" readonly="state != 'draft'">
+                                                    <list editable="bottom" create="0" delete="0">
                                                         <field name="question" readonly="1"/>
                                                         <field name="is_required" readonly="1"/>
-                                                        <field name="answer" readonly="1"/>
+                                                        <field name="question_id" invisible="1" column_invisible="1"/>
+                                                        <field name="answer" placeholder="Answer"/>
                                                     </list>
                                                 </field>
                                             </div>
