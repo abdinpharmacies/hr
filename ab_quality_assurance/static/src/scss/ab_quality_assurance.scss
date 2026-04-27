@@ -190,30 +190,36 @@
 .o_qa_dashboard_stats {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12px;
+    gap: 8px;
 }
 
 .o_qa_dashboard_stats__item {
     border: 1px solid var(--qa-line);
     background: #fff;
-    border-radius: 16px;
-    padding: 14px;
+    border-radius: 14px;
+    padding: 10px 8px;
+    min-width: 0;
+    text-align: center;
 }
 
 .o_qa_dashboard_stats__label,
 .o_qa_dashboard_card__date span {
     display: block;
-    font-size: 0.76rem;
+    font-size: 0.68rem;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
     color: var(--qa-muted);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .o_qa_dashboard_stats__item strong,
 .o_qa_dashboard_card__date strong {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--qa-ink);
+    white-space: nowrap;
 }
 
 .o_qa_dashboard_card__footer {
@@ -234,7 +240,9 @@
 }
 
 @media (max-width: 991.98px) {
-    .o_qa_dashboard_card__primary,
+    .o_qa_dashboard_card__primary {
+        grid-template-columns: 1fr 1fr;
+    }
     .o_qa_dashboard_stats {
         grid-template-columns: 1fr 1fr;
     }
@@ -252,9 +260,13 @@
         align-items: flex-start;
     }
 
-    .o_qa_dashboard_card__primary,
-    .o_qa_dashboard_stats {
+    .o_qa_dashboard_card__primary {
         grid-template-columns: 1fr;
+    }
+    
+    .o_qa_dashboard_stats {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
     }
 
     .o_qa_dashboard_metric__value {

@@ -5,12 +5,12 @@
             <field name="name">ab_quality_assurance_department_dashboard.search</field>
             <field name="model">ab_quality_assurance_department_dashboard</field>
             <field name="arch" type="xml">
-                <search string="Quality Assurance Dashboard">
+                <search string="My Drafts">
                     <field name="department_id"/>
                     <separator/>
                     <filter name="high_performing" string="High Performing" domain="[('avg_percentage', '&gt;=', 85)]"/>
                     <filter name="needs_attention" string="Needs Attention" domain="[('avg_percentage', '&lt;', 70)]"/>
-                    <filter name="with_drafts" string="Has Draft Visits" domain="[('draft_visit_count', '&gt;', 0)]"/>
+                    <filter name="with_drafts" string="My Draft Visits" domain="[('draft_visit_count', '&gt;', 0)]"/>
                     <separator/>
                     <filter name="group_by_department" string="Department" context="{'group_by': 'department_id'}"/>
                 </search>
@@ -21,7 +21,7 @@
             <field name="name">ab_quality_assurance_department_dashboard.kanban</field>
             <field name="model">ab_quality_assurance_department_dashboard</field>
             <field name="arch" type="xml">
-                <kanban class="o_qa_dashboard_kanban" sample="1" create="false" default_group_by="">
+                <kanban class="o_qa_dashboard_kanban" sample="1" create="false">
                     <field name="department_id"/>
                     <field name="visit_count"/>
                     <field name="submitted_visit_count"/>
@@ -40,32 +40,32 @@
                             <div class="oe_kanban_global_click o_qa_dashboard_card">
                                 <div class="o_qa_dashboard_card__hero">
                                     <div>
-                                        <div class="o_qa_dashboard_card__eyebrow">Quality Assurance</div>
+                                        <div class="o_qa_dashboard_card__eyebrow">الرقابة والجودة</div>
                                         <div class="o_qa_dashboard_card__title">
                                             <field name="department_id"/>
                                         </div>
                                     </div>
                                     <div t-att-class="'o_qa_dashboard_card__badge ' + (avg >= 85 ? 'is-strong' : (avg >= 70 ? 'is-steady' : 'is-risk'))">
-                                        <t t-if="avg &gt;= 85">Excellent</t>
-                                        <t t-elif="avg &gt;= 70">Stable</t>
-                                        <t t-else="">Attention</t>
+                                        <t t-if="avg &gt;= 85">ممتاز</t>
+                                        <t t-elif="avg &gt;= 70">مستقر</t>
+                                        <t t-else="">تنبيه</t>
                                     </div>
                                 </div>
 
                                 <div class="o_qa_dashboard_card__primary">
                                     <div class="o_qa_dashboard_metric">
-                                        <span class="o_qa_dashboard_metric__label">Average Score</span>
+                                        <span class="o_qa_dashboard_metric__label">متوسط الدرجة</span>
                                         <span class="o_qa_dashboard_metric__value"><field name="avg_percentage"/>%</span>
                                     </div>
                                     <div class="o_qa_dashboard_metric is-secondary">
-                                        <span class="o_qa_dashboard_metric__label">Best Recorded</span>
+                                        <span class="o_qa_dashboard_metric__label">أفضل درجة مسجلة</span>
                                         <span class="o_qa_dashboard_metric__value"><field name="best_percentage"/>%</span>
                                     </div>
                                 </div>
 
                                 <div class="o_qa_dashboard_progress">
                                     <div class="o_qa_dashboard_progress__head">
-                                        <span>Submission Rate</span>
+                                        <span>نسبة الاعتماد</span>
                                         <strong><field name="submission_rate"/>%</strong>
                                     </div>
                                     <div class="o_qa_dashboard_progress__track">
@@ -75,30 +75,30 @@
 
                                 <div class="o_qa_dashboard_stats">
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Total Visits</span>
+                                        <span class="o_qa_dashboard_stats__label">إجمالي الزيارات</span>
                                         <strong><field name="visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Submitted</span>
+                                        <span class="o_qa_dashboard_stats__label">معتمد</span>
                                         <strong><field name="submitted_visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Draft</span>
+                                        <span class="o_qa_dashboard_stats__label">مسودة</span>
                                         <strong t-att-class="drafts > 0 ? 'text-warning' : ''"><field name="draft_visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Avg Earned</span>
+                                        <span class="o_qa_dashboard_stats__label">متوسط المحقق</span>
                                         <strong><field name="avg_earned_score"/></strong>
                                     </div>
                                 </div>
 
                                 <div class="o_qa_dashboard_card__footer">
                                     <div class="o_qa_dashboard_card__date">
-                                        <span>Latest Visit</span>
+                                        <span>آخر زيارة</span>
                                         <strong><field name="last_visit_date"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_card__date">
-                                        <span>Latest Submission</span>
+                                        <span>آخر اعتماد</span>
                                         <strong><field name="latest_submitted_at"/></strong>
                                     </div>
                                 </div>
@@ -113,7 +113,7 @@
             <field name="name">ab_quality_assurance_department_dashboard.list</field>
             <field name="model">ab_quality_assurance_department_dashboard</field>
             <field name="arch" type="xml">
-                <list string="Department Performance Dashboard"
+                <list string="My Drafts"
                       decoration-success="avg_percentage &gt;= 85"
                       decoration-warning="draft_visit_count &gt; 0"
                       decoration-danger="avg_percentage &lt; 70">
@@ -162,7 +162,7 @@
         </record>
 
         <record id="ab_quality_assurance_dashboard_action" model="ir.actions.act_window">
-            <field name="name">Dashboard</field>
+            <field name="name">My Drafts</field>
             <field name="res_model">ab_quality_assurance_department_dashboard</field>
             <field name="view_mode">kanban,graph,list,pivot</field>
             <field name="search_view_id" ref="ab_quality_assurance_dashboard_view_search"/>

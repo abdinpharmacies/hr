@@ -10,7 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2026-04-21 11:06+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
-"Language: ar_001\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -163,8 +163,88 @@ msgstr "أنشئ في"
 #. module: ab_quality_assurance
 #: model:ir.actions.act_window,name:ab_quality_assurance.ab_quality_assurance_dashboard_action
 #: model:ir.ui.menu,name:ab_quality_assurance.ab_quality_assurance_dashboard_menu
-msgid "Dashboard"
-msgstr "لوحة التحكم"
+msgid "My Drafts"
+msgstr "مسوداتي"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_search
+msgid "My Draft Visits"
+msgstr "زياراتي المسودة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Average Score"
+msgstr "متوسط الدرجة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Best Recorded"
+msgstr "أفضل درجة مسجلة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Submission Rate"
+msgstr "نسبة الاعتماد"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Total Visits"
+msgstr "إجمالي الزيارات"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Avg Earned"
+msgstr "متوسط المحقق"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Latest Visit"
+msgstr "آخر زيارة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Latest Submission"
+msgstr "آخر اعتماد"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Quality Assurance"
+msgstr "الرقابة والجودة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Submitted"
+msgstr "معتمد"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Excellent"
+msgstr "ممتاز"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Stable"
+msgstr "مستقر"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Attention"
+msgstr "تنبيه"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_search
+msgid "High Performing"
+msgstr "أداء عالي"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_search
+msgid "Needs Attention"
+msgstr "يحتاج اهتمام"
 
 #. module: ab_quality_assurance
 #. odoo-javascript
@@ -191,8 +271,8 @@ msgstr "أداء الإدارات"
 
 #. module: ab_quality_assurance
 #: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_list
-msgid "Department Performance Dashboard"
-msgstr "لوحة أداء الإدارات"
+msgid "My Drafts"
+msgstr "مسوداتي"
 
 #. module: ab_quality_assurance
 #. odoo-javascript
@@ -278,7 +358,7 @@ msgstr "يوجد مرفق"
 
 #. module: ab_quality_assurance
 #: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_hr_department__id
-#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_hr_employee__id
+#: model:ir.model.fields,field_description:ab_hr_employee__id
 #: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_access__id
 #: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_department_dashboard__id
 #: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_section__id
@@ -429,8 +509,8 @@ msgstr "مسؤول الرقابة والجودة"
 
 #. module: ab_quality_assurance
 #: model:ir.model,name:ab_quality_assurance.model_ab_quality_assurance_department_dashboard
-msgid "Quality Assurance Department Dashboard"
-msgstr "لوحة أداء الإدارات للرقابة والجودة"
+msgid "My Drafts"
+msgstr "مسوداتي"
 
 #. module: ab_quality_assurance
 #: model:res.groups,name:ab_quality_assurance.group_ab_quality_assurance_manager
