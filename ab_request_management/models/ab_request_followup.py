@@ -1,5 +1,6 @@
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools.translate import _
 
 
 class AbRequestFollowup(models.Model):
