@@ -1,264 +1,186 @@
-# `ab_request_management`
+# ab_request_management
 
-Technical documentation for the Odoo module `ab_request_management`.
+Technical documentation for the Odoo module ``ab_request_management``.
 
-## Overview
+Overview
+========
 
-`ab_request_management` implements an internal request workflow on top of Odoo mail/chatter. It allows employees to
-submit requests, routes them to the responsible department manager, supports assignment to one or more employees, tracks
-immutable follow-ups, and exposes list/dashboard views for daily operations.
+``ab_request_management`` implements an internal request workflow on top of Odoo mail/chatter. It allows employees to submit requests, routes them to the responsible department manager, supports assignment to one or more employees, tracks immutable follow-ups, and exposes list/dashboard views for daily operations.
 
 The module depends on:
 
-- `base`
-- `mail`
-- `web`
-- `ab_hr`
+- base
+- mail
+- web
+- ab_hr
 
-Declared in [__manifest__.py](/opt/odoo19/custom-addons/ab_request_management/__manifest__.py).
+Declared in ``__manifest__.py``.
 
-## Main Business Objects
+Main Business Objects
+======================
 
-### Request
+Request
+-------
 
-Model: `ab.request`  
-Table: `ab_request_ticket`
-
-Implemented in [ab_request_ticket.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_ticket.py).
+Model: ``ab.request``  
+Table: ``ab_request_ticket``
 
 Core fields:
 
-- `name`: generated request number from sequence `ab_request_ticket.ticket_number`
-- `subject`: immutable after creation
-- `description`: immutable after creation
-- `request_type_id`: request category linked to a department
-- `employee_id`: current employee linked to the logged-in user
-- `department_id`: related from the selected request type
-- `manager_id`: related department manager
-- `assigned_employee_ids`: current assignees
-- `assigned_employee_id`: legacy primary assignee for backward compatibility
-- `deadline`: optional planned completion date
-- `state`: workflow status
-- `link` and `link_ids`: related URLs and extra links
-- `attachment_ids`: files attached to the request
-- `followup_ids`: immutable timeline entries
+- name: generated request number (sequence)
+- subject: immutable after creation
+- description: immutable after creation
+- request_type_id: request category linked to department
+- employee_id: requester employee
+- department_id: derived from request type
+- manager_id: responsible department manager
+- assigned_employee_ids: assigned employees
+- assigned_employee_id: legacy primary assignee
+- deadline: optional due date
+- state: workflow status
+- link, link_ids: external references
+- attachment_ids: files
+- followup_ids: immutable timeline
 
-Computed UI/access fields include:
+Request Type
+------------
 
-- `is_requester`
-- `is_department_manager`
-- `is_assigned_employee`
-- `is_request_admin`
-- `can_assign`
-- `can_work_on_request`
-- `can_add_followup`
-- `can_edit_assignment_details`
-- `is_overdue`
-- `request_role_summary`
-- `request_deadline_label`
-- `request_ui_summary`
-
-### Request Type
-
-Model: `ab.request.type`  
-Table: `ab_request_type`
-
-Implemented in [ab_request_type.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_type.py).
+Model: ``ab.request.type``
 
 Purpose:
 
 - classify requests
-- bind each type to an `ab_hr_department`
-- derive the responsible manager from that department
+- bind request to department
+- derive responsible manager
 
-Constraint:
+Rules:
 
-- request type name must be unique per department
-- the selected department must have a manager
+- unique per department
+- department must have a manager
 
-### Follow-up
+Follow-up
+---------
 
-Model: `ab.request.followup`
-
-Implemented in [ab_request_followup.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_followup.py).
-
-Purpose:
-
-- append an auditable timeline entry to a request
-- store the author and timestamp
-- mirror the note into the request chatter
-
-Important behavior:
-
-- follow-ups cannot be edited
-- follow-ups cannot be deleted
-
-### Follow-up Wizard
-
-Transient model: `ab.request.followup.wizard`
-
-Implemented
-in [ab_request_followup_wizard.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_followup_wizard.py).
+Model: ``ab.request.followup``
 
 Purpose:
 
-- used when the requester asks for changes during confirmation
-- posts the note to chatter
-- moves the request back to `in_progress`
+- audit timeline entries
+- store author and timestamp
+- sync with chatter
 
-## Workflow
+Rules:
 
-Request states:
+- cannot be edited
+- cannot be deleted
 
-1. `under_review`
-2. `scheduled`
-3. `in_progress`
-4. `under_requester_confirmation`
-5. `satisfied`
-6. `rejected`
-7. `closed`
+Follow-up Wizard
+----------------
 
-State transitions are implemented
-in [ab_request_ticket.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_ticket.py) and enforced
-through button actions rather than direct writes.
+Model: ``ab.request.followup.wizard``
 
-Typical lifecycle:
+Purpose:
 
-1. Requester creates a request. The record is forced into `under_review`.
-2. Department manager or request admin approves it, moving it to `scheduled`.
-3. Manager or admin assigns one or more employees and starts work through `action_assign`, moving it to `in_progress`.
-4. Assigned employee, manager, or admin sends it to requester confirmation.
-5. Requester either marks it `satisfied` or requests changes.
-6. If changes are requested, the wizard adds a follow-up and returns the request to `in_progress`.
-7. Assigned employee, manager, or admin closes the request once it is `satisfied` or `rejected`.
+- used during requester feedback
+- adds follow-up
+- returns request to in_progress
 
-Alternative path:
+Workflow
+========
 
-- a request can be rejected directly from `under_review`
-- a rejected request can still be moved to `closed`
+States:
 
-## Business Rules
+under_review → scheduled → in_progress → under_requester_confirmation → satisfied → rejected → closed
 
-Validated in [ab_request_ticket.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_ticket.py)
-and [ab_request_type.py](/opt/odoo19/custom-addons/ab_request_management/models/ab_request_type.py).
+Lifecycle:
 
-Key rules:
+1. Request created → under_review  
+2. Manager/admin approves → scheduled  
+3. Assignment → in_progress  
+4. Sent to requester confirmation  
+5. Requester:
+   - satisfied → close
+   - request changes → back to in_progress  
+6. Closed by authorized roles  
 
-- `subject` and `description` are mandatory and must contain alphabetic characters
-- `subject` and `description` become immutable after creation
-- request numbers are unique
-- request types require a department manager
-- assigned employees must belong to the request department
-- `deadline` cannot be in the past
-- `link` must start with `http://` or `https://` if provided
-- state changes are blocked unless they happen through workflow actions
-- assignment fields are restricted to department managers and request admins
+Business Rules
+==============
 
-Compatibility note:
+- subject & description required
+- immutable after creation
+- unique request numbers
+- deadline cannot be in past
+- link must be http/https
+- assignments restricted to department
+- state changes only via actions
 
-- `assigned_employee_id` is kept as a legacy primary assignee and synchronized from `assigned_employee_ids`
+Roles & Security
+================
 
-## Roles and Security
+Groups:
 
-Security groups are defined
-in [security_groups.xml](/opt/odoo19/custom-addons/ab_request_management/security/security_groups.xml).
+- User
+- Manager
+- Admin
 
-Available groups:
+Hierarchy:
 
-- `group_ab_request_management_user`: Request User
-- `group_ab_request_management_manager`: Department Manager
-- `group_ab_request_management_admin`: Request Admin
+Admin → Manager → User
 
-Inheritance:
+Notifications
+=============
 
-- manager implies user
-- admin implies manager
-- `base.group_system` implies request admin
-- `base.group_user` implies request user
+- On creation → manager + admins notified
+- On assignment → assignees notified
+- On feedback → manager notified
 
-Record rules are defined
-in [record_rules.xml](/opt/odoo19/custom-addons/ab_request_management/security/record_rules.xml).
+Telegram Module
+===============
 
-Access model summary:
+Purpose
+-------
 
-- regular users can see requests where they are requester or assignee
-- department managers can see requests where they are the responsible manager
-- request admins can see all requests and follow-ups
-- follow-up creation is limited by request role and current state
+Integrates Odoo requests with Telegram notifications to managers using chat_id mapping.
 
-Functional permissions:
+Installation
+------------
 
-- requester can create requests and confirm satisfaction
-- department manager or request admin can approve, reject, assign, and edit assignment details
-- assigned employee, department manager, or request admin can progress work and close eligible requests
+Step 1: Install module ``Request_Telegram_Notification``
 
-## Notifications and Chatter
+Step 2: Add system parameter:
 
-The module uses `mail.thread` and `mail.activity.mixin`.
+telegram.bot.token = 8751357580:AAHRiqynnOv9PBzKzQRu0UNo-jj_ijAbFWA
 
-Notification behavior:
+Step 3: Get chat IDs:
 
-- on creation, the responsible manager and request admins are notified
-- on assignment, assignees are notified
-- on requester feedback, the manager is notified
-- requester, manager, and assignees are automatically subscribed to chatter
+https://api.telegram.org/bot8751357580:AAHRiqynnOv9PBzKzQRu0UNo-jj_ijAbFWA/getUpdates
 
-Attachments added through the form are rebound to the request record so authorized users can access them consistently.
+Step 4: Bind in Odoo (model ``ab_hr_bot``):
 
-## User Interface
+- Employee / Manager ID
+- chat_id
 
-Views are declared mainly in:
+Workflow
+--------
 
-- [ab_request_ticket_views.xml](/opt/odoo19/custom-addons/ab_request_management/views/ab_request_ticket_views.xml)
-- [ab_request_type_views.xml](/opt/odoo19/custom-addons/ab_request_management/views/ab_request_type_views.xml)
-- [ab_request_followup_wizard_views.xml](/opt/odoo19/custom-addons/ab_request_management/views/ab_request_followup_wizard_views.xml)
-- [ab_request_dashboard_views.xml](/opt/odoo19/custom-addons/ab_request_management/views/ab_request_dashboard_views.xml)
-- [menus.xml](/opt/odoo19/custom-addons/ab_request_management/views/menus.xml)
+1. User submits request  
+2. System selects manager  
+3. chat_id resolved  
+4. Telegram message sent  
+5. Manager processes request  
 
-Main menus:
+Binding Rules
+-------------
 
-- Dashboard
-- My Requests
-- Assigned Requests
-- Review Queue
-- All Requests
-- Settings
-- Request Types
+Case A: Chat ID conflict → block + notify  
+Case B: Employee conflict → block + notify  
+Case C: Exact match → no action  
+Case D: New binding → create record  
 
-Backend assets are loaded from the module `static/` folder and include custom JavaScript widgets, XML templates, and
-SCSS for:
+Expected Result
+---------------
 
-- dashboard rendering
-- request state widgets
-- list renderer patching
-- summary widgets
-
-## Automated Tests
-
-The module includes transactional tests
-in [test_ab_request_management.py](/opt/odoo19/custom-addons/ab_request_management/tests/test_ab_request_management.py).
-
-Covered scenarios include:
-
-- request creation defaults
-- text validation
-- immutable fields
-- deadline validation
-- full workflow lifecycle
-- multi-assignee behavior
-- follow-up permissions
-- admin capabilities
-- record-rule isolation
-
-## Known Integration Points
-
-- `ab_hr_employee` is required for requester, manager, and assignee relations
-- `ab_hr_department` drives department ownership and manager routing
-- `mail.thread` provides chatter and notifications
-- `ir.sequence` generates request numbers
-
-## Suggested Maintenance Notes
-
-- if department managers change in `ab_hr`, request routing changes automatically through related fields
-- if legacy code still references `assigned_employee_id`, keep the synchronization logic intact during refactors
-- any future workflow expansion should continue using explicit action methods instead of direct `state` writes
+✔ Request created  
+✔ Manager resolved  
+✔ Telegram notification sent  
+✔ No duplicate bindings  
