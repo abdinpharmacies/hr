@@ -22,6 +22,7 @@ class AbQualityAssuranceVisit(models.Model):
         readonly=True,
     )
     visit_date = fields.Date(required=True, default=fields.Date.today)
+    notes = fields.Text(copy=False)
     state = fields.Selection(
         [("draft", "Draft"), ("submitted", "Submitted")],
         default="draft",
@@ -51,10 +52,11 @@ class AbQualityAssuranceVisit(models.Model):
     def _compute_totals(self):
         for record in self:
             lines = record.visit_section_ids.mapped("visit_line_ids")
+            scored_lines = lines.filtered(lambda line: line.score is not False)
             record.max_total_score = sum(lines.mapped("max_score"))
             record.earned_total_score = sum(lines.mapped("score"))
             record.total_percentage = (
-                (record.earned_total_score / record.max_total_score) * 100 if record.max_total_score else 0.0
+                (sum(scored_lines.mapped("score")) / (len(scored_lines) * 10.0) * 100) if scored_lines else 0.0
             )
             record.line_count = len(lines)
             record.section_count = len(record.visit_section_ids)

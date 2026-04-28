@@ -1,6 +1,8 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
+SCORE_SCALE = 10.0
+
 
 class AbQualityAssuranceVisitLine(models.Model):
     _name = "ab_quality_assurance_visit_line"
@@ -34,8 +36,8 @@ class AbQualityAssuranceVisitLine(models.Model):
     @api.depends("score", "max_score")
     def _compute_percentage(self):
         for record in self:
-            if record.max_score:
-                record.percentage = (record.score / record.max_score) * 100
+            if record.score:
+                record.percentage = (record.score / SCORE_SCALE) * 100
             else:
                 record.percentage = 0.0
 
@@ -44,7 +46,7 @@ class AbQualityAssuranceVisitLine(models.Model):
         for record in self:
             if record.score is False:
                 continue
-            if record.score <= 0 or record.score > 10:
+            if record.score <= 0 or record.score > SCORE_SCALE:
                 raise ValidationError(_("You must add value only between 1 and 10."))
 
     @api.constrains("score")
@@ -52,7 +54,7 @@ class AbQualityAssuranceVisitLine(models.Model):
         for record in self:
             if record.score is False:
                 continue
-            if record.score <= 0 or record.score > 10:
+            if record.score <= 0 or record.score > SCORE_SCALE:
                 raise ValidationError(_("You must add value only between 1 and 10."))
 
     @api.constrains("section_id", "standard_id")

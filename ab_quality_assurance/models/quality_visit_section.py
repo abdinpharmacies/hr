@@ -24,9 +24,12 @@ class AbQualityAssuranceVisitSection(models.Model):
     @api.depends("visit_line_ids", "visit_line_ids.score", "visit_line_ids.max_score")
     def _compute_totals(self):
         for record in self:
+            scored_lines = record.visit_line_ids.filtered(lambda line: line.score is not False)
             record.earned_score = sum(record.visit_line_ids.mapped("score"))
             record.max_score = sum(record.visit_line_ids.mapped("max_score"))
-            record.percentage = (record.earned_score / record.max_score) * 100 if record.max_score else 0.0
+            record.percentage = (
+                sum(scored_lines.mapped("score")) / (len(scored_lines) * 10.0) * 100 if scored_lines else 0.0
+            )
 
     @api.onchange("section_id")
     def _onchange_section_id(self):

@@ -104,21 +104,22 @@
                       default_order="visit_date desc, id desc"
                       decoration-success="state == 'submitted'"
                       decoration-warning="state == 'draft'">
-                    <field name="name"/>
-                    <field name="visit_date"/>
-                    <field name="department_id"/>
-                    <field name="employee_id"/>
+                    <field name="name" string="Reference"/>
+                    <field name="department_id" string="Department"/>
+                    <field name="employee_id" string="Performer"/>
+                    <field name="visit_date" string="Visit Date"/>
                     <field name="department_manager_id" optional="hide"/>
-                    <field name="section_count"/>
-                    <field name="earned_total_score"/>
-                    <field name="max_total_score"/>
-                    <field name="total_percentage" widget="progressbar"/>
-                    <field name="submitted_at" optional="show"/>
+                    <field name="section_count" string="Sections"/>
+                    <field name="earned_total_score" string="Earned"/>
+                    <field name="max_total_score" string="Max Score" optional="hide"/>
+                    <field name="total_percentage" string="Performance" widget="progressbar"/>
+                    <field name="submitted_at" string="Submitted At" optional="show"/>
                     <field name="state" widget="badge"
+                           string="Status"
                            decoration-success="state == 'submitted'"
                            decoration-warning="state == 'draft'"/>
-                    <button name="action_export_pdf" type="object" icon="fa-file-pdf-o" title="Download PDF"/>
-                    <button name="action_export_xlsx" type="object" icon="fa-file-excel-o" title="Download Sheet"/>
+                    <button name="action_export_pdf" type="object" icon="fa-file-pdf-o" title="Download PDF" class="o_qa_export_pdf"/>
+                    <button name="action_export_xlsx" type="object" icon="fa-file-excel-o" title="Download Sheet" class="o_qa_export_xlsx"/>
                 </list>
             </field>
         </record>
@@ -129,8 +130,8 @@
             <field name="arch" type="xml">
                 <form string="Quality Visit" class="o_qa_visit_form">
                     <header>
-                        <button name="action_export_pdf" type="object" string="Export PDF" icon="fa-file-pdf-o" class="btn-secondary" invisible="not id"/>
-                        <button name="action_export_xlsx" type="object" string="Export Excel" icon="fa-file-excel-o" class="btn-secondary" invisible="not id"/>
+                        <button name="action_export_pdf" type="object" string="Export PDF" icon="fa-file-pdf-o" class="btn-secondary o_qa_export_pdf" invisible="not id"/>
+                        <button name="action_export_xlsx" type="object" string="Export Excel" icon="fa-file-excel-o" class="btn-secondary o_qa_export_xlsx" invisible="not id"/>
                         <button name="action_submit_visit" type="object" string="Submit Visit"
                                 class="btn-primary"
                                 invisible="state != 'draft'"/>
@@ -235,6 +236,16 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="o_qa_visit_notes_card">
+                            <div class="o_qa_visit_summary_header">Visit Notes</div>
+                            <div class="o_qa_visit_notes_card__subtitle">
+                                Capture key observations, branch-specific remarks, follow-up points, and any context that explains the final score.
+                            </div>
+                            <field name="notes"
+                                   nolabel="1"
+                                   readonly="state == 'submitted'"
+                                   placeholder="Add visit observations, operational remarks, compliance notes, or recommended actions..."/>
+                        </div>
                         <notebook>
                             <page string="Sections">
                                 <div class="o_qa_visit_section_intro">
@@ -320,27 +331,26 @@
             <field name="name">ab_quality_assurance_visit.search</field>
             <field name="model">ab_quality_assurance_visit</field>
             <field name="arch" type="xml">
-                <search string="الزيارات">
+                <search string="Visits">
                     <field name="name"/>
                     <field name="department_id"/>
                     <field name="employee_id"/>
                     <field name="visit_date"/>
                     <separator/>
                     <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
-                    <filter name="filter_submitted" string="معتمد" domain="[('state', '=', 'submitted')]"/>
+                    <filter name="filter_submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                     <separator/>
-                    <filter name="group_by_department" string="الإدارة" context="{'group_by': 'department_id'}"/>
-                    <filter name="group_by_employee" string="المنفذ" context="{'group_by': 'employee_id'}"/>
-                    <filter name="group_by_state" string="الحالة" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_department" string="Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_by_employee" string="Performer" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
                 </search>
             </field>
         </record>
 
         <record id="ab_quality_assurance_visit_action" model="ir.actions.act_window">
-            <field name="name">الزيارات</field>
+            <field name="name">Visits</field>
             <field name="res_model">ab_quality_assurance_visit</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('state', '=', 'submitted')]</field>
             <field name="context">{'search_default_filter_submitted': 1}</field>
             <field name="search_view_id" ref="ab_quality_assurance_visit_view_search"/>
         </record>
@@ -349,7 +359,6 @@
             <field name="name">Drafts</field>
             <field name="res_model">ab_quality_assurance_visit</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('state', '=', 'draft')]</field>
             <field name="context">{'search_default_filter_draft': 1}</field>
             <field name="search_view_id" ref="ab_quality_assurance_visit_view_search"/>
         </record>
