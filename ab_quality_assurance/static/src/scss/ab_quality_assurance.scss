@@ -37,6 +37,46 @@
     box-shadow: 0 24px 60px rgba(18, 39, 61, 0.08);
 }
 
+.o_qa_export_pdf {
+    color: #b42318 !important;
+}
+
+.o_qa_export_pdf.btn,
+.o_qa_visit_form .o_qa_export_pdf.btn {
+    border-color: rgba(180, 35, 24, 0.22) !important;
+    background: linear-gradient(180deg, #fff5f4 0%, #ffe7e5 100%) !important;
+    color: #b42318 !important;
+}
+
+.o_qa_export_pdf.btn:hover,
+.o_qa_export_pdf.btn:focus,
+.o_qa_visit_form .o_qa_export_pdf.btn:hover,
+.o_qa_visit_form .o_qa_export_pdf.btn:focus {
+    border-color: rgba(180, 35, 24, 0.34) !important;
+    background: linear-gradient(180deg, #ffe9e6 0%, #ffd5d0 100%) !important;
+    color: #8f1c13 !important;
+}
+
+.o_qa_export_xlsx {
+    color: #16794b !important;
+}
+
+.o_qa_export_xlsx.btn,
+.o_qa_visit_form .o_qa_export_xlsx.btn {
+    border-color: rgba(22, 121, 75, 0.24) !important;
+    background: linear-gradient(180deg, #f2fcf7 0%, #dcf5e7 100%) !important;
+    color: #16794b !important;
+}
+
+.o_qa_export_xlsx.btn:hover,
+.o_qa_export_xlsx.btn:focus,
+.o_qa_visit_form .o_qa_export_xlsx.btn:hover,
+.o_qa_visit_form .o_qa_export_xlsx.btn:focus {
+    border-color: rgba(22, 121, 75, 0.36) !important;
+    background: linear-gradient(180deg, #e5f8ee 0%, #ccefdc 100%) !important;
+    color: #0f623b !important;
+}
+
 .o_qa_visit_hero {
     display: grid;
     grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.8fr);
@@ -279,6 +319,36 @@
     margin-bottom: 6px;
 }
 
+.o_qa_visit_notes_card {
+    border: 1px solid var(--qa-line);
+    border-radius: 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+    padding: 20px 20px 18px;
+    box-shadow: 0 14px 32px rgba(18, 39, 61, 0.05);
+    margin-bottom: 18px;
+}
+
+.o_qa_visit_notes_card__subtitle {
+    color: var(--qa-muted);
+    line-height: 1.7;
+    margin-bottom: 14px;
+    max-width: 76ch;
+}
+
+.o_qa_visit_notes_card .o_field_widget textarea {
+    min-height: 132px;
+    border-radius: 16px;
+    border: 1px solid var(--qa-line);
+    background: #fff;
+    padding: 14px 16px;
+    box-shadow: inset 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.o_qa_visit_notes_card .o_field_widget textarea:focus {
+    border-color: rgba(43, 109, 163, 0.45);
+    box-shadow: 0 0 0 3px rgba(43, 109, 163, 0.1);
+}
+
 .o_qa_visit_section_intro {
     display: flex;
     align-items: center;
@@ -318,6 +388,134 @@
     border-radius: 999px;
     padding-inline: 10px;
     font-weight: 700;
+}
+
+.o_qa_visit_list .badge.text-bg-success,
+.o_qa_visit_form .badge.text-bg-success {
+    color: #fff !important;
+    border: 1px solid #198754 !important;
+    background: #198754 !important;
+}
+
+.o_qa_visit_list .badge.text-bg-warning,
+.o_qa_visit_form .badge.text-bg-warning {
+    color: #111827 !important;
+    border: 1px solid #d4a017 !important;
+    background: #fff4cc !important;
+}
+
+.o_list_renderer .o_list_table.o_qa_visit_list,
+.o_qa_visit_list .o_list_table {
+    border-collapse: separate;
+    border-spacing: 0 8px;
+}
+
+.o_qa_visit_list thead th {
+    background: transparent !important;
+    color: #111827 !important;
+    font-size: 0.74rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    border-bottom: 0 !important;
+    padding-top: 6px !important;
+    padding-bottom: 10px !important;
+}
+
+.o_qa_visit_list thead th,
+.o_qa_visit_list thead th .o_column_title,
+.o_qa_visit_list thead th span,
+.o_qa_visit_list thead th div {
+    color: #111827 !important;
+}
+
+.o_qa_visit_list tbody td {
+    background: #fff;
+    border-top: 1px solid rgba(22, 50, 79, 0.08);
+    border-bottom: 1px solid rgba(22, 50, 79, 0.08);
+    padding-top: 12px !important;
+    padding-bottom: 12px !important;
+    vertical-align: middle !important;
+    color: #111827;
+}
+
+.o_qa_visit_list tbody td:first-child {
+    border-left: 1px solid rgba(22, 50, 79, 0.08);
+    border-top-left-radius: 16px;
+    border-bottom-left-radius: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.o_qa_visit_list tbody td:last-child {
+    border-right: 1px solid rgba(22, 50, 79, 0.08);
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+.o_qa_visit_list tbody tr > td:nth-last-child(4),
+.o_qa_visit_list tbody tr > td:nth-last-child(4) .o_field_widget,
+.o_qa_visit_list tbody tr > td:nth-last-child(4) span,
+.o_qa_visit_list tbody tr > td:nth-last-child(4) div,
+.o_qa_visit_list tbody tr > td:nth-last-child(4) time {
+    color: #198754 !important;
+    font-weight: 700;
+}
+
+.o_qa_visit_list tbody tr > td:nth-last-child(3),
+.o_qa_visit_list tbody tr > td:nth-last-child(3) .o_field_widget,
+.o_qa_visit_list tbody tr > td:nth-last-child(3) span,
+.o_qa_visit_list tbody tr > td:nth-last-child(3) div {
+    color: inherit !important;
+    font-weight: inherit;
+}
+
+.o_qa_visit_list tbody tr {
+    box-shadow: 0 8px 22px rgba(16, 34, 53, 0.04);
+}
+
+.o_qa_visit_list tbody tr:hover td {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbfd 100%);
+}
+
+.o_qa_visit_list .o_data_row.text-success td:first-child::before,
+.o_qa_visit_list .o_data_row.text-warning td:first-child::before {
+    content: "";
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+    margin-inline-end: 10px;
+    vertical-align: middle;
+}
+
+.o_qa_visit_list .o_data_row.text-success td:first-child::before {
+    background: #198754;
+    box-shadow: 0 0 0 4px rgba(25, 135, 84, 0.12);
+}
+
+.o_qa_visit_list .o_data_row.text-warning td:first-child::before {
+    background: #d08a00;
+    box-shadow: 0 0 0 4px rgba(208, 138, 0, 0.12);
+}
+
+.o_qa_visit_list .o_field_widget.o_field_progressbar .o_progressbar_value,
+.o_qa_visit_list .o_field_widget.o_progressbar .o_progressbar_value {
+    min-width: 52px;
+    text-align: end;
+    font-weight: 700;
+    color: #111827;
+}
+
+.o_qa_visit_list .o_list_button {
+    border-radius: 12px;
+    padding: 6px 8px !important;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.o_qa_visit_list .o_list_button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 18px rgba(16, 34, 53, 0.1);
 }
 
 .o_qa_dashboard_kanban {

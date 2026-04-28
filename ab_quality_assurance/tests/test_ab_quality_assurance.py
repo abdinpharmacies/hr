@@ -125,8 +125,11 @@ class TestAbQualityAssurance(TransactionCase):
             }
         )
         line = visit.visit_section_ids.mapped("visit_line_ids").filtered(lambda current_line: current_line.standard_id == self.standard)
+        line.with_user(self.member_user).write({"score": 10})
+        self.assertEqual(line.score, 10)
+        self.assertEqual(line.percentage, 100)
         with self.assertRaises(ValidationError):
-            line.with_user(self.member_user).write({"score": 25})
+            line.with_user(self.member_user).write({"score": 11})
 
     def test_submitted_visit_scores_are_locked(self):
         visit = self.Visits.with_user(self.member_user).create(
