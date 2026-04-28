@@ -2,7 +2,7 @@ from lxml import etree
 
 from odoo import api, fields, models
 from odoo.fields import Command
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError, ValidationError
 from odoo.tools.translate import _
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"

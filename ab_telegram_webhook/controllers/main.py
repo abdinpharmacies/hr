@@ -198,6 +198,18 @@ class AbTelegramWebhookController(http.Controller):
                             phone=sender_phone,
                             language_code=(sender.get("language_code") or "").strip(),
                         )
+                    if not extra_payload.get("handled") and "ab_hr_bot" in request.env:
+                        extra_payload = request.env["ab_hr_bot"].sudo().bot_process_message(
+                            telegram_user_id=str(sender.get("id") or ""),
+                            telegram_chat_id=str(chat_id),
+                            text=text,
+                            username=(sender.get("username") or "").strip(),
+                            first_name=(sender.get("first_name") or "").strip(),
+                            last_name=(sender.get("last_name") or "").strip(),
+                            phone=sender_phone,
+                            language_code=(sender.get("language_code") or "").strip(),
+                            chat_type=chat_type,
+                        )
                 finally:
                     typing_stop.set()
                     if typing_thread.is_alive():
