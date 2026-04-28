@@ -10,7 +10,7 @@
                     <separator/>
                     <filter name="high_performing" string="High Performing" domain="[('avg_percentage', '&gt;=', 85)]"/>
                     <filter name="needs_attention" string="Needs Attention" domain="[('avg_percentage', '&lt;', 70)]"/>
-                    <filter name="with_drafts" string="Has Draft Visits" domain="[('draft_visit_count', '&gt;', 0)]"/>
+                    <filter name="with_drafts" string="My Draft Visits" domain="[('draft_visit_count', '&gt;', 0)]"/>
                     <separator/>
                     <filter name="group_by_department" string="Department" context="{'group_by': 'department_id'}"/>
                 </search>
@@ -21,7 +21,7 @@
             <field name="name">ab_quality_assurance_department_dashboard.kanban</field>
             <field name="model">ab_quality_assurance_department_dashboard</field>
             <field name="arch" type="xml">
-                <kanban class="o_qa_dashboard_kanban" sample="1" create="false" default_group_by="">
+                <kanban class="o_qa_dashboard_kanban" sample="1" create="false">
                     <field name="department_id"/>
                     <field name="visit_count"/>
                     <field name="submitted_visit_count"/>
