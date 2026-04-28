@@ -199,10 +199,11 @@ class AbQualityAssuranceVisit(models.Model):
 
     @api.model
     def _get_active_sections(self):
-        return self.env["ab_quality_assurance_section"].search(
+        sections = self.env["ab_quality_assurance_section"].search(
             [("active", "=", True)],
             order="sequence, id",
         )
+        return sections.filtered(lambda section: section.standard_ids.filtered("active"))
 
     @api.model
     def _build_line_commands(self, standards):
