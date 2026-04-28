@@ -77,6 +77,7 @@ msgstr "مُسند"
 msgid "Assigned By"
 msgstr "أُسنِد بواسطة"
 
+
 #. module: ab_orders_management
 #: model_terms:ir.ui.view,arch_db:ab_orders_management.view_ab_pharmacy_delivery_assignment_form
 msgid "Assignment"
@@ -112,8 +113,92 @@ msgstr "بيانات المندوبين"
 #. module: ab_orders_management
 #. odoo-javascript
 #: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
-msgid "Select all pilots"
-msgstr "تحديد جميع المندوبين"
+msgid "Sort by deliveries"
+msgstr "ترتيب حسب التوصيلات"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Add Additional Order"
+msgstr "إضافة طلب إضافي"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Enter order number (numbers only)"
+msgstr "أدخل رقم الطلب (أرقام فقط)"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Add Order"
+msgstr "إضافة طلب"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Add Another Order"
+msgstr "إضافة طلب آخر"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Offline mode - showing cached data"
+msgstr "وضع غير متصل - عرض البيانات المخزنة"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Order number is required."
+msgstr "رقم الطلب مطلوب."
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Order number must contain only numbers."
+msgstr "يجب أن يحتوي رقم الطلب على أرقام فقط."
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Additional order added successfully."
+msgstr "تمت إضافة الطلب الإضافي بنجاح."
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Failed to add additional order."
+msgstr "فشل في إضافة الطلب الإضافي."
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Select All"
+msgstr "تحديد الكل"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Select all"
+msgstr "تحديد الكل"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Select all visible pilots"
+msgstr "تحديد جميع المندوبين الظاهرين"
+
+#. module: ab_orders_management
+#. odoo-python
+#: code:addons/ab_orders_management/wizard/pharmacy_delivery_assignment_wizard.py:0
+msgid "Order number must contain only numbers."
+msgstr "يجب أن يحتوي رقم الطلب على أرقام فقط."
 
 #. module: ab_orders_management
 #. odoo-javascript
@@ -743,3 +828,124 @@ msgstr "طلب"
 
 #~ msgid "Free pilots"
 #~ msgstr "المندوبون المتاحون"
+
+#. module: ab_orders_management
+#. odoo-python
+#: code:addons/ab_orders_management/models/pharmacy_delivery_pilot.py:0
+msgid "Only pilots with 'In Delivery' status can add additional orders."
+msgstr "يمكن فقط للمندوبين بحالة 'قيد التوصيل' إضافة طلبات إضافية."
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Add Additional Order"
+msgstr "إضافة طلب إضافي"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Order Number"
+msgstr "رقم الطلب"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Enter order number (numbers only)"
+msgstr "أدخل رقم الطلب (أرقام فقط)"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Transaction Type"
+msgstr "نوع العملية"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Transaction Delivery"
+msgstr "طلب تحويل"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Client Order"
+msgstr "طلب عميل"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Optional notes"
+msgstr "ملاحظات اختيارية"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Add Order"
+msgstr "إضافة طلب"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "Add Another Order"
+msgstr "إضافة طلب آخر"
+
+#. module: ab_orders_management
+#: model:ir.model.fields,field_description:ab_orders_management.field_ab_pharmacy_delivery_assignment__completed_by_user_id
+msgid "Completed By"
+msgstr "أكمل بواسطة"
+
+#. module: ab_orders_management
+#: model_terms:ir.ui.view,arch_db:ab_orders_management.view_ab_pharmacy_delivery_branch_list
+msgid "Branches"
+msgstr "الفروع"
+
+#. module: ab_orders_management
+#: model_terms:ir.ui.view,arch_db:ab_orders_management.view_ab_pharmacy_delivery_assignment_wizard_form
+msgid "Enter order number (numbers only)"
+msgstr "أدخل رقم الطلب (أرقام فقط)"
+
+#. module: ab_orders_management
+#: model_terms:ir.ui.view,arch_db:ab_orders_management.view_ab_pharmacy_delivery_pilot_form
+msgid "Order number"
+msgstr "رقم الطلب"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "OFF"
+msgstr "إيقاف"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "ON"
+msgstr "تشغيل"
+
+#. module: ab_orders_management
+#. odoo-javascript
+#: code:addons/ab_orders_management/static/src/js/pharmacy_delivery_dashboard.js:0
+msgid "All departments"
+msgstr "كل الأقسام"
+
+#. module: ab_orders_management
+#: model:ir.model.fields,field_description:ab_orders_management.field_ab_pharmacy_delivery_assignment__completed_by_pilot_id
+msgid "Pilot Name"
+msgstr "اسم المندوب"
