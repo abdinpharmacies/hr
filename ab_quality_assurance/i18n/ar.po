@@ -167,6 +167,146 @@ msgid "Dashboard"
 msgstr "لوحة التحكم"
 
 #. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_search
+msgid "My Draft Visits"
+msgstr "زياراتي المسودة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Average Score"
+msgstr "متوسط الدرجة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Best Recorded"
+msgstr "أفضل درجة مسجلة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Submission Rate"
+msgstr "نسبة الاعتماد"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Total Visits"
+msgstr "إجمالي الزيارات"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Avg Earned"
+msgstr "متوسط المحقق"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Latest Visit"
+msgstr "آخر زيارة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Latest Submission"
+msgstr "آخر اعتماد"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Quality Assurance"
+msgstr "الرقابة والجودة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Submitted"
+msgstr "معتمد"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Excellent"
+msgstr "ممتاز"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Stable"
+msgstr "مستقر"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_kanban
+msgid "Attention"
+msgstr "تنبيه"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Quality Assurance Visit Report"
+msgstr "تقرير زيارة الرقابة والجودة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Final Score Percentage"
+msgstr "النسبة النهائية للدرجة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Standard Title"
+msgstr "عنوان المعيار"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Evidence / Attachment"
+msgstr "الدليل / المرفق"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "SECTION SUMMARY TOTAL"
+msgstr "إجمالي ملخص المحور"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Visit Performer"
+msgstr "منفذ الزيارة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Points"
+msgstr "نقاط"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Reference:"
+msgstr "المرجع:"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Visit Date:"
+msgstr "تاريخ الزيارة:"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Branch:"
+msgstr "الفرع:"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Visited By:"
+msgstr "بواسطة:"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "Manager:"
+msgstr "المدير:"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+msgid "No evaluation criteria found for this section."
+msgstr "لا توجد معايير تقييم لهذا المحور."
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_dashboard_view_search
+msgid "Needs Attention"
+msgstr "يحتاج اهتمام"
+
+#. module: ab_quality_assurance
 #. odoo-javascript
 #: code:addons/ab_quality_assurance/static/src/js/ab_quality_assurance_form_controller.js:0
 #: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_department_dashboard__department_id
@@ -430,7 +570,7 @@ msgstr "مسؤول الرقابة والجودة"
 #. module: ab_quality_assurance
 #: model:ir.model,name:ab_quality_assurance.model_ab_quality_assurance_department_dashboard
 msgid "Quality Assurance Department Dashboard"
-msgstr "لوحة أداء الإدارات للرقابة والجودة"
+msgstr "لوحة تحكم الرقابة والجودة"
 
 #. module: ab_quality_assurance
 #: model:res.groups,name:ab_quality_assurance.group_ab_quality_assurance_manager
@@ -852,3 +992,59 @@ msgstr "الإدارة"
 #: model:ir.model,name:ab_quality_assurance.model_ab_hr_employee
 msgid "ab_hr_employee"
 msgstr "الموظف"
+#. module: ab_quality_assurance
+#: model:ir.actions.act_window,name:ab_quality_assurance.ab_quality_assurance_visit_draft_action
+#: model:ir.ui.menu,name:ab_quality_assurance.ab_quality_assurance_draft_visit_menu
+msgid "Drafts"
+msgstr "المسودات"
+#. module: ab_quality_assurance
+msgid "Export PDF"
+msgstr "تصدير PDF"
+
+#. module: ab_quality_assurance
+msgid "Export Excel"
+msgstr "تصدير Excel"
+
+#. module: ab_quality_assurance
+msgid "A clear overview of the visit, ownership, and final result."
+msgstr "عرض واضح لمعلومات الزيارة والمسؤولية والنتيجة النهائية."
+
+#. module: ab_quality_assurance
+msgid "Submission Status"
+msgstr "حالة الاعتماد"
+
+#. module: ab_quality_assurance
+msgid "Complete all section scores, then submit the visit when it is ready for review."
+msgstr "أكمل تقييم جميع الأقسام ثم اعتمد الزيارة عند جاهزيتها للمراجعة."
+
+#. module: ab_quality_assurance
+msgid "Visited Department"
+msgstr "الجهة محل الزيارة"
+
+#. module: ab_quality_assurance
+msgid "Visit"
+msgstr "الزيارة"
+
+#. module: ab_quality_assurance
+msgid "Execution and Ownership"
+msgstr "توقيت التنفيذ والمسؤول"
+
+#. module: ab_quality_assurance
+msgid "Result"
+msgstr "النتيجة"
+
+#. module: ab_quality_assurance
+msgid "Performance Indicators"
+msgstr "مؤشرات الأداء"
+
+#. module: ab_quality_assurance
+msgid "Sections"
+msgstr "الأقسام"
+
+#. module: ab_quality_assurance
+msgid "Evaluation Sections"
+msgstr "أقسام التقييم"
+
+#. module: ab_quality_assurance
+msgid "Maximum Score"
+msgstr "الدرجة العظمى"

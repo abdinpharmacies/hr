@@ -1,18 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="ab_quality_assurance_dashboard_view_search" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_department_dashboard.search</field>
+            <field name="model">ab_quality_assurance_department_dashboard</field>
+            <field name="arch" type="xml">
+                <search string="Quality Assurance Dashboard">
+                    <field name="department_id"/>
+                    <separator/>
+                    <filter name="high_performing" string="High Performing" domain="[('avg_percentage', '&gt;=', 85)]"/>
+                    <filter name="needs_attention" string="Needs Attention" domain="[('avg_percentage', '&lt;', 70)]"/>
+                    <filter name="with_drafts" string="My Draft Visits" domain="[('draft_visit_count', '&gt;', 0)]"/>
+                    <separator/>
+                    <filter name="group_by_department" string="Department" context="{'group_by': 'department_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_quality_assurance_dashboard_view_kanban" model="ir.ui.view">
+            <field name="name">ab_quality_assurance_department_dashboard.kanban</field>
+            <field name="model">ab_quality_assurance_department_dashboard</field>
+            <field name="arch" type="xml">
+                <kanban class="o_qa_dashboard_kanban" sample="1" create="false">
+                    <field name="department_id"/>
+                    <field name="visit_count"/>
+                    <field name="submitted_visit_count"/>
+                    <field name="draft_visit_count"/>
+                    <field name="avg_earned_score"/>
+                    <field name="avg_percentage"/>
+                    <field name="best_percentage"/>
+                    <field name="submission_rate"/>
+                    <field name="last_visit_date"/>
+                    <field name="latest_submitted_at"/>
+                    <templates>
+                        <t t-name="card">
+                            <t t-set="avg" t-value="record.avg_percentage.raw_value || 0"/>
+                            <t t-set="rate" t-value="record.submission_rate.raw_value || 0"/>
+                            <t t-set="drafts" t-value="record.draft_visit_count.raw_value || 0"/>
+                            <div class="oe_kanban_global_click o_qa_dashboard_card">
+                                <div class="o_qa_dashboard_card__hero">
+                                    <div>
+                                        <div class="o_qa_dashboard_card__eyebrow">Quality Assurance</div>
+                                        <div class="o_qa_dashboard_card__title">
+                                            <field name="department_id"/>
+                                        </div>
+                                    </div>
+                                    <div t-att-class="'o_qa_dashboard_card__badge ' + (avg >= 85 ? 'is-strong' : (avg >= 70 ? 'is-steady' : 'is-risk'))">
+                                        <t t-if="avg &gt;= 85">Excellent</t>
+                                        <t t-elif="avg &gt;= 70">Stable</t>
+                                        <t t-else="">Attention</t>
+                                    </div>
+                                </div>
+
+                                <div class="o_qa_dashboard_card__primary">
+                                    <div class="o_qa_dashboard_metric">
+                                        <span class="o_qa_dashboard_metric__label">Average Score</span>
+                                        <span class="o_qa_dashboard_metric__value"><field name="avg_percentage"/>%</span>
+                                    </div>
+                                    <div class="o_qa_dashboard_metric is-secondary">
+                                        <span class="o_qa_dashboard_metric__label">Best Recorded</span>
+                                        <span class="o_qa_dashboard_metric__value"><field name="best_percentage"/>%</span>
+                                    </div>
+                                </div>
+
+                                <div class="o_qa_dashboard_progress">
+                                    <div class="o_qa_dashboard_progress__head">
+                                        <span>Submission Rate</span>
+                                        <strong><field name="submission_rate"/>%</strong>
+                                    </div>
+                                    <div class="o_qa_dashboard_progress__track">
+                                        <div class="o_qa_dashboard_progress__fill" t-att-style="'width: ' + Math.min(Math.max(rate, 0), 100) + '%'"/>
+                                    </div>
+                                </div>
+
+                                <div class="o_qa_dashboard_stats">
+                                    <div class="o_qa_dashboard_stats__item">
+                                        <span class="o_qa_dashboard_stats__label">Total Visits</span>
+                                        <strong><field name="visit_count"/></strong>
+                                    </div>
+                                    <div class="o_qa_dashboard_stats__item">
+                                        <span class="o_qa_dashboard_stats__label">Submitted</span>
+                                        <strong><field name="submitted_visit_count"/></strong>
+                                    </div>
+                                    <div class="o_qa_dashboard_stats__item">
+                                        <span class="o_qa_dashboard_stats__label">Draft</span>
+                                        <strong t-att-class="drafts > 0 ? 'text-warning' : ''"><field name="draft_visit_count"/></strong>
+                                    </div>
+                                    <div class="o_qa_dashboard_stats__item">
+                                        <span class="o_qa_dashboard_stats__label">Avg Earned</span>
+                                        <strong><field name="avg_earned_score"/></strong>
+                                    </div>
+                                </div>
+
+                                <div class="o_qa_dashboard_card__footer">
+                                    <div class="o_qa_dashboard_card__date">
+                                        <span>Latest Visit</span>
+                                        <strong><field name="last_visit_date"/></strong>
+                                    </div>
+                                    <div class="o_qa_dashboard_card__date">
+                                        <span>Latest Submission</span>
+                                        <strong><field name="latest_submitted_at"/></strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
         <record id="ab_quality_assurance_dashboard_view_list" model="ir.ui.view">
             <field name="name">ab_quality_assurance_department_dashboard.list</field>
             <field name="model">ab_quality_assurance_department_dashboard</field>
             <field name="arch" type="xml">
-                <list string="Department Performance Dashboard">
+                <list string="Department Performance Dashboard"
+                      decoration-success="avg_percentage &gt;= 85"
+                      decoration-warning="draft_visit_count &gt; 0"
+                      decoration-danger="avg_percentage &lt; 70">
                     <field name="department_id"/>
                     <field name="visit_count"/>
                     <field name="submitted_visit_count"/>
+                    <field name="draft_visit_count"/>
+                    <field name="submission_rate" widget="progressbar"/>
                     <field name="avg_earned_score"/>
-                    <field name="avg_percentage"/>
+                    <field name="avg_percentage" widget="progressbar"/>
                     <field name="best_percentage"/>
                     <field name="last_visit_date"/>
+                    <field name="latest_submitted_at"/>
                 </list>
             </field>
         </record>
@@ -24,6 +138,7 @@
                 <graph string="Department Performance" type="bar">
                     <field name="department_id" type="row"/>
                     <field name="avg_percentage" type="measure"/>
+                    <field name="submission_rate" type="measure"/>
                     <field name="submitted_visit_count" type="measure"/>
                 </graph>
             </field>
@@ -37,6 +152,8 @@
                     <field name="department_id" type="row"/>
                     <field name="visit_count" type="measure"/>
                     <field name="submitted_visit_count" type="measure"/>
+                    <field name="draft_visit_count" type="measure"/>
+                    <field name="submission_rate" type="measure"/>
                     <field name="avg_earned_score" type="measure"/>
                     <field name="avg_percentage" type="measure"/>
                     <field name="best_percentage" type="measure"/>
@@ -47,7 +164,17 @@
         <record id="ab_quality_assurance_dashboard_action" model="ir.actions.act_window">
             <field name="name">Dashboard</field>
             <field name="res_model">ab_quality_assurance_department_dashboard</field>
-            <field name="view_mode">graph,list,pivot</field>
+            <field name="view_mode">kanban,graph,list,pivot</field>
+            <field name="search_view_id" ref="ab_quality_assurance_dashboard_view_search"/>
+            <field name="context">{'search_default_group_by_department': 1}</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No dashboard data is available yet.
+                </p>
+                <p>
+                    Department performance cards will appear automatically once quality visits are created.
+                </p>
+            </field>
         </record>
     </data>
 </odoo>

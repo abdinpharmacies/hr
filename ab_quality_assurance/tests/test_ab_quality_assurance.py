@@ -104,6 +104,20 @@ class TestAbQualityAssurance(TransactionCase):
             set(self.Standards.search([]).ids),
         )
 
+    def test_visit_creation_hides_sections_without_active_standards(self):
+        empty_section = self.Sections.with_user(self.admin_user).create(
+            {
+                "name": "Empty Section",
+            }
+        )
+        visit = self.Visits.with_user(self.member_user).create(
+            {
+                "department_id": self.visited_department.id,
+            }
+        )
+
+        self.assertNotIn(empty_section, visit.visit_section_ids.mapped("section_id"))
+
     def test_score_cannot_exceed_standard_maximum(self):
         visit = self.Visits.with_user(self.member_user).create(
             {
@@ -162,4 +176,3 @@ class TestAbQualityAssurance(TransactionCase):
                     "department_id": self.non_branch_department.id,
                 }
             )
-

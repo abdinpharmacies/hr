@@ -14,6 +14,13 @@
                   sequence="10"
                   groups="ab_quality_assurance.group_ab_quality_assurance_member,ab_quality_assurance.group_ab_quality_assurance_manager,ab_quality_assurance.group_ab_quality_assurance_admin"/>
 
+        <menuitem id="ab_quality_assurance_draft_visit_menu"
+                  name="Drafts"
+                  parent="ab_quality_assurance_root_menu"
+                  action="ab_quality_assurance_visit_draft_action"
+                  sequence="15"
+                  groups="ab_quality_assurance.group_ab_quality_assurance_member,ab_quality_assurance.group_ab_quality_assurance_manager,ab_quality_assurance.group_ab_quality_assurance_admin"/>
+
         <menuitem id="ab_quality_assurance_dashboard_menu"
                   name="Dashboard"
                   parent="ab_quality_assurance_root_menu"
@@ -21,15 +28,8 @@
                   sequence="20"
                   groups="ab_quality_assurance.group_ab_quality_assurance_member,ab_quality_assurance.group_ab_quality_assurance_manager,ab_quality_assurance.group_ab_quality_assurance_admin"/>
 
-        <menuitem id="ab_quality_assurance_standard_menu"
-                  name="Standards"
-                  parent="ab_quality_assurance_root_menu"
-                  action="ab_quality_assurance_standard_action"
-                  sequence="30"
-                  groups="ab_quality_assurance.group_ab_quality_assurance_manager,ab_quality_assurance.group_ab_quality_assurance_admin"/>
-
         <menuitem id="ab_quality_assurance_section_menu"
-                  name="Sections"
+                  name="Standards"
                   parent="ab_quality_assurance_root_menu"
                   action="ab_quality_assurance_section_action"
                   sequence="25"

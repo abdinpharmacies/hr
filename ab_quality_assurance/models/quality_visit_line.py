@@ -16,7 +16,7 @@ class AbQualityAssuranceVisitLine(models.Model):
     title = fields.Char(related="standard_id.title", store=True, readonly=True)
     max_score = fields.Float(related="standard_id.max_score", store=True, readonly=True, string="Max Score")
     percentage = fields.Float(compute="_compute_percentage", store=True, readonly=True)
-    score = fields.Float(required=True, default=0.0)
+    score = fields.Float(default=False)
     attachment = fields.Binary(attachment=True)
     attachment_name = fields.Char()
     has_attachment = fields.Boolean(compute="_compute_has_attachment")
@@ -42,40 +42,18 @@ class AbQualityAssuranceVisitLine(models.Model):
     @api.onchange("score")
     def _onchange_score(self):
         for record in self:
-            if record.score > 10:
-                record.score = 10
-            if record.score < 0:
-                record.score = 0.0
-                return {
-                    "warning": {
-                        "title": _("Invalid Score"),
-                        "message": _("Standard score cannot be negative."),
-                    }
-                }
-            if record.max_score and record.score > record.max_score:
-                record.score = record.max_score
-                return {
-                    "warning": {
-                        "title": _("Score Adjusted"),
-                        "message": _(
-                            "Score for standard '%(standard)s' cannot exceed %(max)s. The value was adjusted."
-                        )
-                        % {"standard": record.title, "max": record.max_score},
-                    }
-                }
+            if record.score is False:
+                continue
+            if record.score <= 0 or record.score > 10:
+                raise ValidationError(_("You must add value only between 1 and 10."))
 
-    @api.constrains("score", "max_score")
+    @api.constrains("score")
     def _check_score_range(self):
         for record in self:
-            if record.score > 10:
-                raise ValidationError(_("Score cannot exceed 10."))
-            if record.score < 0:
-                raise ValidationError(_("Standard score cannot be negative."))
-            if record.max_score and record.score > record.max_score:
-                raise ValidationError(
-                    _("Score for standard '%(standard)s' cannot exceed %(max)s.")
-                    % {"standard": record.title, "max": record.max_score}
-                )
+            if record.score is False:
+                continue
+            if record.score <= 0 or record.score > 10:
+                raise ValidationError(_("You must add value only between 1 and 10."))
 
     @api.constrains("section_id", "standard_id")
     def _check_standard_section(self):
