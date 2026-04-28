@@ -1,5 +1,6 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
+from uuid import uuid4
 
 VISIT_SEQUENCE_CODE = "ab_quality_assurance.visit"
 BRANCH_PREFIX = "فرع"
@@ -174,10 +175,17 @@ class AbQualityAssuranceVisit(models.Model):
         }
 
     @api.model
+    def _next_visit_name(self):
+        sequence_value = self.env["ir.sequence"].next_by_code(VISIT_SEQUENCE_CODE)
+        if sequence_value:
+            return sequence_value
+        return "QA-VISIT-%s" % uuid4().hex[:8].upper()
+
+    @api.model
     def _prepare_create_or_write_vals(self, vals, for_create=False):
         prepared_vals = dict(vals or {})
         if for_create and prepared_vals.get("name", "New") == "New":
-            prepared_vals["name"] = self.env["ir.sequence"].next_by_code(VISIT_SEQUENCE_CODE) or "New"
+            prepared_vals["name"] = self._next_visit_name()
         if for_create and not prepared_vals.get("user_id"):
             prepared_vals["user_id"] = self.env.user.id
         if for_create and not prepared_vals.get("employee_id"):
@@ -243,53 +251,107 @@ class AbQualityAssuranceVisit(models.Model):
     def _generate_xlsx_workbook(self, workbook):
         self.ensure_one()
 
-        sheet = workbook.add_worksheet(_("Visit"))
-        title_format = workbook.add_format(
-            {"bold": True, "font_size": 16, "align": "center", "valign": "vcenter", "bg_color": "#dceaf7"}
-        )
-        label_format = workbook.add_format({"bold": True, "bg_color": "#eef4fb", "border": 1})
-        value_format = workbook.add_format({"border": 1})
-        header_format = workbook.add_format({"bold": True, "bg_color": "#d9e2f3", "border": 1, "align": "center"})
-        section_format = workbook.add_format({"bold": True, "bg_color": "#f7ead9", "border": 1})
-        percent_format = workbook.add_format({"border": 1, "num_format": "0.00"})
-        number_format = workbook.add_format({"border": 1, "num_format": "0.00"})
+        sheet = workbook.add_worksheet(_("Quality Visit Report"))
+        
+        # Color Palette
+        color_navy = "#16324f"
+        color_white = "#ffffff"
+        color_bg_light = "#f8f9fa"
+        color_header_bg = "#eef4fb"
+        color_success = "#28a745"
+        color_danger = "#dc3545"
+        color_warning = "#ffc107"
 
-        sheet.merge_range(0, 0, 0, 5, _("Quality Visit Details"), title_format)
+        # Formats
+        title_format = workbook.add_format({
+            "bold": True, "font_size": 18, "align": "center", "valign": "vcenter",
+            "bg_color": color_navy, "font_color": color_white, "border": 1
+        })
+        
+        label_format = workbook.add_format({
+            "bold": True, "bg_color": color_header_bg, "font_color": color_navy,
+            "border": 1, "font_size": 10
+        })
+        
+        value_format = workbook.add_format({
+            "border": 1, "font_size": 10, "valign": "vcenter"
+        })
+        
+        header_format = workbook.add_format({
+            "bold": True, "bg_color": color_navy, "font_color": color_white,
+            "border": 1, "align": "center", "valign": "vcenter", "font_size": 11
+        })
+        
+        section_format = workbook.add_format({
+            "bold": True, "bg_color": "#d9e2f3", "font_color": color_navy,
+            "border": 1, "valign": "vcenter", "font_size": 11
+        })
+        
+        percent_format = workbook.add_format({
+            "border": 1, "num_format": "0.00%", "align": "center", "valign": "vcenter"
+        })
+        
+        number_format = workbook.add_format({
+            "border": 1, "num_format": "0.00", "align": "center", "valign": "vcenter"
+        })
 
-        summary_rows = [
+        score_card_format = workbook.add_format({
+            "bold": True, "font_size": 14, "align": "center", "valign": "vcenter",
+            "bg_color": "#f1f4f7", "font_color": color_navy, "border": 2
+        })
+
+        # Header Title
+        sheet.merge_range("A1:F2", _("QUALITY ASSURANCE VISIT REPORT"), title_format)
+
+        # Summary Grid (2 columns)
+        summary_left = [
             (_("Reference"), self.name or ""),
             (_("Branch"), self.department_id.name or ""),
-            (_("Department Manager"), self.department_manager_id.name or ""),
+            (_("Manager"), self.department_manager_id.name or ""),
             (_("Visit Date"), fields.Date.to_string(self.visit_date) or ""),
-            (_("Visited By"), self.employee_id.name or ""),
-            (_("State"), dict(self._fields["state"].selection).get(self.state, "")),
-            (_("Earned Score"), self.earned_total_score),
-            (_("Max Score"), self.max_total_score),
-            (_("Total Percentage"), self.total_percentage),
         ]
-        if self.submitted_at:
-            summary_rows.append((_("Submitted At"), fields.Datetime.to_string(self.submitted_at)))
+        
+        summary_right = [
+            (_("Visited By"), self.employee_id.name or ""),
+            (_("Status"), dict(self._fields["state"].selection).get(self.state, "")),
+            (_("Earned Total"), self.earned_total_score),
+            (_("Max Total"), self.max_total_score),
+        ]
 
-        row = 2
-        for label, value in summary_rows:
-            is_number = isinstance(value, (int, float))
-            sheet.write(row, 0, label, label_format)
-            sheet.write(row, 1, value, number_format if is_number else value_format)
+        row = 3
+        for i in range(len(summary_left)):
+            # Left Column
+            sheet.write(row, 0, summary_left[i][0], label_format)
+            sheet.write(row, 1, summary_left[i][1], value_format)
+            
+            # Right Column
+            sheet.write(row, 3, summary_right[i][0], label_format)
+            sheet.write(row, 4, summary_right[i][1], number_format if isinstance(summary_right[i][1], (int, float)) else value_format)
             row += 1
 
-        row += 1
+        # Final Percentage Score Card
+        sheet.merge_range(row, 0, row + 1, 1, _("TOTAL PERFORMANCE SCORE"), score_card_format)
+        sheet.merge_range(row, 2, row + 1, 4, self.total_percentage / 100.0, workbook.add_format({
+            "bold": True, "font_size": 20, "num_format": "0.00%", "align": "center", 
+            "valign": "vcenter", "border": 2, "font_color": color_success if self.total_percentage >= 85 else (color_warning if self.total_percentage >= 70 else color_danger)
+        }))
+        
+        row += 3
+        
+        # Table Headers
         headers = [
             _("Section"),
-            _("Standard"),
+            _("Standard Title"),
             _("Max Score"),
-            _("Score"),
+            _("Earned Score"),
             _("Percentage"),
-            _("Attachment"),
+            _("Evidence"),
         ]
         for column, header in enumerate(headers):
             sheet.write(row, column, header, header_format)
         row += 1
 
+        # Data Rows
         for section in self.visit_section_ids.sorted(lambda record: (record.sequence, record.id)):
             sheet.merge_range(row, 0, row, 5, section.name or "", section_format)
             row += 1
@@ -298,11 +360,19 @@ class AbQualityAssuranceVisit(models.Model):
                 sheet.write(row, 1, line.title or "", value_format)
                 sheet.write(row, 2, line.max_score or 0.0, number_format)
                 sheet.write(row, 3, line.score or 0.0, number_format)
-                sheet.write(row, 4, line.percentage or 0.0, percent_format)
-                sheet.write(row, 5, line.attachment_name or "", value_format)
+                
+                # Percentage with color coding logic (simplified for xlsxwriter)
+                p_val = line.percentage / 100.0
+                sheet.write(row, 4, p_val, percent_format)
+                
+                sheet.write(row, 5, line.attachment_name or "-", value_format)
                 row += 1
 
-        sheet.set_column(0, 0, 24)
-        sheet.set_column(1, 1, 34)
-        sheet.set_column(2, 4, 16)
-        sheet.set_column(5, 5, 24)
+        # Column Widths
+        sheet.set_column("A:A", 20)
+        sheet.set_column("B:B", 45)
+        sheet.set_column("C:E", 15)
+        sheet.set_column("F:F", 25)
+        
+        # Freeze panes
+        sheet.freeze_panes(row - (row - 8), 0)

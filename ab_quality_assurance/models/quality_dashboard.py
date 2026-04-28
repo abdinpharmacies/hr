@@ -3,7 +3,7 @@ from odoo import fields, models
 
 class AbQualityAssuranceDepartmentDashboard(models.Model):
     _name = "ab_quality_assurance_department_dashboard"
-    _description = "My Drafts"
+    _description = "Quality Assurance Department Dashboard"
     _auto = False
     _rec_name = "department_id"
 

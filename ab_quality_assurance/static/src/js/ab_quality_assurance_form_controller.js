@@ -17,10 +17,6 @@ function isSubmittedVisit(controller) {
 }
 
 async function saveQualityVisitDraft(controller) {
-    const isValid = await controller.model.root.checkValidity({ displayNotification: false });
-    if (!isValid) {
-        return false;
-    }
     return controller.save({
         reload: false,
         onError: (error, options) => controller.onSaveError(error, options, true),
@@ -106,11 +102,6 @@ patch(FormController.prototype, {
             return super.beforeUnload(...arguments);
         }
 
-        const isValid = await this.model.root.checkValidity({ displayNotification: false });
-        if (!isValid) {
-            return;
-        }
-
         const succeeded = await this.model.root.urgentSave();
         if (!succeeded) {
             ev.preventDefault();
@@ -174,27 +165,21 @@ patch(FloatField.prototype, {
     setup() {
         super.setup(...arguments);
         this.notificationService = useService("notification");
-        this._qaScoreValidationNotified = false;
     },
 
     parse(value) {
         const parsedValue = super.parse(...arguments);
         if (!isQualityScoreField(this) || value === "" || value === false || value === null) {
-            this._qaScoreValidationNotified = false;
             return parsedValue;
         }
 
         if (Number.isNaN(parsedValue) || parsedValue <= 0 || parsedValue > 10) {
-            if (!this._qaScoreValidationNotified) {
-                this.notificationService.add(_t("You must add value only between 1 and 10."), {
-                    type: "danger",
-                });
-                this._qaScoreValidationNotified = true;
-            }
+            this.notificationService.add(_t("You must add value only between 1 and 10."), {
+                type: "danger",
+            });
             throw new Error("Invalid quality score");
         }
 
-        this._qaScoreValidationNotified = false;
         return parsedValue;
     },
 });
