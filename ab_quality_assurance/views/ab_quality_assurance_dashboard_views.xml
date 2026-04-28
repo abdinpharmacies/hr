@@ -21,7 +21,7 @@
             <field name="name">ab_quality_assurance_department_dashboard.kanban</field>
             <field name="model">ab_quality_assurance_department_dashboard</field>
             <field name="arch" type="xml">
-                <kanban class="o_qa_dashboard_kanban" sample="1" create="false">
+                <kanban class="o_qa_dashboard_kanban" sample="1" create="false" string="Quality Assurance Dashboard">
                     <field name="department_id"/>
                     <field name="visit_count"/>
                     <field name="submitted_visit_count"/>
@@ -37,18 +37,18 @@
                             <t t-set="avg" t-value="record.avg_percentage.raw_value || 0"/>
                             <t t-set="rate" t-value="record.submission_rate.raw_value || 0"/>
                             <t t-set="drafts" t-value="record.draft_visit_count.raw_value || 0"/>
-                            <div class="oe_kanban_global_click o_qa_dashboard_card">
+                            <div class="oe_kanban_global_click o_qa_dashboard_card" t-translation="on">
                                 <div class="o_qa_dashboard_card__hero">
                                     <div>
-                                        <div class="o_qa_dashboard_card__eyebrow">Quality Assurance</div>
+                                        <div class="o_qa_dashboard_card__eyebrow"><span>Quality Assurance</span></div>
                                         <div class="o_qa_dashboard_card__title">
                                             <field name="department_id"/>
                                         </div>
                                     </div>
                                     <div t-att-class="'o_qa_dashboard_card__badge ' + (avg >= 85 ? 'is-strong' : (avg >= 70 ? 'is-steady' : 'is-risk'))">
-                                        <t t-if="avg &gt;= 85">Excellent</t>
-                                        <t t-elif="avg &gt;= 70">Stable</t>
-                                        <t t-else="">Attention</t>
+                                        <span t-if="avg >= 85">Excellent</span>
+                                        <span t-elif="avg >= 70">Stable</span>
+                                        <span t-else="">Attention</span>
                                     </div>
                                 </div>
 

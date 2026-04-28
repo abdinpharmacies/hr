@@ -7,16 +7,16 @@ class AbQualityAssuranceDepartmentDashboard(models.Model):
     _auto = False
     _rec_name = "department_id"
 
-    department_id = fields.Many2one("ab_hr_department", readonly=True)
-    visit_count = fields.Integer(readonly=True)
-    submitted_visit_count = fields.Integer(readonly=True)
-    draft_visit_count = fields.Integer(readonly=True)
-    avg_earned_score = fields.Float(readonly=True)
-    avg_percentage = fields.Float(readonly=True)
-    best_percentage = fields.Float(readonly=True)
-    submission_rate = fields.Float(readonly=True)
-    last_visit_date = fields.Date(readonly=True)
-    latest_submitted_at = fields.Datetime(readonly=True)
+    department_id = fields.Many2one("ab_hr_department", string="Department", readonly=True)
+    visit_count = fields.Integer(string="Total Visits", readonly=True)
+    submitted_visit_count = fields.Integer(string="Submitted", readonly=True)
+    draft_visit_count = fields.Integer(string="Draft", readonly=True)
+    avg_earned_score = fields.Float(string="Avg Earned", readonly=True)
+    avg_percentage = fields.Float(string="Average Score", readonly=True)
+    best_percentage = fields.Float(string="Best Recorded", readonly=True)
+    submission_rate = fields.Float(string="Submission Rate", readonly=True)
+    last_visit_date = fields.Date(string="Latest Visit", readonly=True)
+    latest_submitted_at = fields.Datetime(string="Latest Submission", readonly=True)
 
     def init(self):
         self.env.cr.execute(

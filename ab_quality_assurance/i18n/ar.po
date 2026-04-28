@@ -1048,3 +1048,23 @@ msgstr "أقسام التقييم"
 #. module: ab_quality_assurance
 msgid "Maximum Score"
 msgstr "الدرجة العظمى"
+
+#. module: ab_quality_assurance
+msgid "High Performing"
+msgstr "الأداء العالي"
+
+#. module: ab_quality_assurance
+msgid "Quality Assurance Dashboard"
+msgstr "لوحة تحكم الرقابة والجودة"
+
+#. module: ab_quality_assurance
+msgid "No dashboard data is available yet."
+msgstr "لا توجد بيانات لوحة تحكم متاحة بعد."
+
+#. module: ab_quality_assurance
+msgid "Department performance cards will appear automatically once quality visits are created."
+msgstr "ستظهر بطاقات أداء الأقسام تلقائيًا بمجرد إنشاء زيارات الجودة."
+
+#. module: ab_quality_assurance
+msgid "You must add value only between 1 and 10."
+msgstr "يجب إضافة قيمة بين 1 و 10 فقط."
