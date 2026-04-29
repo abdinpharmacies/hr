@@ -104,6 +104,20 @@ class TestAbQualityAssurance(TransactionCase):
             set(self.Standards.search([]).ids),
         )
 
+    def test_visit_creation_hides_sections_without_active_standards(self):
+        empty_section = self.Sections.with_user(self.admin_user).create(
+            {
+                "name": "Empty Section",
+            }
+        )
+        visit = self.Visits.with_user(self.member_user).create(
+            {
+                "department_id": self.visited_department.id,
+            }
+        )
+
+        self.assertNotIn(empty_section, visit.visit_section_ids.mapped("section_id"))
+
     def test_score_cannot_exceed_standard_maximum(self):
         visit = self.Visits.with_user(self.member_user).create(
             {
@@ -111,8 +125,22 @@ class TestAbQualityAssurance(TransactionCase):
             }
         )
         line = visit.visit_section_ids.mapped("visit_line_ids").filtered(lambda current_line: current_line.standard_id == self.standard)
+        line.with_user(self.member_user).write({"score": 20})
+        self.assertEqual(line.score, 20)
+        self.assertEqual(line.percentage, 100)
         with self.assertRaises(ValidationError):
-            line.with_user(self.member_user).write({"score": 25})
+            line.with_user(self.member_user).write({"score": 21})
+
+    def test_score_can_be_zero(self):
+        visit = self.Visits.with_user(self.member_user).create(
+            {
+                "department_id": self.visited_department.id,
+            }
+        )
+        line = visit.visit_section_ids.mapped("visit_line_ids").filtered(lambda current_line: current_line.standard_id == self.standard)
+        line.with_user(self.member_user).write({"score": 0})
+        self.assertEqual(line.score, 0)
+        self.assertEqual(line.percentage, 0)
 
     def test_submitted_visit_scores_are_locked(self):
         visit = self.Visits.with_user(self.member_user).create(
