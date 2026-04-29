@@ -32,40 +32,49 @@
                     <field name="submission_rate"/>
                     <field name="last_visit_date"/>
                     <field name="latest_submitted_at"/>
+                    <field name="ui_eyebrow"/>
+                    <field name="ui_badge_label"/>
+                    <field name="ui_average_score_label"/>
+                    <field name="ui_best_recorded_label"/>
+                    <field name="ui_submission_rate_label"/>
+                    <field name="ui_total_visits_label"/>
+                    <field name="ui_submitted_label"/>
+                    <field name="ui_draft_label"/>
+                    <field name="ui_avg_earned_label"/>
+                    <field name="ui_latest_visit_label"/>
+                    <field name="ui_latest_submission_label"/>
                     <templates>
                         <t t-name="card">
                             <t t-set="avg" t-value="record.avg_percentage.raw_value || 0"/>
                             <t t-set="rate" t-value="record.submission_rate.raw_value || 0"/>
                             <t t-set="drafts" t-value="record.draft_visit_count.raw_value || 0"/>
-                            <div class="oe_kanban_global_click o_qa_dashboard_card" t-translation="on">
+                            <div class="oe_kanban_global_click o_qa_dashboard_card">
                                 <div class="o_qa_dashboard_card__hero">
                                     <div>
-                                        <div class="o_qa_dashboard_card__eyebrow"><span>Quality Assurance</span></div>
+                                        <div class="o_qa_dashboard_card__eyebrow"><field name="ui_eyebrow"/></div>
                                         <div class="o_qa_dashboard_card__title">
                                             <field name="department_id"/>
                                         </div>
                                     </div>
                                     <div t-att-class="'o_qa_dashboard_card__badge ' + (avg >= 85 ? 'is-strong' : (avg >= 70 ? 'is-steady' : 'is-risk'))">
-                                        <span t-if="avg >= 85">Excellent</span>
-                                        <span t-elif="avg >= 70">Stable</span>
-                                        <span t-else="">Attention</span>
+                                        <span><field name="ui_badge_label"/></span>
                                     </div>
                                 </div>
 
                                 <div class="o_qa_dashboard_card__primary">
                                     <div class="o_qa_dashboard_metric">
-                                        <span class="o_qa_dashboard_metric__label">Average Score</span>
+                                        <span class="o_qa_dashboard_metric__label"><field name="ui_average_score_label"/></span>
                                         <span class="o_qa_dashboard_metric__value"><field name="avg_percentage"/>%</span>
                                     </div>
                                     <div class="o_qa_dashboard_metric is-secondary">
-                                        <span class="o_qa_dashboard_metric__label">Best Recorded</span>
+                                        <span class="o_qa_dashboard_metric__label"><field name="ui_best_recorded_label"/></span>
                                         <span class="o_qa_dashboard_metric__value"><field name="best_percentage"/>%</span>
                                     </div>
                                 </div>
 
                                 <div class="o_qa_dashboard_progress">
                                     <div class="o_qa_dashboard_progress__head">
-                                        <span>Submission Rate</span>
+                                        <span><field name="ui_submission_rate_label"/></span>
                                         <strong><field name="submission_rate"/>%</strong>
                                     </div>
                                     <div class="o_qa_dashboard_progress__track">
@@ -75,30 +84,30 @@
 
                                 <div class="o_qa_dashboard_stats">
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Total Visits</span>
+                                        <span class="o_qa_dashboard_stats__label"><field name="ui_total_visits_label"/></span>
                                         <strong><field name="visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Submitted</span>
+                                        <span class="o_qa_dashboard_stats__label"><field name="ui_submitted_label"/></span>
                                         <strong><field name="submitted_visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Draft</span>
+                                        <span class="o_qa_dashboard_stats__label"><field name="ui_draft_label"/></span>
                                         <strong t-att-class="drafts > 0 ? 'text-warning' : ''"><field name="draft_visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label">Avg Earned</span>
+                                        <span class="o_qa_dashboard_stats__label"><field name="ui_avg_earned_label"/></span>
                                         <strong><field name="avg_earned_score"/></strong>
                                     </div>
                                 </div>
 
                                 <div class="o_qa_dashboard_card__footer">
                                     <div class="o_qa_dashboard_card__date">
-                                        <span>Latest Visit</span>
+                                        <span><field name="ui_latest_visit_label"/></span>
                                         <strong><field name="last_visit_date"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_card__date">
-                                        <span>Latest Submission</span>
+                                        <span><field name="ui_latest_submission_label"/></span>
                                         <strong><field name="latest_submitted_at"/></strong>
                                     </div>
                                 </div>

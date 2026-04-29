@@ -27,9 +27,8 @@ class AbQualityAssuranceVisitSection(models.Model):
             scored_lines = record.visit_line_ids.filtered(lambda line: line.score is not False)
             record.earned_score = sum(record.visit_line_ids.mapped("score"))
             record.max_score = sum(record.visit_line_ids.mapped("max_score"))
-            record.percentage = (
-                sum(scored_lines.mapped("score")) / (len(scored_lines) * 10.0) * 100 if scored_lines else 0.0
-            )
+            scored_max_total = sum(scored_lines.mapped("max_score"))
+            record.percentage = (sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
 
     @api.onchange("section_id")
     def _onchange_section_id(self):

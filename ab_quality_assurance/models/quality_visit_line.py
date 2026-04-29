@@ -1,8 +1,6 @@
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, ValidationError
 
-SCORE_SCALE = 10.0
-
 
 class AbQualityAssuranceVisitLine(models.Model):
     _name = "ab_quality_assurance_visit_line"
@@ -36,26 +34,20 @@ class AbQualityAssuranceVisitLine(models.Model):
     @api.depends("score", "max_score")
     def _compute_percentage(self):
         for record in self:
-            if record.score:
-                record.percentage = (record.score / SCORE_SCALE) * 100
-            else:
-                record.percentage = 0.0
+            if record.score is not False and record.max_score:
+                record.percentage = (record.score / record.max_score) * 100
+                continue
+            record.percentage = 0.0
 
     @api.onchange("score")
     def _onchange_score(self):
         for record in self:
-            if record.score is False:
-                continue
-            if record.score <= 0 or record.score > SCORE_SCALE:
-                raise ValidationError(_("You must add value only between 1 and 10."))
+            record._validate_score_range()
 
     @api.constrains("score")
     def _check_score_range(self):
         for record in self:
-            if record.score is False:
-                continue
-            if record.score <= 0 or record.score > SCORE_SCALE:
-                raise ValidationError(_("You must add value only between 1 and 10."))
+            record._validate_score_range()
 
     @api.constrains("section_id", "standard_id")
     def _check_standard_section(self):
@@ -80,3 +72,11 @@ class AbQualityAssuranceVisitLine(models.Model):
     def _check_visit_is_editable(self):
         if any(line.visit_id.state == "submitted" for line in self):
             raise UserError(_("Submitted visits cannot be modified."))
+
+    def _validate_score_range(self):
+        for record in self:
+            if record.score is False:
+                continue
+            if record.max_score and 0 <= record.score <= record.max_score:
+                continue
+            raise ValidationError(_("Score must be between 0 and the standard maximum score."))

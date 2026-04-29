@@ -10,6 +10,7 @@
 }
 
 .o_qa_visit_summary_header {
+    display: block;
     font-size: 1rem;
     font-weight: 600;
     color: #1f3a5f;
@@ -99,6 +100,7 @@
 }
 
 .o_qa_visit_hero__eyebrow {
+    display: block;
     font-size: 0.72rem;
     text-transform: uppercase;
     letter-spacing: 0.14em;
@@ -117,6 +119,7 @@
 }
 
 .o_qa_visit_hero__subtitle {
+    display: block;
     color: var(--qa-muted);
     max-width: 48ch;
     line-height: 1.8;
@@ -132,6 +135,7 @@
 }
 
 .o_qa_visit_status_card__label {
+    display: block;
     font-size: 0.82rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -145,6 +149,7 @@
 }
 
 .o_qa_visit_status_card__hint {
+    display: block;
     color: var(--qa-muted);
     line-height: 1.7;
 }
@@ -187,7 +192,14 @@
 }
 
 .o_qa_visit_overview_card__head {
+    display: block;
     margin-bottom: 14px;
+}
+
+.o_qa_visit_overview_card__title {
+    display: block;
+    color: var(--qa-navy);
+    font-size: 1rem;
 }
 
 .o_qa_visit_overview_card__eyebrow,
@@ -198,11 +210,6 @@
     letter-spacing: 0.08em;
     color: var(--qa-muted);
     margin-bottom: 8px;
-}
-
-.o_qa_visit_overview_card__head strong {
-    color: var(--qa-navy);
-    font-size: 1rem;
 }
 
 .o_qa_visit_overview_card__body {
@@ -250,7 +257,7 @@
 }
 
 .o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_card__eyebrow,
-.o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_card__head strong,
+.o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_card__title,
 .o_qa_visit_metric.is-highlight .o_qa_visit_metric__label,
 .o_qa_visit_metric.is-highlight .o_field_widget,
 .o_qa_visit_metric.is-highlight .o_progressbar_value {
@@ -283,7 +290,7 @@
 
 .o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_item__label,
 .o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_item .o_field_widget,
-.o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_stat span,
+.o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_stat div,
 .o_qa_visit_overview_card.is-highlight .o_qa_visit_overview_stat .o_field_widget {
     color: #fff;
 }
@@ -313,7 +320,7 @@
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.o_qa_visit_overview_stat span {
+.o_qa_visit_overview_stat div {
     display: block;
     font-size: 0.74rem;
     margin-bottom: 6px;
@@ -329,6 +336,7 @@
 }
 
 .o_qa_visit_notes_card__subtitle {
+    display: block;
     color: var(--qa-muted);
     line-height: 1.7;
     margin-bottom: 14px;
@@ -365,9 +373,11 @@
     display: block;
     color: var(--qa-navy);
     margin-bottom: 4px;
+    font-weight: 700;
 }
 
 .o_qa_visit_section_intro span {
+    display: block;
     color: var(--qa-muted);
 }
 
@@ -788,7 +798,7 @@
     .o_qa_dashboard_card__primary {
         grid-template-columns: 1fr;
     }
-    
+
     .o_qa_dashboard_stats {
         grid-template-columns: 1fr 1fr;
         gap: 6px;
@@ -796,5 +806,51 @@
 
     .o_qa_dashboard_metric__value {
         font-size: 1.7rem;
+    }
+}
+
+html[dir="rtl"] {
+    .o_qa_visit_form,
+    .o_qa_dashboard_kanban {
+        direction: rtl;
+    }
+
+    .o_qa_visit_hero,
+    .o_qa_visit_overview,
+    .o_qa_visit_summary_card,
+    .o_qa_visit_notes_card,
+    .o_qa_visit_section_intro,
+    .o_qa_dashboard_card__hero,
+    .o_qa_dashboard_card__footer,
+    .o_qa_dashboard_progress__head,
+    .o_qa_dashboard_stats {
+        text-align: right;
+    }
+
+    .o_qa_visit_hero {
+        direction: rtl;
+    }
+
+    .o_qa_visit_overview,
+    .o_qa_dashboard_stats {
+        direction: rtl;
+    }
+
+    .o_qa_visit_section_intro,
+    .o_qa_dashboard_card__hero,
+    .o_qa_dashboard_card__footer,
+    .o_qa_dashboard_progress__head {
+        flex-direction: row-reverse;
+    }
+
+    .o_qa_visit_status_card__hint span,
+    .o_qa_visit_overview_card__eyebrow,
+    .o_qa_visit_overview_item__label,
+    .o_qa_visit_metric__label,
+    .o_qa_dashboard_card__eyebrow,
+    .o_qa_dashboard_metric__label,
+    .o_qa_dashboard_stats__label,
+    .o_qa_dashboard_card__date span {
+        letter-spacing: normal;
     }
 }

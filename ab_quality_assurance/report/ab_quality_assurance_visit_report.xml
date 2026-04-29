@@ -4,7 +4,7 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.external_layout">
-                    <div class="page" style="font-family: 'Helvetica', 'Arial', sans-serif; color: #333;">
+                    <div class="page" style="font-family: 'Helvetica', 'Arial', sans-serif; color: #333;" t-translation="on">
                         <style>
                             /* Professional Styling for Quality Report */
                             .qa-header-box {
@@ -131,7 +131,7 @@
                             }
                         </style>
 
-                        <h2 class="qa-report-title text-center">Quality Assurance Visit Report</h2>
+                        <h2 class="qa-report-title text-center" t-translation="on">Quality Assurance Visit Report</h2>
                         
                         <!-- Summary Score Card -->
                         <div class="row">
@@ -139,28 +139,28 @@
                                 <div class="qa-header-box">
                                     <table class="qa-info-grid">
                                         <tr>
-                                            <td class="qa-info-label">Reference:</td>
+                                            <td class="qa-info-label" t-translation="on">Reference:</td>
                                             <td class="qa-info-value"><span t-field="o.name"/></td>
-                                            <td class="qa-info-label">Visit Date:</td>
+                                            <td class="qa-info-label" t-translation="on">Visit Date:</td>
                                             <td class="qa-info-value"><span t-field="o.visit_date"/></td>
                                         </tr>
                                         <tr>
-                                            <td class="qa-info-label">Branch:</td>
+                                            <td class="qa-info-label" t-translation="on">Branch:</td>
                                             <td class="qa-info-value"><span t-field="o.department_id"/></td>
-                                            <td class="qa-info-label">Visited By:</td>
+                                            <td class="qa-info-label" t-translation="on">Visited By:</td>
                                             <td class="qa-info-value"><span t-field="o.employee_id"/></td>
                                         </tr>
                                         <tr>
-                                            <td class="qa-info-label">Manager:</td>
+                                            <td class="qa-info-label" t-translation="on">Manager:</td>
                                             <td class="qa-info-value"><span t-field="o.department_manager_id"/></td>
-                                            <td class="qa-info-label">Status:</td>
+                                            <td class="qa-info-label" t-translation="on">Status:</td>
                                             <td class="qa-info-value">
-                                                <span t-if="o.state == 'draft'" class="badge badge-info">Draft</span>
-                                                <span t-if="o.state == 'submitted'" class="badge badge-success">Submitted</span>
+                                                <span t-if="o.state == 'draft'" class="badge badge-info" t-translation="on">Draft</span>
+                                                <span t-if="o.state == 'submitted'" class="badge badge-success" t-translation="on">Submitted</span>
                                             </td>
                                         </tr>
                                         <tr t-if="o.submitted_at">
-                                            <td class="qa-info-label">Submitted:</td>
+                                            <td class="qa-info-label" t-translation="on">Submitted:</td>
                                             <td class="qa-info-value" colspan="3"><span t-field="o.submitted_at"/></td>
                                         </tr>
                                     </table>
@@ -168,10 +168,10 @@
                             </div>
                             <div class="col-4">
                                 <div class="qa-score-card">
-                                    <div class="qa-score-title">Final Score Percentage</div>
+                                    <div class="qa-score-title" t-translation="on">Final Score Percentage</div>
                                     <div class="qa-score-value"><span t-out="'{:.2f}%'.format(o.total_percentage or 0.0)"/></div>
                                     <div class="mt-2" style="font-size: 0.9rem;">
-                                        <span t-out="'{:.2f}'.format(o.earned_total_score or 0.0)"/> / <span t-out="'{:.2f}'.format(o.max_total_score or 0.0)"/> Points
+                                        <span t-out="'{:.2f}'.format(o.earned_total_score or 0.0)"/> / <span t-out="'{:.2f}'.format(o.max_total_score or 0.0)"/> <span t-translation="on">Points</span>
                                     </div>
                                     <div class="qa-progress-container mt-3">
                                         <div class="qa-progress-bar" t-att-style="'width: ' + str(min(max(o.total_percentage or 0.0, 0), 100)) + '%; ' + ('background-color: #dc3545;' if o.total_percentage &lt; 70 else 'background-color: #ffc107;' if o.total_percentage &lt; 85 else 'background-color: #28a745;')"></div>
@@ -185,17 +185,17 @@
                             <div class="qa-section-header">
                                 <span t-out="section.name"/>
                                 <span class="float-right" style="font-size: 0.9rem;">
-                                    Score: <t t-out="'{:.2f}%'.format(section.percentage or 0.0)"/>
+                                    <span t-translation="on">Score:</span> <t t-out="'{:.2f}%'.format(section.percentage or 0.0)"/>
                                 </span>
                             </div>
                             <table class="qa-table">
                                 <thead>
                                     <tr>
-                                        <th class="text-left">Standard Title</th>
-                                        <th class="qa-cell-center">Max</th>
-                                        <th class="qa-cell-center">Earned</th>
-                                        <th class="qa-cell-center">%</th>
-                                        <th class="text-left">Evidence / Attachment</th>
+                                        <th class="text-left" t-translation="on">Standard Title</th>
+                                        <th class="qa-cell-center" t-translation="on">Max</th>
+                                        <th class="qa-cell-center" t-translation="on">Earned</th>
+                                        <th class="qa-cell-center" t-translation="on">%</th>
+                                        <th class="text-left" t-translation="on">Evidence / Attachment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -209,13 +209,13 @@
                                         <td class="qa-cell-attachment"><span t-out="line.attachment_name or '-'"/></td>
                                     </tr>
                                     <tr t-if="not section.visit_line_ids">
-                                        <td colspan="5" class="text-center text-muted italic">No evaluation criteria found for this section.</td>
+                                        <td colspan="5" class="text-center text-muted italic" t-translation="on">No evaluation criteria found for this section.</td>
                                     </tr>
                                 </tbody>
                                 <t t-if="section.visit_line_ids">
                                     <tfoot>
                                         <tr class="qa-footer-summary">
-                                            <td>SECTION SUMMARY TOTAL</td>
+                                            <td t-translation="on">SECTION SUMMARY TOTAL</td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}'.format(section.max_score or 0.0)"/></td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}'.format(section.earned_score or 0.0)"/></td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}%'.format(section.percentage or 0.0)"/></td>
@@ -232,7 +232,7 @@
                                 <tr>
                                     <td style="width: 33%; border: none; text-align: center;">
                                         <div style="border-top: 1px solid #000; padding-top: 10px; width: 80%; margin: 0 auto;">
-                                            <strong>Visit Performer</strong><br/>
+                                            <strong t-translation="on">Visit Performer</strong><br/>
                                             <span t-field="o.employee_id"/>
                                         </div>
                                     </td>
@@ -242,7 +242,7 @@
                                     </td>
                                     <td style="width: 33%; border: none; text-align: center;">
                                         <div style="border-top: 1px solid #000; padding-top: 10px; width: 80%; margin: 0 auto;">
-                                            <strong>Department Manager</strong><br/>
+                                            <strong t-translation="on">Department Manager</strong><br/>
                                             <span t-field="o.department_manager_id"/>
                                         </div>
                                     </td>

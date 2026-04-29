@@ -11,7 +11,33 @@ class AbQualityAssuranceVisit(models.Model):
     _description = "Quality Assurance Visit"
     _order = "visit_date desc, id desc"
 
-    name = fields.Char(required=True, readonly=True, copy=False, default="New")
+    name = fields.Char(required=True, readonly=True, copy=False)
+    ui_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_hero_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_hero_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_status_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_status_submitted_at_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_status_draft_hint = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_manager_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_date_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_performer_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_submitted_at_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_result_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_result_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overall_percentage_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_sections_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_earned_score_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_maximum_score_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_notes_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_notes_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_notes_hint = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_evaluation_sections_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_evaluation_sections_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user, readonly=True)
     employee_id = fields.Many2one("ab_hr_employee", required=False, ondelete="restrict", string="Visited By")
     department_id = fields.Many2one("ab_hr_department", required=False, ondelete="restrict", index=True)
@@ -24,7 +50,7 @@ class AbQualityAssuranceVisit(models.Model):
     visit_date = fields.Date(required=True, default=fields.Date.today)
     notes = fields.Text(copy=False)
     state = fields.Selection(
-        [("draft", "Draft"), ("submitted", "Submitted")],
+        [("draft", _("Draft")), ("submitted", _("Submitted"))],
         default="draft",
         required=True,
         readonly=True,
@@ -55,11 +81,49 @@ class AbQualityAssuranceVisit(models.Model):
             scored_lines = lines.filtered(lambda line: line.score is not False)
             record.max_total_score = sum(lines.mapped("max_score"))
             record.earned_total_score = sum(lines.mapped("score"))
-            record.total_percentage = (
-                (sum(scored_lines.mapped("score")) / (len(scored_lines) * 10.0) * 100) if scored_lines else 0.0
-            )
+            scored_max_total = sum(scored_lines.mapped("max_score"))
+            record.total_percentage = (sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
             record.line_count = len(lines)
             record.section_count = len(record.visit_section_ids)
+
+    @api.depends("state", "name")
+    @api.depends_context("lang")
+    def _compute_ui_texts(self):
+        for record in self:
+            record.ui_title = _("New Visit/Draft") if record.state == "draft" else (record.name or "")
+            record.ui_hero_eyebrow = _("Quality Assurance")
+            record.ui_hero_subtitle = _("A clear overview of the visit, ownership, and final result.")
+            record.ui_status_label = _("Submission Status")
+            record.ui_status_submitted_at_label = _("Submitted At")
+            record.ui_status_draft_hint = _(
+                "Complete all section scores, then submit the visit when it is ready for review."
+            )
+            record.ui_overview_department_eyebrow = _("Department")
+            record.ui_overview_department_title = _("Visited Department")
+            record.ui_overview_department_label = _("Department")
+            record.ui_overview_department_manager_label = _("Department Manager")
+            record.ui_visit_eyebrow = _("Visit")
+            record.ui_visit_title = _("Execution and Ownership")
+            record.ui_visit_date_label = _("Visit Date")
+            record.ui_visit_performer_label = _("Performer")
+            record.ui_visit_submitted_at_label = _("Submitted At")
+            record.ui_result_eyebrow = _("Result")
+            record.ui_result_title = _("Performance Indicators")
+            record.ui_overall_percentage_label = _("Overall Percentage")
+            record.ui_sections_label = _("Sections")
+            record.ui_earned_score_label = _("Earned Score")
+            record.ui_maximum_score_label = _("Maximum Score")
+            record.ui_visit_notes_title = _("Visit Notes")
+            record.ui_visit_notes_subtitle = _(
+                "Capture key observations, branch-specific remarks, follow-up points, and any context that explains the final score."
+            )
+            record.ui_visit_notes_hint = _(
+                "Add visit observations, operational remarks, compliance notes, or recommended actions..."
+            )
+            record.ui_evaluation_sections_title = _("Evaluation Sections")
+            record.ui_evaluation_sections_subtitle = _(
+                "Review each section, score every standard, and attach supporting evidence where needed."
+            )
 
     @api.model
     def _default_employee_id(self):
@@ -69,6 +133,8 @@ class AbQualityAssuranceVisit(models.Model):
     @api.model
     def default_get(self, fields_list):
         defaults = super().default_get(fields_list)
+        if "name" in fields_list and not defaults.get("name"):
+            defaults["name"] = self._next_visit_name()
         if "employee_id" in fields_list and not defaults.get("employee_id"):
             defaults["employee_id"] = self._default_employee_id()
         if "user_id" in fields_list and not defaults.get("user_id"):
@@ -149,8 +215,10 @@ class AbQualityAssuranceVisit(models.Model):
             visit_lines = record.visit_section_ids.mapped("visit_line_ids")
             if not visit_lines:
                 raise ValidationError(_("The configured sections do not contain active standards yet."))
-            if any(line.score is False or line.score <= 0 or line.score > 10 for line in visit_lines):
-                raise ValidationError(_("You must add value only between 1 and 10."))
+            for line in visit_lines:
+                if line.score is False:
+                    raise ValidationError(_("Please enter a score for every standard before submitting the visit."))
+                line._validate_score_range()
             record._validate_visit_sections()
             record.with_context(allow_submitted_visit_write=True).write(
                 {
@@ -186,7 +254,9 @@ class AbQualityAssuranceVisit(models.Model):
     @api.model
     def _prepare_create_or_write_vals(self, vals, for_create=False):
         prepared_vals = dict(vals or {})
-        if for_create and prepared_vals.get("name", "New") == "New":
+        if for_create and not prepared_vals.get("name"):
+            prepared_vals["name"] = self._next_visit_name()
+        elif for_create and prepared_vals.get("name") in {"New", "جديد"}:
             prepared_vals["name"] = self._next_visit_name()
         if for_create and not prepared_vals.get("user_id"):
             prepared_vals["user_id"] = self.env.user.id
