@@ -7,8 +7,8 @@
     "depends": ["base", "web", "ab_hr"],
     "icon": "ab_quality_assurance/static/description/icon.svg",
     "data": [
-        "security/ir.model.access.csv",
         "security/security_groups.xml",
+        "security/ir.model.access.csv",
         "security/record_rules.xml",
         "data/ab_quality_assurance_sequence.xml",
         "views/ab_quality_assurance_section_views.xml",
