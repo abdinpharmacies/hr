@@ -1,224 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="rule_ab_quality_assurance_section_deny_all_internal" model="ir.rule">
-            <field name="name">Quality Assurance Sections Deny Internal By Default</field>
-            <field name="model_id" ref="model_ab_quality_assurance_section"/>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_section_member_read" model="ir.rule">
-            <field name="name">Quality Assurance Sections Member Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_section"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_member'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+        <record id="rule_ab_quality_assurance_visit_ro" model="ir.rule">
+            <field name="name">Quality Assurance Visits RO</field>
+            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
+            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_ro'))]"/>
+            <field name="domain_force">[('department_id', 'in', user.ab_department_ids.ids)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
-        <record id="rule_ab_quality_assurance_section_manager" model="ir.rule">
-            <field name="name">Quality Assurance Sections Manager Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_section"/>
+
+        <record id="rule_ab_quality_assurance_visit_user" model="ir.rule">
+            <field name="name">Quality Assurance Visits user Access</field>
+            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
+            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_user'))]"/>
+            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_quality_assurance_visit_manager" model="ir.rule">
+            <field name="name">Quality Assurance Visits Manager Access</field>
+            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
             <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_manager'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_section_admin" model="ir.rule">
-            <field name="name">Quality Assurance Sections Admin Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_section"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_admin'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_deny_all_internal" model="ir.rule">
-            <field name="name">Quality Assurance Visits Deny Internal By Default</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_member" model="ir.rule">
-            <field name="name">Quality Assurance Visits Member Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_member'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_admin" model="ir.rule">
-            <field name="name">Quality Assurance Visits Admin Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_admin'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_line_deny_all_internal" model="ir.rule">
-            <field name="name">Quality Assurance Visit Lines Deny Internal By Default</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_line"/>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_line_member" model="ir.rule">
-            <field name="name">Quality Assurance Visit Lines Member Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_line"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_member'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_line_admin" model="ir.rule">
-            <field name="name">Quality Assurance Visit Lines Admin Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_line"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_admin'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_section_deny_all_internal" model="ir.rule">
-            <field name="name">Quality Assurance Visit Sections Deny Internal By Default</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_section"/>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_section_member" model="ir.rule">
-            <field name="name">Quality Assurance Visit Sections Member Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_section"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_member'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_visit_section_admin" model="ir.rule">
-            <field name="name">Quality Assurance Visit Sections Admin Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_section"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_admin'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_standard_deny_all_internal" model="ir.rule">
-            <field name="name">Quality Assurance Standards Deny Internal By Default</field>
-            <field name="model_id" ref="model_ab_quality_assurance_standard"/>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_standard_member_read" model="ir.rule">
-            <field name="name">Quality Assurance Standards Member Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_standard"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_member'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
-        <record id="rule_ab_quality_assurance_standard_manager" model="ir.rule">
-            <field name="name">Quality Assurance Standards Manager Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_standard"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_manager'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
 
-        <record id="rule_ab_quality_assurance_standard_admin" model="ir.rule">
-            <field name="name">Quality Assurance Standards Admin Access</field>
-            <field name="model_id" ref="model_ab_quality_assurance_standard"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_admin'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_dashboard_deny_all_internal" model="ir.rule">
-            <field name="name">Quality Assurance Dashboard Deny Internal By Default</field>
-            <field name="model_id" ref="model_ab_quality_assurance_department_dashboard"/>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_dashboard_member_read" model="ir.rule">
-            <field name="name">Quality Assurance Dashboard Member Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_department_dashboard"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_member'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_dashboard_admin_read" model="ir.rule">
-            <field name="name">Quality Assurance Dashboard Admin Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_department_dashboard"/>
-            <field name="groups" eval="[(4, ref('ab_quality_assurance.group_ab_quality_assurance_admin'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
     </data>
 </odoo>

@@ -15,6 +15,7 @@ class AbQualityAssuranceVisitSection(models.Model):
     earned_score = fields.Float(compute="_compute_totals", store=True)
     max_score = fields.Float(compute="_compute_totals", store=True)
     percentage = fields.Float(compute="_compute_totals", store=True)
+    active = fields.Boolean(default=True)
 
     _ab_quality_assurance_visit_section_visit_section_uniq = models.Constraint(
         "UNIQUE(visit_id, section_id)",
@@ -28,7 +29,8 @@ class AbQualityAssuranceVisitSection(models.Model):
             record.earned_score = sum(record.visit_line_ids.mapped("score"))
             record.max_score = sum(record.visit_line_ids.mapped("max_score"))
             scored_max_total = sum(scored_lines.mapped("max_score"))
-            record.percentage = (sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
+            record.percentage = (
+                        sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
 
     @api.onchange("section_id")
     def _onchange_section_id(self):
@@ -39,7 +41,8 @@ class AbQualityAssuranceVisitSection(models.Model):
     @api.constrains("visit_line_ids", "section_id")
     def _check_lines_match_section(self):
         for record in self:
-            invalid_lines = record.visit_line_ids.filtered(lambda line: line.standard_id.section_id != record.section_id)
+            invalid_lines = record.visit_line_ids.filtered(
+                lambda line: line.standard_id.section_id != record.section_id)
             if invalid_lines:
                 raise ValidationError(_("All standards in a visit section must belong to the same section."))
 

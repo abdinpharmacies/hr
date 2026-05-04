@@ -20,6 +20,7 @@ class AbQualityAssuranceVisitLine(models.Model):
     attachment = fields.Binary(attachment=True)
     attachment_name = fields.Char()
     has_attachment = fields.Boolean(compute="_compute_has_attachment")
+    active = fields.Boolean(default=True)
 
     _ab_quality_assurance_visit_line_section_standard_uniq = models.Constraint(
         "UNIQUE(visit_section_id, standard_id)",

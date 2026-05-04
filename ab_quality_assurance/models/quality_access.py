@@ -24,7 +24,7 @@ class AbQualityAssuranceAccess(models.AbstractModel):
     @api.model
     def _is_quality_admin(self, user=None):
         current_user = user or self.env.user
-        return current_user.has_group("ab_quality_assurance.group_ab_quality_assurance_admin")
+        return current_user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
 
     @api.model
     def _check_standard_management_access(self):

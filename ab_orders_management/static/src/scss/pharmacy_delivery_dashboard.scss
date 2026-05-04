@@ -1,375 +1,383 @@
 .o_ab_pharmacy_delivery_dashboard {
-    padding: 12px;
-    background:
-        radial-gradient(circle at top left, rgba(47, 111, 221, 0.10), transparent 34%),
-        radial-gradient(circle at top right, rgba(223, 122, 34, 0.10), transparent 28%),
-        linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
-    min-height: 100%;
-    height: 100%;
-    overflow: hidden;
-    display: grid;
-    grid-template-rows: 1fr;
-    grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
-    gap: 0;
-    transition: grid-template-columns 0.2s ease;
+  padding: 12px;
+  background: radial-gradient(circle at top left, rgba(47, 111, 221, 0.10), transparent 34%),
+  radial-gradient(circle at top right, rgba(223, 122, 34, 0.10), transparent 28%),
+  linear-gradient(180deg, #f8fbff 0%, #eef3f9 100%);
+  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: 1fr;
+  grid-template-columns: minmax(280px, 340px) minmax(0, 1fr);
+  gap: 0;
+  transition: grid-template-columns 0.2s ease;
 }
 
 .o_ab_pharmacy_delivery_dashboard.is-sidebar-collapsed {
-    grid-template-columns: 60px minmax(0, 1fr);
+  grid-template-columns: 60px minmax(0, 1fr);
 }
 
 .o_ab_pharmacy_delivery_content {
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    padding-left: 8px;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-left: 8px;
 }
 
 .o_ab_pharmacy_delivery_header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 16px;
-    padding: 4px 2px 12px;
-    border-bottom: 1px solid rgba(29, 51, 84, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding: 4px 2px 12px;
+  border-bottom: 1px solid rgba(29, 51, 84, 0.08);
 }
 
 .o_ab_pharmacy_delivery_header_actions {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    min-width: 420px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 420px;
 }
 
 .o_ab_pharmacy_delivery_summary_grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-    margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .o_ab_pharmacy_delivery_summary_card,
 .o_ab_pharmacy_delivery_card,
 .o_ab_pharmacy_delivery_sidebar,
 .o_ab_pharmacy_delivery_queue {
-    background: #fff;
-    border: 1px solid rgba(29, 51, 84, 0.08);
-    border-radius: 14px;
-    box-shadow: 0 8px 20px rgba(29, 51, 84, 0.06);
+  background: #fff;
+  border: 1px solid rgba(29, 51, 84, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(29, 51, 84, 0.06);
 }
 
 .o_ab_pharmacy_delivery_summary_card {
-    padding: 14px;
-    border-left: 4px solid transparent;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 14px;
+  border-left: 4px solid transparent;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .o_ab_pharmacy_delivery_summary_card:hover,
 .o_ab_pharmacy_delivery_card:hover,
 .o_ab_pharmacy_delivery_sidebar_item:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 12px 26px rgba(29, 51, 84, 0.10);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 26px rgba(29, 51, 84, 0.10);
 }
 
 .o_ab_pharmacy_delivery_summary_card.is-free {
-    border-left-color: #2f8f57;
+  border-left-color: #2f8f57;
 }
 
-.o_ab_pharmacy_delivery_card{
-            border-radius: 14px;
+.o_ab_pharmacy_delivery_card {
+  border-radius: 14px;
 }
 
 .o_ab_pharmacy_delivery_summary_card.is-in-delivery {
-    border-left-color: #df7a22;
+  border-left-color: #df7a22;
 }
 
 .o_ab_pharmacy_delivery_summary_name,
 .o_ab_pharmacy_delivery_card_head,
 .o_ab_pharmacy_delivery_sidebar_item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .o_ab_pharmacy_delivery_summary_meta,
 .o_ab_pharmacy_delivery_card_meta,
 .o_ab_pharmacy_delivery_sidebar_item small {
-    color: #667085;
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
+  color: #667085;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
 }
 
 .o_ab_pharmacy_delivery_summary_counts,
 .o_ab_pharmacy_delivery_card_counts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin: 10px 0;
-    color: #364152;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 10px 0;
+  color: #364152;
 }
 
 .o_ab_pharmacy_delivery_status_dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 999px;
-    display: inline-block;
-    flex: 0 0 10px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  display: inline-block;
+  flex: 0 0 10px;
 }
 
 .o_ab_pharmacy_delivery_main {
-    min-height: 0;
-    flex: 1 1 auto;
-    overflow: hidden;
+  min-height: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .o_ab_pharmacy_delivery_sidebar {
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: 10px !important;
-    margin: 0 !important;
-    bottom: 0 !important;
-    transition: width 0.2s ease, padding 0.2s ease;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 10px !important;
+  margin: 0 !important;
+  bottom: 0 !important;
+  transition: width 0.2s ease, padding 0.2s ease;
 
-    &.is-open {
-        width: stretch;
-    }
+  &.is-open {
+    width: stretch;
+  }
 
-    .o_search_panel_section {
-        flex-shrink: 0;
-        margin-bottom: 12px;
-        &:last-of-type {
-            flex: 1 1 auto;
-            min-height: 0;
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 0;
-            
-            .o_search_panel_category_value {
-                flex: 1 1 auto;
-                min-height: 0;
-                display: flex;
-                flex-direction: column;
-            }
-        }
-    }
+  .o_search_panel_section {
+    flex-shrink: 0;
+    margin-bottom: 12px;
 
-    .form-control {
-        flex-shrink: 0;
-    }
+    &:last-of-type {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 0;
 
-    .o_search_panel_section_header {
-        margin-bottom: 8px;
+      .o_search_panel_category_value {
+        flex: 1 1 auto;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+      }
     }
+  }
+
+  .form-control {
+    flex-shrink: 0;
+  }
+
+  .o_search_panel_section_header {
+    margin-bottom: 8px;
+  }
 }
 
 .o_ab_pharmacy_delivery_sidebar.is-collapsed {
-    width: max-content !important;
-    padding-left: 8px !important;
-    padding-right: 8px !important;
+  width: max-content !important;
+  padding-left: 8px !important;
+  padding-right: 8px !important;
 }
 
 .o_ab_pharmacy_delivery_sidebar_header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
 }
 
 .o_ab_pharmacy_delivery_sidebar_section_header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .o_ab_pharmacy_delivery_sidebar_select_all {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    flex: 0 0 auto;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
 }
 
 .o_ab_pharmacy_delivery_sidebar_toggle {
-    width: 28px;
-    height: 28px;
-    padding: 0;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .o_ab_pharmacy_delivery_sidebar_list {
-    display: flex;
-    flex-direction: column;
-    flex: 1 1 auto;
-    min-height: 0;
-    overflow: auto;
-    padding-right: 4px;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 4px;
 
-    li + li {
-        margin-top: 8px;
-    }
+  li + li {
+    margin-top: 8px;
+  }
 }
 
 .o_ab_pharmacy_delivery_department_filter {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    border: 0;
-    background: transparent;
-    border-radius: 8px;
-    padding: 6px 8px;
-    text-align: left;
-    color: #364152;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  padding: 6px 8px;
+  text-align: left;
+  color: #364152;
 }
 
 .o_ab_pharmacy_delivery_department_filter.is-active {
-    background: #eaf2ff;
-    color: #1f4ba5;
-    font-weight: 600;
+  background: #eaf2ff;
+  color: #1f4ba5;
+  font-weight: 600;
 }
 
 .o_ab_pharmacy_delivery_sidebar_item {
-    width: 100%;
-    text-align: left;
-    background: transparent;
-    border: 0;
-    border-radius: 10px;
-    padding: 6px 8px;
-    transition: background-color 0.15s ease, color 0.15s ease;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  border-radius: 10px;
+  padding: 6px 8px;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .o_ab_pharmacy_delivery_sidebar_item.is-active {
-    background: #eaf2ff;
-    color: #1f4ba5;
+  background: #eaf2ff;
+  color: #1f4ba5;
 }
 
 .o_ab_pharmacy_delivery_sidebar_item_text {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .o_ab_pharmacy_delivery_sidebar_item_text small {
-    display: block;
-    justify-content: normal;
+  display: block;
+  justify-content: normal;
 }
 
 .o_ab_pharmacy_delivery_signin_order {
-    min-width: 28px;
-    height: 28px;
-    border-radius: 999px;
-    background: #cfd6df;
-    color: #243041;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 0.85rem;
-    padding: 0 8px;
+  min-width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: #cfd6df;
+  color: #243041;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0 8px;
 }
 
 .o_ab_pharmacy_delivery_queues {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 16px;
-    min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  min-height: 0;
 }
 
 .o_ab_pharmacy_delivery_queue {
-    padding: 16px;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
+  padding: 16px;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
 }
 
 .o_ab_pharmacy_delivery_queue.is-drop-target {
-    border-color: rgba(47, 111, 221, 0.42);
-    background: linear-gradient(180deg, rgba(47, 111, 221, 0.05) 0%, rgba(47, 111, 221, 0.01) 100%);
+  border-color: rgba(47, 111, 221, 0.42);
+  background: linear-gradient(180deg, rgba(47, 111, 221, 0.05) 0%, rgba(47, 111, 221, 0.01) 100%);
 }
 
 .o_ab_pharmacy_delivery_queue_header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
 }
 
 .o_ab_pharmacy_delivery_queue_cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 12px;
-    max-height: 80vh;
-    overflow: auto;
-    padding-right: 2px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  max-height: 80vh;
+  overflow: auto;
+  padding-right: 2px;
 }
 
 .o_ab_pharmacy_delivery_card {
-    padding: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    cursor: grab;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  cursor: grab;
 }
 
 .o_ab_pharmacy_delivery_card.is-in-delivery {
-    border-color: rgba(223, 122, 34, 0.35);
+  border-color: rgba(223, 122, 34, 0.35);
 }
 
 .o_ab_pharmacy_delivery_card:active {
-    cursor: grabbing;
+  cursor: grabbing;
 }
 
 .o_ab_pharmacy_delivery_card_assignment {
-    padding: 10px;
-    border-radius: 10px;
-    background: #fff8ef;
-    color: #5f3b13;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #fff8ef;
+  color: #5f3b13;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .o_ab_pharmacy_delivery_empty {
-    color: #667085;
-    padding: 16px;
-    text-align: center;
-    background: #f8fafc;
-    border: 1px dashed rgba(102, 112, 133, 0.24);
-    border-radius: 12px;
-}
-.o_search_panel{
-    width: 100%;
+  color: #667085;
+  padding: 16px;
+  text-align: center;
+  background: #f8fafc;
+  border: 1px dashed rgba(102, 112, 133, 0.24);
+  border-radius: 12px;
 }
 
-strong{
-    font-weight: 200;
+/* cancel this css, as it is built-in odoo class for search panel (Apps, HR, ... etc)
+.o_search_panel {
+  width: 100%;
+}
+*/
+
+.o_ab_pharmacy_delivery_sidebar {
+  width: 100%;
 }
 
-.o_ab_pharmacy_delivery_queues{
-        height: -webkit-fill-available;
-        margin-bottom: 0;
-    }
 
-.o_ab_pharmacy_delivery_queue{
-    margin-bottom: 0 !important;
+strong {
+  font-weight: 200;
+}
+
+.o_ab_pharmacy_delivery_queues {
+  height: -webkit-fill-available;
+  margin-bottom: 0;
+}
+
+.o_ab_pharmacy_delivery_queue {
+  margin-bottom: 0 !important;
 }
 
 @media (max-width: 1100px) {
-    .o_ab_pharmacy_delivery_dashboard,
-    .o_ab_pharmacy_delivery_queues {
-        grid-template-columns: 1fr;
-    }
+  .o_ab_pharmacy_delivery_dashboard,
+  .o_ab_pharmacy_delivery_queues {
+    grid-template-columns: 1fr;
+  }
 
-    .o_ab_pharmacy_delivery_sidebar {
-        width: 100%;
-    }
+  .o_ab_pharmacy_delivery_sidebar {
+    width: 100%;
+  }
 
 }
