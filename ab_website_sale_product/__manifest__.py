@@ -1,0 +1,19 @@
+{
+    "name": "Abdin Website Sale Products",
+    "summary": "Sync Abdin products into Odoo eCommerce products",
+    "version": "19.0.1.0.0",
+    "license": "LGPL-3",
+    "author": "Abdin Pharmacies",
+    "category": "Website",
+    "depends": ["website_sale", "ab_product"],
+    "data": [
+        "data/server_actions.xml",
+        "data/ir_cron.xml",
+        "views/ab_product_views.xml",
+        "views/product_template_views.xml",
+        "views/website_sale_menus.xml",
+    ],
+    "post_init_hook": "post_init_hook",
+    "installable": True,
+    "application": False,
+}
