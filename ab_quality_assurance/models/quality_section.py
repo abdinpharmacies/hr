@@ -10,6 +10,18 @@ class AbQualityAssuranceSection(models.Model):
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
     name = fields.Char(required=True)
+    department_id = fields.Many2one(
+        "ab_hr_department",
+        string="Responsible Department",
+        ondelete="restrict",
+        index=True,
+    )
+    department_manager_id = fields.Many2one(
+        "ab_hr_employee",
+        related="department_id.manager_id",
+        store=True,
+        readonly=True,
+    )
     standard_ids = fields.One2many("ab_quality_assurance_standard", "section_id", string="Standards")
     standard_count = fields.Integer(compute="_compute_standard_count")
 
@@ -30,7 +42,11 @@ class AbQualityAssuranceSection(models.Model):
 
     def write(self, vals):
         self.env["ab_quality_assurance.access"]._check_standard_management_access()
-        return super().write(self._prepare_vals(vals))
+        prepared_vals = self._prepare_vals(vals)
+        result = super().write(prepared_vals)
+        if "department_id" in prepared_vals:
+            self._sync_visit_department_followers()
+        return result
 
     def unlink(self):
         self.env["ab_quality_assurance.access"]._check_standard_management_access()
@@ -48,3 +64,9 @@ class AbQualityAssuranceSection(models.Model):
         if prepared_vals.get("name"):
             prepared_vals["name"] = prepared_vals["name"].strip()
         return prepared_vals
+
+    def _sync_visit_department_followers(self):
+        visits = self.env["ab_quality_assurance_visit"].sudo().search(
+            [("visit_section_ids.section_id", "in", self.ids)]
+        )
+        visits._sync_section_department_followers()

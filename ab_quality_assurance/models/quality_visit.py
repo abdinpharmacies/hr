@@ -8,14 +8,14 @@ QUALITY_EDITOR_GROUPS = (
     "ab_quality_assurance.group_ab_quality_assurance_user",
     "ab_quality_assurance.group_ab_quality_assurance_manager",
 )
-FOLLOW_UP_WRITE_FIELDS = {"follow_up_ids"}
-FOLLOW_UP_RESPONSE_WRITE_FIELDS = {"response"}
 
 
 class AbQualityAssuranceVisit(models.Model):
     _name = "ab_quality_assurance_visit"
     _description = "Quality Assurance Visit"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "visit_date desc, id desc"
+    _mail_post_access = "read"
 
     name = fields.Char(required=True, readonly=True, copy=False)
     ui_title = fields.Char(compute="_compute_ui_texts", readonly=True)
@@ -45,7 +45,13 @@ class AbQualityAssuranceVisit(models.Model):
     ui_evaluation_sections_title = fields.Char(compute="_compute_ui_texts", readonly=True)
     ui_evaluation_sections_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user, readonly=True)
-    employee_id = fields.Many2one("ab_hr_employee", required=False, ondelete="restrict", string="Visited By")
+    employee_id = fields.Many2one(
+        "ab_hr_employee",
+        required=False,
+        ondelete="restrict",
+        string="Visited By",
+        readonly=True,
+    )
     department_id = fields.Many2one("ab_hr_department", required=False, ondelete="restrict", index=True)
     department_manager_id = fields.Many2one(
         "ab_hr_employee",
@@ -56,9 +62,6 @@ class AbQualityAssuranceVisit(models.Model):
     visit_date = fields.Date(required=True, default=fields.Date.today)
     notes = fields.Text(copy=False)
     can_edit_evaluation = fields.Boolean(compute="_compute_can_edit_evaluation")
-    can_manage_follow_up = fields.Boolean(compute="_compute_follow_up_permissions")
-    can_edit_follow_up_response = fields.Boolean(compute="_compute_follow_up_permissions")
-    follow_up_ids = fields.One2many("ab_quality_assurance_visit_followup", "visit_id", string="Follow Up")
     state = fields.Selection(
         [("draft", _("Draft")), ("submitted", _("Submitted"))],
         default="draft",
@@ -106,19 +109,6 @@ class AbQualityAssuranceVisit(models.Model):
         for record in self:
             record.can_edit_evaluation = bool(can_manage_all or (can_edit_own and record.user_id == user))
 
-    @api.depends("user_id", "follow_up_ids.department_id")
-    @api.depends_context("uid")
-    def _compute_follow_up_permissions(self):
-        user_departments = self.env.user.ab_department_ids
-        user = self.env.user
-        can_edit_own = any(user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
-        can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
-        for record in self:
-            record.can_manage_follow_up = bool(can_manage_all or (can_edit_own and record.user_id == user))
-            record.can_edit_follow_up_response = bool(
-                record.follow_up_ids.filtered(lambda follow_up: follow_up.department_id in user_departments)
-            )
-
     @api.depends("state", "name")
     @api.depends_context("lang")
     def _compute_ui_texts(self):
@@ -160,7 +150,11 @@ class AbQualityAssuranceVisit(models.Model):
 
     @api.model
     def _default_employee_id(self):
-        employee = self.env["ab_hr_employee"].sudo().search([("user_id", "=", self.env.user.id)], limit=1)
+        return self._get_user_employee_id(self.env.user)
+
+    @api.model
+    def _get_user_employee_id(self, user):
+        employee = self.env["ab_hr_employee"].sudo().search([("user_id", "=", user.id)], limit=1)
         return employee.id
 
     @api.model
@@ -217,14 +211,10 @@ class AbQualityAssuranceVisit(models.Model):
         prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
         records = super().create(prepared_vals_list)
         records._validate_visit_sections()
+        records._sync_section_department_followers()
         return records
 
     def write(self, vals):
-        if set((vals or {}).keys()) == FOLLOW_UP_WRITE_FIELDS:
-            if not self._is_quality_editor():
-                self._check_follow_up_response_write(vals)
-            return super().write(vals)
-
         if not self._is_quality_editor() or not self._can_manage_visit():
             raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
 
@@ -238,6 +228,7 @@ class AbQualityAssuranceVisit(models.Model):
             prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
         result = super().write(prepared_vals)
         self._validate_visit_sections()
+        self._sync_section_department_followers()
         return result
 
     def unlink(self):
@@ -254,35 +245,17 @@ class AbQualityAssuranceVisit(models.Model):
             return True
         return all(visit.user_id == user for visit in self)
 
-    def _check_follow_up_response_write(self, vals):
-        commands = vals.get("follow_up_ids") or []
-        if not commands:
-            raise AccessError(_("Only selected departments can add follow-up responses."))
-        user_departments = self.env.user.ab_department_ids
-        follow_up_model = self.env["ab_quality_assurance_visit_followup"]
-        for command in commands:
-            if not isinstance(command, (list, tuple)) or len(command) < 3 or command[0] != 1:
-                raise AccessError(_("Only selected departments can add follow-up responses."))
-            follow_up = follow_up_model.browse(command[1]).exists()
-            values = command[2] or {}
-            if (
-                    not follow_up
-                    or follow_up.visit_id not in self
-                    or follow_up.department_id not in user_departments
-                    or set(values.keys()) - FOLLOW_UP_RESPONSE_WRITE_FIELDS
-            ):
-                raise AccessError(_("Only selected departments can add follow-up responses."))
-
     def action_submit_visit(self):
         if not self._is_quality_editor() or not self._can_manage_visit():
             raise AccessError(_("Only quality assurance users can submit visits."))
+        submitter_employee_id = self._default_employee_id()
+        if not submitter_employee_id:
+            raise ValidationError(_("The submitting user must have an employee profile before submitting the visit."))
         for record in self:
             if record.state != "draft":
                 raise UserError(_("Only draft visits can be submitted."))
             if not record.department_id:
                 raise ValidationError(_("Please select a department before submitting the visit."))
-            if not record.employee_id:
-                raise ValidationError(_("Please set the performer before submitting the visit."))
             if not record.visit_section_ids:
                 raise ValidationError(_("There are no configured sections to evaluate in this visit."))
             visit_lines = record.visit_section_ids.mapped("visit_line_ids")
@@ -295,6 +268,7 @@ class AbQualityAssuranceVisit(models.Model):
             record._validate_visit_sections()
             record.with_context(allow_submitted_visit_write=True).write(
                 {
+                    "employee_id": submitter_employee_id,
                     "state": "submitted",
                     "submitted_at": fields.Datetime.now(),
                 }
@@ -378,6 +352,18 @@ class AbQualityAssuranceVisit(models.Model):
                 )
             )
         return commands
+
+    def _get_section_department_manager_partners(self):
+        self.ensure_one()
+        return self.visit_section_ids.mapped("department_manager_id.user_id.partner_id").filtered(
+            lambda partner: partner
+        )
+
+    def _sync_section_department_followers(self):
+        for record in self:
+            partners = record._get_section_department_manager_partners()
+            if partners:
+                record.sudo().message_subscribe(partner_ids=partners.ids)
 
     def _validate_visit_sections(self):
         for record in self:

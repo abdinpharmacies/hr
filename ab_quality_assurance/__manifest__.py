@@ -4,7 +4,7 @@
     "license": "LGPL-3",
     "category": "Operations",
     "application": True,
-    "depends": ["base", "web", "ab_hr"],
+    "depends": ["base", "web", "mail", "ab_hr"],
     "icon": "ab_quality_assurance/static/description/icon.svg",
     "data": [
         "security/security_groups.xml",

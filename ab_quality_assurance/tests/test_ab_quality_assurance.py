@@ -1,6 +1,5 @@
 import base64
 
-from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
@@ -24,13 +23,13 @@ class TestAbQualityAssurance(TransactionCase):
         self.member_user = self._create_user("QA Member", "qa_member_test", [self.member_group.id])
         self.admin_user = self._create_user("QA Admin", "qa_admin_test", [self.admin_group.id])
         self.quality_manager_user = self._create_user("QA Manager", "qa_manager_test", [])
-        self.follow_up_user = self._create_user("Management Response", "qa_management_response_test", [self.ro_group.id])
+        self.section_manager_user = self._create_user("Section Manager", "qa_section_manager_test", [])
         self.outsider_user = self._create_user("QA Outsider", "qa_outsider_test", [])
 
         self.member_employee = self._create_employee("QA Member Employee", self.member_user)
         self.admin_employee = self._create_employee("QA Admin Employee", self.admin_user)
         self.quality_manager_employee = self._create_employee("QA Manager Employee", self.quality_manager_user)
-        self.follow_up_employee = self._create_employee("Management Response Employee", self.follow_up_user)
+        self.section_manager_employee = self._create_employee("Section Manager Employee", self.section_manager_user)
         self.outsider_employee = self._create_employee("QA Outsider Employee", self.outsider_user)
 
         self.quality_department = self.Departments.create(
@@ -40,10 +39,10 @@ class TestAbQualityAssurance(TransactionCase):
             }
         )
         self.visited_department = self.Departments.create({"name": "فرع العمليات"})
-        self.follow_up_department = self.Departments.create(
+        self.section_department = self.Departments.create(
             {
                 "name": "الادارة المعنية",
-                "user_id": self.follow_up_user.id,
+                "manager_id": self.section_manager_employee.id,
             }
         )
         self.non_branch_department = self.Departments.create({"name": "Operations"})
@@ -51,7 +50,7 @@ class TestAbQualityAssurance(TransactionCase):
         self.member_employee.department_id = self.quality_department.id
         self.admin_employee.department_id = self.quality_department.id
         self.quality_manager_employee.department_id = self.quality_department.id
-        self.follow_up_employee.department_id = self.follow_up_department.id
+        self.section_manager_employee.department_id = self.section_department.id
         self.outsider_employee.department_id = self.visited_department.id
 
         self.env["ab_quality_assurance.access"].sudo()._sync_quality_manager_group()
@@ -59,11 +58,13 @@ class TestAbQualityAssurance(TransactionCase):
         self.section = self.Sections.with_user(self.quality_manager_user).create(
             {
                 "name": "Cleanliness",
+                "department_id": self.section_department.id,
             }
         )
         self.second_section = self.Sections.with_user(self.quality_manager_user).create(
             {
                 "name": "Documentation",
+                "department_id": self.section_department.id,
             }
         )
 
@@ -83,11 +84,19 @@ class TestAbQualityAssurance(TransactionCase):
         )
 
     def _create_user(self, name, login, extra_groups):
+        partner_vals = {
+            "name": name,
+            "email": f"{login}@example.com",
+        }
+        if "autopost_bills" in self.env["res.partner"]._fields:
+            partner_vals["autopost_bills"] = "ask"
+        partner = self.env["res.partner"].sudo().create(partner_vals)
         return self.Users.create(
             {
                 "name": name,
                 "login": login,
                 "email": f"{login}@example.com",
+                "partner_id": partner.id,
                 "group_ids": [(6, 0, [self.group_user.id, *extra_groups])],
             }
         )
@@ -116,6 +125,20 @@ class TestAbQualityAssurance(TransactionCase):
             set(visit.visit_section_ids.mapped("visit_line_ids.standard_id").ids),
             set(self.Standards.search([]).ids),
         )
+
+    def test_visit_submission_sets_performer_to_submitter_employee(self):
+        visit = self.Visits.with_user(self.admin_user).create(
+            {
+                "department_id": self.visited_department.id,
+                "employee_id": self.section_manager_employee.id,
+            }
+        )
+        for line in visit.visit_section_ids.mapped("visit_line_ids"):
+            line.with_user(self.admin_user).write({"score": line.max_score})
+
+        visit.with_user(self.admin_user).action_submit_visit()
+
+        self.assertEqual(visit.employee_id, self.admin_employee)
 
     def test_visit_creation_hides_sections_without_active_standards(self):
         empty_section = self.Sections.with_user(self.quality_manager_user).create(
@@ -188,7 +211,7 @@ class TestAbQualityAssurance(TransactionCase):
         self.assertIn("/web/content/ab_quality_assurance_visit_line/", action["url"])
         self.assertIn("download=true", action["url"])
 
-    def test_selected_follow_up_department_can_only_write_its_response(self):
+    def test_section_department_manager_can_reply_in_visit_chatter(self):
         visit = self.Visits.with_user(self.member_user).create(
             {
                 "department_id": self.visited_department.id,
@@ -198,53 +221,22 @@ class TestAbQualityAssurance(TransactionCase):
             line.with_user(self.member_user).write({"score": line.max_score})
         visit.with_user(self.member_user).action_submit_visit()
 
-        visit.with_user(self.member_user).write(
-            {
-                "follow_up_ids": [
-                    fields.Command.create({"department_id": self.follow_up_department.id}),
-                ]
-            }
+        self.assertTrue(self.Visits.with_user(self.section_manager_user).search([("id", "=", visit.id)]))
+        self.assertIn(self.section_manager_user.partner_id, visit.message_partner_ids)
+
+        message = visit.with_user(self.section_manager_user).message_post(
+            body="The section department manager reviewed the visit."
         )
-        follow_up = visit.follow_up_ids.filtered(lambda current: current.department_id == self.follow_up_department)
+        self.assertIn("section department manager reviewed", message.body)
 
         with self.assertRaises(AccessError):
-            follow_up.with_user(self.member_user).write({"response": "The visit creator cannot answer for management."})
-
-        visit.with_user(self.follow_up_user).write(
-            {
-                "follow_up_ids": [
-                    fields.Command.update(
-                        follow_up.id,
-                        {"response": "The management reviewed the visit and added its response."},
-                    ),
-                ]
-            }
-        )
-        follow_up.invalidate_recordset(["response", "response_user_id", "response_date"])
-        self.assertEqual(
-            follow_up.response,
-            "The management reviewed the visit and added its response.",
-        )
-        self.assertEqual(follow_up.response_user_id, self.follow_up_user)
-        self.assertTrue(follow_up.response_date)
-
-        with self.assertRaises(AccessError):
-            visit.with_user(self.follow_up_user).write(
+            visit.with_user(self.section_manager_user).write(
                 {"notes": "Changing evaluation notes is not allowed."}
-            )
-
-        with self.assertRaises(AccessError):
-            visit.with_user(self.follow_up_user).write(
-                {
-                    "follow_up_ids": [
-                        fields.Command.create({"department_id": self.non_branch_department.id}),
-                    ]
-                }
             )
 
         first_line = visit.visit_section_ids.mapped("visit_line_ids").sorted("id")[0]
         with self.assertRaises(AccessError):
-            first_line.with_user(self.follow_up_user).write({"score": 0})
+            first_line.with_user(self.section_manager_user).write({"score": 0})
 
     def test_submitted_visit_scores_are_locked(self):
         visit = self.Visits.with_user(self.member_user).create(

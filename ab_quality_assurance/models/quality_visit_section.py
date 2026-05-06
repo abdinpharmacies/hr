@@ -16,6 +16,8 @@ class AbQualityAssuranceVisitSection(models.Model):
     visit_id = fields.Many2one("ab_quality_assurance_visit", required=True, ondelete="cascade")
     section_id = fields.Many2one("ab_quality_assurance_section", required=True, ondelete="restrict")
     name = fields.Char(related="section_id.name", store=True, readonly=True)
+    department_id = fields.Many2one(related="section_id.department_id", store=True, readonly=True)
+    department_manager_id = fields.Many2one(related="section_id.department_manager_id", store=True, readonly=True)
     visit_line_ids = fields.One2many("ab_quality_assurance_visit_line", "visit_section_id", string="Standards")
     earned_score = fields.Float(compute="_compute_totals", store=True)
     max_score = fields.Float(compute="_compute_totals", store=True)

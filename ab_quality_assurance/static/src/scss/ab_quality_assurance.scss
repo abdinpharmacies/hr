@@ -413,20 +413,6 @@
     min-width: 0;
 }
 
-.o_qa_follow_up_card {
-    border: 1px solid var(--qa-line);
-    border-radius: 18px;
-    background: #fff;
-    padding: 16px 18px 18px;
-    margin-top: 16px;
-    box-shadow: 0 12px 28px rgba(18, 39, 61, 0.05);
-}
-
-.o_qa_follow_up_list .o_data_cell textarea {
-    min-height: 72px;
-    resize: vertical;
-}
-
 .o_qa_visit_list .badge,
 .o_qa_visit_form .badge {
     border-radius: 999px;

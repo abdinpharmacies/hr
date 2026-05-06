@@ -37,17 +37,28 @@ class AbQualityAssuranceAccess(models.AbstractModel):
 
     @api.model
     def _sync_quality_manager_group(self):
-        group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_manager", raise_if_not_found=False)
+        self._sync_specific_group("ab_quality_assurance.group_ab_quality_assurance_manager", self._get_quality_manager_users())
+        self._sync_dept_manager_group()
+
+    @api.model
+    def _sync_dept_manager_group(self):
+        # Get all users who are managers of ANY department
+        all_departments = self.env["ab_hr_department"].sudo().search([("manager_id", "!=", False)])
+        dept_managers = all_departments.mapped("manager_id.user_id").filtered(lambda user: user)
+        self._sync_specific_group("ab_quality_assurance.group_ab_quality_assurance_dept_manager", dept_managers)
+
+    @api.model
+    def _sync_specific_group(self, group_xml_id, target_users):
+        group = self.env.ref(group_xml_id, raise_if_not_found=False)
         if not group:
             return
 
-        target_users = self._get_quality_manager_users()
-        current_users = self.env["res.users"].sudo().search([("group_ids", "in", group.id)])
+        current_users = self.env["res.users"].sudo().search([("groups_id", "in", group.id)])
 
         users_to_add = target_users - current_users
         users_to_remove = current_users - target_users
 
         if users_to_add:
-            users_to_add.write({"group_ids": [(4, group.id)]})
+            users_to_add.write({"groups_id": [(4, group.id)]})
         if users_to_remove:
-            users_to_remove.write({"group_ids": [(3, group.id)]})
+            users_to_remove.write({"groups_id": [(3, group.id)]})
