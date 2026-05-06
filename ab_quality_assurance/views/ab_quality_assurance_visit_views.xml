@@ -5,7 +5,7 @@
             <field name="name">ab_quality_assurance_visit_section.form</field>
             <field name="model">ab_quality_assurance_visit_section</field>
             <field name="arch" type="xml">
-                <form string="قسم الزيارة" create="false" delete="false">
+                <form string="Visit Section" create="false" delete="false">
                     <sheet>
                         <field name="visit_id" invisible="1"/>
                         <field name="section_id" invisible="1"/>
@@ -34,7 +34,7 @@
                                 <field name="attachment_name" optional="hide"/>
                                 <field name="has_attachment" optional="show" readonly="1"/>
                             </list>
-                            <form string="تقييم المعيار" create="false" delete="false">
+                            <form string="Standard Evaluation" create="false" delete="false">
                                 <sheet>
                                     <field name="visit_id" invisible="1"/>
                                     <field name="visit_section_id" invisible="1"/>
@@ -68,7 +68,7 @@
             <field name="name">ab_quality_assurance_visit_line.form</field>
             <field name="model">ab_quality_assurance_visit_line</field>
             <field name="arch" type="xml">
-                <form string="تقييم المعيار">
+                <form string="Standard Evaluation">
                     <sheet>
                         <field name="visit_id" invisible="1"/>
                         <field name="visit_section_id" invisible="1"/>
@@ -99,26 +99,26 @@
             <field name="name">ab_quality_assurance_visit.list</field>
             <field name="model">ab_quality_assurance_visit</field>
             <field name="arch" type="xml">
-                <list string="الزيارات"
+                <list string="Visits"
                       class="o_qa_visit_list"
                       default_order="visit_date desc, id desc"
                       decoration-success="state == 'submitted'"
                       decoration-warning="state == 'draft'">
                     <field name="name"/>
-                    <field name="visit_date"/>
                     <field name="department_id"/>
                     <field name="employee_id"/>
+                    <field name="visit_date"/>
                     <field name="department_manager_id" optional="hide"/>
                     <field name="section_count"/>
                     <field name="earned_total_score"/>
-                    <field name="max_total_score"/>
+                    <field name="max_total_score" optional="hide"/>
                     <field name="total_percentage" widget="progressbar"/>
                     <field name="submitted_at" optional="show"/>
                     <field name="state" widget="badge"
                            decoration-success="state == 'submitted'"
                            decoration-warning="state == 'draft'"/>
-                    <button name="action_export_pdf" type="object" icon="fa-file-pdf-o" title="Download PDF"/>
-                    <button name="action_export_xlsx" type="object" icon="fa-file-excel-o" title="Download Sheet"/>
+                    <button name="action_export_pdf" type="object" icon="fa-file-pdf-o" title="Download PDF" class="o_qa_export_pdf"/>
+                    <button name="action_export_xlsx" type="object" icon="fa-file-excel-o" title="Download Sheet" class="o_qa_export_xlsx"/>
                 </list>
             </field>
         </record>
@@ -129,8 +129,8 @@
             <field name="arch" type="xml">
                 <form string="Quality Visit" class="o_qa_visit_form">
                     <header>
-                        <button name="action_export_pdf" type="object" string="Export PDF" icon="fa-file-pdf-o" class="btn-secondary" invisible="not id"/>
-                        <button name="action_export_xlsx" type="object" string="Export Excel" icon="fa-file-excel-o" class="btn-secondary" invisible="not id"/>
+                        <button name="action_export_pdf" type="object" string="Export PDF" icon="fa-file-pdf-o" class="btn-secondary o_qa_export_pdf" invisible="not id"/>
+                        <button name="action_export_xlsx" type="object" string="Export Excel" icon="fa-file-excel-o" class="btn-secondary o_qa_export_xlsx" invisible="not id"/>
                         <button name="action_submit_visit" type="object" string="Submit Visit"
                                 class="btn-primary"
                                 invisible="state != 'draft'"/>
@@ -142,30 +142,33 @@
                         <field name="state" invisible="1"/>
                         <div class="o_qa_visit_hero">
                             <div class="o_qa_visit_hero__content">
-                                <div class="o_qa_visit_hero__eyebrow">Quality Assurance</div>
+                                <div class="o_form_label o_qa_visit_hero__eyebrow">
+                                    <field name="ui_hero_eyebrow" nolabel="1" readonly="1"/>
+                                </div>
                                 <div class="oe_title o_qa_visit_hero__title">
                                     <h1>
-                                        <field name="name" readonly="1"/>
+                                        <field name="ui_title" readonly="1" nolabel="1"/>
                                     </h1>
                                 </div>
-                                <div class="o_qa_visit_hero__subtitle">
-                                    A clear overview of the visit, ownership, and final result.
+                                <div class="o_form_label o_qa_visit_hero__subtitle text-muted">
+                                    <field name="ui_hero_subtitle" nolabel="1" readonly="1"/>
                                 </div>
                             </div>
                             <div class="o_qa_visit_hero__aside">
                                 <div class="o_qa_visit_status_card">
-                                    <div class="o_qa_visit_status_card__label">Submission Status</div>
+                                    <div class="o_form_label o_qa_visit_status_card__label">
+                                        <field name="ui_status_label" nolabel="1" readonly="1"/>
+                                    </div>
                                     <div class="o_qa_visit_status_card__value">
                                         <field name="state" nolabel="1" widget="badge"
                                                decoration-success="state == 'submitted'"
                                                decoration-warning="state == 'draft'"/>
                                     </div>
-                                    <div class="o_qa_visit_status_card__hint" invisible="state != 'submitted'">
-                                        <span>Submitted At</span>
-                                        <field name="submitted_at" nolabel="1" readonly="1"/>
+                                    <div class="o_form_label o_qa_visit_status_card__hint" invisible="state != 'submitted'">
+                                        <field name="ui_status_submitted_at_label" nolabel="1" readonly="1"/>
                                     </div>
-                                    <div class="o_qa_visit_status_card__hint" invisible="state != 'draft'">
-                                        Complete all section scores, then submit the visit when it is ready for review.
+                                    <div class="o_qa_visit_status_card__hint text-muted" invisible="state != 'draft'">
+                                        <span><field name="ui_status_draft_hint" nolabel="1" readonly="1"/></span>
                                     </div>
                                 </div>
                             </div>
@@ -173,74 +176,122 @@
                         <div class="o_qa_visit_overview">
                             <div class="o_qa_visit_overview_card">
                                 <div class="o_qa_visit_overview_card__head">
-                                    <span class="o_qa_visit_overview_card__eyebrow">Department</span>
-                                    <strong>Visited Department</strong>
+                                    <div class="o_form_label o_qa_visit_overview_card__eyebrow">
+                                        <field name="ui_overview_department_eyebrow" nolabel="1" readonly="1"/>
+                                    </div>
+                                    <div class="o_form_label o_qa_visit_overview_card__title">
+                                        <field name="ui_overview_department_title" nolabel="1" readonly="1"/>
+                                    </div>
                                 </div>
                                 <div class="o_qa_visit_overview_card__body">
                                     <div class="o_qa_visit_overview_item">
-                                        <span class="o_qa_visit_overview_item__label">Department</span>
+                                        <div class="o_form_label o_qa_visit_overview_item__label">
+                                            <field name="ui_overview_department_label" nolabel="1" readonly="1"/>
+                                        </div>
                                         <field name="department_id" nolabel="1" readonly="state == 'submitted'"
                                                domain="[('name', '=like', 'فرع%')]"/>
                                     </div>
                                     <div class="o_qa_visit_overview_item">
-                                        <span class="o_qa_visit_overview_item__label">Department Manager</span>
+                                        <div class="o_form_label o_qa_visit_overview_item__label">
+                                            <field name="ui_overview_department_manager_label" nolabel="1" readonly="1"/>
+                                        </div>
                                         <field name="department_manager_id" nolabel="1" readonly="1"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="o_qa_visit_overview_card">
                                 <div class="o_qa_visit_overview_card__head">
-                                    <span class="o_qa_visit_overview_card__eyebrow">Visit</span>
-                                    <strong>Execution and Ownership</strong>
+                                    <div class="o_form_label o_qa_visit_overview_card__eyebrow">
+                                        <field name="ui_visit_eyebrow" nolabel="1" readonly="1"/>
+                                    </div>
+                                    <div class="o_form_label o_qa_visit_overview_card__title">
+                                        <field name="ui_visit_title" nolabel="1" readonly="1"/>
+                                    </div>
                                 </div>
                                 <div class="o_qa_visit_overview_card__body">
                                     <div class="o_qa_visit_overview_item">
-                                        <span class="o_qa_visit_overview_item__label">Visit Date</span>
+                                        <div class="o_form_label o_qa_visit_overview_item__label">
+                                            <field name="ui_visit_date_label" nolabel="1" readonly="1"/>
+                                        </div>
                                         <field name="visit_date" nolabel="1" readonly="state == 'submitted'"/>
                                     </div>
                                     <div class="o_qa_visit_overview_item" invisible="not id">
-                                        <span class="o_qa_visit_overview_item__label">Performer</span>
+                                        <div class="o_form_label o_qa_visit_overview_item__label">
+                                            <field name="ui_visit_performer_label" nolabel="1" readonly="1"/>
+                                        </div>
                                         <field name="employee_id" nolabel="1" readonly="state == 'submitted'"/>
                                     </div>
                                     <div class="o_qa_visit_overview_item" invisible="state != 'submitted'">
-                                        <span class="o_qa_visit_overview_item__label">Submitted At</span>
+                                        <div class="o_form_label o_qa_visit_overview_item__label">
+                                            <field name="ui_visit_submitted_at_label" nolabel="1" readonly="1"/>
+                                        </div>
                                         <field name="submitted_at" nolabel="1" readonly="1"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="o_qa_visit_overview_card is-highlight">
                                 <div class="o_qa_visit_overview_card__head">
-                                    <span class="o_qa_visit_overview_card__eyebrow">Result</span>
-                                    <strong>Performance Indicators</strong>
+                                    <div class="o_form_label o_qa_visit_overview_card__eyebrow">
+                                        <field name="ui_result_eyebrow" nolabel="1" readonly="1"/>
+                                    </div>
+                                    <div class="o_form_label o_qa_visit_overview_card__title">
+                                        <field name="ui_result_title" nolabel="1" readonly="1"/>
+                                    </div>
                                 </div>
                                 <div class="o_qa_visit_overview_card__body">
                                     <div class="o_qa_visit_metric is-highlight">
-                                        <span class="o_qa_visit_metric__label">Overall Percentage</span>
+                                        <div class="o_form_label o_qa_visit_metric__label">
+                                            <field name="ui_overall_percentage_label" nolabel="1" readonly="1"/>
+                                        </div>
                                         <field name="total_percentage" nolabel="1" readonly="1" widget="progressbar" class="o_qa_visit_metric__value"/>
                                     </div>
                                     <div class="o_qa_visit_overview_stats">
                                         <div class="o_qa_visit_overview_stat">
-                                            <span>Sections</span>
+                                            <div class="o_form_label">
+                                                <field name="ui_sections_label" nolabel="1" readonly="1"/>
+                                            </div>
                                             <field name="section_count" nolabel="1" readonly="1"/>
                                         </div>
                                         <div class="o_qa_visit_overview_stat">
-                                            <span>Earned Score</span>
+                                            <div class="o_form_label">
+                                                <field name="ui_earned_score_label" nolabel="1" readonly="1"/>
+                                            </div>
                                             <field name="earned_total_score" nolabel="1" readonly="1"/>
                                         </div>
                                         <div class="o_qa_visit_overview_stat">
-                                            <span>Maximum Score</span>
+                                            <div class="o_form_label">
+                                                <field name="ui_maximum_score_label" nolabel="1" readonly="1"/>
+                                            </div>
                                             <field name="max_total_score" nolabel="1" readonly="1"/>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                        <div class="o_qa_visit_notes_card">
+                            <div class="o_form_label o_qa_visit_summary_header">
+                                <field name="ui_visit_notes_title" nolabel="1" readonly="1"/>
+                            </div>
+                            <div class="o_form_label o_qa_visit_notes_card__subtitle text-muted">
+                                <field name="ui_visit_notes_subtitle" nolabel="1" readonly="1"/>
+                            </div>
+                            <div class="o_form_label o_qa_visit_notes_card__hint text-muted">
+                                <field name="ui_visit_notes_hint" nolabel="1" readonly="1"/>
+                            </div>
+                            <field name="notes"
+                                   nolabel="1"
+                                   readonly="state == 'submitted'"/>
+                        </div>
                         <notebook>
                             <page string="Sections">
                                 <div class="o_qa_visit_section_intro">
                                     <div>
-                                        <strong>Evaluation Sections</strong>
-                                        <span>Review each section, score every standard, and attach supporting evidence where needed.</span>
+                                        <strong>
+                                            <field name="ui_evaluation_sections_title" nolabel="1" readonly="1"/>
+                                        </strong>
+                                        <span class="text-muted">
+                                            <field name="ui_evaluation_sections_subtitle" nolabel="1" readonly="1"/>
+                                        </span>
                                     </div>
                                 </div>
                                 <field name="visit_section_ids" readonly="state == 'submitted'">
@@ -320,27 +371,26 @@
             <field name="name">ab_quality_assurance_visit.search</field>
             <field name="model">ab_quality_assurance_visit</field>
             <field name="arch" type="xml">
-                <search string="الزيارات">
+                <search string="Visits">
                     <field name="name"/>
                     <field name="department_id"/>
                     <field name="employee_id"/>
                     <field name="visit_date"/>
                     <separator/>
                     <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
-                    <filter name="filter_submitted" string="معتمد" domain="[('state', '=', 'submitted')]"/>
+                    <filter name="filter_submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                     <separator/>
-                    <filter name="group_by_department" string="الإدارة" context="{'group_by': 'department_id'}"/>
-                    <filter name="group_by_employee" string="المنفذ" context="{'group_by': 'employee_id'}"/>
-                    <filter name="group_by_state" string="الحالة" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_department" string="Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_by_employee" string="Performer" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_by_state" string="Status" context="{'group_by': 'state'}"/>
                 </search>
             </field>
         </record>
 
         <record id="ab_quality_assurance_visit_action" model="ir.actions.act_window">
-            <field name="name">الزيارات</field>
+            <field name="name">Visits</field>
             <field name="res_model">ab_quality_assurance_visit</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('state', '=', 'submitted')]</field>
             <field name="context">{'search_default_filter_submitted': 1}</field>
             <field name="search_view_id" ref="ab_quality_assurance_visit_view_search"/>
         </record>
@@ -349,7 +399,6 @@
             <field name="name">Drafts</field>
             <field name="res_model">ab_quality_assurance_visit</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('state', '=', 'draft')]</field>
             <field name="context">{'search_default_filter_draft': 1}</field>
             <field name="search_view_id" ref="ab_quality_assurance_visit_view_search"/>
         </record>

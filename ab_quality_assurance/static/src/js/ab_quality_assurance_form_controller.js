@@ -173,8 +173,9 @@ patch(FloatField.prototype, {
             return parsedValue;
         }
 
-        if (Number.isNaN(parsedValue) || parsedValue <= 0 || parsedValue > 10) {
-            this.notificationService.add(_t("You must add value only between 1 and 10."), {
+        const maxScore = Number(this.props?.record?.data?.max_score || 0);
+        if (Number.isNaN(parsedValue) || (maxScore && (parsedValue < 0 || parsedValue > maxScore))) {
+            this.notificationService.add(_t("Score must be between 0 and the standard maximum score."), {
                 type: "danger",
             });
             throw new Error("Invalid quality score");

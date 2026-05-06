@@ -11,7 +11,33 @@ class AbQualityAssuranceVisit(models.Model):
     _description = "Quality Assurance Visit"
     _order = "visit_date desc, id desc"
 
-    name = fields.Char(required=True, readonly=True, copy=False, default="New")
+    name = fields.Char(required=True, readonly=True, copy=False)
+    ui_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_hero_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_hero_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_status_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_status_submitted_at_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_status_draft_hint = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overview_department_manager_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_date_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_performer_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_submitted_at_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_result_eyebrow = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_result_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_overall_percentage_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_sections_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_earned_score_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_maximum_score_label = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_notes_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_notes_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_visit_notes_hint = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_evaluation_sections_title = fields.Char(compute="_compute_ui_texts", readonly=True)
+    ui_evaluation_sections_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user, readonly=True)
     employee_id = fields.Many2one("ab_hr_employee", required=False, ondelete="restrict", string="Visited By")
     department_id = fields.Many2one("ab_hr_department", required=False, ondelete="restrict", index=True)
@@ -22,8 +48,9 @@ class AbQualityAssuranceVisit(models.Model):
         readonly=True,
     )
     visit_date = fields.Date(required=True, default=fields.Date.today)
+    notes = fields.Text(copy=False)
     state = fields.Selection(
-        [("draft", "Draft"), ("submitted", "Submitted")],
+        [("draft", _("Draft")), ("submitted", _("Submitted"))],
         default="draft",
         required=True,
         readonly=True,
@@ -36,6 +63,7 @@ class AbQualityAssuranceVisit(models.Model):
     total_percentage = fields.Float(compute="_compute_totals", store=True)
     line_count = fields.Integer(compute="_compute_totals", store=True)
     section_count = fields.Integer(compute="_compute_totals", store=True)
+    active = fields.Boolean(default=True)
 
     _ab_quality_assurance_visit_name_uniq = models.Constraint(
         "UNIQUE(name)",
@@ -51,13 +79,53 @@ class AbQualityAssuranceVisit(models.Model):
     def _compute_totals(self):
         for record in self:
             lines = record.visit_section_ids.mapped("visit_line_ids")
+            scored_lines = lines.filtered(lambda line: line.score is not False)
             record.max_total_score = sum(lines.mapped("max_score"))
             record.earned_total_score = sum(lines.mapped("score"))
+            scored_max_total = sum(scored_lines.mapped("max_score"))
             record.total_percentage = (
-                (record.earned_total_score / record.max_total_score) * 100 if record.max_total_score else 0.0
-            )
+                    sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
             record.line_count = len(lines)
             record.section_count = len(record.visit_section_ids)
+
+    @api.depends("state", "name")
+    @api.depends_context("lang")
+    def _compute_ui_texts(self):
+        for record in self:
+            record.ui_title = _("New Visit/Draft") if record.state == "draft" else (record.name or "")
+            record.ui_hero_eyebrow = _("Quality Assurance")
+            record.ui_hero_subtitle = _("A clear overview of the visit, ownership, and final result.")
+            record.ui_status_label = _("Submission Status")
+            record.ui_status_submitted_at_label = _("Submitted At")
+            record.ui_status_draft_hint = _(
+                "Complete all section scores, then submit the visit when it is ready for review."
+            )
+            record.ui_overview_department_eyebrow = _("Department")
+            record.ui_overview_department_title = _("Visited Department")
+            record.ui_overview_department_label = _("Department")
+            record.ui_overview_department_manager_label = _("Department Manager")
+            record.ui_visit_eyebrow = _("Visit")
+            record.ui_visit_title = _("Execution and Ownership")
+            record.ui_visit_date_label = _("Visit Date")
+            record.ui_visit_performer_label = _("Performer")
+            record.ui_visit_submitted_at_label = _("Submitted At")
+            record.ui_result_eyebrow = _("Result")
+            record.ui_result_title = _("Performance Indicators")
+            record.ui_overall_percentage_label = _("Overall Percentage")
+            record.ui_sections_label = _("Sections")
+            record.ui_earned_score_label = _("Earned Score")
+            record.ui_maximum_score_label = _("Maximum Score")
+            record.ui_visit_notes_title = _("Visit Notes")
+            record.ui_visit_notes_subtitle = _(
+                "Capture key observations, branch-specific remarks, follow-up points, and any context that explains the final score."
+            )
+            record.ui_visit_notes_hint = _(
+                "Add visit observations, operational remarks, compliance notes, or recommended actions..."
+            )
+            record.ui_evaluation_sections_title = _("Evaluation Sections")
+            record.ui_evaluation_sections_subtitle = _(
+                "Review each section, score every standard, and attach supporting evidence where needed."
+            )
 
     @api.model
     def _default_employee_id(self):
@@ -67,6 +135,8 @@ class AbQualityAssuranceVisit(models.Model):
     @api.model
     def default_get(self, fields_list):
         defaults = super().default_get(fields_list)
+        if "name" in fields_list and not defaults.get("name"):
+            defaults["name"] = self._next_visit_name()
         if "employee_id" in fields_list and not defaults.get("employee_id"):
             defaults["employee_id"] = self._default_employee_id()
         if "user_id" in fields_list and not defaults.get("user_id"):
@@ -96,10 +166,10 @@ class AbQualityAssuranceVisit(models.Model):
     def _check_user_employee_link(self):
         for record in self:
             if (
-                record.user_id
-                and record.user_id.ab_employee_ids
-                and record.employee_id
-                and not record.user_id.has_group("ab_quality_assurance.group_ab_quality_assurance_admin")
+                    record.user_id
+                    and record.user_id.ab_employee_ids
+                    and record.employee_id
+                    and not record.user_id.has_group("ab_quality_assurance.group_ab_quality_assurance_admin")
             ):
                 if record.user_id == self.env.user and record.employee_id.user_id != record.user_id:
                     raise ValidationError(_("The visit performer must match the current user's employee."))
@@ -108,7 +178,8 @@ class AbQualityAssuranceVisit(models.Model):
     def _check_branch_department(self):
         for record in self:
             if record.department_id and not (record.department_id.name or "").startswith(BRANCH_PREFIX):
-                raise ValidationError(_("Visits can only evaluate branch departments whose names start with '%s'.") % BRANCH_PREFIX)
+                raise ValidationError(
+                    _("Visits can only evaluate branch departments whose names start with '%s'.") % BRANCH_PREFIX)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -118,7 +189,8 @@ class AbQualityAssuranceVisit(models.Model):
         return records
 
     def write(self, vals):
-        if any(record.state == "submitted" for record in self) and not self.env.context.get("allow_submitted_visit_write"):
+        if any(record.state == "submitted" for record in self) and not self.env.context.get(
+                "allow_submitted_visit_write"):
             raise UserError(_("Submitted visits cannot be modified."))
 
         prepared_vals = self._prepare_create_or_write_vals(vals, for_create=False)
@@ -147,8 +219,10 @@ class AbQualityAssuranceVisit(models.Model):
             visit_lines = record.visit_section_ids.mapped("visit_line_ids")
             if not visit_lines:
                 raise ValidationError(_("The configured sections do not contain active standards yet."))
-            if any(line.score is False or line.score <= 0 or line.score > 10 for line in visit_lines):
-                raise ValidationError(_("You must add value only between 1 and 10."))
+            for line in visit_lines:
+                if line.score is False:
+                    raise ValidationError(_("Please enter a score for every standard before submitting the visit."))
+                line._validate_score_range()
             record._validate_visit_sections()
             record.with_context(allow_submitted_visit_write=True).write(
                 {
@@ -184,7 +258,9 @@ class AbQualityAssuranceVisit(models.Model):
     @api.model
     def _prepare_create_or_write_vals(self, vals, for_create=False):
         prepared_vals = dict(vals or {})
-        if for_create and prepared_vals.get("name", "New") == "New":
+        if for_create and not prepared_vals.get("name"):
+            prepared_vals["name"] = self._next_visit_name()
+        elif for_create and prepared_vals.get("name") in {"New", "جديد"}:
             prepared_vals["name"] = self._next_visit_name()
         if for_create and not prepared_vals.get("user_id"):
             prepared_vals["user_id"] = self.env.user.id
@@ -253,7 +329,7 @@ class AbQualityAssuranceVisit(models.Model):
         self.ensure_one()
 
         sheet = workbook.add_worksheet(_("Quality Visit Report"))
-        
+
         # Color Palette
         color_navy = "#16324f"
         color_white = "#ffffff"
@@ -268,30 +344,30 @@ class AbQualityAssuranceVisit(models.Model):
             "bold": True, "font_size": 18, "align": "center", "valign": "vcenter",
             "bg_color": color_navy, "font_color": color_white, "border": 1
         })
-        
+
         label_format = workbook.add_format({
             "bold": True, "bg_color": color_header_bg, "font_color": color_navy,
             "border": 1, "font_size": 10
         })
-        
+
         value_format = workbook.add_format({
             "border": 1, "font_size": 10, "valign": "vcenter"
         })
-        
+
         header_format = workbook.add_format({
             "bold": True, "bg_color": color_navy, "font_color": color_white,
             "border": 1, "align": "center", "valign": "vcenter", "font_size": 11
         })
-        
+
         section_format = workbook.add_format({
             "bold": True, "bg_color": "#d9e2f3", "font_color": color_navy,
             "border": 1, "valign": "vcenter", "font_size": 11
         })
-        
+
         percent_format = workbook.add_format({
             "border": 1, "num_format": "0.00%", "align": "center", "valign": "vcenter"
         })
-        
+
         number_format = workbook.add_format({
             "border": 1, "num_format": "0.00", "align": "center", "valign": "vcenter"
         })
@@ -311,7 +387,7 @@ class AbQualityAssuranceVisit(models.Model):
             (_("Manager"), self.department_manager_id.name or ""),
             (_("Visit Date"), fields.Date.to_string(self.visit_date) or ""),
         ]
-        
+
         summary_right = [
             (_("Visited By"), self.employee_id.name or ""),
             (_("Status"), dict(self._fields["state"].selection).get(self.state, "")),
@@ -324,21 +400,23 @@ class AbQualityAssuranceVisit(models.Model):
             # Left Column
             sheet.write(row, 0, summary_left[i][0], label_format)
             sheet.write(row, 1, summary_left[i][1], value_format)
-            
+
             # Right Column
             sheet.write(row, 3, summary_right[i][0], label_format)
-            sheet.write(row, 4, summary_right[i][1], number_format if isinstance(summary_right[i][1], (int, float)) else value_format)
+            sheet.write(row, 4, summary_right[i][1],
+                        number_format if isinstance(summary_right[i][1], (int, float)) else value_format)
             row += 1
 
         # Final Percentage Score Card
         sheet.merge_range(row, 0, row + 1, 1, _("TOTAL PERFORMANCE SCORE"), score_card_format)
         sheet.merge_range(row, 2, row + 1, 4, self.total_percentage / 100.0, workbook.add_format({
-            "bold": True, "font_size": 20, "num_format": "0.00%", "align": "center", 
-            "valign": "vcenter", "border": 2, "font_color": color_success if self.total_percentage >= 85 else (color_warning if self.total_percentage >= 70 else color_danger)
+            "bold": True, "font_size": 20, "num_format": "0.00%", "align": "center",
+            "valign": "vcenter", "border": 2, "font_color": color_success if self.total_percentage >= 85 else (
+                color_warning if self.total_percentage >= 70 else color_danger)
         }))
-        
+
         row += 3
-        
+
         # Table Headers
         headers = [
             _("Section"),
@@ -361,11 +439,11 @@ class AbQualityAssuranceVisit(models.Model):
                 sheet.write(row, 1, line.title or "", value_format)
                 sheet.write(row, 2, line.max_score or 0.0, number_format)
                 sheet.write(row, 3, line.score or 0.0, number_format)
-                
+
                 # Percentage with color coding logic (simplified for xlsxwriter)
                 p_val = line.percentage / 100.0
                 sheet.write(row, 4, p_val, percent_format)
-                
+
                 sheet.write(row, 5, line.attachment_name or "-", value_format)
                 row += 1
 
@@ -374,6 +452,6 @@ class AbQualityAssuranceVisit(models.Model):
         sheet.set_column("B:B", 45)
         sheet.set_column("C:E", 15)
         sheet.set_column("F:F", 25)
-        
+
         # Freeze panes
         sheet.freeze_panes(row - (row - 8), 0)

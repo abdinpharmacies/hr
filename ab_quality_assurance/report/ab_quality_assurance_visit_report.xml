@@ -4,14 +4,20 @@
         <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="web.external_layout">
-                    <div class="page" style="font-family: 'Helvetica', 'Arial', sans-serif; color: #333;">
+                    <div class="page" style="font-family: 'Helvetica', 'Arial', sans-serif; color: #333;" t-translation="on">
                         <style>
                             /* Professional Styling for Quality Report */
+                            .qa-page {
+                                direction: ltr;
+                            }
+                            .qa-page.is-rtl {
+                                direction: rtl;
+                            }
                             .qa-header-box {
                                 background-color: #f8f9fa;
                                 border-radius: 8px;
-                                padding: 20px;
-                                margin-bottom: 30px;
+                                padding: 14px 10px;
+                                margin-bottom: 18px;
                                 border-left: 5px solid #16324f;
                             }
                             .qa-report-title {
@@ -25,32 +31,37 @@
                             }
                             .qa-info-grid {
                                 width: 100%;
-                                border-collapse: separate;
-                                border-spacing: 0 8px;
+                                margin: 0 50px;
+                                border-collapse: collapse;
+                                table-layout: auto;
                             }
                             .qa-info-grid td {
-                                padding: 4px 8px;
+                                padding: 3px 6px;
                                 vertical-align: middle;
+                                border: none;
                             }
                             .qa-info-label {
                                 font-weight: bold;
                                 color: #555;
-                                width: 20%;
+                                width: 1%;
                                 font-size: 0.9rem;
+                                white-space: nowrap;
                             }
                             .qa-info-value {
                                 color: #000;
-                                width: 30%;
                                 font-size: 0.95rem;
+                                white-space: normal;
+                                overflow-wrap: anywhere;
                             }
                             
                             .qa-score-card {
                                 background: linear-gradient(135deg, #16324f, #27557f);
                                 color: white;
-                                padding: 15px;
+                                padding: 14px 12px;
                                 border-radius: 8px;
                                 text-align: center;
-                                margin-bottom: 30px;
+                                margin-top: 10px;
+                                margin-bottom: 18px;
                             }
                             .qa-score-title {
                                 font-size: 0.8rem;
@@ -64,13 +75,36 @@
                             }
 
                             .qa-section-header {
+                                width: 100%;
+                                border-collapse: collapse;
                                 background-color: #16324f;
                                 color: white;
-                                padding: 8px 15px;
                                 border-radius: 4px 4px 0 0;
-                                font-weight: bold;
-                                font-size: 1.1rem;
                                 margin-top: 25px;
+
+                                overflow: hidden;
+                            }
+                            .qa-section-header td {
+                                padding: 10px 16px;
+                                font-weight: bold;
+                                font-size: 1.05rem;
+                                vertical-align: middle;
+                                border: none;
+                            }
+                            .qa-section-header__name {
+                                width: 72%;
+                                text-align: center;
+                                word-break: break-word;
+                                padding-inline-start: 1.5cm;
+                                padding-inline-end: 1.5cm;
+                            }
+                            .qa-section-header__score {
+                                width: 28%;
+                                text-align: center;
+                                white-space: nowrap;
+                                font-size: 0.9rem;
+                                padding-inline-start: 1.5cm;
+                                padding-inline-end: 1.5cm;
                             }
                             
                             .qa-table {
@@ -81,7 +115,7 @@
                             .qa-table th {
                                 background-color: #f1f4f7;
                                 color: #16324f;
-                                padding: 10px;
+                                padding: 10px 16px;
                                 text-align: center;
                                 font-size: 0.85rem;
                                 border: 1px solid #dee2e6;
@@ -131,71 +165,71 @@
                             }
                         </style>
 
-                        <h2 class="qa-report-title text-center">Quality Assurance Visit Report</h2>
+                        <t t-set="is_rtl" t-value="(o.env.context.get('lang') or '').startswith('ar')"/>
+                        <div t-attf-class="qa-page #{'is-rtl' if is_rtl else ''}">
+                        <h2 class="qa-report-title text-center" t-translation="on">Quality Assurance Visit Report</h2>
                         
                         <!-- Summary Score Card -->
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="qa-header-box">
-                                    <table class="qa-info-grid">
-                                        <tr>
-                                            <td class="qa-info-label">Reference:</td>
-                                            <td class="qa-info-value"><span t-field="o.name"/></td>
-                                            <td class="qa-info-label">Visit Date:</td>
-                                            <td class="qa-info-value"><span t-field="o.visit_date"/></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="qa-info-label">Branch:</td>
-                                            <td class="qa-info-value"><span t-field="o.department_id"/></td>
-                                            <td class="qa-info-label">Visited By:</td>
-                                            <td class="qa-info-value"><span t-field="o.employee_id"/></td>
-                                        </tr>
-                                        <tr>
-                                            <td class="qa-info-label">Manager:</td>
-                                            <td class="qa-info-value"><span t-field="o.department_manager_id"/></td>
-                                            <td class="qa-info-label">Status:</td>
-                                            <td class="qa-info-value">
-                                                <span t-if="o.state == 'draft'" class="badge badge-info">Draft</span>
-                                                <span t-if="o.state == 'submitted'" class="badge badge-success">Submitted</span>
-                                            </td>
-                                        </tr>
-                                        <tr t-if="o.submitted_at">
-                                            <td class="qa-info-label">Submitted:</td>
-                                            <td class="qa-info-value" colspan="3"><span t-field="o.submitted_at"/></td>
-                                        </tr>
-                                    </table>
+                        <div class="qa-header-box">
+                            <table class="qa-info-grid">
+                                <tr>
+                                    <td class="qa-info-label" t-translation="on">Reference:</td>
+                                    <td class="qa-info-value"><span t-field="o.name"/></td>
+                                    <td class="qa-info-label" t-translation="on">Visit Date:</td>
+                                    <td class="qa-info-value"><span t-field="o.visit_date"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="qa-info-label" t-translation="on">Branch:</td>
+                                    <td class="qa-info-value"><span t-field="o.department_id"/></td>
+                                    <td class="qa-info-label" t-translation="on">Visited By:</td>
+                                    <td class="qa-info-value"><span t-field="o.employee_id"/></td>
+                                </tr>
+                                <tr>
+                                    <td class="qa-info-label" t-translation="on">Manager:</td>
+                                    <td class="qa-info-value"><span t-field="o.department_manager_id"/></td>
+                                    <td class="qa-info-label" t-translation="on">Status:</td>
+                                    <td class="qa-info-value">
+                                        <span t-if="o.state == 'draft'" class="badge badge-info" t-translation="on">Draft</span>
+                                        <span t-if="o.state == 'submitted'" class="badge badge-success" t-translation="on">Submitted</span>
+                                    </td>
+                                </tr>
+                                <tr t-if="o.submitted_at">
+                                    <td class="qa-info-label" t-translation="on">Submitted:</td>
+                                    <td class="qa-info-value" colspan="3"><span t-field="o.submitted_at"/></td>
+                                </tr>
+                            </table>
+
+                            <div class="qa-score-card">
+                                <div class="qa-score-title" t-translation="on">Final Score Percentage</div>
+                                <div class="qa-score-value"><span t-out="'{:.2f}%'.format(o.total_percentage or 0.0)"/></div>
+                                <div class="mt-2" style="font-size: 0.9rem;">
+                                    <span t-out="'{:.2f}'.format(o.earned_total_score or 0.0)"/> / <span t-out="'{:.2f}'.format(o.max_total_score or 0.0)"/> <span t-translation="on">Points</span>
                                 </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="qa-score-card">
-                                    <div class="qa-score-title">Final Score Percentage</div>
-                                    <div class="qa-score-value"><span t-out="'{:.2f}%'.format(o.total_percentage or 0.0)"/></div>
-                                    <div class="mt-2" style="font-size: 0.9rem;">
-                                        <span t-out="'{:.2f}'.format(o.earned_total_score or 0.0)"/> / <span t-out="'{:.2f}'.format(o.max_total_score or 0.0)"/> Points
-                                    </div>
-                                    <div class="qa-progress-container mt-3">
-                                        <div class="qa-progress-bar" t-att-style="'width: ' + str(min(max(o.total_percentage or 0.0, 0), 100)) + '%; ' + ('background-color: #dc3545;' if o.total_percentage &lt; 70 else 'background-color: #ffc107;' if o.total_percentage &lt; 85 else 'background-color: #28a745;')"></div>
-                                    </div>
+                                <div class="qa-progress-container mt-3">
+                                    <div class="qa-progress-bar" t-att-style="'width: ' + str(min(max(o.total_percentage or 0.0, 0), 100)) + '%; ' + ('background-color: #dc3545;' if o.total_percentage &lt; 70 else 'background-color: #ffc107;' if o.total_percentage &lt; 85 else 'background-color: #28a745;')"></div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Content Sections -->
                         <t t-foreach="o.visit_section_ids.sorted(lambda section: (section.sequence, section.id))" t-as="section">
-                            <div class="qa-section-header">
-                                <span t-out="section.name"/>
-                                <span class="float-right" style="font-size: 0.9rem;">
-                                    Score: <t t-out="'{:.2f}%'.format(section.percentage or 0.0)"/>
-                                </span>
-                            </div>
+                            <table class="qa-section-header">
+                                <tr>
+                                    <td class="qa-section-header__name"><span t-out="section.name"/></td>
+                                    <td class="qa-section-header__score">
+                                        <span t-translation="on">Score:</span>
+                                        <span t-out="'{:.2f}%'.format(section.percentage or 0.0)"/>
+                                    </td>
+                                </tr>
+                            </table>
                             <table class="qa-table">
                                 <thead>
                                     <tr>
-                                        <th class="text-left">Standard Title</th>
-                                        <th class="qa-cell-center">Max</th>
-                                        <th class="qa-cell-center">Earned</th>
-                                        <th class="qa-cell-center">%</th>
-                                        <th class="text-left">Evidence / Attachment</th>
+                                        <th class="text-left" t-translation="on">Standard Title</th>
+                                        <th class="qa-cell-center" t-translation="on">Max</th>
+                                        <th class="qa-cell-center" t-translation="on">Earned</th>
+                                        <th class="qa-cell-center" t-translation="on">%</th>
+                                        <th class="text-left" t-translation="on">Evidence / Attachment</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -209,13 +243,13 @@
                                         <td class="qa-cell-attachment"><span t-out="line.attachment_name or '-'"/></td>
                                     </tr>
                                     <tr t-if="not section.visit_line_ids">
-                                        <td colspan="5" class="text-center text-muted italic">No evaluation criteria found for this section.</td>
+                                        <td colspan="5" class="text-center text-muted italic" t-translation="on">No evaluation criteria found for this section.</td>
                                     </tr>
                                 </tbody>
                                 <t t-if="section.visit_line_ids">
                                     <tfoot>
                                         <tr class="qa-footer-summary">
-                                            <td>SECTION SUMMARY TOTAL</td>
+                                            <td t-translation="on">SECTION SUMMARY TOTAL</td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}'.format(section.max_score or 0.0)"/></td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}'.format(section.earned_score or 0.0)"/></td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}%'.format(section.percentage or 0.0)"/></td>
@@ -232,7 +266,7 @@
                                 <tr>
                                     <td style="width: 33%; border: none; text-align: center;">
                                         <div style="border-top: 1px solid #000; padding-top: 10px; width: 80%; margin: 0 auto;">
-                                            <strong>Visit Performer</strong><br/>
+                                            <strong t-translation="on">Visit Performer</strong><br/>
                                             <span t-field="o.employee_id"/>
                                         </div>
                                     </td>
@@ -242,18 +276,32 @@
                                     </td>
                                     <td style="width: 33%; border: none; text-align: center;">
                                         <div style="border-top: 1px solid #000; padding-top: 10px; width: 80%; margin: 0 auto;">
-                                            <strong>Department Manager</strong><br/>
+                                            <strong t-translation="on">Department Manager</strong><br/>
                                             <span t-field="o.department_manager_id"/>
                                         </div>
                                     </td>
                                 </tr>
                             </table>
                         </div>
+                        </div>
                     </div>
                 </t>
             </t>
         </t>
     </template>
+
+    <record id="paperformat_ab_quality_assurance_visit" model="report.paperformat">
+        <field name="name">Quality Visit A4</field>
+        <field name="default" eval="False"/>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">5</field>
+        <field name="margin_bottom">10</field>
+        <field name="margin_left">7</field>
+        <field name="margin_right">7</field>
+        <field name="header_spacing">5</field>
+        <field name="dpi">90</field>
+    </record>
 
     <record id="action_report_ab_quality_assurance_visit" model="ir.actions.report">
         <field name="name">Quality Visit</field>
@@ -263,6 +311,7 @@
         <field name="report_file">ab_quality_assurance.report_ab_quality_assurance_visit_document</field>
         <field name="binding_model_id" ref="model_ab_quality_assurance_visit"/>
         <field name="binding_type">report</field>
+        <field name="paperformat_id" ref="paperformat_ab_quality_assurance_visit"/>
         <field name="print_report_name">'Quality Visit - %s' % (object.name or '')</field>
     </record>
 </odoo>
