@@ -1,15 +1,21 @@
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from uuid import uuid4
 
 VISIT_SEQUENCE_CODE = "ab_quality_assurance.visit"
 BRANCH_PREFIX = "فرع"
+QUALITY_EDITOR_GROUPS = (
+    "ab_quality_assurance.group_ab_quality_assurance_user",
+    "ab_quality_assurance.group_ab_quality_assurance_manager",
+)
 
 
 class AbQualityAssuranceVisit(models.Model):
     _name = "ab_quality_assurance_visit"
     _description = "Quality Assurance Visit"
+    _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "visit_date desc, id desc"
+    _mail_post_access = "read"
 
     name = fields.Char(required=True, readonly=True, copy=False)
     ui_title = fields.Char(compute="_compute_ui_texts", readonly=True)
@@ -39,7 +45,13 @@ class AbQualityAssuranceVisit(models.Model):
     ui_evaluation_sections_title = fields.Char(compute="_compute_ui_texts", readonly=True)
     ui_evaluation_sections_subtitle = fields.Char(compute="_compute_ui_texts", readonly=True)
     user_id = fields.Many2one("res.users", default=lambda self: self.env.user, readonly=True)
-    employee_id = fields.Many2one("ab_hr_employee", required=False, ondelete="restrict", string="Visited By")
+    employee_id = fields.Many2one(
+        "ab_hr_employee",
+        required=False,
+        ondelete="restrict",
+        string="Visited By",
+        readonly=True,
+    )
     department_id = fields.Many2one("ab_hr_department", required=False, ondelete="restrict", index=True)
     department_manager_id = fields.Many2one(
         "ab_hr_employee",
@@ -49,6 +61,7 @@ class AbQualityAssuranceVisit(models.Model):
     )
     visit_date = fields.Date(required=True, default=fields.Date.today)
     notes = fields.Text(copy=False)
+    can_edit_evaluation = fields.Boolean(compute="_compute_can_edit_evaluation")
     state = fields.Selection(
         [("draft", _("Draft")), ("submitted", _("Submitted"))],
         default="draft",
@@ -87,6 +100,14 @@ class AbQualityAssuranceVisit(models.Model):
                     sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
             record.line_count = len(lines)
             record.section_count = len(record.visit_section_ids)
+
+    @api.depends_context("uid")
+    def _compute_can_edit_evaluation(self):
+        user = self.env.user
+        can_edit_own = any(user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
+        can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
+        for record in self:
+            record.can_edit_evaluation = bool(can_manage_all or (can_edit_own and record.user_id == user))
 
     @api.depends("state", "name")
     @api.depends_context("lang")
@@ -129,7 +150,11 @@ class AbQualityAssuranceVisit(models.Model):
 
     @api.model
     def _default_employee_id(self):
-        employee = self.env["ab_hr_employee"].sudo().search([("user_id", "=", self.env.user.id)], limit=1)
+        return self._get_user_employee_id(self.env.user)
+
+    @api.model
+    def _get_user_employee_id(self, user):
+        employee = self.env["ab_hr_employee"].sudo().search([("user_id", "=", user.id)], limit=1)
         return employee.id
 
     @api.model
@@ -169,7 +194,7 @@ class AbQualityAssuranceVisit(models.Model):
                     record.user_id
                     and record.user_id.ab_employee_ids
                     and record.employee_id
-                    and not record.user_id.has_group("ab_quality_assurance.group_ab_quality_assurance_admin")
+                    and not record.user_id.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
             ):
                 if record.user_id == self.env.user and record.employee_id.user_id != record.user_id:
                     raise ValidationError(_("The visit performer must match the current user's employee."))
@@ -186,9 +211,13 @@ class AbQualityAssuranceVisit(models.Model):
         prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
         records = super().create(prepared_vals_list)
         records._validate_visit_sections()
+        records._sync_section_department_followers()
         return records
 
     def write(self, vals):
+        if not self._is_quality_editor() or not self._can_manage_visit():
+            raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
+
         if any(record.state == "submitted" for record in self) and not self.env.context.get(
                 "allow_submitted_visit_write"):
             raise UserError(_("Submitted visits cannot be modified."))
@@ -199,6 +228,7 @@ class AbQualityAssuranceVisit(models.Model):
             prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
         result = super().write(prepared_vals)
         self._validate_visit_sections()
+        self._sync_section_department_followers()
         return result
 
     def unlink(self):
@@ -206,14 +236,26 @@ class AbQualityAssuranceVisit(models.Model):
             raise UserError(_("Submitted visits cannot be deleted."))
         return super().unlink()
 
+    def _is_quality_editor(self):
+        return any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
+
+    def _can_manage_visit(self):
+        user = self.env.user
+        if user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager"):
+            return True
+        return all(visit.user_id == user for visit in self)
+
     def action_submit_visit(self):
+        if not self._is_quality_editor() or not self._can_manage_visit():
+            raise AccessError(_("Only quality assurance users can submit visits."))
+        submitter_employee_id = self._default_employee_id()
+        if not submitter_employee_id:
+            raise ValidationError(_("The submitting user must have an employee profile before submitting the visit."))
         for record in self:
             if record.state != "draft":
                 raise UserError(_("Only draft visits can be submitted."))
             if not record.department_id:
                 raise ValidationError(_("Please select a department before submitting the visit."))
-            if not record.employee_id:
-                raise ValidationError(_("Please set the performer before submitting the visit."))
             if not record.visit_section_ids:
                 raise ValidationError(_("There are no configured sections to evaluate in this visit."))
             visit_lines = record.visit_section_ids.mapped("visit_line_ids")
@@ -226,6 +268,7 @@ class AbQualityAssuranceVisit(models.Model):
             record._validate_visit_sections()
             record.with_context(allow_submitted_visit_write=True).write(
                 {
+                    "employee_id": submitter_employee_id,
                     "state": "submitted",
                     "submitted_at": fields.Datetime.now(),
                 }
@@ -310,6 +353,18 @@ class AbQualityAssuranceVisit(models.Model):
             )
         return commands
 
+    def _get_section_department_manager_partners(self):
+        self.ensure_one()
+        return self.visit_section_ids.mapped("department_manager_id.user_id.partner_id").filtered(
+            lambda partner: partner
+        )
+
+    def _sync_section_department_followers(self):
+        for record in self:
+            partners = record._get_section_department_manager_partners()
+            if partners:
+                record.sudo().message_subscribe(partner_ids=partners.ids)
+
     def _validate_visit_sections(self):
         for record in self:
             invalid_sections = record.visit_section_ids.filtered(
@@ -354,6 +409,10 @@ class AbQualityAssuranceVisit(models.Model):
             "border": 1, "font_size": 10, "valign": "vcenter"
         })
 
+        note_format = workbook.add_format({
+            "border": 1, "font_size": 10, "valign": "top", "text_wrap": True
+        })
+
         header_format = workbook.add_format({
             "bold": True, "bg_color": color_navy, "font_color": color_white,
             "border": 1, "align": "center", "valign": "vcenter", "font_size": 11
@@ -378,7 +437,7 @@ class AbQualityAssuranceVisit(models.Model):
         })
 
         # Header Title
-        sheet.merge_range("A1:F2", _("QUALITY ASSURANCE VISIT REPORT"), title_format)
+        sheet.merge_range("A1:G2", _("QUALITY ASSURANCE VISIT REPORT"), title_format)
 
         # Summary Grid (2 columns)
         summary_left = [
@@ -424,6 +483,7 @@ class AbQualityAssuranceVisit(models.Model):
             _("Max Score"),
             _("Earned Score"),
             _("Percentage"),
+            _("Score Note"),
             _("Evidence"),
         ]
         for column, header in enumerate(headers):
@@ -432,7 +492,7 @@ class AbQualityAssuranceVisit(models.Model):
 
         # Data Rows
         for section in self.visit_section_ids.sorted(lambda record: (record.sequence, record.id)):
-            sheet.merge_range(row, 0, row, 5, section.name or "", section_format)
+            sheet.merge_range(row, 0, row, 6, section.name or "", section_format)
             row += 1
             for line in section.visit_line_ids.sorted(lambda record: (record.sequence, record.id)):
                 sheet.write(row, 0, section.name or "", value_format)
@@ -444,14 +504,16 @@ class AbQualityAssuranceVisit(models.Model):
                 p_val = line.percentage / 100.0
                 sheet.write(row, 4, p_val, percent_format)
 
-                sheet.write(row, 5, line.attachment_name or "-", value_format)
+                sheet.write(row, 5, line.note or "-", note_format)
+                sheet.write(row, 6, line.attachment_name or "-", value_format)
                 row += 1
 
         # Column Widths
         sheet.set_column("A:A", 20)
         sheet.set_column("B:B", 45)
         sheet.set_column("C:E", 15)
-        sheet.set_column("F:F", 25)
+        sheet.set_column("F:F", 35)
+        sheet.set_column("G:G", 25)
 
         # Freeze panes
         sheet.freeze_panes(row - (row - 8), 0)

@@ -19,6 +19,12 @@ class AbHrDepartment(models.Model):
         result = super().write(vals)
         if self._qa_should_sync_department(vals):
             self.env["ab_quality_assurance.access"].sudo()._sync_quality_manager_group()
+        if "manager_id" in vals:
+            sections = self.env["ab_quality_assurance_section"].sudo().search([("department_id", "in", self.ids)])
+            visits = self.env["ab_quality_assurance_visit"].sudo().search(
+                [("visit_section_ids.section_id", "in", sections.ids)]
+            )
+            visits._sync_section_department_followers()
         return result
 
     def unlink(self):

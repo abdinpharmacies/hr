@@ -13,26 +13,30 @@
                             <div class="o_qa_visit_summary_header">
                                 <field name="name" readonly="1"/>
                             </div>
-                            <group col="3">
+                            <group col="5">
+                                <field name="department_id" readonly="1"/>
+                                <field name="department_manager_id" readonly="1"/>
                                 <field name="earned_score" readonly="1"/>
                                 <field name="max_score" readonly="1"/>
                                 <field name="percentage" readonly="1"/>
                             </group>
                         </div>
                         <field name="visit_line_ids" readonly="visit_id.state == 'submitted'">
-                            <list editable="bottom" create="false" delete="false">
+                            <list class="o_qa_visit_line_list" editable="bottom" create="false" delete="false">
                                 <field name="visit_section_id" column_invisible="1"/>
                                 <field name="visit_id" column_invisible="1"/>
+                                <field name="visit_state" column_invisible="1"/>
+                                <field name="can_upload_attachment" column_invisible="1"/>
                                 <field name="section_id" column_invisible="1"/>
                                 <field name="standard_id" column_invisible="1"/>
                                 <field name="sequence" widget="handle"/>
                                 <field name="title" readonly="1"/>
                                 <field name="max_score" readonly="1"/>
-                                <field name="score" options="{'type': 'number', 'step': 1}"/>
-                                <field name="percentage" readonly="1"/>
-                                <field name="attachment" widget="binary" filename="attachment_name"/>
+                                <field name="score" options="{'type': 'number', 'step': 1}" class="o_qa_score_column"/>
+                                <field name="percentage" readonly="1" class="o_qa_percentage_column"/>
+                                <field name="note" string="Score Note" optional="show"/>
+                                <field name="attachment" widget="qa_list_binary" filename="attachment_name"/>
                                 <field name="attachment_name" optional="hide"/>
-                                <field name="has_attachment" optional="show" readonly="1"/>
                             </list>
                             <form string="Standard Evaluation" create="false" delete="false">
                                 <sheet>
@@ -50,7 +54,11 @@
                                         <group>
                                             <field name="score" readonly="visit_id.state == 'submitted'" options="{'type': 'number', 'step': 1}"/>
                                             <field name="has_attachment" readonly="1"/>
+                                            <button name="action_download_attachment" type="object" string="Download Attachment" icon="fa-paperclip" class="btn-secondary" invisible="not has_attachment"/>
                                         </group>
+                                    </group>
+                                    <group>
+                                        <field name="note" string="Score Note" placeholder="Clarify the reason for this score..." readonly="visit_id.state == 'submitted'"/>
                                     </group>
                                     <group>
                                         <field name="attachment" filename="attachment_name" readonly="visit_id.state == 'submitted'"/>
@@ -84,7 +92,11 @@
                             <group>
                                 <field name="score" readonly="visit_id.state == 'submitted'" options="{'type': 'number', 'step': 1}"/>
                                 <field name="has_attachment" readonly="1"/>
+                                <button name="action_download_attachment" type="object" string="Download Attachment" icon="fa-paperclip" class="btn-secondary" invisible="not has_attachment"/>
                             </group>
+                        </group>
+                        <group>
+                            <field name="note" string="Score Note" placeholder="Clarify the reason for this score..." readonly="visit_id.state == 'submitted'"/>
                         </group>
                         <group>
                             <field name="attachment" filename="attachment_name" readonly="visit_id.state == 'submitted'"/>
@@ -133,13 +145,14 @@
                         <button name="action_export_xlsx" type="object" string="Export Excel" icon="fa-file-excel-o" class="btn-secondary o_qa_export_xlsx" invisible="not id"/>
                         <button name="action_submit_visit" type="object" string="Submit Visit"
                                 class="btn-primary"
-                                invisible="state != 'draft'"/>
+                                invisible="state != 'draft' or not can_edit_evaluation"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted"/>
                     </header>
                     <sheet>
                         <widget name="web_ribbon" title="Submitted" bg_color="bg-success" invisible="state != 'submitted'"/>
                         <field name="user_id" invisible="1"/>
                         <field name="state" invisible="1"/>
+                        <field name="can_edit_evaluation" invisible="1"/>
                         <div class="o_qa_visit_hero">
                             <div class="o_qa_visit_hero__content">
                                 <div class="o_form_label o_qa_visit_hero__eyebrow">
@@ -188,7 +201,7 @@
                                         <div class="o_form_label o_qa_visit_overview_item__label">
                                             <field name="ui_overview_department_label" nolabel="1" readonly="1"/>
                                         </div>
-                                        <field name="department_id" nolabel="1" readonly="state == 'submitted'"
+                                        <field name="department_id" nolabel="1" readonly="state == 'submitted' or not can_edit_evaluation"
                                                domain="[('name', '=like', 'فرع%')]"/>
                                     </div>
                                     <div class="o_qa_visit_overview_item">
@@ -213,13 +226,13 @@
                                         <div class="o_form_label o_qa_visit_overview_item__label">
                                             <field name="ui_visit_date_label" nolabel="1" readonly="1"/>
                                         </div>
-                                        <field name="visit_date" nolabel="1" readonly="state == 'submitted'"/>
+                                        <field name="visit_date" nolabel="1" readonly="state == 'submitted' or not can_edit_evaluation"/>
                                     </div>
                                     <div class="o_qa_visit_overview_item" invisible="not id">
                                         <div class="o_form_label o_qa_visit_overview_item__label">
                                             <field name="ui_visit_performer_label" nolabel="1" readonly="1"/>
                                         </div>
-                                        <field name="employee_id" nolabel="1" readonly="state == 'submitted'"/>
+                                        <field name="employee_id" nolabel="1" readonly="1"/>
                                     </div>
                                     <div class="o_qa_visit_overview_item" invisible="state != 'submitted'">
                                         <div class="o_form_label o_qa_visit_overview_item__label">
@@ -280,7 +293,7 @@
                             </div>
                             <field name="notes"
                                    nolabel="1"
-                                   readonly="state == 'submitted'"/>
+                                   readonly="state == 'submitted' or not can_edit_evaluation"/>
                         </div>
                         <notebook>
                             <page string="Sections">
@@ -294,11 +307,13 @@
                                         </span>
                                     </div>
                                 </div>
-                                <field name="visit_section_ids" readonly="state == 'submitted'">
+                                <field name="visit_section_ids" readonly="state == 'submitted' or not can_edit_evaluation">
                                     <list class="o_qa_visit_section_list" create="false" delete="false" open_form_view="True">
                                         <field name="section_id" column_invisible="1"/>
                                         <field name="sequence" widget="handle"/>
                                         <field name="name" string="Section" readonly="1"/>
+                                        <field name="department_id" readonly="1" optional="show"/>
+                                        <field name="department_manager_id" readonly="1" optional="show"/>
                                         <field name="earned_score" readonly="1"/>
                                         <field name="max_score" readonly="1"/>
                                         <field name="percentage" readonly="1" widget="progressbar"/>
@@ -311,7 +326,9 @@
                                                 <div class="o_qa_visit_summary_header">
                                                     <field name="name" readonly="1"/>
                                                 </div>
-                                                <group col="3">
+                                                <group col="5">
+                                                    <field name="department_id" readonly="1"/>
+                                                    <field name="department_manager_id" readonly="1"/>
                                                     <field name="earned_score" readonly="1"/>
                                                     <field name="max_score" readonly="1"/>
                                                     <field name="percentage" readonly="1"/>
@@ -321,16 +338,18 @@
                                                 <list class="o_qa_visit_line_list" editable="bottom" create="false" delete="false">
                                                     <field name="visit_section_id" column_invisible="1"/>
                                                     <field name="visit_id" column_invisible="1"/>
+                                                    <field name="visit_state" column_invisible="1"/>
+                                                    <field name="can_upload_attachment" column_invisible="1"/>
                                                     <field name="section_id" column_invisible="1"/>
                                                     <field name="standard_id" column_invisible="1"/>
                                                     <field name="sequence" widget="handle"/>
                                                     <field name="title" readonly="1"/>
                                                     <field name="max_score" readonly="1"/>
-                                                    <field name="score" options="{'type': 'number', 'step': 1}"/>
-                                                    <field name="percentage" readonly="1" widget="progressbar"/>
-                                                    <field name="attachment" widget="binary" filename="attachment_name"/>
+                                                    <field name="score" options="{'type': 'number', 'step': 1}" class="o_qa_score_column"/>
+                                                    <field name="percentage" readonly="1" class="o_qa_percentage_column"/>
+                                                    <field name="note" string="Score Note" optional="show"/>
+                                                    <field name="attachment" widget="qa_list_binary" filename="attachment_name"/>
                                                     <field name="attachment_name" optional="hide"/>
-                                                    <field name="has_attachment" optional="show" readonly="1"/>
                                                 </list>
                                                 <form string="Visit Standard Score" create="false" delete="false">
                                                     <sheet>
@@ -348,7 +367,11 @@
                                                             <group>
                                                                 <field name="score" readonly="visit_id.state == 'submitted'" options="{'type': 'number', 'step': 1}"/>
                                                                 <field name="has_attachment" readonly="1"/>
+                                                                <button name="action_download_attachment" type="object" string="Download Attachment" icon="fa-paperclip" class="btn-secondary" invisible="not has_attachment"/>
                                                             </group>
+                                                        </group>
+                                                        <group>
+                                                            <field name="note" string="Score Note" placeholder="Clarify the reason for this score..." readonly="visit_id.state == 'submitted'"/>
                                                         </group>
                                                         <group>
                                                             <field name="attachment" filename="attachment_name" readonly="visit_id.state == 'submitted'"/>
@@ -363,6 +386,7 @@
                             </page>
                         </notebook>
                     </sheet>
+                    <chatter/>
                 </form>
             </field>
         </record>
