@@ -131,15 +131,21 @@
                                 background-color: #fafafa;
                             }
                             .qa-cell-standard {
-                                width: 45%;
+                                width: 36%;
                                 font-weight: 500;
                             }
                             .qa-cell-center {
                                 text-align: center;
-                                width: 11%;
+                                width: 9%;
+                            }
+                            .qa-cell-note {
+                                width: 28%;
+                                color: #444;
+                                font-size: 0.82rem;
+                                overflow-wrap: anywhere;
                             }
                             .qa-cell-attachment {
-                                width: 22%;
+                                width: 18%;
                                 color: #666;
                                 font-size: 0.8rem;
                             }
@@ -229,6 +235,7 @@
                                         <th class="qa-cell-center" t-translation="on">Max</th>
                                         <th class="qa-cell-center" t-translation="on">Earned</th>
                                         <th class="qa-cell-center" t-translation="on">%</th>
+                                        <th class="text-left" t-translation="on">Score Note</th>
                                         <th class="text-left" t-translation="on">Evidence / Attachment</th>
                                     </tr>
                                 </thead>
@@ -240,10 +247,11 @@
                                             <span t-out="'{:.2f}'.format(line.score or 0.0)"/>
                                         </td>
                                         <td class="qa-cell-center"><span t-out="'{:.2f}%'.format(line.percentage or 0.0)"/></td>
+                                        <td class="qa-cell-note"><span t-out="line.note or '-'"/></td>
                                         <td class="qa-cell-attachment"><span t-out="line.attachment_name or '-'"/></td>
                                     </tr>
                                     <tr t-if="not section.visit_line_ids">
-                                        <td colspan="5" class="text-center text-muted italic" t-translation="on">No evaluation criteria found for this section.</td>
+                                        <td colspan="6" class="text-center text-muted italic" t-translation="on">No evaluation criteria found for this section.</td>
                                     </tr>
                                 </tbody>
                                 <t t-if="section.visit_line_ids">
@@ -253,6 +261,7 @@
                                             <td class="qa-cell-center"><span t-out="'{:.2f}'.format(section.max_score or 0.0)"/></td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}'.format(section.earned_score or 0.0)"/></td>
                                             <td class="qa-cell-center"><span t-out="'{:.2f}%'.format(section.percentage or 0.0)"/></td>
+                                            <td></td>
                                             <td></td>
                                         </tr>
                                     </tfoot>

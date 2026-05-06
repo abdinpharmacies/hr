@@ -1,9 +1,15 @@
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from uuid import uuid4
 
 VISIT_SEQUENCE_CODE = "ab_quality_assurance.visit"
 BRANCH_PREFIX = "فرع"
+QUALITY_EDITOR_GROUPS = (
+    "ab_quality_assurance.group_ab_quality_assurance_user",
+    "ab_quality_assurance.group_ab_quality_assurance_manager",
+)
+FOLLOW_UP_WRITE_FIELDS = {"follow_up_ids"}
+FOLLOW_UP_RESPONSE_WRITE_FIELDS = {"response"}
 
 
 class AbQualityAssuranceVisit(models.Model):
@@ -49,6 +55,10 @@ class AbQualityAssuranceVisit(models.Model):
     )
     visit_date = fields.Date(required=True, default=fields.Date.today)
     notes = fields.Text(copy=False)
+    can_edit_evaluation = fields.Boolean(compute="_compute_can_edit_evaluation")
+    can_manage_follow_up = fields.Boolean(compute="_compute_follow_up_permissions")
+    can_edit_follow_up_response = fields.Boolean(compute="_compute_follow_up_permissions")
+    follow_up_ids = fields.One2many("ab_quality_assurance_visit_followup", "visit_id", string="Follow Up")
     state = fields.Selection(
         [("draft", _("Draft")), ("submitted", _("Submitted"))],
         default="draft",
@@ -87,6 +97,27 @@ class AbQualityAssuranceVisit(models.Model):
                     sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
             record.line_count = len(lines)
             record.section_count = len(record.visit_section_ids)
+
+    @api.depends_context("uid")
+    def _compute_can_edit_evaluation(self):
+        user = self.env.user
+        can_edit_own = any(user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
+        can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
+        for record in self:
+            record.can_edit_evaluation = bool(can_manage_all or (can_edit_own and record.user_id == user))
+
+    @api.depends("user_id", "follow_up_ids.department_id")
+    @api.depends_context("uid")
+    def _compute_follow_up_permissions(self):
+        user_departments = self.env.user.ab_department_ids
+        user = self.env.user
+        can_edit_own = any(user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
+        can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
+        for record in self:
+            record.can_manage_follow_up = bool(can_manage_all or (can_edit_own and record.user_id == user))
+            record.can_edit_follow_up_response = bool(
+                record.follow_up_ids.filtered(lambda follow_up: follow_up.department_id in user_departments)
+            )
 
     @api.depends("state", "name")
     @api.depends_context("lang")
@@ -169,7 +200,7 @@ class AbQualityAssuranceVisit(models.Model):
                     record.user_id
                     and record.user_id.ab_employee_ids
                     and record.employee_id
-                    and not record.user_id.has_group("ab_quality_assurance.group_ab_quality_assurance_admin")
+                    and not record.user_id.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
             ):
                 if record.user_id == self.env.user and record.employee_id.user_id != record.user_id:
                     raise ValidationError(_("The visit performer must match the current user's employee."))
@@ -189,6 +220,14 @@ class AbQualityAssuranceVisit(models.Model):
         return records
 
     def write(self, vals):
+        if set((vals or {}).keys()) == FOLLOW_UP_WRITE_FIELDS:
+            if not self._is_quality_editor():
+                self._check_follow_up_response_write(vals)
+            return super().write(vals)
+
+        if not self._is_quality_editor() or not self._can_manage_visit():
+            raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
+
         if any(record.state == "submitted" for record in self) and not self.env.context.get(
                 "allow_submitted_visit_write"):
             raise UserError(_("Submitted visits cannot be modified."))
@@ -206,7 +245,37 @@ class AbQualityAssuranceVisit(models.Model):
             raise UserError(_("Submitted visits cannot be deleted."))
         return super().unlink()
 
+    def _is_quality_editor(self):
+        return any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
+
+    def _can_manage_visit(self):
+        user = self.env.user
+        if user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager"):
+            return True
+        return all(visit.user_id == user for visit in self)
+
+    def _check_follow_up_response_write(self, vals):
+        commands = vals.get("follow_up_ids") or []
+        if not commands:
+            raise AccessError(_("Only selected departments can add follow-up responses."))
+        user_departments = self.env.user.ab_department_ids
+        follow_up_model = self.env["ab_quality_assurance_visit_followup"]
+        for command in commands:
+            if not isinstance(command, (list, tuple)) or len(command) < 3 or command[0] != 1:
+                raise AccessError(_("Only selected departments can add follow-up responses."))
+            follow_up = follow_up_model.browse(command[1]).exists()
+            values = command[2] or {}
+            if (
+                    not follow_up
+                    or follow_up.visit_id not in self
+                    or follow_up.department_id not in user_departments
+                    or set(values.keys()) - FOLLOW_UP_RESPONSE_WRITE_FIELDS
+            ):
+                raise AccessError(_("Only selected departments can add follow-up responses."))
+
     def action_submit_visit(self):
+        if not self._is_quality_editor() or not self._can_manage_visit():
+            raise AccessError(_("Only quality assurance users can submit visits."))
         for record in self:
             if record.state != "draft":
                 raise UserError(_("Only draft visits can be submitted."))
@@ -354,6 +423,10 @@ class AbQualityAssuranceVisit(models.Model):
             "border": 1, "font_size": 10, "valign": "vcenter"
         })
 
+        note_format = workbook.add_format({
+            "border": 1, "font_size": 10, "valign": "top", "text_wrap": True
+        })
+
         header_format = workbook.add_format({
             "bold": True, "bg_color": color_navy, "font_color": color_white,
             "border": 1, "align": "center", "valign": "vcenter", "font_size": 11
@@ -378,7 +451,7 @@ class AbQualityAssuranceVisit(models.Model):
         })
 
         # Header Title
-        sheet.merge_range("A1:F2", _("QUALITY ASSURANCE VISIT REPORT"), title_format)
+        sheet.merge_range("A1:G2", _("QUALITY ASSURANCE VISIT REPORT"), title_format)
 
         # Summary Grid (2 columns)
         summary_left = [
@@ -424,6 +497,7 @@ class AbQualityAssuranceVisit(models.Model):
             _("Max Score"),
             _("Earned Score"),
             _("Percentage"),
+            _("Score Note"),
             _("Evidence"),
         ]
         for column, header in enumerate(headers):
@@ -432,7 +506,7 @@ class AbQualityAssuranceVisit(models.Model):
 
         # Data Rows
         for section in self.visit_section_ids.sorted(lambda record: (record.sequence, record.id)):
-            sheet.merge_range(row, 0, row, 5, section.name or "", section_format)
+            sheet.merge_range(row, 0, row, 6, section.name or "", section_format)
             row += 1
             for line in section.visit_line_ids.sorted(lambda record: (record.sequence, record.id)):
                 sheet.write(row, 0, section.name or "", value_format)
@@ -444,14 +518,16 @@ class AbQualityAssuranceVisit(models.Model):
                 p_val = line.percentage / 100.0
                 sheet.write(row, 4, p_val, percent_format)
 
-                sheet.write(row, 5, line.attachment_name or "-", value_format)
+                sheet.write(row, 5, line.note or "-", note_format)
+                sheet.write(row, 6, line.attachment_name or "-", value_format)
                 row += 1
 
         # Column Widths
         sheet.set_column("A:A", 20)
         sheet.set_column("B:B", 45)
         sheet.set_column("C:E", 15)
-        sheet.set_column("F:F", 25)
+        sheet.set_column("F:F", 35)
+        sheet.set_column("G:G", 25)
 
         # Freeze panes
         sheet.freeze_panes(row - (row - 8), 0)

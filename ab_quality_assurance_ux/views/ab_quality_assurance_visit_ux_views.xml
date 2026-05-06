@@ -107,7 +107,7 @@
                         <div class="o_qa_ux_card_icon bg-primary-light"><i class="fa fa-building"/></div>
                         <div class="o_qa_ux_card_content">
                             <label for="department_id" string="Target Unit"/>
-                            <div class="fw-bold fs-5"><field name="department_id" readonly="state == 'submitted'" domain="[('name', '=like', 'فرع%')]"/></div>
+                            <div class="fw-bold fs-5"><field name="department_id" readonly="state == 'submitted' or not can_edit_evaluation" domain="[('name', '=like', 'فرع%')]"/></div>
                             <div class="text-muted small"><field name="department_manager_id"/></div>
                         </div>
                     </div>
@@ -115,8 +115,8 @@
                         <div class="o_qa_ux_card_icon bg-info-light"><i class="fa fa-calendar"/></div>
                         <div class="o_qa_ux_card_content">
                             <label for="visit_date"/>
-                            <div class="fw-bold fs-5"><field name="visit_date" readonly="state == 'submitted'"/></div>
-                            <div class="text-muted small">Performer: <field name="employee_id" readonly="state == 'submitted'"/></div>
+                            <div class="fw-bold fs-5"><field name="visit_date" readonly="state == 'submitted' or not can_edit_evaluation"/></div>
+                            <div class="text-muted small">Performer: <field name="employee_id" readonly="state == 'submitted' or not can_edit_evaluation"/></div>
                         </div>
                     </div>
                     <div class="o_qa_ux_card">
@@ -137,12 +137,12 @@
             <xpath expr="//field[@name='visit_section_ids']" position="attributes">
                 <attribute name="class">o_qa_ux_section_main_list</attribute>
             </xpath>
-            
+
             <xpath expr="//field[@name='visit_section_ids']/list" position="attributes">
                 <attribute name="decoration-success">percentage &gt;= 90</attribute>
                 <attribute name="decoration-danger">percentage &lt; 50</attribute>
             </xpath>
-            
+
             <xpath expr="//field[@name='visit_section_ids']/list/field[@name='percentage']" position="attributes">
                 <attribute name="widget">progressbar</attribute>
             </xpath>
@@ -168,15 +168,11 @@
             </xpath>
 
             <xpath expr="//field[@name='visit_section_ids']/form//field[@name='visit_line_ids']/list" position="attributes">
-                <attribute name="class">o_qa_ux_line_list</attribute>
+                <attribute name="class">o_qa_visit_line_list o_qa_ux_line_list</attribute>
             </xpath>
 
             <xpath expr="//field[@name='visit_section_ids']/form//field[@name='visit_line_ids']/list/field[@name='title']" position="attributes">
                 <attribute name="class">fw-bold text-primary fs-6</attribute>
-            </xpath>
-            
-            <xpath expr="//field[@name='visit_section_ids']/form//field[@name='visit_line_ids']/list/field[@name='percentage']" position="attributes">
-                <attribute name="widget">progressbar</attribute>
             </xpath>
         </field>
     </record>

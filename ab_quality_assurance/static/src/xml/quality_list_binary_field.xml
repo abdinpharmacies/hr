@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_quality_assurance.QualityListBinaryField">
+        <t t-if="props.record.data[props.name]">
+            <t t-if="props.readonly">
+                <a class="o_form_uri o_qa_attachment_download" href="#" t-on-click.prevent="onFileDownload">
+                    <span class="fa fa-download me-1"/>
+                    <t t-if="fileName" t-esc="fileName"/>
+                </a>
+            </t>
+            <t t-else="">
+                <div class="w-100 d-inline-flex gap-1">
+                    <FileUploader
+                        acceptedFileExtensions="props.acceptedFileExtensions"
+                        allowedMIMETypes="props.allowedMIMETypes"
+                        onUploaded.bind="update"
+                    >
+                        <t name="download" t-if="props.record.resId and !props.record.dirty">
+                            <button
+                                class="btn btn-link btn-sm lh-1 fa fa-download o_download_file_button"
+                                data-tooltip="Download"
+                                aria-label="Download"
+                                t-on-click="onFileDownload"
+                            />
+                        </t>
+                        <t t-set-slot="toggler">
+                            <input type="text" class="o_input" t-att-value="fileName" readonly="readonly"/>
+                            <button
+                                class="btn btn-link btn-sm lh-1 fa fa-pencil o_select_file_button"
+                                data-tooltip="Edit"
+                                aria-label="Edit"
+                            />
+                        </t>
+                        <button
+                            class="btn btn-link btn-sm lh-1 fa fa-trash o_clear_file_button"
+                            data-tooltip="Clear"
+                            aria-label="Clear"
+                            t-on-click="() => this.update({})"
+                        />
+                    </FileUploader>
+                </div>
+            </t>
+        </t>
+        <t t-elif="canUpload">
+            <label class="o_select_file_button btn btn-sm btn-link p-0 o_qa_attachment_upload">
+                <FileUploader
+                    acceptedFileExtensions="props.acceptedFileExtensions"
+                    allowedMIMETypes="props.allowedMIMETypes"
+                    onUploaded.bind="update"
+                >
+                    <t t-set-slot="toggler">
+                        <i class="fa fa-upload fa-fw"/> Upload your file
+                    </t>
+                </FileUploader>
+            </label>
+        </t>
+    </t>
+</templates>

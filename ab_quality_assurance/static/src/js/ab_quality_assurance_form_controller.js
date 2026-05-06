@@ -46,6 +46,7 @@ function buildScoreSummary(record) {
             const score = Number(line.data.score || 0);
             const maxScore = Number(line.data.max_score || 0);
             const percentage = maxScore ? (score / maxScore) * 100 : 0;
+            const note = (line.data.note || "").trim();
 
             sectionEarned += score;
             sectionMax += maxScore;
@@ -55,7 +56,8 @@ function buildScoreSummary(record) {
             summaryLines.push(
                 `- ${line.data.title || line.data.standard_id?.display_name || _t("Standard")}: ` +
                     `${score}/${maxScore} | ` +
-                    `${_t("Percentage")}: ${percentage.toFixed(2)}%`
+                    `${_t("Percentage")}: ${percentage.toFixed(2)}%` +
+                    (note ? ` | ${_t("Note")}: ${note}` : "")
             );
         }
 

@@ -5,5 +5,5 @@
               parent="ab_quality_assurance.ab_quality_assurance_root_menu"
               action="action_ab_quality_assurance_visit_drafts"
               sequence="15"
-              groups="ab_quality_assurance.group_ab_quality_assurance_member,ab_quality_assurance.group_ab_quality_assurance_manager,ab_quality_assurance.group_ab_quality_assurance_admin"/>
+              groups="ab_quality_assurance.group_ab_quality_assurance_user,ab_quality_assurance.group_ab_quality_assurance_manager"/>
 </odoo>
