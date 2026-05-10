@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_stock_recycling_to_cycle_view_tree" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_to_cycle_view_tree</field>
+            <field name="model">ab_stock_recycling_to_cycle</field>
+            <field name="arch" type="xml">
+                <list string="ab_stock_recycling_to_cycle_tree">
+                    <field name="product_id" optional="show"/>
+                    <field name="qty" optional="show"/>
+                    <field name="store_id" optional="show"/>
+                    <field name="cycle_date" optional="show"/>
+                    <field name="cycle_type" optional="show"/>
+                    <field name="is_done" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_to_cycle_view_form" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_to_cycle_view_form</field>
+            <field name="model">ab_stock_recycling_to_cycle</field>
+            <field name="arch" type="xml">
+                <form string="ab_stock_recycling_to_cycle_form">
+                    <sheet>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="qty"/>
+                            <field name="store_id"/>
+                            <field name="cycle_date"/>
+                            <field name="cycle_type"/>
+                            <field name="is_done"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_stock_recycling_to_cycle_view_search" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_to_cycle_view_search</field>
+            <field name="model">ab_stock_recycling_to_cycle</field>
+            <field name="arch" type="xml">
+                <search string="ab_stock_recycling_to_cycle_search">
+                    <field name="product_id"/>
+                    <field name="qty"/>
+                    <field name="store_id"/>
+                    <field name="cycle_date"/>
+                    <field name="cycle_type"/>
+                    <field name="is_done"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_stock_recycling_to_cycle_view_pivot" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_to_cycle_view_pivot</field>
+            <field name="model">ab_stock_recycling_to_cycle</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_stock_recycling_to_cycle_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_stock_recycling_to_cycle_action" model="ir.actions.act_window">
+            <field name="name">To Cycle</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_stock_recycling_to_cycle</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_stock_recycling_to_cycle_menu"
+                  name="To Cycle"
+                  parent="ab_stock_recycling_data_sub_menu"
+                  action="ab_stock_recycling_to_cycle_action"
+                  sequence="600"/>
+
+
+    </data>
+</odoo>

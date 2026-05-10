@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_export_overstock_no_need" model="ir.actions.report">
+        <field name="name">overstock_no_need</field>
+        <field name="model">ab_stock_recycling_header</field>
+        <field name="report_name">overstock_no_need</field>
+        <field name="report_type">xlsx</field>
+        <field name="binding_model_id" eval="False"/>
+    </record>
+
+</odoo>

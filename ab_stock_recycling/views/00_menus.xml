@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <menuitem id="menu_root"
+                  name="Stock Recycle"
+                  web_icon="ab_stock_recycling,static/description/icon.png"
+                  sequence="100"/>
+
+        <menuitem id="config_sub_menu" name="Configuration" parent="menu_root" sequence="200"/>
+
+        <menuitem id="ab_stock_recycling_data_sub_menu" name="Stock Recycling Data" parent="menu_root" sequence="100"/>
+    </data>
+</odoo>
