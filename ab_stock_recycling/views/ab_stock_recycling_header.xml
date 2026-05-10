@@ -1,0 +1,274 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_stock_recycling_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_header_view_tree</field>
+            <field name="model">ab_stock_recycling_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_stock_recycling_header_tree" limit="20">
+                    <field name="id" optional="show" class="text-muted"/>
+                    <field name="name" optional="show"/>
+                    <field name="collection_count" optional="show"/>
+                    <field name="need_count" optional="show"/>
+                    <field name="distribution_count" optional="show"/>
+                    <field name="create_uid" optional="show"/>
+                    <field name="create_date" optional="show"/>
+                    <field name="write_date" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_header_view_form" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_header_view_form</field>
+            <field name="model">ab_stock_recycling_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_stock_recycling_header_form">
+                    <header invisible="not show_advanced">
+                        <button name="btn_get_overstock_for_stores"
+                                invisible="process_type in ['need', 'near']"
+                                type="object"
+                                confirm="Are you sure?"
+                                string="Get Overstock"
+                                class="btn-primary"/>
+
+                        <button name="btn_get_need_for_specific_stores" confirm="Are you sure?" type="object"
+                                string="Get Need For Stores"
+                                invisible="process_type != 'need'"
+                                class="btn-info"/>
+                        <button name="btn_get_need_for_stock" confirm="Are you sure?" type="object"
+                                invisible="process_type == 'need'"
+                                string="Get Need For Stock"
+                                class="btn-info"/>
+                        <button name="btn_distribute_stock"
+                                invisible="process_type == 'need'"
+                                confirm="Are you sure?" type="object"
+                                string="Distribute"
+                                class="btn-primary"/>
+                        <button name="btn_reset_collection" confirm="Are you sure?" type="object"
+                                invisible="process_type == 'need'"
+                                string="Reset Collection" class="btn-danger"/>
+
+                        <button name="btn_reset_need" confirm="Are you sure?" type="object" string="Reset Need"
+                                class="btn-danger"/>
+                        <button name="btn_reset_dist" confirm="Are you sure?" type="object"
+                                invisible="process_type == 'need'"
+                                string="Reset Distribution"
+                                class="btn-danger"/>
+                    </header>
+                    <sheet>
+
+                        <div class="oe_button_box" name="button_box">
+                            <field name="show_advanced" widget="boolean_toggle"/>
+                            <button name="btn_show_view"
+                                    context="{'recycling_model':'ab_stock_recycling_line','title':'Stock'}"
+                                    type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="Stock" name="collection_count" widget="statinfo"/>
+                            </button>
+                            <button name="btn_show_view"
+                                    context="{'recycling_model':'ab_stock_recycling_need','title':'Need'}"
+                                    type="object"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="Need" name="need_count" widget="statinfo"/>
+                            </button>
+                            <button name="btn_show_view" type="object"
+                                    context="{'recycling_model':'ab_stock_recycling_dist','title':'Distribution'}"
+                                    class="oe_stat_button" icon="fa-list-ul">
+                                <field string="Distribution" name="distribution_count" widget="statinfo"/>
+                            </button>
+                        </div>
+
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="......"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <field name="process_type"/>
+                            <field name="item_type"/>
+                        </group>
+                        <group col="4">
+                            <label for="start_date" string="Date"/>
+                            <div class="o_row">
+                                <field name="start_date" widget="daterange" nolabel="1" class="oe_inline"
+                                       options="{'related_end_date': 'end_date'}"/>
+                                <i class="fa fa-long-arrow-right mx-2" aria-label="Arrow icon" title="Arrow"/>
+                                <field name="end_date" widget="daterange" nolabel="1" class="oe_inline"
+                                       options="{'related_start_date': 'start_date'}"/>
+                            </div>
+                            <field name="need_per_x_day"/>
+                            <field name="last_sales_x_days"/>
+                        </group>
+                        <group>
+                            <field name="overstock_store_ids" widget="many2many_tags"
+                                   invisible="process_type in ['near', 'need']"
+                            />
+                            <field name="get_pending_transfer"/>
+                            <field name="use_last_trans_date_logic"
+                                   invisible="process_type != 'over'"/>
+                            <field name="store_ids" widget="many2many_tags"
+                                   required="process_type in ['near', 'need']"/>
+
+                        </group>
+                        <div class="d-flex align-items-center" invisible="process_type == 'need'">
+                            <button name="btn_one_click_distribute" type="object"
+                                    confirm="Are you sure?"
+                                    string="One-Click Distribution" class="btn-primary btn-lg"/>
+                            <label for="apply_source_store_need_first" class="ml-4"/>
+                            <field name="apply_source_store_need_first"/>
+                        </div>
+                        <notebook>
+                            <page string="From Excel"
+                                  invisible="process_type in ['over', 'need']">
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container">
+                                            <field name="from_excel" nolabel="1"
+                                                   placeholder="Paste data here in the box"
+                                                   class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2">
+                                        <div class="h-50">
+                                            <button type="object" name="btn_add_data_from_excel"
+                                                    confirm="Adding these lines, are you sure?"
+                                                    string="Add"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </page>
+                            <page string="Collection Lines"
+                                  invisible="not show_advanced or process_type == 'need'">
+                                <button name="btn_export_excel_over_need" type="object"
+                                        string="Export Excel"
+                                        class="btn-primary"/>
+                                <br/>
+                                <field name="collection_ids" nolabel="1"/>
+                            </page>
+                            <page string="Only Need For Items">
+                                <field name="only_item_ids" nolabel="1"/>
+                            </page>
+
+                            <page string="Need Lines" invisible="not show_advanced">
+                                <div>
+                                    <button name="btn_download_need_files" type="object" string="Download"
+                                            class="btn-primary"/>
+                                </div>
+                                <field name="need_ids" nolabel="1"/>
+                            </page>
+                            <page string="Distribution Lines"
+                                  invisible="not show_advanced or process_type == 'need'">
+                                <field name="dist_ids" nolabel="1"/>
+                            </page>
+                            <page string="Permanent Excluded Items"
+                                  invisible="process_type != 'over'">
+                                <div class="d-flex justify-content-center">
+                                    <label for="excluded_items_codes" string="##### Permanent Exclusion #####"/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container h-100">
+                                            <field name="excluded_items_codes" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 d-flex flex-column justify-content-center ">
+                                        <div class="h-100">
+                                            <button type="object" name="btn_modify_excluded_items_codes"
+                                                    context="{'modify_type':'add'}"
+                                                    confirm="Are you sure?"
+                                                    string="Add"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                        <div class="h-100">
+                                            <button type="object" name="btn_modify_excluded_items_codes"
+                                                    context="{'modify_type':'remove'}"
+                                                    confirm="Are you sure?"
+                                                    string="Remove"
+                                                    class="btn-outline-warning  btn-block h-100"/>
+                                        </div>
+                                        <div class="h-100">
+                                            <button type="object" name="btn_refresh_excluded_items_list"
+                                                    confirm="Are you sure?"
+                                                    string="Auto Refresh Exclusion"
+                                                    class="btn-outline-danger  btn-block h-100"/>
+                                        </div>
+
+                                        <div class="h-100">
+                                            <button type="object" name="btn_show_excluded_items"
+                                                    context="{'modify_type':'remove'}"
+                                                    string="Show Exclusion"
+                                                    class="btn-outline-info  btn-block h-100"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <field name="excluded_item_perm_ids"/>
+                                </div>
+                            </page>
+                            <page string="Temporary Excluded Items"
+                                  invisible="process_type not in ['over', 'need']">
+                                <div class="d-flex justify-content-center">
+                                    <label for="excluded_item_temp_ids" string="##### Temp Exclusion #####"/>
+                                </div>
+                                <div class="row">
+                                    <div class="col-10">
+                                        <div class="abdin-textbox-container h-100">
+                                            <field name="excluded_items_codes" nolabel="1" class="abdin-textbox"/>
+                                        </div>
+                                    </div>
+                                    <div class="col-2 d-flex flex-column justify-content-center">
+                                        <div class="h-100">
+                                            <button type="object" name="btn_modify_excluded_items_codes"
+                                                    context="{'modify_type':'add_temp'}"
+                                                    confirm="Are you sure?"
+                                                    string="Add Temp"
+                                                    class="btn-outline-success  btn-block h-100"/>
+                                        </div>
+                                        <div class="h-100">
+                                            <button type="object" name="btn_modify_excluded_items_codes"
+                                                    context="{'modify_type':'remove_temp'}"
+                                                    confirm="Are you sure?"
+                                                    string="Remove Temp"
+                                                    class="btn-outline-warning  btn-block h-100"/>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="">
+                                    <field name="excluded_item_temp_ids"/>
+                                </div>
+                            </page>
+                        </notebook>
+
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_header_view_pivot" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_header_view_pivot</field>
+            <field name="model">ab_stock_recycling_header</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_stock_recycling_header_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_stock_recycling_header_action" model="ir.actions.act_window">
+            <field name="name">Stock Recycling</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_stock_recycling_header</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_stock_recycling_header_menu"
+                  name="Stock Recycling"
+                  parent="menu_root"
+                  action="ab_stock_recycling_header_action"
+                  sequence="0"/>
+
+    </data>
+</odoo>
