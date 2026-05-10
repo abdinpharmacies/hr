@@ -6,7 +6,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
 from .ab_stock_recycling_overstock_sql import build_overstock_sql
 
-PLACEHOLDER = '%s'
+PLACEHOLDER = '?'
 
 _logger = logging.getLogger(__name__)
 
@@ -218,8 +218,7 @@ class StockRecycling(models.Model):
 
                     rows = cr.fetchall()
                     need_dicts_list = []
-                    for row, store, product in self.web_progress_iter(
-                            self._prepare_stock_rows(rows), msg='Getting Needs ...'):
+                    for row, store, product in  self._prepare_stock_rows(rows):
                         need_dicts_list.append({
                             "store_id": store.id,
                             "item_id": product.id,
@@ -247,7 +246,7 @@ class StockRecycling(models.Model):
 
         overstock_lines = self.collection_ids.browse(overstock_ids)
         i = 0
-        for over_line in self.web_progress_iter(overstock_lines, msg='Distributing Stock ...'):
+        for over_line in overstock_lines:
             i += 1
 
             total_transferred = 0
@@ -379,8 +378,7 @@ class StockRecycling(models.Model):
 
                 rows = cr.fetchall()
                 overstock_dicts_list = []
-                for row, store, product in self.web_progress_iter(
-                        self._prepare_stock_rows(rows), msg='Getting Overstock ...'):
+                for row, store, product in  self._prepare_stock_rows(rows):
                     last_trans_date = row[6] if has_last_trans_date else False
                     overstock_dicts_list.append({
                         "store_id": store.id,
@@ -431,8 +429,7 @@ class StockRecycling(models.Model):
 
                     rows = cr.fetchall()
                     need_dicts_list = []
-                    for row, store, product in self.web_progress_iter(
-                            self._prepare_stock_rows(rows), msg='Getting Needs ...'):
+                    for row, store, product in self._prepare_stock_rows(rows):
                         need_dicts_list.append({
                             "store_id": store.id,
                             "item_id": product.id,
