@@ -28,11 +28,12 @@
                   action="ab_quality_assurance_dashboard_action"
                   sequence="20"/>
 
-        <menuitem id="ab_quality_assurance_section_menu"
-                  name="Standards"
-                  parent="ab_quality_assurance_root_menu"
-                  action="ab_quality_assurance_section_action"
-                  sequence="25"
+     <menuitem id="ab_quality_assurance_section_menu"
+          name="Standards"
+          parent="ab_quality_assurance_root_menu"
+          action="ab_quality_assurance_section_action"
+          sequence="25"
+          groups="ab_quality_assurance.group_ab_quality_assurance_manager"
         />
     </data>
 </odoo>
