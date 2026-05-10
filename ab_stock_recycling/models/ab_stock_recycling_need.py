@@ -3,7 +3,7 @@ import logging
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError, UserError
 
-PLACEHOLDER = '%s'
+PLACEHOLDER = '?'
 
 _logger = logging.getLogger(__name__)
 
