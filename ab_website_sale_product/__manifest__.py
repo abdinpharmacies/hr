@@ -12,6 +12,8 @@
         "views/ab_product_views.xml",
         "views/product_template_views.xml",
         "views/website_sale_menus.xml",
+        "views/ab_product_kanban_views.xml",
+        "views/ab_product_professional_views.xml",
     ],
     "post_init_hook": "post_init_hook",
     "installable": True,

@@ -5,7 +5,7 @@
             <field name="name">Abdin Products</field>
             <field name="res_model">ab_product</field>
             <field name="path">ecommerce-abdin-products</field>
-            <field name="view_mode">list,form,pivot</field>
+            <field name="view_mode">kanban,list,form,pivot</field>
             <field name="domain">[('active', '=', True), ('allow_sale', '=', True)]</field>
             <field name="context">{
                 'search_default_filter_website_sale_available': 1,
