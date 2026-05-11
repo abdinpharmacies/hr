@@ -1,5 +1,10 @@
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
+
+QUALITY_EDITOR_GROUPS = (
+    "ab_quality_assurance.group_ab_quality_assurance_user",
+    "ab_quality_assurance.group_ab_quality_assurance_manager",
+)
 
 
 class AbQualityAssuranceVisitSection(models.Model):
@@ -11,6 +16,8 @@ class AbQualityAssuranceVisitSection(models.Model):
     visit_id = fields.Many2one("ab_quality_assurance_visit", required=True, ondelete="cascade")
     section_id = fields.Many2one("ab_quality_assurance_section", required=True, ondelete="restrict")
     name = fields.Char(related="section_id.name", store=True, readonly=True)
+    department_id = fields.Many2one(related="section_id.department_id", store=True, readonly=True)
+    department_manager_id = fields.Many2one(related="section_id.department_manager_id", store=True, readonly=True)
     visit_line_ids = fields.One2many("ab_quality_assurance_visit_line", "visit_section_id", string="Standards")
     earned_score = fields.Float(compute="_compute_totals", store=True)
     max_score = fields.Float(compute="_compute_totals", store=True)
@@ -64,6 +71,11 @@ class AbQualityAssuranceVisitSection(models.Model):
     def _check_visit_is_editable(self):
         if any(section.visit_id.state == "submitted" for section in self):
             raise UserError(_("Submitted visits cannot be modified."))
+        user = self.env.user
+        can_edit_own = any(user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
+        can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
+        if not can_manage_all and (not can_edit_own or any(section.visit_id.user_id != user for section in self)):
+            raise AccessError(_("Only the visit creator or a quality assurance manager can modify visit sections."))
 
     def _get_active_standards(self):
         self.ensure_one()

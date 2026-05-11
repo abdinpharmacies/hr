@@ -4,7 +4,7 @@
     "license": "LGPL-3",
     "category": "Operations",
     "application": True,
-    "depends": ["base", "web", "ab_hr"],
+    "depends": ["base", "web", "mail", "ab_hr"],
     "icon": "ab_quality_assurance/static/description/icon.svg",
     "data": [
         "security/security_groups.xml",
@@ -20,10 +20,11 @@
     ],
     "assets": {
         "web.assets_backend": [
+            "ab_quality_assurance/static/src/js/quality_list_binary_field.js",
+            "ab_quality_assurance/static/src/xml/quality_list_binary_field.xml",
             "ab_quality_assurance/static/src/js/ab_quality_assurance_form_controller.js",
             "ab_quality_assurance/static/src/scss/ab_quality_assurance.scss",
         ],
     },
-    "post_init_hook": "post_init_hook",
     "installable": True,
 }
