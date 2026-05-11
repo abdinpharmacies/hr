@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- ======================================================================
+             PROFESSIONAL FORM VIEW - ab_product
+             ====================================================================== -->
+        <record id="ab_product_form_view_professional" model="ir.ui.view">
+            <field name="name">ab.product.form.professional</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
+            <field name="priority">50</field>
+            <field name="arch" type="xml">
+
+                <!-- 1. PREMIUM STATUS BAR -->
+                <xpath expr="//sheet" position="before">
+                    <div class="o_abdin_statusbar">
+                        <div class="o_abdin_statusbar_inner">
+                            <div class="o_abdin_statusbar_badges">
+                                <span class="o_abdin_badge o_abdin_badge_success"
+                                      invisible="not website_product_is_published">
+                                    <i class="fa fa-globe"/>
+                                    Published
+                                </span>
+                                <span class="o_abdin_badge o_abdin_badge_warning"
+                                      invisible="website_product_is_published or not website_product_synced">
+                                    <i class="fa fa-cloud"/>
+                                    Synced
+                                </span>
+                                <span class="o_abdin_badge o_abdin_badge_secondary"
+                                      invisible="website_product_synced">
+                                    <i class="fa fa-cloud-upload"/>
+                                    Not Synced
+                                </span>
+                                <span class="o_abdin_badge o_abdin_badge_info"
+                                      invisible="not website_sale_available">
+                                    <i class="fa fa-check"/>
+                                    eCommerce Ready
+                                </span>
+                            </div>
+                            <div class="o_abdin_statusbar_meta">
+                                <span class="o_abdin_statusbar_code">
+                                    <i class="fa fa-barcode"/>
+                                    <field name="code"/>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </xpath>
+
+                <!-- 2. HIDE the original edit button (we recreate it below) -->
+                <xpath expr="//button[@name='btn_edit_product_main_data']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- 3. ACTION BAR (inserted after the now-invisible original button) -->
+                <xpath expr="//button[@name='btn_edit_product_main_data']" position="after">
+                    <div class="o_abdin_action_bar">
+                        <div class="o_abdin_action_bar_left">
+                            <button name="action_sync_website_product" type="object"
+                                    class="btn o_abdin_btn_primary"
+                                    string="Sync to eCommerce">
+                                <i class="fa fa-refresh"/>
+                                <span>Sync to eCommerce</span>
+                            </button>
+                            <button name="action_open_website_product" type="object"
+                                    class="btn o_abdin_btn_outline"
+                                    invisible="not website_product_tmpl_id"
+                                    string="Open eCommerce Product">
+                                <i class="fa fa-pencil-square-o"/>
+                                <span>Edit eCommerce Product</span>
+                            </button>
+                            <button name="action_open_website_product_page" type="object"
+                                    class="btn o_abdin_btn_ghost"
+                                    invisible="not website_product_is_published"
+                                    string="View on Website">
+                                <i class="fa fa-external-link"/>
+                                <span>View on Website</span>
+                            </button>
+                        </div>
+                        <div class="o_abdin_action_bar_right">
+                            <button name="btn_edit_product_main_data" type="object"
+                                    class="btn o_abdin_btn_outline"
+                                    string="Edit Main Data">
+                                <i class="fa fa-edit"/>
+                                <span>Edit Main Data</span>
+                            </button>
+                        </div>
+                    </div>
+                </xpath>
+
+                <!-- 4. HIDDEN field bindings for website data -->
+                <xpath expr="//field[@name='code']" position="after">
+                    <field name="website_product_synced" readonly="1" invisible="1"/>
+                    <field name="website_product_tmpl_id" readonly="1" invisible="1"/>
+                    <field name="website_product_is_published" readonly="1" invisible="1"/>
+                </xpath>
+
+                <!-- 5. Replace the old Product Details group with a Notebook -->
+                <xpath expr="//group[./field[@name='code']]" position="replace">
+                    <notebook class="o_abdin_notebook">
+                        <page string="Details &amp; Pricing" name="page_details">
+                            <div class="o_abdin_page_grid">
+                                <group string="Pricing">
+                                    <field name="default_price"/>
+                                    <field name="default_reference_price"/>
+                                    <field name="default_cost"/>
+                                    <field name="default_reference_cost"/>
+                                </group>
+                                <group string="Units &amp; UoM">
+                                    <field name="uom_category_id"/>
+                                    <field name="uom_id"/>
+                                    <field name="u_s_num"/>
+                                    <field name="u_s_name"/>
+                                </group>
+                                <group string="Capabilities">
+                                    <field name="allow_sale" widget="boolean_toggle"/>
+                                    <field name="allow_purchase" widget="boolean_toggle"/>
+                                </group>
+                            </div>
+                        </page>
+                        <page string="eCommerce" name="page_ecommerce">
+                            <div class="o_abdin_page_grid">
+                                <group string="Website Settings">
+                                    <field name="website_sale_available" widget="boolean_toggle"/>
+                                    <field name="website_product_synced"/>
+                                    <field name="website_product_is_published"/>
+                                </group>
+                                <group string="Linked Product">
+                                    <field name="website_product_tmpl_id"/>
+                                </group>
+                                <group string="Quick Actions">
+                                    <div class="o_abdin_page_actions">
+                                        <button name="action_sync_website_product" type="object"
+                                                class="btn o_abdin_btn_primary btn-block">
+                                            <i class="fa fa-refresh"/>
+                                            Sync Now
+                                        </button>
+                                        <button name="action_open_website_product" type="object"
+                                                class="btn o_abdin_btn_outline btn-block"
+                                                invisible="not website_product_tmpl_id">
+                                            <i class="fa fa-pencil-square-o"/>
+                                            Open Linked Product
+                                        </button>
+                                        <button name="action_open_website_product_page" type="object"
+                                                class="btn o_abdin_btn_ghost btn-block"
+                                                invisible="not website_product_is_published">
+                                            <i class="fa fa-external-link"/>
+                                            View Published Page
+                                        </button>
+                                    </div>
+                                </group>
+                            </div>
+                        </page>
+                        <page string="Tags &amp; Barcodes" name="page_tags">
+                            <div class="o_abdin_page_grid">
+                                <group string="Product Tags">
+                                    <field name="tag_ids" widget="many2many_tags"/>
+                                </group>
+                                <group string="Barcodes">
+                                    <field name="barcode_ids" widget="many2many_tags"/>
+                                </group>
+                            </div>
+                        </page>
+                    </notebook>
+                </xpath>
+
+                <!-- 6. Style the original Product Basic group -->
+                <xpath expr="//group[./field[@name='name']]" position="attributes">
+                    <attribute name="class">o_abdin_group_basic</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- ======================================================================
+             PROFESSIONAL LIST VIEW
+             ====================================================================== -->
+        <record id="ab_product_list_view_professional" model="ir.ui.view">
+            <field name="name">ab.product.list.professional</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_tree"/>
+            <field name="priority">50</field>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="decoration-success">website_product_is_published</attribute>
+                    <attribute name="decoration-warning">website_sale_available and not website_product_synced</attribute>
+                    <attribute name="decoration-info">website_product_synced and not website_product_is_published</attribute>
+                </xpath>
+                <xpath expr="//field[@name='allow_sale']" position="after">
+                    <field name="website_sale_available" widget="boolean_toggle" optional="show"/>
+                    <field name="website_product_synced" optional="show"/>
+                    <field name="website_product_is_published" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
