@@ -11,8 +11,7 @@
     'assets': {
         'web.assets_backend': [
             'abdin_css/static/src/scss/abdin.scss',
-            # 'abdin_css/static/src/scss/sticky_list_view_headers.css',
-            # "abdin_css/static/src/css/pivot.css",
+            'abdin_css/static/src/scss/abdin_ecommerce.scss',
         ],
         'web.assets_qweb': [
             # 'abdin_css/static/src/xml/pivot.xml',

@@ -1,0 +1,677 @@
+/* ==========================================================================
+   Abdin eCommerce - Premium UI (Kanban + Form)
+   Odoo 19 OWL Compatible
+   ========================================================================== */
+
+// -----------------------------------------------------------------------
+// COLOR PALETTE
+// -----------------------------------------------------------------------
+$abdin-primary: #0d6efd;
+$abdin-primary-dark: #0b5ed7;
+$abdin-success: #28a745;
+$abdin-success-dark: #1e7e34;
+$abdin-warning: #ffc107;
+$abdin-warning-dark: #e0a800;
+$abdin-danger: #dc3545;
+$abdin-info: #17a2b8;
+$abdin-gray-100: #f8f9fa;
+$abdin-gray-200: #e9ecef;
+$abdin-gray-300: #dee2e6;
+$abdin-gray-400: #ced4da;
+$abdin-gray-500: #adb5bd;
+$abdin-gray-600: #6c757d;
+$abdin-gray-700: #495057;
+$abdin-gray-800: #343a40;
+$abdin-gray-900: #212529;
+$abdin-radius-sm: 6px;
+$abdin-radius-md: 10px;
+$abdin-radius-lg: 14px;
+$abdin-radius-xl: 20px;
+$abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+/* ======================================================================
+   PART 1: KANBAN VIEW
+   ====================================================================== */
+.o_abdin_kanban_ecommerce {
+    .o_kanban_group {
+        background: #fff;
+        border-radius: $abdin-radius-lg;
+        border: 1px solid $abdin-gray-300;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+        transition: box-shadow $abdin-transition;
+        &:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+        .o_kanban_header {
+            background: linear-gradient(135deg, $abdin-gray-100, $abdin-gray-200);
+            border-bottom: 1px solid $abdin-gray-300;
+            border-radius: $abdin-radius-lg $abdin-radius-lg 0 0;
+            padding: 12px 16px;
+            .o_kanban_title {
+                font-weight: 700;
+                font-size: 14px;
+                color: $abdin-gray-900;
+            }
+            .o_kanban_count {
+                font-size: 12px;
+                font-weight: 600;
+                color: $abdin-gray-600;
+                background: $abdin-gray-300;
+                border-radius: $abdin-radius-xl;
+                padding: 2px 10px;
+                margin-left: 8px;
+            }
+        }
+    }
+
+    .o_abdin_card {
+        position: relative;
+        border-radius: $abdin-radius-md;
+        border: 1px solid $abdin-gray-300;
+        background: #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+        transition: all $abdin-transition;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        min-height: 340px;
+        &:hover {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            border-color: $abdin-gray-300;
+        }
+        &:focus-within {
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+            border-color: #86b7fe;
+        }
+    }
+
+    .o_abdin_card_image_section {
+        position: relative;
+        height: 140px;
+        background: linear-gradient(135deg, $abdin-gray-100, $abdin-gray-200);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        border-bottom: 1px solid $abdin-gray-200;
+        flex-shrink: 0;
+    }
+    .o_abdin_image_wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 100%;
+        transition: transform 0.3s ease;
+        .o_abdin_card:hover & { transform: scale(1.05); }
+    }
+    .o_abdin_icon_placeholder {
+        width: 64px;
+        height: 64px;
+        background: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px dashed $abdin-gray-400;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transition: all 0.3s ease;
+        i {
+            font-size: 28px;
+            color: $abdin-gray-500;
+            transition: color 0.3s ease;
+        }
+        .o_abdin_card:hover & {
+            border-color: $abdin-gray-500;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            i { color: $abdin-gray-600; }
+        }
+    }
+
+    .o_abdin_ribbon {
+        position: absolute;
+        top: 10px;
+        left: -28px;
+        padding: 3px 36px;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: #fff;
+        transform: rotate(-45deg);
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+        z-index: 2;
+        white-space: nowrap;
+        pointer-events: none;
+        &.o_abdin_ribbon_published { background: linear-gradient(135deg, #28a745, #20c997); }
+        &.o_abdin_ribbon_synced { background: linear-gradient(135deg, #ffc107, #fd7e14); color: $abdin-gray-900; }
+        &.o_abdin_ribbon_new { background: linear-gradient(135deg, #0d6efd, #6610f2); }
+    }
+
+    .o_abdin_dropdown_container {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        z-index: 3;
+        .o_kanban_dropdown_arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px; height: 28px;
+            border-radius: $abdin-radius-sm;
+            background: rgba(255,255,255,0.9);
+            color: $abdin-gray-600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(0,0,0,0.06);
+            font-size: 12px;
+            &:hover {
+                background: #fff;
+                color: $abdin-gray-900;
+                border-color: $abdin-gray-300;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            }
+            &:focus-visible { outline: 2px solid $abdin-primary; outline-offset: 2px; }
+        }
+    }
+
+    .o_abdin_card_body {
+        padding: 16px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .o_abdin_code_row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+    .o_abdin_code_badge {
+        display: inline-flex;
+        align-items: center;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: $abdin-radius-sm;
+        letter-spacing: 0.02em;
+        font-family: 'SF Mono', Consolas, Monaco, monospace;
+        white-space: nowrap;
+        max-width: 70%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        &.o_active { background: #d1e7dd; color: #0f5132; }
+        &.o_inactive { background: #f8d7da; color: #842029; }
+    }
+    .o_abdin_status_dot {
+        width: 8px; height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+        &.o_published { background: $abdin-success; box-shadow: 0 0 0 3px rgba(40,167,69,0.2); }
+        &.o_synced { background: $abdin-warning; box-shadow: 0 0 0 3px rgba(255,193,7,0.2); }
+        &.o_pending { background: $abdin-gray-600; box-shadow: 0 0 0 3px rgba(108,117,125,0.15); }
+    }
+    .o_abdin_product_name {
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1.5;
+        color: $abdin-gray-900;
+        min-height: 42px;
+        max-height: 42px;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        word-break: break-word;
+    }
+    .o_abdin_price_row {
+        display: flex;
+        align-items: baseline;
+        gap: 4px;
+        margin-top: 4px;
+    }
+    .o_abdin_price_currency {
+        font-size: 12px;
+        font-weight: 600;
+        color: $abdin-gray-600;
+        text-transform: uppercase;
+    }
+    .o_abdin_price_value {
+        font-size: 22px;
+        font-weight: 800;
+        color: $abdin-primary;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+    }
+    .o_abdin_meta_row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: auto;
+        padding-top: 8px;
+        flex-wrap: wrap;
+    }
+    .o_abdin_availability, .o_abdin_sync_indicator {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: $abdin-radius-xl;
+        white-space: nowrap;
+        i { font-size: 10px; }
+    }
+    .o_abdin_availability {
+        &.o_in_stock { background: #e8f5e9; color: #2e7d32; }
+        &.o_out_of_stock { background: #fbe9e7; color: #c62828; }
+    }
+    .o_abdin_sync_indicator {
+        &.o_done { background: #e3f2fd; color: #1565c0; }
+        &.o_idle { background: #f3e5f5; color: #7b1fa2; }
+    }
+
+    .o_abdin_card_footer {
+        padding: 12px 16px;
+        background: $abdin-gray-100;
+        border-top: 1px solid $abdin-gray-300;
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+    .o_abdin_btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: $abdin-radius-sm;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.2s $abdin-transition;
+        white-space: nowrap;
+        text-decoration: none;
+        line-height: 1.4;
+        i { font-size: 12px; transition: transform 0.2s ease; }
+        &:focus-visible { outline: 2px solid $abdin-primary; outline-offset: 2px; }
+    }
+    .o_abdin_btn_sync {
+        background: $abdin-primary; color: #fff; border-color: $abdin-primary;
+        &:hover {
+            background: $abdin-primary-dark;
+            box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+            transform: translateY(-1px);
+            i { transform: rotate(180deg); }
+        }
+    }
+    .o_abdin_btn_edit {
+        background: #fff; color: $abdin-gray-900; border-color: $abdin-gray-300;
+        &:hover {
+            background: $abdin-gray-100;
+            border-color: $abdin-gray-400;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            transform: translateY(-1px);
+            i { color: $abdin-primary; }
+        }
+    }
+    .o_abdin_btn_view {
+        background: linear-gradient(135deg, #20c997, $abdin-primary);
+        color: #fff; border: none;
+        &:hover {
+            box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+            transform: translateY(-1px);
+            i { transform: translate(2px, -2px); }
+        }
+    }
+}
+
+// Kanban responsive
+.o_kanban_renderer.o_abdin_kanban_ecommerce {
+    padding: 16px;
+    gap: 16px;
+    .o_kanban_group {
+        min-width: 280px;
+        max-width: 360px;
+        flex: 1 1 300px;
+    }
+    .o_kanban_record {
+        padding: 8px;
+        padding-bottom: 0;
+        &:last-child { padding-bottom: 8px; }
+    }
+    @media (max-width: 768px) {
+        padding: 8px; gap: 8px;
+        .o_kanban_group { min-width: 100%; max-width: 100%; flex: 1 1 100%; }
+        .o_abdin_price_value { font-size: 18px; }
+        .o_abdin_card { min-height: 300px; }
+        .o_abdin_product_name { font-size: 13px; }
+        .o_abdin_btn { padding: 6px 10px; font-size: 11px; }
+    }
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .o_kanban_group { min-width: 240px; flex: 1 1 45%; }
+    }
+    @media (min-width: 1025px) and (max-width: 1400px) {
+        .o_kanban_group { flex: 1 1 30%; }
+    }
+    @media (min-width: 1401px) {
+        .o_kanban_group { flex: 1 1 23%; max-width: 320px; }
+    }
+}
+
+
+/* ======================================================================
+   PART 2: FORM VIEW
+   ====================================================================== */
+
+// --- 2a. Premium Status Bar ---
+.o_abdin_statusbar {
+    background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
+    border-bottom: 1px solid $abdin-gray-300;
+    padding: 10px 16px;
+
+    .o_abdin_statusbar_inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 8px;
+        max-width: 100%;
+    }
+    .o_abdin_statusbar_badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .o_abdin_badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        border-radius: 20px;
+        white-space: nowrap;
+        i { font-size: 11px; }
+    }
+    .o_abdin_badge_success { background: #d1e7dd; color: #0f5132; }
+    .o_abdin_badge_warning { background: #fff3cd; color: #664d03; }
+    .o_abdin_badge_secondary { background: #e2e3e5; color: #41464b; }
+    .o_abdin_badge_info { background: #cff4fc; color: #055160; }
+
+    .o_abdin_statusbar_meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .o_abdin_statusbar_code {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        color: $abdin-gray-600;
+        background: #fff;
+        padding: 3px 12px;
+        border-radius: 20px;
+        border: 1px solid $abdin-gray-300;
+        i { color: $abdin-gray-500; }
+        .o_field_widget { font-weight: 700; color: $abdin-gray-900; }
+    }
+}
+
+// --- 2b. Action Bar ---
+.o_abdin_action_bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #fff;
+    border-bottom: 1px solid $abdin-gray-300;
+
+    .o_abdin_action_bar_left, .o_abdin_action_bar_right {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    .o_abdin_btn_primary {
+        background: $abdin-primary;
+        color: #fff;
+        border: 1px solid $abdin-primary;
+        padding: 7px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: $abdin-radius-sm;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        i { font-size: 13px; }
+        &:hover {
+            background: $abdin-primary-dark;
+            box-shadow: 0 4px 12px rgba(13,110,253,0.3);
+            transform: translateY(-1px);
+        }
+    }
+    .o_abdin_btn_outline {
+        background: #fff;
+        color: $abdin-gray-700;
+        border: 1px solid $abdin-gray-300;
+        padding: 7px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        border-radius: $abdin-radius-sm;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        i { font-size: 13px; }
+        &:hover {
+            background: $abdin-gray-100;
+            border-color: $abdin-gray-400;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+        }
+    }
+    .o_abdin_btn_ghost {
+        background: transparent;
+        color: $abdin-gray-600;
+        border: 1px solid transparent;
+        padding: 7px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        border-radius: $abdin-radius-sm;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        i { font-size: 13px; }
+        &:hover {
+            background: $abdin-gray-100;
+            color: $abdin-primary;
+        }
+    }
+}
+
+// --- 2c. Product Basic Group ---
+.o_abdin_group_basic {
+    padding: 16px;
+    margin: 0;
+
+    .o_field_widget {
+        font-size: 14px;
+    }
+
+    .oe_title {
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: $abdin-gray-900;
+            margin-bottom: 4px;
+        }
+    }
+}
+
+// --- 2d. Notebook ---
+.o_abdin_notebook {
+    margin: 0 16px 16px;
+
+    // Modern tab headers
+    > .o_notebook_headers {
+        background: $abdin-gray-100;
+        border-radius: $abdin-radius-md $abdin-radius-md 0 0;
+        border: 1px solid $abdin-gray-300;
+        border-bottom: none;
+        padding: 0;
+        margin: 0;
+
+        .nav-item {
+            margin: 0;
+
+            .nav-link {
+                border: none;
+                border-radius: 0;
+                padding: 12px 20px;
+                font-size: 13px;
+                font-weight: 600;
+                color: $abdin-gray-600;
+                background: transparent;
+                transition: all 0.2s ease;
+                position: relative;
+                white-space: nowrap;
+
+                i {
+                    margin-right: 6px;
+                    font-size: 13px;
+                }
+
+                &:hover {
+                    color: $abdin-gray-900;
+                    background: rgba(0,0,0,0.02);
+                }
+
+                &.active {
+                    color: $abdin-primary;
+                    background: #fff;
+                    box-shadow: inset 0 -2px 0 $abdin-primary;
+
+                    i { color: $abdin-primary; }
+                }
+
+                &:focus-visible {
+                    outline: 2px solid $abdin-primary;
+                    outline-offset: -2px;
+                }
+            }
+
+            &:first-child .nav-link {
+                border-radius: $abdin-radius-md 0 0 0;
+            }
+        }
+    }
+
+    // Notebook page content
+    .tab-content {
+        background: #fff;
+        border: 1px solid $abdin-gray-300;
+        border-top: none;
+        border-radius: 0 0 $abdin-radius-md $abdin-radius-md;
+        padding: 16px;
+
+        .o_abdin_page_grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+
+            > group {
+                border: 1px solid $abdin-gray-200;
+                border-radius: $abdin-radius-sm;
+                padding: 16px;
+                background: $abdin-gray-100;
+
+                > .o_field_widget {
+                    font-size: 13px;
+                }
+            }
+        }
+
+        .o_abdin_page_actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+
+            .btn-block {
+                width: 100%;
+            }
+        }
+    }
+}
+
+// --- 2e. Sheet adjustments ---
+.o_form_view {
+    .o_form_sheet {
+        max-width: 100%;
+        width: 100%;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+    }
+}
+
+// --- 2f. General Form Field Tweaks ---
+.o_form_view {
+    .o_field_widget {
+        &.o_abdin_price_field {
+            .o_field_number {
+                font-size: 16px;
+                font-weight: 700;
+                color: $abdin-primary;
+            }
+        }
+        &.o_abdin_cost_field {
+            .o_field_number {
+                font-size: 14px;
+                font-weight: 600;
+                color: $abdin-gray-700;
+            }
+        }
+    }
+
+    .o_row {
+        display: flex;
+        gap: 12px;
+        > * {
+            flex: 1;
+        }
+    }
+}
+
+
+/* ======================================================================
+   PART 3: ACCESSIBILITY & REDUCED MOTION
+   ====================================================================== */
+@media (prefers-reduced-motion: reduce) {
+    .o_abdin_kanban_ecommerce .o_abdin_card,
+    .o_abdin_kanban_ecommerce .o_abdin_btn,
+    .o_abdin_action_bar .o_abdin_btn_primary,
+    .o_abdin_action_bar .o_abdin_btn_outline {
+        transition: none;
+        &:hover { transform: none; }
+    }
+    .o_abdin_btn_sync:hover i { transform: none; }
+    .o_abdin_btn_view:hover i { transform: none; }
+    .o_abdin_image_wrapper { transition: none; }
+    .o_abdin_card:hover .o_abdin_image_wrapper { transform: none; }
+}
