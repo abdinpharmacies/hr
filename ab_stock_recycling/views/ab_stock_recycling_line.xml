@@ -21,6 +21,8 @@
                     <field name="last_trans_date" optional="show"/>
                     <field name="exp_date" optional="show"/>
                     <field name="file_source" optional="show"/>
+                    <field name="reason_for_keeping_item" optional="show"/>
+                    <field name="notes" optional="show"/>
                 </list>
             </field>
         </record>
@@ -40,6 +42,8 @@
                             <field name="last_trans_date"/>
                             <field name="exp_date"/>
                             <field name="file_source"/>
+                            <field name="reason_for_keeping_item"/>
+                            <field name="notes"/>
                         </group>
                     </sheet>
                 </form>
