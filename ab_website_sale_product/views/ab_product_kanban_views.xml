@@ -6,7 +6,7 @@
             <field name="model">ab_product</field>
             <field name="priority">100</field>
             <field name="arch" type="xml">
-                <kanban class="o_abdin_kanban_ecommerce">
+                <kanban class="abdin_ecommerce_kanban_ecommerce">
                     <field name="id"/>
                     <field name="name"/>
                     <field name="code"/>
@@ -18,26 +18,26 @@
                     <field name="website_product_tmpl_id"/>
                     <templates>
                         <t t-name="card">
-                            <div class="oe_kanban_card o_abdin_card">
-                                <div class="o_abdin_card_image_section">
-                                    <div class="o_abdin_image_wrapper">
-                                        <div class="o_abdin_icon_placeholder">
+                            <div class="oe_kanban_card abdin_ecommerce_card">
+                                <div class="abdin_ecommerce_card_image_section">
+                                    <div class="abdin_ecommerce_image_wrapper">
+                                        <div class="abdin_ecommerce_icon_placeholder">
                                             <i class="fa fa-cube"/>
                                         </div>
                                     </div>
-                                    <span class="o_abdin_ribbon o_abdin_ribbon_published"
+                                    <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_published"
                                           t-if="record.website_product_is_published.raw_value">
                                         Published
                                     </span>
-                                    <span class="o_abdin_ribbon o_abdin_ribbon_synced"
+                                    <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_synced"
                                           t-if="!record.website_product_is_published.raw_value and record.website_product_synced.raw_value">
                                         Synced
                                     </span>
-                                    <span class="o_abdin_ribbon o_abdin_ribbon_new"
+                                    <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_new"
                                           t-if="!record.website_product_synced.raw_value and record.website_sale_available.raw_value">
                                         Ready
                                     </span>
-                                    <div class="o_abdin_dropdown_container">
+                                    <div class="abdin_ecommerce_dropdown_container">
                                         <div class="o_dropdown_kanban dropdown">
                                             <span class="o_kanban_dropdown_arrow" role="button" tabindex="0" aria-label="Actions">
                                                 <i class="fa fa-ellipsis-v"/>
@@ -45,24 +45,24 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="o_abdin_card_body">
-                                    <div class="o_abdin_code_row">
-                                        <span class="o_abdin_code_badge" t-attf-class="o_abdin_code_badge #{record.active.raw_value ? 'o_active' : 'o_inactive'}">
+                                <div class="abdin_ecommerce_card_body">
+                                    <div class="abdin_ecommerce_code_row">
+                                        <span class="abdin_ecommerce_code_badge" t-attf-class="abdin_ecommerce_code_badge #{record.active.raw_value ? 'abdin_ecommerce_active' : 'abdin_ecommerce_inactive'}">
                                             <field name="code"/>
                                         </span>
-                                        <span class="o_abdin_status_dot" t-attf-class="o_abdin_status_dot #{record.website_product_is_published.raw_value ? 'o_published' : (record.website_product_synced.raw_value ? 'o_synced' : 'o_pending')}" aria-hidden="true"/>
+                                        <span class="abdin_ecommerce_status_dot" t-attf-class="abdin_ecommerce_status_dot #{record.website_product_is_published.raw_value ? 'abdin_ecommerce_published' : (record.website_product_synced.raw_value ? 'abdin_ecommerce_synced' : 'abdin_ecommerce_pending')}" aria-hidden="true"/>
                                     </div>
-                                    <div class="o_abdin_product_name">
+                                    <div class="abdin_ecommerce_product_name">
                                         <field name="name"/>
                                     </div>
-                                    <div class="o_abdin_price_row">
-                                        <span class="o_abdin_price_currency">EGP</span>
-                                        <span class="o_abdin_price_value">
+                                    <div class="abdin_ecommerce_price_row">
+                                        <span class="abdin_ecommerce_price_currency">EGP</span>
+                                        <span class="abdin_ecommerce_price_value">
                                             <field name="default_price"/>
                                         </span>
                                     </div>
-                                    <div class="o_abdin_meta_row">
-                                        <span class="o_abdin_availability" t-attf-class="o_abdin_availability #{record.active.raw_value ? 'o_in_stock' : 'o_out_of_stock'}">
+                                    <div class="abdin_ecommerce_meta_row">
+                                        <span class="abdin_ecommerce_availability" t-attf-class="abdin_ecommerce_availability #{record.active.raw_value ? 'abdin_ecommerce_in_stock' : 'abdin_ecommerce_out_of_stock'}">
                                             <t t-if="record.active.raw_value">
                                                 <i class="fa fa-check-circle" aria-hidden="true"/>
                                                 Active
@@ -72,29 +72,29 @@
                                                 Inactive
                                             </t>
                                         </span>
-                                        <span class="o_abdin_sync_indicator" t-attf-class="o_abdin_sync_indicator #{record.website_product_synced.raw_value ? 'o_done' : 'o_idle'}">
+                                        <span class="abdin_ecommerce_sync_indicator" t-attf-class="abdin_ecommerce_sync_indicator #{record.website_product_synced.raw_value ? 'abdin_ecommerce_done' : 'abdin_ecommerce_idle'}">
                                             <i class="fa fa-cloud" aria-hidden="true"/>
                                             <t t-if="record.website_product_synced.raw_value">Synced</t>
                                             <t t-else="">Pending</t>
                                         </span>
                                     </div>
                                 </div>
-                                <div class="o_abdin_card_footer">
+                                <div class="abdin_ecommerce_card_footer">
                                     <button name="action_sync_website_product" type="object"
-                                            class="btn o_abdin_btn o_abdin_btn_sync"
+                                            class="btn abdin_ecommerce_btn abdin_ecommerce_btn_sync"
                                             aria-label="Sync to eCommerce">
                                         <i class="fa fa-refresh" aria-hidden="true"/>
                                         <span>Sync</span>
                                     </button>
                                     <button name="action_open_website_product" type="object"
-                                            class="btn o_abdin_btn o_abdin_btn_edit"
+                                            class="btn abdin_ecommerce_btn abdin_ecommerce_btn_edit"
                                             invisible="not website_product_tmpl_id"
                                             aria-label="Edit eCommerce product">
                                         <i class="fa fa-pencil" aria-hidden="true"/>
                                         <span>Edit</span>
                                     </button>
                                     <button name="action_open_website_product_page" type="object"
-                                            class="btn o_abdin_btn o_abdin_btn_view"
+                                            class="btn abdin_ecommerce_btn abdin_ecommerce_btn_view"
                                             invisible="not website_product_is_published"
                                             aria-label="View on website">
                                         <i class="fa fa-external-link" aria-hidden="true"/>
