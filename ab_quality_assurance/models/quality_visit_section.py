@@ -1,10 +1,6 @@
 from odoo import _, api, fields, models
+from odoo.addons.base.models.ir_module import assert_log_admin_access
 from odoo.exceptions import AccessError, UserError, ValidationError
-
-QUALITY_EDITOR_GROUPS = (
-    "ab_quality_assurance.group_ab_quality_assurance_user",
-    "ab_quality_assurance.group_ab_quality_assurance_manager",
-)
 
 
 class AbQualityAssuranceVisitSection(models.Model):
@@ -37,7 +33,7 @@ class AbQualityAssuranceVisitSection(models.Model):
             record.max_score = sum(record.visit_line_ids.mapped("max_score"))
             scored_max_total = sum(scored_lines.mapped("max_score"))
             record.percentage = (
-                        sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
+                    sum(scored_lines.mapped("score")) / scored_max_total * 100) if scored_max_total else 0.0
 
     @api.onchange("section_id")
     def _onchange_section_id(self):
@@ -52,30 +48,6 @@ class AbQualityAssuranceVisitSection(models.Model):
                 lambda line: line.standard_id.section_id != record.section_id)
             if invalid_lines:
                 raise ValidationError(_("All standards in a visit section must belong to the same section."))
-
-    @api.model_create_multi
-    def create(self, vals_list):
-        prepared_vals_list = [self._prepare_vals(vals, for_create=True) for vals in vals_list]
-        records = super().create(prepared_vals_list)
-        records._check_visit_is_editable()
-        return records
-
-    def write(self, vals):
-        self._check_visit_is_editable()
-        return super().write(self._prepare_vals(vals, for_create=False))
-
-    def unlink(self):
-        self._check_visit_is_editable()
-        return super().unlink()
-
-    def _check_visit_is_editable(self):
-        if any(section.visit_id.state == "submitted" for section in self):
-            raise UserError(_("Submitted visits cannot be modified."))
-        user = self.env.user
-        can_edit_own = any(user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
-        can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
-        if not can_manage_all and (not can_edit_own or any(section.visit_id.user_id != user for section in self)):
-            raise AccessError(_("Only the visit creator or a quality assurance manager can modify visit sections."))
 
     def _get_active_standards(self):
         self.ensure_one()

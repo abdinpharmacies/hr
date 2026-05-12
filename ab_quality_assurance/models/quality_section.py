@@ -35,23 +35,6 @@ class AbQualityAssuranceSection(models.Model):
         for record in self:
             record.standard_count = len(record.standard_ids)
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        self.env["ab_quality_assurance.access"]._check_standard_management_access()
-        return super().create([self._prepare_vals(vals) for vals in vals_list])
-
-    def write(self, vals):
-        self.env["ab_quality_assurance.access"]._check_standard_management_access()
-        prepared_vals = self._prepare_vals(vals)
-        result = super().write(prepared_vals)
-        if "department_id" in prepared_vals:
-            self._sync_visit_department_followers()
-        return result
-
-    def unlink(self):
-        self.env["ab_quality_assurance.access"]._check_standard_management_access()
-        return super().unlink()
-
     @api.constrains("name")
     def _check_name(self):
         for record in self:
