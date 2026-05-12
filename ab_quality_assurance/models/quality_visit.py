@@ -206,35 +206,35 @@ class AbQualityAssuranceVisit(models.Model):
                 raise ValidationError(
                     _("Visits can only evaluate branch departments whose names start with '%s'.") % BRANCH_PREFIX)
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
-        records = super().create(prepared_vals_list)
-        records._validate_visit_sections()
-        records._sync_section_department_followers()
-        return records
-
-    def write(self, vals):
-        if not self._is_quality_editor() or not self._can_manage_visit():
-            raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
-
-        if any(record.state == "submitted" for record in self) and not self.env.context.get(
-                "allow_submitted_visit_write"):
-            raise UserError(_("Submitted visits cannot be modified."))
-
-        prepared_vals = self._prepare_create_or_write_vals(vals, for_create=False)
-        if prepared_vals.get("department_id") and "visit_section_ids" not in prepared_vals:
-            sections = self._get_active_sections()
-            prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
-        result = super().write(prepared_vals)
-        self._validate_visit_sections()
-        self._sync_section_department_followers()
-        return result
-
-    def unlink(self):
-        if any(record.state == "submitted" for record in self):
-            raise UserError(_("Submitted visits cannot be deleted."))
-        return super().unlink()
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
+    #     records = super().create(prepared_vals_list)
+    #     records._validate_visit_sections()
+    #     records._sync_section_department_followers()
+    #     return records
+    #
+    # def write(self, vals):
+    #     if not self._is_quality_editor() or not self._can_manage_visit():
+    #         raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
+    #
+    #     if any(record.state == "submitted" for record in self) and not self.env.context.get(
+    #             "allow_submitted_visit_write"):
+    #         raise UserError(_("Submitted visits cannot be modified."))
+    #
+    #     prepared_vals = self._prepare_create_or_write_vals(vals, for_create=False)
+    #     if prepared_vals.get("department_id") and "visit_section_ids" not in prepared_vals:
+    #         sections = self._get_active_sections()
+    #         prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
+    #     result = super().write(prepared_vals)
+    #     self._validate_visit_sections()
+    #     self._sync_section_department_followers()
+    #     return result
+    #
+    # def unlink(self):
+    #     if any(record.state == "submitted" for record in self):
+    #         raise UserError(_("Submitted visits cannot be deleted."))
+    #     return super().unlink()
 
     def _is_quality_editor(self):
         return any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)

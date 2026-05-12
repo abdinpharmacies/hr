@@ -24,19 +24,6 @@ class AbQualityAssuranceStandard(models.Model):
             if record.max_score <= 0:
                 raise ValidationError(_("Standard total score must be greater than zero."))
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        self.env["ab_quality_assurance.access"]._check_standard_management_access()
-        return super().create([self._prepare_vals(vals) for vals in vals_list])
-
-    def write(self, vals):
-        self.env["ab_quality_assurance.access"]._check_standard_management_access()
-        return super().write(self._prepare_vals(vals))
-
-    def unlink(self):
-        self.env["ab_quality_assurance.access"]._check_standard_management_access()
-        return super().unlink()
-
     @api.model
     def _prepare_vals(self, vals):
         prepared_vals = dict(vals or {})

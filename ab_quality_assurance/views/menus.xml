@@ -5,7 +5,6 @@
                   name="Quality Assurance"
                   sequence="35"
                   web_icon="ab_quality_assurance,static/description/icon.svg"
-                  groups="ab_quality_assurance.group_ab_quality_assurance_ro,ab_quality_assurance.group_ab_quality_assurance_dept_manager,ab_quality_assurance.group_ab_quality_assurance_user,ab_quality_assurance.group_ab_quality_assurance_manager"
         />
 
         <menuitem id="ab_quality_assurance_visit_menu"
@@ -28,12 +27,12 @@
                   action="ab_quality_assurance_dashboard_action"
                   sequence="20"/>
 
-     <menuitem id="ab_quality_assurance_section_menu"
-          name="Standards"
-          parent="ab_quality_assurance_root_menu"
-          action="ab_quality_assurance_section_action"
-          sequence="25"
-          groups="ab_quality_assurance.group_ab_quality_assurance_manager"
+        <menuitem id="ab_quality_assurance_section_menu"
+                  name="Standards"
+                  parent="ab_quality_assurance_root_menu"
+                  action="ab_quality_assurance_section_action"
+                  sequence="25"
+                  groups="ab_quality_assurance.group_ab_quality_assurance_manager"
         />
     </data>
 </odoo>

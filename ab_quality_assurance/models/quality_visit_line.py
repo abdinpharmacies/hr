@@ -74,20 +74,6 @@ class AbQualityAssuranceVisitLine(models.Model):
             if record.standard_id.section_id != record.section_id:
                 raise ValidationError(_("Visit line standards must belong to the selected section."))
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        records = super().create(vals_list)
-        records._check_visit_is_editable()
-        return records
-
-    def write(self, vals):
-        self._check_visit_is_editable()
-        return super().write(vals)
-
-    def unlink(self):
-        self._check_visit_is_editable()
-        return super().unlink()
-
     def action_download_attachment(self):
         self.ensure_one()
         if not self.attachment:
@@ -95,8 +81,8 @@ class AbQualityAssuranceVisitLine(models.Model):
         return {
             "type": "ir.actions.act_url",
             "url": (
-                "/web/content/%s/%s/attachment?download=true&filename_field=attachment_name"
-                % (self._name, self.id)
+                    "/web/content/%s/%s/attachment?download=true&filename_field=attachment_name"
+                    % (self._name, self.id)
             ),
             "target": "self",
         }
