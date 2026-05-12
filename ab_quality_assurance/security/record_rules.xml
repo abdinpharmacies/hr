@@ -30,7 +30,7 @@
             <field name="model_id" ref="model_ab_quality_assurance_visit"/>
             <field name="groups" eval="[(4, ref('group_ab_quality_assurance_ro'))]"/>
             <field name="domain_force">[
-                ('department_id', 'in', user.ab_employee_ids.department_id.ids),
+                ('department_id', 'child_of', user.ab_employee_ids.department_id.ids),
             ]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
