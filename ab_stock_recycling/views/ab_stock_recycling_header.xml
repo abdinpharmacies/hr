@@ -29,36 +29,43 @@
                                 type="object"
                                 confirm="Are you sure?"
                                 string="Get Overstock"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user,ab_stock_recycling.group_ab_stock_recycling_branch_role"
                                 class="btn-primary"/>
 
                         <button name="btn_get_need_for_specific_stores" confirm="Are you sure?" type="object"
                                 string="Get Need For Stores"
                                 invisible="process_type != 'need'"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                 class="btn-info"/>
                         <button name="btn_get_need_for_stock" confirm="Are you sure?" type="object"
                                 invisible="process_type == 'need'"
                                 string="Get Need For Stock"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                 class="btn-info"/>
                         <button name="btn_distribute_stock"
                                 invisible="process_type == 'need'"
                                 confirm="Are you sure?" type="object"
                                 string="Distribute"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                 class="btn-primary"/>
                         <button name="btn_reset_collection" confirm="Are you sure?" type="object"
                                 invisible="process_type == 'need'"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                 string="Reset Collection" class="btn-danger"/>
 
                         <button name="btn_reset_need" confirm="Are you sure?" type="object" string="Reset Need"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                 class="btn-danger"/>
                         <button name="btn_reset_dist" confirm="Are you sure?" type="object"
                                 invisible="process_type == 'need'"
                                 string="Reset Distribution"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                 class="btn-danger"/>
                     </header>
                     <sheet>
 
                         <div class="oe_button_box" name="button_box">
-                            <field name="show_advanced" widget="boolean_toggle"/>
+                            <field name="show_advanced" widget="boolean_toggle" groups="ab_stock_recycling.group_ab_stock_recycling_user"/>
                             <button name="btn_show_view"
                                     context="{'recycling_model':'ab_stock_recycling_line','title':'Stock'}"
                                     type="object"
@@ -68,11 +75,13 @@
                             <button name="btn_show_view"
                                     context="{'recycling_model':'ab_stock_recycling_need','title':'Need'}"
                                     type="object"
+                                    groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                     class="oe_stat_button" icon="fa-list-ul">
                                 <field string="Need" name="need_count" widget="statinfo"/>
                             </button>
                             <button name="btn_show_view" type="object"
                                     context="{'recycling_model':'ab_stock_recycling_dist','title':'Distribution'}"
+                                    groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                     class="oe_stat_button" icon="fa-list-ul">
                                 <field string="Distribution" name="distribution_count" widget="statinfo"/>
                             </button>
@@ -114,12 +123,13 @@
                         <div class="d-flex align-items-center" invisible="process_type == 'need'">
                             <button name="btn_one_click_distribute" type="object"
                                     confirm="Are you sure?"
+                                    groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                     string="One-Click Distribution" class="btn-primary btn-lg"/>
                             <label for="apply_source_store_need_first" class="ml-4"/>
-                            <field name="apply_source_store_need_first"/>
+                            <field name="apply_source_store_need_first" groups="ab_stock_recycling.group_ab_stock_recycling_user"/>
                         </div>
                         <notebook>
-                            <page string="From Excel"
+                            <page string="From Excel" groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                   invisible="process_type in ['over', 'need']">
                                 <div class="row">
                                     <div class="col-10">
@@ -145,24 +155,24 @@
                                         string="Export Excel"
                                         class="btn-primary"/>
                                 <br/>
-                                <field name="collection_ids" nolabel="1"/>
+                                <field name="collection_ids" nolabel="1" class="ab_stock_recycling_x2many_scroll_fix"/>
                             </page>
-                            <page string="Only Need For Items">
-                                <field name="only_item_ids" nolabel="1"/>
+                            <page string="Only Need For Items" groups="ab_stock_recycling.group_ab_stock_recycling_user">
+                                <field name="only_item_ids" nolabel="1" class="ab_stock_recycling_x2many_scroll_fix"/>
                             </page>
 
-                            <page string="Need Lines" invisible="not show_advanced">
+                            <page string="Need Lines" groups="ab_stock_recycling.group_ab_stock_recycling_user" invisible="not show_advanced">
                                 <div>
                                     <button name="btn_download_need_files" type="object" string="Download"
                                             class="btn-primary"/>
                                 </div>
-                                <field name="need_ids" nolabel="1"/>
+                                <field name="need_ids" nolabel="1" class="ab_stock_recycling_x2many_scroll_fix"/>
                             </page>
-                            <page string="Distribution Lines"
+                            <page string="Distribution Lines" groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                   invisible="not show_advanced or process_type == 'need'">
-                                <field name="dist_ids" nolabel="1"/>
+                                <field name="dist_ids" nolabel="1" class="ab_stock_recycling_x2many_scroll_fix"/>
                             </page>
-                            <page string="Permanent Excluded Items"
+                            <page string="Permanent Excluded Items" groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                   invisible="process_type != 'over'">
                                 <div class="d-flex justify-content-center">
                                     <label for="excluded_items_codes" string="##### Permanent Exclusion #####"/>
@@ -204,10 +214,10 @@
                                     </div>
                                 </div>
                                 <div class="">
-                                    <field name="excluded_item_perm_ids"/>
+                                    <field name="excluded_item_perm_ids" class="ab_stock_recycling_x2many_scroll_fix"/>
                                 </div>
                             </page>
-                            <page string="Temporary Excluded Items"
+                            <page string="Temporary Excluded Items" groups="ab_stock_recycling.group_ab_stock_recycling_user"
                                   invisible="process_type not in ['over', 'need']">
                                 <div class="d-flex justify-content-center">
                                     <label for="excluded_item_temp_ids" string="##### Temp Exclusion #####"/>
@@ -237,7 +247,7 @@
                                     </div>
                                 </div>
                                 <div class="">
-                                    <field name="excluded_item_temp_ids"/>
+                                    <field name="excluded_item_temp_ids" class="ab_stock_recycling_x2many_scroll_fix"/>
                                 </div>
                             </page>
                         </notebook>
@@ -268,6 +278,7 @@
                   name="Stock Recycling"
                   parent="menu_root"
                   action="ab_stock_recycling_header_action"
+                  groups="ab_stock_recycling.group_ab_stock_recycling_user,ab_stock_recycling.group_ab_stock_recycling_branch_role"
                   sequence="0"/>
 
     </data>
