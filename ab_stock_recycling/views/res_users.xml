@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_stock_recycling_res_users_view_form" model="ir.ui.view">
+            <field name="name">ab.stock.recycling.res.users.form</field>
+            <field name="model">res.users</field>
+            <field name="inherit_id" ref="base.view_users_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='tz']" position="after">
+                    <field name="ab_stock_recycling_branch_store_id"
+                           groups="ab_stock_recycling.group_ab_stock_recycling_admin"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
