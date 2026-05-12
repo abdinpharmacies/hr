@@ -81,7 +81,8 @@ class StockRecycling(models.Model):
         column1='stock_recycling_id',
         column2='store_id',
         string='Sending Stores',
-        domain=[('active', '=', True), ('eplus_serial', '>', 0)]
+        domain=[('active', '=', True), ('eplus_serial', '>', 0)],
+        default=lambda self: self._default_overstock_store_ids(),
     )
 
     collection_ids = fields.One2many(
@@ -101,6 +102,53 @@ class StockRecycling(models.Model):
         inverse_name='header_id',
         string='Distribution Lines',
         required=False)
+
+    def _default_overstock_store_ids(self):
+        user = self.env.user
+        if user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
+            return self._get_branch_store_for_user(user)
+        return self.env['ab_store']
+
+    def _get_branch_store_for_user(self, user):
+        if user.ab_stock_recycling_branch_store_id:
+            return user.ab_stock_recycling_branch_store_id
+        if user.name:
+            store_model = self.env['ab_store']
+            user_name = (user.name or '').strip()
+            candidates = [user_name]
+            if '-' in user_name:
+                suffix = user_name.split('-', 1)[1].strip()
+                if suffix:
+                    candidates.append(suffix)
+            for candidate in candidates:
+                store = store_model.search([
+                    ('name', '=', candidate),
+                    ('active', '=', True),
+                ], limit=1)
+                if store:
+                    user.sudo().write({'ab_stock_recycling_branch_store_id': store.id})
+                    return store
+            for candidate in candidates:
+                store = store_model.search([
+                    ('name', 'ilike', candidate),
+                    ('active', '=', True),
+                ], limit=1)
+                if store:
+                    user.sudo().write({'ab_stock_recycling_branch_store_id': store.id})
+                    return store
+        return self.env['ab_store']
+
+    @api.constrains('overstock_store_ids')
+    def _check_branch_role_sending_store(self):
+        for rec in self:
+            user = rec.env.user
+            if not user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
+                continue
+            user_store = rec._get_branch_store_for_user(user)
+            if not user_store:
+                raise ValidationError(_("Set Stock Recycling Branch Store on the user before using branch_role."))
+            if len(rec.overstock_store_ids) != 1 or rec.overstock_store_ids != user_store:
+                raise ValidationError(_("Branch role users can only use their own sending store."))
 
     @api.depends('start_date', 'end_date')
     def _compute_need_per_x_day(self):
@@ -324,6 +372,13 @@ class StockRecycling(models.Model):
         self.collection_ids.unlink()
 
     def btn_get_overstock_for_stores(self):
+        if self.env.user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
+            branch_store = self._get_branch_store_for_user(self.env.user)
+            if not branch_store:
+                raise ValidationError(_("Set Stock Recycling Branch Store on the user before using branch_role."))
+            if self.overstock_store_ids != branch_store:
+                self.overstock_store_ids = [(6, 0, [branch_store.id])]
+
         fn_balance_sales = (
             'fn_balance_sales_with_trans_odoo'
             if self.get_pending_transfer
@@ -575,7 +630,7 @@ class StockRecycling(models.Model):
 
     def btn_export_excel_over_need(self):
         action = self.env.ref("ab_stock_recycling.action_export_overstock_no_need")
-        action[0].name = "Overstock without need"
+        action.sudo().name = "Overstock without need"
         return action.report_action(self)
 
     def get_overstock_no_need_data(self):

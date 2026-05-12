@@ -4,3 +4,4 @@ from . import ab_stock_recycling_need
 from . import ab_stock_recycling_dist
 from . import ab_stock_recycling_excluded_item
 from . import ab_stock_recycling_to_cycle
+from . import res_users

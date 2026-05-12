@@ -21,11 +21,17 @@
                 'ab_product'],
     'license': 'LGPL-3',
     'installable': True,
+    'assets': {
+        'web.assets_backend': [
+            'ab_stock_recycling/static/src/scss/ab_stock_recycling.scss',
+        ],
+    },
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',
         'security/ir.model.access.csv',
         'views/00_menus.xml',
+        'views/res_users.xml',
         'views/ab_stock_recycling_header.xml',
         'views/ab_stock_recycling_line.xml',
         'views/ab_stock_recycling_need.xml',

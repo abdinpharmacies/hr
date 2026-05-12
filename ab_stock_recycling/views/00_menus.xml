@@ -5,10 +5,13 @@
         <menuitem id="menu_root"
                   name="Stock Recycle"
                   web_icon="ab_stock_recycling,static/description/icon.png"
+                  groups="ab_stock_recycling.group_ab_stock_recycling_user,ab_stock_recycling.group_ab_stock_recycling_branch_role"
                   sequence="100"/>
 
-        <menuitem id="config_sub_menu" name="Configuration" parent="menu_root" sequence="200"/>
+        <menuitem id="config_sub_menu" name="Configuration" parent="menu_root" sequence="200"
+                  groups="ab_stock_recycling.group_ab_stock_recycling_user"/>
 
-        <menuitem id="ab_stock_recycling_data_sub_menu" name="Stock Recycling Data" parent="menu_root" sequence="100"/>
+        <menuitem id="ab_stock_recycling_data_sub_menu" name="Stock Recycling Data" parent="menu_root" sequence="100"
+                  groups="ab_stock_recycling.group_ab_stock_recycling_user"/>
     </data>
 </odoo>
