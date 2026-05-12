@@ -83,9 +83,20 @@ class EPlusConnect(models.AbstractModel):
     def is_port_open(host, port=1433, timeout=2):
         return is_port_open(host, port, timeout)
 
+    # def decrypt_password(self):
+    #     encrypted_password = bytes(self.env['ir.config_parameter'].sudo().get_param("bconnect_crypt_pass"), 'utf-8')
+    #     cipher = Fernet(bytes(DECRYPTION_KEY, 'utf-8'))
+    #     password = cipher.decrypt(encrypted_password).decode('utf-8')
+    #     return password
+
     def decrypt_password(self):
-        encrypted_password = bytes(self.env['ir.config_parameter'].sudo().get_param("bconnect_crypt_pass"), 'utf-8')
+        encrypted_password = self.env['ir.config_parameter'].sudo().get_param("bconnect_crypt_pass")
+        _logger.info(f"Encrypted password: {encrypted_password}")
+        _logger.info(f"Decryption key: {DECRYPTION_KEY}")
+
+        encrypted_password = bytes(encrypted_password, 'utf-8')
         cipher = Fernet(bytes(DECRYPTION_KEY, 'utf-8'))
+
         password = cipher.decrypt(encrypted_password).decode('utf-8')
         return password
 

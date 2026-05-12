@@ -34,6 +34,15 @@ class StockRecyclingLine(models.Model):
     
     is_consumed = fields.Boolean(compute='_compute_is_consumed', search='_search_is_consumed')
 
+    reason_for_keeping_item = fields.Selection([
+        ("on_consignment", "On Consignment"),
+        ("prescription_item", "Prescription Item"),
+        ("seasonal_item", "Seasonal Item"),
+        ("expected_fast_moving_item", "Expected Fast Moving Item")
+    ], string="Reason For Keeping Item")
+
+    notes = fields.Text(string="Notes")
+
     @api.depends('balance', 'over_need_qty')
     def _compute_target_qty(self):
         for rec in self:
