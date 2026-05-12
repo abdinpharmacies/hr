@@ -32,7 +32,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 /* ======================================================================
    PART 1: KANBAN VIEW
    ====================================================================== */
-.o_abdin_kanban_ecommerce {
+.abdin_ecommerce_kanban_ecommerce {
     .o_kanban_group {
         background: #fff;
         border-radius: $abdin-radius-lg;
@@ -64,7 +64,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
     }
 
-    .o_abdin_card {
+    .abdin_ecommerce_card {
         position: relative;
         border-radius: $abdin-radius-md;
         border: 1px solid $abdin-gray-300;
@@ -87,7 +87,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
     }
 
-    .o_abdin_card_image_section {
+    .abdin_ecommerce_card_image_section {
         position: relative;
         height: 140px;
         background: linear-gradient(135deg, $abdin-gray-100, $abdin-gray-200);
@@ -98,16 +98,16 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         border-bottom: 1px solid $abdin-gray-200;
         flex-shrink: 0;
     }
-    .o_abdin_image_wrapper {
+    .abdin_ecommerce_image_wrapper {
         display: flex;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 100%;
         transition: transform 0.3s ease;
-        .o_abdin_card:hover & { transform: scale(1.05); }
+        .abdin_ecommerce_card:hover & { transform: scale(1.05); }
     }
-    .o_abdin_icon_placeholder {
+    .abdin_ecommerce_icon_placeholder {
         width: 64px;
         height: 64px;
         background: #fff;
@@ -123,14 +123,14 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             color: $abdin-gray-500;
             transition: color 0.3s ease;
         }
-        .o_abdin_card:hover & {
+        .abdin_ecommerce_card:hover & {
             border-color: $abdin-gray-500;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
             i { color: $abdin-gray-600; }
         }
     }
 
-    .o_abdin_ribbon {
+    .abdin_ecommerce_ribbon {
         position: absolute;
         top: 10px;
         left: -28px;
@@ -145,12 +145,12 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         z-index: 2;
         white-space: nowrap;
         pointer-events: none;
-        &.o_abdin_ribbon_published { background: linear-gradient(135deg, #28a745, #20c997); }
-        &.o_abdin_ribbon_synced { background: linear-gradient(135deg, #ffc107, #fd7e14); color: $abdin-gray-900; }
-        &.o_abdin_ribbon_new { background: linear-gradient(135deg, #0d6efd, #6610f2); }
+        &.abdin_ecommerce_ribbon_published { background: linear-gradient(135deg, #28a745, #20c997); }
+        &.abdin_ecommerce_ribbon_synced { background: linear-gradient(135deg, #ffc107, #fd7e14); color: $abdin-gray-900; }
+        &.abdin_ecommerce_ribbon_new { background: linear-gradient(135deg, #0d6efd, #6610f2); }
     }
 
-    .o_abdin_dropdown_container {
+    .abdin_ecommerce_dropdown_container {
         position: absolute;
         top: 8px;
         right: 8px;
@@ -177,20 +177,20 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
     }
 
-    .o_abdin_card_body {
+    .abdin_ecommerce_card_body {
         padding: 16px;
         flex: 1;
         display: flex;
         flex-direction: column;
         gap: 8px;
     }
-    .o_abdin_code_row {
+    .abdin_ecommerce_code_row {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 8px;
     }
-    .o_abdin_code_badge {
+    .abdin_ecommerce_code_badge {
         display: inline-flex;
         align-items: center;
         font-size: 11px;
@@ -203,19 +203,19 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         max-width: 70%;
         overflow: hidden;
         text-overflow: ellipsis;
-        &.o_active { background: #d1e7dd; color: #0f5132; }
-        &.o_inactive { background: #f8d7da; color: #842029; }
+        &.abdin_ecommerce_active { background: #d1e7dd; color: #0f5132; }
+        &.abdin_ecommerce_inactive { background: #f8d7da; color: #842029; }
     }
-    .o_abdin_status_dot {
+    .abdin_ecommerce_status_dot {
         width: 8px; height: 8px;
         border-radius: 50%;
         flex-shrink: 0;
         transition: all 0.3s ease;
-        &.o_published { background: $abdin-success; box-shadow: 0 0 0 3px rgba(40,167,69,0.2); }
-        &.o_synced { background: $abdin-warning; box-shadow: 0 0 0 3px rgba(255,193,7,0.2); }
-        &.o_pending { background: $abdin-gray-600; box-shadow: 0 0 0 3px rgba(108,117,125,0.15); }
+        &.abdin_ecommerce_published { background: $abdin-success; box-shadow: 0 0 0 3px rgba(40,167,69,0.2); }
+        &.abdin_ecommerce_synced { background: $abdin-warning; box-shadow: 0 0 0 3px rgba(255,193,7,0.2); }
+        &.abdin_ecommerce_pending { background: $abdin-gray-600; box-shadow: 0 0 0 3px rgba(108,117,125,0.15); }
     }
-    .o_abdin_product_name {
+    .abdin_ecommerce_product_name {
         font-size: 14px;
         font-weight: 600;
         line-height: 1.5;
@@ -228,26 +228,26 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         -webkit-box-orient: vertical;
         word-break: break-word;
     }
-    .o_abdin_price_row {
+    .abdin_ecommerce_price_row {
         display: flex;
         align-items: baseline;
         gap: 4px;
         margin-top: 4px;
     }
-    .o_abdin_price_currency {
+    .abdin_ecommerce_price_currency {
         font-size: 12px;
         font-weight: 600;
         color: $abdin-gray-600;
         text-transform: uppercase;
     }
-    .o_abdin_price_value {
+    .abdin_ecommerce_price_value {
         font-size: 22px;
         font-weight: 800;
         color: $abdin-primary;
         line-height: 1.2;
         letter-spacing: -0.01em;
     }
-    .o_abdin_meta_row {
+    .abdin_ecommerce_meta_row {
         display: flex;
         align-items: center;
         gap: 12px;
@@ -255,7 +255,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         padding-top: 8px;
         flex-wrap: wrap;
     }
-    .o_abdin_availability, .o_abdin_sync_indicator {
+    .abdin_ecommerce_availability, .abdin_ecommerce_sync_indicator {
         display: inline-flex;
         align-items: center;
         gap: 4px;
@@ -266,16 +266,16 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         white-space: nowrap;
         i { font-size: 10px; }
     }
-    .o_abdin_availability {
-        &.o_in_stock { background: #e8f5e9; color: #2e7d32; }
-        &.o_out_of_stock { background: #fbe9e7; color: #c62828; }
+    .abdin_ecommerce_availability {
+        &.abdin_ecommerce_in_stock { background: #e8f5e9; color: #2e7d32; }
+        &.abdin_ecommerce_out_of_stock { background: #fbe9e7; color: #c62828; }
     }
-    .o_abdin_sync_indicator {
-        &.o_done { background: #e3f2fd; color: #1565c0; }
-        &.o_idle { background: #f3e5f5; color: #7b1fa2; }
+    .abdin_ecommerce_sync_indicator {
+        &.abdin_ecommerce_done { background: #e3f2fd; color: #1565c0; }
+        &.abdin_ecommerce_idle { background: #f3e5f5; color: #7b1fa2; }
     }
 
-    .o_abdin_card_footer {
+    .abdin_ecommerce_card_footer {
         padding: 12px 16px;
         background: $abdin-gray-100;
         border-top: 1px solid $abdin-gray-300;
@@ -283,7 +283,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         gap: 8px;
         flex-shrink: 0;
     }
-    .o_abdin_btn {
+    .abdin_ecommerce_btn {
         flex: 1;
         display: inline-flex;
         align-items: center;
@@ -302,7 +302,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         i { font-size: 12px; transition: transform 0.2s ease; }
         &:focus-visible { outline: 2px solid $abdin-primary; outline-offset: 2px; }
     }
-    .o_abdin_btn_sync {
+    .abdin_ecommerce_btn_sync {
         background: $abdin-primary; color: #fff; border-color: $abdin-primary;
         &:hover {
             background: $abdin-primary-dark;
@@ -311,7 +311,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             i { transform: rotate(180deg); }
         }
     }
-    .o_abdin_btn_edit {
+    .abdin_ecommerce_btn_edit {
         background: #fff; color: $abdin-gray-900; border-color: $abdin-gray-300;
         &:hover {
             background: $abdin-gray-100;
@@ -321,7 +321,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             i { color: $abdin-primary; }
         }
     }
-    .o_abdin_btn_view {
+    .abdin_ecommerce_btn_view {
         background: linear-gradient(135deg, #20c997, $abdin-primary);
         color: #fff; border: none;
         &:hover {
@@ -333,7 +333,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // Kanban responsive
-.o_kanban_renderer.o_abdin_kanban_ecommerce {
+.o_kanban_renderer.abdin_ecommerce_kanban_ecommerce {
     padding: 16px;
     gap: 16px;
     .o_kanban_group {
@@ -349,10 +349,10 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     @media (max-width: 768px) {
         padding: 8px; gap: 8px;
         .o_kanban_group { min-width: 100%; max-width: 100%; flex: 1 1 100%; }
-        .o_abdin_price_value { font-size: 18px; }
-        .o_abdin_card { min-height: 300px; }
-        .o_abdin_product_name { font-size: 13px; }
-        .o_abdin_btn { padding: 6px 10px; font-size: 11px; }
+        .abdin_ecommerce_price_value { font-size: 18px; }
+        .abdin_ecommerce_card { min-height: 300px; }
+        .abdin_ecommerce_product_name { font-size: 13px; }
+        .abdin_ecommerce_btn { padding: 6px 10px; font-size: 11px; }
     }
     @media (min-width: 769px) and (max-width: 1024px) {
         .o_kanban_group { min-width: 240px; flex: 1 1 45%; }
@@ -371,12 +371,12 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
    ====================================================================== */
 
 // --- 2a. Premium Status Bar ---
-.o_abdin_statusbar {
+.abdin_ecommerce_statusbar {
     background: linear-gradient(135deg, #f8f9fa 0%, #f1f3f5 100%);
     border-bottom: 1px solid $abdin-gray-300;
     padding: 10px 16px;
 
-    .o_abdin_statusbar_inner {
+    .abdin_ecommerce_statusbar_inner {
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -384,13 +384,13 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         gap: 8px;
         max-width: 100%;
     }
-    .o_abdin_statusbar_badges {
+    .abdin_ecommerce_statusbar_badges {
         display: flex;
         align-items: center;
         gap: 8px;
         flex-wrap: wrap;
     }
-    .o_abdin_badge {
+    .abdin_ecommerce_badge {
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -401,17 +401,17 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         white-space: nowrap;
         i { font-size: 11px; }
     }
-    .o_abdin_badge_success { background: #d1e7dd; color: #0f5132; }
-    .o_abdin_badge_warning { background: #fff3cd; color: #664d03; }
-    .o_abdin_badge_secondary { background: #e2e3e5; color: #41464b; }
-    .o_abdin_badge_info { background: #cff4fc; color: #055160; }
+    .abdin_ecommerce_badge_success { background: #d1e7dd; color: #0f5132; }
+    .abdin_ecommerce_badge_warning { background: #fff3cd; color: #664d03; }
+    .abdin_ecommerce_badge_secondary { background: #e2e3e5; color: #41464b; }
+    .abdin_ecommerce_badge_info { background: #cff4fc; color: #055160; }
 
-    .o_abdin_statusbar_meta {
+    .abdin_ecommerce_statusbar_meta {
         display: flex;
         align-items: center;
         gap: 12px;
     }
-    .o_abdin_statusbar_code {
+    .abdin_ecommerce_statusbar_code {
         display: inline-flex;
         align-items: center;
         gap: 6px;
@@ -428,7 +428,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // --- 2b. Action Bar ---
-.o_abdin_action_bar {
+.abdin_ecommerce_action_bar {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -438,13 +438,13 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     background: #fff;
     border-bottom: 1px solid $abdin-gray-300;
 
-    .o_abdin_action_bar_left, .o_abdin_action_bar_right {
+    .abdin_ecommerce_action_bar_left, .abdin_ecommerce_action_bar_right {
         display: flex;
         align-items: center;
         gap: 8px;
         flex-wrap: wrap;
     }
-    .o_abdin_btn_primary {
+    .abdin_ecommerce_btn_primary {
         background: $abdin-primary;
         color: #fff;
         border: 1px solid $abdin-primary;
@@ -464,7 +464,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             transform: translateY(-1px);
         }
     }
-    .o_abdin_btn_outline {
+    .abdin_ecommerce_btn_outline {
         background: #fff;
         color: $abdin-gray-700;
         border: 1px solid $abdin-gray-300;
@@ -484,7 +484,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
     }
-    .o_abdin_btn_ghost {
+    .abdin_ecommerce_btn_ghost {
         background: transparent;
         color: $abdin-gray-600;
         border: 1px solid transparent;
@@ -506,7 +506,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // --- 2c. Product Basic Group ---
-.o_abdin_group_basic {
+.abdin_ecommerce_group_basic {
     padding: 16px;
     margin: 0;
 
@@ -525,7 +525,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 // --- 2d. Notebook ---
-.o_abdin_notebook {
+.abdin_ecommerce_notebook {
     margin: 0 16px 16px;
 
     // Modern tab headers
@@ -590,7 +590,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         border-radius: 0 0 $abdin-radius-md $abdin-radius-md;
         padding: 16px;
 
-        .o_abdin_page_grid {
+        .abdin_ecommerce_page_grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 16px;
@@ -607,7 +607,7 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             }
         }
 
-        .o_abdin_page_actions {
+        .abdin_ecommerce_page_actions {
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -633,14 +633,14 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 // --- 2f. General Form Field Tweaks ---
 .o_form_view {
     .o_field_widget {
-        &.o_abdin_price_field {
+        &.abdin_ecommerce_price_field {
             .o_field_number {
                 font-size: 16px;
                 font-weight: 700;
                 color: $abdin-primary;
             }
         }
-        &.o_abdin_cost_field {
+        &.abdin_ecommerce_cost_field {
             .o_field_number {
                 font-size: 14px;
                 font-weight: 600;
@@ -663,15 +663,15 @@ $abdin-transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
    PART 3: ACCESSIBILITY & REDUCED MOTION
    ====================================================================== */
 @media (prefers-reduced-motion: reduce) {
-    .o_abdin_kanban_ecommerce .o_abdin_card,
-    .o_abdin_kanban_ecommerce .o_abdin_btn,
-    .o_abdin_action_bar .o_abdin_btn_primary,
-    .o_abdin_action_bar .o_abdin_btn_outline {
+    .abdin_ecommerce_kanban_ecommerce .abdin_ecommerce_card,
+    .abdin_ecommerce_kanban_ecommerce .abdin_ecommerce_btn,
+    .abdin_ecommerce_action_bar .abdin_ecommerce_btn_primary,
+    .abdin_ecommerce_action_bar .abdin_ecommerce_btn_outline {
         transition: none;
         &:hover { transform: none; }
     }
-    .o_abdin_btn_sync:hover i { transform: none; }
-    .o_abdin_btn_view:hover i { transform: none; }
-    .o_abdin_image_wrapper { transition: none; }
-    .o_abdin_card:hover .o_abdin_image_wrapper { transform: none; }
+    .abdin_ecommerce_btn_sync:hover i { transform: none; }
+    .abdin_ecommerce_btn_view:hover i { transform: none; }
+    .abdin_ecommerce_image_wrapper { transition: none; }
+    .abdin_ecommerce_card:hover .abdin_ecommerce_image_wrapper { transform: none; }
 }
