@@ -75,5 +75,12 @@ class StockRecyclingLine(models.Model):
     @api.depends('file_source', 'qty', 'exp_date')
     def _compute_display_name(self):
         for rec in self:
-            name_items = [f"Source:{rec.file_source or ''}", f"Target qty:{rec.qty or ''}", f"Exp:{rec.exp_date or ''}"]
+            file_source = rec.file_source or ''
+            qty = rec.qty or ''
+            exp_date = rec.exp_date or ''
+            name_items = [
+                _("Source:%s") % file_source,
+                _("Target qty:%s") % qty,
+                _("Exp:%s") % exp_date,
+            ]
             rec.display_name = '/'.join(str(it) for it in name_items if it.split(":")[-1])

@@ -31,7 +31,11 @@ class StockNeed(models.Model):
     @api.depends('sales_qty', 'balance', 'qty')
     def _compute_display_name(self):
         for rec in self:
-            name_items = [f"Sales:{rec.sales_qty}", f"Balance:{rec.balance}", f"Need:{rec.qty}"]
+            name_items = [
+                _("Sales:%s") % rec.sales_qty,
+                _("Balance:%s") % rec.balance,
+                _("Need:%s") % rec.qty,
+            ]
             rec.display_name = '/'.join(str(it) for it in name_items if it)
 
     @api.depends('item_price', 'qty')
