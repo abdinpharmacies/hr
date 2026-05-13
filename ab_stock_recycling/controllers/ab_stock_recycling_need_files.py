@@ -2,7 +2,7 @@
 import io
 from urllib.parse import quote
 import zipfile
-from odoo import http
+from odoo import _, http
 import xlsxwriter
 from itertools import groupby
 from operator import attrgetter
@@ -44,9 +44,9 @@ def write_summary(worksheet, rows, headers, title_format, data_format):
     total_cost = sum(row[3] for row in rows)
     total_price = sum(row[4] for row in rows)
     products_count = len(rows)
-    products_count_title = 'Products Count'
-    total_price_title = 'Total Price'
-    total_cost_title = 'Total Cost'
+    products_count_title = _('Products Count')
+    total_price_title = _('Total Price')
+    total_cost_title = _('Total Cost')
     worksheet.set_column(0, len(headers) + 2, len(products_count_title))
     worksheet.set_column(1, len(headers) + 2, len(total_cost_title))
     worksheet.set_column(2, len(headers) + 2, len(total_price_title))
@@ -151,13 +151,13 @@ class NeedStockFileDownloader(http.Controller):
         return {
             'supplier_groups': groupby(need_tuples, key=lambda x: x[0]),
             'file_name': file_name,
-            'headers': ('Supplier Name',
-                        'Product Code',
-                        '----- Product Name -----',
-                        'Approx. Cost',
-                        'Price',
-                        'Sales',
-                        'Balance',
-                        'Required Quantity')
+            'headers': (_('Supplier Name'),
+                        _('Product Code'),
+                        _('----- Product Name -----'),
+                        _('Approx. Cost'),
+                        _('Price'),
+                        _('Sales'),
+                        _('Balance'),
+                        _('Required Quantity'))
 
         }

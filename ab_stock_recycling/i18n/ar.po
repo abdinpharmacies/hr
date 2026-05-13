@@ -1,0 +1,1135 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_stock_recycling
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-12 13:08+0000\n"
+"PO-Revision-Date: 2026-05-12 13:08+0000\n"
+"Last-Translator: Alhassan Hossny\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid ""
+"\n"
+"        <div class='h4 text-success'>Process completed successfully</div>\n"
+"        <div class='h6 text-info w-50'>\n"
+"            <table class='table table-striped'>\n"
+"                <tr>\n"
+"                    <th>Number of Target Stock lines</th>\n"
+"                    <td>%s</td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <th>Number of Need Stock lines</th>\n"
+"                    <td>%s</td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <th>Number of Distributed Stock lines</th>\n"
+"                    <td>%s</td>\n"
+"                </tr>\n"
+"            </table>\n"
+"        </div>\n"
+"        "
+msgstr ""
+"\n"
+"        <div class='h4 text-success'>تمت العملية بنجاح</div>\n"
+"        <div class='h6 text-info w-50'>\n"
+"            <table class='table table-striped'>\n"
+"                <tr>\n"
+"                    <th>عدد سطور المخزون المستهدف</th>\n"
+"                    <td>%s</td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <th>عدد سطور الاحتياج</th>\n"
+"                    <td>%s</td>\n"
+"                </tr>\n"
+"                <tr>\n"
+"                    <th>عدد سطور المخزون الموزع</th>\n"
+"                    <td>%s</td>\n"
+"                </tr>\n"
+"            </table>\n"
+"        </div>\n"
+"        "
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "##### Permanent Exclusion #####"
+msgstr "##### الاستبعاد الدائم #####"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "##### Temp Exclusion #####"
+msgstr "##### الاستبعاد المؤقت #####"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "----- Product Name -----"
+msgstr "----- اسم المنتج -----"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid ""
+"<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"Arrow icon\" "
+"title=\"Arrow\"/>"
+msgstr "<i class=\"fa fa-long-arrow-right mx-2\" aria-label=\"أيقونة سهم\" title=\"سهم\"/>"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid ""
+"<span class='h4 text-success'>%s</span> lines added\n"
+"        <span class='h4 text-success'>successfully</span>\n"
+"        by user <span class='h4 font-italic text-muted'>%s</span>"
+msgstr ""
+"تمت إضافة <span class='h4 text-success'>%s</span> سطر\n"
+"        <span class='h4 text-success'>بنجاح</span>\n"
+"        بواسطة المستخدم <span class='h4 font-italic text-muted'>%s</span>"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,help:ab_stock_recycling.field_ab_stock_recycling_line__over_need_qty
+msgid "=Quantity Before Distribution - Distributed Quantity"
+msgstr "=الكمية قبل التوزيع - الكمية الموزعة"
+
+#. module: ab_stock_recycling
+#: model:ir.actions.act_window,name:ab_stock_recycling.ab_stock_recycling_excluded_item_action
+msgid "Ab stock recycling excluded item"
+msgstr "الأصناف المستبعدة من تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__need_line_id
+msgid "According To Need"
+msgstr "حسب الاحتياج"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Add Temp"
+msgstr "إضافة مؤقت"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Adding these lines, are you sure?"
+msgstr "سيتم إضافة هذه السطور، هل أنت متأكد؟"
+
+#. module: ab_stock_recycling
+#: model:res.groups,name:ab_stock_recycling.group_ab_stock_recycling_admin
+msgid "Administrator"
+msgstr "مدير النظام"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_header__item_type__all
+msgid "All"
+msgstr "الكل"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__apply_source_store_need_first
+msgid "Apply Source Store Need First"
+msgstr "تطبيق احتياج فرع المصدر أولا"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "Approx. Cost"
+msgstr "التكلفة التقريبية"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Are you sure?"
+msgstr "هل أنت متأكد؟"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Auto Refresh Exclusion"
+msgstr "تحديث الاستبعاد تلقائيا"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__balance
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__balance
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_need.py:0
+msgid "Balance:%s"
+msgstr "الرصيد:%s"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,help:ab_stock_recycling.field_res_users__ab_stock_recycling_branch_store_id
+msgid "Branch role users are restricted to this sending store."
+msgstr "مستخدمو دور الفرع مقيدون بفرع الإرسال هذا."
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "Branch role users can only use their own sending store."
+msgstr "يمكن لمستخدمي دور الفرع استخدام فرع الإرسال الخاص بهم فقط."
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__item_code
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__item_code
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__item_code
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__item_code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__collection_count
+msgid "Collection Count"
+msgstr "عدد التجميع"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__collection_ids
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Collection Lines"
+msgstr "سطور التجميع"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__supplier_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.config_sub_menu
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_header__item_type__not_medicine
+msgid "Cosmo"
+msgstr "تجميل"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__count_of_excluded_items
+msgid "Count Of Excluded Items"
+msgstr "عدد الأصناف المستبعدة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__create_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__create_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__create_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__create_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__create_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__create_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__create_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__create_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__create_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__create_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_excluded_item__exclusion_reason__custom
+msgid "Custom"
+msgstr "مخصص"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__cycle_date
+msgid "Cycle Date"
+msgstr "تاريخ الدورة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__cycle_type
+msgid "Cycle Type"
+msgstr "نوع الدورة"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_excel_writer__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_report_overstock_no_need__display_name
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_res_users__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Distribute"
+msgstr "توزيع"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__distributed_qty
+msgid "Distributed Qty"
+msgstr "الكمية الموزعة"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_dist_menu
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Distribution"
+msgstr "التوزيع"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__distribution_count
+msgid "Distribution Count"
+msgstr "عدد التوزيع"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__dist_ids
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Distribution Lines"
+msgstr "سطور التوزيع"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Download"
+msgstr "تنزيل"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__end_date
+msgid "End Date"
+msgstr "تاريخ النهاية"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__excluded_item_perm_ids
+msgid "Excluded Item Perm"
+msgstr "صنف مستبعد دائم"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_excluded_item_menu
+msgid "Excluded Items"
+msgstr "الأصناف المستبعدة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__excluded_items_codes
+msgid "Excluded Items Codes"
+msgstr "أكواد الأصناف المستبعدة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__exclusion_reason
+msgid "Exclusion Reason"
+msgstr "سبب الاستبعاد"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__exp_date
+msgid "Exp Date"
+msgstr "تاريخ الانتهاء"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_line.py:0
+msgid "Exp:%s"
+msgstr "الانتهاء:%s"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_line__reason_for_keeping_item__expected_fast_moving_item
+msgid "Expected Fast Moving Item"
+msgstr "صنف متوقع ارتفاع معدل بيعه"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Export Excel"
+msgstr "تصدير إكسل"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__file_source
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__file_source
+msgid "File Source"
+msgstr "مصدر الملف"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__from_excel
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "From Excel"
+msgstr "من إكسل"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__stock_line_id
+msgid "From Stock"
+msgstr "من المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__from_store_id
+msgid "From Store"
+msgstr "من الفرع"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Get Need For Stock"
+msgstr "جلب احتياج المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Get Need For Stores"
+msgstr "جلب احتياج الفروع"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Get Overstock"
+msgstr "جلب المخزون الزائد"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__get_pending_transfer
+msgid "Get Pending Transfer"
+msgstr "جلب التحويل المعلق"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__given_qty
+msgid "Given Qty"
+msgstr "الكمية المعطاة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__header_id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__header_id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__header_id
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_excel_writer__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_report_overstock_no_need__id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_res_users__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_stock_recycling
+#: model:ir.model.constraint,message:ab_stock_recycling.constraint_ab_stock_recycling_excluded_item_ab_stock_recycling_ex_3ef04c9f
+msgid "ITEM CAN NOT BE DUPLICATED!"
+msgstr "لا يمكن تكرار الصنف!"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_excel_writer
+msgid "Inherit this to call excel functions"
+msgstr "يرث هذا النموذج لاستدعاء دوال إكسل"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__is_consumed
+msgid "Is Consumed"
+msgstr "مستهلك"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__is_done
+msgid "Is Done"
+msgstr "تم"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__item_id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__item_id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__item_id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__item_id
+msgid "Item"
+msgstr "الصنف"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__item_cost
+msgid "Item Cost"
+msgstr "تكلفة الصنف"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__item_price
+msgid "Item Price"
+msgstr "سعر الصنف"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__item_type
+msgid "Item Type"
+msgstr "نوع الصنف"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_item_catalog_menu
+msgid "Items"
+msgstr "الأصناف"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__last_sales_x_days
+msgid "Last Sales X Days"
+msgstr "مبيعات آخر X يوم"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__last_trans_date
+msgid "Last Trans Date"
+msgstr "تاريخ آخر حركة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__write_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__write_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__write_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__write_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__write_uid
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__write_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_excluded_item__write_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__write_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__write_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__write_date
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_stock_recycling
+#: model:res.groups,name:ab_stock_recycling.group_ab_stock_recycling_manager
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_header__item_type__medicine
+msgid "Medicine"
+msgstr "دواء"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_header__process_type__near
+msgid "Nearly Exp Recycling"
+msgstr "تدوير الأصناف قريبة الانتهاء"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_need_menu
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Need"
+msgstr "الاحتياج"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__need_count
+msgid "Need Count"
+msgstr "عدد الاحتياج"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__need_ids
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Need Lines"
+msgstr "سطور الاحتياج"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__only_item_ids
+msgid "Need Only For Items"
+msgstr "الاحتياج لهذه الأصناف فقط"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__need_per_x_day
+msgid "Need Per X Day"
+msgstr "الاحتياج لكل X يوم"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_need.py:0
+msgid "Need:%s"
+msgstr "الاحتياج:%s"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_excluded_item__exclusion_reason__new_item
+msgid "New Item"
+msgstr "صنف جديد"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "No Need Qty"
+msgstr "كمية بلا احتياج"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_line__reason_for_keeping_item__on_consignment
+msgid "On Consignment"
+msgstr "صنف تحت التصريف"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "One-Click Distribution"
+msgstr "توزيع بنقرة واحدة"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Only Need For Items"
+msgstr "احتياج الأصناف فقط"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_line.py:0
+msgid "Operation not supported"
+msgstr "العملية غير مدعومة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__over_need_qty
+msgid "Over Need Qty"
+msgstr "الكمية الزائدة عن الاحتياج"
+
+#. module: ab_stock_recycling
+#: model:ir.actions.act_window,name:ab_stock_recycling.ab_stock_recycling_line_action
+msgid "Over Stock Recycling"
+msgstr "تدوير المخزون الزائد"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_report_overstock_no_need
+msgid "Overstock No Need"
+msgstr "مخزون زائد بلا احتياج"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_header__process_type__over
+msgid "Overstock and Stagnant Recycling"
+msgstr "تدوير المخزون الزائد والراكد"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+#: model:ir.actions.report,name:ab_stock_recycling.action_export_overstock_no_need
+msgid "Overstock without need"
+msgstr "مخزون زائد بدون احتياج"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__parent_item_code
+msgid "Parent Code"
+msgstr "كود الصنف الرئيسي"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__parent_item_id
+msgid "Parent Item"
+msgstr "الصنف الرئيسي"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Paste data here in the box"
+msgstr "الصق البيانات هنا في المربع"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Permanent Excluded Items"
+msgstr "الأصناف المستبعدة دائما"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_line__reason_for_keeping_item__prescription_item
+msgid "Prescription Item"
+msgstr "صنف طبيب"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__item_price
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__item_price
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__process_type
+msgid "Process Type"
+msgstr "نوع العملية"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__product_id
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "Product Code"
+msgstr "كود المنتج"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "Products Count"
+msgstr "عدد المنتجات"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__qty
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__qty
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__qty
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__qty
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,help:ab_stock_recycling.field_ab_stock_recycling_line__qty
+msgid "Quantity Before Distribution"
+msgstr "الكمية قبل التوزيع"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__reason_for_keeping_item
+msgid "Reason For Keeping Item"
+msgstr "سبب الاحتفاظ بالصنف"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__store_ids
+msgid "Receiving Stores"
+msgstr "الفروع المستقبلة"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Remove"
+msgstr "إزالة"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Remove Temp"
+msgstr "إزالة مؤقت"
+
+#. module: ab_stock_recycling
+#: model:ir.actions.report,name:ab_stock_recycling.action_ab_stock_recycling_header_pdf
+msgid "Report"
+msgstr "التقرير"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "Required Quantity"
+msgstr "الكمية المطلوبة"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Reset Collection"
+msgstr "إعادة تعيين التجميع"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Reset Distribution"
+msgstr "إعادة تعيين التوزيع"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Reset Need"
+msgstr "إعادة تعيين الاحتياج"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__sales_qty
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__sales_qty
+msgid "Sales Qty"
+msgstr "كمية المبيعات"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__sales_x_qty
+msgid "Sales X Qty"
+msgstr "كمية مبيعات X"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_need.py:0
+msgid "Sales:%s"
+msgstr "المبيعات:%s"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_line__reason_for_keeping_item__seasonal_item
+msgid "Seasonal Item"
+msgstr "صنف موسمي"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__overstock_store_ids
+msgid "Sending Stores"
+msgstr "الفروع المرسلة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_header__item_type__service
+msgid "Service"
+msgstr "خدمة"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "Set Stock Recycling Branch Store on the user before using branch_role."
+msgstr "حدد فرع تدوير المخزون على المستخدم قبل استخدام دور الفرع."
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Show Exclusion"
+msgstr "عرض الاستبعاد"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__show_advanced
+msgid "Show Hidden Settings"
+msgstr "إظهار الإعدادات المخفية"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_line.py:0
+msgid "Source:%s"
+msgstr "المصدر:%s"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__start_date
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Stock"
+msgstr "المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.actions.act_window,name:ab_stock_recycling.ab_stock_recycling_need_action
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_header__process_type__need
+msgid "Stock Need"
+msgstr "احتياج المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.menu_root
+msgid "Stock Recycle"
+msgstr "تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.actions.act_window,name:ab_stock_recycling.ab_stock_recycling_header_action
+#: model:ir.module.category,name:ab_stock_recycling.category_ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_header_menu
+#: model:res.groups.privilege,name:ab_stock_recycling.privilege_ab_stock_recycling
+msgid "Stock Recycling"
+msgstr "تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:res.groups.privilege,name:ab_stock_recycling.privilege_ab_stock_recycling_branch_role
+msgid "Stock Recycling Branch Role"
+msgstr "دور فرع تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_res_users__ab_stock_recycling_branch_store_id
+msgid "Stock Recycling Branch Store"
+msgstr "فرع تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_data_sub_menu
+msgid "Stock Recycling Data"
+msgstr "بيانات تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_line_menu
+msgid "Stock Recycling Details"
+msgstr "تفاصيل تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.actions.act_window,name:ab_stock_recycling.ab_stock_recycling_dist_action
+msgid "Stock dist"
+msgstr "توزيع المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__store_id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__store_id
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_to_cycle__store_id
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "Supplier Name"
+msgstr "اسم المورد"
+
+#. module: ab_stock_recycling
+#: model:ir.actions.act_window,name:ab_stock_recycling.abdin_eplus_ab_supplier_action
+#: model:ir.ui.menu,name:ab_stock_recycling.abdin_eplus_ab_supplier_menu
+msgid "Suppliers"
+msgstr "الموردون"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_line__target_qty
+msgid "Target Qty"
+msgstr "الكمية المستهدفة"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_line.py:0
+msgid "Target qty:%s"
+msgstr "الكمية المستهدفة:%s"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__excluded_item_temp_ids
+msgid "Temp Excluded Items"
+msgstr "الأصناف المستبعدة مؤقتا"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "Temporary Excluded Items"
+msgstr "الأصناف المستبعدة مؤقتا"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "There are no stock lines with ePlus product serials."
+msgstr "لا توجد سطور مخزون تحتوي على أرقام منتجات ePlus."
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "There are old distribution lines, please do reset distribution. "
+msgstr "توجد سطور توزيع قديمة، يرجى إعادة تعيين التوزيع. "
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "There are old need lines, please do reset need. "
+msgstr "توجد سطور احتياج قديمة، يرجى إعادة تعيين الاحتياج. "
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "There are old stock lines, please do reset stock. "
+msgstr "توجد سطور مخزون قديمة، يرجى إعادة تعيين المخزون. "
+
+#. module: ab_stock_recycling
+#: model:ir.actions.act_window,name:ab_stock_recycling.ab_stock_recycling_to_cycle_action
+#: model:ir.ui.menu,name:ab_stock_recycling.ab_stock_recycling_to_cycle_menu
+msgid "To Cycle"
+msgstr "إلى الدورة"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_dist__to_store_id
+msgid "To Store"
+msgstr "إلى الفرع"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+msgid "Total Cost"
+msgstr "إجمالي التكلفة"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/controllers/ab_stock_recycling_need_files.py:0
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_need__total_price
+msgid "Total Price"
+msgstr "إجمالي السعر"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields,field_description:ab_stock_recycling.field_ab_stock_recycling_header__use_last_trans_date_logic
+msgid "Use Last Trans Date Logic"
+msgstr "استخدام منطق تاريخ آخر حركة"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_res_users
+#: model:res.groups,name:ab_stock_recycling.group_ab_stock_recycling_user
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_stock_recycling
+#: model:ir.model.fields.selection,name:ab_stock_recycling.selection__ab_stock_recycling_excluded_item__exclusion_reason__xxx
+msgid "XXX"
+msgstr "XXX"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid "You must paste excel data into the box"
+msgstr "يجب لصق بيانات إكسل داخل المربع"
+
+#. module: ab_stock_recycling
+#. odoo-python
+#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
+msgid ""
+"You should either (STAGNANT AND OVERSTOCK RECYCLING) or (NEARLY EXP STOCK "
+"RECYCLING) "
+msgstr ""
+"يجب اختيار إما (تدوير المخزون الراكد والزائد) أو (تدوير المخزون قريب الانتهاء) "
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_ab_stock_recycling_dist
+msgid "ab_stock_recycling_dist"
+msgstr "توزيع تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_dist_view_form
+msgid "ab_stock_recycling_dist_form"
+msgstr "نموذج توزيع تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_dist_view_pivot
+msgid "ab_stock_recycling_dist_pivot"
+msgstr "محور توزيع تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_dist_search
+msgid "ab_stock_recycling_dist_search"
+msgstr "بحث توزيع تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_dist_view_tree
+msgid "ab_stock_recycling_dist_tree"
+msgstr "قائمة توزيع تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_ab_stock_recycling_excluded_item
+msgid "ab_stock_recycling_excluded_item"
+msgstr "صنف مستبعد من تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_excluded_item_view_form
+msgid "ab_stock_recycling_excluded_item_form"
+msgstr "نموذج صنف مستبعد من تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_excluded_item_view_pivot
+msgid "ab_stock_recycling_excluded_item_pivot"
+msgstr "محور الأصناف المستبعدة من تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_excluded_item_view_tree
+msgid "ab_stock_recycling_excluded_item_tree"
+msgstr "قائمة الأصناف المستبعدة من تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_line_view_form
+msgid "ab_stock_recycling_form"
+msgstr "نموذج تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_ab_stock_recycling_header
+msgid "ab_stock_recycling_header"
+msgstr "رأس تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
+msgid "ab_stock_recycling_header_form"
+msgstr "نموذج رأس تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_pivot
+msgid "ab_stock_recycling_header_pivot"
+msgstr "محور رأس تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_tree
+msgid "ab_stock_recycling_header_tree"
+msgstr "قائمة رؤوس تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_ab_stock_recycling_line
+msgid "ab_stock_recycling_line"
+msgstr "سطر تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_line_search
+msgid "ab_stock_recycling_line_search"
+msgstr "بحث سطور تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_view_tree
+msgid "ab_stock_recycling_line_tree"
+msgstr "قائمة سطور تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_ab_stock_recycling_need
+msgid "ab_stock_recycling_need"
+msgstr "احتياج تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_need_view_form
+msgid "ab_stock_recycling_need_form"
+msgstr "نموذج احتياج تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_need_view_pivot
+msgid "ab_stock_recycling_need_pivot"
+msgstr "محور احتياج تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_need_search
+msgid "ab_stock_recycling_need_search"
+msgstr "بحث احتياج تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_need_view_tree
+msgid "ab_stock_recycling_need_tree"
+msgstr "قائمة احتياج تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_line_view_pivot
+msgid "ab_stock_recycling_pivot"
+msgstr "محور تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model:ir.model,name:ab_stock_recycling.model_ab_stock_recycling_to_cycle
+msgid "ab_stock_recycling_to_cycle"
+msgstr "إلى دورة تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_to_cycle_view_form
+msgid "ab_stock_recycling_to_cycle_form"
+msgstr "نموذج إلى دورة تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_to_cycle_view_pivot
+msgid "ab_stock_recycling_to_cycle_pivot"
+msgstr "محور إلى دورة تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_to_cycle_view_search
+msgid "ab_stock_recycling_to_cycle_search"
+msgstr "بحث إلى دورة تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_to_cycle_view_tree
+msgid "ab_stock_recycling_to_cycle_tree"
+msgstr "قائمة إلى دورة تدوير المخزون"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.abdin_eplus_ab_supplier_view_form
+msgid "abdin_eplus_ab_supplier_form"
+msgstr "نموذج مورد ePlus"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.abdin_eplus_ab_supplier_view_pivot
+msgid "abdin_eplus_ab_supplier_pivot"
+msgstr "محور مورد ePlus"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.abdin_eplus_ab_supplier_view_search
+msgid "abdin_eplus_ab_supplier_search"
+msgstr "بحث مورد ePlus"
+
+#. module: ab_stock_recycling
+#: model_terms:ir.ui.view,arch_db:ab_stock_recycling.abdin_eplus_ab_supplier_view_tree
+msgid "abdin_eplus_ab_supplier_tree"
+msgstr "قائمة مورد ePlus"
+
+#. module: ab_stock_recycling
+#: model:res.groups,name:ab_stock_recycling.group_ab_stock_recycling_branch_role
+msgid "branch_role"
+msgstr "دور الفرع"
