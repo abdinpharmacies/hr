@@ -512,33 +512,33 @@ class StockRecycling(models.Model):
 
         self.btn_get_need_for_stock()
         self.btn_distribute_stock()
-        message = _(f"""  
-        <div class='h4 text-success'>Process completed successfully</div>  
+        message = _("""
+        <div class='h4 text-success'>Process completed successfully</div>
         <div class='h6 text-info w-50'>
             <table class='table table-striped'>
                 <tr>
                     <th>Number of Target Stock lines</th>
-                    <td>{len(self.collection_ids)}</td>
+                    <td>%s</td>
                 </tr>
                 <tr>
                     <th>Number of Need Stock lines</th>
-                    <td>{len(self.need_ids)}</td>
+                    <td>%s</td>
                 </tr>
                 <tr>
                     <th>Number of Distributed Stock lines</th>
-                    <td>{len(self.dist_ids)}</td>
+                    <td>%s</td>
                 </tr>
             </table>
         </div>
-        """)
+        """) % (len(self.collection_ids), len(self.need_ids), len(self.dist_ids))
         return self.ab_msg(message=message)
 
     def btn_add_data_from_excel(self):
         number_of_lines = self._add_data_from_excel()
 
-        message = _(f"""<span class='h4 text-success'>{number_of_lines}</span> lines added  
-        <span class='h4 text-success'>successfully</span>  
-        by user <span class='h4 font-italic text-muted'>{self.env.user.name}</span>""")
+        message = _("""<span class='h4 text-success'>%s</span> lines added
+        <span class='h4 text-success'>successfully</span>
+        by user <span class='h4 font-italic text-muted'>%s</span>""") % (number_of_lines, self.env.user.name)
         return self.ab_msg(message=message)
 
     def _add_data_from_excel(self):
@@ -630,7 +630,7 @@ class StockRecycling(models.Model):
 
     def btn_export_excel_over_need(self):
         action = self.env.ref("ab_stock_recycling.action_export_overstock_no_need")
-        action.sudo().name = "Overstock without need"
+        action.sudo().name = _("Overstock without need")
         return action.report_action(self)
 
     def get_overstock_no_need_data(self):
@@ -652,7 +652,7 @@ class StockRecycling(models.Model):
         self.env.cr.execute(sql, (self.id,))
         rows = self.env.cr.fetchall()
         return {
-            'headers': ['Code', 'Name', 'Price', 'Target Qty', 'Distributed Qty', 'No Need Qty'],
+            'headers': [_('Code'), _('Name'), _('Price'), _('Target Qty'), _('Distributed Qty'), _('No Need Qty')],
             'rows': rows
         }
 

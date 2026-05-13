@@ -5,17 +5,15 @@
 
 .ab_stock_recycling_x2many_scroll_fix .o_field_x2many_list {
     max-width: 100%;
-    overflow-x: auto;
-    overflow-y: hidden;
 }
 
 .ab_stock_recycling_x2many_scroll_fix .o_list_renderer {
     width: 100%;
     max-height: 65vh;
-    overflow-y: auto;
-    overflow-x: visible;
+    overflow: auto;
 }
 
 .ab_stock_recycling_x2many_scroll_fix table.o_list_table {
-    min-width: max-content;
+    width: max-content;
+    min-width: 100%;
 }
