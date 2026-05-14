@@ -6,7 +6,7 @@
             <field name="model">abdin_eplus_ab_region</field>
             <field name="arch" type="xml">
                 <list string="abdin_eplus_ab_region_tree">
-                    <field name="name" optional="show"/>
+                    <field name="name" string="Name" optional="show"/>
                 </list>
             </field>
         </record>
@@ -18,7 +18,7 @@
                 <form string="abdin_eplus_ab_region_form">
                     <sheet>
                         <group>
-                            <field name="name"/>
+                            <field name="name" string="Name"/>
                         </group>
                     </sheet>
                 </form>
@@ -29,7 +29,7 @@
             <field name="model">abdin_eplus_ab_region</field>
             <field name="arch" type="xml">
                 <search string="abdin_eplus_ab_region_search">
-                    <field name="name" optional="show"/>
+                    <field name="name" string="Name" optional="show"/>
                 </search>
             </field>
         </record>

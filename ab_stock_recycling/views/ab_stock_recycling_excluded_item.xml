@@ -7,9 +7,9 @@
             <field name="model">ab_stock_recycling_excluded_item</field>
             <field name="arch" type="xml">
                 <list multi_edit="1" editable="top" string="ab_stock_recycling_excluded_item_tree">
-                    <field name="item_code" optional="show"/>
-                    <field name="item_id" optional="show"/>
-                    <field name="exclusion_reason" optional="show"/>
+                    <field name="item_code" string="Code" optional="show"/>
+                    <field name="item_id" string="Item" optional="show"/>
+                    <field name="exclusion_reason" string="Exclusion Reason" optional="show"/>
                 </list>
             </field>
         </record>

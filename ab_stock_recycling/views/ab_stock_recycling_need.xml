@@ -6,20 +6,20 @@
             <field name="model">ab_stock_recycling_need</field>
             <field name="arch" type="xml">
                 <list string="ab_stock_recycling_need_tree">
-                    <field name="header_id" optional="hide"/>
-                    <field name="item_code" optional="show"/>
-                    <field name="item_id" optional="show"/>
-                    <field name="parent_item_code" optional="hide"/>
-                    <field name="parent_item_id" optional="hide"/>
-                    <field name="item_cost" optional="show"/>
-                    <field name="item_price" optional="show"/>
-                    <field name="store_id" optional="show"/>
-                    <field name="supplier_id" optional="show"/>
-                    <field name="sales_qty" optional="show"/>
-                    <field name="balance" optional="show"/>
-                    <field name="qty" optional="show"/>
-                    <field name="total_price" optional="show"/>
-                    <field name="given_qty" optional="show"/>
+                    <field name="header_id" string="Header" optional="hide"/>
+                    <field name="item_code" string="Code" optional="show"/>
+                    <field name="item_id" string="Item" optional="show"/>
+                    <field name="parent_item_code" string="Parent Code" optional="hide"/>
+                    <field name="parent_item_id" string="Parent Item" optional="hide"/>
+                    <field name="item_cost" string="Item Cost" optional="show"/>
+                    <field name="item_price" string="Item Price" optional="show"/>
+                    <field name="store_id" string="Store" optional="show"/>
+                    <field name="supplier_id" string="Company" optional="show"/>
+                    <field name="sales_qty" string="Sales Qty" optional="show"/>
+                    <field name="balance" string="Balance" optional="show"/>
+                    <field name="qty" string="Qty" optional="show"/>
+                    <field name="total_price" string="Total Price" optional="show"/>
+                    <field name="given_qty" string="Given Qty" optional="show"/>
 
                 </list>
             </field>
