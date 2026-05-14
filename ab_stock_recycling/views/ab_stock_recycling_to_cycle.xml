@@ -6,12 +6,12 @@
             <field name="model">ab_stock_recycling_to_cycle</field>
             <field name="arch" type="xml">
                 <list string="ab_stock_recycling_to_cycle_tree">
-                    <field name="product_id" optional="show"/>
-                    <field name="qty" optional="show"/>
-                    <field name="store_id" optional="show"/>
-                    <field name="cycle_date" optional="show"/>
-                    <field name="cycle_type" optional="show"/>
-                    <field name="is_done" optional="show"/>
+                    <field name="product_id" string="Product" optional="show"/>
+                    <field name="qty" string="Qty" optional="show"/>
+                    <field name="store_id" string="Store" optional="show"/>
+                    <field name="cycle_date" string="Cycle Date" optional="show"/>
+                    <field name="cycle_type" string="Cycle Type" optional="show"/>
+                    <field name="is_done" string="Is Done" optional="show"/>
                 </list>
             </field>
         </record>

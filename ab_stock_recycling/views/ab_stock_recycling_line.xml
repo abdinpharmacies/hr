@@ -6,23 +6,23 @@
             <field name="model">ab_stock_recycling_line</field>
             <field name="arch" type="xml">
                 <list string="ab_stock_recycling_line_tree">
-                    <field name="header_id" optional="hide"/>
-                    <field name="store_id" optional="show"/>
-                    <field name="item_code" optional="show"/>
-                    <field name="item_id" optional="show"/>
-                    <field name="item_price" optional="show"/>
-                    <field name="sales_qty"/>
-                    <field name="sales_x_qty"/>
-                    <field name="balance"/>
-                    <field name="qty" optional="show"/>
-                    <field name="distributed_qty" optional="show"/>
-                    <field name="over_need_qty" optional="show"/>
-                    <field name="target_qty" optional="show"/>
-                    <field name="last_trans_date" optional="show"/>
-                    <field name="exp_date" optional="show"/>
-                    <field name="file_source" optional="show"/>
-                    <field name="reason_for_keeping_item" optional="show"/>
-                    <field name="notes" optional="show"/>
+                    <field name="header_id" string="Header" optional="hide"/>
+                    <field name="store_id" string="Store" optional="show"/>
+                    <field name="item_code" string="Code" optional="show"/>
+                    <field name="item_id" string="Item" optional="show"/>
+                    <field name="item_price" string="Price" optional="show"/>
+                    <field name="sales_qty" string="Sales Qty"/>
+                    <field name="sales_x_qty" string="Sales X Qty"/>
+                    <field name="balance" string="Balance"/>
+                    <field name="qty" string="Qty" optional="show"/>
+                    <field name="distributed_qty" string="Distributed Qty" optional="show"/>
+                    <field name="over_need_qty" string="Over Need Qty" optional="show"/>
+                    <field name="target_qty" string="Target Qty" optional="show"/>
+                    <field name="last_trans_date" string="Last Trans Date" optional="show"/>
+                    <field name="exp_date" string="Exp Date" optional="show"/>
+                    <field name="file_source" string="File Source" optional="show"/>
+                    <field name="reason_for_keeping_item" string="Reason For Keeping Item" optional="show"/>
+                    <field name="notes" string="Notes" optional="show"/>
                 </list>
             </field>
         </record>

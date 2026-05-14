@@ -6,14 +6,14 @@
             <field name="model">ab_stock_recycling_header</field>
             <field name="arch" type="xml">
                 <list string="ab_stock_recycling_header_tree" limit="20">
-                    <field name="id" optional="show" class="text-muted"/>
-                    <field name="name" optional="show"/>
-                    <field name="collection_count" optional="show"/>
-                    <field name="need_count" optional="show"/>
-                    <field name="distribution_count" optional="show"/>
-                    <field name="create_uid" optional="show"/>
-                    <field name="create_date" optional="show"/>
-                    <field name="write_date" optional="show"/>
+                    <field name="id" string="ID" optional="show" class="text-muted"/>
+                    <field name="name" string="Name" optional="show"/>
+                    <field name="collection_count" string="Collection Count" optional="show"/>
+                    <field name="need_count" string="Need Count" optional="show"/>
+                    <field name="distribution_count" string="Distribution Count" optional="show"/>
+                    <field name="create_uid" string="Created by" optional="show"/>
+                    <field name="create_date" string="Created on" optional="show"/>
+                    <field name="write_date" string="Last Updated on" optional="show"/>
                 </list>
             </field>
         </record>
@@ -158,7 +158,20 @@
                                 <field name="collection_ids" nolabel="1" class="ab_stock_recycling_x2many_scroll_fix"/>
                             </page>
                             <page string="Only Need For Items" groups="ab_stock_recycling.group_ab_stock_recycling_user">
-                                <field name="only_item_ids" nolabel="1" class="ab_stock_recycling_x2many_scroll_fix"/>
+                                <field name="only_item_ids" nolabel="1" class="ab_stock_recycling_x2many_scroll_fix">
+                                    <list string="Need Only For Items">
+                                        <field name="code" string="Code"/>
+                                        <field name="name" string="Full Name"/>
+                                        <field name="default_price" string="Default Price"/>
+                                        <field name="default_reference_price" string="Default Reference Price"/>
+                                        <field name="default_cost" string="Default Cost" optional="hide"/>
+                                        <field name="default_reference_cost" string="Default Reference Cost" optional="hide"/>
+                                        <field name="uom_category_id" string="UoM Category" optional="hide"/>
+                                        <field name="uom_id" string="Default UoM In Sales" optional="hide"/>
+                                        <field name="allow_sale" string="Allow Sale" widget="boolean_toggle" optional="hide"/>
+                                        <field name="allow_purchase" string="Allow Purchase" widget="boolean_toggle" optional="hide"/>
+                                    </list>
+                                </field>
                             </page>
 
                             <page string="Need Lines" groups="ab_stock_recycling.group_ab_stock_recycling_user" invisible="not show_advanced">
