@@ -6,7 +6,10 @@
             <field name="model">ab_product_company</field>
             <field name="arch" type="xml">
                 <list string="abdin_eplus_ab_supplier_tree">
-                    <field name="name" optional="show"/>
+                    <field name="name" string="Supplier Name" optional="show"/>
+                    <field name="telephone" string="Telephone" optional="show"/>
+                    <field name="address" string="Address" optional="show"/>
+                    <field name="active" string="Active" optional="show"/>
                 </list>
             </field>
         </record>
@@ -18,7 +21,10 @@
                 <form string="abdin_eplus_ab_supplier_form">
                     <sheet>
                         <group>
-                            <field name="name"/>
+                            <field name="name" string="Supplier Name"/>
+                            <field name="telephone" string="Telephone"/>
+                            <field name="address" string="Address"/>
+                            <field name="active" string="Active"/>
                         </group>
                     </sheet>
                 </form>
@@ -29,7 +35,10 @@
             <field name="model">ab_product_company</field>
             <field name="arch" type="xml">
                 <search string="abdin_eplus_ab_supplier_search">
-                    <field name="name"/>
+                    <field name="name" string="Supplier Name"/>
+                    <field name="telephone" string="Telephone"/>
+                    <field name="address" string="Address"/>
+                    <field name="active" string="Active"/>
                 </search>
             </field>
         </record>
@@ -48,6 +57,99 @@
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_product_company</field>
             <field name="view_mode">list,form,pivot</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('abdin_eplus_ab_supplier_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('abdin_eplus_ab_supplier_view_form')}),
+                (0, 0, {'view_mode': 'pivot', 'view_id': ref('abdin_eplus_ab_supplier_view_pivot')})
+            ]"/>
+            <field name="search_view_id" ref="abdin_eplus_ab_supplier_view_search"/>
+        </record>
+
+        <record id="ab_stock_recycling_product_view_tree" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_product_view_tree</field>
+            <field name="model">ab_product</field>
+            <field name="arch" type="xml">
+                <list string="Items">
+                    <field name="id" string="ID" optional="hide"/>
+                    <field name="code" string="Code"/>
+                    <field name="name" string="Full Name"/>
+                    <field name="default_price" string="Default Price"/>
+                    <field name="default_reference_price" string="Default Reference Price"/>
+                    <field name="default_cost" string="Default Cost" optional="hide"/>
+                    <field name="default_reference_cost" string="Default Reference Cost" optional="hide"/>
+                    <field name="uom_category_id" string="UoM Category" optional="hide"/>
+                    <field name="uom_id" string="Default UoM In Sales" optional="hide"/>
+                    <field name="allow_sale" string="Allow Sale" widget="boolean_toggle" optional="hide"/>
+                    <field name="allow_purchase" string="Allow Purchase" widget="boolean_toggle" optional="hide"/>
+                    <field name="tag_ids" string="Tags" widget="many2many_tags" optional="hide"/>
+                    <field name="barcode_ids" string="Barcodes" widget="many2many_tags" optional="hide"/>
+                    <field name="product_card_id" string="Product Card" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_product_view_form" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_product_view_form</field>
+            <field name="model">ab_product</field>
+            <field name="arch" type="xml">
+                <form string="Items">
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="product_card_name" placeholder="Product Name Without Units ..."/>
+                            </h1>
+                        </div>
+                        <group string="Product Basic">
+                            <field name="name" string="Full Name"/>
+                            <field name="default_price" string="Default Price"/>
+                            <field name="default_reference_price" string="Default Reference Price"/>
+                            <field name="default_cost" string="Default Cost"/>
+                            <field name="default_reference_cost" string="Default Reference Cost"/>
+                        </group>
+                        <button name="btn_edit_product_main_data" type="object" icon="fa-edit" title="Edit Product Main Data"
+                                class="btn-primary"/>
+                        <group string="Product Details">
+                            <field name="u_s_num" string="Small Unit Number"/>
+                            <field name="u_s_name" string="Small Unit Name"/>
+                            <field name="uom_category_id" string="UoM Category"/>
+                            <field name="uom_id" string="Default UoM In Sales"/>
+                            <field name="allow_sale" string="Allow Sale" widget="boolean_toggle"/>
+                            <field name="allow_purchase" string="Allow Purchase" widget="boolean_toggle"/>
+                            <field name="tag_ids" string="Tags" widget="many2many_tags"/>
+                            <field name="barcode_ids" string="Barcodes" widget="many2many_tags"/>
+                            <field name="code" string="Code"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_product_view_search" model="ir.ui.view">
+            <field name="name">ab_stock_recycling_product_view_search</field>
+            <field name="model">ab_product</field>
+            <field name="arch" type="xml">
+                <search string="Items">
+                    <field name="product_search" string="Product Search"/>
+                    <field name="name" string="Full Name"/>
+                    <field name="code" string="Code"/>
+                    <field name="default_price" string="Default Price"/>
+                    <field name="eplus_serial" string="ePlus Serial"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_stock_recycling_product_action" model="ir.actions.act_window">
+            <field name="name">Items</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_product</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_ids" eval="[
+                (5, 0, 0),
+                (0, 0, {'view_mode': 'list', 'view_id': ref('ab_stock_recycling_product_view_tree')}),
+                (0, 0, {'view_mode': 'form', 'view_id': ref('ab_stock_recycling_product_view_form')})
+            ]"/>
+            <field name="search_view_id" ref="ab_stock_recycling_product_view_search"/>
         </record>
 
         <menuitem id="abdin_eplus_ab_supplier_menu"
@@ -59,7 +161,7 @@
         <menuitem id="ab_stock_recycling_item_catalog_menu"
                   name="Items"
                   parent="config_sub_menu"
-                  action="ab_product.ab_product_action"
+                  action="ab_stock_recycling_product_action"
                   sequence="100"/>
 
     </data>

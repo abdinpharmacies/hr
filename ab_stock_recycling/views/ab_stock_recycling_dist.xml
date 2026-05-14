@@ -6,15 +6,15 @@
             <field name="model">ab_stock_recycling_dist</field>
             <field name="arch" type="xml">
                 <list string="ab_stock_recycling_dist_tree">
-                    <field name="item_code" optional="show"/>
-                    <field name="item_id" optional="show"/>
-                    <field name="item_price" optional="show"/>
-                    <field name="file_source" optional="show"/>
-                    <field name="from_store_id" optional="show"/>
-                    <field name="stock_line_id" optional="show"/>
-                    <field name="to_store_id" optional="show"/>
-                    <field name="need_line_id" optional="show"/>
-                    <field name="qty" optional="show"/>
+                    <field name="item_code" string="Code" optional="show"/>
+                    <field name="item_id" string="Item" optional="show"/>
+                    <field name="item_price" string="Price" optional="show"/>
+                    <field name="file_source" string="File Source" optional="show"/>
+                    <field name="from_store_id" string="From Store" optional="show"/>
+                    <field name="stock_line_id" string="From Stock" optional="show"/>
+                    <field name="to_store_id" string="To Store" optional="show"/>
+                    <field name="need_line_id" string="According To Need" optional="show"/>
+                    <field name="qty" string="Qty" optional="show"/>
                 </list>
             </field>
         </record>
