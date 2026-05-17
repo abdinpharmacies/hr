@@ -14,6 +14,7 @@
             'abdin_loyalty_redesign/static/src/scss/loyalty_redesign.scss',
             'abdin_loyalty_redesign/static/src/js/loyalty_redesign_form.js',
             'abdin_loyalty_redesign/static/src/js/loyalty_program_type_widget.js',
+            'abdin_loyalty_redesign/static/src/js/loyalty_card_widgets.js',
         ],
     },
     'installable': True,

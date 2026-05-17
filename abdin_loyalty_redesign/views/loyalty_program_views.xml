@@ -328,4 +328,89 @@
         </field>
     </record>
 
+    <!-- ================================================================
+         LOYALTY CARD FORM — Premium Wallet / Coupon Detail Panel
+         ================================================================ -->
+    <record id="abdin_loyalty_card_form_inherit" model="ir.ui.view">
+        <field name="name">abdin.loyalty.card.form.inherit</field>
+        <field name="model">loyalty.card</field>
+        <field name="inherit_id" ref="loyalty.loyalty_card_view_form"/>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="class">abdin_card_form</attribute>
+            </form>
+
+            <!-- Replace outer group with a wallet detail card grid -->
+            <xpath expr="//sheet/group" position="replace">
+                <div class="abdin_wallet_grid">
+                    <!-- ── Code Card ── -->
+                    <div class="abdin_wallet_card">
+                        <div class="abdin_wallet_card_inner">
+                            <div class="abdin_wallet_card_head">
+                                <i class="fa fa-tag abdin_wallet_icon" title="Coupon code"/>
+                                <span class="abdin_wallet_label">Code</span>
+                            </div>
+                            <div class="abdin_wallet_card_body">
+                                <field name="code" readonly="1" widget="abdin_wallet_code"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Expiration Card ── -->
+                    <div class="abdin_wallet_card">
+                        <div class="abdin_wallet_card_inner">
+                            <div class="abdin_wallet_card_head">
+                                <i class="fa fa-calendar abdin_wallet_icon" title="Expiry date"/>
+                                <span class="abdin_wallet_label">Expiration</span>
+                            </div>
+                            <div class="abdin_wallet_card_body">
+                                <field name="expiration_date" nolabel="1" widget="abdin_wallet_expiry"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Partner Card ── -->
+                    <div class="abdin_wallet_card">
+                        <div class="abdin_wallet_card_inner">
+                            <div class="abdin_wallet_card_head">
+                                <i class="fa fa-user abdin_wallet_icon" title="Customer"/>
+                                <span class="abdin_wallet_label">Customer</span>
+                            </div>
+                            <div class="abdin_wallet_card_body">
+                                <field name="partner_id" nolabel="1" placeholder="No customer assigned" class="abdin_wallet_partner"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ── Balance KPI Card ── -->
+                    <div class="abdin_wallet_card abdin_wallet_card_balance">
+                        <div class="abdin_wallet_card_inner">
+                            <div class="abdin_wallet_card_head">
+                                <div class="abdin_wallet_card_head_left">
+                                    <i class="fa fa-wallet abdin_wallet_icon" title="Points balance"/>
+                                    <span class="abdin_wallet_label">Balance</span>
+                                </div>
+                                <button name="action_loyalty_update_balance" type="object" class="abdin_balance_topup btn">
+                                    <i class="fa fa-plus-circle"/>
+                                    <span>Top Up</span>
+                                </button>
+                            </div>
+                            <div class="abdin_wallet_card_body">
+                                <button name="action_loyalty_update_balance" type="object" class="abdin_balance_kpi">
+                                    <field name="points_display" nolabel="1" widget="abdin_wallet_balance"/>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+
+            <!-- Add class to notebook for premium styling -->
+            <xpath expr="//notebook" position="attributes">
+                <attribute name="class">abdin_wallet_notebook</attribute>
+            </xpath>
+        </field>
+    </record>
+
 </odoo>
