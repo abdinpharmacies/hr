@@ -1,0 +1,838 @@
+/* ==========================================================================
+   Abdin Loyalty Redesign — Premium SaaS Design System
+   Odoo 19 OWL Compatible
+   ========================================================================== */
+
+// -----------------------------------------------------------------------
+// DESIGN TOKENS
+// -----------------------------------------------------------------------
+$ab-font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$ab-font-mono: 'SF Mono', 'Fira Code', 'Fira Mono', 'Roboto Mono', monospace;
+
+$ab-radius-xs: 4px;
+$ab-radius-sm: 6px;
+$ab-radius-md: 10px;
+$ab-radius-lg: 14px;
+$ab-radius-xl: 20px;
+$ab-radius-full: 9999px;
+
+$ab-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+$ab-transition-slow: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+
+$ab-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.05);
+$ab-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.04), 0 2px 8px rgba(0, 0, 0, 0.06);
+$ab-shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.08);
+$ab-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.08), 0 8px 20px rgba(0, 0, 0, 0.06);
+
+// Program type colors
+$ab-color-coupons: #6366f1;
+$ab-color-promo_code: #f59e0b;
+$ab-color-promotion: #8b5cf6;
+$ab-color-buy_x_get_y: #10b981;
+$ab-color-loyalty: #3b82f6;
+$ab-color-gift_card: #ec4899;
+$ab-color-ewallet: #14b8a6;
+
+$ab-color-coupons-bg: #eef2ff;
+$ab-color-promo_code-bg: #fffbeb;
+$ab-color-promotion-bg: #f5f3ff;
+$ab-color-buy_x_get_y-bg: #ecfdf5;
+$ab-color-loyalty-bg: #eff6ff;
+$ab-color-gift_card-bg: #fdf2f8;
+$ab-color-ewallet-bg: #f0fdfa;
+
+$ab-text-primary: #0f172a;
+$ab-text-secondary: #64748b;
+$ab-text-muted: #94a3b8;
+$ab-border: #e2e8f0;
+$ab-bg-subtle: #f8fafc;
+
+/* ======================================================================
+   1. KANBAN VIEW — Premium Campaign Cards
+   ====================================================================== */
+.abdin_loyalty_kanban {
+    padding: 24px 20px;
+    gap: 20px;
+    background: $ab-bg-subtle;
+    min-height: 400px;
+
+    // Group columns
+    .o_kanban_group {
+        background: transparent;
+        border: none;
+        box-shadow: none;
+        min-width: 320px;
+        max-width: 400px;
+        flex: 1 1 340px;
+
+        .o_kanban_header {
+            background: transparent;
+            border: none;
+            padding: 0 4px 14px 4px;
+
+            .o_kanban_title {
+                font-family: $ab-font-sans;
+                font-size: 13px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: $ab-text-secondary;
+            }
+
+            .o_kanban_count {
+                background: $ab-border;
+                color: $ab-text-secondary;
+                font-size: 11px;
+                font-weight: 600;
+                padding: 1px 10px;
+            }
+        }
+    }
+
+    .o_kanban_record {
+        padding: 8px 4px;
+
+        &:last-child { padding-bottom: 8px; }
+    }
+}
+
+/* ======================================================================
+   1a. LOYALTY CARD — Individual Campaign Card
+   ====================================================================== */
+.abdin_loyalty_card {
+    position: relative;
+    background: #fff;
+    border-radius: $ab-radius-lg;
+    border: 1px solid $ab-border;
+    box-shadow: $ab-shadow-sm;
+    transition: all $ab-transition;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+
+    &:hover {
+        box-shadow: $ab-shadow-lg;
+        transform: translateY(-3px);
+        border-color: #cbd5e1;
+
+        .abdin_loyalty_card_accent { opacity: 1; }
+    }
+
+    &:focus-within {
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        border-color: #a5b4fc;
+    }
+
+    // Archived state
+    &.abdin_loyalty_card_archived {
+        opacity: 0.6;
+        &:hover { opacity: 0.85; }
+    }
+
+    // Top accent color bar
+    .abdin_loyalty_card_accent {
+        height: 4px;
+        background: $ab-color-coupons;
+        opacity: 0.7;
+        transition: opacity $ab-transition;
+        flex-shrink: 0;
+    }
+
+    // Per-type accent colors
+    &.abdin_loyalty_type_coupons .abdin_loyalty_card_accent { background: $ab-color-coupons; }
+    &.abdin_loyalty_type_promo_code .abdin_loyalty_card_accent { background: $ab-color-promo_code; }
+    &.abdin_loyalty_type_promotion .abdin_loyalty_card_accent { background: $ab-color-promotion; }
+    &.abdin_loyalty_type_buy_x_get_y .abdin_loyalty_card_accent { background: $ab-color-buy_x_get_y; }
+    &.abdin_loyalty_type_loyalty .abdin_loyalty_card_accent { background: $ab-color-loyalty; }
+    &.abdin_loyalty_type_gift_card .abdin_loyalty_card_accent { background: $ab-color-gift_card; }
+    &.abdin_loyalty_type_ewallet .abdin_loyalty_card_accent { background: $ab-color-ewallet; }
+
+    // Card header
+    .abdin_loyalty_card_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 18px 10px;
+    }
+
+    // Icon
+    .abdin_loyalty_card_icon {
+        width: 40px;
+        height: 40px;
+        border-radius: $ab-radius-md;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        transition: all $ab-transition;
+        flex-shrink: 0;
+
+        i { transition: transform $ab-transition; }
+
+        &.abdin_loyalty_icon_coupons { background: $ab-color-coupons-bg; color: $ab-color-coupons; }
+        &.abdin_loyalty_icon_promo_code { background: $ab-color-promo_code-bg; color: $ab-color-promo_code; }
+        &.abdin_loyalty_icon_promotion { background: $ab-color-promotion-bg; color: $ab-color-promotion; }
+        &.abdin_loyalty_icon_buy_x_get_y { background: $ab-color-buy_x_get_y-bg; color: $ab-color-buy_x_get_y; }
+        &.abdin_loyalty_icon_loyalty { background: $ab-color-loyalty-bg; color: $ab-color-loyalty; }
+        &.abdin_loyalty_icon_gift_card { background: $ab-color-gift_card-bg; color: $ab-color-gift_card; }
+        &.abdin_loyalty_icon_ewallet { background: $ab-color-ewallet-bg; color: $ab-color-ewallet; }
+
+        .abdin_loyalty_card:hover & i { transform: scale(1.1); }
+    }
+
+    // Badge
+    .abdin_loyalty_badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 10px;
+        border-radius: $ab-radius-full;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+        font-family: $ab-font-sans;
+
+        &.abdin_loyalty_badge_coupons { background: $ab-color-coupons-bg; color: $ab-color-coupons; }
+        &.abdin_loyalty_badge_promo_code { background: $ab-color-promo_code-bg; color: $ab-color-promo_code; }
+        &.abdin_loyalty_badge_promotion { background: $ab-color-promotion-bg; color: $ab-color-promotion; }
+        &.abdin_loyalty_badge_buy_x_get_y { background: $ab-color-buy_x_get_y-bg; color: $ab-color-buy_x_get_y; }
+        &.abdin_loyalty_badge_loyalty { background: $ab-color-loyalty-bg; color: $ab-color-loyalty; }
+        &.abdin_loyalty_badge_gift_card { background: $ab-color-gift_card-bg; color: $ab-color-gift_card; }
+        &.abdin_loyalty_badge_ewallet { background: $ab-color-ewallet-bg; color: $ab-color-ewallet; }
+    }
+
+    // Card body
+    .abdin_loyalty_card_body {
+        padding: 4px 18px 14px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .abdin_loyalty_card_name {
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.4;
+        color: $ab-text-primary;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        word-break: break-word;
+        min-height: 42px;
+    }
+
+    // Status row
+    .abdin_loyalty_card_status_row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .abdin_loyalty_status_dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+
+        &.abdin_loyalty_status_active { background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15); }
+        &.abdin_loyalty_status_inactive { background: #94a3b8; box-shadow: 0 0 0 3px rgba(148, 163, 184, 0.15); }
+    }
+
+    .abdin_loyalty_status_text {
+        font-size: 12px;
+        font-weight: 600;
+        color: $ab-text-secondary;
+    }
+
+    // Pills
+    .abdin_loyalty_pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 1px 8px;
+        border-radius: $ab-radius-full;
+        font-size: 10px;
+        font-weight: 600;
+        white-space: nowrap;
+
+        i { font-size: 9px; }
+
+        &.abdin_loyalty_pill_website { background: #eff6ff; color: #2563eb; }
+        &.abdin_loyalty_pill_sale { background: #f0fdf4; color: #16a34a; }
+    }
+
+    // Dates
+    .abdin_loyalty_card_dates {
+        font-size: 11px;
+        color: $ab-text-muted;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+
+        i { font-size: 11px; }
+    }
+
+    // Stats
+    .abdin_loyalty_card_stats {
+        display: flex;
+        gap: 20px;
+        margin-top: auto;
+        padding-top: 8px;
+        border-top: 1px solid $ab-border;
+    }
+
+    .abdin_loyalty_stat {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+    }
+
+    .abdin_loyalty_stat_value {
+        font-size: 16px;
+        font-weight: 800;
+        color: $ab-text-primary;
+        line-height: 1.2;
+    }
+
+    .abdin_loyalty_stat_label {
+        font-size: 10px;
+        font-weight: 600;
+        color: $ab-text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    // Card footer
+    .abdin_loyalty_card_footer {
+        display: flex;
+        gap: 6px;
+        padding: 10px 18px 14px;
+        flex-shrink: 0;
+    }
+
+    .abdin_loyalty_btn {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        padding: 7px 12px;
+        border-radius: $ab-radius-sm;
+        font-size: 11px;
+        font-weight: 600;
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all $ab-transition;
+        text-decoration: none;
+        line-height: 1.4;
+        background: transparent;
+        color: $ab-text-primary;
+
+        i { font-size: 11px; }
+
+        &:focus-visible { outline: 2px solid $ab-color-coupons; outline-offset: 2px; }
+    }
+
+    .abdin_loyalty_btn_primary {
+        background: #f1f5f9;
+        color: $ab-text-primary;
+        border-color: $ab-border;
+
+        &:hover {
+            background: #e2e8f0;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: $ab-shadow-sm;
+        }
+    }
+
+    .abdin_loyalty_btn_ghost {
+        background: transparent;
+        color: $ab-text-secondary;
+        border-color: transparent;
+
+        &:hover {
+            background: #f1f5f9;
+            color: $ab-color-coupons;
+        }
+    }
+}
+
+// Kanban responsive
+.o_kanban_renderer.abdin_loyalty_kanban {
+    @media (max-width: 768px) {
+        padding: 12px;
+        gap: 12px;
+
+        .o_kanban_group {
+            min-width: 100%;
+            max-width: 100%;
+            flex: 1 1 100%;
+        }
+
+        .abdin_loyalty_card_name { font-size: 14px; }
+    }
+
+    @media (min-width: 769px) and (max-width: 1024px) {
+        .o_kanban_group { min-width: 280px; flex: 1 1 46%; }
+    }
+
+    @media (min-width: 1025px) and (max-width: 1400px) {
+        .o_kanban_group { flex: 1 1 30%; }
+    }
+
+    @media (min-width: 1401px) {
+        .o_kanban_group { flex: 1 1 23%; max-width: 360px; }
+    }
+}
+
+
+/* ======================================================================
+   2. LIST VIEW — Modern Data Table
+   ====================================================================== */
+.abdin_loyalty_list_view.o_list_renderer {
+    .o_list_table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border: 1px solid $ab-border;
+        border-radius: $ab-radius-md;
+        overflow: hidden;
+        box-shadow: $ab-shadow-sm;
+
+        thead {
+            background: linear-gradient(180deg, #f8fafc, #f1f5f9);
+            border-bottom: 1px solid $ab-border;
+
+            th {
+                padding: 10px 14px;
+                font-size: 11px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: $ab-text-secondary;
+                border: none;
+                border-bottom: 1px solid $ab-border;
+                white-space: nowrap;
+            }
+        }
+
+        tbody {
+            tr {
+                transition: background $ab-transition;
+                border-bottom: 1px solid #f1f5f9;
+
+                &:hover {
+                    background: #f8fafc;
+                    box-shadow: inset 2px 0 0 $ab-color-coupons;
+                }
+
+                &:last-child td { border-bottom: none; }
+            }
+
+            td {
+                padding: 11px 14px;
+                font-size: 13px;
+                color: $ab-text-primary;
+                border: none;
+                border-bottom: 1px solid #f1f5f9;
+                vertical-align: middle;
+            }
+        }
+    }
+
+    // Selected row
+    .o_list_table tbody tr.o_selected_row {
+        background: #eef2ff;
+        box-shadow: inset 2px 0 0 $ab-color-coupons;
+
+        &:hover { background: #e0e7ff; }
+    }
+}
+
+
+/* ======================================================================
+   3. FORM VIEW — Premium Enterprise Form
+   ====================================================================== */
+.abdin_loyalty_form.o_form_view {
+    .o_form_sheet {
+        max-width: 100%;
+        width: 100%;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        background: $ab-bg-subtle;
+    }
+
+    // Header area
+    > .o_form_sheet > .oe_button_box + .oe_title {
+        margin-top: 0;
+    }
+
+    .abdin_loyalty_form_button_box {
+        display: flex;
+        gap: 10px;
+        padding: 20px 24px 0;
+        flex-wrap: wrap;
+    }
+
+    .abdin_loyalty_stat_button {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        min-width: 90px;
+        padding: 12px 20px;
+        background: #fff;
+        border: 1px solid $ab-border;
+        border-radius: $ab-radius-md;
+        cursor: pointer;
+        transition: all $ab-transition;
+        box-shadow: $ab-shadow-sm;
+
+        &:hover {
+            box-shadow: $ab-shadow-md;
+            transform: translateY(-1px);
+            border-color: #cbd5e1;
+        }
+
+        .abdin_loyalty_stat_button_value {
+            font-size: 22px;
+            font-weight: 800;
+            color: $ab-text-primary;
+            line-height: 1;
+        }
+
+        .abdin_loyalty_stat_button_label {
+            font-size: 10px;
+            font-weight: 600;
+            color: $ab-text-muted;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+    }
+
+    // Title
+    .oe_title {
+        padding: 16px 24px 0;
+
+        h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: $ab-text-primary;
+            line-height: 1.3;
+            margin: 0;
+
+            input, textarea {
+                font-size: 24px;
+                font-weight: 800;
+            }
+        }
+
+        label { display: none; }
+    }
+
+    // Main field groups
+    > .o_form_sheet > .o_group {
+        padding: 12px 24px 4px;
+    }
+
+    .o_group.o_inner_group {
+        background: #fff;
+        border: 1px solid $ab-border;
+        border-radius: $ab-radius-md;
+        padding: 20px 24px;
+        margin-bottom: 14px;
+        box-shadow: $ab-shadow-sm;
+        transition: box-shadow $ab-transition;
+
+        &:hover {
+            box-shadow: $ab-shadow-md;
+        }
+
+        .o_td_label {
+            label {
+                font-size: 12px;
+                font-weight: 700;
+                color: $ab-text-secondary;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+                white-space: nowrap;
+            }
+        }
+
+        .o_field_widget {
+            font-size: 14px;
+            color: $ab-text-primary;
+        }
+
+        .o_field_widget.o_field_boolean {
+            font-size: 14px;
+        }
+
+        .text-muted {
+            font-size: 12px;
+            color: $ab-text-muted !important;
+        }
+    }
+
+    // Notebook
+    .o_notebook {
+        margin: 4px 24px 24px;
+        border-radius: $ab-radius-md;
+        overflow: visible;
+
+        > .o_notebook_headers {
+            background: #fff;
+            border: 1px solid $ab-border;
+            border-radius: $ab-radius-md $ab-radius-md 0 0;
+            border-bottom: none;
+            padding: 0 4px;
+
+            .nav-item {
+                margin: 0;
+
+                .nav-link {
+                    border: none;
+                    padding: 12px 20px;
+                    font-size: 13px;
+                    font-weight: 600;
+                    color: $ab-text-secondary;
+                    background: transparent;
+                    transition: all $ab-transition;
+                    position: relative;
+
+                    i { margin-right: 6px; font-size: 13px; }
+
+                    &:hover { color: $ab-text-primary; background: $ab-bg-subtle; }
+
+                    &.active {
+                        color: $ab-color-coupons;
+                        background: transparent;
+
+                        &::after {
+                            content: '';
+                            position: absolute;
+                            bottom: 0; left: 20%; right: 20%;
+                            height: 2px;
+                            background: $ab-color-coupons;
+                            border-radius: 2px 2px 0 0;
+                        }
+                    }
+
+                    &:focus-visible { outline: 2px solid $ab-color-coupons; outline-offset: -2px; }
+                }
+
+                &:first-child .nav-link { border-radius: $ab-radius-md 0 0 0; }
+            }
+        }
+
+        .tab-content {
+            background: #fff;
+            border: 1px solid $ab-border;
+            border-top: none;
+            border-radius: 0 0 $ab-radius-md $ab-radius-md;
+            padding: 20px 24px;
+        }
+    }
+
+    // Rules & Rewards (loyalty_one2many widget)
+    .o_loyalty_kanban_inline {
+        .o_kanban_renderer {
+            background: transparent;
+            .o_kanban_record {
+                background: #fff;
+                border: 1px solid $ab-border;
+                border-radius: $ab-radius-sm;
+                padding: 12px 14px;
+                margin-bottom: 8px;
+                transition: all $ab-transition;
+
+                &:hover {
+                    box-shadow: $ab-shadow-sm;
+                    border-color: #cbd5e1;
+                }
+            }
+        }
+
+        .o_cp_buttons {
+            .btn-secondary {
+                background: #f1f5f9;
+                border: 1px solid $ab-border;
+                color: $ab-text-primary;
+                border-radius: $ab-radius-sm;
+                padding: 6px 14px;
+                font-weight: 600;
+                font-size: 12px;
+                transition: all $ab-transition;
+
+                &:hover {
+                    background: #e2e8f0;
+                    border-color: #cbd5e1;
+                }
+            }
+        }
+    }
+}
+
+// Responsive form
+@media (max-width: 768px) {
+    .abdin_loyalty_form.o_form_view {
+        .oe_title { padding: 12px 16px 0; h1 { font-size: 20px; } }
+        > .o_form_sheet > .o_group { padding: 8px 16px 0; }
+        .o_group.o_inner_group { padding: 14px 16px; }
+        .o_notebook { margin: 4px 16px 16px; }
+        .abdin_loyalty_form_button_box { padding: 14px 16px 0; }
+    }
+}
+
+
+/* ======================================================================
+   4. SEARCH VIEW — Premium Filter Bar
+   ====================================================================== */
+.o_searchview.abdin_loyalty_search {
+    border: 1px solid $ab-border;
+    border-radius: $ab-radius-md;
+    background: #fff;
+    box-shadow: $ab-shadow-sm;
+    transition: all $ab-transition;
+
+    &:focus-within {
+        border-color: #a5b4fc;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+}
+
+
+/* ======================================================================
+   5. DASHBOARD KPI BANNER — Sticky top stats
+   ====================================================================== */
+.abdin_loyalty_dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    padding: 20px 20px 8px;
+    background: $ab-bg-subtle;
+}
+
+.abdin_loyalty_kpi {
+    background: #fff;
+    border: 1px solid $ab-border;
+    border-radius: $ab-radius-md;
+    padding: 16px 18px;
+    box-shadow: $ab-shadow-sm;
+    transition: all $ab-transition;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    &:hover {
+        box-shadow: $ab-shadow-md;
+        transform: translateY(-2px);
+    }
+
+    .abdin_loyalty_kpi_header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .abdin_loyalty_kpi_icon {
+        width: 34px;
+        height: 34px;
+        border-radius: $ab-radius-sm;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 15px;
+
+        &.abdin_kpi_primary { background: #eef2ff; color: #6366f1; }
+        &.abdin_kpi_success { background: #ecfdf5; color: #10b981; }
+        &.abdin_kpi_warning { background: #fffbeb; color: #f59e0b; }
+        &.abdin_kpi_pink { background: #fdf2f8; color: #ec4899; }
+        &.abdin_kpi_cyan { background: #ecfeff; color: #06b6d4; }
+        &.abdin_kpi_purple { background: #f5f3ff; color: #8b5cf6; }
+    }
+
+    .abdin_loyalty_kpi_value {
+        font-size: 24px;
+        font-weight: 800;
+        color: $ab-text-primary;
+        line-height: 1.1;
+    }
+
+    .abdin_loyalty_kpi_label {
+        font-size: 11px;
+        font-weight: 600;
+        color: $ab-text-muted;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .abdin_loyalty_kpi_trend {
+        font-size: 11px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 3px;
+        margin-top: 2px;
+
+        &.abdin_trend_up { color: #16a34a; }
+        &.abdin_trend_down { color: #dc2626; }
+    }
+}
+
+@media (max-width: 768px) {
+    .abdin_loyalty_dashboard {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        padding: 12px 12px 4px;
+    }
+
+    .abdin_loyalty_kpi { padding: 12px 14px; .abdin_loyalty_kpi_value { font-size: 20px; } }
+}
+
+
+/* ======================================================================
+   6. MICRO-INTERACTIONS & ANIMATIONS
+   ====================================================================== */
+@keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.o_kanban_record {
+    animation: fadeSlideIn 0.35s ease both;
+
+    @for $i from 1 through 12 {
+        &:nth-child(#{$i}) { animation-delay: #{$i * 0.05}s; }
+    }
+}
+
+// Reduced motion
+@media (prefers-reduced-motion: reduce) {
+    .abdin_loyalty_card,
+    .abdin_loyalty_kpi,
+    .abdin_loyalty_btn,
+    .o_kanban_record {
+        transition: none;
+        animation: none;
+        &:hover { transform: none; }
+    }
+}
+
+/* ======================================================================
+   7. EMPTY STATE
+   ====================================================================== */
+.abdin_loyalty_kanban .o_view_nocontent {
+    .o_nocontent_help {
+        h1 { font-weight: 800; color: $ab-text-primary; }
+        p.lead { color: $ab-text-secondary; }
+    }
+}
