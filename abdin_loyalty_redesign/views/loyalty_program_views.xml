@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================
+         KANBAN VIEW — Premium campaign card deck
+         ============================================================ -->
+    <record id="abdin_loyalty_program_view_kanban" model="ir.ui.view">
+        <field name="name">abdin.loyalty.program.view.kanban</field>
+        <field name="model">loyalty.program</field>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <kanban class="abdin_loyalty_kanban" default_group_by="program_type">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="program_type"/>
+                <field name="coupon_count_display"/>
+                <field name="total_order_count"/>
+                <field name="active"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="limit_usage"/>
+                <field name="max_usage"/>
+                <field name="ecommerce_ok"/>
+                <field name="sale_ok"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="abdin_loyalty_card"
+                             t-att-class="'abdin_loyalty_card abdin_loyalty_type_' + record.program_type.raw_value + (record.active.raw_value ? '' : ' abdin_loyalty_card_archived')">
+                            <!-- Top accent bar -->
+                            <div class="abdin_loyalty_card_accent"/>
+
+                            <!-- Card header: icon + badge -->
+                            <div class="abdin_loyalty_card_header">
+                                <div class="abdin_loyalty_card_icon" t-attf-class="abdin_loyalty_card_icon abdin_loyalty_icon_{{ record.program_type.raw_value }}">
+                                    <t t-if="record.program_type.raw_value === 'coupons'">
+                                        <i class="fa fa-ticket" title="Coupons"/>
+                                    </t>
+                                    <t t-elif="record.program_type.raw_value === 'promo_code'">
+                                        <i class="fa fa-percent" title="Promo Code"/>
+                                    </t>
+                                    <t t-elif="record.program_type.raw_value === 'promotion'">
+                                        <i class="fa fa-star" title="Promotion"/>
+                                    </t>
+                                    <t t-elif="record.program_type.raw_value === 'buy_x_get_y'">
+                                        <i class="fa fa-gift" title="BOGO"/>
+                                    </t>
+                                    <t t-elif="record.program_type.raw_value === 'loyalty'">
+                                        <i class="fa fa-id-card" title="Loyalty"/>
+                                    </t>
+                                    <t t-elif="record.program_type.raw_value === 'gift_card'">
+                                        <i class="fa fa-credit-card" title="Gift Card"/>
+                                    </t>
+                                    <t t-elif="record.program_type.raw_value === 'ewallet'">
+                                        <i class="fa fa-wallet" title="eWallet"/>
+                                    </t>
+                                    <t t-else="">
+                                        <i class="fa fa-tag" title="Program"/>
+                                    </t>
+                                </div>
+                                <span class="abdin_loyalty_badge" t-attf-class="abdin_loyalty_badge abdin_loyalty_badge_{{ record.program_type.raw_value }}">
+                                    <t t-esc="record.program_type.raw_value.replace('_', ' ').replace('buy x get y', 'BOGO')"/>
+                                </span>
+                            </div>
+
+                            <!-- Card body -->
+                            <div class="abdin_loyalty_card_body">
+                                <div class="abdin_loyalty_card_name">
+                                    <field name="name"/>
+                                </div>
+
+                                <!-- Status indicators row -->
+                                <div class="abdin_loyalty_card_status_row">
+                                    <span class="abdin_loyalty_status_dot"
+                                          t-att-class="'abdin_loyalty_status_dot ' + (record.active.raw_value ? 'abdin_loyalty_status_active' : 'abdin_loyalty_status_inactive')"/>
+                                    <span class="abdin_loyalty_status_text"
+                                          t-if="record.active.raw_value">Active</span>
+                                    <span class="abdin_loyalty_status_text"
+                                          t-else="">Inactive</span>
+
+                                    <span t-if="record.ecommerce_ok.raw_value"
+                                          class="abdin_loyalty_pill abdin_loyalty_pill_website">
+                                        <i class="fa fa-globe" title="Website"/> Website
+                                    </span>
+                                    <span t-if="record.sale_ok.raw_value"
+                                          class="abdin_loyalty_pill abdin_loyalty_pill_sale">
+                                        <i class="fa fa-shopping-cart" title="Sales"/> Sales
+                                    </span>
+                                </div>
+
+                                <!-- Date range -->
+                                <div class="abdin_loyalty_card_dates" t-if="record.date_from.raw_value">
+<i class="fa fa-calendar" title="Date"/> 
+                                    <t t-esc="record.date_from.raw_value"/>
+                                    <t t-if="record.date_to.raw_value">
+                                        &#160;&#8594;&#160;<t t-esc="record.date_to.raw_value"/>
+                                    </t>
+                                </div>
+
+                                <!-- Usage stats -->
+                                <div class="abdin_loyalty_card_stats">
+                                    <div class="abdin_loyalty_stat">
+                                        <span class="abdin_loyalty_stat_value">
+                                            <field name="coupon_count_display"/>
+                                        </span>
+                                        <span class="abdin_loyalty_stat_label">Items</span>
+                                    </div>
+                                    <div class="abdin_loyalty_stat">
+                                        <span class="abdin_loyalty_stat_value">
+                                            <field name="total_order_count"/>
+                                        </span>
+                                        <span class="abdin_loyalty_stat_label">Orders</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Card footer: quick actions -->
+                            <div class="abdin_loyalty_card_footer">
+                                <button name="%(loyalty.loyalty_generate_wizard_action)d"
+                                        type="action"
+                                        class="abdin_loyalty_btn abdin_loyalty_btn_primary"
+                                        invisible="program_type not in ('coupons', 'gift_card', 'ewallet')">
+                                    <i class="fa fa-plus" title="Generate"/> Generate
+                                </button>
+                                <button name="action_program_share" type="object"
+                                        class="abdin_loyalty_btn abdin_loyalty_btn_ghost"
+                                        invisible="program_type != 'promo_code'">
+                                    <i class="fa fa-share-alt" title="Share"/> Share
+                                </button>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Add kanban view to Discount & Loyalty action -->
+    <record id="action_loyalty_program_kanban_discount_loyalty" model="ir.actions.act_window.view">
+        <field name="view_mode">kanban</field>
+        <field name="sequence">0</field>
+        <field name="view_id" ref="abdin_loyalty_program_view_kanban"/>
+        <field name="act_window_id" ref="loyalty.loyalty_program_discount_loyalty_action"/>
+    </record>
+
+    <!-- Add kanban view to Gift Cards & eWallet action -->
+    <record id="action_loyalty_program_kanban_gift_card_ewallet" model="ir.actions.act_window.view">
+        <field name="view_mode">kanban</field>
+        <field name="sequence">0</field>
+        <field name="view_id" ref="abdin_loyalty_program_view_kanban"/>
+        <field name="act_window_id" ref="loyalty.loyalty_program_gift_ewallet_action"/>
+    </record>
+
+    <!-- Set kanban as default view mode for Discount & Loyalty -->
+    <record id="loyalty.loyalty_program_discount_loyalty_action" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- Set kanban as default view mode for Gift Cards & eWallet -->
+    <record id="loyalty.loyalty_program_gift_ewallet_action" model="ir.actions.act_window">
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <!-- ============================================================
+         LIST VIEW — Styled modern table (override)
+         ============================================================ -->
+    <record id="abdin_loyalty_program_view_tree_inherit" model="ir.ui.view">
+        <field name="name">abdin.loyalty.program.view.list.inherit</field>
+        <field name="model">loyalty.program</field>
+        <field name="inherit_id" ref="loyalty.loyalty_program_view_tree"/>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <list position="attributes">
+                <attribute name="class">abdin_loyalty_list_view</attribute>
+            </list>
+            <field name="program_type" position="attributes">
+                <attribute name="widget">badge</attribute>
+            </field>
+        </field>
+    </record>
+
+    <!-- ============================================================
+         FORM VIEW — Premium redesign via SCSS targeting existing structure
+         ============================================================ -->
+    <record id="abdin_loyalty_program_view_form_inherit" model="ir.ui.view">
+        <field name="name">abdin.loyalty.program.view.form.inherit</field>
+        <field name="model">loyalty.program</field>
+        <field name="inherit_id" ref="loyalty.loyalty_program_view_form"/>
+        <field name="priority">200</field>
+        <field name="arch" type="xml">
+            <form position="attributes">
+                <attribute name="class">abdin_loyalty_form</attribute>
+            </form>
+            <div class="oe_button_box" position="replace">
+                <div class="abdin_loyalty_form_button_box" name="button_box">
+                    <button class="abdin_loyalty_stat_button" type="object"
+                            name="action_open_loyalty_cards">
+                        <span class="abdin_loyalty_stat_button_value">
+                            <field name="coupon_count"/>
+                        </span>
+                        <span class="abdin_loyalty_stat_button_label">Coupons</span>
+                    </button>
+                </div>
+            </div>
+        </field>
+    </record>
+
+</odoo>
