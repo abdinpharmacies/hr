@@ -12,6 +12,8 @@
     'assets': {
         'web.assets_backend': [
             'abdin_loyalty_redesign/static/src/scss/loyalty_redesign.scss',
+            'abdin_loyalty_redesign/static/src/js/loyalty_redesign_form.js',
+            'abdin_loyalty_redesign/static/src/js/loyalty_program_type_widget.js',
         ],
     },
     'installable': True,
