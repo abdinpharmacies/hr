@@ -46,6 +46,30 @@ $ab-text-secondary: #64748b;
 $ab-text-muted: #94a3b8;
 $ab-border: #e2e8f0;
 $ab-bg-subtle: #f8fafc;
+$ab-bg-page: #f1f5f9;
+
+// Program type color maps
+$ab-pt-colors: (
+    'coupons': #6366f1,
+    'promo_code': #f59e0b,
+    'promotion': #8b5cf6,
+    'buy_x_get_y': #10b981,
+    'loyalty': #3b82f6,
+    'gift_card': #ec4899,
+    'ewallet': #14b8a6,
+    'next_order_coupons': #8b5cf6,
+);
+
+$ab-pt-bgs: (
+    'coupons': #eef2ff,
+    'promo_code': #fffbeb,
+    'promotion': #f5f3ff,
+    'buy_x_get_y': #ecfdf5,
+    'loyalty': #eff6ff,
+    'gift_card': #fdf2f8,
+    'ewallet': #f0fdfa,
+    'next_order_coupons': #f5f3ff,
+);
 
 /* ======================================================================
    1. KANBAN VIEW — Premium Campaign Cards
@@ -457,9 +481,11 @@ $ab-bg-subtle: #f8fafc;
 
 
 /* ======================================================================
-   3. FORM VIEW — Premium Enterprise Form
+   3. FORM VIEW — Premium Campaign Form
    ====================================================================== */
-.abdin_loyalty_form.o_form_view {
+
+// ── 3a. Form Sheet ──
+.abdin_campaign_form.o_form_view {
     .o_form_sheet {
         max-width: 100%;
         width: 100%;
@@ -467,58 +493,84 @@ $ab-bg-subtle: #f8fafc;
         box-shadow: none;
         padding: 0;
         background: $ab-bg-subtle;
+        border-radius: 0;
     }
 
-    // Header area
-    > .o_form_sheet > .oe_button_box + .oe_title {
-        margin-top: 0;
-    }
-
-    .abdin_loyalty_form_button_box {
+    // ── 3b. Stat Bar (replaces oe_button_box) ──
+    .abdin_stat_bar {
         display: flex;
-        gap: 10px;
-        padding: 20px 24px 0;
-        flex-wrap: wrap;
-    }
-
-    .abdin_loyalty_stat_button {
-        display: flex;
-        flex-direction: column;
         align-items: center;
-        justify-content: center;
-        gap: 4px;
-        min-width: 90px;
-        padding: 12px 20px;
-        background: #fff;
-        border: 1px solid $ab-border;
-        border-radius: $ab-radius-md;
-        cursor: pointer;
-        transition: all $ab-transition;
-        box-shadow: $ab-shadow-sm;
+        gap: 16px;
+        padding: 20px 24px 0;
 
-        &:hover {
-            box-shadow: $ab-shadow-md;
-            transform: translateY(-1px);
-            border-color: #cbd5e1;
+        .abdin_stat_button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            background: #fff;
+            border: 1px solid $ab-border;
+            border-radius: $ab-radius-md;
+            cursor: pointer;
+            transition: all $ab-transition;
+            box-shadow: $ab-shadow-sm;
+
+            &:hover {
+                box-shadow: $ab-shadow-md;
+                transform: translateY(-1px);
+                border-color: #cbd5e1;
+            }
+
+            .abdin_stat_value {
+                font-size: 20px;
+                font-weight: 800;
+                color: $ab-text-primary;
+                line-height: 1;
+            }
+
+            .abdin_stat_icon {
+                font-size: 16px;
+                color: $ab-text-muted;
+            }
+
+            .abdin_stat_label {
+                font-size: 10px;
+                font-weight: 700;
+                color: $ab-text-muted;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
         }
 
-        .abdin_loyalty_stat_button_value {
-            font-size: 22px;
-            font-weight: 800;
-            color: $ab-text-primary;
-            line-height: 1;
+        .abdin_stat_spacer {
+            width: 1px;
+            height: 32px;
+            background: $ab-border;
         }
 
-        .abdin_loyalty_stat_button_label {
-            font-size: 10px;
-            font-weight: 600;
-            color: $ab-text-muted;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
+        .abdin_stat_total {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+
+            .abdin_stat_value {
+                font-size: 20px;
+                font-weight: 800;
+                color: $ab-text-primary;
+                line-height: 1;
+            }
+
+            .abdin_stat_label {
+                font-size: 10px;
+                font-weight: 700;
+                color: $ab-text-muted;
+                text-transform: uppercase;
+                letter-spacing: 0.03em;
+            }
         }
     }
 
-    // Title
+    // ── 3c. Title ──
     .oe_title {
         padding: 16px 24px 0;
 
@@ -538,7 +590,28 @@ $ab-bg-subtle: #f8fafc;
         label { display: none; }
     }
 
-    // Main field groups
+    // ── 3d. Section Headers ──
+    .abdin_section_head {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 12px;
+
+        i {
+            font-size: 14px;
+            color: $ab-text-muted;
+        }
+
+        span {
+            font-size: 12px;
+            font-weight: 700;
+            color: $ab-text-secondary;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+    }
+
+    // ── 3e. Main field groups ──
     > .o_form_sheet > .o_group {
         padding: 12px 24px 4px;
     }
@@ -547,7 +620,7 @@ $ab-bg-subtle: #f8fafc;
         background: #fff;
         border: 1px solid $ab-border;
         border-radius: $ab-radius-md;
-        padding: 20px 24px;
+        padding: 20px 22px;
         margin-bottom: 14px;
         box-shadow: $ab-shadow-sm;
         transition: box-shadow $ab-transition;
@@ -579,10 +652,242 @@ $ab-bg-subtle: #f8fafc;
         .text-muted {
             font-size: 12px;
             color: $ab-text-muted !important;
+            line-height: 1.5;
+        }
+
+        // Inputs
+        select.o_input {
+            background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center !important;
+            padding: 8px 34px 8px 12px !important;
+            font-size: 14px !important;
+            font-weight: 600 !important;
+            color: $ab-text-primary !important;
+            border: 1.5px solid $ab-border !important;
+            border-radius: $ab-radius-sm !important;
+            appearance: none !important;
+            -webkit-appearance: none !important;
+            cursor: pointer !important;
+            min-height: 38px;
+
+            &:hover { border-color: #cbd5e1 !important; }
+            &:focus { border-color: #a5b4fc !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important; outline: none !important; }
+        }
+
+        input.o_input, textarea.o_input {
+            border: 1.5px solid $ab-border !important;
+            border-radius: $ab-radius-sm !important;
+            padding: 8px 12px !important;
+            font-size: 14px !important;
+            color: $ab-text-primary !important;
+            min-height: 38px;
+
+            &:hover { border-color: #cbd5e1 !important; }
+            &:focus { border-color: #a5b4fc !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important; outline: none !important; }
+        }
+
+        .o_field_many2manytags .o_tag {
+            background: #f1f5f9;
+            border: 1px solid $ab-border;
+            border-radius: $ab-radius-sm;
+            padding: 3px 10px;
+            font-size: 12px;
+            font-weight: 600;
+            color: $ab-text-primary;
+        }
+
+        .o_field_radio .o_radio_item {
+            margin-right: 14px;
+            label { font-size: 13px; font-weight: 500; color: $ab-text-primary; }
+            input[type="radio"] { accent-color: $ab-color-coupons; }
+        }
+
+        .o_field_checkbox input[type="checkbox"] {
+            accent-color: $ab-color-coupons;
+            width: 15px;
+            height: 15px;
         }
     }
 
-    // Notebook
+    // ── 3k. Radio buttons as segmented controls ──
+    .o_field_radio.o_horizontal {
+        display: inline-flex;
+        background: #f1f5f9;
+        padding: 3px;
+        border-radius: 10px;
+        gap: 2px;
+
+        .o_radio_item {
+            margin: 0;
+
+            input[type="radio"] {
+                position: absolute;
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            label {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                padding: 7px 18px;
+                border-radius: 8px;
+                font-size: 13px;
+                font-weight: 500;
+                color: $ab-text-secondary;
+                cursor: pointer;
+                transition: all 0.2s;
+                white-space: nowrap;
+                margin: 0;
+
+                &:hover { color: $ab-text-primary; }
+            }
+
+            input[type="radio"]:checked + label {
+                background: #fff;
+                color: var(--ab-theme, #6366f1);
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+                font-weight: 600;
+            }
+        }
+    }
+
+    // ── 3l. Checkboxes as toggle switches ──
+    .o_field_checkbox {
+        .o_checkbox {
+            position: relative;
+
+            input[type="checkbox"] {
+                position: absolute;
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            label {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                cursor: pointer;
+                padding: 4px 0;
+
+                &::before {
+                    content: '';
+                    width: 40px;
+                    height: 22px;
+                    background: #e2e8f0;
+                    border-radius: 11px;
+                    transition: all 0.25s;
+                    flex-shrink: 0;
+                    position: relative;
+                }
+
+                &::after {
+                    content: '';
+                    position: absolute;
+                    left: 3px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    width: 16px;
+                    height: 16px;
+                    background: #fff;
+                    border-radius: 50%;
+                    transition: all 0.25s;
+                    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+                }
+            }
+
+            input[type="checkbox"]:checked + label::before {
+                background: var(--ab-theme, #6366f1);
+            }
+
+            input[type="checkbox"]:checked + label::after {
+                left: 21px;
+            }
+        }
+    }
+
+    // ── 3m. Group table section card styling ──
+    .o_group {
+        table.o_group_layout {
+            border-spacing: 0 4px;
+
+            .o_td_label {
+                label {
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: $ab-text-secondary;
+                    text-transform: uppercase;
+                    letter-spacing: 0.03em;
+                    white-space: nowrap;
+                    margin-bottom: 0;
+                }
+            }
+
+            .o_td_field {
+                .o_field_widget {
+                    font-size: 14px;
+                    color: $ab-text-primary;
+                }
+            }
+        }
+    }
+
+    // ── 3n. Stepper input styling ──
+    input.o_input[type="number"] {
+        max-width: 100px;
+        text-align: center;
+        font-weight: 700;
+        font-size: 15px;
+        padding: 6px 4px;
+        border: 1.5px solid $ab-border;
+        border-radius: 8px;
+        -moz-appearance: textfield;
+
+        &::-webkit-inner-spin-button,
+        &::-webkit-outer-spin-button {
+            opacity: 1;
+            height: 28px;
+        }
+
+        &:focus {
+            border-color: #a5b4fc;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+    }
+
+    // ── 3o. Section heads (full-width card headers) ──
+    .abdin_section_head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 16px 20px;
+        margin: 20px 0 12px;
+        background: #fff;
+        border: 1px solid $ab-border;
+        border-radius: $ab-radius-md;
+        box-shadow: $ab-shadow-sm;
+
+        i {
+            font-size: 15px;
+            color: var(--ab-theme, #6366f1);
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            background: #f0f0ff;
+        }
+
+        span {
+            font-size: 13px;
+            font-weight: 700;
+            color: $ab-text-primary;
+        }
+    }
+
+    // ── 3f. Notebook ──
     .o_notebook {
         margin: 4px 24px 24px;
         border-radius: $ab-radius-md;
@@ -642,10 +947,11 @@ $ab-bg-subtle: #f8fafc;
         }
     }
 
-    // Rules & Rewards (loyalty_one2many widget)
+    // ── 3g. Rules & Rewards inline kanban ──
     .o_loyalty_kanban_inline {
         .o_kanban_renderer {
             background: transparent;
+
             .o_kanban_record {
                 background: #fff;
                 border: 1px solid $ab-border;
@@ -679,16 +985,345 @@ $ab-bg-subtle: #f8fafc;
             }
         }
     }
+
+    // ── 3h. KPI Dashboard (moved to top area) ──
+    .abdin_dashboard_top {
+        display: flex;
+        gap: 12px;
+        padding: 8px 24px 16px;
+        flex-wrap: wrap;
+
+        .abdin_kpi_card {
+            flex: 1;
+            min-width: 150px;
+            max-width: 220px;
+            background: #fff;
+            border: 1px solid $ab-border;
+            border-radius: $ab-radius-md;
+            padding: 16px 18px;
+            box-shadow: $ab-shadow-sm;
+            transition: all $ab-transition;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+
+            &:hover {
+                box-shadow: $ab-shadow-md;
+                transform: translateY(-2px);
+            }
+
+            &--items {
+                border-left: 3px solid $ab-color-coupons;
+                .abdin_kpi_card_icon { background: #eef2ff; color: $ab-color-coupons; }
+            }
+            &--orders {
+                border-left: 3px solid $ab-color-loyalty;
+                .abdin_kpi_card_icon { background: #eff6ff; color: $ab-color-loyalty; }
+            }
+            &--usage {
+                border-left: 3px solid $ab-color-buy_x_get_y;
+                .abdin_kpi_card_icon { background: #ecfdf5; color: $ab-color-buy_x_get_y; }
+            }
+            &--status {
+                border-left: 3px solid #22c55e;
+                .abdin_kpi_card_icon { background: #f0fdf4; color: #22c55e; }
+            }
+        }
+
+        .abdin_kpi_card_top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .abdin_kpi_card_icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            transition: transform $ab-transition;
+
+            .abdin_kpi_card:hover & { transform: scale(1.1); }
+        }
+
+        .abdin_kpi_card_value {
+            font-size: 22px;
+            font-weight: 800;
+            color: $ab-text-primary;
+            line-height: 1.1;
+        }
+
+        .abdin_kpi_card_label {
+            font-size: 10px;
+            font-weight: 700;
+            color: $ab-text-muted;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .abdin_kpi_card_detail {
+            font-size: 12px;
+            color: $ab-text-secondary;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #f1f5f9;
+            margin-top: auto;
+        }
+
+        .abdin_kpi_status_dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            flex-shrink: 0;
+
+            &--active { background: #22c55e; box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15); }
+            &--inactive { background: #94a3b8; }
+        }
+
+        .abdin_kpi_badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+
+            &--coupons { background: #eef2ff; color: $ab-color-coupons; }
+            &--promo_code { background: #fffbeb; color: $ab-color-promo_code; }
+            &--promotion { background: #f5f3ff; color: $ab-color-promotion; }
+            &--buy_x_get_y { background: #ecfdf5; color: $ab-color-buy_x_get_y; }
+            &--loyalty { background: #eff6ff; color: $ab-color-loyalty; }
+            &--gift_card { background: #fdf2f8; color: $ab-color-gift_card; }
+            &--ewallet { background: #f0fdfa; color: $ab-color-ewallet; }
+        }
+
+        .abdin_kpi_progress {
+            width: 100%;
+            height: 4px;
+            background: #f1f5f9;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 4px;
+
+            &-bar {
+                height: 100%;
+                border-radius: 2px;
+                background: $ab-color-coupons;
+                transition: width 0.5s;
+            }
+        }
+    }
+
+    // ── 3i. Program type theming ──
+    @each $type, $color in $ab-pt-colors {
+        &[data-program-type="#{$type}"] {
+            --ab-theme: #{$color};
+            --ab-theme-bg: #{map-get($ab-pt-bgs, $type)};
+
+            .abdin_stat_button:hover {
+                border-color: $color;
+                .abdin_stat_value { color: $color; }
+            }
+
+            .o_notebook > .o_notebook_headers .nav-link.active {
+                color: $color;
+                &::after { background: $color; }
+            }
+        }
+    }
 }
 
-// Responsive form
+// ── 3j. Responsive ──
+@media (max-width: 1024px) {
+    .abdin_campaign_form.o_form_view {
+        .abdin_dashboard_top {
+            gap: 8px;
+            .abdin_kpi_card { min-width: 130px; }
+        }
+    }
+}
+
 @media (max-width: 768px) {
-    .abdin_loyalty_form.o_form_view {
+    .abdin_campaign_form.o_form_view {
         .oe_title { padding: 12px 16px 0; h1 { font-size: 20px; } }
         > .o_form_sheet > .o_group { padding: 8px 16px 0; }
         .o_group.o_inner_group { padding: 14px 16px; }
         .o_notebook { margin: 4px 16px 16px; }
-        .abdin_loyalty_form_button_box { padding: 14px 16px 0; }
+        .abdin_stat_bar { padding: 14px 16px 0; flex-wrap: wrap; }
+        .abdin_dashboard_top { padding: 8px 16px 12px; gap: 8px;
+            .abdin_kpi_card { min-width: calc(50% - 8px); max-width: none; }
+        }
+    }
+}
+
+/* ======================================================================
+   4. RULE FORM — Dialog Card
+   ====================================================================== */
+.abdin_rule_form.o_form_view {
+    .o_form_sheet_bg {
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .o_form_sheet {
+        max-width: 600px;
+        margin: 0 auto;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        background: transparent;
+    }
+
+    .oe_button_box { display: none; }
+
+    > .o_form_sheet > .o_group {
+        background: #fff;
+        border: 1px solid $ab-border;
+        border-radius: $ab-radius-md;
+        padding: 20px 22px;
+        box-shadow: $ab-shadow-md;
+    }
+
+    .o_td_label label {
+        font-size: 12px;
+        font-weight: 700;
+        color: $ab-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .o_separator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 0 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: $ab-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: transparent;
+        border: none;
+        margin: 8px 0 4px;
+    }
+
+    select.o_input {
+        background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center !important;
+        padding: 8px 34px 8px 12px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: $ab-text-primary !important;
+        border: 1.5px solid $ab-border !important;
+        border-radius: $ab-radius-sm !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        cursor: pointer !important;
+        min-height: 38px;
+        width: 100% !important;
+
+        &:hover { border-color: #cbd5e1 !important; }
+        &:focus { border-color: #a5b4fc !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important; outline: none !important; }
+    }
+
+    input.o_input {
+        border: 1.5px solid $ab-border !important;
+        border-radius: $ab-radius-sm !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+        color: $ab-text-primary !important;
+        min-height: 38px;
+
+        &:hover { border-color: #cbd5e1 !important; }
+        &:focus { border-color: #a5b4fc !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important; outline: none !important; }
+    }
+}
+
+/* ======================================================================
+   5. REWARD FORM — Dialog Card
+   ====================================================================== */
+.abdin_reward_form.o_form_view {
+    .o_form_sheet_bg {
+        background: transparent;
+        box-shadow: none;
+    }
+
+    .o_form_sheet {
+        max-width: 600px;
+        margin: 0 auto;
+        border: none;
+        box-shadow: none;
+        padding: 0;
+        background: transparent;
+    }
+
+    .oe_button_box { display: none; }
+
+    > .o_form_sheet > .o_group {
+        background: #fff;
+        border: 1px solid $ab-border;
+        border-radius: $ab-radius-md;
+        padding: 20px 22px;
+        box-shadow: $ab-shadow-md;
+    }
+
+    .o_td_label label {
+        font-size: 12px;
+        font-weight: 700;
+        color: $ab-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    .o_separator {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 0 8px;
+        font-size: 12px;
+        font-weight: 700;
+        color: $ab-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        background: transparent;
+        border: none;
+        margin: 8px 0 4px;
+    }
+
+    select.o_input {
+        background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='8' viewBox='0 0 14 8' fill='none'%3E%3Cpath d='M1 1L7 7L13 1' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 12px center !important;
+        padding: 8px 34px 8px 12px !important;
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        color: $ab-text-primary !important;
+        border: 1.5px solid $ab-border !important;
+        border-radius: $ab-radius-sm !important;
+        appearance: none !important;
+        -webkit-appearance: none !important;
+        cursor: pointer !important;
+        min-height: 38px;
+        width: 100% !important;
+
+        &:hover { border-color: #cbd5e1 !important; }
+        &:focus { border-color: #a5b4fc !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important; outline: none !important; }
+    }
+
+    input.o_input {
+        border: 1.5px solid $ab-border !important;
+        border-radius: $ab-radius-sm !important;
+        padding: 8px 12px !important;
+        font-size: 14px !important;
+        color: $ab-text-primary !important;
+        min-height: 38px;
+
+        &:hover { border-color: #cbd5e1 !important; }
+        &:focus { border-color: #a5b4fc !important; box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important; outline: none !important; }
     }
 }
 
@@ -796,6 +1431,351 @@ $ab-bg-subtle: #f8fafc;
     }
 
     .abdin_loyalty_kpi { padding: 12px 14px; .abdin_loyalty_kpi_value { font-size: 20px; } }
+}
+
+/* ======================================================================
+   8. PROGRAM TYPE SELECTOR — Visual Card Grid
+   ====================================================================== */
+.abdin-pt-container {
+    display: block !important;
+    width: 100%;
+}
+
+.abdin-pt-selector {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+
+    &--readonly {
+        grid-template-columns: 1fr;
+        max-width: 320px;
+    }
+}
+
+.abdin-pt-card {
+    position: relative;
+    background: #fff;
+    border: 1.5px solid $ab-border;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+        transform: translateY(-2px);
+    }
+
+    &--active {
+        border-color: var(--ab-theme, #6366f1);
+        box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15), 0 4px 12px rgba(0, 0, 0, 0.06);
+
+        .abdin-pt-card-check {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    &--readonly {
+        cursor: default;
+        max-width: 320px;
+
+        &:hover {
+            transform: none;
+            box-shadow: none;
+            border-color: $ab-border;
+        }
+    }
+}
+
+.abdin-pt-card-accent {
+    height: 3px;
+    width: 100%;
+}
+
+.abdin-pt-card-inner {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+}
+
+.abdin-pt-card-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: transform 0.25s;
+
+    .abdin-pt-card:hover & { transform: scale(1.1); }
+}
+
+.abdin-pt-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.abdin-pt-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $ab-text-primary;
+    line-height: 1.3;
+    margin-bottom: 1px;
+}
+
+.abdin-pt-card-desc {
+    font-size: 10.5px;
+    color: $ab-text-muted;
+    line-height: 1.35;
+}
+
+.abdin-pt-card-check {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: var(--ab-theme, #6366f1);
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.25s;
+    flex-shrink: 0;
+}
+
+
+// Program type selector responsive
+@media (max-width: 768px) {
+    .abdin-pt-selector {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* ======================================================================
+   9. DIALOG HEADERS — Rule / Reward Form Header
+   ====================================================================== */
+.abdin-dialog-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 0 0 20px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid $ab-border;
+}
+
+.abdin-dialog-head__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    background: #f0f0ff;
+    color: #6366f1;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.1);
+}
+
+.abdin-dialog-head__content {
+    flex: 1;
+}
+
+.abdin-dialog-head__title {
+    display: block;
+    font-size: 17px;
+    font-weight: 800;
+    color: $ab-text-primary;
+    line-height: 1.3;
+}
+
+.abdin-dialog-head__sub {
+    display: block;
+    font-size: 12px;
+    color: $ab-text-muted;
+    line-height: 1.4;
+    margin-top: 2px;
+}
+
+/* ── 10. DIALOG CARD HEADS — Replacement for separators ── */
+.abdin-dialog-card-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 0 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: $ab-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+
+    i {
+        font-size: 13px;
+        color: $ab-text-muted;
+    }
+}
+
+
+/* ======================================================================
+   11. PREMIUM MODAL DIALOGS — Rule/Reward modal overlay
+   ====================================================================== */
+.modal.o_technical_modal {
+    .modal-dialog {
+        max-width: 680px;
+        transform: translateY(20px);
+        transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    &.show .modal-dialog { transform: translateY(0); }
+
+    .modal-content {
+        border: none;
+        border-radius: 16px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.12), 0 8px 20px rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+    }
+
+    .modal-header {
+        border-bottom: 1px solid $ab-border;
+        padding: 18px 24px;
+        background: #fafafa;
+
+        .modal-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: $ab-text-primary;
+        }
+
+        .close {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: none;
+            background: transparent;
+            font-size: 18px;
+            color: $ab-text-muted;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+                background: #f1f5f9;
+                color: $ab-text-primary;
+            }
+        }
+    }
+
+    .modal-body {
+        padding: 24px;
+    }
+
+    .modal-footer {
+        border-top: 1px solid $ab-border;
+        padding: 14px 24px;
+        gap: 8px;
+
+        .btn {
+            padding: 9px 22px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+
+            &.btn-primary {
+                background: #6366f1;
+                border: none;
+                color: #fff;
+
+                &:hover {
+                    background: #4f46e5;
+                    transform: translateY(-1px);
+                    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+                }
+            }
+
+            &.btn-secondary {
+                background: #f1f5f9;
+                border: 1px solid $ab-border;
+                color: $ab-text-primary;
+
+                &:hover {
+                    background: #e2e8f0;
+                    border-color: #cbd5e1;
+                }
+            }
+        }
+    }
+}
+
+// Modal backdrop with blur
+.modal-backdrop {
+    backdrop-filter: blur(4px);
+    background: rgba(15, 23, 42, 0.35);
+}
+
+// Modal responsive
+@media (max-width: 768px) {
+    .modal.o_technical_modal .modal-dialog {
+        max-width: 100%;
+        margin: 10px;
+    }
+}
+
+
+/* ======================================================================
+   12. ENHANCED INLINE KANBAN — Rules & Rewards x2many cards
+   ====================================================================== */
+.abdin_campaign_form.o_form_view .o_loyalty_kanban_inline {
+    .o_kanban_renderer {
+        .o_kanban_record {
+            background: #fff;
+            border: 1px solid $ab-border;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+            &:hover {
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+                border-color: #cbd5e1;
+                transform: translateY(-1px);
+            }
+        }
+    }
+
+    .o_cp_buttons {
+        .btn-secondary {
+            background: #f1f5f9;
+            border: 1px dashed $ab-border;
+            color: $ab-text-secondary;
+            border-radius: 10px;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.2s;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+
+            &:hover {
+                background: #e2e8f0;
+                border-color: #cbd5e1;
+                color: $ab-text-primary;
+            }
+        }
+    }
 }
 
 
