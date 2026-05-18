@@ -943,11 +943,6 @@ msgstr "الفروع المرسلة"
 msgid "Service"
 msgstr "خدمة"
 
-#. module: ab_stock_recycling
-#. odoo-python
-#: code:addons/ab_stock_recycling/models/ab_stock_recycling_header.py:0
-msgid "Set Stock Recycling Branch Store on the user before using branch_role."
-msgstr "حدد فرع تدوير المخزون على المستخدم قبل استخدام دور الفرع."
 
 #. module: ab_stock_recycling
 #: model_terms:ir.ui.view,arch_db:ab_stock_recycling.ab_stock_recycling_header_view_form
