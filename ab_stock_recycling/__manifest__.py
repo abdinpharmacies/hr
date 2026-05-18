@@ -7,8 +7,8 @@
     """,
 
     'description': """
-        ab_stock_recycling
-    """,
+                           ab_stock_recycling
+                       """,
     'application': True,
 
     'author': "emadco88@gmail.com",
@@ -18,7 +18,7 @@
     'version': '19.0.1.0.0',
 
     'depends': ['base', 'ab_eplus_connect', 'ab_data_from_excel', 'abdin_et', 'report_xlsx', 'ab_store',
-                'ab_product'],
+                'ab_product', 'ab_hr'],
     'license': 'LGPL-3',
     'installable': True,
     'assets': {
@@ -31,7 +31,6 @@
         'security/record_rules.xml',
         'security/ir.model.access.csv',
         'views/00_menus.xml',
-        'views/res_users.xml',
         'views/ab_stock_recycling_header.xml',
         'views/ab_stock_recycling_line.xml',
         'views/ab_stock_recycling_need.xml',

@@ -16,16 +16,6 @@
             <field name="perm_unlink" eval="1"/>
         </record>
 
-        <record id="rule_ab_stock_recycling_header_manager" model="ir.rule">
-            <field name="name">rule_ab_stock_recycling_header_manager</field>
-            <field name="model_id" ref="model_ab_stock_recycling_header"/>
-            <field name="groups" eval="[(4, ref('group_ab_stock_recycling_manager'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-        </record>
 
         <record id="rule_ab_stock_recycling_header_branch_role" model="ir.rule">
             <field name="name">rule_ab_stock_recycling_header_branch_role</field>
@@ -33,9 +23,8 @@
             <field name="groups" eval="[(4, ref('group_ab_stock_recycling_branch_role'))]"/>
             <field name="domain_force">[
                 '|',
-                ('create_uid', '=', user.id),
-                ('overstock_store_ids', 'in', [user.ab_stock_recycling_branch_store_id.id]),
-            ]</field>
+                ('user_id', '=', user.id),
+                ('overstock_store_ids', 'in', user.ab_department_ids.store_id.ids)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -58,8 +47,7 @@
             <field name="model_id" ref="model_ab_stock_recycling_line"/>
             <field name="groups" eval="[(4, ref('group_ab_stock_recycling_branch_role'))]"/>
             <field name="domain_force">[
-                ('store_id', '=', user.ab_stock_recycling_branch_store_id.id),
-            ]</field>
+                ('store_id', 'child_of', user.ab_department_ids.store_id.ids)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -82,8 +70,7 @@
             <field name="model_id" ref="model_ab_stock_recycling_need"/>
             <field name="groups" eval="[(4, ref('group_ab_stock_recycling_branch_role'))]"/>
             <field name="domain_force">[
-                ('header_id.overstock_store_ids', 'in', [user.ab_stock_recycling_branch_store_id.id]),
-            ]</field>
+                ('header_id.overstock_store_ids', 'in', user.ab_department_ids.store_id.ids)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
@@ -95,12 +82,22 @@
             <field name="model_id" ref="model_ab_stock_recycling_dist"/>
             <field name="groups" eval="[(4, ref('group_ab_stock_recycling_branch_role'))]"/>
             <field name="domain_force">[
-                ('from_store_id', '=', user.ab_stock_recycling_branch_store_id.id),
-            ]</field>
+                ('from_store_id', 'in', user.ab_department_ids.store_id.ids)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_stock_recycling_header_manager" model="ir.rule">
+            <field name="name">rule_ab_stock_recycling_header_manager</field>
+            <field name="model_id" ref="model_ab_stock_recycling_header"/>
+            <field name="groups" eval="[(4, ref('group_ab_stock_recycling_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
         </record>
     </data>
 </odoo>
