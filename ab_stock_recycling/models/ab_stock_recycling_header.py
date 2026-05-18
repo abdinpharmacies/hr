@@ -56,7 +56,7 @@ class StockRecycling(models.Model):
             ('over', 'Overstock and Stagnant Recycling'),
             ('near', 'Nearly Exp Recycling'),
             ('need', 'Stock Need'),
-        ], default='near')
+        ], default='over')
 
     item_type = fields.Selection(
         selection=[
@@ -104,7 +104,7 @@ class StockRecycling(models.Model):
         required=False)
 
     user_id = fields.Many2one('res.users', readonly=True, default=lambda self: self.env.user.id)
-    
+
     def _default_overstock_store_ids(self):
         user = self.env.user
         if user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
