@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <!-- ======================================================================
-             PROFESSIONAL FORM VIEW - ab_product
-             ====================================================================== -->
-        <record id="ab_product_form_view_professional" model="ir.ui.view">
-            <field name="name">ab.product.form.professional</field>
-            <field name="model">ab_product</field>
-            <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
-            <field name="priority">50</field>
-            <field name="arch" type="xml">
+    <!-- ======================================================================
+         PROFESSIONAL FORM VIEW - ab_product
+         ====================================================================== -->
+    <record id="ab_product_form_view_professional" model="ir.ui.view">
+        <field name="name">ab.product.form.professional</field>
+        <field name="model">ab_product</field>
+        <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
+        <field name="priority">50</field>
+        <field name="arch" type="xml">
 
                 <!-- 1. PREMIUM STATUS BAR -->
                 <xpath expr="//sheet" position="before">
@@ -18,28 +17,28 @@
                             <div class="abdin_ecommerce_statusbar_badges">
                                 <span class="abdin_ecommerce_badge abdin_ecommerce_badge_success"
                                       invisible="not website_product_is_published">
-                                    <i class="fa fa-globe"/>
+                                    <i class="fa fa-globe" title="Published on website"/>
                                     Published
                                 </span>
                                 <span class="abdin_ecommerce_badge abdin_ecommerce_badge_warning"
                                       invisible="website_product_is_published or not website_product_synced">
-                                    <i class="fa fa-cloud"/>
+                                    <i class="fa fa-cloud" title="Synced to eCommerce"/>
                                     Synced
                                 </span>
                                 <span class="abdin_ecommerce_badge abdin_ecommerce_badge_secondary"
                                       invisible="website_product_synced">
-                                    <i class="fa fa-cloud-upload"/>
+                                    <i class="fa fa-cloud-upload" title="Not synced"/>
                                     Not Synced
                                 </span>
                                 <span class="abdin_ecommerce_badge abdin_ecommerce_badge_info"
                                       invisible="not website_sale_available">
-                                    <i class="fa fa-check"/>
+                                    <i class="fa fa-check" title="Available on eCommerce"/>
                                     eCommerce Ready
                                 </span>
                             </div>
                             <div class="abdin_ecommerce_statusbar_meta">
                                 <span class="abdin_ecommerce_statusbar_code">
-                                    <i class="fa fa-barcode"/>
+                                    <i class="fa fa-barcode" title="Product code"/>
                                     <field name="code"/>
                                 </span>
                             </div>
@@ -47,8 +46,9 @@
                     </div>
                 </xpath>
 
-                <!-- 2. HIDE the original edit button (we recreate it below) -->
+                <!-- 2. HIDE the original edit button + add title for accessibility -->
                 <xpath expr="//button[@name='btn_edit_product_main_data']" position="attributes">
+                    <attribute name="title">Edit Main Data</attribute>
                     <attribute name="invisible">1</attribute>
                 </xpath>
 
@@ -58,30 +58,34 @@
                         <div class="abdin_ecommerce_action_bar_left">
                             <button name="action_sync_website_product" type="object"
                                     class="btn abdin_ecommerce_btn_primary"
-                                    string="Sync to eCommerce">
-                                <i class="fa fa-refresh"/>
+                                    string="Sync to eCommerce"
+                                    title="Sync to eCommerce">
+                                <i class="fa fa-refresh" title="Sync"/>
                                 <span>Sync to eCommerce</span>
                             </button>
                             <button name="action_open_website_product" type="object"
                                     class="btn abdin_ecommerce_btn_outline"
                                     invisible="not website_product_tmpl_id"
-                                    string="Open eCommerce Product">
-                                <i class="fa fa-pencil-square-o"/>
+                                    string="Open eCommerce Product"
+                                    title="Open eCommerce Product">
+                                <i class="fa fa-pencil-square-o" title="Edit product"/>
                                 <span>Edit eCommerce Product</span>
                             </button>
                             <button name="action_open_website_product_page" type="object"
                                     class="btn abdin_ecommerce_btn_ghost"
                                     invisible="not website_product_is_published"
-                                    string="View on Website">
-                                <i class="fa fa-external-link"/>
+                                    string="View on Website"
+                                    title="View on Website">
+                                <i class="fa fa-external-link" title="View page"/>
                                 <span>View on Website</span>
                             </button>
                         </div>
                         <div class="abdin_ecommerce_action_bar_right">
                             <button name="btn_edit_product_main_data" type="object"
                                     class="btn abdin_ecommerce_btn_outline"
-                                    string="Edit Main Data">
-                                <i class="fa fa-edit"/>
+                                    string="Edit Main Data"
+                                    title="Edit Main Data">
+                                <i class="fa fa-edit" title="Edit"/>
                                 <span>Edit Main Data</span>
                             </button>
                         </div>
@@ -131,20 +135,23 @@
                                 <group string="Quick Actions">
                                     <div class="abdin_ecommerce_page_actions">
                                         <button name="action_sync_website_product" type="object"
-                                                class="btn abdin_ecommerce_btn_primary btn-block">
-                                            <i class="fa fa-refresh"/>
+                                                class="btn abdin_ecommerce_btn_primary btn-block"
+                                                title="Sync Now">
+                                            <i class="fa fa-refresh" title="Sync"/>
                                             Sync Now
                                         </button>
                                         <button name="action_open_website_product" type="object"
                                                 class="btn abdin_ecommerce_btn_outline btn-block"
-                                                invisible="not website_product_tmpl_id">
-                                            <i class="fa fa-pencil-square-o"/>
+                                                invisible="not website_product_tmpl_id"
+                                                title="Open Linked Product">
+                                            <i class="fa fa-pencil-square-o" title="Edit"/>
                                             Open Linked Product
                                         </button>
                                         <button name="action_open_website_product_page" type="object"
                                                 class="btn abdin_ecommerce_btn_ghost btn-block"
-                                                invisible="not website_product_is_published">
-                                            <i class="fa fa-external-link"/>
+                                                invisible="not website_product_is_published"
+                                                title="View Published Page">
+                                            <i class="fa fa-external-link" title="View"/>
                                             View Published Page
                                         </button>
                                     </div>
@@ -192,5 +199,4 @@
                 </xpath>
             </field>
         </record>
-    </data>
 </odoo>
