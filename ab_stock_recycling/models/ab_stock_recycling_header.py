@@ -340,6 +340,9 @@ class StockRecycling(models.Model):
     def btn_get_overstock_for_stores(self):
         if self.env.user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
             branch_store = self._get_branch_store_for_user(self.env.user)
+            if not branch_store:
+                raise ValidationError(_("User has 'Branch Role' but not linked to department (store)"))
+
             if self.overstock_store_ids != branch_store:
                 self.overstock_store_ids = [(6, 0, [branch_store.id])]
 
