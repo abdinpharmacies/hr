@@ -5,7 +5,7 @@
             <field name="name">rule_ab_employee_tools_user</field>
             <field name="model_id" ref="model_ab_employee_tools_employee_tools"/>
             <field name="groups" eval="[(4, ref('group_ab_employee_tools_user'))]"/>
-            <field name="domain_force">[('user_id', '=', user.id)]</field>
+            <field name="domain_force">[('user_id', '=', user.id), ('status', '!=', 'delivered')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
@@ -16,8 +16,7 @@
             <field name="name">Rule employee User No Edit</field>
             <field name="model_id" ref="model_ab_employee_tools_employee_tools"/>
             <field name="groups" eval="[(4, ref('group_ab_employee_tools_user'))]"/>
-            <field name="domain_force">[('user_id', '=', user.id),
-                                        ('status', '=', 'delivered')]</field>
+            <field name="domain_force">[('user_id', '=', user.id), ('status', '=', 'delivered')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
