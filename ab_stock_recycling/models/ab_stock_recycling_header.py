@@ -103,6 +103,8 @@ class StockRecycling(models.Model):
         string='Distribution Lines',
         required=False)
 
+    user_id = fields.Many2one('res.users', readonly=True, default=lambda self: self.env.user.id)
+    
     def _default_overstock_store_ids(self):
         user = self.env.user
         if user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
@@ -110,32 +112,8 @@ class StockRecycling(models.Model):
         return self.env['ab_store']
 
     def _get_branch_store_for_user(self, user):
-        if user.ab_stock_recycling_branch_store_id:
-            return user.ab_stock_recycling_branch_store_id
-        if user.name:
-            store_model = self.env['ab_store']
-            user_name = (user.name or '').strip()
-            candidates = [user_name]
-            if '-' in user_name:
-                suffix = user_name.split('-', 1)[1].strip()
-                if suffix:
-                    candidates.append(suffix)
-            for candidate in candidates:
-                store = store_model.search([
-                    ('name', '=', candidate),
-                    ('active', '=', True),
-                ], limit=1)
-                if store:
-                    user.sudo().write({'ab_stock_recycling_branch_store_id': store.id})
-                    return store
-            for candidate in candidates:
-                store = store_model.search([
-                    ('name', 'ilike', candidate),
-                    ('active', '=', True),
-                ], limit=1)
-                if store:
-                    user.sudo().write({'ab_stock_recycling_branch_store_id': store.id})
-                    return store
+        if user.ab_department_ids:
+            return user.ab_department_ids[0].store_id
         return self.env['ab_store']
 
     @api.constrains('overstock_store_ids')
@@ -266,7 +244,7 @@ class StockRecycling(models.Model):
 
                     rows = cr.fetchall()
                     need_dicts_list = []
-                    for row, store, product in  self._prepare_stock_rows(rows):
+                    for row, store, product in self._prepare_stock_rows(rows):
                         need_dicts_list.append({
                             "store_id": store.id,
                             "item_id": product.id,
@@ -433,7 +411,7 @@ class StockRecycling(models.Model):
 
                 rows = cr.fetchall()
                 overstock_dicts_list = []
-                for row, store, product in  self._prepare_stock_rows(rows):
+                for row, store, product in self._prepare_stock_rows(rows):
                     last_trans_date = row[6] if has_last_trans_date else False
                     overstock_dicts_list.append({
                         "store_id": store.id,
