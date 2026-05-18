@@ -45,7 +45,7 @@
                             <field name="default_reference_cost"/>
                         </group>
                         <button name="btn_edit_product_main_data" type="object" icon="fa-edit"
-                                class="btn-primary"/>
+                                class="btn-primary" title="Edit Main Data"/>
                         <group string="Product Details">
                             <!--                            <field name="unit_l_id" string="Large Unit"/>-->
                             <!--                            <field name="unit_m_id" string="Medium Unit" context="{'default_unit_size':'medium'}"/>-->
