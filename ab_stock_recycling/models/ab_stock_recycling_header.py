@@ -116,18 +116,6 @@ class StockRecycling(models.Model):
             return user.ab_department_ids[0].store_id
         return self.env['ab_store']
 
-    @api.constrains('overstock_store_ids')
-    def _check_branch_role_sending_store(self):
-        for rec in self:
-            user = rec.env.user
-            if not user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
-                continue
-            user_store = rec._get_branch_store_for_user(user)
-            if not user_store:
-                raise ValidationError(_("Set Stock Recycling Branch Store on the user before using branch_role."))
-            if len(rec.overstock_store_ids) != 1 or rec.overstock_store_ids != user_store:
-                raise ValidationError(_("Branch role users can only use their own sending store."))
-
     @api.depends('start_date', 'end_date')
     def _compute_need_per_x_day(self):
         for rec in self:
@@ -352,8 +340,6 @@ class StockRecycling(models.Model):
     def btn_get_overstock_for_stores(self):
         if self.env.user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
             branch_store = self._get_branch_store_for_user(self.env.user)
-            if not branch_store:
-                raise ValidationError(_("Set Stock Recycling Branch Store on the user before using branch_role."))
             if self.overstock_store_ids != branch_store:
                 self.overstock_store_ids = [(6, 0, [branch_store.id])]
 
