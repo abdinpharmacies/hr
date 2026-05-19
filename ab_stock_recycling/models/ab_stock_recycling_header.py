@@ -335,7 +335,8 @@ class StockRecycling(models.Model):
         self.write({'need_ids': [(6, False, [])]})
 
     def btn_reset_collection(self):
-        self.collection_ids.unlink()
+        collection_ids = self.collection_ids
+        collection_ids.sudo().unlink()
 
     def btn_get_overstock_for_stores(self):
         if self.env.user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
