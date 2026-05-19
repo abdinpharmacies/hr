@@ -50,7 +50,7 @@
                                 class="btn-primary"/>
                         <button name="btn_reset_collection" confirm="Are you sure?" type="object"
                                 invisible="process_type == 'need'"
-                                groups="ab_stock_recycling.group_ab_stock_recycling_user"
+                                groups="ab_stock_recycling.group_ab_stock_recycling_user,ab_stock_recycling.group_ab_stock_recycling_branch_role"
                                 string="Reset Collection" class="btn-danger"/>
 
                         <button name="btn_reset_need" confirm="Are you sure?" type="object" string="Reset Need"
