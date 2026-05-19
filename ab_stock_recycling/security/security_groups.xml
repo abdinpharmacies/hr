@@ -12,13 +12,6 @@
             <field name="category_id" ref="category_ab_stock_recycling"/>
         </record>
 
-        <record id="group_ab_stock_recycling_user" model="res.groups">
-            <field name="name">User</field>
-            <field name="sequence">10</field>
-            <field name="privilege_id" ref="privilege_ab_stock_recycling"/>
-            <field name="implied_ids" eval="[(4, ref('group_ab_stock_recycling_branch_role'))]"/>
-        </record>
-
         <record id="privilege_ab_stock_recycling_branch_role" model="res.groups.privilege">
             <field name="name">Stock Recycling Branch Role</field>
             <field name="sequence">110</field>
@@ -30,6 +23,13 @@
             <field name="sequence">15</field>
             <field name="privilege_id" ref="privilege_ab_stock_recycling_branch_role"/>
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <record id="group_ab_stock_recycling_user" model="res.groups">
+            <field name="name">User</field>
+            <field name="sequence">10</field>
+            <field name="privilege_id" ref="privilege_ab_stock_recycling"/>
+            <field name="implied_ids" eval="[(4, ref('group_ab_stock_recycling_branch_role'))]"/>
         </record>
 
         <record id="group_ab_stock_recycling_manager" model="res.groups">

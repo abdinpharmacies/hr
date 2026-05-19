@@ -87,6 +87,35 @@ domain = fields.Domain('name', '=', 'abc') | fields.Domain('phone', 'ilike', '76
 4. Data only when required.
 5. Tests last.
 
+6. **Avoid hard model dependencies in field declarations.**
+
+   A `Many2one`, `One2many`, or `Many2many` field to a model from another module creates a **registry-level dependency** — Odoo must resolve that model at module load time. If the external module is missing, the entire module crashes on install/upgrade.
+
+   **Preferred approach:** Use Python-level validation at runtime instead of a database field + record rule.
+
+   ```python
+   # ❌ Avoid — creates hard schema dependency
+   class ResUsers(models.Model):
+       _inherit = 'res.users'
+       branch_store_id = fields.Many2one('external_module.model')
+
+   # record rule referencing user.branch_store_id.id
+
+   # ✅ Better — validate at runtime, no schema coupling
+   class MyModel(models.Model):
+       def _get_user_store(self, user):
+           return self.env['external_module.model'].search([...], limit=1)
+
+       @api.constrains('store_ids')
+       def _check_user_store(self):
+           for rec in self:
+               store = rec._get_user_store(self.env.user)
+               if store and rec.store_ids != store:
+                   raise ValidationError(_("..."))
+   ```
+
+   This way the module installs cleanly even when the external module is absent, and the external model is only queried at runtime (where failures are handled gracefully).
+
 ## Repository and Environment
 
 Addon structure:
@@ -174,6 +203,7 @@ Required:
 - Always use view inheritance.
 - Avoid positional XPath.
 - Use stable anchors.
+- **Order data records by dependency.** Within a single XML file, a record referenced by `ref()` in an `eval` attribute must be defined before the record that references it. Otherwise fresh install fails with `External ID not found` because Odoo processes the file sequentially.
 
 ## Security
 
