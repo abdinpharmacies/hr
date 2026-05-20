@@ -102,6 +102,46 @@ class AbProduct(models.Model):
         compute_sudo=True,
         groups="base.group_user",
     )
+    eplus_stock_snapshot_ids = fields.One2many(
+        "ab_eplus_stock_snapshot",
+        "product_id",
+        string="Eplus Items",
+        groups="base.group_user",
+    )
+    eplus_stock_item_count = fields.Integer(
+        string="Eplus Item Count",
+        compute="_compute_eplus_stock_snapshot_summary",
+        compute_sudo=True,
+        groups="base.group_user",
+    )
+    eplus_stock_total_qty = fields.Float(
+        string="Eplus Total Quantity",
+        compute="_compute_eplus_stock_snapshot_summary",
+        compute_sudo=True,
+        groups="base.group_user",
+    )
+
+    def _compute_eplus_stock_snapshot_summary(self):
+        summary_by_product = {
+            product.id: {"count": 0, "qty": 0.0}
+            for product in self
+        }
+        if self.ids:
+            groups = self.env["ab_eplus_stock_snapshot"].sudo().read_group(
+                [("product_id", "in", self.ids), ("active", "=", True)],
+                ["product_id", "itm_qty:sum"],
+                ["product_id"],
+            )
+            for group in groups:
+                product_id = group["product_id"][0]
+                summary_by_product[product_id] = {
+                    "count": group["product_id_count"],
+                    "qty": group["itm_qty"],
+                }
+        for product in self:
+            summary = summary_by_product.get(product.id, {})
+            product.eplus_stock_item_count = summary.get("count", 0)
+            product.eplus_stock_total_qty = summary.get("qty", 0.0)
 
     def _compute_website_product_tmpl_id(self):
         templates = self.env["product.template"].sudo().with_context(active_test=False).search([
@@ -175,6 +215,20 @@ class AbProduct(models.Model):
         if extra_domain:
             domain += extra_domain
         return self.env["product.template"].sudo().with_context(active_test=False).search(domain).mapped("ab_product_id").ids
+
+    def action_refresh_eplus_stock_items(self):
+        return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_from_eplus()
+
+    def action_open_eplus_stock_items(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Eplus Items - %s") % self.display_name,
+            "res_model": "ab_eplus_stock_snapshot",
+            "view_mode": "list,form,pivot",
+            "domain": [("product_id", "=", self.id)],
+            "context": {"search_default_filter_matched": 1},
+        }
 
     @api.model
     def _ab_text_to_html(self, text):

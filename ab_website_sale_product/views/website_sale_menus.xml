@@ -26,5 +26,11 @@
                   parent="website_sale.menu_catalog"
                   action="action_ab_products_ecommerce_sync"
                   sequence="2"/>
+
+        <menuitem id="menu_catalog_eplus_stock"
+                  name="Eplus Stock"
+                  parent="website_sale.menu_catalog"
+                  action="action_ab_eplus_stock_snapshot"
+                  sequence="3"/>
     </data>
 </odoo>
