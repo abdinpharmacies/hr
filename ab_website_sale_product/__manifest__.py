@@ -5,7 +5,7 @@
     "license": "LGPL-3",
     "author": "Abdin Pharmacies",
     "category": "Website",
-    "depends": ["website_sale", "ab_product", "ab_eplus_connect"],
+    "depends": ["website_sale_stock", "ab_product", "ab_eplus_connect"],
     "data": [
         "security/ir.model.access.csv",
         "data/server_actions.xml",
@@ -17,6 +17,11 @@
         "views/ab_product_kanban_views.xml",
         "views/ab_product_professional_views.xml",
     ],
+    "assets": {
+        "web.assets_frontend": [
+            "ab_website_sale_product/static/src/xml/stock_availability.xml",
+        ],
+    },
     "post_init_hook": "post_init_hook",
     "installable": True,
     "application": False,
