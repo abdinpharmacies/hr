@@ -97,6 +97,8 @@
                     <field name="website_product_synced" readonly="1" invisible="1"/>
                     <field name="website_product_tmpl_id" readonly="1" invisible="1"/>
                     <field name="website_product_is_published" readonly="1" invisible="1"/>
+                    <field name="eplus_stock_item_count" readonly="1" invisible="1"/>
+                    <field name="eplus_stock_total_qty" readonly="1" invisible="1"/>
                 </xpath>
 
                 <!-- 5. Replace the old Product Details group with a Notebook -->
@@ -131,6 +133,8 @@
                                 </group>
                                 <group string="Linked Product">
                                     <field name="website_product_tmpl_id"/>
+                                    <field name="eplus_stock_item_count"/>
+                                    <field name="eplus_stock_total_qty"/>
                                 </group>
                                 <group string="Quick Actions">
                                     <div class="abdin_ecommerce_page_actions">
@@ -154,9 +158,33 @@
                                             <i class="fa fa-external-link" title="View"/>
                                             View Published Page
                                         </button>
+                                        <button name="action_refresh_eplus_stock_items" type="object"
+                                                class="btn abdin_ecommerce_btn_outline btn-block"
+                                                title="Refresh Eplus Items">
+                                            <i class="fa fa-refresh" title="Refresh"/>
+                                            Refresh Eplus Items
+                                        </button>
+                                        <button name="action_open_eplus_stock_items" type="object"
+                                                class="btn abdin_ecommerce_btn_ghost btn-block"
+                                                invisible="not eplus_stock_item_count"
+                                                title="Open Eplus Items">
+                                            <i class="fa fa-list" title="Items"/>
+                                            Open Eplus Items
+                                        </button>
                                     </div>
                                 </group>
                             </div>
+                        </page>
+                        <page string="Eplus Items" name="page_eplus_items">
+                            <field name="eplus_stock_snapshot_ids" readonly="1" nolabel="1">
+                                <list string="Eplus Items" create="0" edit="0" delete="0">
+                                    <field name="itm_id"/>
+                                    <field name="itm_code"/>
+                                    <field name="itm_qty" sum="Total Quantity"/>
+                                    <field name="matched_by"/>
+                                    <field name="last_sync_date"/>
+                                </list>
+                            </field>
                         </page>
                         <page string="Tags &amp; Barcodes" name="page_tags">
                             <div class="abdin_ecommerce_page_grid">
