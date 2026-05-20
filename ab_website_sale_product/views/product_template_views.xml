@@ -9,6 +9,38 @@
                 <xpath expr="//group[@name='extra_info']" position="inside">
                     <field name="ab_product_id" readonly="1"/>
                 </xpath>
+                <xpath expr="//page[@name='sales']" position="after">
+                    <page string="Eplus Stock" name="eplus_stock" invisible="not ab_product_id">
+                        <group>
+                            <group string="Snapshot Summary">
+                                <field name="ab_product_id" readonly="1"/>
+                                <field name="eplus_stock_item_count" readonly="1"/>
+                                <field name="eplus_stock_total_qty" readonly="1"/>
+                            </group>
+                            <group string="Actions">
+                                <button name="action_refresh_eplus_stock_items"
+                                        type="object"
+                                        string="Refresh Eplus Stock"
+                                        class="btn-primary"/>
+                                <button name="action_open_eplus_stock_items"
+                                        type="object"
+                                        string="Open Eplus Stock"
+                                        class="btn-secondary"
+                                        invisible="not eplus_stock_item_count"/>
+                            </group>
+                        </group>
+                        <field name="eplus_stock_snapshot_ids" readonly="1" nolabel="1">
+                            <list string="Eplus Stock" create="0" edit="0" delete="0">
+                                <field name="itm_id"/>
+                                <field name="itm_code"/>
+                                <field name="itm_qty" sum="Total Quantity"/>
+                                <field name="product_id"/>
+                                <field name="matched_by"/>
+                                <field name="last_sync_date"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
             </field>
         </record>
     </data>
