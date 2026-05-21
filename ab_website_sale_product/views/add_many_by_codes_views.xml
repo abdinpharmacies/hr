@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_add_many_by_codes_wizard_form" model="ir.ui.view">
+            <field name="name">ab.website.sale.add.many.by.codes.wizard.form</field>
+            <field name="model">ab.website.sale.add.many.by.codes.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Add Many By Codes">
+                    <sheet>
+                        <group>
+                            <field name="codes_text"
+                                   widget="text"
+                                   placeholder="CODE001, CODE002, CODE003"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_sync_codes" type="object" string="Sync Now" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_product_tree_view_add_many_by_codes" model="ir.ui.view">
+            <field name="name">ab.product.list.add.many.by.codes</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="inside">
+                    <header>
+                        <button name="action_open_add_many_by_codes_wizard"
+                                type="object"
+                                string="Add Many By Codes"
+                                class="btn-secondary"
+                                display="always"/>
+                    </header>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

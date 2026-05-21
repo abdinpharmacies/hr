@@ -127,17 +127,17 @@ class AbProduct(models.Model):
             for product in self
         }
         if self.ids:
-            groups = self.env["ab_eplus_stock_snapshot"].sudo().read_group(
+            groups = self.env["ab_eplus_stock_snapshot"].sudo()._read_group(
                 [("product_id", "in", self.ids), ("active", "=", True)],
-                ["product_id", "itm_qty:sum"],
-                ["product_id"],
+                groupby=["product_id"],
+                aggregates=["__count", "itm_qty:sum"],
             )
-            for group in groups:
-                product_id = group["product_id"][0]
-                summary_by_product[product_id] = {
-                    "count": group["product_id_count"],
-                    "qty": group["itm_qty"],
-                }
+            for product, count, qty in groups:
+                if product:
+                    summary_by_product[product.id] = {
+                        "count": count,
+                        "qty": qty or 0.0,
+                    }
         for product in self:
             summary = summary_by_product.get(product.id, {})
             product.eplus_stock_item_count = summary.get("count", 0)

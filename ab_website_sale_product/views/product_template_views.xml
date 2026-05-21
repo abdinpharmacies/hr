@@ -10,7 +10,7 @@
                     <field name="ab_product_id" readonly="1"/>
                 </xpath>
                 <xpath expr="//page[@name='sales']" position="after">
-                    <page string="Eplus Stock" name="eplus_stock" invisible="not ab_product_id">
+                    <page string="Eplus Stock" name="eplus_stock" groups="base.group_user" invisible="not ab_product_id">
                         <group>
                             <group string="Snapshot Summary">
                                 <field name="ab_product_id" readonly="1"/>
@@ -21,10 +21,12 @@
                                 <button name="action_refresh_eplus_stock_items"
                                         type="object"
                                         string="Refresh Eplus Stock"
+                                        groups="base.group_user"
                                         class="btn-primary"/>
                                 <button name="action_open_eplus_stock_items"
                                         type="object"
                                         string="Open Eplus Stock"
+                                        groups="base.group_user"
                                         class="btn-secondary"
                                         invisible="not eplus_stock_item_count"/>
                             </group>

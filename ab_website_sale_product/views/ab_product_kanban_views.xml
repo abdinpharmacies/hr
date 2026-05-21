@@ -6,6 +6,13 @@
         <field name="priority">100</field>
         <field name="arch" type="xml">
             <kanban class="abdin_ecommerce_kanban_ecommerce">
+                <header>
+                    <button name="action_open_add_many_by_codes_wizard"
+                            type="object"
+                            string="Add Many By Codes"
+                            class="btn-secondary"
+                            display="always"/>
+                </header>
                 <field name="id"/>
                 <field name="name"/>
                 <field name="code"/>
