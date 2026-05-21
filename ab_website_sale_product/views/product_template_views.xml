@@ -8,6 +8,12 @@
             <field name="arch" type="xml">
                 <xpath expr="//group[@name='extra_info']" position="inside">
                     <field name="ab_product_id" readonly="1"/>
+                    <field name="eplus_stock_shown_qty_type"
+                           groups="base.group_user"
+                           invisible="not ab_product_id"/>
+                    <field name="eplus_stock_shown_qty_value"
+                           groups="base.group_user"
+                           invisible="not ab_product_id"/>
                 </xpath>
                 <xpath expr="//page[@name='sales']" position="after">
                     <page string="Eplus Stock" name="eplus_stock" groups="base.group_user" invisible="not ab_product_id">
