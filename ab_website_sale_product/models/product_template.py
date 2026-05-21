@@ -1,4 +1,5 @@
-from odoo import fields, models
+from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 from odoo.http import request
 from odoo.tools import float_round
 
@@ -32,11 +33,44 @@ class ProductTemplate(models.Model):
         readonly=True,
         groups="base.group_user",
     )
+    eplus_stock_shown_qty_type = fields.Selection(
+        selection=[
+            ("quantity", "Quantity"),
+            ("percentage", "Percentage"),
+        ],
+        string="Eplus Stock Shown Qty Type",
+        default="quantity",
+        required=True,
+        groups="base.group_user",
+        help="Choose whether eCommerce should show a fixed quantity or a percentage of Eplus stock.",
+    )
+    eplus_stock_shown_qty_value = fields.Float(
+        string="Eplus Stock Shown Qty",
+        default=lambda self: self._default_eplus_stock_shown_qty_value(),
+        groups="base.group_user",
+        help="Quantity or percentage of Eplus stock to show on eCommerce.",
+    )
 
     _ab_product_unique = models.UniqueIndex(
         "(ab_product_id) WHERE ab_product_id IS NOT NULL",
         "Each Abdin product can only be linked to one eCommerce product.",
     )
+
+    @api.constrains("eplus_stock_shown_qty_type", "eplus_stock_shown_qty_value")
+    def _check_eplus_stock_shown_qty(self):
+        for template in self:
+            shown_qty = template.eplus_stock_shown_qty_value
+            if shown_qty < 0:
+                raise ValidationError(_("Eplus Stock Shown Qty cannot be negative."))
+            if template.eplus_stock_shown_qty_type == "percentage" and shown_qty > 100:
+                raise ValidationError(_("Eplus Stock Shown Qty percentage cannot exceed 100."))
+
+    def _default_eplus_stock_shown_qty_value(self):
+        ab_product_id = self.env.context.get("default_ab_product_id")
+        if not ab_product_id:
+            return 0.0
+        ab_product = self.env["ab_product"].browse(ab_product_id)
+        return ab_product.eplus_stock_total_qty or 0.0
 
     def action_refresh_eplus_stock_items(self):
         self.ensure_one()
@@ -56,6 +90,7 @@ class ProductTemplate(models.Model):
             "domain": [("product_id", "=", self.ab_product_id.id)],
             "context": {"search_default_filter_matched": 1},
         }
+
     def _is_sold_out(self):
         self.ensure_one()
         if self.ab_product_id and not self.ab_product_id.is_service:
@@ -120,13 +155,18 @@ class ProductProduct(models.Model):
         self.ensure_one()
         if not self._ab_website_uses_eplus_stock():
             return None
-        groups = self.env["ab_eplus_stock_snapshot"].sudo().read_group(
+        groups = self.env["ab_eplus_stock_snapshot"].sudo()._read_group(
             [("product_id", "=", self.ab_product_id.id), ("active", "=", True)],
-            ["itm_qty:sum"],
             [],
+            ["itm_qty:sum"],
         )
-        available_qty = groups[0]["itm_qty"] if groups else 0.0
-        return max(available_qty or 0.0, 0.0)
+        eplus_qty = groups[0][0] if groups else 0.0
+        eplus_qty = max(eplus_qty or 0.0, 0.0)
+        template = self.product_tmpl_id
+        shown_qty = max(template.eplus_stock_shown_qty_value or 0.0, 0.0)
+        if template.eplus_stock_shown_qty_type == "percentage":
+            shown_qty = eplus_qty * shown_qty / 100.0
+        return min(shown_qty, eplus_qty)
 
     def _is_sold_out(self):
         self.ensure_one()
