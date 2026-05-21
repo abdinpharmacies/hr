@@ -274,6 +274,23 @@ class AbProduct(models.Model):
             vals["service_tracking"] = "no"
         return vals
 
+    def _prepare_initial_website_stock_display_vals(self):
+        self.ensure_one()
+        return {
+            "eplus_stock_shown_qty_type": "quantity",
+            "eplus_stock_shown_qty_value": self.eplus_stock_total_qty or 0.0,
+        }
+
+    def _template_needs_initial_website_stock_display(self, template):
+        self.ensure_one()
+        return (
+            not template.eplus_stock_shown_qty_value
+            or (
+                template.eplus_stock_shown_qty_type == "percentage"
+                and template.eplus_stock_shown_qty_value == 100.0
+            )
+        )
+
     def _prepare_website_product_variant_vals(self):
         self.ensure_one()
         barcode = self.barcode_ids.filtered("name")[:1].name or False
@@ -290,7 +307,10 @@ class AbProduct(models.Model):
             vals = product._prepare_website_product_template_vals()
             if template:
                 template.write(vals)
+                if product._template_needs_initial_website_stock_display(template):
+                    template.write(product._prepare_initial_website_stock_display_vals())
             else:
+                vals.update(product._prepare_initial_website_stock_display_vals())
                 template = ProductTemplate.create(vals)
 
             variant = template.product_variant_id or template.with_context(active_test=False).product_variant_ids[:1]
