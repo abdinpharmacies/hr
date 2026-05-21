@@ -914,8 +914,8 @@ msgstr "رابط الطلب"
 #: model:ir.module.category,name:ab_request_management.category_ab_request_management
 #: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_root
 #: model:res.groups.privilege,name:ab_request_management.privilege_ab_request_management
-msgid "Request Management"
-msgstr "إدارة الطلبات"
+msgid "Requests and Complaints"
+msgstr "ادارة الطلبات والشكاوي"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__name
@@ -1125,6 +1125,12 @@ msgstr "إرسال"
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Submit Request"
 msgstr "إرسال الطلب"
+
+#. module: ab_request_management
+#. odoo-javascript
+#: code:addons/ab_request_management/static/src/js/ab_request_list_controller_patch.js:0
+msgid "New Request or Complaint"
+msgstr "طلب جديد او شكوى"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
