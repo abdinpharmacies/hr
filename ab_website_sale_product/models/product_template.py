@@ -38,7 +38,6 @@ class ProductTemplate(models.Model):
         "Each Abdin product can only be linked to one eCommerce product.",
     )
 
-<<<<<<< Updated upstream
     def action_refresh_eplus_stock_items(self):
         self.ensure_one()
         if not self.ab_product_id:
@@ -57,7 +56,6 @@ class ProductTemplate(models.Model):
             "domain": [("product_id", "=", self.ab_product_id.id)],
             "context": {"search_default_filter_matched": 1},
         }
-=======
     def _is_sold_out(self):
         self.ensure_one()
         if self.ab_product_id and not self.ab_product_id.is_service:
@@ -100,7 +98,6 @@ class ProductTemplate(models.Model):
             "out_of_stock_message": product.out_of_stock_message,
         })
         return res
->>>>>>> Stashed changes
 
 
 class ProductProduct(models.Model):

@@ -1,16 +1,12 @@
-<<<<<<< Updated upstream
 from odoo import _, models
 from odoo.tools import float_is_zero
-=======
 from odoo import models
 from odoo.tools import float_round
->>>>>>> Stashed changes
 
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-<<<<<<< Updated upstream
     def _verify_updated_quantity(self, order_line, product_id, new_qty, uom_id, **kwargs):
         new_qty, warning = super()._verify_updated_quantity(
             order_line, product_id, new_qty, uom_id, **kwargs
@@ -44,7 +40,6 @@ class SaleOrder(models.Model):
             "available": allowed_qty,
         }
         return allowed_qty, warning
-=======
     def _get_free_qty(self, product):
         product.ensure_one()
         if product._ab_website_uses_eplus_stock():
@@ -100,4 +95,3 @@ class SaleOrder(models.Model):
                 product_name=product.name,
             )
         return allowed_line_qty, warning
->>>>>>> Stashed changes
