@@ -10,6 +10,7 @@
         "security/ir.model.access.csv",
         "data/server_actions.xml",
         "data/ir_cron.xml",
+        "views/add_many_by_codes_views.xml",
         "views/eplus_stock_snapshot_views.xml",
         "views/ab_product_views.xml",
         "views/product_template_views.xml",
