@@ -1,5 +1,5 @@
 {
-    'name': 'Request Management',
+    'name': 'Requests and Complaints',
     'version': '19.0.1.1.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
@@ -19,11 +19,13 @@
     'assets': {
         'web.assets_backend': [
             'ab_request_management/static/src/js/ab_request_dashboard.js',
+            'ab_request_management/static/src/js/ab_request_list_controller_patch.js',
             'ab_request_management/static/src/js/ab_request_list_renderer_patch.js',
             'ab_request_management/static/src/js/ab_request_state_widgets.js',
             'ab_request_management/static/src/js/ab_request_kanban_view.js',
             'ab_request_management/static/src/js/ab_request_summary_widget.js',
             'ab_request_management/static/src/xml/ab_request_dashboard.xml',
+            'ab_request_management/static/src/xml/ab_request_list_controller.xml',
             'ab_request_management/static/src/xml/ab_request_list_renderer.xml',
             'ab_request_management/static/src/xml/ab_request_state_widgets.xml',
             'ab_request_management/static/src/xml/ab_request_summary_widget.xml',

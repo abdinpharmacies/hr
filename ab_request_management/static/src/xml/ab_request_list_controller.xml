@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_request_management.ListView" t-inherit="web.ListView" t-inherit-mode="extension">
+        <xpath expr="//button[contains(@class, 'o_list_button_add')]" position="replace">
+            <button t-if="!editedRecord and activeActions.create and props.showButtons" type="button" class="btn btn-primary o_list_button_add" data-hotkey="c" t-on-click="onClickCreate" data-bounce-button="">
+                <t t-esc="abRequestCreateButtonLabel"/>
+            </button>
+        </xpath>
+    </t>
+</templates>
