@@ -1,6 +1,13 @@
+import base64
+import os
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 from odoo.tools import html_escape
+
+
+DEFAULT_WEBSITE_IMAGE_DIRECTORY = "/opt/odoo19/product_images"
+WEBSITE_IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp")
 
 
 class AbProductGroup(models.Model):
@@ -102,6 +109,18 @@ class AbProduct(models.Model):
         compute_sudo=True,
         groups="base.group_user",
     )
+    website_image_file_found = fields.Boolean(
+        string="Image File Found",
+        compute="_compute_website_image_file_info",
+        compute_sudo=True,
+        groups="base.group_user",
+    )
+    website_image_file_path = fields.Char(
+        string="Image File",
+        compute="_compute_website_image_file_info",
+        compute_sudo=True,
+        groups="base.group_user",
+    )
     eplus_stock_snapshot_ids = fields.One2many(
         "ab_eplus_stock_snapshot",
         "product_id",
@@ -163,6 +182,73 @@ class AbProduct(models.Model):
             product.website_product_is_published = bool(
                 template and template.active and template.sale_ok and template.is_published
             )
+
+    def _compute_website_image_file_info(self):
+        directory_path = self._get_configured_website_image_directory()
+        for product in self:
+            image_path = product._find_website_image_file(directory_path) if directory_path else False
+            product.website_image_file_found = bool(image_path)
+            product.website_image_file_path = image_path or False
+
+    @api.model
+    def _get_default_website_image_directory(self):
+        return (
+            self.env["ir.config_parameter"].sudo().get_param(
+                "ab_website_sale_product.image_directory"
+            )
+            or DEFAULT_WEBSITE_IMAGE_DIRECTORY
+        )
+
+    @api.model
+    def _get_configured_website_image_directory(self):
+        directory_path = (self._get_default_website_image_directory() or "").strip()
+        if not directory_path:
+            return False
+        directory_path = os.path.abspath(os.path.expanduser(directory_path))
+        return directory_path if os.path.isdir(directory_path) else False
+
+    def _get_website_image_filename_candidates(self):
+        self.ensure_one()
+        code = (self.code or "").strip()
+        if not code or os.path.basename(code) != code:
+            return []
+        _, extension = os.path.splitext(code)
+        if extension:
+            return [code]
+        return [f"{code}{extension}" for extension in WEBSITE_IMAGE_EXTENSIONS]
+
+    def _find_website_image_file(self, directory_path):
+        self.ensure_one()
+        if not directory_path:
+            return False
+        candidates = self._get_website_image_filename_candidates()
+        for filename in candidates:
+            image_path = os.path.join(directory_path, filename)
+            if os.path.isfile(image_path):
+                return image_path
+
+        candidate_names = {filename.lower() for filename in candidates}
+        try:
+            directory_names = os.listdir(directory_path)
+        except OSError:
+            return False
+        for filename in directory_names:
+            if filename.lower() in candidate_names:
+                image_path = os.path.join(directory_path, filename)
+                if os.path.isfile(image_path):
+                    return image_path
+        return False
+
+    def _sync_website_product_image_from_file(self, image_path):
+        self.ensure_one()
+        template = self.website_product_tmpl_id
+        if not template:
+            raise UserError(_("Product %s is not synced to eCommerce.") % (self.display_name,))
+        with open(image_path, "rb") as image_file:
+            template.sudo().write({
+                "image_1920": base64.b64encode(image_file.read()),
+            })
+        return template
 
     @api.model
     def _search_website_product_tmpl_id(self, operator, value):
@@ -365,6 +451,31 @@ class AbProduct(models.Model):
         if not template.is_published:
             raise UserError(_("The linked eCommerce product is not published. Enable Website availability and sync again."))
         return template.open_website_url()
+
+    def action_check_website_product_image(self):
+        self.ensure_one()
+        directory_path = self._get_configured_website_image_directory()
+        if not directory_path:
+            raise UserError(
+                _("Image directory is not configured or does not exist. Current default: %s")
+                % self._get_default_website_image_directory()
+            )
+        image_path = self._find_website_image_file(directory_path)
+        message = (
+            _("Image file found: %s") % image_path
+            if image_path
+            else _("No image file found for product code %s in %s.") % (self.code or _("empty"), directory_path)
+        )
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Product Image Check"),
+                "message": message,
+                "type": "success" if image_path else "warning",
+                "sticky": not bool(image_path),
+            },
+        }
 
     @api.model
     def cron_sync_website_products(self, limit=1000):
