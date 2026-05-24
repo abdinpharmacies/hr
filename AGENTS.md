@@ -116,6 +116,32 @@ domain = fields.Domain('name', '=', 'abc') | fields.Domain('phone', 'ilike', '76
 
    This way the module installs cleanly even when the external module is absent, and the external model is only queried at runtime (where failures are handled gracefully).
 
+7. **Guard branch/restricted group logic against inherited admin access.**
+
+   When you modify `base.group_system` via `implied_ids` to include your module's groups, every system (Settings/Admin) user automatically inherits **all groups in the chain**. This means `has_group('your_module.branch_role')` returns `True` for admin even though admin has no department/branch configured.
+
+   **Always check the highest privilege group first** before applying branch-level restrictions. If the user has the manager or admin group, skip the branch role check entirely.
+
+   ```python
+   # ❌ Bad — admin inherits branch_role via implied_ids chain and hits the validation
+   def btn_get_overstock_for_stores(self):
+       if self.env.user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
+           branch_store = self._get_branch_store_for_user(self.env.user)
+           if not branch_store:
+               raise ValidationError(_("User has 'Branch Role' but not linked to department"))
+
+   # ✅ Better — check highest group first, branch logic only for non-admin users
+   def btn_get_overstock_for_stores(self):
+       if self.env.user.has_group('ab_stock_recycling.group_ab_stock_recycling_manager'):
+           pass  # managers/admins bypass branch store restriction
+       elif self.env.user.has_group('ab_stock_recycling.group_ab_stock_recycling_branch_role'):
+           branch_store = self._get_branch_store_for_user(self.env.user)
+           if not branch_store:
+               raise ValidationError(_("User has 'Branch Role' but not linked to department"))
+   ```
+
+   The same pattern applies to `_default_overstock_store_ids` or any default/get method that returns branch-scoped values. Always let admin/managers fall through to the unrestricted path.
+
 ## Repository and Environment
 
 Addon structure:
