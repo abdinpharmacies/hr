@@ -65,6 +65,11 @@ msgid "Attachment"
 msgstr "المرفق"
 
 #. module: ab_quality_assurance
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_line__attachments
+msgid "Other Attachments"
+msgstr "مرفقات أخرى"
+
+#. module: ab_quality_assurance
 #: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_line__attachment_name
 msgid "Attachment Name"
 msgstr "اسم المرفق"
