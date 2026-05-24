@@ -17,6 +17,7 @@
         "views/website_sale_menus.xml",
         "views/ab_product_kanban_views.xml",
         "views/ab_product_professional_views.xml",
+        "sync_images_views.xml",
     ],
     "assets": {
         "web.assets_frontend": [
