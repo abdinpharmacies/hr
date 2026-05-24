@@ -1,5 +1,6 @@
 from odoo import fields, models, api
 from odoo.tools.translate import _
+
 from odoo.exceptions import UserError
 from .ab_sales_header import PARAM_STR
 import logging
@@ -132,7 +133,7 @@ class AbProduct(models.Model):
 
     def btn_get_stores_balance(self):
         html = self._get_all_stores_balance_html([self.eplus_serial])
-        return self.ab_msg(title="Store Balances", message=html)
+        return self.ab_msg(title=_("Store Balances"), message=html)
 
     @api.model
     def _get_all_stores_balance_html(self, product_serials=None):

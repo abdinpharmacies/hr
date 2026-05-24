@@ -305,6 +305,16 @@ class AbProduct(models.Model):
     def action_refresh_eplus_stock_items(self):
         return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_from_eplus()
 
+    def action_open_sync_images_wizard(self):
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Sync Images"),
+            "res_model": "ab.website.sale.add.many.by.codes.wizard",
+            "view_mode": "form",
+            "view_id": self.env.ref("ab_website_sale_product.view_sync_images_wizard_form").id,
+            "target": "new",
+        }
+
     def action_open_eplus_stock_items(self):
         self.ensure_one()
         return {
