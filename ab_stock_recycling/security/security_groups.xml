@@ -29,7 +29,7 @@
             <field name="name">User</field>
             <field name="sequence">10</field>
             <field name="privilege_id" ref="privilege_ab_stock_recycling"/>
-            <field name="implied_ids" eval="[(4, ref('group_ab_stock_recycling_branch_role'))]"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
 
