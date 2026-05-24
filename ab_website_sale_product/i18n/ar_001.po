@@ -239,23 +239,23 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_product_template__ab_product_id
 #: model:ir.model.fields,field_description:ab_website_sale_product.field_sale_order_line__ab_product_id
 msgid "Abdin Product"
-msgstr "منتج عابدين"
+msgstr ""
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_ab_product_group
 msgid "Abdin Product Group"
-msgstr "مجموعة منتجات عابدين"
+msgstr ""
 
 #. module: ab_website_sale_product
 #: model:ir.model,name:ab_website_sale_product.model_ab_product_tag
 msgid "Abdin Product Tag"
-msgstr "وسم منتج عابدين"
+msgstr ""
 
 #. module: ab_website_sale_product
 #: model:ir.actions.act_window,name:ab_website_sale_product.action_ab_products_ecommerce_sync
 #: model:ir.ui.menu,name:ab_website_sale_product.menu_catalog_abdin_products
 msgid "Abdin Products"
-msgstr "منتجات عابدين"
+msgstr ""
 
 #. module: ab_website_sale_product
 #: model_terms:ir.ui.view,arch_db:ab_website_sale_product.product_template_form_view_inherit_ab_product
