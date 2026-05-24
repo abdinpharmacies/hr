@@ -373,7 +373,6 @@
                                                     <field name="note" string="Score Note" optional="show"/>
                                                     <field name="attachment" widget="qa_list_binary"
                                                            filename="attachment_name"/>
-                                                    <field name="attachments" widget="many2many_tags"/>
                                                     <field name="attachment_name" optional="hide"/>
                                                 </list>
                                                 <form string="Visit Standard Score">
