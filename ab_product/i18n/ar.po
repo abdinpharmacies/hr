@@ -1,0 +1,951 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_product
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-24 09:59+0000\n"
+"PO-Revision-Date: 2026-05-24 09:59+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ar\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product
+msgid "Abdin Product"
+msgstr "منتج عبدين"
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_barcode
+msgid "Abdin Product Barcode"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_barcode_temp
+msgid "Abdin Product Barcode Temp"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_card
+msgid "Abdin Product Card"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_company
+msgid "Abdin Product Company"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_group
+msgid "Abdin Product Group"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_origin
+msgid "Abdin Product Origin"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_tag
+msgid "Abdin Product Tag"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_template
+msgid "Abdin Product Template"
+msgstr "قالب منتج عبدين"
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_uom
+msgid "Abdin Unit Of Measure"
+msgstr "وحدة قياس عبدين"
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_uom_type
+msgid "Abdin Uom Type"
+msgstr "نوع وحدة قياس عبدين"
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_usage_causes
+msgid "Abdin Usage Causes"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_usage_manner
+msgid "Abdin Usage Manner"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_scientific_group
+msgid "Abdin scientific group"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__active
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__address
+msgid "Address"
+msgstr ""
+
+#. module: ab_product
+#. odoo-python
+#: code:addons/ab_product/models/ab_product_card.py:0
+msgid "All products must have the same Unit Type.\n"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__allow_discount
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__allow_discount
+msgid "Allow Discount"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__allow_print_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__allow_print_name
+msgid "Allow Print Name"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__allow_purchase
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__allow_purchase
+msgid "Allow Purchase"
+msgstr "السماح بالشراء"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__allow_sale
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__allow_sale
+msgid "Allow Sale"
+msgstr "السماح بالبيع"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__allow_sell_fraction
+msgid "Allow Sell Fraction"
+msgstr "السماح ببيع الكسور"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__allow_transfer
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__allow_transfer
+msgid "Allow Transfer"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__barcode_ids
+msgid "Barcode"
+msgstr ""
+
+#. module: ab_product
+#. odoo-python
+#: code:addons/ab_product/models/ab_product_barcode_temp.py:0
+#: model:ir.model.constraint,message:ab_product.constraint_ab_product_barcode_temp_uniq_name
+msgid "Barcode must be unique."
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_uom__uom_type__bigger
+msgid "Bigger"
+msgstr "أكبر"
+
+#. module: ab_product
+#. odoo-python
+#: code:addons/ab_product/models/ab_product.py:0
+msgid ""
+"CONVERTING FROM SMALL ERROR: SMALL QTY INCONSISTENT WITH MEDIUM QTY, Product"
+" ID: %d"
+msgstr ""
+
+#. module: ab_product
+#. odoo-python
+#: code:addons/ab_product/models/ab_product.py:0
+msgid ""
+"CONVERTING TO SMALL ERROR: SMALL QTY INCONSISTENT WITH MEDIUM QTY, Product "
+"ID: %d"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__category_id
+msgid "Category"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_card__origin__chemical
+msgid "Chemical"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__child_ids
+msgid "Child"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__code
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__code
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__code
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__code
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__code
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_product_company_action
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__company_id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__company_id
+msgid "Company"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_company_view_form
+msgid "Company Name"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom_type__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__create_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom_type__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__create_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__default_cost
+msgid "Default Cost"
+msgstr "التكلفة الافتراضية"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__default_price
+msgid "Default Price"
+msgstr "السعر الافتراضي"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__default_reference_cost
+msgid "Default Reference Cost"
+msgstr "التكلفة المرجعية الافتراضية"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__default_reference_price
+msgid "Default Reference Price"
+msgstr "السعر المرجعي الافتراضي"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__uom_pur_id
+msgid "Default UoM In Purchase"
+msgstr "وحدة القياس الافتراضية في المشتريات"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__uom_id
+msgid "Default UoM In Sales"
+msgstr "وحدة القياس الافتراضية في المبيعات"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__description
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__description
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "Description"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_qty__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_template__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom_type__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__display_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_view_form
+msgid "Edit Main Data"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__effective_material
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__effective_material
+msgid "Effective Material"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__effective_material_conc
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__effective_material_conc
+msgid "Effective Material Conc"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,help:ab_product.field_ab_product_qty__qty_str
+msgid "Enter arithmetic expression, e.g. 1/3, 2.5*4, 10-3, 2*1.25"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__eplus_create_date
+msgid "Eplus Create Date"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__eplus_serial
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__eplus_serial
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__eplus_serial
+msgid "Eplus Serial"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__factor
+msgid "Factor"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__is_favorite
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__is_favorite
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_card__is_favorite__1
+msgid "Favorite"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__name
+msgid "Full Name"
+msgstr "الاسم الكامل"
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "General Information"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_group_view_form
+msgid "Group"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_product_group_action
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__groups_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__groups_ids
+msgid "Groups"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__has_exp_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__has_exp_date
+msgid "Has Exp Date"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_qty__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_template__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom_type__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__id
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_card__origin__imported
+msgid "Imported"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__is_freeze
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__is_freeze
+msgid "Is Freeze"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__is_medicine
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__is_medicine
+msgid "Is Medicine"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__is_narcotic
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__is_narcotic
+msgid "Is Narcotic"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__is_service
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__is_service
+msgid "Is Service"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_uom__unit_size__large
+msgid "Large"
+msgstr "كبير"
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "Large Unit"
+msgstr "الوحدة الكبيرة"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__last_update_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__last_update_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__last_update_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__last_update_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__last_update_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__last_update_date
+msgid "Last Update Date"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom_type__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__write_uid
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom_type__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__write_date
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_card__origin__local
+msgid "Local"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__max_discount_percentage
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__max_discount_percentage
+msgid "Max Discount Percentage"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_tree
+msgid "Max Discount(%)"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_uom__unit_size__medium
+msgid "Medium"
+msgstr "متوسط"
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "Medium Unit"
+msgstr "الوحدة المتوسطة"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__product_card_name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_origin__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_scientific_group__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom_type__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_causes__name
+#: model:ir.model.fields,field_description:ab_product.field_ab_usage_manner__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_card__is_favorite__0
+msgid "Normal"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_tag__tag_type__offer
+msgid "Offer"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__origin
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__origin_id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__origin
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__origin_id
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_origin_view_form
+msgid "Origin"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_product_origin_action
+msgid "Origins"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_card__origin__other
+msgid "Other"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_group__parent_id
+msgid "Parent"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__priority
+msgid "Priority"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_product_card_action
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__product_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode__product_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_barcode_temp__product_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__product_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__product_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_template__product_id
+msgid "Product"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_product_barcode_action
+msgid "Product Barcodes"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_view_form
+msgid "Product Basic"
+msgstr "أساسيات المنتج"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__product_card_id
+msgid "Product Card"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_view_form
+msgid "Product Details"
+msgstr "تفاصيل المنتج"
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "Product Name"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_view_form
+msgid "Product Name Without Units ..."
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__product_search
+msgid "Product Search"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_uom
+msgid "Product UoM"
+msgstr "وحدة قياس المنتج"
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_uom_category
+msgid "Product UoM Category"
+msgstr "فئة وحدة قياس المنتج"
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_product_action
+msgid "Products"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_qty__qty_str
+msgid "Qty"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_template__qty_large
+msgid "Qty Large"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_qty__qty
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_template__qty
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_uom__uom_type__reference
+msgid "Reference"
+msgstr "مرجع"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__rounding
+msgid "Rounding"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_scientific_group_view_form
+msgid "Scientific Group"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_scientific_group_action
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__scientific_groups_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__scientific_groups_ids
+msgid "Scientific Groups"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_tag__tag_type__type
+msgid "Similar classification"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_uom__unit_size__small
+msgid "Small"
+msgstr "صغير"
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "Small Unit"
+msgstr "الوحدة الصغيرة"
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_uom__uom_type__smaller
+msgid "Smaller"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_card__origin__special_imported
+msgid "Special Imported"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "Sub Products"
+msgstr "المنتجات الفرعية"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__tag_ids
+msgid "Tag"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_tag__tag_type
+msgid "Tag Type"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_company__telephone
+msgid "Telephone"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_product_barcode_temp_action
+msgid "Temp Product Barcodes"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__type_id
+msgid "Type"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__u_s_name
+msgid "U S Name"
+msgstr "اسم الوحدة"
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__u_s_num
+msgid "U S Num"
+msgstr "الرقم التسلسلي للوحدة"
+
+#. module: ab_product
+#: model:ir.model.fields.selection,name:ab_product.selection__ab_product_tag__tag_type__unit
+msgid "Unit"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__unit_l_id
+msgid "Unit L"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__unit_m_id
+msgid "Unit M"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__unit_no
+msgid "Unit No"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__unit_s_id
+msgid "Unit S"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_uom__unit_size
+msgid "Unit Size"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_uom_view_form
+msgid "UoM"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_uom_category_view_tree
+msgid "UoM Categories"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__uom_category_id
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_uom_category_view_form
+msgid "UoM Category"
+msgstr "فئة وحدة القياس"
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_uom_category_view_form
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_uom_view_tree
+msgid "UoMs"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__uom_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_template__product_uom_ids
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_template__uom_id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom_category__uom_ids
+msgid "Uom"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_uom__uom_type
+msgid "Uom Type"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_usage_causes_action
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__usage_causes_id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__usage_causes_id
+msgid "Usage Causes"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.actions.act_window,name:ab_product.ab_usage_manner_action
+#: model:ir.model.fields,field_description:ab_product.field_ab_product__usage_manner_id
+#: model:ir.model.fields,field_description:ab_product.field_ab_product_card__usage_manner_id
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_usage_causes_view_form
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_usage_manner_view_form
+msgid "Usage Manner"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_temp_view_form
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_view_form
+msgid "Write Barcode Here"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "Write your feedback here"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_view_form
+msgid "ab_product_barcode_form"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_view_pivot
+msgid "ab_product_barcode_pivot"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_view_search
+msgid "ab_product_barcode_search"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_temp_view_form
+msgid "ab_product_barcode_temp_form"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_temp_view_search
+msgid "ab_product_barcode_temp_search"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_temp_view_tree
+msgid "ab_product_barcode_temp_tree"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_barcode_view_tree
+msgid "ab_product_barcode_tree"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "ab_product_card_form"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_tree
+msgid "ab_product_card_tree"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_view_form
+msgid "ab_product_form"
+msgstr ""
+
+#. module: ab_product
+#: model:ir.model,name:ab_product.model_ab_product_qty
+msgid "ab_product_qty"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_view_search
+msgid "ab_product_search"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_tag_view_form
+msgid "ab_product_tag_form"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_view_tree
+msgid "ab_product_tree"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_uom_view_form
+msgid "ab_uom_form"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_uom_view_tree
+msgid "ab_uom_tree"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_scientific_group_view_form
+msgid "e.g. Anti-Inflamatory"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_card_view_form
+msgid "e.g. Cataflam"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_usage_causes_view_form
+msgid "e.g. Fever"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_group_view_form
+msgid "e.g. HAIR CARE"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_origin_view_form
+msgid "e.g. Local"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_usage_manner_view_form
+msgid "e.g. Orally"
+msgstr ""
+
+#. module: ab_product
+#: model_terms:ir.ui.view,arch_db:ab_product.ab_product_company_view_form
+msgid "e.g. Pharco"
+msgstr ""
