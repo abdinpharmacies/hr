@@ -6,15 +6,6 @@
             <field name="sequence" eval="1"/>
         </record>
 
-<<<<<<< Updated upstream
-        <record id="privilege_ab_stock_recycling" model="res.groups.privilege">
-            <field name="name">Stock Recycling</field>
-            <field name="sequence">100</field>
-            <field name="category_id" ref="category_ab_stock_recycling"/>
-        </record>
-
-=======
->>>>>>> Stashed changes
         <record id="privilege_ab_stock_recycling_branch_role" model="res.groups.privilege">
             <field name="name">Stock Recycling Branch Role</field>
             <field name="sequence">110</field>
@@ -28,6 +19,12 @@
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
+        <record id="privilege_ab_stock_recycling" model="res.groups.privilege">
+            <field name="name">Stock Recycling</field>
+            <field name="sequence">100</field>
+            <field name="category_id" ref="category_ab_stock_recycling"/>
+        </record>
+
         <record id="group_ab_stock_recycling_user" model="res.groups">
             <field name="name">User</field>
             <field name="sequence">10</field>
@@ -35,10 +32,7 @@
             <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
         </record>
 
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
         <record id="group_ab_stock_recycling_manager" model="res.groups">
             <field name="name">Manager</field>
             <field name="sequence">20</field>
