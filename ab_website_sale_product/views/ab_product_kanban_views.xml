@@ -22,14 +22,21 @@
                 <field name="website_product_synced"/>
                 <field name="website_product_is_published"/>
                 <field name="website_product_tmpl_id"/>
+                <field name="website_product_image"/>
                 <templates>
                     <t t-name="card">
                         <div class="oe_kanban_card abdin_ecommerce_card">
                             <div class="abdin_ecommerce_card_image_section">
                                 <div class="abdin_ecommerce_image_wrapper">
-                                    <div class="abdin_ecommerce_icon_placeholder">
-                                        <i class="fa fa-cube" title="Product"/>
-                                    </div>
+                                    <t t-if="record.website_product_image.raw_value">
+                                        <img t-att-src="'/web/image/ab_product/' + record.id.raw_value + '/website_product_image'"
+                                             alt="Product" style="width:100%;height:100%;object-fit:cover;display:block;"/>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="abdin_ecommerce_icon_placeholder">
+                                            <i class="fa fa-cube" title="Product"/>
+                                        </div>
+                                    </t>
                                 </div>
                                 <span class="abdin_ecommerce_ribbon abdin_ecommerce_ribbon_published"
                                       t-if="record.website_product_is_published.raw_value">
