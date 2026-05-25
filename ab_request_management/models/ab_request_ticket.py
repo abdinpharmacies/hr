@@ -2,7 +2,7 @@ from lxml import etree
 
 from odoo import api, fields, models
 from odoo.fields import Command
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 from odoo.tools.translate import _
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
@@ -344,9 +344,9 @@ class AbRequest(models.Model):
         """Keep the selected type aligned with the chosen category."""
         for record in self:
             if (
-                record.request_category_id
-                and record.request_type_id
-                and record.request_type_id.category_id != record.request_category_id
+                    record.request_category_id
+                    and record.request_type_id
+                    and record.request_type_id.category_id != record.request_category_id
             ):
                 raise ValidationError(_("The selected request type must belong to the selected category."))
 
