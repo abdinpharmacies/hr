@@ -7,10 +7,8 @@
     "category": "Website",
     "depends": ["website_sale_stock", "ab_product", "ab_eplus_connect"],
     "data": [
-        "security/security_sync_groups.xml",
         "security/ir.model.access.csv",
         "data/server_actions.xml",
-        "security/sync_action_security.xml",
         "data/ir_cron.xml",
         "views/add_many_by_codes_views.xml",
         "views/eplus_stock_snapshot_views.xml",
