@@ -25,7 +25,6 @@ class AbQualityAssuranceVisitLine(models.Model):
     score = fields.Float(default=False)
     note = fields.Text(string="Score Note", copy=False)
     attachment = fields.Binary(attachment=True)
-    attachments = fields.Binary(string='Other Attachments')
     attachment_name = fields.Char()
     has_attachment = fields.Boolean(compute="_compute_has_attachment")
     can_upload_attachment = fields.Boolean(compute="_compute_can_upload_attachment")
