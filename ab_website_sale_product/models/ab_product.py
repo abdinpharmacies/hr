@@ -109,11 +109,6 @@ class AbProduct(models.Model):
         compute_sudo=True,
         groups="base.group_user",
     )
-    website_product_image = fields.Binary(
-        string="Image",
-        compute="_compute_website_product_image",
-        groups="base.group_user",
-    )
     website_image_file_found = fields.Boolean(
         string="Image File Found",
         compute="_compute_website_image_file_info",
@@ -187,14 +182,6 @@ class AbProduct(models.Model):
             product.website_product_is_published = bool(
                 template and template.active and template.sale_ok and template.is_published
             )
-
-    def _compute_website_product_image(self):
-        for product in self:
-            template = product.website_product_tmpl_id
-            if template and template.image_128:
-                product.website_product_image = template.image_128
-            else:
-                product.website_product_image = False
 
     def _compute_website_image_file_info(self):
         directory_path = self._get_configured_website_image_directory()
