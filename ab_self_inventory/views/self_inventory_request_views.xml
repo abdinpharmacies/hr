@@ -5,7 +5,7 @@
             <field name="name">ab_self_inventory_request_line_list</field>
             <field name="model">ab_self_inventory_request_line</field>
             <field name="arch" type="xml">
-                <list editable="bottom" decoration-muted="matched_by == 'none'">
+                <list editable="bottom" delete="0" decoration-muted="matched_by == 'none'">
                     <field name="selected"/>
                     <field name="product_id" readonly="1"/>
                     <field name="product_code" optional="show"/>
@@ -26,6 +26,7 @@
                     <field name="name"/>
                     <field name="branch_id"/>
                     <field name="requester_id"/>
+                    <field name="deadline" optional="hide"/>
                     <field name="selected_line_count"/>
                     <field name="process_id"/>
                     <field name="state"/>
@@ -51,6 +52,7 @@
                         <group col="4">
                             <field name="name"/>
                             <field name="branch_id" readonly="state != 'draft'"/>
+                            <field name="deadline" readonly="state != 'draft'"/>
                             <field name="selected_line_count"/>
                             <field name="process_id"/>
                             <field name="submitted_date"/>

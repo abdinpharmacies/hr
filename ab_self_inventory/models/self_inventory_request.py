@@ -34,6 +34,7 @@ class SelfInventoryRequest(models.Model):
         required=True,
         domain="[('store_type', '=', 'branch')]",
     )
+    deadline = fields.Datetime()
     note = fields.Text()
     state = fields.Selection(
         selection=[
@@ -74,6 +75,8 @@ class SelfInventoryRequest(models.Model):
         for rec in self:
             rec._check_can_fetch_stock()
             rows = rec._fetch_branch_stock_rows()
+            if not rows:
+                raise ValidationError(_("No stock rows were returned from B-Connect for branch %s.") % rec.branch_id.display_name)
             products_by_serial = rec._get_products_by_eplus_serial([row['itm_id'] for row in rows])
             products_by_code = rec._get_products_by_code([row['itm_code'] for row in rows if row['itm_code']])
             line_commands = [(5, 0, 0)]
@@ -235,6 +238,7 @@ class SelfInventoryRequest(models.Model):
             'requester_id': self.requester_id.id,
             'branch_id': self.branch_id.id,
             'request_note': self.note,
+            'deadline': self.deadline,
             'state': 'draft',
             'line_ids': [(5, 0, 0)] + [
                 (0, 0, {
@@ -242,6 +246,7 @@ class SelfInventoryRequest(models.Model):
                     'eplus_item_id': line.eplus_item_id,
                     'eplus_item_code': line.eplus_item_code,
                     'system_qty': line.system_qty,
+                    'unit_cost': line.product_id.default_cost or line.product_id.default_price or 0.0,
                     'requested': True,
                 })
                 for line in selected_lines
