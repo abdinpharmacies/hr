@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_self_inventory_import_wizard_form" model="ir.ui.view">
+        <field name="name">ab_self_inventory_import_wizard_form</field>
+        <field name="model">ab_self_inventory_import_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Actual Counts">
+                <group>
+                    <field name="process_id" readonly="1"/>
+                    <field name="file" filename="filename"/>
+                    <field name="filename" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_import" type="object" string="Import" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

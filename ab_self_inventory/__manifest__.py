@@ -5,7 +5,7 @@
     'category': 'AbdinSupplyChain',
     'author': 'Alhassan Hossny',
     'application': True,
-    'depends': ['base', 'ab_eplus_connect', 'ab_store', 'ab_product', 'ab_hr'],
+    'depends': ['base', 'ab_eplus_connect', 'ab_store', 'ab_product', 'ab_hr', 'report_xlsx'],
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',
@@ -13,6 +13,8 @@
         'views/menus.xml',
         'views/self_inventory_request_views.xml',
         'views/self_inventory_process_views.xml',
+        'wizard/self_inventory_import_wizard_views.xml',
+        'reports/self_inventory_reports.xml',
     ],
     'installable': True,
 }
