@@ -40,6 +40,7 @@ class SelfInventoryProcess(models.Model):
     requester_id = fields.Many2one('res.users', readonly=True, index=True)
     branch_id = fields.Many2one('ab_store', string='Branch', required=True, readonly=True, index=True)
     receiver_id = fields.Many2one('res.users', string='Received By', default=lambda self: self.env.user)
+    deadline = fields.Datetime(readonly=True)
     request_note = fields.Text(readonly=True)
     branch_note = fields.Text()
     state = fields.Selection(
@@ -54,8 +55,8 @@ class SelfInventoryProcess(models.Model):
     )
     line_ids = fields.One2many('ab_self_inventory_process_line', 'process_id', string='Inventory Lines')
     submitted_date = fields.Datetime(readonly=True, copy=False)
-    shortage_qty = fields.Float(compute='_compute_totals', digits=(12, 3))
-    extra_qty = fields.Float(compute='_compute_totals', digits=(12, 3))
+    shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_totals', digits=(12, 2))
+    extra_qty = fields.Float(string='Extra Cost', compute='_compute_totals', digits=(12, 2))
     available_product_ids = fields.Many2many(
         'ab_product',
         compute='_compute_available_product_ids',
@@ -75,6 +76,7 @@ class SelfInventoryProcess(models.Model):
             rec.shortage_qty = sum(rec.line_ids.mapped('shortage_qty'))
             rec.extra_qty = sum(rec.line_ids.mapped('extra_qty'))
 
+    @api.depends('branch_id', 'line_ids.product_id')
     def _compute_available_product_ids(self):
         for rec in self:
             rec.available_product_ids = rec._get_branch_stock_products()
@@ -93,9 +95,6 @@ class SelfInventoryProcess(models.Model):
                 continue
             if not rec.line_ids:
                 raise ValidationError(_("Add at least one product line before submitting."))
-            missing_actual = rec.line_ids.filtered(lambda line: not line.actual_qty_set)
-            if missing_actual:
-                raise ValidationError(_("Set actual quantity for all self inventory lines before submitting."))
             rec.write({
                 'state': 'submitted',
                 'submitted_date': fields.Datetime.now(),
@@ -144,7 +143,8 @@ class SelfInventoryProcess(models.Model):
             product_id = products_by_serial.get(row['itm_id']) or products_by_code.get(row['itm_code'])
             if product_id:
                 product_ids.append(product_id)
-        return products.browse(product_ids)
+        existing_product_ids = set(self.line_ids.mapped('product_id').ids)
+        return products.browse(product_ids).filtered(lambda product: product.id not in existing_product_ids)
 
     def _fetch_branch_stock_product_rows(self):
         self.ensure_one()
@@ -184,6 +184,20 @@ class SelfInventoryProcess(models.Model):
                     stock_qty = row[0]
                 return float(stock_qty or 0.0)
 
+    def action_export_count_sheet(self):
+        return self.env.ref('ab_self_inventory.action_self_inventory_count_sheet_xlsx').report_action(self)
+
+    def action_open_import_wizard(self):
+        self.ensure_one()
+        return {
+            'name': _('Import Actual Counts'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ab_self_inventory_import_wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_process_id': self.id},
+        }
+
 
 class SelfInventoryProcessLine(models.Model):
     _name = 'ab_self_inventory_process_line'
@@ -197,15 +211,16 @@ class SelfInventoryProcessLine(models.Model):
     eplus_item_code = fields.Char(string='E-plus Item Code', readonly=True, index=True)
     requested = fields.Boolean(default=False, readonly=True)
     system_qty = fields.Float(string='E-stock Qty', digits=(12, 3), required=True, default=0.0)
+    unit_cost = fields.Float(digits=(12, 2), default=0.0)
     actual_qty = fields.Float(digits=(12, 3))
-    actual_qty_set = fields.Boolean(string='Actual Qty Set')
     difference_qty = fields.Float(compute='_compute_difference_qty', digits=(12, 3), store=True)
-    shortage_qty = fields.Float(compute='_compute_difference_qty', digits=(12, 3), store=True)
-    extra_qty = fields.Float(compute='_compute_difference_qty', digits=(12, 3), store=True)
+    shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_difference_qty', digits=(12, 2), store=True)
+    extra_qty = fields.Float(string='Extra Cost', compute='_compute_difference_qty', digits=(12, 2), store=True)
     explanation = fields.Char()
 
     @api.model_create_multi
     def create(self, vals_list):
+        self._check_duplicate_products(vals_list)
         for vals in vals_list:
             process = self.env['ab_self_inventory_process'].browse(vals.get('process_id')).exists()
             if process and process.state != 'draft':
@@ -218,11 +233,42 @@ class SelfInventoryProcessLine(models.Model):
             if rec.process_id.state != 'draft':
                 raise ValidationError(_("Only draft self inventory process lines can be changed."))
             rec._check_locked_fields(vals)
-        vals = dict(vals)
         return super().write(vals)
 
     def unlink(self):
-        raise ValidationError(_("Self inventory products cannot be deleted after the request is received."))
+        for rec in self:
+            if rec.process_id.state != 'draft':
+                raise ValidationError(_("Only draft self inventory process lines can be deleted."))
+            if rec.requested:
+                raise ValidationError(_("Requested self inventory products cannot be deleted."))
+        return super().unlink()
+
+    def action_delete_manual_line(self):
+        self.unlink()
+        return True
+
+    @api.model
+    def _check_duplicate_products(self, vals_list):
+        incoming_by_process = {}
+        for vals in vals_list:
+            process_id = vals.get('process_id')
+            product_id = vals.get('product_id')
+            if not process_id or not product_id:
+                continue
+            key = (process_id, product_id)
+            if key in incoming_by_process:
+                raise ValidationError(_("already exists product"))
+            incoming_by_process[key] = True
+
+        if not incoming_by_process:
+            return
+        domain = [
+            ('process_id', 'in', list({process_id for process_id, product_id in incoming_by_process})),
+            ('product_id', 'in', list({product_id for process_id, product_id in incoming_by_process})),
+        ]
+        for line in self.search(domain):
+            if (line.process_id.id, line.product_id.id) in incoming_by_process:
+                raise ValidationError(_("already exists product"))
 
     def _check_locked_fields(self, vals):
         locked_fields = {
@@ -232,6 +278,7 @@ class SelfInventoryProcessLine(models.Model):
             'eplus_item_code',
             'requested',
             'system_qty',
+            'unit_cost',
         }
         if locked_fields.intersection(vals):
             raise ValidationError(_("Self inventory products cannot be changed after the request is received."))
@@ -244,6 +291,7 @@ class SelfInventoryProcessLine(models.Model):
             if product:
                 vals.setdefault('eplus_item_id', product.eplus_serial or 0)
                 vals.setdefault('eplus_item_code', product.code or '')
+                vals.setdefault('unit_cost', product.default_cost or product.default_price or 0.0)
                 process = self.env['ab_self_inventory_process'].browse(vals.get('process_id')).exists()
                 if process and not vals.get('requested'):
                     system_qty = process._get_branch_product_stock_qty(product)
@@ -251,25 +299,36 @@ class SelfInventoryProcessLine(models.Model):
                         raise ValidationError(_("Selected product is not available in this branch stock."))
                     vals['system_qty'] = system_qty
 
-    @api.depends('system_qty', 'actual_qty', 'actual_qty_set')
+    @api.depends('system_qty', 'actual_qty', 'unit_cost')
     def _compute_difference_qty(self):
         for rec in self:
-            if not rec.actual_qty_set:
-                rec.difference_qty = 0.0
-                rec.shortage_qty = 0.0
-                rec.extra_qty = 0.0
-                continue
             difference = (rec.actual_qty or 0.0) - (rec.system_qty or 0.0)
             rec.difference_qty = difference
-            rec.shortage_qty = abs(difference) if difference < 0 else 0.0
-            rec.extra_qty = difference if difference > 0 else 0.0
+            rec.shortage_qty = abs(difference) * (rec.unit_cost or 0.0) if difference < 0 else 0.0
+            rec.extra_qty = difference * (rec.unit_cost or 0.0) if difference > 0 else 0.0
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
         for rec in self:
             if rec.product_id:
+                duplicate_line = rec.process_id.line_ids.filtered(
+                    lambda line: line != rec and line.product_id == rec.product_id
+                )
+                if duplicate_line:
+                    rec.product_id = False
+                    rec.eplus_item_id = 0
+                    rec.eplus_item_code = False
+                    rec.unit_cost = 0.0
+                    rec.system_qty = 0.0
+                    return {
+                        'warning': {
+                            'title': _("Duplicate Product"),
+                            'message': _("already exists product"),
+                        }
+                    }
                 rec.eplus_item_id = rec.product_id.eplus_serial or 0
                 rec.eplus_item_code = rec.product_id.code or ''
+                rec.unit_cost = rec.product_id.default_cost or rec.product_id.default_price or 0.0
                 if rec.process_id and not rec.requested:
                     system_qty = rec.process_id._get_branch_product_stock_qty(rec.product_id)
                     if system_qty is None:
@@ -286,5 +345,5 @@ class SelfInventoryProcessLine(models.Model):
     @api.constrains('actual_qty')
     def _check_actual_qty(self):
         for rec in self:
-            if rec.actual_qty_set and rec.actual_qty < 0:
+            if rec.actual_qty < 0:
                 raise ValidationError(_("Actual quantity cannot be negative."))

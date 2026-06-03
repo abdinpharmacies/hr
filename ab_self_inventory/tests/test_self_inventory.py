@@ -35,6 +35,10 @@ class TestSelfInventory(TransactionCase):
             'store_type': 'branch',
             'eplus_serial': 9002,
         })
+        self.env.cr.execute(
+            "SELECT setval(pg_get_serial_sequence(%s, %s), COALESCE(MAX(id), 0) + 1, false) FROM ab_hr_department",
+            ('ab_hr_department', 'id'),
+        )
         self.env['ab_hr_department'].sudo().create({
             'name': 'Self Inventory Branch Department',
             'store_id': self.branch.id,
@@ -51,12 +55,14 @@ class TestSelfInventory(TransactionCase):
             'product_card_id': card.id,
             'code': 'SIP001',
             'eplus_serial': 7001,
+            'default_cost': 3.0,
         })
         second_card = self.env['ab_product_card'].sudo().create({'name': 'Second Self Inventory Product Card'})
         self.second_product = self.env['ab_product'].sudo().create({
             'product_card_id': second_card.id,
             'code': 'SIP002',
             'eplus_serial': 7002,
+            'default_cost': 4.0,
         })
 
     def test_submit_request_creates_independent_process(self):
@@ -84,7 +90,6 @@ class TestSelfInventory(TransactionCase):
 
         process_line = request.process_id.line_ids
         process_line.with_user(self.receiver).write({
-            'actual_qty_set': True,
             'actual_qty': 10.0,
             'explanation': 'Two units short.',
         })
@@ -92,7 +97,7 @@ class TestSelfInventory(TransactionCase):
 
         self.assertEqual(request.process_id.state, 'submitted')
         self.assertEqual(process_line.difference_qty, -2.0)
-        self.assertEqual(process_line.shortage_qty, 2.0)
+        self.assertEqual(process_line.shortage_qty, 6.0)
         self.assertEqual(process_line.extra_qty, 0.0)
 
     def test_receiver_only_sees_own_branch_processes(self):
@@ -171,7 +176,6 @@ class TestSelfInventory(TransactionCase):
             process_line.unlink()
 
         process_line.write({
-            'actual_qty_set': True,
             'actual_qty': 11.0,
             'explanation': 'One unit short.',
         })
@@ -212,3 +216,64 @@ class TestSelfInventory(TransactionCase):
                     'process_id': process.id,
                     'product_id': self.second_product.id,
                 })
+
+    def test_manually_added_line_can_be_deleted_in_draft(self):
+        process = self.env['ab_self_inventory_process'].sudo().create({
+            'requester_id': self.requester.id,
+            'branch_id': self.branch.id,
+        })
+        with patch.object(type(process), '_get_branch_product_stock_qty', return_value=5.0):
+            line = self.env['ab_self_inventory_process_line'].with_user(self.receiver).create({
+                'process_id': process.id,
+                'product_id': self.product.id,
+            })
+        line.unlink()
+        self.assertFalse(line.exists())
+
+    def test_receiver_cannot_add_duplicate_product(self):
+        process = self.env['ab_self_inventory_process'].sudo().create({
+            'requester_id': self.requester.id,
+            'branch_id': self.branch.id,
+        })
+        with patch.object(type(process), '_get_branch_product_stock_qty', return_value=5.0):
+            self.env['ab_self_inventory_process_line'].with_user(self.receiver).create({
+                'process_id': process.id,
+                'product_id': self.product.id,
+            })
+            with self.assertRaisesRegex(ValidationError, "already exists product"):
+                self.env['ab_self_inventory_process_line'].with_user(self.receiver).create({
+                    'process_id': process.id,
+                    'product_id': self.product.id,
+                })
+
+    def test_available_products_exclude_existing_process_lines(self):
+        process = self.env['ab_self_inventory_process'].sudo().create({
+            'requester_id': self.requester.id,
+            'branch_id': self.branch.id,
+        })
+        with patch.object(
+            type(process),
+            '_fetch_branch_stock_product_rows',
+            return_value=[
+                {'itm_id': self.product.eplus_serial, 'itm_code': self.product.code},
+                {'itm_id': self.second_product.eplus_serial, 'itm_code': self.second_product.code},
+            ],
+        ):
+            self.assertIn(self.product, process.available_product_ids)
+            self.env['ab_self_inventory_process_line'].sudo().create({
+                'process_id': process.id,
+                'product_id': self.product.id,
+                'system_qty': 5.0,
+                'requested': True,
+            })
+            process.invalidate_recordset(['available_product_ids'])
+            self.assertNotIn(self.product, process.available_product_ids)
+            self.assertIn(self.second_product, process.available_product_ids)
+
+    def test_fetch_branch_stock_requires_rows(self):
+        request = self.env['ab_self_inventory_request'].with_user(self.requester).create({
+            'branch_id': self.branch.id,
+        })
+        with patch.object(type(request), '_fetch_branch_stock_rows', return_value=[]):
+            with self.assertRaises(ValidationError):
+                request.action_fetch_branch_stock()
