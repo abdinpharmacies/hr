@@ -14,6 +14,7 @@ const STATE_THEME = {
     in_progress: "#df7a22",
     under_requester_confirmation: "#7b4fd7",
     satisfied: "#2f8f57",
+    resolved: "#1f8f8a",
     rejected: "#cf4c4c",
     closed: "#96a1ad",
 };
@@ -75,7 +76,7 @@ export class AbRequestDashboard extends Component {
             this.orm.searchCount("ab_request", [
                 ["deadline", "!=", false],
                 ["deadline", "<", nowIso],
-                ["state", "not in", ["closed", "rejected", "satisfied"]],
+                ["state", "not in", ["closed", "rejected", "satisfied", "resolved"]],
             ]),
             this.orm.call(
                 "ab_request",
@@ -126,7 +127,7 @@ export class AbRequestDashboard extends Component {
                 domain: [
                     ["deadline", "!=", false],
                     ["deadline", "<", nowIso],
-                    ["state", "not in", ["closed", "rejected", "satisfied"]],
+                    ["state", "not in", ["closed", "rejected", "satisfied", "resolved"]],
                 ],
             },
         ];
@@ -210,6 +211,7 @@ export class AbRequestDashboard extends Component {
             in_progress: _t("In Progress"),
             under_requester_confirmation: _t("Under Requester Confirmation"),
             satisfied: _t("Satisfied"),
+            resolved: _t("Resolved"),
             rejected: _t("Rejected"),
             closed: _t("Closed"),
         }[value] || value || _t("Unknown");

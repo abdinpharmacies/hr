@@ -91,7 +91,7 @@
                             domain="[('state', '=', 'under_review'), ('manager_user_id', '=', uid)]"/>
                     <separator/>
                     <filter name="filter_open_requests" string="Open Requests"
-                            domain="[('state', 'in', ['draft', 'under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied'])]"/>
+                            domain="[('state', 'in', ['draft', 'under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied', 'resolved'])]"/>
                     <filter name="filter_closed_requests" string="Closed Requests"
                             domain="[('state', 'in', ['closed', 'rejected'])]"/>
                     <filter name="filter_overdue" string="Overdue"
@@ -104,6 +104,7 @@
                     <filter name="filter_confirmation" string="Awaiting Requester Confirmation"
                             domain="[('state', '=', 'under_requester_confirmation')]"/>
                     <filter name="filter_satisfied" string="Satisfied" domain="[('state', '=', 'satisfied')]"/>
+                    <filter name="filter_resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
 
                     <separator/>
                     <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
@@ -226,8 +227,11 @@
                                         <button t-if="record.can_work_on_request.raw_value and record.state.raw_value === 'scheduled'" type="object" name="action_mark_in_progress" class="btn btn-primary btn-sm">
                                             Start
                                         </button>
-                                        <button t-if="record.can_work_on_request.raw_value and ['satisfied', 'rejected'].includes(record.state.raw_value)" type="object" name="action_close" class="btn btn-dark btn-sm">
-                                            Close
+                                        <button t-if="record.can_mark_resolved.raw_value" type="object" name="action_mark_resolved" class="btn btn-primary btn-sm">
+                                            Resolve
+                                        </button>
+                                        <button t-if="record.can_confirm_resolution.raw_value" type="object" name="action_confirm_resolution" class="btn btn-dark btn-sm">
+                                            Confirm
                                         </button>
                                     </div>
                                     <span class="ab_request_kanban_metrics">
@@ -273,10 +277,13 @@
                                 invisible="state != 'under_requester_confirmation' or not is_requester"/>
                         <button name="action_request_changes" type="object" string="Request Changes"
                                 invisible="state != 'under_requester_confirmation' or not is_requester"/>
-                        <button name="action_close" type="object" string="Close Request" class="btn-primary"
-                                invisible="state not in ('satisfied', 'rejected') or not can_work_on_request"/>
+                        <button name="action_mark_resolved" type="object" string="Mark Resolved" class="btn-primary"
+                                invisible="not can_mark_resolved"/>
+                        <button name="action_confirm_resolution" type="object" string="Confirm Resolution"
+                                class="btn-primary"
+                                invisible="not can_confirm_resolution"/>
                         <field name="state" widget="statusbar" class="ab_request_statusbar"
-                               statusbar_visible="draft,under_review,scheduled,in_progress,under_requester_confirmation,satisfied,rejected,closed"/>
+                               statusbar_visible="draft,under_review,scheduled,in_progress,under_requester_confirmation,satisfied,resolved,rejected,closed"/>
                     </header>
                     <sheet class="ab_request_sheet">
                         <div class="oe_button_box" name="button_box">
@@ -292,9 +299,13 @@
                                     invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)">
                                 <span>Reject</span>
                             </button>
-                            <button name="action_close" type="object" class="oe_stat_button" icon="fa-lock"
-                                    invisible="state not in ('satisfied', 'rejected') or not can_work_on_request">
-                                <span>Close</span>
+                            <button name="action_mark_resolved" type="object" class="oe_stat_button" icon="fa-check-circle"
+                                    invisible="not can_mark_resolved">
+                                <span>Resolve</span>
+                            </button>
+                            <button name="action_confirm_resolution" type="object" class="oe_stat_button" icon="fa-lock"
+                                    invisible="not can_confirm_resolution">
+                                <span>Confirm</span>
                             </button>
                         </div>
                         <field name="is_requester" invisible="1"/>
@@ -303,6 +314,8 @@
                         <field name="is_request_admin" invisible="1"/>
                         <field name="can_assign" invisible="1"/>
                         <field name="can_work_on_request" invisible="1"/>
+                        <field name="can_mark_resolved" invisible="1"/>
+                        <field name="can_confirm_resolution" invisible="1"/>
                         <field name="can_add_followup" invisible="1"/>
                         <field name="can_edit_assignment_details" invisible="1"/>
                         <field name="is_overdue" invisible="1"/>

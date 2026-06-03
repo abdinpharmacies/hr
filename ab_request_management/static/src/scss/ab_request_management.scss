@@ -4,6 +4,7 @@
     --ab-request-state-in-progress: #df7a22;
     --ab-request-state-under-requester-confirmation: #7b4fd7;
     --ab-request-state-satisfied: #2f8f57;
+    --ab-request-state-resolved: #1f8f8a;
     --ab-request-state-rejected: #cf4c4c;
     --ab-request-state-closed: #96a1ad;
     --ab-request-surface: #ffffff;
@@ -53,6 +54,11 @@
 .ab_request_state_satisfied {
     background: var(--ab-request-state-satisfied);
     color: var(--ab-request-state-satisfied);
+}
+
+.ab_request_state_resolved {
+    background: var(--ab-request-state-resolved);
+    color: var(--ab-request-state-resolved);
 }
 
 .ab_request_state_rejected {
@@ -205,6 +211,10 @@
 
             &.ab_request_state_satisfied {
                 background: var(--ab-request-state-satisfied, #2f8f57);
+            }
+
+            &.ab_request_state_resolved {
+                background: var(--ab-request-state-resolved, #1f8f8a);
             }
 
             &.ab_request_state_rejected {
@@ -598,6 +608,11 @@
     &.ab_request_state_satisfied {
         background: color-mix(in srgb, var(--ab-request-state-satisfied) 14%, white);
         color: var(--ab-request-state-satisfied);
+    }
+
+    &.ab_request_state_resolved {
+        background: color-mix(in srgb, var(--ab-request-state-resolved) 14%, white);
+        color: var(--ab-request-state-resolved);
     }
 
     &.ab_request_state_rejected {
@@ -1081,6 +1096,10 @@
             linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(248, 244, 255, 0.98) 100%),
             linear-gradient(135deg, rgba(123, 79, 215, 0.06), transparent 58%);
         border-left-color: var(--ab-request-state-under-requester-confirmation);
+    }
+
+    .ab_request_state_card_resolved {
+        border-left-color: var(--ab-request-state-resolved);
     }
 
     .ab_request_overdue {

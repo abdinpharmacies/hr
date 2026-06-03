@@ -12,10 +12,12 @@ const WORKFLOW_ACTIONS = {
     "under_review->rejected": "action_reject",
     "scheduled->in_progress": "action_mark_in_progress",
     "in_progress->under_requester_confirmation": "action_request_confirmation",
+    "in_progress->resolved": "action_mark_resolved",
     "under_requester_confirmation->in_progress": "action_request_changes",
     "under_requester_confirmation->satisfied": "action_mark_satisfied",
-    "satisfied->closed": "action_close",
-    "rejected->closed": "action_close",
+    "under_requester_confirmation->resolved": "action_mark_resolved",
+    "satisfied->resolved": "action_mark_resolved",
+    "resolved->closed": "action_confirm_resolution",
 };
 
 export class AbRequestKanbanRenderer extends KanbanRenderer {
