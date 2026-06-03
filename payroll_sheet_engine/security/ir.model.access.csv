@@ -1,0 +1,8 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_payroll_excel_sheet_user,payroll.excel.sheet user,model_payroll_excel_sheet,hr.group_hr_user,1,1,1,0
+access_payroll_excel_sheet_manager,payroll.excel.sheet manager,model_payroll_excel_sheet,hr.group_hr_manager,1,1,1,1
+access_payroll_excel_sheet_adjustment_user,payroll.excel.sheet.adjustment user,model_payroll_excel_sheet_adjustment,hr.group_hr_user,1,1,1,1
+access_payroll_excel_sheet_component_user,payroll.excel.sheet.component user,model_payroll_excel_sheet_component,hr.group_hr_user,1,1,1,1
+access_payroll_excel_sheet_fingerprint_user,payroll.excel.sheet.fingerprint user,model_payroll_excel_sheet_fingerprint,hr.group_hr_user,1,1,1,1
+access_payroll_excel_type_config_manager,payroll.excel.type.config manager,model_payroll_excel_type_config,hr.group_hr_manager,1,1,1,1
+access_payroll_excel_type_config_user,payroll.excel.type.config user,model_payroll_excel_type_config,hr.group_hr_user,1,0,0,0

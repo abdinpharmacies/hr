@@ -1,0 +1,658 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* payroll_sheet_engine
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-24 12:00+0000\n"
+"PO-Revision-Date: 2026-05-24 12:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: payroll_sheet_engine
+#: model:ir.model,name:payroll_sheet_engine.model_payroll_excel_sheet
+msgid "Payroll Sheet (Excel Mirror)"
+msgstr "شيت مرتب (مرآة Excel)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model,name:payroll_sheet_engine.model_payroll_excel_sheet_adjustment
+msgid "Sheet Adjustment (A80:A89)"
+msgstr "تعديل شيت (A80:A89)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model,name:payroll_sheet_engine.model_payroll_excel_sheet_component
+msgid "Payroll Sheet Item"
+msgstr "بند شيت مرتب"
+
+#. module: payroll_sheet_engine
+#: model:ir.model,name:payroll_sheet_engine.model_payroll_excel_sheet_fingerprint
+msgid "Payroll Sheet Fingerprint"
+msgstr "بصمة شيت المرتب"
+
+#. module: payroll_sheet_engine
+#: model:ir.model,name:payroll_sheet_engine.model_payroll_excel_type_config
+msgid "Excel Sheet Type Config (J70)"
+msgstr "إعداد نوع شيت Excel (J70)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__name
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__name
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__name
+msgid "Name"
+msgstr "المسمى"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__contract_id
+msgid "Employment Contract"
+msgstr "عقد العمل"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__date_from
+msgid "From"
+msgstr "من"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__date_to
+msgid "To"
+msgstr "إلى"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__sheet_type
+msgid "Sheet Type (J70)"
+msgstr "نوع الشيت (J70)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__e2_basic
+msgid "E2 (Basic Agreement)"
+msgstr "E2 (أساسي الاتفاق)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__f2_allowance
+msgid "F2 (Allowances)"
+msgstr "F2 (بدلات للاتفاق)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__h2_hours
+msgid "H2 (Agreed Hours/Month)"
+msgstr "H2 (ساعات الاتفاق/الشهر)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__i53_factor
+msgid "I53 (Days/Month Factor)"
+msgstr "I53 (معامل الأيام/الشهر)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,help:payroll_sheet_engine.field_payroll_excel_sheet__i53_factor
+msgid "In Excel appears as a divisor for days or month factor. Adjust to match the sheet."
+msgstr "في Excel يظهر كمقسوم على الأيام أو معامل الشهر — يُضبط ليطابق الشيت."
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__e70
+msgid "E70 Daily Hour Rate (Basic)"
+msgstr "E70 سعر الساعة اليومي (أساسي)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__e72
+msgid "E72 Daily Hour Rate on Basic Allowances"
+msgstr "E72 سعر الساعة اليومي على البدلات الأساسية"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__e74
+msgid "E74 Total Salary"
+msgstr "E74 شامل الراتب"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__f70
+msgid "F70 Daily Value on Basic"
+msgstr "F70 قيمة يوم على الأساسي"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__g70
+msgid "G70 Daily Value on Allowances"
+msgstr "G70 قيمة يوم على البدلات"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__h70
+msgid "H70 Agreement Salary"
+msgstr "H70 راتب الاتفاق"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__adjustment_line_ids
+msgid "Adjustments A80:A89 (SUM in H70)"
+msgstr "تعديلات A80:A89 (SUM في H70)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__adjustment_sum
+msgid "Adjustment Total"
+msgstr "مجموع التعديلات"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__earning_line_ids
+msgid "Earning Items (E44:E68)"
+msgstr "بنود الاستحقاق (E44:E68)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__deduction_line_ids
+msgid "Deduction Items (G44:G68)"
+msgstr "بنود الاستقطاع (G44:G68)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__fingerprint_ids
+msgid "Fingerprints (Attendance Area)"
+msgstr "البصمات (منطقة الحضور/الانصراف)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__fingerprint_overlap_count
+msgid "Overlap/Duplicate Alerts"
+msgstr "تنبيهات تداخل/تكرار"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,state
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,state
+msgid "Confirmed"
+msgstr "معتمد"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,state
+msgid "Locked"
+msgstr "مقفل"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__amount
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__amount
+msgid "Amount"
+msgstr "المبلغ"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__name
+msgid "Item"
+msgstr "البند"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__excel_row
+msgid "Excel Row"
+msgstr "صف Excel"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet.component,side
+msgid "Earning"
+msgstr "استحقاق"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet.component,side
+msgid "Deduction"
+msgstr "استقطاع"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__name
+msgid "Item Name"
+msgstr "اسم البند"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__value
+msgid "Value"
+msgstr "القيمة"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet.component,source
+msgid "Manual / Fixed Periodic"
+msgstr "يدوي / ثابت دوري"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet.component,source
+msgid "Computed (linked to engine)"
+msgstr "محسوب (سيتم ربطه بالمحرك)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__excel_formula_trace
+msgid "Excel Formula Trace (Reference)"
+msgstr "تتبع معادلة Excel (مرجعي)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__day_date
+msgid "Day"
+msgstr "اليوم"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__check_in
+msgid "Check In (M)"
+msgstr "حضور (M)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__check_out
+msgid "Check Out (N)"
+msgstr "انصراف (N)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__has_issue
+msgid "Overlap/Duplicate Issue"
+msgstr "مشكلة تداخل/تكرار"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__issue_detail
+msgid "Details"
+msgstr "تفاصيل"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__sheet_type
+msgid "Sheet Type J70"
+msgstr "نوع الشيت J70"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__e72_zero
+msgid "Zero E72 (IF I70=Q64 branch)"
+msgstr "إلغاء E72 (فرع IF(I70=Q64))"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,help:payroll_sheet_engine.field_payroll_excel_type_config__e72_zero
+msgid "When enabled, E72 is set to 0 as in the Excel formula."
+msgstr "عند التفعيل تُحسب E72 = 0 كما في معادلة Excel."
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__g70_daily_allowance
+msgid "G70 (VLOOKUP result)"
+msgstr "G70 (نتيجة VLOOKUP)"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,help:payroll_sheet_engine.field_payroll_excel_type_config__g70_daily_allowance
+msgid "Daily allowance value per sheet type from the Excel lookup table."
+msgstr "قيمة اليوم على البدلات حسب جدول النوع في الشيت."
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,sheet_type
+#: selection:payroll.excel.type.config,sheet_type
+msgid "Daily Hours"
+msgstr "ساعات يومية"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,sheet_type
+#: selection:payroll.excel.type.config,sheet_type
+msgid "Fixed Attendance"
+msgstr "حضور وانصراف ثابت"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,sheet_type
+#: selection:payroll.excel.type.config,sheet_type
+msgid "Monthly Hours"
+msgstr "ساعات شهرية"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,sheet_type
+#: selection:payroll.excel.type.config,sheet_type
+msgid "Attendance Days"
+msgstr "حضور أيام"
+
+#. module: payroll_sheet_engine
+#: selection:payroll.excel.sheet,sheet_type
+#: selection:payroll.excel.type.config,sheet_type
+msgid "Fixed Salary"
+msgstr "مرتب ثابت"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Payroll Sheet"
+msgstr "شيت المرتب"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Seed E/G Lines"
+msgstr "تهيئة بنود E/G"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Confirm"
+msgstr "اعتماد"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Set to Draft"
+msgstr "إلى مسودة"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Lock"
+msgstr "قفل"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "This sheet is locked for editing."
+msgstr "هذا الشيت مقفل للتعديل."
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Excel Mirror Inputs (E2, H2, I53...)"
+msgstr "مدخلات مرآة Excel (E2,H2,I53...)"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Sheet Inputs"
+msgstr "مدخلات الشيت"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Agreement Block Results (Computed)"
+msgstr "نتائج كتلة الاتفاق (محسوبة)"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Earning Items (E44:E68)"
+msgstr "بنود الاستحقاق (E44:E68)"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Deduction Items (G44:G68)"
+msgstr "بنود الاستقطاع (G44:G68)"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Fingerprints (Day / In / Out)"
+msgstr "البصمات (يوم / حضور / انصراف)"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "One record per day; duplicates prevented. Basic validation: check-out before check-in, or missing sign."
+msgstr "قيد واحد لكل يوم؛ يمنع التكرار. التحقق الأولي: انصراف قبل حضور، أو غياب أحد الطرفين."
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_sheet_tree
+msgid "Payroll Sheets"
+msgstr "شيتات المرتب"
+
+#. module: payroll_sheet_engine
+#: model:ir.actions.act_window,name:payroll_sheet_engine.action_payroll_excel_sheet
+#: model:ir.ui.menu,name:payroll_sheet_engine.menu_payroll_sheet_engine_root
+#: model:ir.ui.menu,name:payroll_sheet_engine.menu_payroll_excel_sheet
+msgid "Payroll Sheets"
+msgstr "شيتات المرتب"
+
+#. module: payroll_sheet_engine
+#: model:ir.ui.view,arch_db:payroll_sheet_engine.view_payroll_excel_type_config_tree
+msgid "Sheet Types (J70)"
+msgstr "أنواع الشيت (J70)"
+
+#. module: payroll_sheet_engine
+#: model:ir.actions.act_window,name:payroll_sheet_engine.action_payroll_excel_type_config
+#: model:ir.ui.menu,name:payroll_sheet_engine.menu_payroll_excel_type_config
+msgid "J70 Type Config"
+msgstr "إعداد أنواع J70"
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Start date must be before or equal to end date."
+msgstr "تاريخ البداية يجب أن يكون قبل أو يساوي تاريخ النهاية."
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Only one fingerprint record per day per sheet is allowed."
+msgstr "لا يُسمح بأكثر من سجل بصمة لنفس اليوم في نفس الشيت."
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Check out before check in"
+msgstr "انصراف قبل حضور"
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Missing check out"
+msgstr "انصراف مفقود"
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Missing check in"
+msgstr "حضور مفقود"
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Sheet type must be unique."
+msgstr "نوع الشيت يجب أن يكون فريداً."
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__sheet_id
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__sheet_id
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__sheet_id
+msgid "Sheet"
+msgstr "الشيت"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__side
+msgid "Side"
+msgstr "الجهة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__source
+msgid "Source"
+msgstr "المصدر"
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Earning Item E%s"
+msgstr "بند استحقاق E%s"
+
+#. module: payroll_sheet_engine
+#: code:addons/payroll_sheet_engine/models/payroll_excel_sheet.py:0
+msgid "Deduction Item G%s"
+msgstr "بند استقطاع G%s"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__activity_type_id
+msgid "Activity Type"
+msgstr "نوع النشاط"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__my_activity_date_deadline
+msgid "Deadline"
+msgstr "الموعد النهائي"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__message_needaction_counter
+msgid "Counter"
+msgstr "عداد"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__message_has_error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__message_has_error_counter
+msgid "Error Counter"
+msgstr "عداد الأخطاء"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__message_partner_ids
+msgid "Partners"
+msgstr "الشركاء"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__create_uid
+msgid "Created By"
+msgstr "أنشئ بواسطة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__create_date
+msgid "Created On"
+msgstr "تاريخ الإنشاء"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__write_uid
+msgid "Last Updated By"
+msgstr "آخر تحديث بواسطة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet__write_date
+msgid "Last Updated On"
+msgstr "آخر تحديث في"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__display_name
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__display_name
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__display_name
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__id
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__id
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__id
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__create_uid
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__create_uid
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__create_uid
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__create_uid
+msgid "Created By"
+msgstr "أنشئ بواسطة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__create_date
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__create_date
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__create_date
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__create_date
+msgid "Created On"
+msgstr "تاريخ الإنشاء"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__write_uid
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__write_uid
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__write_uid
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__write_uid
+msgid "Last Updated By"
+msgstr "آخر تحديث بواسطة"
+
+#. module: payroll_sheet_engine
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_fingerprint__write_date
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_adjustment__write_date
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_sheet_component__write_date
+#: model:ir.model.fields,field_description:payroll_sheet_engine.field_payroll_excel_type_config__write_date
+msgid "Last Updated On"
+msgstr "آخر تحديث في"

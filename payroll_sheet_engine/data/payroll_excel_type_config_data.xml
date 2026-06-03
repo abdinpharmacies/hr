@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="payroll_excel_type_daily_hours" model="payroll.excel.type.config">
+        <field name="sequence">10</field>
+        <field name="name">Daily Hours</field>
+        <field name="sheet_type">daily_hours</field>
+        <field name="e72_zero" eval="False"/>
+        <field name="g70_daily_allowance" eval="0.0"/>
+    </record>
+    <record id="payroll_excel_type_fixed_att" model="payroll.excel.type.config">
+        <field name="sequence">20</field>
+        <field name="name">Fixed Attendance</field>
+        <field name="sheet_type">fixed_att</field>
+        <field name="e72_zero" eval="False"/>
+        <field name="g70_daily_allowance" eval="0.0"/>
+    </record>
+    <record id="payroll_excel_type_monthly_hours" model="payroll.excel.type.config">
+        <field name="sequence">30</field>
+        <field name="name">Monthly Hours</field>
+        <field name="sheet_type">monthly_hours</field>
+        <field name="e72_zero" eval="False"/>
+        <field name="g70_daily_allowance" eval="0.0"/>
+    </record>
+    <record id="payroll_excel_type_days_att" model="payroll.excel.type.config">
+        <field name="sequence">40</field>
+        <field name="name">Attendance Days</field>
+        <field name="sheet_type">days_att</field>
+        <field name="e72_zero" eval="False"/>
+        <field name="g70_daily_allowance" eval="0.0"/>
+    </record>
+    <record id="payroll_excel_type_fixed_salary" model="payroll.excel.type.config">
+        <field name="sequence">50</field>
+        <field name="name">Fixed Salary</field>
+        <field name="sheet_type">fixed_salary</field>
+        <field name="e72_zero" eval="True"/>
+        <field name="g70_daily_allowance" eval="0.0"/>
+    </record>
+</odoo>

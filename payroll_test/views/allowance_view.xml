@@ -14,7 +14,7 @@
     </record>
 
     <menuitem id="menu_allowance_type"
-              name="أنواع البدلات"
+              name="Allowance Types"
               parent="menu_payroll_config"
               action="action_allowance_type"
               sequence="20"/>

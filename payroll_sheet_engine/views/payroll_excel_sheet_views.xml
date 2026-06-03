@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_payroll_excel_sheet_form" model="ir.ui.view">
+        <field name="name">payroll.excel.sheet.form</field>
+        <field name="model">payroll.excel.sheet</field>
+        <field name="arch" type="xml">
+            <form string="Payroll Sheet">
+                <header>
+                    <button name="action_seed_lines" type="object" string="Seed E/G Lines" class="btn-secondary" invisible="state == 'locked'"/>
+                    <button name="action_confirm" type="object" string="Confirm" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_draft" type="object" string="Set to Draft" invisible="state != 'confirmed'"/>
+                    <button name="action_lock" type="object" string="Lock" invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,locked"/>
+                </header>
+                <sheet>
+                    <div class="o_form_sheet">
+                        <div class="alert alert-warning" role="alert" invisible="state != 'locked'">This sheet is locked for editing.</div>
+                        <group>
+                            <group>
+                                <field name="name" readonly="state == 'locked'"/>
+                                <field name="employee_id" readonly="state == 'locked'"/>
+                                <field name="sheet_type" readonly="state == 'locked'"/>
+                            </group>
+                            <group>
+                                <field name="date_from" readonly="state == 'locked'"/>
+                                <field name="date_to" readonly="state == 'locked'"/>
+                                <field name="fingerprint_overlap_count" readonly="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Excel Mirror Inputs (E2, H2, I53...)">
+                                <group string="Main Inputs">
+                                    <group>
+                                        <field name="e2_basic" readonly="state == 'locked'"/>
+                                        <field name="f2_allowance" readonly="state == 'locked'"/>
+                                        <field name="h2_hours" readonly="state == 'locked'"/>
+                                        <field name="i53_factor" readonly="state == 'locked'"/>
+                                    </group>
+                                    <group>
+                                        <field name="e70" readonly="1"/>
+                                        <field name="e72" readonly="1"/>
+                                        <field name="e74" readonly="1"/>
+                                        <field name="f70" readonly="1"/>
+                                        <field name="g70" readonly="1"/>
+                                        <field name="h70" readonly="1"/>
+                                    </group>
+                                </group>
+                                <group string="Adjustments (A80:A89)">
+                                    <field name="adjustment_line_ids" readonly="state == 'locked'" nolabel="1">
+                                        <list editable="bottom">
+                                            <field name="sequence" widget="handle"/>
+                                            <field name="name"/>
+                                            <field name="amount"/>
+                                        </list>
+                                    </field>
+                                    <field name="adjustment_sum" readonly="1"/>
+                                </group>
+                            </page>
+                            <page string="Earning Items (E44:E68)">
+                                <field name="earning_line_ids" readonly="state == 'locked'">
+                                    <list editable="bottom">
+                                        <field name="excel_row"/>
+                                        <field name="name"/>
+                                        <field name="amount"/>
+                                        <field name="source"/>
+                                        <field name="excel_formula_trace" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Deduction Items (G44:G68)">
+                                <field name="deduction_line_ids" readonly="state == 'locked'">
+                                    <list editable="bottom">
+                                        <field name="excel_row"/>
+                                        <field name="name"/>
+                                        <field name="amount"/>
+                                        <field name="source"/>
+                                        <field name="excel_formula_trace" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Fingerprints (Day / In / Out)">
+                                <p class="text-muted">One record per day; duplicates prevented. Basic validation: check-out before check-in, or missing sign.</p>
+                                <field name="fingerprint_ids" readonly="state == 'locked'">
+                                    <list editable="bottom" decoration-danger="has_issue">
+                                        <field name="day_date"/>
+                                        <field name="check_in"/>
+                                        <field name="check_out"/>
+                                        <field name="has_issue" column_invisible="1"/>
+                                        <field name="issue_detail" readonly="1"/>
+                                        <field name="note"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Notes">
+                                <field name="notes" readonly="state == 'locked'"/>
+                            </page>
+                        </notebook>
+                    </div>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids"/>
+                        <field name="activity_ids"/>
+                        <field name="message_ids"/>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_payroll_excel_sheet_tree" model="ir.ui.view">
+        <field name="name">payroll.excel.sheet.tree</field>
+        <field name="model">payroll.excel.sheet</field>
+        <field name="arch" type="xml">
+            <list string="Payroll Sheets">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="sheet_type"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="h70"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_payroll_excel_sheet" model="ir.actions.act_window">
+        <field name="name">Payroll Sheets</field>
+        <field name="res_model">payroll.excel.sheet</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

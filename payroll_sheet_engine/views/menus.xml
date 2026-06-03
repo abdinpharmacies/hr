@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_payroll_sheet_engine_root" name="Payroll Sheets" parent="payroll_test.menu_daily_hours_root" sequence="45"/>
+    <menuitem id="menu_payroll_excel_sheet" name="Payroll Sheets" parent="menu_payroll_sheet_engine_root" action="action_payroll_excel_sheet" sequence="10"/>
+    <menuitem id="menu_payroll_excel_type_config" name="J70 Type Config" parent="menu_payroll_sheet_engine_root" action="action_payroll_excel_type_config" sequence="20"/>
+</odoo>
