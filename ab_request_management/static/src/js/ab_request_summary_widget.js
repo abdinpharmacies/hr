@@ -11,6 +11,7 @@ const STATE_LABELS = {
     in_progress: _t("In Progress"),
     under_requester_confirmation: _t("Under Requester Confirmation"),
     satisfied: _t("Satisfied"),
+    resolved: _t("Resolved"),
     rejected: _t("Rejected"),
     closed: _t("Closed"),
 };

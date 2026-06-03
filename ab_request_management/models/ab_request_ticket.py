@@ -7,7 +7,7 @@ from odoo.tools.translate import _
 
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
-NON_CLOSABLE_STATES = {"closed", "rejected"}
+NON_CLOSABLE_STATES = {"closed", "rejected", "resolved"}
 REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the Request system."
 REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
@@ -119,6 +119,7 @@ class AbRequest(models.Model):
             ("in_progress", "In Progress"),
             ("under_requester_confirmation", "Under Requester Confirmation"),
             ("satisfied", "Satisfied"),
+            ("resolved", "Resolved"),
             ("rejected", "Rejected"),
             ("closed", "Closed"),
         ],
@@ -154,6 +155,8 @@ class AbRequest(models.Model):
     is_request_admin = fields.Boolean(compute="_compute_access_flags")
     can_assign = fields.Boolean(compute="_compute_access_flags")
     can_work_on_request = fields.Boolean(compute="_compute_access_flags")
+    can_mark_resolved = fields.Boolean(compute="_compute_access_flags")
+    can_confirm_resolution = fields.Boolean(compute="_compute_access_flags")
     can_add_followup = fields.Boolean(compute="_compute_access_flags")
     can_edit_assignment_details = fields.Boolean(compute="_compute_access_flags")
 
@@ -261,6 +264,12 @@ class AbRequest(models.Model):
             record.is_assigned_employee = current_user in record._get_effective_assigned_users()
             record.can_assign = (record.is_department_manager or is_request_admin) and record.state == "scheduled"
             record.can_work_on_request = record.is_department_manager or record.is_assigned_employee or is_request_admin
+            record.can_mark_resolved = record.can_work_on_request and record.state in {
+                "in_progress",
+                "under_requester_confirmation",
+                "satisfied",
+            }
+            record.can_confirm_resolution = record.is_requester and record.state == "resolved"
             record.can_add_followup = record._can_current_user_add_followup()
             record.can_edit_assignment_details = (
                     (record.is_department_manager or is_request_admin) and record.state not in NON_CLOSABLE_STATES
@@ -300,7 +309,7 @@ class AbRequest(models.Model):
 
             is_overdue = bool(
                 record.deadline
-                and record.state not in {"closed", "rejected", "satisfied"}
+                and record.state not in {"closed", "rejected", "satisfied", "resolved"}
                 and record.deadline < now
             )
             record.is_overdue = is_overdue
@@ -686,6 +695,18 @@ class AbRequest(models.Model):
                    }
             record._post_notification(body, record.manager_user_id.partner_id)
 
+    def _notify_resolution_required(self):
+        """Notify the requester that final closure requires their confirmation."""
+        for record in self:
+            if not record.user_id.partner_id:
+                continue
+            body = _(
+                "Request %(request)s has been marked as resolved. Please confirm the resolution to close it."
+            ) % {
+                "request": record.name,
+            }
+            record._post_notification(body, record.user_id.partner_id)
+
     def action_approve(self):
         """Approve a request and move it to scheduled."""
         self._check_department_manager_action()
@@ -749,6 +770,16 @@ class AbRequest(models.Model):
             record._notify_requester_confirmation()
         return True
 
+    def action_mark_resolved(self):
+        """Mark the request as resolved and request creator confirmation."""
+        self._check_request_worker()
+        for record in self:
+            if record.state not in {"in_progress", "under_requester_confirmation", "satisfied"}:
+                raise UserError(_("Only active requests can be marked as resolved."))
+            record.with_context(allow_state_write=True).write({"state": "resolved"})
+            record._notify_resolution_required()
+        return True
+
     def action_request_changes(self):
         """Return the request to in-progress after requester feedback."""
         self.ensure_one()
@@ -765,14 +796,18 @@ class AbRequest(models.Model):
             "context": {"default_request_id": self.id},
         }
 
-    def action_close(self):
-        """Close the request."""
-        self._check_request_worker()
+    def action_confirm_resolution(self):
+        """Close the request after requester confirmation."""
+        self._check_requester()
         for record in self:
-            if record.state not in {"satisfied", "rejected"}:
-                raise UserError(_("Only satisfied or rejected requests can be closed."))
+            if record.state != "resolved":
+                raise UserError(_("Only resolved requests can be closed by requester confirmation."))
             record.with_context(allow_state_write=True).write({"state": "closed"})
         return True
+
+    def action_close(self):
+        """Backward-compatible close action routed through requester confirmation."""
+        return self.action_confirm_resolution()
 
     def action_view_followups(self):
         """Open the request follow-ups."""
