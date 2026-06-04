@@ -1,6 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
     <data>
+
+        <record id="rule_ab_self_inventory_request_batch_requester" model="ir.rule">
+            <field name="name">Self inventory batches: own requester records</field>
+            <field name="model_id" ref="model_ab_self_inventory_request_batch"/>
+            <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
+            <field name="domain_force">[('requester_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_self_inventory_request_batch_manager" model="ir.rule">
+            <field name="name">Self inventory batches: manager all</field>
+            <field name="model_id" ref="model_ab_self_inventory_request_batch"/>
+            <field name="groups" eval="[(4, ref('group_ab_self_inventory_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_self_inventory_request_batch_line_requester" model="ir.rule">
+            <field name="name">Self inventory batch lines: own requester records</field>
+            <field name="model_id" ref="model_ab_self_inventory_request_batch_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
+            <field name="domain_force">[('batch_id.requester_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_self_inventory_request_batch_line_manager" model="ir.rule">
+            <field name="name">Self inventory batch lines: manager all</field>
+            <field name="model_id" ref="model_ab_self_inventory_request_batch_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_self_inventory_manager'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
         <record id="rule_ab_self_inventory_request_requester" model="ir.rule">
             <field name="name">Self inventory requests: own requester records</field>
             <field name="model_id" ref="model_ab_self_inventory_request"/>
