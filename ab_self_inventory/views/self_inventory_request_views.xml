@@ -5,7 +5,7 @@
             <field name="name">ab_self_inventory_request_line_list</field>
             <field name="model">ab_self_inventory_request_line</field>
             <field name="arch" type="xml">
-                <list editable="bottom" delete="0" decoration-muted="matched_by == 'none'">
+                <list editable="bottom" delete="0">
                     <field name="selected"/>
                     <field name="product_id" readonly="1"/>
                     <field name="product_code" optional="show"/>
@@ -68,7 +68,7 @@
                                     <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
                                     <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" confirm="Delete all unselected fetched products?"/>
                                 </group>
-                                <field name="line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_line_list'}" readonly="state != 'draft'"/>
+                                <field name="line_ids" domain="[('matched_by', '!=', 'none')]" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_line_list'}" readonly="state != 'draft'"/>
                             </page>
                         </notebook>
                     </sheet>

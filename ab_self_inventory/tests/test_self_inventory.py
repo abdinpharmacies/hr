@@ -23,8 +23,10 @@ class TestSelfInventory(TransactionCase):
             ],
         })
 
+        branch_seed = (self.env['ab_store'].sudo().search([], order='id desc', limit=1).id or 0) + 1000000
+        self.governorate_text = 'GovFilter%s' % branch_seed
         self.branch = self.env['ab_store'].sudo().create({
-            'name': 'Test Branch',
+            'name': '%s فرع Test Branch' % self.governorate_text,
             'code': 'SITB',
             'store_type': 'branch',
             'eplus_serial': 9001,
@@ -34,6 +36,18 @@ class TestSelfInventory(TransactionCase):
             'code': 'SOIB',
             'store_type': 'branch',
             'eplus_serial': 9002,
+        })
+        self.same_governorate_branch = self.env['ab_store'].sudo().create({
+            'name': '%s فرع Same Governorate Test Branch' % self.governorate_text,
+            'code': 'SGIB',
+            'store_type': 'branch',
+            'eplus_serial': 9003,
+        })
+        self.same_governorate_non_branch_name = self.env['ab_store'].sudo().create({
+            'name': '%s Warehouse Name Without Arabic Branch Word' % self.governorate_text,
+            'code': 'SGNB',
+            'store_type': 'branch',
+            'eplus_serial': 9004,
         })
         self.env.cr.execute(
             "SELECT setval(pg_get_serial_sequence(%s, %s), COALESCE(MAX(id), 0) + 1, false) FROM ab_hr_department",
@@ -50,18 +64,19 @@ class TestSelfInventory(TransactionCase):
             'user_id': self.requester.id,
         })
 
+        product_seed = (self.env['ab_product'].sudo().search([], order='id desc', limit=1).id or 0) + 1000000
         card = self.env['ab_product_card'].sudo().create({'name': 'Self Inventory Product Card'})
         self.product = self.env['ab_product'].sudo().create({
             'product_card_id': card.id,
-            'code': 'SIP001',
-            'eplus_serial': 7001,
+            'code': 'SIP%s' % product_seed,
+            'eplus_serial': product_seed,
             'default_cost': 3.0,
         })
         second_card = self.env['ab_product_card'].sudo().create({'name': 'Second Self Inventory Product Card'})
         self.second_product = self.env['ab_product'].sudo().create({
             'product_card_id': second_card.id,
-            'code': 'SIP002',
-            'eplus_serial': 7002,
+            'code': 'SIP%s' % (product_seed + 1),
+            'eplus_serial': product_seed + 1,
             'default_cost': 4.0,
         })
 
@@ -277,3 +292,285 @@ class TestSelfInventory(TransactionCase):
         with patch.object(type(request), '_fetch_branch_stock_rows', return_value=[]):
             with self.assertRaises(ValidationError):
                 request.action_fetch_branch_stock()
+
+    def test_fetch_branch_stock_does_not_preselect_products(self):
+        request = self.env['ab_self_inventory_request'].with_user(self.requester).create({
+            'branch_id': self.branch.id,
+        })
+        with patch.object(type(request), '_fetch_branch_stock_rows', return_value=[{
+            'itm_id': self.product.eplus_serial,
+            'itm_code': self.product.code,
+            'system_qty': 12.0,
+            'extra_data': {},
+        }]):
+            request.action_fetch_branch_stock()
+
+        self.assertEqual(len(request.line_ids), 1)
+        self.assertFalse(request.line_ids.selected)
+        self.assertEqual(request.selected_line_count, 0)
+
+    def test_batch_fetches_grouped_branch_lines(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id, self.other_branch.id])],
+            'note': 'Count both branches.',
+        })
+
+        def fake_fetch(rec, branch):
+            if branch == self.branch:
+                return [{
+                    'itm_id': self.product.eplus_serial,
+                    'itm_code': self.product.code,
+                    'system_qty': 12.0,
+                    'extra_data': {},
+                }]
+            return [{
+                'itm_id': self.second_product.eplus_serial,
+                'itm_code': self.second_product.code,
+                'system_qty': 7.0,
+                'extra_data': {},
+            }]
+
+        with patch.object(type(batch), '_fetch_branch_stock_rows', fake_fetch):
+            batch.action_fetch_branch_stocks()
+
+        self.assertEqual(len(batch.line_ids), 2)
+        self.assertEqual(set(batch.line_ids.mapped('branch_id').ids), {self.branch.id, self.other_branch.id})
+        self.assertEqual(batch.selected_line_count, 0)
+        self.assertFalse(any(batch.line_ids.mapped('selected')))
+        self.assertEqual(
+            batch.line_ids.filtered(lambda line: line.branch_id == self.branch).system_qty,
+            12.0,
+        )
+        self.assertEqual(
+            batch.line_ids.filtered(lambda line: line.branch_id == self.other_branch).system_qty,
+            7.0,
+        )
+
+    def test_batch_adds_all_branches_matching_governorate_name(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_governorate_name': self.governorate_text,
+            'branch_ids': [(6, 0, [self.other_branch.id])],
+        })
+
+        self.assertEqual(batch.governorate_branch_count, 2)
+        action = batch.action_add_governorate_branches()
+
+        self.assertIn(self.branch, batch.branch_ids)
+        self.assertIn(self.same_governorate_branch, batch.branch_ids)
+        self.assertIn(self.other_branch, batch.branch_ids)
+        self.assertNotIn(self.same_governorate_non_branch_name, batch.branch_ids)
+        self.assertEqual(action['params']['next']['tag'], 'reload')
+
+    def test_submitted_batch_cannot_add_governorate_branches(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_governorate_name': self.governorate_text,
+            'branch_ids': [(6, 0, [self.branch.id])],
+            'state': 'submitted',
+        })
+
+        with self.assertRaises(ValidationError):
+            batch.action_add_governorate_branches()
+
+    def test_batch_bulk_select_and_delete_lines(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id, self.other_branch.id])],
+            'line_ids': [
+                (0, 0, {
+                    'branch_id': self.branch.id,
+                    'selected': False,
+                    'product_id': self.product.id,
+                    'eplus_item_id': self.product.eplus_serial,
+                    'eplus_item_code': self.product.code,
+                    'system_qty': 12.0,
+                    'matched_by': 'eplus_serial',
+                }),
+                (0, 0, {
+                    'branch_id': self.other_branch.id,
+                    'selected': True,
+                    'product_id': self.second_product.id,
+                    'eplus_item_id': self.second_product.eplus_serial,
+                    'eplus_item_code': self.second_product.code,
+                    'system_qty': 7.0,
+                    'matched_by': 'eplus_serial',
+                }),
+            ],
+        })
+
+        batch.action_select_all_lines()
+        self.assertEqual(batch.selected_line_count, 2)
+
+        batch.action_unselect_all_lines()
+        self.assertEqual(batch.selected_line_count, 0)
+
+        batch.line_ids.filtered(lambda line: line.product_id == self.product).selected = True
+        batch.action_delete_unselected_lines()
+        self.assertEqual(batch.line_ids.product_id, self.product)
+
+        batch.action_delete_selected_lines()
+        self.assertFalse(batch.line_ids)
+
+    def test_batch_line_list_bulk_buttons_use_context_batch(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id])],
+            'line_ids': [(0, 0, {
+                'branch_id': self.branch.id,
+                'selected': False,
+                'product_id': self.product.id,
+                'eplus_item_id': self.product.eplus_serial,
+                'eplus_item_code': self.product.code,
+                'system_qty': 12.0,
+                'matched_by': 'eplus_serial',
+            })],
+        })
+
+        action = self.env['ab_self_inventory_request_batch_line'].with_user(self.requester).with_context(
+            default_batch_id=batch.id
+        ).action_select_all_lines()
+
+        self.assertTrue(batch.line_ids.selected)
+        self.assertEqual(action['tag'], 'reload')
+
+    def test_batch_line_list_bulk_buttons_require_batch_context(self):
+        with self.assertRaises(ValidationError):
+            self.env['ab_self_inventory_request_batch_line'].with_user(self.requester).action_select_all_lines()
+
+    def test_batch_submit_creates_one_request_and_process_per_branch(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id, self.other_branch.id])],
+            'note': 'Count both branches.',
+            'line_ids': [
+                (0, 0, {
+                    'branch_id': self.branch.id,
+                    'selected': True,
+                    'product_id': self.product.id,
+                    'eplus_item_id': self.product.eplus_serial,
+                    'eplus_item_code': self.product.code,
+                    'system_qty': 12.0,
+                    'matched_by': 'eplus_serial',
+                    'note': 'Branch one item.',
+                }),
+                (0, 0, {
+                    'branch_id': self.other_branch.id,
+                    'selected': True,
+                    'product_id': self.second_product.id,
+                    'eplus_item_id': self.second_product.eplus_serial,
+                    'eplus_item_code': self.second_product.code,
+                    'system_qty': 7.0,
+                    'matched_by': 'eplus_serial',
+                    'note': 'Branch two item.',
+                }),
+            ],
+        })
+
+        batch.action_submit_batch()
+
+        self.assertEqual(batch.state, 'submitted')
+        self.assertEqual(batch.request_count, 2)
+        self.assertEqual(batch.process_count, 2)
+        self.assertEqual(set(batch.request_ids.mapped('branch_id').ids), {self.branch.id, self.other_branch.id})
+        for request in batch.request_ids:
+            self.assertEqual(request.state, 'submitted')
+            self.assertEqual(request.batch_id, batch)
+            self.assertEqual(request.note, 'Count both branches.')
+            self.assertTrue(request.process_id)
+            self.assertEqual(request.process_id.branch_id, request.branch_id)
+            self.assertEqual(request.process_id.line_ids.system_qty, request.line_ids.system_qty)
+        self.assertTrue(all(line.request_id for line in batch.line_ids))
+
+    def test_batch_add_product_codes_to_selected_branches(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id, self.other_branch.id])],
+            'product_codes_text': '%s, %s' % (self.product.code, self.second_product.code),
+        })
+
+        def fake_fetch(rec, branch):
+            if branch == self.branch:
+                return [{
+                    'itm_id': self.product.eplus_serial,
+                    'itm_code': self.product.code,
+                    'system_qty': 12.0,
+                    'extra_data': {},
+                }]
+            return [
+                {
+                    'itm_id': self.product.eplus_serial,
+                    'itm_code': self.product.code,
+                    'system_qty': 5.0,
+                    'extra_data': {},
+                },
+                {
+                    'itm_id': self.second_product.eplus_serial,
+                    'itm_code': self.second_product.code,
+                    'system_qty': 7.0,
+                    'extra_data': {},
+                },
+            ]
+
+        with patch.object(type(batch), '_fetch_branch_stock_rows', fake_fetch):
+            batch.action_add_product_codes()
+
+        self.assertEqual(len(batch.line_ids), 3)
+        self.assertEqual(batch.selected_line_count, 0)
+        self.assertEqual(batch.line_count, 3)
+        self.assertFalse(any(batch.line_ids.mapped('selected')))
+        self.assertTrue(batch.last_code_import_message)
+        self.assertEqual(
+            batch.line_ids.filtered(lambda line: line.branch_id == self.branch).product_id,
+            self.product,
+        )
+        other_branch_lines = batch.line_ids.filtered(lambda line: line.branch_id == self.other_branch)
+        self.assertEqual(set(other_branch_lines.mapped('product_id').ids), {self.product.id, self.second_product.id})
+
+    def test_batch_add_product_codes_does_not_duplicate_existing_lines(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id])],
+            'product_codes_text': self.product.code,
+            'line_ids': [(0, 0, {
+                'branch_id': self.branch.id,
+                'selected': True,
+                'product_id': self.product.id,
+                'eplus_item_id': self.product.eplus_serial,
+                'eplus_item_code': self.product.code,
+                'system_qty': 12.0,
+                'matched_by': 'eplus_serial',
+            })],
+        })
+
+        with patch.object(type(batch), '_fetch_branch_stock_rows', return_value=[{
+            'itm_id': self.product.eplus_serial,
+            'itm_code': self.product.code,
+            'system_qty': 12.0,
+            'extra_data': {},
+        }]):
+            with self.assertRaises(ValidationError):
+                batch.action_add_product_codes()
+
+        self.assertEqual(len(batch.line_ids), 1)
+
+    def test_batch_lines_action_hides_not_matched_lines(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id])],
+            'line_ids': [
+                (0, 0, {
+                    'branch_id': self.branch.id,
+                    'selected': True,
+                    'product_id': self.product.id,
+                    'eplus_item_id': self.product.eplus_serial,
+                    'eplus_item_code': self.product.code,
+                    'system_qty': 12.0,
+                    'matched_by': 'eplus_serial',
+                }),
+                (0, 0, {
+                    'branch_id': self.branch.id,
+                    'selected': False,
+                    'eplus_item_id': 999999,
+                    'eplus_item_code': 'UNMATCHED999999',
+                    'system_qty': 4.0,
+                    'matched_by': 'none',
+                }),
+            ],
+        })
+
+        self.assertEqual(len(batch.line_ids), 2)
+        self.assertEqual(batch.line_count, 1)
+        self.assertIn(('matched_by', '!=', 'none'), batch.action_open_lines()['domain'])

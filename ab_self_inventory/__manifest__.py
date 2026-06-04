@@ -12,6 +12,7 @@
         'security/ir.model.access.csv',
         'views/menus.xml',
         'views/self_inventory_request_views.xml',
+        'views/self_inventory_request_batch_views.xml',
         'views/self_inventory_process_views.xml',
         'wizard/self_inventory_import_wizard_views.xml',
         'reports/self_inventory_reports.xml',
