@@ -211,6 +211,43 @@ class TestAbRequestManagement(TransactionCase):
         request.with_user(self.requester_user).action_confirm_resolution()
         self.assertEqual(request.state, "closed")
 
+    def test_cron_auto_closes_resolved_complaints_after_30_days(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        cron_now = request.create_date + timedelta(days=31)
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True) as message_post:
+            with patch("odoo.fields.Datetime.now", return_value=cron_now):
+                self.env["ab_request"]._cron_auto_close_resolved_complaints()
+
+        self.assertEqual(request.state, "closed")
+        self.assertIn("automatically closed", message_post.call_args.kwargs["body"])
+
+    def test_cron_keeps_recent_resolved_complaints_open(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        with patch("odoo.fields.Datetime.now", return_value=request.create_date + timedelta(days=29)):
+            self.env["ab_request"]._cron_auto_close_resolved_complaints()
+
+        self.assertEqual(request.state, "resolved")
+
     def test_resolved_notification_targets_requester(self):
         request = self._create_request()
         with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True) as message_post:
