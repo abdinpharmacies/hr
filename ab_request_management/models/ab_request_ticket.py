@@ -10,15 +10,12 @@ from odoo.tools.translate import _
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected", "resolved"}
-<<<<<<< Updated upstream
 AUTO_CLOSE_DAYS = 30
 AUTO_CLOSE_REASON = (
     "Complaint was automatically closed because the requester did not confirm closure "
     "within 30 days from the complaint creation date."
 )
-=======
 HR_RESOLUTION_GROUP = "ab_hr.group_ab_hr_personnel_spec"
->>>>>>> Stashed changes
 REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the Request system."
 REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
