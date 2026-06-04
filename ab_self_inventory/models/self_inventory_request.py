@@ -312,8 +312,17 @@ class SelfInventoryRequestBatch(models.Model):
         string='Branches',
         domain="[('store_type', '=', 'branch')]",
     )
+    branch_filter_mode = fields.Selection(
+        selection=[
+            ('branch_name', 'Branch Names'),
+            ('governorate_name', 'Governorate Name'),
+        ],
+        default='governorate_name',
+        required=True,
+        string='Branch Filter',
+    )
     branch_governorate_name = fields.Char(string='Governorate Name Filter')
-    governorate_branch_count = fields.Integer(compute='_compute_governorate_branch_count')
+    governorate_branch_count = fields.Integer(string='Matching Branches', compute='_compute_governorate_branch_count')
     deadline = fields.Datetime()
     note = fields.Text()
     state = fields.Selection(
@@ -354,14 +363,17 @@ class SelfInventoryRequestBatch(models.Model):
         for rec in self:
             rec.line_count = len(rec.line_ids.filtered(lambda line: line.matched_by != 'none'))
 
-    @api.depends('branch_governorate_name')
+    @api.depends('branch_filter_mode', 'branch_ids', 'branch_governorate_name')
     def _compute_governorate_branch_count(self):
         Store = self.env['ab_store'].sudo()
         for rec in self:
-            if not (rec.branch_governorate_name or '').strip():
+            if rec.branch_filter_mode == 'branch_name':
+                rec.governorate_branch_count = len(rec.branch_ids)
+                continue
+            if not rec._get_active_branch_filter_text():
                 rec.governorate_branch_count = 0
                 continue
-            rec.governorate_branch_count = Store.search_count(rec._get_governorate_branch_domain())
+            rec.governorate_branch_count = Store.search_count(rec._get_branch_selection_domain())
 
     @api.depends('request_ids')
     def _compute_request_count(self):
@@ -381,6 +393,7 @@ class SelfInventoryRequestBatch(models.Model):
     def write(self, vals):
         protected_fields = {
             'branch_ids',
+            'branch_filter_mode',
             'branch_governorate_name',
             'deadline',
             'note',
@@ -409,68 +422,70 @@ class SelfInventoryRequestBatch(models.Model):
         return True
 
     def action_add_product_codes(self):
-        for rec in self:
-            rec._check_can_fetch_stock()
-            rec._check_can_update_lines()
-            requested_codes = rec._parse_product_codes()
-            if not requested_codes:
-                raise ValidationError(_("Enter at least one product code."))
+        self.ensure_one()
+        self._check_can_fetch_stock()
+        self._check_can_update_lines()
+        requested_codes = self._parse_product_codes()
+        if not requested_codes:
+            raise ValidationError(_("Enter at least one product code."))
 
-            existing_keys = {
-                (line.branch_id.id, (line.eplus_item_code or '').strip().upper())
-                for line in rec.line_ids
-                if line.eplus_item_code
-            }
-            requested_code_set = set(requested_codes)
-            line_commands = []
-            found_by_branch = {}
-            missing_by_branch = {}
-            for branch in rec.branch_ids:
-                rows = rec._fetch_branch_stock_rows(branch)
-                rows_by_code = {
-                    row['itm_code'].strip().upper(): row
-                    for row in rows
-                    if row.get('itm_code')
-                }
-                found_codes = requested_code_set.intersection(rows_by_code)
-                missing_codes = requested_code_set - found_codes
-                found_by_branch[branch.display_name] = sorted(found_codes)
-                missing_by_branch[branch.display_name] = sorted(missing_codes)
-
-                rows_to_add = [
-                    rows_by_code[code]
-                    for code in requested_codes
-                    if code in rows_by_code and (branch.id, code) not in existing_keys
-                ]
-                line_commands.extend(rec._prepare_batch_line_commands(branch, rows_to_add, selected=False))
-                existing_keys.update((branch.id, code) for code in found_codes)
-
-            if not line_commands:
-                raise ValidationError(_("No new matching branch stock rows were found for the entered product codes."))
-
-            rec.write({
-                'line_ids': line_commands,
-                'last_code_import_message': rec._format_code_import_message(found_by_branch, missing_by_branch),
-            })
-        return {
-            'type': 'ir.actions.client',
-            'tag': 'display_notification',
-            'params': {
-                'title': _('Product Codes Added'),
-                'message': _('Matching product codes were added to the selected branch groups.'),
-                'type': 'success',
-                'sticky': False,
-            },
+        existing_keys = {
+            (line.branch_id.id, (line.eplus_item_code or '').strip().upper())
+            for line in self.line_ids
+            if line.eplus_item_code
         }
+        requested_code_set = set(requested_codes)
+        line_commands = []
+        found_by_branch = {}
+        missing_by_branch = {}
+        added_by_branch = {}
+        for branch in self.branch_ids:
+            rows = self._fetch_branch_stock_rows(branch)
+            rows_by_code = {
+                row['itm_code'].strip().upper(): row
+                for row in rows
+                if row.get('itm_code')
+            }
+            found_codes = requested_code_set.intersection(rows_by_code)
+            missing_codes = requested_code_set - found_codes
+            rows_to_add = [
+                rows_by_code[code]
+                for code in requested_codes
+                if code in rows_by_code and (branch.id, code) not in existing_keys
+            ]
+            added_codes = {
+                row['itm_code'].strip().upper()
+                for row in rows_to_add
+                if row.get('itm_code')
+            }
+            found_by_branch[branch.display_name] = sorted(found_codes)
+            missing_by_branch[branch.display_name] = sorted(missing_codes)
+            added_by_branch[branch.display_name] = sorted(added_codes)
+            line_commands.extend(self._prepare_batch_line_commands(branch, rows_to_add, selected=True))
+            existing_keys.update((branch.id, code) for code in found_codes)
+
+        if not line_commands:
+            raise ValidationError(self._format_no_code_lines_error(found_by_branch, missing_by_branch))
+
+        self.write({
+            'line_ids': line_commands,
+            'last_code_import_message': False,
+        })
+        return self._open_code_import_result_wizard(added_by_branch, missing_by_branch)
 
     def action_add_governorate_branches(self):
         for rec in self:
             rec._check_can_update_branches()
-            if not (rec.branch_governorate_name or '').strip():
-                raise ValidationError(_("Enter a governorate name before adding branches."))
-            branches = self.env['ab_store'].sudo().search(rec._get_governorate_branch_domain(), order='name, code, id')
+            if rec.branch_filter_mode == 'branch_name':
+                if not rec.branch_ids:
+                    raise ValidationError(_("Select at least one branch before adding branches."))
+                continue
+            filter_text = rec._get_active_branch_filter_text()
+            if not filter_text:
+                raise ValidationError(rec._get_branch_filter_required_message())
+            branches = self.env['ab_store'].sudo().search(rec._get_branch_selection_domain(), order='name, code, id')
             if not branches:
-                raise ValidationError(_("No branch stores were found with this governorate text and فرع in their name."))
+                raise ValidationError(rec._get_no_matching_branches_message())
             rec.write({'branch_ids': [(4, branch.id) for branch in branches]})
         return {
             'type': 'ir.actions.client',
@@ -484,6 +499,9 @@ class SelfInventoryRequestBatch(models.Model):
             },
         }
 
+    def action_add_matching_branches(self):
+        return self.action_add_governorate_branches()
+
     def action_submit_batch(self):
         Request = self.env['ab_self_inventory_request']
         for rec in self:
@@ -492,8 +510,11 @@ class SelfInventoryRequestBatch(models.Model):
             selected_lines = rec.line_ids.filtered(lambda line: line.selected and line.product_id)
             if not selected_lines:
                 raise ValidationError(_("Select at least one matched product before submitting."))
+            selected_branches = selected_lines.mapped('branch_id')
+            if len(selected_branches) == 1:
+                raise ValidationError(_("Use the Requests view for a single branch self inventory request."))
 
-            for branch in selected_lines.mapped('branch_id'):
+            for branch in selected_branches:
                 branch_lines = selected_lines.filtered(lambda line: line.branch_id == branch)
                 request = Request.create({
                     'batch_id': rec.id,
@@ -618,12 +639,39 @@ class SelfInventoryRequestBatch(models.Model):
             raise ValidationError(_("Only draft batches can update branches."))
 
     def _get_governorate_branch_domain(self):
+        return self._get_branch_selection_domain()
+
+    def _get_branch_selection_domain(self):
         self.ensure_one()
+        if self.branch_filter_mode == 'branch_name':
+            return [
+                ('store_type', '=', 'branch'),
+                ('id', 'in', self.branch_ids.ids),
+            ]
+        filter_text = self._get_active_branch_filter_text()
         return [
             ('store_type', '=', 'branch'),
-            ('name', 'ilike', (self.branch_governorate_name or '').strip()),
+            ('name', 'ilike', filter_text),
             ('name', 'ilike', 'فرع'),
         ]
+
+    def _get_active_branch_filter_text(self):
+        self.ensure_one()
+        if self.branch_filter_mode == 'branch_name':
+            return ', '.join(self.branch_ids.mapped('display_name'))
+        return (self.branch_governorate_name or '').strip()
+
+    def _get_branch_filter_required_message(self):
+        self.ensure_one()
+        if self.branch_filter_mode == 'branch_name':
+            return _("Select at least one branch before adding branches.")
+        return _("Enter a governorate name before adding branches.")
+
+    def _get_no_matching_branches_message(self):
+        self.ensure_one()
+        if self.branch_filter_mode == 'branch_name':
+            return _("No branch stores were found with this branch name text.")
+        return _("No branch stores were found with this governorate text and فرع in their name.")
 
     def _fetch_branch_stock_rows(self, branch):
         with self.connect_eplus(param_str='?', charset='CP1256') as conn:
@@ -687,6 +735,59 @@ class SelfInventoryRequestBatch(models.Model):
                 lines.append(_("Missing: %s") % ', '.join(missing_codes))
         return '\n'.join(lines)
 
+    @api.model
+    def _format_no_code_lines_error(self, found_by_branch, missing_by_branch):
+        message = _("No new matching branch stock rows were found for the entered product codes.")
+        details = self._format_code_import_message(found_by_branch, missing_by_branch)
+        return "%s\n%s" % (message, details) if details else message
+
+    def _open_code_import_result_wizard(self, added_by_branch, missing_by_branch):
+        self.ensure_one()
+        wizard = self.env['ab_self_inventory_batch_code_result_wizard'].create({
+            'batch_id': self.id,
+            'line_ids': [
+                (0, 0, {
+                    'branch_name': branch_name,
+                    'added_count': len(added_codes),
+                    'missing_count': len(missing_by_branch.get(branch_name) or []),
+                    'missing_codes': ', '.join(missing_by_branch.get(branch_name) or []),
+                })
+                for branch_name, added_codes in sorted(added_by_branch.items())
+            ],
+        })
+        return {
+            'name': _('Product Code Results'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ab_self_inventory_batch_code_result_wizard',
+            'view_mode': 'form',
+            'res_id': wizard.id,
+            'target': 'new',
+        }
+
+
+class SelfInventoryBatchCodeResultWizard(models.TransientModel):
+    _name = 'ab_self_inventory_batch_code_result_wizard'
+    _description = 'Self Inventory Batch Product Code Results'
+
+    batch_id = fields.Many2one('ab_self_inventory_request_batch', readonly=True)
+    line_ids = fields.One2many(
+        'ab_self_inventory_batch_code_result_line',
+        'wizard_id',
+        string='Results',
+        readonly=True,
+    )
+
+
+class SelfInventoryBatchCodeResultLine(models.TransientModel):
+    _name = 'ab_self_inventory_batch_code_result_line'
+    _description = 'Self Inventory Batch Product Code Result Line'
+
+    wizard_id = fields.Many2one('ab_self_inventory_batch_code_result_wizard', required=True, ondelete='cascade')
+    branch_name = fields.Char(readonly=True)
+    added_count = fields.Integer(readonly=True)
+    missing_count = fields.Integer(readonly=True)
+    missing_codes = fields.Text(readonly=True)
+
 
 class SelfInventoryRequestBatchLine(models.Model):
     _name = 'ab_self_inventory_request_batch_line'
@@ -714,6 +815,36 @@ class SelfInventoryRequestBatchLine(models.Model):
     note = fields.Char()
     request_id = fields.Many2one('ab_self_inventory_request', readonly=True, copy=False)
     extra_data = fields.Json(readonly=True)
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        self._check_duplicate_branch_products(vals_list)
+        return super().create(vals_list)
+
+    @api.model
+    def _check_duplicate_branch_products(self, vals_list):
+        incoming_keys = set()
+        for vals in vals_list:
+            batch_id = vals.get('batch_id')
+            branch_id = vals.get('branch_id')
+            eplus_item_code = (vals.get('eplus_item_code') or '').strip().upper()
+            if not batch_id or not branch_id or not eplus_item_code:
+                continue
+            key = (batch_id, branch_id, eplus_item_code)
+            if key in incoming_keys:
+                raise ValidationError(_("Product code already exists for this branch in the batch."))
+            incoming_keys.add(key)
+        if not incoming_keys:
+            return
+        domain = [
+            ('batch_id', 'in', list({key[0] for key in incoming_keys})),
+            ('branch_id', 'in', list({key[1] for key in incoming_keys})),
+            ('eplus_item_code', 'in', list({key[2] for key in incoming_keys})),
+        ]
+        for line in self.search(domain):
+            key = (line.batch_id.id, line.branch_id.id, (line.eplus_item_code or '').strip().upper())
+            if key in incoming_keys:
+                raise ValidationError(_("Product code already exists for this branch in the batch."))
 
     def action_select_all_lines(self):
         self._get_context_batch().action_select_all_lines()

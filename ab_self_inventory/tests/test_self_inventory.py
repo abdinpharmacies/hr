@@ -348,6 +348,7 @@ class TestSelfInventory(TransactionCase):
 
     def test_batch_adds_all_branches_matching_governorate_name(self):
         batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_filter_mode': 'governorate_name',
             'branch_governorate_name': self.governorate_text,
             'branch_ids': [(6, 0, [self.other_branch.id])],
         })
@@ -360,6 +361,23 @@ class TestSelfInventory(TransactionCase):
         self.assertIn(self.other_branch, batch.branch_ids)
         self.assertNotIn(self.same_governorate_non_branch_name, batch.branch_ids)
         self.assertEqual(action['params']['next']['tag'], 'reload')
+
+    def test_batch_adds_branches_matching_branch_name(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_filter_mode': 'branch_name',
+            'branch_ids': [(6, 0, [self.branch.id, self.same_governorate_non_branch_name.id])],
+        })
+
+        self.assertEqual(batch.governorate_branch_count, 2)
+        self.assertEqual(set(batch.branch_ids.ids), {self.branch.id, self.same_governorate_non_branch_name.id})
+
+    def test_batch_branch_name_mode_requires_selected_branches(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_filter_mode': 'branch_name',
+        })
+
+        with self.assertRaisesRegex(ValidationError, "Select at least one branch"):
+            batch.action_add_matching_branches()
 
     def test_submitted_batch_cannot_add_governorate_branches(self):
         batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
@@ -507,13 +525,16 @@ class TestSelfInventory(TransactionCase):
             ]
 
         with patch.object(type(batch), '_fetch_branch_stock_rows', fake_fetch):
-            batch.action_add_product_codes()
+            action = batch.action_add_product_codes()
 
         self.assertEqual(len(batch.line_ids), 3)
-        self.assertEqual(batch.selected_line_count, 0)
+        self.assertEqual(batch.selected_line_count, 3)
         self.assertEqual(batch.line_count, 3)
-        self.assertFalse(any(batch.line_ids.mapped('selected')))
-        self.assertTrue(batch.last_code_import_message)
+        self.assertTrue(all(batch.line_ids.mapped('selected')))
+        self.assertFalse(batch.last_code_import_message)
+        self.assertEqual(action['res_model'], 'ab_self_inventory_batch_code_result_wizard')
+        result_wizard = self.env['ab_self_inventory_batch_code_result_wizard'].browse(action['res_id'])
+        self.assertEqual(len(result_wizard.line_ids), 2)
         self.assertEqual(
             batch.line_ids.filtered(lambda line: line.branch_id == self.branch).product_id,
             self.product,
@@ -546,6 +567,23 @@ class TestSelfInventory(TransactionCase):
                 batch.action_add_product_codes()
 
         self.assertEqual(len(batch.line_ids), 1)
+
+    def test_batch_submit_requires_multiple_branches(self):
+        batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
+            'branch_ids': [(6, 0, [self.branch.id])],
+            'line_ids': [(0, 0, {
+                'branch_id': self.branch.id,
+                'selected': True,
+                'product_id': self.product.id,
+                'eplus_item_id': self.product.eplus_serial,
+                'eplus_item_code': self.product.code,
+                'system_qty': 12.0,
+                'matched_by': 'eplus_serial',
+            })],
+        })
+
+        with self.assertRaisesRegex(ValidationError, "Requests view"):
+            batch.action_submit_batch()
 
     def test_batch_lines_action_hides_not_matched_lines(self):
         batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
