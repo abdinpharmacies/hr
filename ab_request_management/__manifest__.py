@@ -10,6 +10,7 @@
         'security/record_rules.xml',
         'security/ir.model.access.csv',
         'data/ab_request_sequence.xml',
+        'data/ab_request_cron.xml',
         'views/ab_request_dashboard_views.xml',
         'views/ab_request_type_views.xml',
         'views/ab_request_ticket_views.xml',

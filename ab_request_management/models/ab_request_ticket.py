@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from lxml import etree
 
 from odoo import api, fields, models
@@ -8,6 +10,11 @@ from odoo.tools.translate import _
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected", "resolved"}
+AUTO_CLOSE_DAYS = 30
+AUTO_CLOSE_REASON = (
+    "Complaint was automatically closed because the requester did not confirm closure "
+    "within 30 days from the complaint creation date."
+)
 REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the Request system."
 REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
@@ -808,6 +815,22 @@ class AbRequest(models.Model):
     def action_close(self):
         """Backward-compatible close action routed through requester confirmation."""
         return self.action_confirm_resolution()
+
+    @api.model
+    def _cron_auto_close_resolved_complaints(self):
+        """Close resolved complaints that exceeded the requester confirmation window."""
+        cutoff_date = fields.Datetime.now() - timedelta(days=AUTO_CLOSE_DAYS)
+        complaints = self.sudo().search(
+            [
+                ("state", "=", "resolved"),
+                ("create_date", "<=", cutoff_date),
+            ]
+        )
+        reason = _(AUTO_CLOSE_REASON)
+        for complaint in complaints:
+            complaint.with_context(allow_state_write=True).write({"state": "closed"})
+            complaint._post_notification(reason)
+        return True
 
     def action_view_followups(self):
         """Open the request follow-ups."""
