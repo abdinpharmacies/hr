@@ -17,10 +17,13 @@ class TestAbRequestManagement(TransactionCase):
         self.request_user_group = self.env.ref("ab_request_management.group_ab_request_management_user")
         self.request_manager_group = self.env.ref("ab_request_management.group_ab_request_management_manager")
         self.request_admin_group = self.env.ref("ab_request_management.group_ab_request_management_admin")
+        self.hr_personnel_group = self.env.ref("ab_hr.group_ab_hr_personnel_spec")
 
         self.requester_user = self._create_user("Requester User", "requester_user_test", [self.request_user_group.id])
         self.manager_user = self._create_user("Manager User", "manager_user_test", [self.request_manager_group.id])
-        self.assignee_user = self._create_user("Assignee User", "assignee_user_test", [self.request_user_group.id])
+        self.assignee_user = self._create_user(
+            "Assignee User", "assignee_user_test", [self.request_user_group.id, self.hr_personnel_group.id]
+        )
         self.second_assignee_user = self._create_user(
             "Second Assignee User", "second_assignee_user_test", [self.request_user_group.id]
         )
@@ -211,7 +214,11 @@ class TestAbRequestManagement(TransactionCase):
         request.with_user(self.requester_user).action_confirm_resolution()
         self.assertEqual(request.state, "closed")
 
+<<<<<<< Updated upstream
     def test_cron_auto_closes_resolved_complaints_after_30_days(self):
+=======
+    def test_mark_resolved_marks_latest_followup_as_official_solution(self):
+>>>>>>> Stashed changes
         request = self._create_request()
         with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
             request.with_user(self.manager_user).action_approve()
@@ -221,6 +228,7 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
             request.with_user(self.manager_user).action_assign()
+<<<<<<< Updated upstream
             request.with_user(self.assignee_user).action_mark_resolved()
 
         cron_now = request.create_date + timedelta(days=31)
@@ -232,6 +240,28 @@ class TestAbRequestManagement(TransactionCase):
         self.assertIn("automatically closed", message_post.call_args.kwargs["body"])
 
     def test_cron_keeps_recent_resolved_complaints_open(self):
+=======
+            first_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "Initial investigation update.",
+                }
+            )
+            latest_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "Final solution applied.",
+                }
+            )
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        self.assertFalse(first_followup.is_resolved_solution)
+        self.assertEqual(first_followup.resolution_label, "Note")
+        self.assertTrue(latest_followup.is_resolved_solution)
+        self.assertEqual(latest_followup.resolution_label, "Official Solution")
+
+    def test_hr_user_can_move_official_solution_marker_between_followups(self):
+>>>>>>> Stashed changes
         request = self._create_request()
         with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
             request.with_user(self.manager_user).action_approve()
@@ -241,12 +271,33 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
             request.with_user(self.manager_user).action_assign()
+<<<<<<< Updated upstream
             request.with_user(self.assignee_user).action_mark_resolved()
 
         with patch("odoo.fields.Datetime.now", return_value=request.create_date + timedelta(days=29)):
             self.env["ab_request"]._cron_auto_close_resolved_complaints()
 
         self.assertEqual(request.state, "resolved")
+=======
+            first_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "First possible solution.",
+                }
+            )
+            second_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "Second possible solution.",
+                }
+            )
+
+            first_followup.with_user(self.assignee_user).action_mark_as_solution()
+            second_followup.with_user(self.assignee_user).action_mark_as_solution()
+
+        self.assertFalse(first_followup.is_resolved_solution)
+        self.assertTrue(second_followup.is_resolved_solution)
+>>>>>>> Stashed changes
 
     def test_resolved_notification_targets_requester(self):
         request = self._create_request()

@@ -10,11 +10,15 @@ from odoo.tools.translate import _
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected", "resolved"}
+<<<<<<< Updated upstream
 AUTO_CLOSE_DAYS = 30
 AUTO_CLOSE_REASON = (
     "Complaint was automatically closed because the requester did not confirm closure "
     "within 30 days from the complaint creation date."
 )
+=======
+HR_RESOLUTION_GROUP = "ab_hr.group_ab_hr_personnel_spec"
+>>>>>>> Stashed changes
 REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the Request system."
 REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
@@ -264,6 +268,7 @@ class AbRequest(models.Model):
     def _compute_access_flags(self):
         current_user = self.env.user
         is_request_admin = current_user.has_group("ab_request_management.group_ab_request_management_admin")
+        is_hr_resolution_user = current_user.has_group(HR_RESOLUTION_GROUP)
         for record in self:
             record.is_request_admin = is_request_admin
             record.is_requester = record.user_id == current_user
@@ -271,7 +276,10 @@ class AbRequest(models.Model):
             record.is_assigned_employee = current_user in record._get_effective_assigned_users()
             record.can_assign = (record.is_department_manager or is_request_admin) and record.state == "scheduled"
             record.can_work_on_request = record.is_department_manager or record.is_assigned_employee or is_request_admin
-            record.can_mark_resolved = record.can_work_on_request and record.state in {
+            record.can_mark_resolved = (
+                is_hr_resolution_user
+                or record.can_work_on_request
+            ) and record.state in {
                 "in_progress",
                 "under_requester_confirmation",
                 "satisfied",
@@ -779,10 +787,18 @@ class AbRequest(models.Model):
 
     def action_mark_resolved(self):
         """Mark the request as resolved and request creator confirmation."""
-        self._check_request_worker()
         for record in self:
+            is_hr_resolution_user = self.env.user.has_group(HR_RESOLUTION_GROUP)
+            if not is_hr_resolution_user and not record.can_work_on_request:
+                raise UserError(_("Only HR users or request workers can mark a request as resolved."))
             if record.state not in {"in_progress", "under_requester_confirmation", "satisfied"}:
                 raise UserError(_("Only active requests can be marked as resolved."))
+            latest_followup = record.followup_ids.sorted(lambda followup: (followup.date, followup.id), reverse=True)[:1]
+            if latest_followup:
+                record.followup_ids.filtered("is_resolved_solution").with_context(
+                    allow_followup_resolution_write=True
+                ).write({"is_resolved_solution": False})
+                latest_followup.with_context(allow_followup_resolution_write=True).write({"is_resolved_solution": True})
             record.with_context(allow_state_write=True).write({"state": "resolved"})
             record._notify_resolution_required()
         return True
