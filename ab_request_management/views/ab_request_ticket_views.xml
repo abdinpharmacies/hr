@@ -629,7 +629,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <chatter/>
+                    <chatter groups="ab_request_management.group_ab_request_management_admin"/>
                 </form>
             </field>
         </record>
