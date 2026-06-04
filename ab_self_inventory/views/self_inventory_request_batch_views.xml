@@ -49,6 +49,7 @@
                 <list decoration-info="state == 'draft'" decoration-success="state == 'submitted'" decoration-muted="state == 'cancelled'">
                     <field name="name"/>
                     <field name="branch_ids" widget="many2many_tags"/>
+                    <field name="branch_filter_mode" optional="hide"/>
                     <field name="deadline" optional="hide"/>
                     <field name="selected_line_count"/>
                     <field name="request_count"/>
@@ -91,10 +92,11 @@
                             <field name="submitted_date"/>
                         </group>
                         <group string="Branch Selection" col="4" invisible="state != 'draft'">
-                            <field name="branch_governorate_name"/>
-                            <field name="governorate_branch_count"/>
-                            <button name="action_add_governorate_branches" type="object" string="Add Matching Branches" class="btn-secondary"/>
-                            <field name="branch_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                            <field name="branch_filter_mode" widget="radio" options="{'horizontal': true}"/>
+                            <field name="branch_governorate_name" invisible="branch_filter_mode != 'governorate_name'"/>
+                            <field name="governorate_branch_count" invisible="branch_filter_mode != 'governorate_name'"/>
+                            <button name="action_add_matching_branches" type="object" string="Add Matching Branches" class="btn-secondary" invisible="branch_filter_mode != 'governorate_name'"/>
+                            <field name="branch_ids" widget="many2many_tags" readonly="state != 'draft' or branch_filter_mode == 'governorate_name'"/>
                         </group>
                         <group string="Branches" invisible="state == 'draft'">
                             <field name="branch_ids" widget="many2many_tags" readonly="1"/>
@@ -105,7 +107,6 @@
                         <group string="Bulk Product Codes" invisible="state != 'draft'">
                             <field name="product_codes_text" nolabel="1" placeholder="Enter product codes separated by new lines, commas, semicolons, or spaces."/>
                             <button name="action_add_product_codes" type="object" string="Add Codes to Selected Branches" class="btn-secondary"/>
-                            <field name="last_code_import_message" nolabel="1" readonly="1" invisible="not last_code_import_message"/>
                         </group>
                         <notebook>
                             <page string="Branch Product Groups">
@@ -119,6 +120,29 @@
                             </page>
                         </notebook>
                     </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_self_inventory_batch_code_result_wizard_form" model="ir.ui.view">
+            <field name="name">ab_self_inventory_batch_code_result_wizard_form</field>
+            <field name="model">ab_self_inventory_batch_code_result_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Product Code Results">
+                    <group>
+                        <field name="batch_id"/>
+                    </group>
+                    <field name="line_ids" nolabel="1">
+                        <list create="0" edit="0" delete="0">
+                            <field name="branch_name"/>
+                            <field name="added_count"/>
+                            <field name="missing_count"/>
+                            <field name="missing_codes"/>
+                        </list>
+                    </field>
+                    <footer>
+                        <button string="Close" special="cancel" class="btn-primary"/>
+                    </footer>
                 </form>
             </field>
         </record>
