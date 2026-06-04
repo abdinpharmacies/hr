@@ -7,6 +7,13 @@
                   groups="group_ab_self_inventory_requester,group_ab_self_inventory_receiver,group_ab_self_inventory_manager"
                   sequence="102"/>
 
+        <record id="seq_ab_self_inventory_request_batch" model="ir.sequence">
+            <field name="name">Self Inventory Request Batch</field>
+            <field name="code">ab_self_inventory_request_batch</field>
+            <field name="prefix">SIB/</field>
+            <field name="padding">5</field>
+        </record>
+
         <record id="seq_ab_self_inventory_request" model="ir.sequence">
             <field name="name">Self Inventory Request</field>
             <field name="code">ab_self_inventory_request</field>
