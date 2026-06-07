@@ -22,15 +22,15 @@
             <field name="name">ab_self_inventory_request_list</field>
             <field name="model">ab_self_inventory_request</field>
             <field name="arch" type="xml">
-                <list decoration-info="state == 'draft'" decoration-success="state == 'submitted'" decoration-muted="state == 'cancelled'">
-                    <field name="name"/>
-                    <field name="branch_id"/>
-                    <field name="requester_id"/>
-                    <field name="deadline" optional="hide"/>
-                    <field name="selected_line_count"/>
-                    <field name="process_id"/>
-                    <field name="state"/>
-                    <field name="submitted_date" optional="hide"/>
+                <list class="ab_self_inventory_list" decoration-muted="state == 'cancelled'">
+                    <field name="name" widget="ab_inventory_row_title" string="Request"/>
+                    <field name="branch_id" string="Branch"/>
+                    <field name="requester_id" string="Requester" optional="show"/>
+                    <field name="deadline" widget="ab_inventory_deadline" string="Deadline" optional="show"/>
+                    <field name="selected_line_count" widget="ab_inventory_kpi" string="Items" options="{'icon': 'items', 'label': 'Items'}" optional="show"/>
+                    <field name="process_id" string="Process" optional="show"/>
+                    <field name="state" widget="ab_inventory_state_badge" string="Status"/>
+                    <field name="submitted_date" string="Submitted" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -81,13 +81,15 @@
             <field name="model">ab_self_inventory_request</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="name"/>
-                    <field name="branch_id"/>
-                    <field name="requester_id"/>
+                    <field name="name" string="Search Requests"/>
+                    <field name="branch_id" string="Branch"/>
+                    <field name="requester_id" string="Requester"/>
+                    <separator/>
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                     <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
-                    <filter name="group_branch" string="Branch" context="{'group_by': 'branch_id'}"/>
+                    <separator/>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_branch" string="Branch" context="{'group_by': 'branch_id'}"/>
                 </search>
             </field>
         </record>
@@ -95,7 +97,7 @@
         <record id="action_ab_self_inventory_request" model="ir.actions.act_window">
             <field name="name">Self Inventory Requests</field>
             <field name="res_model">ab_self_inventory_request</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">list,kanban,form</field>
         </record>
 
         <menuitem id="menu_ab_self_inventory_request"

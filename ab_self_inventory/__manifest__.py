@@ -14,8 +14,15 @@
         'views/self_inventory_request_views.xml',
         'views/self_inventory_request_batch_views.xml',
         'views/self_inventory_process_views.xml',
+        'views/self_inventory_kanban_views.xml',
         'wizard/self_inventory_import_wizard_views.xml',
         'reports/self_inventory_reports.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_self_inventory/static/src/scss/self_inventory.scss',
+            'ab_self_inventory/static/src/js/self_inventory_widgets.js',
+        ],
+    },
     'installable': True,
 }

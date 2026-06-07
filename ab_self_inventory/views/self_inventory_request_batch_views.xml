@@ -46,16 +46,17 @@
             <field name="name">ab_self_inventory_request_batch_list</field>
             <field name="model">ab_self_inventory_request_batch</field>
             <field name="arch" type="xml">
-                <list decoration-info="state == 'draft'" decoration-success="state == 'submitted'" decoration-muted="state == 'cancelled'">
-                    <field name="name"/>
-                    <field name="branch_ids" widget="many2many_tags"/>
+                <list class="ab_self_inventory_list" decoration-muted="state == 'cancelled'">
+                    <field name="name" widget="ab_inventory_row_title" string="Batch"/>
+                    <field name="requester_id" invisible="1"/>
+                    <field name="branch_ids" widget="ab_inventory_branch_pills" string="Branches"/>
                     <field name="branch_filter_mode" optional="hide"/>
-                    <field name="deadline" optional="hide"/>
-                    <field name="selected_line_count"/>
-                    <field name="request_count"/>
-                    <field name="process_count"/>
-                    <field name="state"/>
-                    <field name="submitted_date" optional="hide"/>
+                    <field name="deadline" widget="ab_inventory_deadline" string="Deadline" optional="show"/>
+                    <field name="selected_line_count" widget="ab_inventory_kpi" string="Items" options="{'icon': 'items', 'label': 'Items'}" optional="show"/>
+                    <field name="request_count" widget="ab_inventory_kpi" string="Requests" options="{'icon': 'requests', 'label': 'Requests'}" optional="show"/>
+                    <field name="process_count" widget="ab_inventory_kpi" string="Processed" options="{'icon': 'processes', 'label': 'Processed'}" optional="show"/>
+                    <field name="state" widget="ab_inventory_state_badge" string="Status"/>
+                    <field name="submitted_date" string="Submitted" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -152,12 +153,15 @@
             <field name="model">ab_self_inventory_request_batch</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="name"/>
-                    <field name="branch_ids"/>
-                    <field name="branch_governorate_name"/>
+                    <field name="name" string="Search Batches"/>
+                    <field name="branch_ids" string="Branch"/>
+                    <field name="branch_governorate_name" string="Governorate"/>
+                    <separator/>
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                     <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                    <separator/>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_branch" string="Branch" context="{'group_by': 'branch_ids'}"/>
                 </search>
             </field>
         </record>
@@ -165,7 +169,7 @@
         <record id="action_ab_self_inventory_request_batch" model="ir.actions.act_window">
             <field name="name">Self Inventory Batches</field>
             <field name="res_model">ab_self_inventory_request_batch</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">list,kanban,form</field>
         </record>
 
         <record id="action_ab_self_inventory_request_batch_line" model="ir.actions.act_window">

@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- ============================================================
+             Batch Kanban
+             ============================================================ -->
+        <record id="view_ab_self_inventory_request_batch_kanban" model="ir.ui.view">
+            <field name="name">ab_self_inventory_request_batch_kanban</field>
+            <field name="model">ab_self_inventory_request_batch</field>
+            <field name="arch" type="xml">
+                <kanban class="ab_self_inventory_kanban" default_group_by="state" group_create="0" group_delete="0">
+                    <t t-name="card">
+                        <div class="o_kanban_record_top">
+                            <span class="o_kanban_record_title">
+                                <field name="name"/>
+                            </span>
+                            <field name="state" widget="ab_inventory_state_badge"/>
+                        </div>
+                        <div class="o_kanban_record_body">
+                            <div class="ab_kanban_meta">
+                                <span><field name="requester_id"/></span>
+                                <t t-if="record.submitted_date.raw_value">
+                                    <span>·</span>
+                                    <field name="submitted_date"/>
+                                </t>
+                            </div>
+                            <div class="ab_kanban_kpi_row">
+                                <span class="ab_kanban_kpi_item ab_kanban_kpi_item--items">
+                                    <span class="ab_kanban_kpi_value">
+                                        <field name="selected_line_count"/>
+                                    </span>
+                                    Items
+                                </span>
+                                <span class="ab_kanban_kpi_item ab_kanban_kpi_item--requests">
+                                    <span class="ab_kanban_kpi_value">
+                                        <field name="request_count"/>
+                                    </span>
+                                    Requests
+                                </span>
+                                <span class="ab_kanban_kpi_item ab_kanban_kpi_item--processes">
+                                    <span class="ab_kanban_kpi_value">
+                                        <field name="process_count"/>
+                                    </span>
+                                    Processes
+                                </span>
+                            </div>
+                        </div>
+                        <div class="o_kanban_record_bottom">
+                            <span>
+                                <field name="branch_ids" widget="ab_inventory_branch_pills"/>
+                            </span>
+                            <span>
+                                <field name="deadline" widget="ab_inventory_deadline"/>
+                            </span>
+                        </div>
+                    </t>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ============================================================
+             Request Kanban
+             ============================================================ -->
+        <record id="view_ab_self_inventory_request_kanban" model="ir.ui.view">
+            <field name="name">ab_self_inventory_request_kanban</field>
+            <field name="model">ab_self_inventory_request</field>
+            <field name="arch" type="xml">
+                <kanban class="ab_self_inventory_kanban" default_group_by="state" group_create="0" group_delete="0">
+                    <t t-name="card">
+                        <div class="o_kanban_record_top">
+                            <span class="o_kanban_record_title">
+                                <field name="name"/>
+                            </span>
+                            <field name="state" widget="ab_inventory_state_badge"/>
+                        </div>
+                        <div class="o_kanban_record_body">
+                            <div class="ab_kanban_meta">
+                                <field name="branch_id"/>
+                                <t t-if="record.requester_id.raw_value">
+                                    <span>·</span>
+                                    <field name="requester_id"/>
+                                </t>
+                            </div>
+                            <div class="ab_kanban_kpi_row">
+                                <span class="ab_kanban_kpi_item ab_kanban_kpi_item--items">
+                                    <span class="ab_kanban_kpi_value">
+                                        <field name="selected_line_count"/>
+                                    </span>
+                                    Items
+                                </span>
+                            </div>
+                        </div>
+                        <div class="o_kanban_record_bottom">
+                            <span>
+                                <field name="deadline" widget="ab_inventory_deadline"/>
+                            </span>
+                            <t t-if="record.submitted_date.raw_value">
+                                <span>
+                                    <field name="submitted_date"/>
+                                </span>
+                            </t>
+                        </div>
+                    </t>
+                </kanban>
+            </field>
+        </record>
+
+        <!-- ============================================================
+             Process Kanban
+             ============================================================ -->
+        <record id="view_ab_self_inventory_process_kanban" model="ir.ui.view">
+            <field name="name">ab_self_inventory_process_kanban</field>
+            <field name="model">ab_self_inventory_process</field>
+            <field name="arch" type="xml">
+                <kanban class="ab_self_inventory_kanban" default_group_by="state" group_create="0" group_delete="0">
+                    <t t-name="card">
+                        <div class="o_kanban_record_top">
+                            <span class="o_kanban_record_title">
+                                <field name="name"/>
+                            </span>
+                            <field name="state" widget="ab_inventory_state_badge"/>
+                        </div>
+                        <div class="o_kanban_record_body">
+                            <div class="ab_kanban_meta">
+                                <field name="branch_id"/>
+                                <t t-if="record.requester_id.raw_value">
+                                    <span>·</span>
+                                    <field name="requester_id"/>
+                                </t>
+                            </div>
+                            <div class="ab_kanban_kpi_row">
+                                <t t-if="record.shortage_qty.raw_value">
+                                    <span class="ab_kanban_kpi_item" style="background:#FEE2E2;color:#B91C1C;">
+                                        <span class="ab_kanban_kpi_value">
+                                            <field name="shortage_qty"/>
+                                        </span>
+                                        Shortage
+                                    </span>
+                                </t>
+                                <t t-if="record.extra_qty.raw_value">
+                                    <span class="ab_kanban_kpi_item" style="background:#DCFCE7;color:#15803D;">
+                                        <span class="ab_kanban_kpi_value">
+                                            <field name="extra_qty"/>
+                                        </span>
+                                        Extra
+                                    </span>
+                                </t>
+                            </div>
+                        </div>
+                        <div class="o_kanban_record_bottom">
+                            <span>
+                                <field name="deadline" widget="ab_inventory_deadline"/>
+                            </span>
+                            <t t-if="record.submitted_date.raw_value">
+                                <span>
+                                    <field name="submitted_date"/>
+                                </span>
+                            </t>
+                        </div>
+                    </t>
+                </kanban>
+            </field>
+        </record>
+
+    </data>
+</odoo>
