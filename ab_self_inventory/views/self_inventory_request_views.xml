@@ -39,7 +39,7 @@
             <field name="name">ab_self_inventory_request_form</field>
             <field name="model">ab_self_inventory_request</field>
             <field name="arch" type="xml">
-                <form>
+                <form class="ab_self_inventory_form">
                     <header>
                         <button name="action_fetch_branch_stock" string="Fetch Branch Stock" type="object" class="btn-secondary" invisible="state != 'draft'"/>
                         <button name="action_submit_request" string="Submit Request" type="object" class="btn-primary" invisible="state != 'draft'"/>
@@ -49,28 +49,78 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted"/>
                     </header>
                     <sheet>
-                        <group col="4">
-                            <field name="name"/>
-                            <field name="branch_id" readonly="state != 'draft'"/>
-                            <field name="deadline" readonly="state != 'draft'"/>
-                            <field name="selected_line_count"/>
-                            <field name="process_id"/>
-                            <field name="submitted_date"/>
-                        </group>
-                        <group>
-                            <field name="note" readonly="state != 'draft'"/>
-                        </group>
-                        <notebook>
-                            <page string="Fetched Products">
-                                <group col="4" invisible="state != 'draft'">
-                                    <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary"/>
-                                    <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary"/>
-                                    <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
-                                    <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" confirm="Delete all unselected fetched products?"/>
-                                </group>
-                                <field name="line_ids" domain="[('matched_by', '!=', 'none')]" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_line_list'}" readonly="state != 'draft'"/>
-                            </page>
-                        </notebook>
+                        <div class="ab_form_hero_row">
+                            <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
+                        </div>
+                        <div class="ab_form_kpi_row">
+                            <field name="selected_line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'items', 'icon': 'items', 'label': 'Items'}"/>
+                        </div>
+                        <div class="ab_form_two_column">
+                            <div class="ab_form_main">
+                                <div class="ab_form_section">
+                                    <div class="ab_form_section_title">Details</div>
+                                    <div class="ab_form_section_body">
+                                        <field name="branch_id" readonly="state != 'draft'"/>
+                                        <field name="deadline" readonly="state != 'draft'"/>
+                                        <field name="note" nolabel="1" placeholder="Add a note..." readonly="state != 'draft'"/>
+                                    </div>
+                                </div>
+                                <notebook>
+                                    <page string="Fetched Products">
+                                        <div class="ab_form_row" invisible="state != 'draft'">
+                                            <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary"/>
+                                            <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary"/>
+                                            <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
+                                            <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" confirm="Delete all unselected fetched products?"/>
+                                        </div>
+                                        <field name="line_ids" domain="[('matched_by', '!=', 'none')]" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_line_list'}" readonly="state != 'draft'"/>
+                                    </page>
+                                </notebook>
+                            </div>
+                            <div class="ab_form_sidebar">
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Details</div>
+                                    <div class="ab_form_card_body">
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Status</span>
+                                            <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Branch</span>
+                                            <span class="ab_form_info_value"><field name="branch_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Deadline</span>
+                                            <span class="ab_form_info_value"><field name="deadline" widget="ab_inventory_deadline" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Requester</span>
+                                            <span class="ab_form_info_value"><field name="requester_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Created</span>
+                                            <span class="ab_form_info_value"><field name="create_date" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row" invisible="not submitted_date">
+                                            <span class="ab_form_info_label">Submitted</span>
+                                            <span class="ab_form_info_value"><field name="submitted_date" nolabel="1"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card" invisible="not process_id">
+                                    <div class="ab_form_card_title">Process</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="process_id" nolabel="1"/>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Timeline</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="write_date" widget="ab_inventory_timeline" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </sheet>
                 </form>
             </field>

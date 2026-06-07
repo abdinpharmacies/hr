@@ -1,0 +1,1040 @@
+/* ============================================================
+   ab_self_inventory - Form View SaaS Redesign
+   Design System: #F8FAFC bg, #2563EB primary, 12px radius
+   ============================================================ */
+
+$si-bg: #F8FAFC;
+$si-card: #FFFFFF;
+$si-primary: #2563EB;
+$si-primary-light: #DBEAFE;
+$si-primary-dark: #1D4ED8;
+$si-success: #22C55E;
+$si-success-light: #DCFCE7;
+$si-warning: #F59E0B;
+$si-warning-light: #FEF3C7;
+$si-danger: #EF4444;
+$si-danger-light: #FEE2E2;
+$si-neutral: #64748B;
+$si-neutral-light: #F1F5F9;
+$si-text: #0F172A;
+$si-text-secondary: #64748B;
+$si-border: #E2E8F0;
+$si-radius: 12px;
+$si-radius-lg: 16px;
+$si-shadow: 0 1px 3px rgba(0,0,0,0.08);
+$si-shadow-hover: 0 4px 16px rgba(0,0,0,0.07);
+$si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+
+// ===================================================================
+// 1. FORM CONTAINER OVERRIDES
+// ===================================================================
+.o_form_view.o_form_nosheet {
+    &.ab_dashboard_form,
+    &.ab_self_inventory_form {
+        background: $si-bg;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+}
+
+.o_form_view {
+    &.ab_dashboard_form,
+    &.ab_self_inventory_form {
+        background: $si-bg;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+        // Remove default Odoo form padding/borders
+        .o_form_sheet_bg {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 24px 32px;
+        }
+
+        .o_form_sheet {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+        }
+
+        // Hide default statusbar (we use custom)
+        .o_form_statusbar {
+            display: none;
+        }
+
+        // Hide default button box
+        .oe_button_box {
+            display: none;
+        }
+
+        // Hide default label styles
+        .o_field_label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: $si-text-secondary;
+            margin-bottom: 4px;
+        }
+
+        // Notebook restyling
+        .o_notebook {
+            margin-top: 24px;
+
+            .o_notebook_header {
+                border-bottom: 1.5px solid $si-border;
+                padding: 0;
+                margin-bottom: 0;
+                background: transparent;
+                display: flex;
+                gap: 0;
+
+                .nav-item {
+                    margin: 0;
+
+                    .nav-link {
+                        border: none;
+                        border-bottom: 2px solid transparent;
+                        padding: 12px 20px;
+                        font-size: 13px;
+                        font-weight: 500;
+                        color: $si-text-secondary;
+                        background: transparent;
+                        transition: color $si-transition, border-color $si-transition;
+                        border-radius: 0;
+                        margin: 0;
+
+                        &:hover {
+                            color: $si-text;
+                            background: transparent;
+                        }
+
+                        &.active {
+                            color: $si-primary;
+                            border-bottom-color: $si-primary;
+                            background: transparent;
+                        }
+                    }
+                }
+            }
+
+            .tab-content {
+                padding: 20px 0;
+            }
+        }
+    }
+}
+
+// ===================================================================
+// 2. HEADER / ACTION BAR
+// ===================================================================
+.ab_form_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.ab_form_header_actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+// ===================================================================
+// 3. HERO CARD
+// ===================================================================
+.ab_form_hero {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius-lg;
+    box-shadow: $si-shadow;
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.ab_form_hero_left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ab_form_hero_title {
+    font-size: 22px;
+    font-weight: 700;
+    color: $si-text;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+}
+
+.ab_form_hero_subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    color: $si-text-secondary;
+}
+
+.ab_form_hero_center {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.ab_form_hero_right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+// ===================================================================
+// 4. KPI CARDS ROW
+// ===================================================================
+.ab_form_kpi_row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.ab_kpi_card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 20px;
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    transition: box-shadow $si-transition, transform $si-transition;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: $si-shadow-hover;
+        transform: translateY(-1px);
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+    }
+
+    &--branches::before { background: $si-primary; }
+    &--items::before { background: $si-primary; }
+    &--requests::before { background: $si-warning; }
+    &--processes::before { background: $si-success; }
+    &--shortage::before { background: $si-danger; }
+    &--extra::before { background: $si-success; }
+}
+
+.ab_kpi_card_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 4px;
+
+    &--branches { background: $si-primary-light; color: $si-primary; }
+    &--items { background: $si-primary-light; color: $si-primary; }
+    &--requests { background: $si-warning-light; color: #D97706; }
+    &--processes { background: $si-success-light; color: #16A34A; }
+    &--shortage { background: $si-danger-light; color: $si-danger; }
+    &--extra { background: $si-success-light; color: #16A34A; }
+}
+
+.ab_kpi_card_value {
+    font-size: 28px;
+    font-weight: 800;
+    color: $si-text;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.ab_kpi_card_label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $si-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+// ===================================================================
+// 5. TWO-COLUMN LAYOUT
+// ===================================================================
+.ab_form_two_column {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.ab_form_main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+}
+
+.ab_form_sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+// ===================================================================
+// 6. CONTENT CARDS
+// ===================================================================
+.ab_form_card {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    overflow: hidden;
+}
+
+.ab_form_card_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid $si-border;
+}
+
+.ab_form_card_title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $si-text;
+}
+
+.ab_form_section {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    padding: 20px;
+
+    & + & {
+        margin-top: 0;
+    }
+
+    .ab_form_section_title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $si-text-secondary;
+        margin-bottom: 12px;
+    }
+
+    .ab_form_section_body {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .ab_form_section_actions {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+}
+
+.ab_form_row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.ab_form_info_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+
+    & + & {
+        border-top: 1px solid $si-border;
+    }
+
+    .ab_form_info_label {
+        font-size: 12px;
+        font-weight: 500;
+        color: $si-text-secondary;
+        flex-shrink: 0;
+    }
+
+    .ab_form_info_value {
+        font-size: 12px;
+        font-weight: 600;
+        color: $si-text;
+        text-align: right;
+        max-width: 60%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.ab_form_card_body {
+    padding: 16px 20px;
+}
+
+// ===================================================================
+// 7. BRANCHES - Chip/Pill Display
+// ===================================================================
+.ab_form_branch_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ab_form_branch_chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: $si-neutral-light;
+    border: 1px solid $si-border;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $si-text;
+    cursor: pointer;
+    transition: background $si-transition, border-color $si-transition;
+
+    &:hover {
+        background: $si-primary-light;
+        border-color: $si-primary;
+        color: $si-primary;
+    }
+}
+
+.ab_form_branch_chip_icon {
+    font-size: 12px;
+    line-height: 1;
+}
+
+.ab_form_branch_more {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-primary;
+    cursor: pointer;
+    border-radius: 100px;
+    transition: background $si-transition;
+
+    &:hover {
+        background: $si-primary-light;
+    }
+}
+
+// ===================================================================
+// 8. ONE2MANY DATA GRID
+// ===================================================================
+.ab_form_section {
+    .o_list_view {
+        thead > tr > th {
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            color: $si-text-secondary !important;
+            background: $si-neutral-light !important;
+            border-bottom: 1.5px solid $si-border !important;
+            padding: 10px 12px !important;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        tbody > tr > td {
+            padding: 12px !important;
+            font-size: 13px !important;
+            border-bottom: 1px solid $si-border !important;
+            vertical-align: middle !important;
+        }
+
+        tbody > tr:nth-child(even) > td {
+            background: #FAFBFC !important;
+        }
+
+        tbody > tr:hover > td {
+            background: #EEF2FF !important;
+        }
+    }
+}
+
+// ===================================================================
+// 9. PROGRESS / CIRCULAR
+// ===================================================================
+.ab_progress_card {
+    text-align: center;
+}
+
+.ab_progress_circular {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 12px;
+
+    svg {
+        transform: rotate(-90deg);
+    }
+
+    .ab_progress_circular_bg {
+        fill: none;
+        stroke: $si-neutral-light;
+        stroke-width: 6;
+    }
+
+    .ab_progress_circular_fill {
+        fill: none;
+        stroke: $si-primary;
+        stroke-width: 6;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.6s ease;
+    }
+
+    .ab_progress_circular_label {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+        font-weight: 700;
+        color: $si-text;
+    }
+}
+
+.ab_progress_stats {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.ab_progress_stat {
+    text-align: center;
+
+    .ab_progress_stat_value {
+        font-size: 16px;
+        font-weight: 700;
+        color: $si-text;
+    }
+
+    .ab_progress_stat_label {
+        font-size: 10px;
+        font-weight: 500;
+        color: $si-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+}
+
+// ===================================================================
+// 10. TIMELINE
+// ===================================================================
+.ab_timeline {
+    padding: 4px 0;
+}
+
+.ab_timeline_item {
+    display: flex;
+    gap: 12px;
+    padding: 0 0 20px;
+    position: relative;
+
+    &:last-child {
+        padding-bottom: 0;
+    }
+}
+
+.ab_timeline_dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 20px;
+    position: relative;
+
+    &::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: $si-primary;
+        border: 2px solid $si-card;
+        z-index: 1;
+        flex-shrink: 0;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 14px;
+        width: 2px;
+        height: calc(100% - 14px);
+        background: $si-border;
+    }
+
+    .ab_timeline_item:last-child &::after {
+        display: none;
+    }
+
+    &.ab_timeline_dot--completed::before {
+        background: $si-success;
+    }
+
+    &.ab_timeline_dot--cancelled::before {
+        background: $si-danger;
+    }
+
+    &.ab_timeline_dot--draft::before {
+        background: $si-neutral;
+    }
+}
+
+.ab_timeline_content {
+    flex: 1;
+    padding-bottom: 4px;
+}
+
+.ab_timeline_title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $si-text;
+    line-height: 1.3;
+}
+
+.ab_timeline_date {
+    font-size: 11px;
+    font-weight: 400;
+    color: $si-text-secondary;
+    margin-top: 2px;
+}
+
+// ===================================================================
+// 11. STATE BADGE (form variant)
+// ===================================================================
+.ab_form_state_badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+
+    &.ab_form_state_draft {
+        background: $si-neutral-light;
+        color: $si-neutral;
+    }
+
+    &.ab_form_state_submitted {
+        background: linear-gradient(135deg, #DCFCE7, #BBF7D0);
+        color: #15803D;
+    }
+
+    &.ab_form_state_cancelled {
+        background: linear-gradient(135deg, #FEE2E2, #FECACA);
+        color: #B91C1C;
+    }
+
+    &.ab_form_state_in_progress {
+        background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+        color: #B45309;
+    }
+
+    &.ab_form_state_completed {
+        background: linear-gradient(135deg, #DCFCE7, #BBF7D0);
+        color: #15803D;
+    }
+}
+
+// ===================================================================
+// 12. EMPTY STATES
+// ===================================================================
+.ab_form_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    text-align: center;
+    gap: 12px;
+}
+
+.ab_form_empty_icon {
+    font-size: 36px;
+    opacity: 0.3;
+    line-height: 1;
+}
+
+.ab_form_empty_text {
+    font-size: 14px;
+    font-weight: 500;
+    color: $si-text-secondary;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+.ab_form_empty_cta {
+    margin-top: 8px;
+}
+
+// ===================================================================
+// 13. DEADLINE IN HERO
+// ===================================================================
+.ab_form_hero_deadline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 10px 16px;
+    background: $si-neutral-light;
+    border-radius: $si-radius;
+    min-width: 80px;
+}
+
+.ab_form_hero_deadline_label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $si-text-secondary;
+}
+
+.ab_form_hero_deadline_date {
+    font-size: 13px;
+    font-weight: 600;
+    color: $si-text;
+}
+
+// ===================================================================
+// 14. SIDEBAR INFO CARD
+// ===================================================================
+.ab_sidebar_info {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    padding: 20px;
+}
+
+.ab_sidebar_info_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+
+    & + & {
+        border-top: 1px solid $si-border;
+    }
+}
+
+.ab_sidebar_info_label {
+    font-size: 12px;
+    font-weight: 500;
+    color: $si-text-secondary;
+}
+
+.ab_sidebar_info_value {
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-text;
+}
+
+// ===================================================================
+// 15. RESPONSIVE
+// ===================================================================
+@media (max-width: 992px) {
+    .o_form_view.ab_self_inventory_form {
+        .o_form_sheet_bg {
+            padding: 16px;
+        }
+
+        .ab_form_two_column {
+            grid-template-columns: 1fr;
+        }
+
+        .ab_form_hero {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .ab_form_kpi_row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .o_form_view.ab_self_inventory_form {
+        .ab_form_kpi_row {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .ab_kpi_card {
+            padding: 14px;
+
+            .ab_kpi_card_value {
+                font-size: 22px;
+            }
+        }
+
+        .ab_form_hero {
+            padding: 16px;
+        }
+
+        .ab_form_hero_center {
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+    }
+}
+
+// ===================================================================
+// 16. BULK IMPORT RESULTS DIALOG
+// ===================================================================
+.ab_bulk_dialog {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: $si-text;
+}
+
+.ab_bulk_header {
+    padding: 4px 0 16px;
+    border-bottom: 1px solid $si-border;
+    margin-bottom: 20px;
+
+    .ab_bulk_title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: $si-text;
+    }
+}
+
+.ab_bulk_summary_row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.ab_bulk_summary_card {
+    padding: 16px;
+    border-radius: $si-radius;
+    border: 1px solid $si-border;
+    background: $si-card;
+    text-align: center;
+    transition: box-shadow $si-transition;
+
+    &:hover {
+        box-shadow: $si-shadow-hover;
+    }
+
+    .ab_bulk_summary_value {
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 4px;
+        letter-spacing: -0.03em;
+    }
+
+    .ab_bulk_summary_label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $si-text-secondary;
+    }
+
+    &--branches .ab_bulk_summary_value { color: $si-primary; }
+    &--added .ab_bulk_summary_value { color: $si-success; }
+    &--missing .ab_bulk_summary_value { color: $si-danger; }
+}
+
+.ab_bulk_warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: $si-warning-light;
+    border: 1px solid #FDE68A;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #B45309;
+    margin-bottom: 16px;
+
+    .ab_bulk_warning_icon {
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+}
+
+.ab_bulk_empty {
+    text-align: center;
+    padding: 40px 20px;
+
+    .ab_bulk_empty_icon {
+        font-size: 36px;
+        margin-bottom: 12px;
+        opacity: 0.3;
+    }
+
+    .ab_bulk_empty_title {
+        font-size: 16px;
+        font-weight: 600;
+        color: $si-text;
+        margin-bottom: 6px;
+    }
+
+    .ab_bulk_empty_desc {
+        font-size: 13px;
+        color: $si-text-secondary;
+        max-width: 320px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+}
+
+.ab_bulk_table_wrapper {
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+
+.ab_bulk_table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $si-text-secondary;
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1.5px solid $si-border;
+        background: $si-neutral-light;
+    }
+
+    td {
+        padding: 10px 12px;
+        font-size: 13px;
+        border-bottom: 1px solid $si-border;
+    }
+
+    tbody tr:hover td {
+        background: #EEF2FF;
+    }
+
+    .ab_bulk_cell_added { text-align: center; }
+    .ab_bulk_cell_missing { text-align: center; }
+}
+
+.ab_bulk_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+
+    &--added {
+        background: $si-success-light;
+        color: #16A34A;
+    }
+
+    &--missing {
+        background: $si-danger-light;
+        color: $si-danger;
+    }
+}
+
+.ab_bulk_missing_section {
+    margin-bottom: 16px;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    overflow: hidden;
+}
+
+.ab_bulk_missing_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: $si-neutral-light;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-text;
+    cursor: pointer;
+    user-select: none;
+    transition: background $si-transition;
+
+    &:hover {
+        background: darken($si-neutral-light, 3%);
+    }
+}
+
+.ab_bulk_chevron {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+
+    &--open {
+        transform: rotate(90deg);
+    }
+}
+
+.ab_bulk_missing_body {
+    padding: 12px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.ab_bulk_missing_code {
+    display: inline-block;
+    padding: 3px 10px;
+    background: $si-danger-light;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $si-danger;
+    font-family: 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+}
+
+.ab_bulk_footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid $si-border;
+}
