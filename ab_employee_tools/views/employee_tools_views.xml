@@ -79,6 +79,23 @@
             </field>
         </record>
 
+        <record id="ab_employee_tools_employee_tools_view_search" model="ir.ui.view">
+            <field name="name">ab_employee_tools_employee_tools_view_search</field>
+            <field name="model">ab_employee_tools_employee_tools</field>
+            <field name="arch" type="xml">
+                <search string="ab_employee_tools_employee_tools_search">
+                    <field name="user_id"/>
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="department_id"/>
+                    <field name="job_id"/>
+                    <field name="status"/>
+                    <field name="delivery_date"/>
+                </search>
+            </field>
+        </record>
+
+
         <record id="employee_tools_action" model="ir.actions.act_window">
             <field name="name">Employee Tools</field>
             <field name="res_model">ab_employee_tools_employee_tools</field>
