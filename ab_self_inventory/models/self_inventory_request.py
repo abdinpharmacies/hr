@@ -312,6 +312,12 @@ class SelfInventoryRequestBatch(models.Model):
         string='Branches',
         domain="[('store_type', '=', 'branch')]",
     )
+    selected_branch_id = fields.Many2one(
+        'ab_store',
+        string='Showing Branch',
+        domain="[('id', 'in', branch_ids)]",
+        copy=False,
+    )
     branch_filter_mode = fields.Selection(
         selection=[
             ('branch_name', 'Branch Names'),
@@ -336,6 +342,12 @@ class SelfInventoryRequestBatch(models.Model):
         index=True,
     )
     line_ids = fields.One2many('ab_self_inventory_request_batch_line', 'batch_id', string='Fetched Products')
+    filtered_line_ids = fields.One2many(
+        'ab_self_inventory_request_batch_line',
+        compute='_compute_filtered_line_ids',
+        string='Filtered Lines',
+        readonly=True,
+    )
     request_ids = fields.One2many('ab_self_inventory_request', 'batch_id', readonly=True)
     process_ids = fields.Many2many('ab_self_inventory_process', compute='_compute_process_ids')
     product_codes_text = fields.Text(string='Product Codes')
@@ -362,6 +374,14 @@ class SelfInventoryRequestBatch(models.Model):
     def _compute_line_count(self):
         for rec in self:
             rec.line_count = len(rec.line_ids.filtered(lambda line: line.matched_by != 'none'))
+
+    @api.depends('line_ids', 'selected_branch_id')
+    def _compute_filtered_line_ids(self):
+        for rec in self:
+            lines = rec.line_ids.filtered(lambda l: l.matched_by != 'none')
+            if rec.selected_branch_id:
+                lines = lines.filtered(lambda l: l.branch_id == rec.selected_branch_id)
+            rec.filtered_line_ids = [(6, 0, lines.ids)]
 
     @api.depends('branch_filter_mode', 'branch_ids', 'branch_governorate_name')
     def _compute_governorate_branch_count(self):
@@ -406,6 +426,12 @@ class SelfInventoryRequestBatch(models.Model):
                     raise ValidationError(_("Only draft self inventory request batches can be changed."))
         return super().write(vals)
 
+    @api.onchange('branch_ids')
+    def _onchange_branch_ids_clear_selected_branch(self):
+        for rec in self:
+            if rec.selected_branch_id and rec.selected_branch_id not in rec.branch_ids:
+                rec.selected_branch_id = False
+
     def action_fetch_branch_stocks(self):
         for rec in self:
             rec._check_can_fetch_stock()
@@ -419,7 +445,7 @@ class SelfInventoryRequestBatch(models.Model):
                 'line_ids': line_commands,
                 'last_code_import_message': False,
             })
-        return True
+        return self._get_reload_action()
 
     def action_add_product_codes(self):
         self.ensure_one()
@@ -542,7 +568,7 @@ class SelfInventoryRequestBatch(models.Model):
                 'state': 'submitted',
                 'submitted_date': fields.Datetime.now(),
             })
-        return True
+        return self._get_reload_action()
 
     def action_select_all_lines(self):
         for rec in self:
@@ -638,6 +664,10 @@ class SelfInventoryRequestBatch(models.Model):
         self.ensure_one()
         if self.state != 'draft':
             raise ValidationError(_("Only draft batches can update branches."))
+
+    @api.model
+    def _get_reload_action(self):
+        return {'type': 'ir.actions.client', 'tag': 'reload'}
 
     def _get_governorate_branch_domain(self):
         return self._get_branch_selection_domain()

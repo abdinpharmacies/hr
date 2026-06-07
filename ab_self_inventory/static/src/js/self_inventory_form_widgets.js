@@ -189,16 +189,16 @@ registry.category("fields").add("ab_inventory_kpi_card", {
 class BranchFormWidget extends Component {
     static template = xml`
         <div class="ab_form_branch_list">
-            <t t-foreach="visibleNames" t-as="name" t-key="name_index">
-                <span class="ab_form_branch_chip">
+            <t t-foreach="visibleBranches" t-as="branch" t-key="branch.id || branch.name">
+                <span t-att-class="branchChipClass(branch)" t-on-click="() => this.selectBranch(branch)">
                     <span class="ab_form_branch_chip_icon">&#x1F3E2;</span>
-                    <t t-esc="name"/>
+                    <t t-esc="branch.name"/>
                 </span>
             </t>
             <span class="ab_form_branch_more" t-if="extraCount > 0" t-on-click="onClickMore">
                 +<t t-esc="extraCount"/> more
             </span>
-            <div class="ab_form_empty" t-if="!state.names.length">
+            <div class="ab_form_empty" t-if="!state.branches.length">
                 <div class="ab_form_empty_icon">&#x1F3E2;</div>
                 <div class="ab_form_empty_text">No branches assigned yet</div>
             </div>
@@ -208,7 +208,7 @@ class BranchFormWidget extends Component {
     static components = {};
 
     setup() {
-        this.state = useState({ names: [], loaded: false });
+        this.state = useState({ branches: [], loaded: false });
         this._dialog = null;
         const record = this.props.record;
         if (record && record.model && record.model.dialog) {
@@ -219,7 +219,7 @@ class BranchFormWidget extends Component {
         this._extractNames();
         this._fetchNames();
         onPatched(() => {
-            if (!this.state.names.length && this._getRaw()) {
+            if (!this.state.branches.length && this._getRaw()) {
                 this._extractNames();
             }
         });
@@ -232,24 +232,31 @@ class BranchFormWidget extends Component {
     _extractNames() {
         const raw = this._getRaw();
         if (!raw) return;
-        const names = [];
+        const branches = [];
         if (raw.records && raw.records.length) {
             for (const r of raw.records) {
-                if (Array.isArray(r)) names.push(r[1] || String(r[0]));
-                else if (typeof r === "object") names.push(r.display_name || r.name || String(r.id));
+                if (Array.isArray(r)) {
+                    branches.push({ id: r[0], name: r[1] || String(r[0]) });
+                } else if (typeof r === "object") {
+                    branches.push({ id: r.id, name: r.display_name || r.name || String(r.id) });
+                }
             }
         } else if (raw.currentIds) {
             for (const id of raw.currentIds) {
-                names.push("ID " + id);
+                branches.push({ id, name: "ID " + id });
             }
         } else if (Array.isArray(raw)) {
             for (const r of raw) {
-                if (Array.isArray(r)) names.push(r[1] || String(r[0]));
-                else if (typeof r === "object") names.push(r.display_name || r.name || String(r.id));
-                else names.push(String(r));
+                if (Array.isArray(r)) {
+                    branches.push({ id: r[0], name: r[1] || String(r[0]) });
+                } else if (typeof r === "object") {
+                    branches.push({ id: r.id, name: r.display_name || r.name || String(r.id) });
+                } else {
+                    branches.push({ id: r, name: String(r) });
+                }
             }
         }
-        this.state.names = names;
+        this.state.branches = branches.filter((branch) => branch.name);
     }
 
     async _fetchNames() {
@@ -279,28 +286,110 @@ class BranchFormWidget extends Component {
                 else if (c) nameMap[r.id] = c + (n && n !== c ? " - " + n : "");
                 else nameMap[r.id] = n || String(r.id);
             }
-            this.state.names = ids.map(function (id) { return nameMap[id] || String(id); });
+            this.state.branches = ids.map(function (id) {
+                return { id, name: nameMap[id] || String(id) };
+            });
             this.state.loaded = true;
         } catch (_) {}
     }
 
     get maxVisible() { return 5; }
 
-    get visibleNames() {
-        const all = this.state.names || [];
+    get visibleBranches() {
+        const all = this.state.branches || [];
         return all.slice(0, this.maxVisible);
     }
 
     get extraCount() {
-        const all = this.state.names || [];
+        const all = this.state.branches || [];
         return Math.max(0, all.length - this.maxVisible);
+    }
+
+    get selectedBranchId() {
+        const raw = this.props.record?.data?.selected_branch_id;
+        if (!raw) return false;
+        if (Array.isArray(raw)) return raw[0];
+        if (typeof raw === "object") return raw.id;
+        return raw;
+    }
+
+    branchChipClass(branch) {
+        const active = branch.id && branch.id === this.selectedBranchId;
+        return "ab_form_branch_chip" + (active ? " ab_form_branch_chip_active" : "");
+    }
+
+    async selectBranch(branch) {
+        if (!branch.id || !this.props.record) return;
+        const record = this.props.record;
+        const { model, resId, resModel } = record;
+        if (!model || !model.orm || !resId || !resModel) return;
+        const current = this.selectedBranchId;
+        const newVal = current === branch.id ? false : branch.id;
+        await model.orm.write(
+            resModel,
+            [resId],
+            { selected_branch_id: newVal || false },
+            { context: model.context }
+        );
+        if (typeof model.load === 'function') {
+            await model.load();
+        }
     }
 
     onClickMore() {
         if (!this._dialog) return;
-        const names = this.state.names || [];
-        if (!names.length) return;
-        this._dialog.add(BranchDialog, { branchNames: names });
+        const branches = this.state.branches || [];
+        if (!branches.length) return;
+        this._dialog.add(BranchDialog, {
+            branchItems: branches,
+            onSelect: (branch) => this.selectBranch(branch),
+        });
+    }
+}
+
+class SelectedBranchFilterWidget extends Component {
+    static template = xml`
+        <div class="ab_selected_branch_filter">
+            <div class="ab_selected_branch_filter_text">
+                <span class="ab_selected_branch_filter_label">Showing</span>
+                <span class="ab_selected_branch_filter_value"><t t-esc="selectedBranchName"/></span>
+            </div>
+            <button t-if="selectedBranchId" type="button" class="btn btn-secondary btn-sm" t-on-click="clearBranch">
+                All Branches
+            </button>
+        </div>
+    `;
+    static props = { ...standardFieldProps };
+
+    get selectedBranchId() {
+        const raw = this.props.record?.data?.[this.props.name];
+        if (!raw) return false;
+        if (Array.isArray(raw)) return raw[0];
+        if (typeof raw === "object") return raw.id;
+        return raw;
+    }
+
+    get selectedBranchName() {
+        const raw = this.props.record?.data?.[this.props.name];
+        if (!raw) return "All branches";
+        if (Array.isArray(raw)) return raw[1] || "Selected branch";
+        if (typeof raw === "object") return raw.display_name || raw.name || "Selected branch";
+        return "Selected branch";
+    }
+
+    async clearBranch() {
+        if (!this.props.record) return;
+        const { model, resId, resModel } = this.props.record;
+        if (!model || !model.orm || !resId || !resModel) return;
+        await model.orm.write(
+            resModel,
+            [resId],
+            { [this.props.name]: false },
+            { context: model.context }
+        );
+        if (typeof model.load === 'function') {
+            await model.load();
+        }
     }
 }
 
@@ -313,8 +402,10 @@ class BranchDialog extends Component {
                     <input type="text" class="o_input" placeholder="Search Branch..." t-model="state.searchText"/>
                 </div>
                 <div class="ab_branch_dialog_list" t-if="filteredBranches.length">
-                    <t t-foreach="filteredBranches" t-as="name" t-key="name_index">
-                        <span class="ab_branch_dialog_item"><t t-esc="name"/></span>
+                    <t t-foreach="filteredBranches" t-as="branch" t-key="branch.id || branch.name">
+                        <button type="button" class="ab_branch_dialog_item" t-on-click="() => this.selectBranch(branch)">
+                            <t t-esc="branch.name"/>
+                        </button>
                     </t>
                 </div>
                 <div class="ab_branch_dialog_empty" t-else="">
@@ -325,23 +416,43 @@ class BranchDialog extends Component {
     `;
     static components = { Dialog };
     static props = {
-        branchNames: { type: Array },
+        branchItems: { type: Array, optional: true },
+        branchNames: { type: Array, optional: true },
+        onSelect: { type: Function, optional: true },
         close: { type: Function, optional: true },
     };
     setup() {
         this.state = useState({ searchText: "" });
     }
+    get branches() {
+        if (this.props.branchItems) return this.props.branchItems;
+        return (this.props.branchNames || []).map(function (name) {
+            return { id: false, name };
+        });
+    }
     get filteredBranches() {
         const q = this.state.searchText.trim().toLowerCase();
-        if (!q) return this.props.branchNames;
-        return this.props.branchNames.filter(function (name) {
-            return name.toLowerCase().includes(q);
+        if (!q) return this.branches;
+        return this.branches.filter(function (branch) {
+            return branch.name.toLowerCase().includes(q);
         });
+    }
+    selectBranch(branch) {
+        if (this.props.onSelect) {
+            this.props.onSelect(branch);
+        }
+        if (this.props.close) {
+            this.props.close();
+        }
     }
 }
 
 registry.category("fields").add("ab_inventory_branch_form", {
     component: BranchFormWidget,
+});
+
+registry.category("fields").add("ab_inventory_selected_branch_filter", {
+    component: SelectedBranchFilterWidget,
 });
 
 // ------------------------------------------------------------------

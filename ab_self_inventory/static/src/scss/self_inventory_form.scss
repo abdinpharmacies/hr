@@ -426,6 +426,13 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     }
 }
 
+.ab_form_branch_chip_active {
+    background: $si-primary !important;
+    border-color: $si-primary !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 6px 16px rgba($si-primary, 0.22);
+}
+
 .ab_form_branch_chip_icon {
     font-size: 12px;
     line-height: 1;
@@ -450,6 +457,42 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 // ===================================================================
 // 8. ONE2MANY DATA GRID
 // ===================================================================
+.ab_selected_branch_filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background: #FFFFFF;
+    border: 1px solid $si-border;
+    border-radius: 8px;
+}
+
+.ab_selected_branch_filter_text {
+    min-width: 0;
+}
+
+.ab_selected_branch_filter_label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    color: $si-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ab_selected_branch_filter_value {
+    display: block;
+    overflow: hidden;
+    color: $si-text;
+    font-size: 13px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .ab_form_section {
     .o_list_view {
         thead > tr > th {
