@@ -65,7 +65,7 @@
             <field name="name">ab_self_inventory_request_batch_form</field>
             <field name="model">ab_self_inventory_request_batch</field>
             <field name="arch" type="xml">
-                <form>
+                <form class="ab_self_inventory_form">
                     <header>
                         <button name="action_fetch_branch_stocks" string="Fetch Branch Stocks" type="object" class="btn-secondary" invisible="state != 'draft'"/>
                         <button name="action_submit_batch" string="Submit All" type="object" class="btn-primary" invisible="state != 'draft'"/>
@@ -74,76 +74,101 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted"/>
                     </header>
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
-                            <button name="action_open_requests" type="object" class="oe_stat_button" icon="fa-list" invisible="not request_count">
-                                <field name="request_count" widget="statinfo" string="Requests"/>
-                            </button>
-                            <button name="action_open_processes" type="object" class="oe_stat_button" icon="fa-tasks" invisible="not process_count">
-                                <field name="process_count" widget="statinfo" string="Processes"/>
-                            </button>
-                            <button name="action_open_lines" type="object" class="oe_stat_button" icon="fa-search" invisible="not line_count">
-                                <field name="line_count" widget="statinfo" string="Lines"/>
-                            </button>
+                        <div class="ab_form_hero_row">
+                            <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
                         </div>
-                        <group col="4">
-                            <field name="name"/>
-                            <field name="deadline" readonly="state != 'draft'"/>
-                            <field name="selected_line_count"/>
-                            <field name="line_count"/>
-                            <field name="submitted_date"/>
-                        </group>
-                        <group string="Branch Selection" col="4" invisible="state != 'draft'">
-                            <field name="branch_filter_mode" widget="radio" options="{'horizontal': true}"/>
-                            <field name="branch_governorate_name" invisible="branch_filter_mode != 'governorate_name'"/>
-                            <field name="governorate_branch_count" invisible="branch_filter_mode != 'governorate_name'"/>
-                            <button name="action_add_matching_branches" type="object" string="Add Matching Branches" class="btn-secondary" invisible="branch_filter_mode != 'governorate_name'"/>
-                            <field name="branch_ids" widget="many2many_tags" readonly="state != 'draft' or branch_filter_mode == 'governorate_name'"/>
-                        </group>
-                        <group string="Branches" invisible="state == 'draft'">
-                            <field name="branch_ids" widget="many2many_tags" readonly="1"/>
-                        </group>
-                        <group>
-                            <field name="note" readonly="state != 'draft'"/>
-                        </group>
-                        <group string="Bulk Product Codes" invisible="state != 'draft'">
-                            <field name="product_codes_text" nolabel="1" placeholder="Enter product codes separated by new lines, commas, semicolons, or spaces."/>
-                            <button name="action_add_product_codes" type="object" string="Add Codes to Selected Branches" class="btn-secondary"/>
-                        </group>
-                        <notebook>
-                            <page string="Branch Product Groups">
-                                <group col="4" invisible="state != 'draft'">
-                                    <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary"/>
-                                    <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary"/>
-                                    <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
-                                    <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" confirm="Delete all unselected fetched products?"/>
-                                </group>
-                                <field name="line_ids" domain="[('matched_by', '!=', 'none')]" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_batch_line_list'}" readonly="state != 'draft'"/>
-                            </page>
-                        </notebook>
+                        <div class="ab_form_kpi_row">
+                            <field name="selected_line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'items', 'icon': 'items', 'label': 'Items'}"/>
+                            <field name="request_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'requests', 'icon': 'requests', 'label': 'Requests'}"/>
+                            <field name="process_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'processes', 'icon': 'processes', 'label': 'Processed'}"/>
+                            <field name="line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'branches', 'icon': 'branches', 'label': 'Lines'}"/>
+                        </div>
+                        <div class="ab_form_two_column">
+                            <div class="ab_form_main">
+                                <div class="ab_form_section" invisible="state != 'draft'">
+                                    <div class="ab_form_section_title">Branch Selection</div>
+                                    <div class="ab_form_section_body">
+                                        <field name="branch_filter_mode" widget="radio" options="{'horizontal': true}"/>
+                                        <div class="ab_form_row" invisible="branch_filter_mode != 'governorate_name'">
+                                            <field name="branch_governorate_name"/>
+                                            <field name="governorate_branch_count"/>
+                                            <button name="action_add_matching_branches" type="object" string="Add Matching Branches" class="btn-secondary"/>
+                                        </div>
+                                        <field name="branch_ids" widget="many2many_tags" readonly="branch_filter_mode == 'governorate_name'"/>
+                                    </div>
+                                </div>
+                                <div class="ab_form_section">
+                                    <div class="ab_form_section_title">Notes</div>
+                                    <div class="ab_form_section_body">
+                                        <field name="note" nolabel="1" placeholder="Add a note..." readonly="state != 'draft'"/>
+                                    </div>
+                                </div>
+                                <div class="ab_form_section" invisible="state != 'draft'">
+                                    <div class="ab_form_section_title">Bulk Product Codes</div>
+                                    <div class="ab_form_section_body">
+                                        <field name="product_codes_text" nolabel="1" placeholder="Enter product codes separated by new lines, commas, semicolons, or spaces."/>
+                                        <button name="action_add_product_codes" type="object" string="Add Codes to Selected Branches" class="btn-secondary"/>
+                                    </div>
+                                </div>
+                                <notebook>
+                                    <page string="Branch Product Groups">
+                                        <div class="ab_form_row" invisible="state != 'draft'">
+                                            <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary"/>
+                                            <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary"/>
+                                            <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
+                                            <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" confirm="Delete all unselected fetched products?"/>
+                                        </div>
+                                        <field name="line_ids" domain="[('matched_by', '!=', 'none')]" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_batch_line_list'}" readonly="state != 'draft'"/>
+                                    </page>
+                                </notebook>
+                            </div>
+                            <div class="ab_form_sidebar">
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Details</div>
+                                    <div class="ab_form_card_body">
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Status</span>
+                                            <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Deadline</span>
+                                            <span class="ab_form_info_value"><field name="deadline" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Requester</span>
+                                            <span class="ab_form_info_value"><field name="requester_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Created</span>
+                                            <span class="ab_form_info_value"><field name="create_date" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row" invisible="not submitted_date">
+                                            <span class="ab_form_info_label">Submitted</span>
+                                            <span class="ab_form_info_value"><field name="submitted_date" nolabel="1"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Branches</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="branch_ids" widget="ab_inventory_branch_form" nolabel="1"/>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card" invisible="not request_count">
+                                    <div class="ab_form_card_title">Progress</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="create_date" widget="ab_inventory_form_progress" nolabel="1"/>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Timeline</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="write_date" widget="ab_inventory_timeline" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="view_ab_self_inventory_batch_code_result_wizard_form" model="ir.ui.view">
-            <field name="name">ab_self_inventory_batch_code_result_wizard_form</field>
-            <field name="model">ab_self_inventory_batch_code_result_wizard</field>
-            <field name="arch" type="xml">
-                <form string="Product Code Results">
-                    <group>
-                        <field name="batch_id"/>
-                    </group>
-                    <field name="line_ids" nolabel="1">
-                        <list create="0" edit="0" delete="0">
-                            <field name="branch_name"/>
-                            <field name="added_count"/>
-                            <field name="missing_count"/>
-                            <field name="missing_codes"/>
-                        </list>
-                    </field>
-                    <footer>
-                        <button string="Close" special="cancel" class="btn-primary"/>
-                    </footer>
                 </form>
             </field>
         </record>

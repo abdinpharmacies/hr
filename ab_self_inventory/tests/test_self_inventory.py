@@ -531,10 +531,16 @@ class TestSelfInventory(TransactionCase):
         self.assertEqual(batch.selected_line_count, 3)
         self.assertEqual(batch.line_count, 3)
         self.assertTrue(all(batch.line_ids.mapped('selected')))
-        self.assertFalse(batch.last_code_import_message)
-        self.assertEqual(action['res_model'], 'ab_self_inventory_batch_code_result_wizard')
-        result_wizard = self.env['ab_self_inventory_batch_code_result_wizard'].browse(action['res_id'])
-        self.assertEqual(len(result_wizard.line_ids), 2)
+        self.assertEqual(action['type'], 'ir.actions.client')
+        self.assertEqual(action['tag'], 'ab_inventory_bulk_code_results')
+        params = action['params']
+        self.assertEqual(params['branches_processed'], 2)
+        self.assertEqual(params['products_added'], 3)
+        self.assertEqual(params['products_missing'], 0)
+        self.assertFalse(params['has_missing'])
+        self.assertFalse(params['is_empty'])
+        self.assertEqual(len(params['branch_results']), 2)
+        self.assertEqual(len(params['all_missing_codes']), 0)
         self.assertEqual(
             batch.line_ids.filtered(lambda line: line.branch_id == self.branch).product_id,
             self.product,
