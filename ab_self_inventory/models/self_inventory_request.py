@@ -464,14 +464,13 @@ class SelfInventoryRequestBatch(models.Model):
             line_commands.extend(self._prepare_batch_line_commands(branch, rows_to_add, selected=True))
             existing_keys.update((branch.id, code) for code in found_codes)
 
-        if not line_commands:
-            raise ValidationError(self._format_no_code_lines_error(found_by_branch, missing_by_branch))
+        if line_commands:
+            self.write({
+                'line_ids': line_commands,
+                'last_code_import_message': False,
+            })
 
-        self.write({
-            'line_ids': line_commands,
-            'last_code_import_message': False,
-        })
-        return self._open_code_import_result_wizard(added_by_branch, missing_by_branch)
+        return self._get_bulk_code_result_action(added_by_branch, missing_by_branch, found_by_branch)
 
     def action_add_governorate_branches(self):
         for rec in self:
@@ -507,6 +506,8 @@ class SelfInventoryRequestBatch(models.Model):
         for rec in self:
             if rec.state != 'draft':
                 continue
+            rec._check_can_update_lines()
+            rec.line_ids.filtered(lambda line: not line.selected).unlink()
             selected_lines = rec.line_ids.filtered(lambda line: line.selected and line.product_id)
             if not selected_lines:
                 raise ValidationError(_("Select at least one matched product before submitting."))
@@ -718,75 +719,37 @@ class SelfInventoryRequestBatch(models.Model):
                 seen.add(code)
         return codes
 
-    @api.model
-    def _format_code_import_message(self, found_by_branch, missing_by_branch):
-        lines = []
-        for branch_name in sorted(found_by_branch):
-            found_codes = found_by_branch[branch_name]
-            missing_codes = missing_by_branch.get(branch_name) or []
-            lines.append(
-                _("%(branch)s: added %(added_count)s code(s), missing %(missing_count)s code(s).") % {
-                    'branch': branch_name,
-                    'added_count': len(found_codes),
-                    'missing_count': len(missing_codes),
-                }
-            )
-            if missing_codes:
-                lines.append(_("Missing: %s") % ', '.join(missing_codes))
-        return '\n'.join(lines)
-
-    @api.model
-    def _format_no_code_lines_error(self, found_by_branch, missing_by_branch):
-        message = _("No new matching branch stock rows were found for the entered product codes.")
-        details = self._format_code_import_message(found_by_branch, missing_by_branch)
-        return "%s\n%s" % (message, details) if details else message
-
-    def _open_code_import_result_wizard(self, added_by_branch, missing_by_branch):
+    def _get_bulk_code_result_action(self, added_by_branch, missing_by_branch, found_by_branch):
         self.ensure_one()
-        wizard = self.env['ab_self_inventory_batch_code_result_wizard'].create({
-            'batch_id': self.id,
-            'line_ids': [
-                (0, 0, {
-                    'branch_name': branch_name,
-                    'added_count': len(added_codes),
-                    'missing_count': len(missing_by_branch.get(branch_name) or []),
-                    'missing_codes': ', '.join(missing_by_branch.get(branch_name) or []),
-                })
-                for branch_name, added_codes in sorted(added_by_branch.items())
-            ],
-        })
+        branch_results = []
+        total_added = 0
+        total_missing = 0
+        all_missing = []
+        for branch_name in found_by_branch:
+            added_codes = added_by_branch.get(branch_name, [])
+            missing_codes = missing_by_branch.get(branch_name, [])
+            total_added += len(added_codes)
+            total_missing += len(missing_codes)
+            all_missing.extend(missing_codes)
+            branch_results.append({
+                'branch_name': branch_name,
+                'added_count': len(added_codes),
+                'missing_count': len(missing_codes),
+                'missing_codes': missing_codes,
+            })
         return {
-            'name': _('Product Code Results'),
-            'type': 'ir.actions.act_window',
-            'res_model': 'ab_self_inventory_batch_code_result_wizard',
-            'view_mode': 'form',
-            'res_id': wizard.id,
-            'target': 'new',
+            'type': 'ir.actions.client',
+            'tag': 'ab_inventory_bulk_code_results',
+            'params': {
+                'branches_processed': len(branch_results),
+                'products_added': total_added,
+                'products_missing': total_missing,
+                'has_missing': total_missing > 0,
+                'is_empty': total_added == 0,
+                'branch_results': branch_results,
+                'all_missing_codes': all_missing,
+            },
         }
-
-
-class SelfInventoryBatchCodeResultWizard(models.TransientModel):
-    _name = 'ab_self_inventory_batch_code_result_wizard'
-    _description = 'Self Inventory Batch Product Code Results'
-
-    batch_id = fields.Many2one('ab_self_inventory_request_batch', readonly=True)
-    line_ids = fields.One2many(
-        'ab_self_inventory_batch_code_result_line',
-        'wizard_id',
-        string='Results',
-        readonly=True,
-    )
-
-
-class SelfInventoryBatchCodeResultLine(models.TransientModel):
-    _name = 'ab_self_inventory_batch_code_result_line'
-    _description = 'Self Inventory Batch Product Code Result Line'
-
-    wizard_id = fields.Many2one('ab_self_inventory_batch_code_result_wizard', required=True, ondelete='cascade')
-    branch_name = fields.Char(readonly=True)
-    added_count = fields.Integer(readonly=True)
-    missing_count = fields.Integer(readonly=True)
-    missing_codes = fields.Text(readonly=True)
 
 
 class SelfInventoryRequestBatchLine(models.Model):

@@ -46,7 +46,7 @@
             <field name="name">ab_self_inventory_process_form</field>
             <field name="model">ab_self_inventory_process</field>
             <field name="arch" type="xml">
-                <form>
+                <form class="ab_self_inventory_form">
                     <header>
                         <button name="action_submit_process" string="Submit Inventory" type="object" class="btn-primary" invisible="state != 'draft'"/>
                         <button name="action_export_count_sheet" string="Export Count Sheet" type="object" class="btn-secondary"/>
@@ -56,27 +56,79 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted"/>
                     </header>
                     <sheet>
-                        <group col="4">
-                            <field name="name"/>
-                            <field name="request_id"/>
-                            <field name="branch_id"/>
-                            <field name="requester_id"/>
-                            <field name="receiver_id" readonly="state != 'draft'" invisible="1"/>
-                            <field name="deadline"/>
-                            <field name="shortage_qty"/>
-                            <field name="extra_qty"/>
-                            <field name="submitted_date"/>
-                        </group>
-                        <group>
-                            <field name="request_note"/>
-                            <field name="branch_note" readonly="state != 'draft'"/>
-                        </group>
-                        <notebook>
-                            <page string="Self Inventory Lines">
-                                <field name="available_product_ids" invisible="1"/>
-                                <field name="line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_process_line_list'}" readonly="state != 'draft'"/>
-                            </page>
-                        </notebook>
+                        <div class="ab_form_hero_row">
+                            <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
+                        </div>
+                        <div class="ab_form_kpi_row">
+                            <field name="shortage_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'shortage', 'icon': 'shortage', 'label': 'Shortage'}"/>
+                            <field name="extra_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'extra', 'icon': 'extra', 'label': 'Extra'}"/>
+                        </div>
+                        <div class="ab_form_two_column">
+                            <div class="ab_form_main">
+                                <div class="ab_form_section">
+                                    <div class="ab_form_section_title">Details</div>
+                                    <div class="ab_form_section_body">
+                                        <field name="request_id"/>
+                                        <field name="branch_id"/>
+                                        <field name="receiver_id" readonly="state != 'draft'"/>
+                                        <field name="deadline"/>
+                                        <field name="request_note" nolabel="1" placeholder="Request note..."/>
+                                        <field name="branch_note" nolabel="1" placeholder="Branch note..." readonly="state != 'draft'"/>
+                                    </div>
+                                </div>
+                                <notebook>
+                                    <page string="Self Inventory Lines">
+                                        <field name="available_product_ids" invisible="1"/>
+                                        <field name="line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_process_line_list'}" readonly="state != 'draft'"/>
+                                    </page>
+                                </notebook>
+                            </div>
+                            <div class="ab_form_sidebar">
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Details</div>
+                                    <div class="ab_form_card_body">
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Status</span>
+                                            <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Request</span>
+                                            <span class="ab_form_info_value"><field name="request_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Branch</span>
+                                            <span class="ab_form_info_value"><field name="branch_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Deadline</span>
+                                            <span class="ab_form_info_value"><field name="deadline" widget="ab_inventory_deadline" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Requester</span>
+                                            <span class="ab_form_info_value"><field name="requester_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Receiver</span>
+                                            <span class="ab_form_info_value"><field name="receiver_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Created</span>
+                                            <span class="ab_form_info_value"><field name="create_date" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row" invisible="not submitted_date">
+                                            <span class="ab_form_info_label">Submitted</span>
+                                            <span class="ab_form_info_value"><field name="submitted_date" nolabel="1"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Timeline</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="write_date" widget="ab_inventory_timeline" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </sheet>
                 </form>
             </field>
