@@ -305,16 +305,21 @@ class BranchFormWidget extends Component {
         return Math.max(0, all.length - this.maxVisible);
     }
 
-    get selectedBranchId() {
-        const raw = this.props.record?.data?.selected_branch_id;
-        if (!raw) return false;
-        if (Array.isArray(raw)) return raw[0];
-        if (typeof raw === "object") return raw.id;
-        return raw;
+    get selectedBranchIds() {
+        const raw = this.props.record?.data?.selected_branch_ids;
+        if (!raw) return [];
+        if (raw.currentIds) return [...raw.currentIds];
+        if (raw.records) {
+            return raw.records.map(r => Array.isArray(r) ? r[0] : (r && r.id));
+        }
+        if (Array.isArray(raw)) {
+            return raw.map(r => Array.isArray(r) ? r[0] : (r && r.id) || r).filter(Boolean);
+        }
+        return [];
     }
 
     branchChipClass(branch) {
-        const active = branch.id && branch.id === this.selectedBranchId;
+        const active = branch.id && this.selectedBranchIds.includes(branch.id);
         return "ab_form_branch_chip" + (active ? " ab_form_branch_chip_active" : "");
     }
 
@@ -323,12 +328,18 @@ class BranchFormWidget extends Component {
         const record = this.props.record;
         const { model, resId, resModel } = record;
         if (!model || !model.orm || !resId || !resModel) return;
-        const current = this.selectedBranchId;
-        const newVal = current === branch.id ? false : branch.id;
+        const current = this.selectedBranchIds;
+        const idx = current.indexOf(branch.id);
+        let newVal;
+        if (idx >= 0) {
+            newVal = current.filter(id => id !== branch.id);
+        } else {
+            newVal = [...current, branch.id];
+        }
         await model.orm.write(
             resModel,
             [resId],
-            { selected_branch_id: newVal || false },
+            { selected_branch_ids: [[6, 0, newVal]] },
             { context: model.context }
         );
         if (typeof model.load === 'function') {
@@ -352,29 +363,31 @@ class SelectedBranchFilterWidget extends Component {
         <div class="ab_selected_branch_filter">
             <div class="ab_selected_branch_filter_text">
                 <span class="ab_selected_branch_filter_label">Showing</span>
-                <span class="ab_selected_branch_filter_value"><t t-esc="selectedBranchName"/></span>
+                <span class="ab_selected_branch_filter_value"><t t-esc="selectedBranchNames"/></span>
             </div>
-            <button t-if="selectedBranchId" type="button" class="btn btn-secondary btn-sm" t-on-click="clearBranch">
+            <button t-if="hasSelection" type="button" class="btn btn-secondary btn-sm" t-on-click="clearBranch">
                 All Branches
             </button>
         </div>
     `;
     static props = { ...standardFieldProps };
 
-    get selectedBranchId() {
+    get selectedIds() {
         const raw = this.props.record?.data?.[this.props.name];
-        if (!raw) return false;
-        if (Array.isArray(raw)) return raw[0];
-        if (typeof raw === "object") return raw.id;
-        return raw;
+        if (!raw) return [];
+        if (raw.currentIds) return [...raw.currentIds];
+        if (raw.records) return raw.records.map(r => Array.isArray(r) ? r[0] : (r && r.id));
+        if (Array.isArray(raw)) return raw.map(r => Array.isArray(r) ? r[0] : (r && r.id) || r).filter(Boolean);
+        return [];
     }
 
-    get selectedBranchName() {
-        const raw = this.props.record?.data?.[this.props.name];
-        if (!raw) return "All branches";
-        if (Array.isArray(raw)) return raw[1] || "Selected branch";
-        if (typeof raw === "object") return raw.display_name || raw.name || "Selected branch";
-        return "Selected branch";
+    get hasSelection() { return this.selectedIds.length > 0; }
+
+    get selectedBranchNames() {
+        const ids = this.selectedIds;
+        if (!ids.length) return "All branches";
+        if (ids.length === 1) return "1 branch selected";
+        return ids.length + " branches selected";
     }
 
     async clearBranch() {
@@ -384,7 +397,7 @@ class SelectedBranchFilterWidget extends Component {
         await model.orm.write(
             resModel,
             [resId],
-            { [this.props.name]: false },
+            { [this.props.name]: [[6, 0, []]] },
             { context: model.context }
         );
         if (typeof model.load === 'function') {
@@ -437,11 +450,11 @@ class DataGridWidget extends Component {
                         <input type="text" placeholder="Search branch..." t-model="state.branchSearchText" class="o_input"/>
                     </div>
                     <div class="ab_saas_branch_chips_wrap">
-                        <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_id ? '' : ' ab_saas_branch_chip_active')" t-on-click="() => this.selectBranch(false)">
+                        <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_ids.length ? '' : ' ab_saas_branch_chip_active')" t-on-click="() => this.selectBranch(false)">
                             All Branches
                         </button>
                         <t t-foreach="filteredBranches" t-as="b" t-key="b.id">
-                            <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_id === b.id ? ' ab_saas_branch_chip_active' : '')" t-on-click="() => this.selectBranch(b.id)">
+                            <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_ids.includes(b.id) ? ' ab_saas_branch_chip_active' : '')" t-on-click="() => this.selectBranch(b.id)">
                                 <t t-esc="b.name"/>
                                 <span class="ab_saas_branch_chip_count" t-esc="' ' + b.count"/>
                             </button>
@@ -453,7 +466,7 @@ class DataGridWidget extends Component {
                 </div>
 
                 <!-- Selected branch indicator -->
-                <div class="ab_saas_branch_selected" t-if="state.selected_branch_id &amp;&amp; selectedBranchLabel">
+                <div class="ab_saas_branch_selected" t-if="state.selected_branch_ids.length &amp;&amp; selectedBranchLabel">
                     <span class="ab_saas_branch_selected_text">Showing: <t t-esc="selectedBranchLabel"/></span>
                     <button class="ab_saas_branch_selected_clear" t-on-click="() => this.selectBranch(false)">Show All</button>
                 </div>
@@ -480,7 +493,7 @@ class DataGridWidget extends Component {
                 </div>
 
                 <!-- Selection bar -->
-                <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedCount > 0 &amp;&amp; state.selected_branch_id">
+                <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedCount > 0 &amp;&amp; state.selected_branch_ids.length">
                     <span class="ab_saas_selection_bar_count"><t t-esc="selectedCount"/> products selected</span>
                     <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="() => this.deleteSelected()" t-att-disabled="isReadonly">Delete Selected</button>
                     <button class="ab_saas_toolbar_btn" t-on-click="() => this.unselectAll()">Clear</button>
@@ -499,8 +512,10 @@ class DataGridWidget extends Component {
                             </div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_code">Code</div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
-                                Qty <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
+                                Stock <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
                             </div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price">Price</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">Sold</div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_match">Match</div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_note">Note</div>
                         </div>
@@ -524,6 +539,12 @@ class DataGridWidget extends Component {
                                     </div>
                                     <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
                                         <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_price">
+                                        <span class="ab_saas_price" t-if="row.sell_price"><t t-esc="row.sell_price"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
+                                        <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
                                     </div>
                                     <div class="ab_saas_grid_cell ab_saas_grid_cell_match">
                                         <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + row.matched_by"><t t-esc="matchLabel(row.matched_by)"/></span>
@@ -557,6 +578,12 @@ class DataGridWidget extends Component {
                                             </div>
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
                                                 <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price">
+                                                <span class="ab_saas_price" t-if="row.sell_price"><t t-esc="row.sell_price"/></span>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
+                                                <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
                                             </div>
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_match">
                                                 <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + row.matched_by"><t t-esc="matchLabel(row.matched_by)"/></span>
@@ -599,6 +626,7 @@ class DataGridWidget extends Component {
             analytics: null,
             branches: [],
             selected_branch_id: false,
+            selected_branch_ids: [],
             branchSearchText: "",
             searchText: "",
             rows: [],
@@ -624,11 +652,12 @@ class DataGridWidget extends Component {
     _currentKey() {
         const rec = this.props.record;
         if (!rec || !rec.resId) return "";
-        const sb = this.state.selected_branch_id;
+        const branchIds = this._getServerBranchIds();
+        const key = branchIds.length ? branchIds.sort().join(",") : "all";
         const grp = this.state.groupByBranch ? "g" : "f";
         const version = rec.data?.__last_update || rec.data?.write_date || "";
         const search = this.state.searchText || "";
-        return `${rec.resId}:${sb}:${version}:${search}:${grp}`;
+        return `${rec.resId}:${key}:${version}:${search}:${grp}`;
     }
 
     get resModel() {
@@ -645,11 +674,17 @@ class DataGridWidget extends Component {
     }
 
     _getServerBranchId() {
-        const raw = this.props.record?.data?.selected_branch_id;
-        if (!raw) return false;
-        if (Array.isArray(raw)) return raw[0];
-        if (typeof raw === "object") return raw.id;
-        return raw;
+        const ids = this._getServerBranchIds();
+        return ids.length ? ids[0] : false;
+    }
+
+    _getServerBranchIds() {
+        const raw = this.props.record?.data?.selected_branch_ids;
+        if (!raw) return [];
+        if (raw.currentIds) return [...raw.currentIds];
+        if (raw.records) return raw.records.map(r => Array.isArray(r) ? r[0] : (r && r.id));
+        if (Array.isArray(raw)) return raw.map(r => Array.isArray(r) ? r[0] : (r && r.id) || r).filter(Boolean);
+        return [];
     }
 
     async _load() {
@@ -659,6 +694,10 @@ class DataGridWidget extends Component {
         const id = this.resId;
         if (!id) return;
         const branchId = this.state.selected_branch_id || false;
+        const serverBranchIds = this._getServerBranchIds();
+        if (serverBranchIds.length) {
+            this.state.selected_branch_ids = serverBranchIds;
+        }
         this.state.loading = true;
         try {
             const [analytics, branches, result] = await Promise.all([
@@ -666,6 +705,7 @@ class DataGridWidget extends Component {
                 this.orm.call(this.resModel, "action_get_branch_counts", [[id]], {}),
                 this.orm.call(this.resModel, "action_get_grid_rows", [[id]], {
                     branch_id: branchId,
+                    branch_ids: serverBranchIds.length ? serverBranchIds : false,
                     search: this.state.searchText || false,
                     offset: 0,
                     limit: PAGE_SIZE,
@@ -751,7 +791,7 @@ class DataGridWidget extends Component {
         this.state.loading = true;
         try {
             const result = await this.orm.call(this.resModel, "action_get_grid_rows", [[id]], {
-                branch_id: this.state.selected_branch_id || false,
+                branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
                 search: this.state.searchText || false,
                 offset: this.state.rows.length,
                 limit: PAGE_SIZE,
@@ -792,13 +832,26 @@ class DataGridWidget extends Component {
     }
 
     get selectedBranchLabel() {
-        if (!this.state.selected_branch_id) return "";
-        const found = this.state.branches.find(b => b.id === this.state.selected_branch_id);
-        return found ? found.name : "";
+        const ids = this.state.selected_branch_ids;
+        if (!ids.length) return "";
+        const names = this.state.branches.filter(b => ids.includes(b.id)).map(b => b.name);
+        if (!names.length) return ids.length + " branches";
+        if (names.length <= 3) return names.join(", ");
+        return names.slice(0, 2).join(", ") + " +" + (names.length - 2) + " more";
     }
 
     selectBranch(branchId) {
-        this.state.selected_branch_id = branchId;
+        const ids = this.state.selected_branch_ids;
+        if (!branchId) {
+            this.state.selected_branch_ids = [];
+        } else {
+            const idx = ids.indexOf(branchId);
+            if (idx >= 0) {
+                this.state.selected_branch_ids = ids.filter(id => id !== branchId);
+            } else {
+                this.state.selected_branch_ids = [...ids, branchId];
+            }
+        }
     }
 
     onSearchInput() {
@@ -838,28 +891,10 @@ class DataGridWidget extends Component {
         this.state.rows = [...this.state.rows];
     }
 
-    async unselectAll() {
-        const id = this.resId;
-        if (!id) return;
-        try {
-            await this.orm.call(this.resModel, "action_unselect_all_filtered", [[id]], {
-                branch_id: this.state.selected_branch_id || false,
-                search: this.state.searchText || false,
-            });
-            for (const r of this.state.rows) r.selected = false;
-            this.state.rows = [...this.state.rows];
-        } catch (e) {
-            console.warn("[DataGrid] unselectAll error", e);
-            this.notification.add("Could not clear selections.", { type: "danger" });
-        }
-    }
-
     async selectAll() {
-        const id = this.resId;
-        if (!id) return;
         try {
-            await this.orm.call(this.resModel, "action_select_all_filtered", [[id]], {
-                branch_id: this.state.selected_branch_id || false,
+            await this.orm.call(this.resModel, "action_select_all_filtered", [[this.resId]], {
+                branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
                 search: this.state.searchText || false,
             });
             for (const r of this.state.rows) r.selected = true;
@@ -870,14 +905,32 @@ class DataGridWidget extends Component {
         }
     }
 
+    async unselectAll() {
+        const id = this.resId;
+        if (!id) return;
+        try {
+            await this.orm.call(this.resModel, "action_unselect_all_filtered", [[this.resId]], {
+                branch_id: this.state.selected_branch_id || false,
+                branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
+                search: this.state.searchText || false,
+            });
+            for (const r of this.state.rows) r.selected = false;
+            this.state.rows = [...this.state.rows];
+        } catch (e) {
+            console.warn("[DataGrid] unselectAll error", e);
+            this.notification.add("Could not clear selections.", { type: "danger" });
+        }
+    }
+
     async deleteSelected() {
         const id = this.resId;
         if (!id) return;
         const selected = this.state.rows.filter(r => r.selected);
         if (!selected.length) return;
         try {
-            await this.orm.call(this.resModel, "action_delete_selected_filtered", [[id]], {
+            await this.orm.call(this.resModel, "action_delete_selected_filtered", [[this.resId]], {
                 branch_id: this.state.selected_branch_id || false,
+                branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
                 search: this.state.searchText || false,
             });
             this.state.rows = this.state.rows.filter(r => !r.selected);

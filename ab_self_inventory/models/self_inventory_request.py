@@ -20,6 +20,8 @@ BRANCH_STOCK_SQL = """
     ORDER BY ic.itm_code, main.itm_id
 """
 
+EXCLUDED_ITEM_IDS = (73030, 114531, 116101, 116192, 1)
+
 
 class SelfInventoryRequest(models.Model):
     _name = 'ab_self_inventory_request'
@@ -52,6 +54,21 @@ class SelfInventoryRequest(models.Model):
     batch_id = fields.Many2one('ab_self_inventory_request_batch', readonly=True, copy=False, index=True)
     process_id = fields.Many2one('ab_self_inventory_process', readonly=True, copy=False)
     submitted_date = fields.Datetime(readonly=True, copy=False)
+
+    # Smart Inventory Analysis Fields
+    analysis_mode = fields.Selection(
+        selection=[
+            ('top_n', 'Top N Items Only'),
+            ('min_price', 'High Price Items Only (> Min Price)'),
+            ('both', 'Both Combined'),
+        ],
+        default='top_n',
+        string='Analysis Mode',
+    )
+    analysis_top_n = fields.Integer(string='Top N Items', default=100)
+    analysis_min_price = fields.Float(string='Min Price (EGP)', default=500.0)
+    analysis_period_days = fields.Integer(string='Period (Days)', default=90)
+    analysis_is_collapsed = fields.Boolean(default=True)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -163,6 +180,135 @@ class SelfInventoryRequest(models.Model):
             'res_model': 'ab_self_inventory_process',
             'view_mode': 'form',
             'res_id': self.process_id.id,
+        }
+
+    def action_run_inventory_analysis(self):
+        self.ensure_one()
+        branch = self.branch_id
+        if not branch:
+            raise ValidationError(_("Please select a branch first."))
+        return self._run_inventory_analysis_logic(branch)
+
+    def _run_inventory_analysis_logic(self, branch):
+        self.ensure_one()
+        if not branch.eplus_serial:
+            raise ValidationError(_("The selected branch has no e-plus serial."))
+
+        branch_id = int(branch.eplus_serial)
+        period_days = self.analysis_period_days
+        top_n = self.analysis_top_n
+        min_price = self.analysis_min_price
+
+        # PART 1: Fetch Sales Data
+        sales_sql = f"""
+            SELECT
+                d.itm_id,
+                ic.itm_code,
+                ic.itm_def_sell_price,
+                CAST(SUM(COALESCE(CASE d.itm_unit
+                    WHEN 1 THEN (d.qnty - d.itm_back)
+                    WHEN 2 THEN (d.qnty - d.itm_back) / NULLIF(ic.itm_unit1_unit2, 0)
+                    WHEN 3 THEN (d.qnty - d.itm_back) / NULLIF(ic.itm_unit1_unit3, 0)
+                END, 0)) AS DECIMAL(18,2)) AS sold_qty
+            FROM sales_trans_d d WITH (NOLOCK)
+            INNER JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = d.itm_id
+            INNER JOIN sales_trans_h h WITH (NOLOCK) ON h.sth_id = d.sth_id
+            WHERE h.sto_id = ? 
+              AND d.sec_insert_date >= DATEADD(DAY, -?, GETDATE())
+              AND ic.itm_srvc = 0
+              AND ic.itm_id NOT IN (73030, 114531, 116101, 116192, 1)
+            GROUP BY d.itm_id, ic.itm_code, ic.itm_def_sell_price
+            HAVING SUM(d.qnty - d.itm_back) > 0
+        """
+        sales_params = [branch_id, period_days]
+        
+        # PART 2: Fetch Stock Data
+        stock_sql = f"""
+            SELECT
+                ics.itm_id,
+                CAST(SUM(itm_qty / NULLIF(ic2.itm_unit1_unit3, 0)) AS DECIMAL(18,2)) AS stock_qty
+            FROM Item_Class_Store ics WITH (NOLOCK)
+            INNER JOIN Item_Catalog ic2 WITH (NOLOCK) ON ics.itm_id = ic2.itm_id
+            GROUP BY ics.itm_id
+            HAVING SUM(itm_qty) > 0
+        """
+
+        sales_rows = []
+        stock_rows = {}
+        try:
+            with self.connect_eplus(param_str='?', charset='CP1256') as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(sales_sql, sales_params)
+                    columns = [column[0].lower() for column in cursor.description]
+                    for row in cursor.fetchall():
+                        sales_rows.append(dict(zip(columns, row)))
+                    
+                    cursor.execute(stock_sql)
+                    for row in cursor.fetchall():
+                        stock_rows[int(row[0])] = float(row[1])
+        except Exception as e:
+            raise ValidationError(_("E-plus Connection Error: %s") % str(e))
+
+        if self.analysis_mode == 'top_n':
+            sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
+            sales_rows = sales_rows[:top_n]
+        elif self.analysis_mode == 'min_price':
+            sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
+        else:
+            sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
+            sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
+            sales_rows = sales_rows[:top_n]
+
+        final_rows = []
+        for row in sales_rows:
+            final_rows.append({
+                'itm_id': row['itm_id'],
+                'itm_code': row['itm_code'],
+                'sell_price': float(row['itm_def_sell_price'] or 0.0),
+                'sold_qty': float(row['sold_qty']),
+                'stock_qty': stock_rows.get(row['itm_id'], 0.0),
+            })
+
+        final_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
+
+        products_by_serial = self._get_products_by_eplus_serial([r['itm_id'] for r in final_rows])
+        products_by_code = self._get_products_by_code([r['itm_code'] for r in final_rows if r['itm_code']])
+
+        line_commands = [(5, 0, 0)]
+        for row in final_rows:
+            product = products_by_serial.get(row['itm_id'])
+            matched_by = 'eplus_serial' if product else 'none'
+            if not product and row['itm_code']:
+                product = products_by_code.get(row['itm_code'])
+                matched_by = 'code' if product else 'none'
+            line_commands.append((0, 0, {
+                'product_id': product.id if product else False,
+                'eplus_item_id': row['itm_id'],
+                'eplus_item_code': row['itm_code'],
+                'system_qty': row['stock_qty'],
+                'sell_price': row['sell_price'],
+                'sold_qty': row['sold_qty'],
+                'matched_by': matched_by,
+                'selected': True if product else False,
+            }))
+
+        self.write({
+            'line_ids': line_commands,
+            'analysis_is_collapsed': False,
+        })
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Analysis Complete'),
+                'message': _('Sales found: %d. Stock items: %d. Added to inventory: %d.') % (
+                    len(sales_rows), len(stock_rows), len(final_rows)
+                ),
+                'type': 'success' if final_rows else 'warning',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'reload'},
+            }
         }
 
     def _check_can_fetch_stock(self):
@@ -283,6 +429,8 @@ class SelfInventoryRequestLine(models.Model):
         required=True,
         readonly=True,
     )
+    sell_price = fields.Float(string='Sell Price', readonly=True)
+    sold_qty = fields.Float(string='Sold Qty', readonly=True)
     note = fields.Char()
     extra_data = fields.Json(readonly=True)
 
@@ -312,9 +460,12 @@ class SelfInventoryRequestBatch(models.Model):
         string='Branches',
         domain="[('store_type', '=', 'branch')]",
     )
-    selected_branch_id = fields.Many2one(
+    selected_branch_ids = fields.Many2many(
         'ab_store',
-        string='Showing Branch',
+        relation='ab_self_inventory_request_batch_selected_branch_rel',
+        column1='ab_self_inventory_request_batch_id',
+        column2='ab_store_id',
+        string='Showing Branches',
         domain="[('id', 'in', branch_ids)]",
         copy=False,
     )
@@ -358,6 +509,21 @@ class SelfInventoryRequestBatch(models.Model):
     process_count = fields.Integer(compute='_compute_process_count')
     submitted_date = fields.Datetime(readonly=True, copy=False)
 
+    # Smart Inventory Analysis Fields
+    analysis_mode = fields.Selection(
+        selection=[
+            ('top_n', 'Top N Items Only'),
+            ('min_price', 'High Price Items Only (> Min Price)'),
+            ('both', 'Both Combined'),
+        ],
+        default='top_n',
+        string='Analysis Mode',
+    )
+    analysis_top_n = fields.Integer(string='Top N Items', default=100)
+    analysis_min_price = fields.Float(string='Min Price (EGP)', default=500.0)
+    analysis_period_days = fields.Integer(string='Period (Days)', default=90)
+    analysis_is_collapsed = fields.Boolean(default=True)
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -373,14 +539,14 @@ class SelfInventoryRequestBatch(models.Model):
     @api.depends('line_ids')
     def _compute_line_count(self):
         for rec in self:
-            rec.line_count = len(rec.line_ids.filtered(lambda line: line.matched_by != 'none'))
+            rec.line_count = len(rec.line_ids)
 
-    @api.depends('line_ids', 'selected_branch_id')
+    @api.depends('line_ids', 'selected_branch_ids')
     def _compute_filtered_line_ids(self):
         for rec in self:
-            lines = rec.line_ids.filtered(lambda l: l.matched_by != 'none')
-            if rec.selected_branch_id:
-                lines = lines.filtered(lambda l: l.branch_id == rec.selected_branch_id)
+            lines = rec.line_ids
+            if rec.selected_branch_ids:
+                lines = lines.filtered(lambda l: l.branch_id in rec.selected_branch_ids)
             rec.filtered_line_ids = [(6, 0, lines.ids)]
 
     @api.depends('branch_filter_mode', 'branch_ids', 'branch_governorate_name')
@@ -429,8 +595,8 @@ class SelfInventoryRequestBatch(models.Model):
     @api.onchange('branch_ids')
     def _onchange_branch_ids_clear_selected_branch(self):
         for rec in self:
-            if rec.selected_branch_id and rec.selected_branch_id not in rec.branch_ids:
-                rec.selected_branch_id = False
+            if rec.selected_branch_ids:
+                rec.selected_branch_ids = rec.selected_branch_ids & rec.branch_ids
 
     def action_fetch_branch_stocks(self):
         for rec in self:
@@ -538,8 +704,6 @@ class SelfInventoryRequestBatch(models.Model):
             if not selected_lines:
                 raise ValidationError(_("Select at least one matched product before submitting."))
             selected_branches = selected_lines.mapped('branch_id')
-            if len(selected_branches) == 1:
-                raise ValidationError(_("Use the Requests view for a single branch self inventory request."))
 
             for branch in selected_branches:
                 branch_lines = selected_lines.filtered(lambda line: line.branch_id == branch)
@@ -636,7 +800,7 @@ class SelfInventoryRequestBatch(models.Model):
             'type': 'ir.actions.act_window',
             'res_model': 'ab_self_inventory_request_batch_line',
             'view_mode': 'list,form',
-            'domain': [('batch_id', '=', self.id), ('matched_by', '!=', 'none')],
+            'domain': [('batch_id', '=', self.id)],
             'context': {
                 'default_batch_id': self.id,
                 'search_default_group_branch': 1,
@@ -671,7 +835,7 @@ class SelfInventoryRequestBatch(models.Model):
 
     def action_get_analytics(self):
         self.ensure_one()
-        lines = self.line_ids.filtered(lambda l: l.matched_by != 'none')
+        lines = self.line_ids
         total = len(lines)
         return {
             'branch_count': len(lines.mapped('branch_id')),
@@ -682,7 +846,7 @@ class SelfInventoryRequestBatch(models.Model):
 
     def action_get_branch_counts(self):
         self.ensure_one()
-        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
+        domain = [('batch_id', '=', self.id)]
         grouped = self.env['ab_self_inventory_request_batch_line'].read_group(
             domain,
             ['branch_id'],
@@ -701,7 +865,7 @@ class SelfInventoryRequestBatch(models.Model):
 
     def action_get_grouped_rows(self, search=None, limit=50, branch_id=None):
         self.ensure_one()
-        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
+        domain = [('batch_id', '=', self.id)]
         if search:
             domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
         if branch_id:
@@ -734,10 +898,12 @@ class SelfInventoryRequestBatch(models.Model):
             })
         return groups
 
-    def action_get_grid_rows(self, branch_id=None, search=None, offset=0, limit=50, sort_by='branch_id', sort_order='asc'):
+    def action_get_grid_rows(self, branch_id=None, branch_ids=None, search=None, offset=0, limit=50, sort_by='branch_id', sort_order='asc'):
         self.ensure_one()
-        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
-        if branch_id:
+        domain = [('batch_id', '=', self.id)]
+        if branch_ids:
+            domain += [('branch_id', 'in', branch_ids)]
+        elif branch_id:
             domain += [('branch_id', '=', branch_id)]
         if search:
             domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
@@ -762,6 +928,8 @@ class SelfInventoryRequestBatch(models.Model):
             'product_code': l.product_code or '',
             'eplus_item_code': l.eplus_item_code or '',
             'system_qty': l.system_qty,
+            'sell_price': l.sell_price,
+            'sold_qty': l.sold_qty,
             'matched_by': l.matched_by,
             'note': l.note or '',
         } for l in lines]
@@ -776,33 +944,39 @@ class SelfInventoryRequestBatch(models.Model):
         line.write({'selected': not line.selected})
         return {'selected': line.selected}
 
-    def action_select_all_filtered(self, branch_id=None, search=None):
+    def action_select_all_filtered(self, branch_id=None, branch_ids=None, search=None):
         self.ensure_one()
         self._check_can_update_lines()
-        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
-        if branch_id:
+        domain = [('batch_id', '=', self.id)]
+        if branch_ids:
+            domain += [('branch_id', 'in', branch_ids)]
+        elif branch_id:
             domain += [('branch_id', '=', branch_id)]
         if search:
             domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
         self.env['ab_self_inventory_request_batch_line'].search(domain).write({'selected': True})
         return True
 
-    def action_unselect_all_filtered(self, branch_id=None, search=None):
+    def action_unselect_all_filtered(self, branch_id=None, branch_ids=None, search=None):
         self.ensure_one()
         self._check_can_update_lines()
-        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
-        if branch_id:
+        domain = [('batch_id', '=', self.id)]
+        if branch_ids:
+            domain += [('branch_id', 'in', branch_ids)]
+        elif branch_id:
             domain += [('branch_id', '=', branch_id)]
         if search:
             domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
         self.env['ab_self_inventory_request_batch_line'].search(domain).write({'selected': False})
         return True
 
-    def action_delete_selected_filtered(self, branch_id=None, search=None):
+    def action_delete_selected_filtered(self, branch_id=None, branch_ids=None, search=None):
         self.ensure_one()
         self._check_can_update_lines()
-        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none'), ('selected', '=', True)]
-        if branch_id:
+        domain = [('batch_id', '=', self.id), ('selected', '=', True)]
+        if branch_ids:
+            domain += [('branch_id', 'in', branch_ids)]
+        elif branch_id:
             domain += [('branch_id', '=', branch_id)]
         if search:
             domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
@@ -921,6 +1095,140 @@ class SelfInventoryRequestBatch(models.Model):
             },
         }
 
+    def action_run_inventory_analysis(self):
+        self.ensure_one()
+        branches = self.selected_branch_ids or self.branch_ids
+        if not branches:
+            raise ValidationError(_("Please select at least one branch first."))
+        return self._run_inventory_analysis_logic(branches)
+
+    def _run_inventory_analysis_logic(self, branches):
+        self.ensure_one()
+        all_line_commands = [(5, 0, 0)]
+        total_sales = 0
+        total_stock = 0
+        total_matched = 0
+        for branch in branches:
+            if not branch.eplus_serial:
+                raise ValidationError(_("Branch %s has no e-plus serial.") % branch.display_name)
+
+            branch_id = int(branch.eplus_serial)
+            period_days = self.analysis_period_days
+            top_n = self.analysis_top_n
+            min_price = self.analysis_min_price
+
+            sales_sql = f"""
+                SELECT
+                    d.itm_id,
+                    ic.itm_code,
+                    ic.itm_def_sell_price,
+                    CAST(SUM(COALESCE(CASE d.itm_unit
+                        WHEN 1 THEN (d.qnty - d.itm_back)
+                        WHEN 2 THEN (d.qnty - d.itm_back) / NULLIF(ic.itm_unit1_unit2, 0)
+                        WHEN 3 THEN (d.qnty - d.itm_back) / NULLIF(ic.itm_unit1_unit3, 0)
+                    END, 0)) AS DECIMAL(18,2)) AS sold_qty
+                FROM sales_trans_d d WITH (NOLOCK)
+                INNER JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = d.itm_id
+                INNER JOIN sales_trans_h h WITH (NOLOCK) ON h.sth_id = d.sth_id
+                WHERE h.sto_id = ? 
+                  AND d.sec_insert_date >= DATEADD(DAY, -?, GETDATE())
+                  AND ic.itm_srvc = 0
+                  AND ic.itm_id NOT IN (73030, 114531, 116101, 116192, 1)
+                GROUP BY d.itm_id, ic.itm_code, ic.itm_def_sell_price
+                HAVING SUM(d.qnty - d.itm_back) > 0
+            """
+            stock_sql = f"""
+                SELECT
+                    ics.itm_id,
+                    CAST(SUM(itm_qty / NULLIF(ic2.itm_unit1_unit3, 0)) AS DECIMAL(18,2)) AS stock_qty
+                FROM Item_Class_Store ics WITH (NOLOCK)
+                INNER JOIN Item_Catalog ic2 WITH (NOLOCK) ON ics.itm_id = ic2.itm_id
+                GROUP BY ics.itm_id
+                HAVING SUM(itm_qty) > 0
+            """
+
+            sales_rows = []
+            stock_rows = {}
+            try:
+                with self.connect_eplus(param_str='?', charset='CP1256') as conn:
+                    with conn.cursor() as cursor:
+                        cursor.execute(sales_sql, [branch_id, period_days])
+                        columns = [column[0].lower() for column in cursor.description]
+                        for row in cursor.fetchall():
+                            sales_rows.append(dict(zip(columns, row)))
+                        cursor.execute(stock_sql)
+                        for row in cursor.fetchall():
+                            stock_rows[int(row[0])] = float(row[1])
+            except Exception as e:
+                raise ValidationError(_("E-plus Connection Error for %s: %s") % (branch.display_name, str(e)))
+
+            if self.analysis_mode == 'top_n':
+                sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
+                sales_rows = sales_rows[:top_n]
+            elif self.analysis_mode == 'min_price':
+                sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
+            else:
+                sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
+                sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
+                sales_rows = sales_rows[:top_n]
+
+            final_rows = []
+            for row in sales_rows:
+                final_rows.append({
+                    'itm_id': row['itm_id'],
+                    'itm_code': row['itm_code'],
+                    'sell_price': float(row['itm_def_sell_price'] or 0.0),
+                    'sold_qty': float(row['sold_qty']),
+                    'stock_qty': stock_rows.get(row['itm_id'], 0.0),
+                })
+
+            final_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
+            total_sales += len(sales_rows)
+            total_stock += len(stock_rows)
+            total_matched += len(final_rows)
+
+            all_item_ids = [r['itm_id'] for r in final_rows]
+            all_item_codes = [r['itm_code'] for r in final_rows if r['itm_code']]
+            products_by_serial = self.env['ab_self_inventory_request']._get_products_by_eplus_serial(all_item_ids)
+            products_by_code = self.env['ab_self_inventory_request']._get_products_by_code(all_item_codes)
+
+            for row in final_rows:
+                product = products_by_serial.get(row['itm_id'])
+                matched_by = 'eplus_serial' if product else 'none'
+                if not product and row['itm_code']:
+                    product = products_by_code.get(row['itm_code'])
+                    matched_by = 'code' if product else 'none'
+                all_line_commands.append((0, 0, {
+                    'branch_id': branch.id,
+                    'product_id': product.id if product else False,
+                    'eplus_item_id': row['itm_id'],
+                    'eplus_item_code': row['itm_code'],
+                    'system_qty': row['stock_qty'],
+                    'sell_price': row['sell_price'],
+                    'sold_qty': row['sold_qty'],
+                    'matched_by': matched_by,
+                    'selected': True if product else False,
+                }))
+
+        self.write({
+            'line_ids': all_line_commands,
+            'analysis_is_collapsed': False,
+        })
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Analysis Complete'),
+                'message': _('Branches: %d. Sales found: %d. Stock items: %d. Added: %d.') % (
+                    len(branches), total_sales, total_stock, total_matched
+                ),
+                'type': 'success' if total_matched else 'warning',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'reload'},
+            }
+        }
+
 
 class SelfInventoryRequestBatchLine(models.Model):
     _name = 'ab_self_inventory_request_batch_line'
@@ -945,6 +1253,8 @@ class SelfInventoryRequestBatchLine(models.Model):
         required=True,
         readonly=True,
     )
+    sell_price = fields.Float(string='Sell Price', readonly=True)
+    sold_qty = fields.Float(string='Sold Qty', readonly=True)
     note = fields.Char()
     request_id = fields.Many2one('ab_self_inventory_request', readonly=True, copy=False)
     extra_data = fields.Json(readonly=True)
@@ -1022,3 +1332,5 @@ class SelfInventoryRequestBatchLine(models.Model):
     @api.model
     def _reload_action(self):
         return {'type': 'ir.actions.client', 'tag': 'reload'}
+
+

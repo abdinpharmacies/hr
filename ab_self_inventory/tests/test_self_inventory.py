@@ -591,7 +591,7 @@ class TestSelfInventory(TransactionCase):
         with self.assertRaisesRegex(ValidationError, "Requests view"):
             batch.action_submit_batch()
 
-    def test_batch_lines_action_hides_not_matched_lines(self):
+    def test_batch_lines_action_shows_all_lines(self):
         batch = self.env['ab_self_inventory_request_batch'].with_user(self.requester).create({
             'branch_ids': [(6, 0, [self.branch.id])],
             'line_ids': [
@@ -616,5 +616,6 @@ class TestSelfInventory(TransactionCase):
         })
 
         self.assertEqual(len(batch.line_ids), 2)
-        self.assertEqual(batch.line_count, 1)
-        self.assertIn(('matched_by', '!=', 'none'), batch.action_open_lines()['domain'])
+        self.assertEqual(batch.line_count, 2)
+        self.assertEqual(len(batch.action_open_lines()['domain']), 1)
+        self.assertEqual(batch.action_open_lines()['domain'][0], ('batch_id', '=', batch.id))

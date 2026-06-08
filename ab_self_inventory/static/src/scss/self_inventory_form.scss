@@ -1345,6 +1345,21 @@ $saas-transition: 0.15s ease;
     font-variant-numeric: tabular-nums;
 }
 
+.ab_saas_grid_cell_price {
+    width: 90px;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
+}
+
+.ab_saas_grid_cell_sold {
+    width: 80px;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
 .ab_saas_grid_cell_match {
     width: 110px;
     flex-shrink: 0;
@@ -1394,7 +1409,17 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_qty_positive {
-    color: $saas-success;
+    color: #16A34A;
+}
+
+.ab_saas_price {
+    color: #6366F1;
+    font-weight: 500;
+}
+
+.ab_saas_sold {
+    color: #EA580C;
+    font-weight: 600;
 }
 
 // Branch Pill in cells
@@ -1583,6 +1608,8 @@ $saas-transition: 0.15s ease;
 
     .ab_saas_grid_cell_branch { width: 120px; }
     .ab_saas_grid_cell_code { width: 100px; }
+    .ab_saas_grid_cell_price { width: 70px; }
+    .ab_saas_grid_cell_sold { width: 60px; }
     .ab_saas_grid_cell_match { width: 90px; }
     .ab_saas_grid_cell_note { display: none; }
 }
