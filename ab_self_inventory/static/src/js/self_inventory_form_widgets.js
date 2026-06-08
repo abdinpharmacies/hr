@@ -1,7 +1,7 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
-import { Component, useState, xml, useRef, onWillUnmount, onPatched } from "@odoo/owl";
+import { Component, useState, xml, useRef, onWillStart, onWillUnmount, onPatched } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { Dialog } from "@web/core/dialog/dialog";
 
@@ -392,6 +392,486 @@ class SelectedBranchFilterWidget extends Component {
         }
     }
 }
+
+const ROW_HEIGHT = 56;
+const PAGE_SIZE = 50;
+
+// ===================================================================
+// Data Grid Widget - Modern SaaS grid replacing O2M
+// Features: analytics header, branch nav, search, selection, l/loading
+// ===================================================================
+
+class DataGridWidget extends Component {
+    static template = xml`
+        <div class="ab_saas_grid_wrapper">
+            <div class="ab_saas_grid_loading" t-if="state.loading &amp;&amp; !state.rows.length">
+                <div class="ab_saas_grid_spinner"></div>
+                <span>Loading data...</span>
+            </div>
+
+            <div class="ab_saas_grid_content" t-if="state.analytics">
+                <!-- Analytics Header -->
+                <div class="ab_saas_analytics_row">
+                    <div class="ab_saas_analytics_card ab_saas_analytics_card--branches">
+                        <div class="ab_saas_analytics_value" t-esc="state.analytics.branch_count"/>
+                        <div class="ab_saas_analytics_label">Branches</div>
+                    </div>
+                    <div class="ab_saas_analytics_card ab_saas_analytics_card--products">
+                        <div class="ab_saas_analytics_value" t-esc="state.analytics.total_products"/>
+                        <div class="ab_saas_analytics_label">Products</div>
+                    </div>
+                    <div class="ab_saas_analytics_card ab_saas_analytics_card--selected">
+                        <div class="ab_saas_analytics_value" t-esc="state.analytics.selected_products"/>
+                        <div class="ab_saas_analytics_label">Selected</div>
+                    </div>
+                    <div class="ab_saas_analytics_card ab_saas_analytics_card--matched">
+                        <div class="ab_saas_analytics_value" t-esc="state.analytics.matched_pct + '%'"/>
+                        <div class="ab_saas_analytics_label">Matched</div>
+                    </div>
+                </div>
+
+
+                <!-- Branch Nav -->
+                <div class="ab_saas_branch_nav">
+                    <div class="ab_saas_branch_search">
+                        <input type="text" placeholder="Search branch..." t-model="state.branchSearchText" class="o_input"/>
+                    </div>
+                    <div class="ab_saas_branch_chips_wrap">
+                        <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_id ? '' : ' ab_saas_branch_chip_active')" t-on-click="() => this.selectBranch(false)">
+                            All Branches
+                        </button>
+                        <t t-foreach="filteredBranches" t-as="b" t-key="b.id">
+                            <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_id === b.id ? ' ab_saas_branch_chip_active' : '')" t-on-click="() => this.selectBranch(b.id)">
+                                <t t-esc="b.name"/>
+                                <span class="ab_saas_branch_chip_count" t-esc="' ' + b.count"/>
+                            </button>
+                        </t>
+                        <span class="ab_saas_branch_chip_more" t-if="filteredBranches.length > 8" t-on-click="() => this.state.showAllBranches = !this.state.showAllBranches">
+                            <t t-esc="state.showAllBranches ? 'Show less' : ('+' + (state.branches.length - 8) + ' more')"/>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Selected branch indicator -->
+                <div class="ab_saas_branch_selected" t-if="state.selected_branch_id &amp;&amp; selectedBranchLabel">
+                    <span class="ab_saas_branch_selected_text">Showing: <t t-esc="selectedBranchLabel"/></span>
+                    <button class="ab_saas_branch_selected_clear" t-on-click="() => this.selectBranch(false)">Show All</button>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="ab_saas_toolbar">
+                    <div class="ab_saas_toolbar_left">
+                        <div class="ab_saas_search">
+                            <span class="ab_saas_search_icon">&#x1F50D;</span>
+                            <input type="text" placeholder="Search products..." t-model="state.searchText" t-on-input="onSearchInput" class="o_input"/>
+                        </div>
+                    </div>
+                    <div class="ab_saas_toolbar_right">
+                        <span class="ab_saas_selection_pill" t-if="selectedCount" t-on-click="unselectAll">
+                            &#x2611; <t t-esc="selectedCount"/> selected &#x2716;
+                        </span>
+                        <button class="ab_saas_toolbar_btn" t-on-click="selectAll" t-att-disabled="!state.total || isReadonly">Select All</button>
+                                <button class="ab_saas_toolbar_btn" t-on-click="unselectAll" t-att-disabled="!selectedCount || isReadonly">Clear</button>
+                                <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="deleteSelected" t-att-disabled="!selectedCount || isReadonly">Delete</button>
+                        <button class="ab_saas_toolbar_btn" t-on-click="toggleGrouping">
+                            <t t-esc="state.groupByBranch ? '\u25BC' : '\u25B6'"/> Group
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Selection bar -->
+                <div class="ab_saas_selection_bar" t-if="selectedCount > 0 &amp;&amp; state.selected_branch_id">
+                    <span class="ab_saas_selection_bar_count"><t t-esc="selectedCount"/> products selected</span>
+                    <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="deleteSelected" t-att-disabled="isReadonly">Delete Selected</button>
+                    <button class="ab_saas_toolbar_btn" t-on-click="unselectAll">Clear</button>
+                </div>
+
+                <!-- Grid -->
+                <div class="ab_saas_grid_container" t-ref="gridContainer">
+                    <div class="ab_saas_grid_header">
+                        <div class="ab_saas_grid_header_row">
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click="toggleAllCheck">&#x2611;</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-on-click="() => this.sortBy('branch_name')">
+                                Branch <span class="ab_saas_sort_icon" t-esc="sortIcon('branch_name')"/>
+                            </div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                Product <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
+                            </div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_code">Code</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
+                                Qty <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
+                            </div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_match">Match</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_note">Note</div>
+                        </div>
+                    </div>
+                    <div class="ab_saas_grid_body" t-ref="gridBody" t-on-scroll="onGridScroll">
+                        <t t-if="!state.groupByBranch">
+                            <t t-foreach="state.rows" t-as="row" t-key="row.id">
+                                <div t-att-class="'ab_saas_grid_row' + (row.selected ? ' ab_saas_grid_row_selected' : '') + (row._highlight ? ' ab_saas_grid_row_highlight' : '')" t-on-click="() => this.toggleRow(row)">
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
+                                        <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_branch">
+                                        <span class="ab_saas_branch_pill"><t t-esc="row.branch_name"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                        <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
+                                        <div class="ab_saas_product_code" t-if="row.product_code"><t t-esc="row.product_code"/></div>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_code">
+                                        <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
+                                        <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_match">
+                                        <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + row.matched_by"><t t-esc="matchLabel(row.matched_by)"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
+                                        <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
+                                    </div>
+                                </div>
+                            </t>
+                        </t>
+                        <t t-else="">
+                            <t t-foreach="groupedRows" t-as="group" t-key="group.branch_id">
+                                <div class="ab_saas_grid_group_header" t-on-click="() => this.toggleGroup(group.branch_id)">
+                                    <span class="ab_saas_grid_group_arrow"><t t-esc="state.expandedBranches[group.branch_id] ? '\u25BC' : '\u25B6'"/></span>
+                                    <span class="ab_saas_grid_group_name"><t t-esc="group.branch_name"/></span>
+                                    <span class="ab_saas_grid_group_count"><t t-esc="group.count"/> products</span>
+                                </div>
+                                <t t-if="state.expandedBranches[group.branch_id]">
+                                    <t t-foreach="group.rows" t-as="row" t-key="row.id">
+                                        <div t-att-class="'ab_saas_grid_row' + (row.selected ? ' ab_saas_grid_row_selected' : '')" t-on-click="() => this.toggleRow(row)">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
+                                                <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch"/>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                                <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
+                                                <div class="ab_saas_product_code" t-if="row.product_code"><t t-esc="row.product_code"/></div>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_code">
+                                                <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
+                                                <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_match">
+                                                <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + row.matched_by"><t t-esc="matchLabel(row.matched_by)"/></span>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
+                                                <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
+                                            </div>
+                                        </div>
+                                    </t>
+                                </t>
+                            </t>
+                        </t>
+                        <div class="ab_saas_grid_empty" t-if="!state.rows.length &amp;&amp; !state.loading">
+                            <div class="ab_saas_grid_empty_content">
+                                <div class="ab_saas_grid_empty_icon">&#x1F50D;</div>
+                                <div class="ab_saas_grid_empty_title">No products found</div>
+                                <div class="ab_saas_grid_empty_text">Try changing the branch filter or search terms.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ab_saas_grid_footer" t-if="state.total > state.rows.length">
+                        <span class="ab_saas_grid_footer_text"><t t-esc="state.rows.length"/> of <t t-esc="state.total"/> loaded</span>
+                        <button class="ab_saas_load_more" t-on-click="loadMore">Load more</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    static props = { ...standardFieldProps };
+
+    setup() {
+        this.orm = useService("orm");
+        this.gridContainer = useRef("gridContainer");
+        this.gridBody = useRef("gridBody");
+        this._searchTimer = null;
+        this._loadKey = "";
+        this.state = useState({
+            analytics: null,
+            branches: [],
+            selected_branch_id: false,
+            branchSearchText: "",
+            searchText: "",
+            rows: [],
+            total: 0,
+            loading: false,
+            page: 0,
+            sortBy: "branch_id",
+            sortOrder: "asc",
+            groupByBranch: false,
+            expandedBranches: {},
+            showAllBranches: false,
+        });
+        onWillStart(() => this._load());
+        onPatched(() => this._onPatched());
+    }
+
+    _currentKey() {
+        const rec = this.props.record;
+        if (!rec || !rec.resId) return "";
+        const branchRaw = rec.data?.selected_branch_id;
+        const br = branchRaw
+            ? (Array.isArray(branchRaw) ? branchRaw[0] : typeof branchRaw === "object" ? branchRaw.id : branchRaw)
+            : false;
+        const version = rec.data?.__last_update || rec.data?.write_date || "";
+        return `${rec.resId}:${br}:${version}`;
+    }
+
+    get resModel() {
+        return this.props.record?.resModel || "ab_self_inventory_request_batch";
+    }
+
+    get resId() {
+        return this.props.record?.resId;
+    }
+
+    get isReadonly() {
+        const st = this.props.record?.data?.state;
+        return st && st !== "draft";
+    }
+
+    _getServerBranchId() {
+        const raw = this.props.record?.data?.selected_branch_id;
+        if (!raw) return false;
+        if (Array.isArray(raw)) return raw[0];
+        if (typeof raw === "object") return raw.id;
+        return raw;
+    }
+
+    async _load() {
+        const key = this._currentKey();
+        if (!key) return;
+        this._loadKey = key;
+        const id = this.resId;
+        if (!id) return;
+        const serverBranch = this._getServerBranchId();
+        if (serverBranch) {
+            this.state.selected_branch_id = serverBranch;
+        }
+        this.state.loading = true;
+        try {
+            const [analytics, branches, result] = await Promise.all([
+                this.orm.call(this.resModel, "action_get_analytics", [[id]], {}),
+                this.orm.call(this.resModel, "action_get_branch_counts", [[id]], {}),
+                this.orm.call(this.resModel, "action_get_grid_rows", [[id]], {
+                    branch_id: serverBranch || false,
+                    search: this.state.searchText || false,
+                    offset: 0,
+                    limit: PAGE_SIZE,
+                    sort_by: this.state.sortBy,
+                    sort_order: this.state.sortOrder,
+                }),
+            ]);
+            if (this._currentKey() !== this._loadKey) {
+                return;
+            }
+            this.state.analytics = analytics;
+            this.state.branches = branches;
+            this.state.rows = result.rows || [];
+            this.state.total = result.total || 0;
+            this.state.page = 0;
+        } catch (e) {
+            console.warn("[DataGrid] load error", e);
+            if (this._currentKey() !== this._loadKey) return;
+            this.state.analytics = { branch_count: 0, total_products: 0, selected_products: 0, matched_pct: 0 };
+            this.state.rows = [];
+            this.state.total = 0;
+        } finally {
+            if (this._currentKey() === this._loadKey) {
+                this.state.loading = false;
+            }
+        }
+    }
+
+    _onPatched() {
+        const key = this._currentKey();
+        if (key && key !== this._loadKey) {
+            this._load();
+        }
+    }
+
+    async loadMore() {
+        if (this.state.rows.length >= this.state.total || this.state.loading) return;
+        const id = this.resId;
+        if (!id) return;
+        this.state.loading = true;
+        try {
+            const result = await this.orm.call(this.resModel, "action_get_grid_rows", [[id]], {
+                branch_id: this.state.selected_branch_id || false,
+                search: this.state.searchText || false,
+                offset: this.state.rows.length,
+                limit: PAGE_SIZE,
+                sort_by: this.state.sortBy,
+                sort_order: this.state.sortOrder,
+            });
+            if (this._currentKey() !== this._loadKey) return;
+            this.state.rows = [...this.state.rows, ...(result.rows || [])];
+            this.state.total = result.total || this.state.total;
+        } catch (e) {
+            console.warn("[DataGrid] loadMore error", e);
+        } finally {
+            if (this._currentKey() === this._loadKey) {
+                this.state.loading = false;
+            }
+        }
+    }
+
+    get filteredBranches() {
+        const all = this.state.branches || [];
+        const q = (this.state.branchSearchText || "").trim().toLowerCase();
+        let filtered = q ? all.filter(b => b.name.toLowerCase().includes(q)) : all;
+        if (!this.state.showAllBranches && filtered.length > 8) {
+            filtered = filtered.slice(0, 8);
+        }
+        return filtered;
+    }
+
+    get selectedCount() {
+        return this.state.rows.filter(r => r.selected).length;
+    }
+
+    get selectedBranchLabel() {
+        if (!this.state.selected_branch_id) return "";
+        const found = this.state.branches.find(b => b.id === this.state.selected_branch_id);
+        return found ? found.name : "";
+    }
+
+    selectBranch(branchId) {
+        this.state.selected_branch_id = branchId;
+    }
+
+    onSearchInput() {
+        if (this._searchTimer) clearTimeout(this._searchTimer);
+        this._searchTimer = setTimeout(() => {
+            this.state.rows = [];
+            this.state.total = 0;
+            this._load();
+        }, 350);
+    }
+
+    async toggleRow(row) {
+        if (!row || !row.id) return;
+        const current = row.selected;
+        row.selected = !current;
+        this.state.rows = [...this.state.rows];
+        try {
+            const result = await this.orm.call(this.resModel, "action_toggle_line_selection", [[this.resId], row.id], {});
+            row.selected = result.selected;
+            this.state.rows = [...this.state.rows];
+        } catch (e) {
+            row.selected = current;
+            this.state.rows = [...this.state.rows];
+        }
+    }
+
+    toggleAllCheck() {
+        const visible = this.state.rows;
+        if (!visible.length) return;
+        const allSelected = visible.every(r => r.selected);
+        for (const r of visible) r.selected = !allSelected;
+        this.state.rows = [...this.state.rows];
+    }
+
+    async selectAll() {
+        try {
+            await this.orm.call(this.resModel, "action_select_all_filtered", [[this.resId]], {
+                branch_id: this.state.selected_branch_id || false,
+                search: this.state.searchText || false,
+            });
+            for (const r of this.state.rows) r.selected = true;
+            this.state.rows = [...this.state.rows];
+        } catch (e) {
+            console.warn("[DataGrid] selectAll error", e);
+        }
+    }
+
+    async unselectAll() {
+        try {
+            await this.orm.call(this.resModel, "action_unselect_all_filtered", [[this.resId]], {
+                branch_id: this.state.selected_branch_id || false,
+                search: this.state.searchText || false,
+            });
+            for (const r of this.state.rows) r.selected = false;
+            this.state.rows = [...this.state.rows];
+        } catch (e) {
+            console.warn("[DataGrid] unselectAll error", e);
+        }
+    }
+
+    async deleteSelected() {
+        const selected = this.state.rows.filter(r => r.selected);
+        if (!selected.length) return;
+        try {
+            await this.orm.call(this.resModel, "action_delete_selected_filtered", [[this.resId]], {
+                branch_id: this.state.selected_branch_id || false,
+                search: this.state.searchText || false,
+            });
+            this.state.rows = this.state.rows.filter(r => !r.selected);
+            this.state.total = Math.max(0, this.state.total - selected.length);
+        } catch (e) {
+            console.warn("[DataGrid] deleteSelected error", e);
+        }
+    }
+
+    toggleGrouping() {
+        this.state.groupByBranch = !this.state.groupByBranch;
+    }
+
+    toggleGroup(branchId) {
+        const expanded = this.state.expandedBranches[branchId];
+        this.state.expandedBranches[branchId] = !expanded;
+        this.state.expandedBranches = { ...this.state.expandedBranches };
+    }
+
+    sortBy(field) {
+        if (!field) return;
+        if (this.state.sortBy === field) {
+            this.state.sortOrder = this.state.sortOrder === "asc" ? "desc" : "asc";
+        } else {
+            this.state.sortBy = field;
+            this.state.sortOrder = "asc";
+        }
+        this.state.rows = [];
+        this.state.total = 0;
+        this._load();
+    }
+
+    sortIcon(field) {
+        if (this.state.sortBy !== field) return "";
+        return this.state.sortOrder === "asc" ? "\u25B2" : "\u25BC";
+    }
+
+    matchLabel(value) {
+        const labels = { eplus_serial: "E-plus ID", code: "Item Code", none: "Unmatched" };
+        return labels[value] || value || "";
+    }
+
+    get groupedRows() {
+        const groups = {};
+        for (const r of this.state.rows) {
+            if (!groups[r.branch_id]) {
+                groups[r.branch_id] = { branch_id: r.branch_id, branch_name: r.branch_name, count: 0, rows: [] };
+            }
+            groups[r.branch_id].count++;
+            groups[r.branch_id].rows.push(r);
+        }
+        return Object.values(groups);
+    }
+
+    onGridScroll() {}
+}
+
+registry.category("fields").add("ab_inventory_data_grid", {
+    component: DataGridWidget,
+});
 
 // Dialog for branch list (reuse from inline template)
 class BranchDialog extends Component {

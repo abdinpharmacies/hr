@@ -113,14 +113,7 @@
                                 </div>
                                 <notebook>
                                     <page string="Branch Product Groups">
-                                        <field name="selected_branch_id" widget="ab_inventory_selected_branch_filter" nolabel="1"/>
-                                        <div class="ab_form_row" invisible="state != 'draft'">
-                                            <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary"/>
-                                            <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary"/>
-                                            <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
-                                            <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" confirm="Delete all unselected fetched products?"/>
-                                        </div>
-                                        <field name="filtered_line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_batch_line_list'}" readonly="state != 'draft'"/>
+                                        <field name="line_count" widget="ab_inventory_data_grid" nolabel="1"/>
                                     </page>
                                 </notebook>
                             </div>
