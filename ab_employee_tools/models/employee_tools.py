@@ -79,6 +79,8 @@ class EmployeeTools(models.Model):
         self._check_delivery_allowed()
         move_model = self.env["ab_employee_tools.inventory_move"]
         for rec in self:
+            if not rec.delivery_date:
+                raise ValidationError(_("Please select a delivery date."))
             for line in rec.line_ids:
                 qty = line.no_of_units or 0
                 if qty:

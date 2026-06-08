@@ -50,21 +50,21 @@ class EmployeeToolsLine(models.Model):
             if rec.no_of_units < 0:
                 raise ValidationError(_("No. of Units must be zero or positive."))
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            employee_tools = self.env["ab_employee_tools_employee_tools"].browse(
-                vals.get("employee_tools_id")
-            )
-            if employee_tools:
-                self._check_edit_allowed(employee_tools)
-        return super().create(vals_list)
-
-    def write(self, vals):
-        for rec in self:
-            rec._check_edit_allowed(rec.employee_tools_id)
-            super(EmployeeToolsLine, rec).write(vals)
-        return True
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     for vals in vals_list:
+    #         employee_tools = self.env["ab_employee_tools_employee_tools"].browse(
+    #             vals.get("employee_tools_id")
+    #         )
+    #         if employee_tools:
+    #             self._check_edit_allowed(employee_tools)
+    #     return super().create(vals_list)
+    #
+    # def write(self, vals):
+    #     for rec in self:
+    #         rec._check_edit_allowed(rec.employee_tools_id)
+    #         super(EmployeeToolsLine, rec).write(vals)
+    #     return True
 
     def unlink(self):
         for rec in self:
