@@ -699,6 +699,41 @@ class SelfInventoryRequestBatch(models.Model):
         branches.sort(key=lambda b: b['name'])
         return branches
 
+    def action_get_grouped_rows(self, search=None, limit=50, branch_id=None):
+        self.ensure_one()
+        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
+        if search:
+            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
+        if branch_id:
+            domain += [('branch_id', '=', branch_id)]
+        Line = self.env['ab_self_inventory_request_batch_line']
+        branch_ids = Line.search(domain).mapped('branch_id')
+        groups = []
+        for branch in branch_ids.sorted(key=lambda b: b.display_name or b.name or ''):
+            bd = domain + [('branch_id', '=', branch.id)]
+            lines = Line.search(bd, limit=limit, order='selected DESC, product_id asc')
+            total = Line.search_count(bd)
+            rows = [{
+                'id': l.id,
+                'branch_id': l.branch_id.id,
+                'branch_name': l.branch_id.display_name or l.branch_id.name or '',
+                'selected': l.selected,
+                'product_name': l.product_id.display_name or l.product_id.name or '' if l.product_id else '',
+                'product_code': l.product_code or '',
+                'eplus_item_code': l.eplus_item_code or '',
+                'system_qty': l.system_qty,
+                'matched_by': l.matched_by,
+                'note': l.note or '',
+            } for l in lines]
+            groups.append({
+                'branch_id': branch.id,
+                'branch_name': branch.display_name or branch.name or '',
+                'rows': rows,
+                'count': len(rows),
+                'total': total,
+            })
+        return groups
+
     def action_get_grid_rows(self, branch_id=None, search=None, offset=0, limit=50, sort_by='branch_id', sort_order='asc'):
         self.ensure_one()
         domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
@@ -711,8 +746,12 @@ class SelfInventoryRequestBatch(models.Model):
             'product_name': 'product_id.name',
         }
         sort_field = sort_map.get(sort_by, sort_by)
+        order_parts = []
+        if not branch_id:
+            order_parts.append('selected DESC')
+        order_parts.append(f'{sort_field} {sort_order}')
         Line = self.env['ab_self_inventory_request_batch_line']
-        lines = Line.search(domain, offset=offset, limit=limit, order=f'{sort_field} {sort_order}')
+        lines = Line.search(domain, offset=offset, limit=limit, order=', '.join(order_parts))
         total = Line.search_count(domain)
         rows = [{
             'id': l.id,
