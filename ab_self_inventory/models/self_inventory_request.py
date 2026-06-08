@@ -669,6 +669,107 @@ class SelfInventoryRequestBatch(models.Model):
     def _get_reload_action(self):
         return {'type': 'ir.actions.client', 'tag': 'reload'}
 
+    def action_get_analytics(self):
+        self.ensure_one()
+        lines = self.line_ids.filtered(lambda l: l.matched_by != 'none')
+        total = len(lines)
+        return {
+            'branch_count': len(lines.mapped('branch_id')),
+            'total_products': total,
+            'selected_products': len(lines.filtered('selected')),
+            'matched_pct': round(len(lines.filtered(lambda l: l.matched_by != 'none')) / total * 100) if total else 0,
+        }
+
+    def action_get_branch_counts(self):
+        self.ensure_one()
+        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
+        grouped = self.env['ab_self_inventory_request_batch_line'].read_group(
+            domain,
+            ['branch_id'],
+            ['branch_id'],
+        )
+        branches = []
+        for g in grouped:
+            branch = self.env['ab_store'].browse(g['branch_id'][0])
+            branches.append({
+                'id': branch.id,
+                'name': branch.display_name or branch.name or '',
+                'count': g['branch_id_count'],
+            })
+        branches.sort(key=lambda b: b['name'])
+        return branches
+
+    def action_get_grid_rows(self, branch_id=None, search=None, offset=0, limit=50, sort_by='branch_id', sort_order='asc'):
+        self.ensure_one()
+        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
+        if branch_id:
+            domain += [('branch_id', '=', branch_id)]
+        if search:
+            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
+        sort_map = {
+            'branch_name': 'branch_id.name',
+            'product_name': 'product_id.name',
+        }
+        sort_field = sort_map.get(sort_by, sort_by)
+        Line = self.env['ab_self_inventory_request_batch_line']
+        lines = Line.search(domain, offset=offset, limit=limit, order=f'{sort_field} {sort_order}')
+        total = Line.search_count(domain)
+        rows = [{
+            'id': l.id,
+            'branch_id': l.branch_id.id,
+            'branch_name': l.branch_id.display_name or l.branch_id.name or '',
+            'selected': l.selected,
+            'product_name': l.product_id.display_name or l.product_id.name or '' if l.product_id else '',
+            'product_code': l.product_code or '',
+            'eplus_item_code': l.eplus_item_code or '',
+            'system_qty': l.system_qty,
+            'matched_by': l.matched_by,
+            'note': l.note or '',
+        } for l in lines]
+        return {'rows': rows, 'total': total}
+
+    def action_toggle_line_selection(self, line_id):
+        self.ensure_one()
+        self._check_can_update_lines()
+        line = self.env['ab_self_inventory_request_batch_line'].browse(line_id)
+        if line.batch_id != self:
+            return {'selected': False}
+        line.write({'selected': not line.selected})
+        return {'selected': line.selected}
+
+    def action_select_all_filtered(self, branch_id=None, search=None):
+        self.ensure_one()
+        self._check_can_update_lines()
+        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
+        if branch_id:
+            domain += [('branch_id', '=', branch_id)]
+        if search:
+            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
+        self.env['ab_self_inventory_request_batch_line'].search(domain).write({'selected': True})
+        return True
+
+    def action_unselect_all_filtered(self, branch_id=None, search=None):
+        self.ensure_one()
+        self._check_can_update_lines()
+        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none')]
+        if branch_id:
+            domain += [('branch_id', '=', branch_id)]
+        if search:
+            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
+        self.env['ab_self_inventory_request_batch_line'].search(domain).write({'selected': False})
+        return True
+
+    def action_delete_selected_filtered(self, branch_id=None, search=None):
+        self.ensure_one()
+        self._check_can_update_lines()
+        domain = [('batch_id', '=', self.id), ('matched_by', '!=', 'none'), ('selected', '=', True)]
+        if branch_id:
+            domain += [('branch_id', '=', branch_id)]
+        if search:
+            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
+        self.env['ab_self_inventory_request_batch_line'].search(domain).unlink()
+        return True
+
     def _get_governorate_branch_domain(self):
         return self._get_branch_selection_domain()
 
