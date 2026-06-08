@@ -26,6 +26,8 @@
             'ab_self_inventory/static/src/js/self_inventory_form_widgets.js',
             'ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js',
         ],
+    'icon': '/my_module/static/description/new_icon.png',
+
     },
     'installable': True,
 }
