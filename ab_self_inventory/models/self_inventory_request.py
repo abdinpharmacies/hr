@@ -136,6 +136,7 @@ class SelfInventoryRequest(models.Model):
             if not selected_lines:
                 raise ValidationError(_("Select at least one matched product before submitting."))
             process = rec._create_process_from_request(selected_lines)
+            rec.line_ids.filtered(lambda line: not line.selected).unlink()
             rec.write({
                 'state': 'submitted',
                 'submitted_date': fields.Datetime.now(),
