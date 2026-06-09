@@ -66,7 +66,7 @@ class EmployeeToolsLine(models.Model):
     #         super(EmployeeToolsLine, rec).write(vals)
     #     return True
 
-    def unlink(self):
-        for rec in self:
-            rec._check_edit_allowed(rec.employee_tools_id)
-        return super().unlink()
+    # def unlink(self):
+    #     for rec in self:
+    #         rec._check_edit_allowed(rec.employee_tools_id)
+    #     return super().unlink()
