@@ -359,21 +359,59 @@ class SelectedCheckWidget extends Component {
         <button type="button"
                 t-att-class="'ab_selected_check ' + (isSelected ? 'ab_selected_check--on' : 'ab_selected_check--off')"
                 t-att-title="isSelected ? 'Selected' : 'Not selected'"
+                t-att-aria-pressed="isSelected ? 'true' : 'false'"
+                t-att-disabled="isLocked || state.isUpdating"
+                t-on-pointerdown.stop="onPointerDown"
                 t-on-click.stop="toggle">
             <span class="ab_selected_check_box"></span>
         </button>
     `;
     static props = { ...standardFieldProps };
 
+    setup() {
+        this.state = useState({
+            optimisticValue: null,
+            isUpdating: false,
+        });
+    }
+
     get isSelected() {
+        if (this.state.optimisticValue !== null) {
+            return this.state.optimisticValue;
+        }
         return Boolean(this.props.record.data[this.props.name]);
     }
 
+    get isLocked() {
+        const parentState = this.props.record.data.request_state || this.props.record.data.batch_state;
+        return parentState && parentState !== "draft";
+    }
+
+    onPointerDown(ev) {
+        ev.preventDefault();
+    }
+
     async toggle() {
-        if (this.props.readonly) return;
-        await this.props.record.update({
-            [this.props.name]: !this.isSelected,
-        });
+        if (this.isLocked || this.state.isUpdating) return;
+        const previousValue = this.isSelected;
+        const nextValue = !previousValue;
+        this.state.optimisticValue = nextValue;
+        this.state.isUpdating = true;
+        try {
+            if (this.props.update) {
+                await this.props.update(nextValue);
+            } else {
+                await this.props.record.update({
+                    [this.props.name]: nextValue,
+                });
+            }
+        } catch (error) {
+            this.state.optimisticValue = previousValue;
+            throw error;
+        } finally {
+            this.state.isUpdating = false;
+            this.state.optimisticValue = null;
+        }
     }
 }
 
