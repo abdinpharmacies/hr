@@ -21,6 +21,11 @@ BRANCH_STOCK_SQL = """
 """
 
 EXCLUDED_ITEM_IDS = (73030, 114531, 116101, 116192, 1)
+ANALYSIS_MEDICINE_TYPE_SELECTION = [
+    ('all', 'All'),
+    ('medicine', 'Medicine'),
+    ('non_medicine', 'Non-Medicine'),
+]
 
 
 class SelfInventoryRequest(models.Model):
@@ -68,7 +73,13 @@ class SelfInventoryRequest(models.Model):
     analysis_top_n = fields.Integer(string='Top N Items', default=100)
     analysis_min_price = fields.Float(string='Min Price (EGP)', default=500.0)
     analysis_period_days = fields.Integer(string='Period (Days)', default=90)
-    analysis_is_collapsed = fields.Boolean(default=True)
+    analysis_medicine_type = fields.Selection(
+        selection=ANALYSIS_MEDICINE_TYPE_SELECTION,
+        string='Medicine Type',
+        default='all',
+        required=True,
+    )
+    analysis_is_collapsed = fields.Boolean(default=False)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -249,6 +260,8 @@ class SelfInventoryRequest(models.Model):
         except Exception as e:
             raise ValidationError(_("E-plus Connection Error: %s") % str(e))
 
+        sales_rows = self._filter_analysis_rows_by_medicine_type(sales_rows, self.analysis_medicine_type)
+
         if self.analysis_mode == 'top_n':
             sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
             sales_rows = sales_rows[:top_n]
@@ -265,6 +278,7 @@ class SelfInventoryRequest(models.Model):
                 'itm_id': row['itm_id'],
                 'itm_code': row['itm_code'],
                 'sell_price': float(row['itm_def_sell_price'] or 0.0),
+                'is_medicine': row.get('is_medicine'),
                 'sold_qty': float(row['sold_qty']),
                 'stock_qty': stock_rows.get(row['itm_id'], 0.0),
             })
@@ -377,6 +391,24 @@ class SelfInventoryRequest(models.Model):
                 result.setdefault(code, product)
         return result
 
+    @api.model
+    def _filter_analysis_rows_by_medicine_type(self, sales_rows, medicine_type):
+        products_by_serial = self._get_products_by_eplus_serial([row['itm_id'] for row in sales_rows])
+        products_by_code = self._get_products_by_code([row['itm_code'] for row in sales_rows if row['itm_code']])
+        expected_is_medicine = {
+            'medicine': True,
+            'non_medicine': False,
+        }.get(medicine_type)
+        filtered_rows = []
+        for row in sales_rows:
+            product = products_by_serial.get(row['itm_id'])
+            if not product and row['itm_code']:
+                product = products_by_code.get(row['itm_code'])
+            row['is_medicine'] = product.is_medicine if product else False
+            if expected_is_medicine is None or (product and product.is_medicine == expected_is_medicine):
+                filtered_rows.append(row)
+        return filtered_rows
+
     def _create_process_from_request(self, selected_lines):
         self.ensure_one()
         Process = self.env['ab_self_inventory_process'].sudo()
@@ -413,6 +445,7 @@ class SelfInventoryRequestLine(models.Model):
     _order = 'request_id desc, product_id, eplus_item_code'
 
     request_id = fields.Many2one('ab_self_inventory_request', required=True, ondelete='cascade', index=True)
+    request_state = fields.Selection(related='request_id.state', readonly=True)
     selected = fields.Boolean(default=False)
     product_id = fields.Many2one('ab_product', string='Product', index=True)
     product_code = fields.Char(related='product_id.code', readonly=True)
@@ -522,7 +555,13 @@ class SelfInventoryRequestBatch(models.Model):
     analysis_top_n = fields.Integer(string='Top N Items', default=100)
     analysis_min_price = fields.Float(string='Min Price (EGP)', default=500.0)
     analysis_period_days = fields.Integer(string='Period (Days)', default=90)
-    analysis_is_collapsed = fields.Boolean(default=True)
+    analysis_medicine_type = fields.Selection(
+        selection=ANALYSIS_MEDICINE_TYPE_SELECTION,
+        string='Medicine Type',
+        default='all',
+        required=True,
+    )
+    analysis_is_collapsed = fields.Boolean(default=False)
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -1162,6 +1201,11 @@ class SelfInventoryRequestBatch(models.Model):
             except Exception as e:
                 raise ValidationError(_("E-plus Connection Error for %s: %s") % (branch.display_name, str(e)))
 
+            sales_rows = self.env['ab_self_inventory_request']._filter_analysis_rows_by_medicine_type(
+                sales_rows,
+                self.analysis_medicine_type,
+            )
+
             if self.analysis_mode == 'top_n':
                 sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
                 sales_rows = sales_rows[:top_n]
@@ -1178,6 +1222,7 @@ class SelfInventoryRequestBatch(models.Model):
                     'itm_id': row['itm_id'],
                     'itm_code': row['itm_code'],
                     'sell_price': float(row['itm_def_sell_price'] or 0.0),
+                    'is_medicine': row.get('is_medicine'),
                     'sold_qty': float(row['sold_qty']),
                     'stock_qty': stock_rows.get(row['itm_id'], 0.0),
                 })
@@ -1236,6 +1281,7 @@ class SelfInventoryRequestBatchLine(models.Model):
     _order = 'batch_id desc, branch_id, product_id, eplus_item_code'
 
     batch_id = fields.Many2one('ab_self_inventory_request_batch', required=True, ondelete='cascade', index=True)
+    batch_state = fields.Selection(related='batch_id.state', readonly=True)
     branch_id = fields.Many2one('ab_store', required=True, readonly=True, index=True)
     selected = fields.Boolean(default=False)
     product_id = fields.Many2one('ab_product', string='Product', index=True, readonly=True)
@@ -1332,5 +1378,3 @@ class SelfInventoryRequestBatchLine(models.Model):
     @api.model
     def _reload_action(self):
         return {'type': 'ir.actions.client', 'tag': 'reload'}
-
-
