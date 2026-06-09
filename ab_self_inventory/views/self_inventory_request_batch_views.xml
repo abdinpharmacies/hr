@@ -51,7 +51,7 @@
             <field name="arch" type="xml">
                 <list class="ab_self_inventory_list" decoration-muted="state == 'cancelled'">
                     <field name="name" widget="ab_inventory_row_title" string="Batch"/>
-                    <field name="requester_id" invisible="1"/>
+                    <field name="requester_id" string="Requester" optional="show"/>
                     <field name="branch_ids" widget="ab_inventory_branch_pills" string="Branches"/>
                     <field name="branch_filter_mode" optional="hide"/>
                     <field name="deadline" widget="ab_inventory_deadline" string="Deadline" optional="show"/>
