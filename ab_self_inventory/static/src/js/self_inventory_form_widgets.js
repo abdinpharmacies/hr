@@ -135,6 +135,7 @@ class KpiCardWidget extends Component {
         cardType: { type: String, optional: true },
         cardIcon: { type: String, optional: true },
         cardLabel: { type: String, optional: true },
+        options: { type: Object, optional: true },
     };
 
     static fieldTypeMap = {
@@ -142,6 +143,8 @@ class KpiCardWidget extends Component {
         request_count: { type: "requests", icon: "requests", label: "Requests" },
         process_count: { type: "processes", icon: "processes", label: "Processed" },
         line_count: { type: "items", icon: "items", label: "Total Lines" },
+        shortage_qty: { type: "shortage", icon: "shortage", label: "Shortage" },
+        extra_qty: { type: "extra", icon: "extra", label: "Extra" },
     };
 
     get rawValue() {
@@ -156,6 +159,8 @@ class KpiCardWidget extends Component {
 
     get cardType() {
         const mapped = KpiCardWidget.fieldTypeMap[this.props.name];
+        if (this.props.cardType) return this.props.cardType;
+        if (this.props.options?.type) return this.props.options.type;
         return mapped ? mapped.type : "items";
     }
 
@@ -167,12 +172,14 @@ class KpiCardWidget extends Component {
             shortage: "\u2193",
             extra: "\u2191",
         };
-        const iconKey = this.props.cardIcon || this.cardType;
+        const iconKey = this.props.cardIcon || this.props.options?.icon || this.cardType;
         return chars[iconKey] || "\u25A0";
     }
 
     get cardLabel() {
         const mapped = KpiCardWidget.fieldTypeMap[this.props.name];
+        if (this.props.cardLabel) return this.props.cardLabel;
+        if (this.props.options?.label) return this.props.options.label;
         return mapped ? mapped.label : "Value";
     }
 }

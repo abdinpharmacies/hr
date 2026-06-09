@@ -235,6 +235,153 @@ registry.category("fields").add("ab_inventory_branch_pills", {
 });
 
 // ------------------------------------------------------------------
+// Relation Pill Widget
+// Shows Many2one values with the same compact pill language used by
+// the Batches branch column, without changing the underlying field.
+// ------------------------------------------------------------------
+
+class RelationPillWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_relation_pill ab_relation_pill--' + pillType" t-att-title="displayName">
+            <span class="ab_relation_pill_icon"><t t-esc="iconChar"/></span>
+            <span class="ab_relation_pill_text"><t t-esc="displayName || emptyText"/></span>
+        </span>
+    `;
+    static props = {
+        ...standardFieldProps,
+        pillType: { type: String, optional: true },
+        pillIcon: { type: String, optional: true },
+        emptyText: { type: String, optional: true },
+    };
+
+    get rawValue() {
+        return this.props.record.data[this.props.name];
+    }
+
+    get displayName() {
+        const raw = this.rawValue;
+        if (!raw) return "";
+        if (Array.isArray(raw)) return raw[1] || "";
+        if (typeof raw === "object") return raw.display_name || raw.name || "";
+        return String(raw);
+    }
+
+    get pillType() {
+        return this.props.pillType || "neutral";
+    }
+
+    get iconChar() {
+        return this.props.pillIcon || "\u25CF";
+    }
+
+    get emptyText() {
+        return this.props.emptyText || "-";
+    }
+}
+
+registry.category("fields").add("ab_inventory_relation_pill", {
+    component: RelationPillWidget,
+    extractProps: ({ attrs }) => {
+        const opts = attrs.options || {};
+        return {
+            pillType: opts.type || "neutral",
+            pillIcon: opts.icon || "\u25CF",
+            emptyText: opts.empty || "-",
+        };
+    },
+});
+
+class MatchBadgeWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + matchValue">
+            <t t-esc="matchLabel"/>
+        </span>
+    `;
+    static props = { ...standardFieldProps };
+
+    get matchValue() {
+        return this.props.record.data[this.props.name] || "none";
+    }
+
+    get matchLabel() {
+        const labels = {
+            eplus_serial: "E-plus ID",
+            code: "Item Code",
+            none: "Unmatched",
+        };
+        return labels[this.matchValue] || this.matchValue;
+    }
+}
+
+registry.category("fields").add("ab_inventory_match_badge", {
+    component: MatchBadgeWidget,
+});
+
+class BooleanLineBadgeWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_line_boolean_badge ' + (isChecked ? 'ab_line_boolean_badge--yes' : 'ab_line_boolean_badge--no')">
+            <span class="ab_line_boolean_dot"></span>
+            <t t-esc="isChecked ? yesLabel : noLabel"/>
+        </span>
+    `;
+    static props = {
+        ...standardFieldProps,
+        yesLabel: { type: String, optional: true },
+        noLabel: { type: String, optional: true },
+    };
+
+    get isChecked() {
+        return Boolean(this.props.record.data[this.props.name]);
+    }
+
+    get yesLabel() {
+        return this.props.yesLabel || "Yes";
+    }
+
+    get noLabel() {
+        return this.props.noLabel || "No";
+    }
+}
+
+registry.category("fields").add("ab_inventory_boolean_badge", {
+    component: BooleanLineBadgeWidget,
+    extractProps: ({ attrs }) => {
+        const opts = attrs.options || {};
+        return {
+            yesLabel: opts.yes || "Yes",
+            noLabel: opts.no || "No",
+        };
+    },
+});
+
+class SelectedCheckWidget extends Component {
+    static template = xml`
+        <button type="button"
+                t-att-class="'ab_selected_check ' + (isSelected ? 'ab_selected_check--on' : 'ab_selected_check--off')"
+                t-att-title="isSelected ? 'Selected' : 'Not selected'"
+                t-on-click.stop="toggle">
+            <span class="ab_selected_check_box"></span>
+        </button>
+    `;
+    static props = { ...standardFieldProps };
+
+    get isSelected() {
+        return Boolean(this.props.record.data[this.props.name]);
+    }
+
+    async toggle() {
+        if (this.props.readonly) return;
+        await this.props.record.update({
+            [this.props.name]: !this.isSelected,
+        });
+    }
+}
+
+registry.category("fields").add("ab_inventory_selected_check", {
+    component: SelectedCheckWidget,
+});
+
+// ------------------------------------------------------------------
 // KPI Widget
 // Displays numeric value with icon + label passed via options.
 // ------------------------------------------------------------------
@@ -272,8 +419,20 @@ registry.category("fields").add("ab_inventory_kpi", {
     extractProps: ({ attrs }) => {
         const opts = attrs.options || {};
         const icon = opts.icon || "items";
-        const chars = { items: "\u25A0", requests: "\u25B6", processes: "\u2713" };
-        const labels = { items: "Items", requests: "Requests", processes: "Processed" };
+        const chars = {
+            items: "\u25A0",
+            requests: "\u25B6",
+            processes: "\u2713",
+            shortage: "\u2193",
+            extra: "\u2191",
+        };
+        const labels = {
+            items: "Items",
+            requests: "Requests",
+            processes: "Processed",
+            shortage: "Shortage",
+            extra: "Extra",
+        };
         return {
             kpiIcon: icon,
             kpiIconChar: chars[icon] || "#",
@@ -356,6 +515,7 @@ class RowTitleWidget extends Component {
     `;
     static props = {
         ...standardFieldProps,
+        allowDuplicate: { type: Boolean, optional: true },
     };
 
     setup() {
@@ -427,7 +587,9 @@ class RowTitleWidget extends Component {
         if (isDraft) {
             items.push({ id: "edit", label: "Edit", icon: "\u270E", action: "edit" });
         }
-        items.push({ id: "duplicate", label: "Duplicate", icon: "\uD83D\uDCCB", action: "duplicate" });
+        if (this.props.allowDuplicate !== false) {
+            items.push({ id: "duplicate", label: "Duplicate", icon: "\uD83D\uDCCB", action: "duplicate" });
+        }
         return items;
     }
 
@@ -492,6 +654,12 @@ class RowTitleWidget extends Component {
 
 registry.category("fields").add("ab_inventory_row_title", {
     component: RowTitleWidget,
+    extractProps: ({ attrs }) => {
+        const opts = attrs.options || {};
+        return {
+            allowDuplicate: opts.duplicate !== false,
+        };
+    },
 });
 
 // ------------------------------------------------------------------
