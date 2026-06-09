@@ -165,7 +165,7 @@ class BranchPillsWidget extends Component {
                 ["display_name", "name"],
                 { limit: ids.length }
             );
-            this._names = recs.map((r) => r.display_name || r.name || String(r.id));
+            this._names = recs.map((r) => (r.display_name || r.name || String(r.id)).replace(/\*/g, ""));
         } catch (e) {
             console.warn("[BranchPillsWidget] searchRead failed", e);
         }
@@ -243,7 +243,6 @@ registry.category("fields").add("ab_inventory_branch_pills", {
 class RelationPillWidget extends Component {
     static template = xml`
         <span t-att-class="'ab_relation_pill ab_relation_pill--' + pillType" t-att-title="displayName">
-            <span class="ab_relation_pill_icon"><t t-esc="iconChar"/></span>
             <span class="ab_relation_pill_text"><t t-esc="displayName || emptyText"/></span>
         </span>
     `;
@@ -261,9 +260,11 @@ class RelationPillWidget extends Component {
     get displayName() {
         const raw = this.rawValue;
         if (!raw) return "";
-        if (Array.isArray(raw)) return raw[1] || "";
-        if (typeof raw === "object") return raw.display_name || raw.name || "";
-        return String(raw);
+        let name = "";
+        if (Array.isArray(raw)) name = raw[1] || "";
+        else if (typeof raw === "object") name = raw.display_name || raw.name || "";
+        else name = String(raw);
+        return name.replace(/\*/g, "");
     }
 
     get pillType() {
@@ -427,11 +428,7 @@ registry.category("fields").add("ab_inventory_selected_check", {
 class KpiWidget extends Component {
     static template = xml`
         <span class="ab_kpi_widget">
-            <span t-att-class="'ab_kpi_icon ab_kpi_icon--' + props.kpiIcon">
-                <t t-esc="props.kpiIconChar"/>
-            </span>
             <span class="ab_kpi_value"><t t-esc="formattedValue"/></span>
-            <span class="ab_kpi_label"><t t-esc="props.kpiLabel"/></span>
         </span>
     `;
     static props = {
@@ -568,15 +565,17 @@ class RowTitleWidget extends Component {
     }
 
     get recordName() {
-        return this.props.record.data[this.props.name] || "";
+        return (this.props.record.data[this.props.name] || "").replace(/\*/g, "");
     }
 
     get requesterName() {
         const raw = this.props.record.data.requester_id;
         if (!raw) return "";
-        if (Array.isArray(raw)) return raw[1] || "";
-        if (typeof raw === "object") return raw.display_name || raw.name || "";
-        return String(raw);
+        let name = "";
+        if (Array.isArray(raw)) name = raw[1] || "";
+        else if (typeof raw === "object") name = raw.display_name || raw.name || "";
+        else name = String(raw);
+        return name.replace(/\*/g, "");
     }
 
     get submittedDate() {
