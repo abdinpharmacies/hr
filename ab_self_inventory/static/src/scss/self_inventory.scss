@@ -117,6 +117,30 @@ $si-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         td:nth-last-child(2) {
             overflow: visible;
         }
+
+        &.ab_self_inventory_line_list {
+            border-spacing: 0 5px;
+
+            thead > tr > th {
+                padding: 10px 12px 8px;
+                background: $si-bg;
+                text-align: center;
+                vertical-align: middle;
+            }
+
+            tbody > tr > td {
+                padding: 10px 12px;
+                min-height: 44px;
+            }
+
+            .o_field_widget,
+            .o_input,
+            input,
+            textarea,
+            select {
+                max-width: 100%;
+            }
+        }
     }
 }
 
@@ -259,6 +283,16 @@ $si-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         background: #DCFCE7;
         color: #16A34A;
     }
+
+    &--shortage {
+        background: #FEE2E2;
+        color: $si-danger;
+    }
+
+    &--extra {
+        background: #DCFCE7;
+        color: #16A34A;
+    }
 }
 
 .ab_kpi_value {
@@ -384,6 +418,63 @@ $si-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         font-size: 13px;
         line-height: 1;
     }
+}
+
+.ab_relation_pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 3px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-primary;
+    background: $si-primary-light;
+    border: 1px solid rgba($si-primary, 0.12);
+    border-radius: 20px;
+    line-height: 1.6;
+    white-space: nowrap;
+    transition: background $si-transition, border-color $si-transition, box-shadow $si-transition;
+
+    &:hover {
+        background: darken($si-primary-light, 4%);
+        border-color: rgba($si-primary, 0.28);
+        box-shadow: 0 1px 4px rgba($si-primary, 0.15);
+    }
+
+    &--branch {
+        color: $si-primary;
+        background: $si-primary-light;
+    }
+
+    &--request {
+        color: #D97706;
+        background: $si-warning-light;
+        border-color: rgba($si-warning, 0.2);
+    }
+
+    &--process {
+        color: #16A34A;
+        background: $si-success-light;
+        border-color: rgba($si-success, 0.2);
+    }
+
+    &--neutral {
+        color: $si-text-secondary;
+        background: $si-neutral-light;
+    }
+}
+
+.ab_relation_pill_icon {
+    font-size: 10px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.ab_relation_pill_text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 // ===================================================================
@@ -571,6 +662,11 @@ $si-transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 // 10. SEARCH PANEL - Premium chips
 // ===================================================================
 :root:has(.o_list_view.ab_self_inventory_list) {
+    .o_control_panel,
+    .o_view_controller {
+        min-width: 0;
+    }
+
     .o_searchview {
         border: 1.5px solid $si-border;
         border-radius: $si-radius-md;

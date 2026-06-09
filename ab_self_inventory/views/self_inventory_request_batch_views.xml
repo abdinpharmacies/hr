@@ -5,7 +5,7 @@
             <field name="name">ab_self_inventory_request_batch_line_list</field>
             <field name="model">ab_self_inventory_request_batch_line</field>
             <field name="arch" type="xml">
-                <list editable="bottom" delete="0" default_group_by="branch_id" limit="80">
+                <list class="ab_self_inventory_list ab_self_inventory_line_list" editable="bottom" delete="0" create="0" default_group_by="branch_id" limit="80">
                     <header>
                         <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary" display="always"/>
                         <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary" display="always"/>
@@ -13,7 +13,7 @@
                         <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" display="always" confirm="Delete all unselected fetched products?"/>
                     </header>
                     <field name="branch_id"/>
-                    <field name="selected"/>
+                    <field name="selected" string="Selected" widget="ab_inventory_selected_check"/>
                     <field name="product_id" readonly="1"/>
                     <field name="product_code" optional="show"/>
                     <field name="eplus_item_id" optional="hide"/>
@@ -21,7 +21,7 @@
                     <field name="system_qty"/>
                     <field name="sell_price" optional="show"/>
                     <field name="sold_qty" optional="show"/>
-                    <field name="matched_by"/>
+                    <field name="matched_by" widget="ab_inventory_match_badge"/>
                     <field name="note"/>
                     <field name="request_id" optional="hide"/>
                 </list>
@@ -80,7 +80,7 @@
                         <div class="ab_form_hero_row">
                             <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
                         </div>
-                        <div class="ab_form_kpi_row">
+                        <div class="ab_form_kpi_row" invisible="not create_date or state == 'draft'">
                             <field name="selected_line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'items', 'icon': 'items', 'label': 'Items'}"/>
                             <field name="request_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'requests', 'icon': 'requests', 'label': 'Requests'}"/>
                             <field name="process_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'processes', 'icon': 'processes', 'label': 'Processed'}"/>
@@ -117,8 +117,8 @@
                                     <div class="ab_form_section_title">
                                         <field name="analysis_is_collapsed" invisible="1"/>
                                         <button name="action_run_inventory_analysis" type="object" class="btn btn-link p-0" style="color: inherit; text-decoration: none;">
-                                            <span invisible="not analysis_is_collapsed"><i class="fa fa-chevron-right" style="margin-right: 8px;"/></span>
-                                            <span invisible="analysis_is_collapsed"><i class="fa fa-chevron-down" style="margin-right: 8px;"/></span>
+                                            <span invisible="not analysis_is_collapsed"><i class="fa fa-chevron-right" title="Expand" style="margin-right: 8px;"/></span>
+                                            <span invisible="analysis_is_collapsed"><i class="fa fa-chevron-down" title="Collapse" style="margin-right: 8px;"/></span>
                                             Smart Inventory Analysis
                                         </button>
                                     </div>
@@ -153,7 +153,9 @@
                                 </div>
                                 <notebook>
                                     <page string="Branch Product Groups">
-                                        <field name="line_count" widget="ab_inventory_data_grid" nolabel="1"/>
+                                        <div class="ab_modern_table_panel ab_modern_table_panel--batch">
+                                            <field name="line_count" widget="ab_inventory_data_grid" nolabel="1"/>
+                                        </div>
                                     </page>
                                 </notebook>
                             </div>

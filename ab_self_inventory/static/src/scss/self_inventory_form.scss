@@ -47,7 +47,8 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
             background: transparent;
             border: none;
             box-shadow: none;
-            padding: 24px 32px;
+            padding: 16px 24px 24px;
+            overflow: visible;
         }
 
         .o_form_sheet {
@@ -57,11 +58,34 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
             border: none;
             box-shadow: none;
             padding: 0;
+            width: 100%;
+            min-width: 0;
         }
 
-        // Hide default statusbar (we use custom)
+        // Keep Odoo form actions compact and let the custom hero show state.
         .o_form_statusbar {
-            display: none;
+            position: static;
+            min-height: auto;
+            padding: 8px 24px;
+            border-bottom: 1px solid $si-border;
+            background: $si-bg;
+            box-shadow: none;
+            z-index: 5;
+
+            .o_statusbar_status {
+                display: none;
+            }
+
+            .o_statusbar_buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                min-width: 0;
+            }
+
+            .btn {
+                margin: 0;
+            }
         }
 
         // Hide default button box
@@ -81,7 +105,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 
         // Notebook restyling
         .o_notebook {
-            margin-top: 24px;
+            margin-top: 0;
 
             .o_notebook_header {
                 border-bottom: 1.5px solid $si-border;
@@ -152,18 +176,20 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     border: 1px solid $si-border;
     border-radius: $si-radius-lg;
     box-shadow: $si-shadow;
-    padding: 24px 28px;
-    margin-bottom: 20px;
+    padding: 18px 22px;
+    margin-bottom: 16px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
+    min-width: 0;
 }
 
 .ab_form_hero_left {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    min-width: 0;
 }
 
 .ab_form_hero_title {
@@ -172,6 +198,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     color: $si-text;
     letter-spacing: -0.02em;
     line-height: 1.2;
+    overflow-wrap: anywhere;
 }
 
 .ab_form_hero_subtitle {
@@ -184,6 +211,8 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     display: flex;
     align-items: center;
     gap: 24px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
 }
 
 .ab_form_hero_right {
@@ -198,8 +227,9 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 .ab_form_kpi_row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 12px;
+    margin-bottom: 16px;
+    min-width: 0;
 }
 
 .ab_kpi_card {
@@ -207,7 +237,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
-    padding: 20px;
+    padding: 16px;
     background: $si-card;
     border: 1px solid $si-border;
     border-radius: $si-radius;
@@ -258,7 +288,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
 .ab_kpi_card_value {
-    font-size: 28px;
+    font-size: 24px;
     font-weight: 800;
     color: $si-text;
     line-height: 1;
@@ -278,9 +308,13 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 // ===================================================================
 .ab_form_two_column {
     display: grid;
-    grid-template-columns: 1fr 340px;
-    gap: 24px;
-    margin-bottom: 24px;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+    gap: 18px;
+    margin-bottom: 18px;
+    min-height: 200px;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
 }
 
 .ab_form_main {
@@ -288,12 +322,15 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     flex-direction: column;
     gap: 20px;
     min-width: 0;
+    min-height: 0;
 }
 
 .ab_form_sidebar {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
+    min-width: 0;
+    width: 100%;
 }
 
 // ===================================================================
@@ -305,6 +342,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     border-radius: $si-radius;
     box-shadow: $si-shadow;
     overflow: hidden;
+    min-width: 0;
 }
 
 .ab_form_card_header {
@@ -321,6 +359,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: $si-text;
+    padding: 14px 16px 0;
 }
 
 .ab_form_section {
@@ -328,9 +367,14 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     border: 1px solid $si-border;
     border-radius: $si-radius;
     box-shadow: $si-shadow;
-    padding: 20px;
+    padding: 18px;
+    min-width: 0;
 
     & + & {
+        margin-top: 0;
+    }
+
+    &[style*="display: none"] + & {
         margin-top: 0;
     }
 
@@ -340,19 +384,20 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: $si-text-secondary;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 
     .ab_form_section_body {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
+        min-width: 0;
     }
 
     .ab_form_section_actions {
         display: flex;
         gap: 8px;
-        margin-bottom: 12px;
+        margin-bottom: 14px;
     }
 }
 
@@ -361,16 +406,25 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     align-items: center;
     gap: 12px;
     flex-wrap: wrap;
+    min-width: 0;
 }
 
 .ab_form_info_row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 10px 0;
 
     & + & {
         border-top: 1px solid $si-border;
+    }
+
+    &:first-child {
+        padding-top: 0;
+    }
+
+    &:last-child {
+        padding-bottom: 0;
     }
 
     .ab_form_info_label {
@@ -393,7 +447,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
 .ab_form_card_body {
-    padding: 16px 20px;
+    padding: 14px 16px 16px;
 }
 
 // ===================================================================
@@ -467,6 +521,65 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     background: #FFFFFF;
     border: 1px solid $si-border;
     border-radius: 8px;
+    min-width: 0;
+}
+
+.ab_analysis_toolbar {
+    padding: 12px !important;
+    margin-bottom: 12px !important;
+    background: $si-neutral-light !important;
+    border: 1px solid $si-border;
+    border-radius: 8px !important;
+
+    .row {
+        row-gap: 12px;
+    }
+
+    .form-label {
+        margin-bottom: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        color: $si-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .btn {
+        min-height: 34px;
+    }
+}
+
+.o_form_view.ab_self_inventory_form {
+    .o_notebook,
+    .o_notebook .tab-content,
+    .o_notebook .tab-pane,
+    .o_field_widget,
+    .o_field_x2many,
+    .o_list_renderer {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .o_notebook {
+        background: $si-card;
+        border: 1px solid $si-border;
+        border-radius: $si-radius;
+        box-shadow: $si-shadow;
+        padding: 0 16px 16px;
+        overflow: hidden;
+    }
+
+    .o_notebook .tab-content {
+        overflow-x: auto;
+    }
+
+    .o_notebook .tab-content:has(.ab_modern_table_panel) {
+        overflow-x: hidden;
+    }
+
+    .o_field_x2many .o_list_table {
+        min-width: 860px;
+    }
 }
 
 .ab_selected_branch_filter_text {
@@ -535,9 +648,9 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 
 .ab_progress_circular {
     position: relative;
-    width: 100px;
-    height: 100px;
-    margin: 0 auto 12px;
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 10px;
 
     svg {
         transform: rotate(-90deg);
@@ -571,7 +684,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 .ab_progress_stats {
     display: flex;
     justify-content: center;
-    gap: 16px;
+    gap: 12px;
     margin-top: 8px;
 }
 
@@ -754,7 +867,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     flex-direction: column;
     align-items: center;
     gap: 2px;
-    padding: 10px 16px;
+    padding: 8px 12px;
     background: $si-neutral-light;
     border-radius: $si-radius;
     min-width: 80px;
@@ -809,7 +922,16 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
 // ===================================================================
-// 15. RESPONSIVE
+// 15. FORM TRANSITION - Smooth state changes
+// ===================================================================
+.ab_form_main,
+.ab_form_section,
+.ab_form_sidebar {
+    transition: opacity 0.15s ease;
+}
+
+// ===================================================================
+// 16. RESPONSIVE
 // ===================================================================
 @media (max-width: 992px) {
     .o_form_view.ab_self_inventory_form {
@@ -819,6 +941,11 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 
         .ab_form_two_column {
             grid-template-columns: 1fr;
+        }
+
+        .ab_form_sidebar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
         .ab_form_hero {
@@ -841,7 +968,7 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
         }
 
         .ab_kpi_card {
-            padding: 14px;
+            padding: 16px;
 
             .ab_kpi_card_value {
                 font-size: 22px;
@@ -850,6 +977,10 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 
         .ab_form_hero {
             padding: 16px;
+        }
+
+        .ab_form_sidebar {
+            display: flex;
         }
 
         .ab_form_hero_center {
@@ -884,6 +1015,9 @@ $saas-transition: 0.15s ease;
 .ab_saas_grid_wrapper {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     color: $saas-text;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .ab_saas_grid_loading {
@@ -916,6 +1050,7 @@ $saas-transition: 0.15s ease;
     grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     margin-bottom: 16px;
+    min-width: 0;
 }
 
 .ab_saas_analytics_card {
@@ -923,7 +1058,7 @@ $saas-transition: 0.15s ease;
     border: 1px solid $saas-border;
     border-radius: $saas-radius;
     box-shadow: $saas-shadow;
-    padding: 16px 20px;
+    padding: 12px 14px;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -935,7 +1070,7 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_analytics_value {
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 800;
     letter-spacing: -0.03em;
     line-height: 1.1;
@@ -960,7 +1095,7 @@ $saas-transition: 0.15s ease;
     border: 1px solid $saas-border;
     border-radius: $saas-radius;
     box-shadow: $saas-shadow;
-    padding: 12px 16px;
+    padding: 10px 12px;
     margin-bottom: 12px;
 }
 
@@ -1088,7 +1223,7 @@ $saas-transition: 0.15s ease;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    padding: 10px 0;
+    padding: 8px 0;
     margin-bottom: 4px;
     flex-wrap: wrap;
 }
@@ -1098,7 +1233,7 @@ $saas-transition: 0.15s ease;
     align-items: center;
     gap: 8px;
     flex: 1;
-    min-width: 200px;
+    min-width: 220px;
 }
 
 .ab_saas_toolbar_right {
@@ -1106,6 +1241,8 @@ $saas-transition: 0.15s ease;
     align-items: center;
     gap: 6px;
     flex-wrap: wrap;
+    justify-content: flex-end;
+    min-width: 0;
 }
 
 .ab_saas_search {
@@ -1113,7 +1250,8 @@ $saas-transition: 0.15s ease;
     align-items: center;
     gap: 8px;
     width: 100%;
-    max-width: 320px;
+    max-width: 360px;
+    min-width: 0;
 
     input {
         flex: 1;
@@ -1238,6 +1376,9 @@ $saas-transition: 0.15s ease;
     overflow: hidden;
     background: $saas-card;
     box-shadow: $saas-shadow;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 // Grid Header
@@ -1253,12 +1394,13 @@ $saas-transition: 0.15s ease;
     display: flex;
     align-items: center;
     min-height: 44px;
+    min-width: 900px;
 }
 
 // Grid Body
 .ab_saas_grid_body {
-    overflow-y: auto;
-    max-height: 520px;
+    overflow: auto;
+    max-height: 440px;
     min-height: 200px;
     position: relative;
 }
@@ -1272,6 +1414,7 @@ $saas-transition: 0.15s ease;
     cursor: pointer;
     transition: background 0.1s ease;
     position: relative;
+    min-width: 900px;
 
     &:hover {
         background: #FAFBFC;
@@ -1298,7 +1441,7 @@ $saas-transition: 0.15s ease;
 
 // Grid Cells
 .ab_saas_grid_cell {
-    padding: 8px 12px;
+    padding: 8px 10px;
     font-size: 13px;
     color: $saas-text;
     overflow: hidden;
@@ -1320,20 +1463,20 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_grid_cell_branch {
-    width: 160px;
+    width: 140px;
     flex-shrink: 0;
 }
 
 .ab_saas_grid_cell_product {
     flex: 1;
-    min-width: 180px;
+    min-width: 170px;
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
 }
 
 .ab_saas_grid_cell_code {
-    width: 130px;
+    width: 115px;
     flex-shrink: 0;
 }
 
@@ -1346,14 +1489,14 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_grid_cell_price {
-    width: 90px;
+    width: 78px;
     flex-shrink: 0;
     justify-content: flex-end;
     font-variant-numeric: tabular-nums;
 }
 
 .ab_saas_grid_cell_sold {
-    width: 80px;
+    width: 70px;
     flex-shrink: 0;
     justify-content: flex-end;
     font-variant-numeric: tabular-nums;
@@ -1361,7 +1504,7 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_grid_cell_match {
-    width: 110px;
+    width: 96px;
     flex-shrink: 0;
 }
 
@@ -1600,6 +1743,523 @@ $saas-transition: 0.15s ease;
     line-height: 1.5;
 }
 
+// Native one2many tables styled to match the batch SaaS grid.
+.ab_modern_table_panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    color: $saas-text;
+}
+
+.ab_modern_table_toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0 12px;
+    flex-wrap: wrap;
+}
+
+.ab_modern_table_toolbar_title {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.ab_modern_table_toolbar_label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $saas-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ab_modern_table_toolbar_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    .btn,
+    button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 6px 14px;
+        border: 1px solid $saas-border;
+        border-radius: 8px;
+        background: $saas-card;
+        color: $saas-text;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.2;
+        box-shadow: none;
+        white-space: nowrap;
+
+        &:hover {
+            background: $saas-neutral-light;
+            border-color: darken($saas-border, 10%);
+        }
+    }
+}
+
+.ab_modern_table_body {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 2px;
+    scrollbar-color: rgba($saas-primary, 0.45) transparent;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: rgba($saas-primary, 0.35);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: rgba($saas-primary, 0.55);
+    }
+}
+
+.ab_modern_table_panel--process .ab_modern_table_body {
+    overflow: visible;
+    scrollbar-color: auto;
+    scrollbar-width: auto;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.ab_modern_table_panel {
+    .o_field_x2many,
+    .o_list_renderer,
+    .o_list_table,
+    .o_list_view {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .o_x2m_control_panel,
+    .o_cp_buttons {
+        padding: 8px 0;
+    }
+
+    .o_list_renderer {
+        border: 1px solid $saas-border;
+        border-radius: $saas-radius;
+        background: $saas-card;
+        box-shadow: $saas-shadow;
+        overflow-x: visible;
+        overflow-y: visible;
+    }
+
+    .o_list_view.ab_self_inventory_line_list {
+        min-width: 900px;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: $saas-card;
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: $saas-neutral-light;
+
+            > tr > th {
+                padding: 12px 10px;
+                border: 0;
+                border-bottom: 1.5px solid $saas-border;
+                background: $saas-neutral-light;
+                color: $saas-text-secondary;
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                white-space: nowrap;
+                text-align: center;
+                vertical-align: middle;
+            }
+        }
+
+        tbody > tr {
+            min-height: 48px;
+            background: $saas-card;
+            transition: background $saas-transition, box-shadow $saas-transition;
+
+            > td {
+                padding: 10px;
+                border: 0;
+                border-bottom: 1px solid $saas-border;
+                background: transparent;
+                color: $saas-text;
+                font-size: 13px;
+                vertical-align: middle;
+                white-space: nowrap;
+            }
+
+            &:hover > td {
+                background: #FAFBFC;
+            }
+
+            &:last-child > td {
+                border-bottom: 0;
+            }
+        }
+
+        tbody > tr.o_selected_row > td,
+        tbody > tr.table-info > td {
+            background: #EEF2FF;
+            box-shadow: inset 3px 0 0 $saas-primary;
+        }
+
+        .o_field_widget,
+        .o_field_many2one,
+        .o_input,
+        input,
+        textarea,
+        select {
+            max-width: 100%;
+            min-width: 0;
+            font-size: 13px;
+        }
+
+        input,
+        textarea,
+        select {
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: transparent;
+            transition: border-color $saas-transition, box-shadow $saas-transition, background $saas-transition;
+
+            &:focus {
+                background: $saas-card;
+                border-color: $saas-primary;
+                box-shadow: 0 0 0 3px rgba($saas-primary, 0.1);
+            }
+        }
+
+        code,
+        .o_field_char[name="eplus_item_code"],
+        td[name="eplus_item_code"] {
+            font-family: 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+            font-size: 12px;
+        }
+
+        td[name="system_qty"],
+        td[name="sell_price"],
+        td[name="sold_qty"],
+        td[name="unit_cost"],
+        td[name="actual_qty"],
+        td[name="difference_qty"],
+        td[name="shortage_qty"],
+        td[name="extra_qty"] {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+
+        td[name="sell_price"],
+        td[name="unit_cost"] {
+            color: #6366F1;
+        }
+
+        td[name="sold_qty"] {
+            color: #EA580C;
+        }
+
+        td[name="extra_qty"] {
+            color: #16A34A;
+        }
+
+        td[name="shortage_qty"] {
+            color: $saas-danger;
+        }
+
+        th[data-name="selected"],
+        td[name="selected"] {
+            width: 112px;
+            min-width: 112px;
+            max-width: 112px;
+            text-align: center;
+        }
+    }
+
+    &--process {
+        .ab_modern_table_body {
+            border: 1px solid $saas-border;
+            border-radius: $saas-radius;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 100%);
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+        }
+
+        .o_x2m_control_panel {
+            display: none;
+        }
+
+        .o_list_renderer {
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            background: transparent;
+            overflow-x: auto;
+            scrollbar-color: rgba($saas-primary, 0.45) transparent;
+            scrollbar-width: thin;
+
+            &::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                border-radius: 999px;
+                background: rgba($saas-primary, 0.35);
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: rgba($saas-primary, 0.55);
+            }
+        }
+
+        .o_list_view.ab_self_inventory_line_list {
+            min-width: 1280px;
+            background: transparent;
+
+            thead > tr > th {
+                vertical-align: middle;
+                text-align: center;
+                padding: 14px 12px;
+
+                .d-block.min-w-0 {
+                    text-align: center;
+                }
+
+                .o_list_sortable_icon {
+                    position: static;
+                    margin-left: 6px;
+                    flex-shrink: 0;
+                }
+            }
+
+            th[data-name="requested"],
+            td[name="requested"] {
+                width: 120px;
+                min-width: 120px;
+                max-width: 120px;
+            }
+
+            th[data-name="product_id"],
+            td[name="product_id"] {
+                width: 320px;
+                min-width: 320px;
+                max-width: 420px;
+            }
+
+            th[data-name="product_code"],
+            td[name="product_code"] {
+                width: 130px;
+                min-width: 130px;
+            }
+
+            th[data-name="eplus_item_id"],
+            td[name="eplus_item_id"] {
+                width: 135px;
+                min-width: 135px;
+            }
+
+            th[data-name="eplus_item_code"],
+            td[name="eplus_item_code"] {
+                width: 155px;
+                min-width: 155px;
+            }
+
+            th[data-name="system_qty"],
+            td[name="system_qty"],
+            th[data-name="unit_cost"],
+            td[name="unit_cost"],
+            th[data-name="actual_qty"],
+            td[name="actual_qty"],
+            th[data-name="difference_qty"],
+            td[name="difference_qty"],
+            th[data-name="shortage_qty"],
+            td[name="shortage_qty"],
+            th[data-name="extra_qty"],
+            td[name="extra_qty"] {
+                width: 105px;
+                min-width: 105px;
+            }
+
+            th[data-name="explanation"],
+            td[name="explanation"] {
+                width: 220px;
+                min-width: 220px;
+            }
+
+            th.o_list_button,
+            td.o_list_button {
+                width: 82px;
+                min-width: 82px;
+                max-width: 82px;
+                text-align: center;
+            }
+
+            th.o_list_button::before {
+                content: "Action";
+                display: inline-block;
+                color: $saas-text-secondary;
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            td[name="product_id"] {
+                overflow: visible;
+
+                .o_field_widget,
+                .o_field_many2one,
+                .o_field_many2one_selection,
+                .o_field_many2one_extra,
+                .o_field_widget span,
+                a {
+                    display: inline-block;
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    vertical-align: middle;
+                    white-space: nowrap;
+                }
+
+                &:hover .o_field_widget,
+                &:hover .o_field_many2one,
+                &:hover .o_field_many2one_selection,
+                &:hover .o_field_many2one_extra,
+                &:hover .o_field_widget span,
+                &:hover a {
+                    max-width: none;
+                    overflow: visible;
+                    position: relative;
+                    z-index: 4;
+                    padding: 2px 8px;
+                    margin: -2px -8px;
+                    background: $saas-card;
+                    border-radius: 6px;
+                    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+                    white-space: normal;
+                }
+            }
+
+            tbody > tr > td {
+                padding: 14px 14px;
+            }
+
+            tbody > tr:hover > td {
+                background: $saas-neutral-light;
+            }
+
+            tbody > tr.o_selected_row > td,
+            tbody > tr.table-info > td {
+                background: #EEF2FF;
+                box-shadow: inset 3px 0 0 $saas-primary;
+            }
+        }
+    }
+}
+
+.ab_line_boolean_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    &--yes {
+        color: #16A34A;
+        background: $saas-success-light;
+    }
+
+    &--no {
+        color: $saas-text-secondary;
+        background: $saas-neutral-light;
+    }
+}
+
+.ab_line_boolean_dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.ab_selected_check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid $saas-border;
+    border-radius: 8px;
+    background: $saas-card;
+    color: $saas-text-secondary;
+    transition: background $saas-transition, border-color $saas-transition, color $saas-transition, box-shadow $saas-transition;
+
+    &:hover {
+        background: $saas-primary-light;
+        border-color: rgba($saas-primary, 0.28);
+        color: $saas-primary;
+        box-shadow: 0 1px 4px rgba($saas-primary, 0.15);
+    }
+
+    &--on {
+        background: $saas-success-light;
+        border-color: rgba($saas-success, 0.28);
+        color: #16A34A;
+    }
+}
+
+.ab_selected_check_box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.ab_selected_check--on .ab_selected_check_box {
+    background: currentColor;
+    border-color: currentColor;
+
+    &::after {
+        content: "";
+        width: 8px;
+        height: 4px;
+        border-left: 2px solid #FFFFFF;
+        border-bottom: 2px solid #FFFFFF;
+        transform: rotate(-45deg) translate(1px, -1px);
+    }
+}
+
 // Responsive
 @media (max-width: 992px) {
     .ab_saas_analytics_row {
@@ -1649,6 +2309,15 @@ $saas-transition: 0.15s ease;
 
     .ab_saas_grid_body {
         max-height: 360px;
+    }
+
+    .ab_modern_table_toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ab_modern_table_toolbar_actions {
+        justify-content: flex-start;
     }
 }
 
