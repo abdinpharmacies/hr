@@ -115,6 +115,35 @@ class TestSelfInventory(TransactionCase):
         self.assertEqual(process_line.shortage_qty, 6.0)
         self.assertEqual(process_line.extra_qty, 0.0)
 
+    def test_submit_request_removes_unselected_lines(self):
+        request = self.env['ab_self_inventory_request'].with_user(self.requester).create({
+            'branch_id': self.branch.id,
+            'line_ids': [
+                (0, 0, {
+                    'selected': True,
+                    'product_id': self.product.id,
+                    'eplus_item_id': self.product.eplus_serial,
+                    'eplus_item_code': self.product.code,
+                    'system_qty': 12.0,
+                    'matched_by': 'eplus_serial',
+                }),
+                (0, 0, {
+                    'selected': False,
+                    'product_id': self.second_product.id,
+                    'eplus_item_id': self.second_product.eplus_serial,
+                    'eplus_item_code': self.second_product.code,
+                    'system_qty': 7.0,
+                    'matched_by': 'eplus_serial',
+                }),
+            ],
+        })
+
+        request.action_submit_request()
+
+        self.assertEqual(request.state, 'submitted')
+        self.assertEqual(request.line_ids.product_id, self.product)
+        self.assertEqual(len(request.line_ids), 1)
+
     def test_receiver_only_sees_own_branch_processes(self):
         Process = self.env['ab_self_inventory_process'].sudo()
         branch_process = Process.create({
