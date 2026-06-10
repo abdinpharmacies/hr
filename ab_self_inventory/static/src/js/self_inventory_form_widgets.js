@@ -503,7 +503,7 @@ class DataGridWidget extends Component {
                     <div class="ab_saas_toolbar_left">
                         <div class="ab_saas_search">
                             <span class="ab_saas_search_icon">&#x1F50D;</span>
-                            <input type="text" t-att-placeholder="_t('Search products...')" t-model="state.searchText" t-on-input="onSearchInput" class="o_input"/>
+                            <input type="text" t-att-placeholder="_t('Search products...')" t-on-input="onSearchInput" class="o_input"/>
                         </div>
                     </div>
                     <div class="ab_saas_toolbar_right">
@@ -718,7 +718,7 @@ class DataGridWidget extends Component {
         return [];
     }
 
-    async _load() {
+    async _load(silent = false) {
         const key = this._currentKey();
         if (!key) return;
         this._loadKey = key;
@@ -729,7 +729,7 @@ class DataGridWidget extends Component {
         if (serverBranchIds.length) {
             this.state.selected_branch_ids = serverBranchIds;
         }
-        this.loading.show();
+        if (!silent) this.loading.show();
         try {
             const [analytics, branches, result] = await Promise.all([
                 this.orm.call(this.resModel, "action_get_analytics", [[id]], {}),
@@ -761,18 +761,18 @@ class DataGridWidget extends Component {
             this.state.total = 0;
         } finally {
             if (this._currentKey() === this._loadKey) {
-                this.loading.hide();
+                if (!silent) this.loading.hide();
             }
         }
     }
 
-    async _loadGrouped() {
+    async _loadGrouped(silent = false) {
         const key = this._currentKey();
         if (!key) return;
         this._loadKey = key;
         const id = this.resId;
         if (!id) return;
-        this.loading.show();
+        if (!silent) this.loading.show();
         try {
             const groups = await this.orm.call(this.resModel, "action_get_grouped_rows", [[id]], {
                 search: this.state.searchText || false,
@@ -789,7 +789,7 @@ class DataGridWidget extends Component {
             this.state.groupedData = [];
         } finally {
             if (this._currentKey() === this._loadKey) {
-                this.loading.hide();
+                if (!silent) this.loading.hide();
             }
         }
     }
@@ -882,16 +882,18 @@ class DataGridWidget extends Component {
         }
     }
 
-    onSearchInput() {
+    onSearchInput(ev) {
         if (this._searchTimer) clearTimeout(this._searchTimer);
+        const value = ev.target.value;
         this._searchTimer = setTimeout(() => {
+            this.state.searchText = value;
             if (this.state.groupByBranch) {
                 this.state.groupedData = [];
-                this._loadGrouped();
+                this._loadGrouped(true);
             } else {
                 this.state.rows = [];
                 this.state.total = 0;
-                this._load();
+                this._load(true);
             }
         }, 350);
     }
