@@ -168,6 +168,23 @@ class SelfInventoryRequest(models.Model):
             rec.line_ids.filtered(lambda line: not line.selected).unlink()
         return True
 
+    def action_open_manual_add_line_wizard(self):
+        self.ensure_one()
+        if self.state != 'draft':
+            raise ValidationError(_("You cannot add lines after the request is submitted."))
+        wizard = self.env['ab_self_inventory_batch_add_line_wizard'].create({
+            'request_id': self.id,
+        })
+        return {
+            'name': _('Add Line'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ab_self_inventory_batch_add_line_wizard',
+            'view_mode': 'form',
+            'views': [(False, 'form')],
+            'res_id': wizard.id,
+            'target': 'new',
+        }
+
     def action_cancel(self):
         for rec in self:
             if rec.process_id and rec.process_id.state != 'draft':
@@ -797,6 +814,24 @@ class SelfInventoryRequestBatch(models.Model):
             rec._check_can_update_lines()
             rec.line_ids.filtered(lambda line: not line.selected).unlink()
         return True
+
+    def action_open_manual_add_line_wizard(self):
+        self.ensure_one()
+        if self.state != 'draft':
+            raise ValidationError(_("You cannot add lines after the batch is submitted."))
+        wizard = self.env['ab_self_inventory_batch_add_line_wizard'].create({
+            'batch_id': self.id,
+            'branch_ids': [(6, 0, self.branch_ids.ids)],
+        })
+        return {
+            'name': _('Add Line'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ab_self_inventory_batch_add_line_wizard',
+            'view_mode': 'form',
+            'views': [(False, 'form')],
+            'res_id': wizard.id,
+            'target': 'new',
+        }
 
     def action_cancel(self):
         for rec in self:
