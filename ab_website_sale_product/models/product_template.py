@@ -93,7 +93,9 @@ class ProductTemplate(models.Model):
 
     def _is_sold_out(self):
         self.ensure_one()
-        if self.ab_product_id and not self.ab_product_id.is_service:
+        template = self.sudo()
+        ab_product = template.ab_product_id.sudo()
+        if ab_product and not ab_product.is_service:
             return self.product_variant_id._is_sold_out()
         return super()._is_sold_out()
 
@@ -149,20 +151,24 @@ class ProductProduct(models.Model):
 
     def _ab_website_uses_eplus_stock(self):
         self.ensure_one()
-        return bool(self.ab_product_id and not self.ab_product_id.is_service)
+        product = self.sudo()
+        ab_product = product.ab_product_id.sudo()
+        return bool(ab_product and not ab_product.is_service)
 
     def _get_ab_website_available_qty(self):
         self.ensure_one()
-        if not self._ab_website_uses_eplus_stock():
+        product = self.sudo()
+        ab_product = product.ab_product_id.sudo()
+        if not ab_product or ab_product.is_service:
             return None
         groups = self.env["ab_eplus_stock_snapshot"].sudo()._read_group(
-            [("product_id", "=", self.ab_product_id.id), ("active", "=", True)],
+            [("product_id", "=", ab_product.id), ("active", "=", True)],
             [],
             ["itm_qty:sum"],
         )
         eplus_qty = groups[0][0] if groups else 0.0
         eplus_qty = max(eplus_qty or 0.0, 0.0)
-        template = self.product_tmpl_id
+        template = product.product_tmpl_id.sudo()
         shown_qty = max(template.eplus_stock_shown_qty_value or 0.0, 0.0)
         if template.eplus_stock_shown_qty_type == "percentage":
             shown_qty = eplus_qty * shown_qty / 100.0
