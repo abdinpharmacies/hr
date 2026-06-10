@@ -6,6 +6,7 @@ import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { Component, useState, xml, useRef, onWillStart, onWillUnmount, onPatched, useExternalListener } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { Dialog } from "@web/core/dialog/dialog";
+import { BatchesLoadingOverlay, useBatchLoading } from "./batches_loading_overlay";
 
 function getRecordValue(record, fieldName, fallback = null) {
     const data = record?.data;
@@ -443,10 +444,9 @@ const PAGE_SIZE = 50;
 
 class DataGridWidget extends Component {
     static template = xml`
-        <div class="ab_saas_grid_wrapper">
-            <div class="ab_saas_grid_loading" t-if="state.loading &amp;&amp; !state.rows.length">
-                <div class="ab_saas_grid_spinner"></div>
-                <span><t t-esc="_t('Loading data...')"/></span>
+        <div class="ab_saas_grid_wrapper" style="position: relative;">
+            <div t-att-class="'ab-batches-overlay-fixed' + (loading.state.isLoading ? ' ab-batches-overlay-fixed--visible' : '')">
+                <BatchesLoadingOverlay/>
             </div>
 
             <div class="ab_saas_grid_content" t-if="state.analytics">
@@ -623,7 +623,7 @@ class DataGridWidget extends Component {
                                 </t>
                             </t>
                         </t>
-                        <div class="ab_saas_grid_empty" t-if="(!state.groupByBranch &amp;&amp; !state.rows.length || state.groupByBranch &amp;&amp; !state.groupedData.length) &amp;&amp; !state.loading">
+                        <div class="ab_saas_grid_empty" t-if="(!state.groupByBranch &amp;&amp; !state.rows.length || state.groupByBranch &amp;&amp; !state.groupedData.length) &amp;&amp; !loading.state.isLoading">
                             <div class="ab_saas_grid_empty_content">
                                 <div class="ab_saas_grid_empty_icon">&#x1F50D;</div>
                                 <div class="ab_saas_grid_empty_title"><t t-esc="_t('No products found')"/></div>
@@ -640,6 +640,7 @@ class DataGridWidget extends Component {
         </div>
     `;
 
+    static components = { BatchesLoadingOverlay };
     static props = { ...standardFieldProps };
 
     setup() {
@@ -650,6 +651,7 @@ class DataGridWidget extends Component {
         this.gridBody = useRef("gridBody");
         this._searchTimer = null;
         this._loadKey = "";
+        this.loading = useBatchLoading({ minDuration: 600 });
         this.state = useState({
             analytics: null,
             branches: [],
@@ -660,7 +662,6 @@ class DataGridWidget extends Component {
             rows: [],
             groupedData: [],
             total: 0,
-            loading: false,
             page: 0,
             sortBy: "branch_id",
             sortOrder: "asc",
@@ -726,7 +727,7 @@ class DataGridWidget extends Component {
         if (serverBranchIds.length) {
             this.state.selected_branch_ids = serverBranchIds;
         }
-        this.state.loading = true;
+        this.loading.show();
         try {
             const [analytics, branches, result] = await Promise.all([
                 this.orm.call(this.resModel, "action_get_analytics", [[id]], {}),
@@ -758,7 +759,7 @@ class DataGridWidget extends Component {
             this.state.total = 0;
         } finally {
             if (this._currentKey() === this._loadKey) {
-                this.state.loading = false;
+                this.loading.hide();
             }
         }
     }
@@ -769,7 +770,7 @@ class DataGridWidget extends Component {
         this._loadKey = key;
         const id = this.resId;
         if (!id) return;
-        this.state.loading = true;
+        this.loading.show();
         try {
             const groups = await this.orm.call(this.resModel, "action_get_grouped_rows", [[id]], {
                 search: this.state.searchText || false,
@@ -786,7 +787,7 @@ class DataGridWidget extends Component {
             this.state.groupedData = [];
         } finally {
             if (this._currentKey() === this._loadKey) {
-                this.state.loading = false;
+                this.loading.hide();
             }
         }
     }
@@ -811,10 +812,10 @@ class DataGridWidget extends Component {
     }
 
     async loadMore() {
-        if (this.state.rows.length >= this.state.total || this.state.loading) return;
+        if (this.state.rows.length >= this.state.total || this.loading.state.isLoading) return;
         const id = this.resId;
         if (!id) return;
-        this.state.loading = true;
+        this.loading.show();
         try {
             const result = await this.orm.call(this.resModel, "action_get_grid_rows", [[id]], {
                 branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
@@ -830,7 +831,7 @@ class DataGridWidget extends Component {
         } catch (e) {
         } finally {
             if (this._currentKey() === this._loadKey) {
-                this.state.loading = false;
+                this.loading.hide();
             }
         }
     }
