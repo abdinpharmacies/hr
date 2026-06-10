@@ -23,6 +23,7 @@
             'ab_self_inventory/static/src/scss/self_inventory.scss',
             'ab_self_inventory/static/src/scss/self_inventory_form.scss',
             'ab_self_inventory/static/src/js/self_inventory_widgets.js',
+            'ab_self_inventory/static/src/js/batches_loading_overlay.js',
             'ab_self_inventory/static/src/js/self_inventory_form_widgets.js',
             'ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js',
         ],
