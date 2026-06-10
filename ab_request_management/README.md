@@ -134,6 +134,72 @@ Notifications
 - On assignment → assignees notified
 - On feedback → manager notified
 
+Website Portal Requests
+=======================
+
+Purpose
+-------
+
+The module includes a public website intake form for customer requests and complaints. Website submissions are stored separately from the internal employee workflow in model ``ab_request_website`` and are shown in the backend menu:
+
+``Requests and Complaints → Website Requests``
+
+This keeps public customer submissions isolated from the employee-based ``ab_request`` workflow and avoids exposing internal request ACLs to public users.
+
+Public Routes
+-------------
+
+- ``/requests/customer-form``: embeddable public form
+- ``/requests/customer-submit``: form submit route
+
+Embed Code
+----------
+
+Use this code inside the website custom embed/code field when the form is embedded on the same Odoo website:
+
+.. code-block:: html
+
+   <iframe src="/requests/customer-form" style="width:100%; min-height:780px; border:0;"></iframe>
+
+If the form is embedded from an external website, use the full production domain:
+
+.. code-block:: html
+
+   <iframe src="https://your-production-domain.com/requests/customer-form" style="width:100%; min-height:780px; border:0;"></iframe>
+
+Production Deployment
+---------------------
+
+1. Commit and push all ``ab_request_management`` source changes.
+2. Pull the code on production into the custom addons path, for example:
+
+   ``/opt/odoo19/custom-addons/ab_request_management``
+
+3. Confirm the production Odoo config includes the custom addons directory in ``addons_path``:
+
+   ``/opt/odoo19/custom-addons``
+
+4. Upgrade the module on the production database:
+
+.. code-block:: bash
+
+   /opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin \
+     -c /opt/odoo19/odoo19.conf \
+     -d YOUR_PROD_DB \
+     -u ab_request_management \
+     --stop-after-init
+
+5. Restart the actual Odoo process serving the website so the public controller routes are loaded.
+6. Hard refresh the browser after restart so the dashboard JS asset shows the new ``Website Requests`` counter.
+
+Expected Result
+---------------
+
+- Website form loads without the website header/footer inside the iframe.
+- Public submissions create records in ``ab_request_website``.
+- Backend users can review submissions from ``Website Requests``.
+- The dashboard shows a ``Website Requests`` counter for new website submissions.
+
 Telegram Module
 ===============
 
@@ -183,4 +249,4 @@ Expected Result
 ✔ Request created  
 ✔ Manager resolved  
 ✔ Telegram notification sent  
-✔ No duplicate bindings  
+✔ No duplicate bindings
