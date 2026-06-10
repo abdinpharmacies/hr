@@ -1,0 +1,1713 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# * ab_self_inventory
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-09 12:43+0000\n"
+"PO-Revision-Date: 2026-06-09 12:00+0000\n"
+"Last-Translator: Alhassan Hossny\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n>=3 && n<=10 ? 3 : n>=11 && n<=99 ? 4 : 5;\n"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid " Missing product codes: %s"
+msgstr " أكواد المنتجات المفقودة: %s"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid " branches"
+msgstr " فروع"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid " more"
+msgstr " المزيد"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%(a)s of %(b)s loaded"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%s branches selected"
+msgstr "تم تحديد %s فرع"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "(no branch names available)"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "1 branch selected"
+msgstr "تم تحديد فرع واحد"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid ""
+"<i class=\"fa fa-info-circle\"/> Add branches to the batch to run analysis."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Branch</span>"
+msgstr "<span class=\"ab_form_info_label\">الفرع</span>"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Created</span>"
+msgstr "<span class=\"ab_form_info_label\">تاريخ الإنشاء</span>"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Deadline</span>"
+msgstr "<span class=\"ab_form_info_label\">الموعد النهائي</span>"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "<span class=\"ab_form_info_label\">Receiver</span>"
+msgstr "<span class=\"ab_form_info_label\">المستلم</span>"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "<span class=\"ab_form_info_label\">Request</span>"
+msgstr "<span class=\"ab_form_info_label\">الطلب</span>"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Requester</span>"
+msgstr "<span class=\"ab_form_info_label\">مقدم الطلب</span>"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Status</span>"
+msgstr "<span class=\"ab_form_info_label\">الحالة</span>"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Submitted</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_kanban
+msgid "<span>·</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Actions"
+msgstr "الإجراءات"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__actual_qty
+msgid "Actual Qty"
+msgstr "الكمية الفعلية"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Actual quantity cannot be negative."
+msgstr "الكمية الفعلية لا يمكن أن تكون سالبة."
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Add Codes to Selected Branches"
+msgstr "إضافة الأكواد إلى الفروع المختارة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Add Matching Branches"
+msgstr "إضافة الفروع المتطابقة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Add a note..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Add at least one product line before submitting."
+msgstr "أضف بند منتج واحدًا على الأقل قبل التقديم."
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_medicine_type__all
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_medicine_type__all
+msgid "All"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "All branches"
+msgstr "كل الفروع"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "All matching branch stores were added."
+msgstr "تمت إضافة جميع مخازن الفروع المتطابقة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Analysis Complete"
+msgstr "اكتمل التحليل"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_is_collapsed
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_is_collapsed
+msgid "Analysis Is Collapsed"
+msgstr "اكتمل التحليل"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_mode
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_mode
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Analysis Mode"
+msgstr "وضع التحليل"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Assigned Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__batch_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__batch_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+msgid "Batch"
+msgstr "مجموعة"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Batch Created"
+msgstr "تم إنشاء المجموعة"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_request_batch_line
+msgid "Batch Product Lines"
+msgstr "بنود منتجات المجموعة"
+
+#. module: ab_self_inventory
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_request_batch
+msgid "Batches"
+msgstr "المجموعات"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__both
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_mode__both
+msgid "Both Combined"
+msgstr "كلاهما معاً"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__branch_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__branch_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:523
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Branch %s has no e-plus serial."
+msgstr "الفرع %s ليس لديه رقم تسلسلي E-plus."
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_filter_mode
+msgid "Branch Filter"
+msgstr "مستلم الفرع"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__branch_filter_mode__branch_name
+msgid "Branch Names"
+msgstr "أسماء الفروع"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__branch_note
+msgid "Branch Note"
+msgstr "الفروع"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Branch Product Groups"
+msgstr "مجموعات منتجات الفروع"
+
+#. module: ab_self_inventory
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_receiver
+msgid "Branch Receiver"
+msgstr "مستلم الفرع"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Branch Selection"
+msgstr "اختيار الفروع"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Branch Stock"
+msgstr "مخزون الفرع"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__available_product_ids
+msgid "Branch Stock Products"
+msgstr "مخزون الفرع"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Branch note..."
+msgstr "الفروع"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:445
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_ids
+msgid "Branches"
+msgstr "الفروع"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Branches Added"
+msgstr "تمت إضافة الفروع"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Branches: %d. Sales found: %d. Stock items: %d. Added: %d."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Bulk Product Codes"
+msgstr "أكواد المنتجات بالجملة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__cancelled
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__cancelled
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__state__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__product_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__product_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__product_code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+msgid "Code or Name"
+msgstr "الكود أو الاسم"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Completed"
+msgstr "مكتمل"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not clear selections."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not delete selected items."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Could not read Excel file: %s"
+msgstr "تعذر قراءة ملف Excel: %s"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not select all."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__deadline
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__deadline
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__deadline
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Deadline"
+msgstr "الموعد النهائي"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Delete"
+msgstr "حذف"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete Selected"
+msgstr "حذف المحدد"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete Unselected"
+msgstr "حذف غير المختار"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete all selected fetched products?"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete all unselected fetched products?"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Details"
+msgstr "التفاصيل"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__difference_qty
+msgid "Difference Qty"
+msgstr "فرق الكمية"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_report_ab_self_inventory_count_sheet_xlsx__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__draft
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__draft
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__state__draft
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Duplicate Product"
+msgstr "منتج مكرر"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "E-plus Connection Error for %s: %s"
+msgstr "خطأ في الاتصال بـ E-plus للفرع %s: %s"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "E-plus Connection Error: %s"
+msgstr "خطأ في الاتصال بـ E-plus: %s"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch_line__matched_by__eplus_serial
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_line__matched_by__eplus_serial
+msgid "E-plus ID"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__eplus_item_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__eplus_item_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__eplus_item_code
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "E-plus Item Code"
+msgstr "كود الصنف في E-plus"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__eplus_item_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__eplus_item_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__eplus_item_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "E-plus Item ID"
+msgstr "رقم الصنف في E-plus"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__system_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__system_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__system_qty
+msgid "E-stock Qty"
+msgstr "كمية E-stock"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Enter a governorate name before adding branches."
+msgstr "أدخل اسم محافظة قبل إضافة الفروع."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Enter at least one product code."
+msgstr "أدخل كود منتج واحد على الأقل."
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid ""
+"Enter product codes separated by new lines, commas, semicolons, or spaces."
+msgstr ""
+"أدخل أكواد المنتجات مفصولة بأسطر جديدة أو فواصل أو فواصل منقوطة أو مسافات."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Excel must contain Product Code and Actual Qty columns."
+msgstr "يجب أن يحتوي Excel على عمودي كود المنتج والكمية الفعلية."
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__explanation
+msgid "Explanation"
+msgstr "التوضيح"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Export Count Sheet"
+msgstr "تصدير كشف العد"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+msgid "Extra"
+msgstr "الزيادة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__extra_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__extra_qty
+msgid "Extra Cost"
+msgstr "تكلفة الزيادة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__extra_data
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__extra_data
+msgid "Extra Data"
+msgstr "الزيادة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Fetch Branch Stock"
+msgstr "استيراد مخزون الفرع"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Fetch Branch Stocks"
+msgstr "استيراد مخزون الفروع"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__line_ids
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Fetched Products"
+msgstr "المنتجات المستوردة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__file
+msgid "File"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__filename
+msgid "Filename"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__filtered_line_ids
+msgid "Filtered Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+msgid "Governorate"
+msgstr "المحافظة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__branch_filter_mode__governorate_name
+msgid "Governorate Name"
+msgstr "اسم المحافظة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_governorate_name
+msgid "Governorate Name Filter"
+msgstr "فلتر اسم المحافظة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__min_price
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_mode__min_price
+msgid "High Price Items Only (> Min Price)"
+msgstr "الأصناف مرتفعة السعر فقط (> الحد الأدنى للسعر)"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_report_ab_self_inventory_count_sheet_xlsx__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_import_wizard_form
+msgid "Import"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Import Actual Counts"
+msgstr "استيراد الأعداد الفعلية"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Import Complete"
+msgstr "اكتمل الاستيراد"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "In Progress"
+msgstr "قيد التنفيذ"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__line_ids
+msgid "Inventory Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch_line__matched_by__code
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_line__matched_by__code
+msgid "Item Code"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Items"
+msgstr "الأصناف"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__last_code_import_message
+msgid "Last Code Import Message"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__line_count
+msgid "Line Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_manager
+msgid "Manager"
+msgstr "مدير"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+msgid "Match"
+msgstr "التطابق"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__matched_by
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__matched_by
+msgid "Matched By"
+msgstr "متطابق"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__governorate_branch_count
+msgid "Matching Branches"
+msgstr "الفروع المطابقة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_medicine_type__medicine
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_medicine_type__medicine
+msgid "Medicine"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_medicine_type
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_medicine_type
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Medicine Type"
+msgstr "نوع الدواء"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_min_price
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_min_price
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Min Price (EGP)"
+msgstr "الحد الأدنى للسعر (جنيه)"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__name
+msgid "Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No branch stores were found with this branch name text."
+msgstr "لم يتم العثور على مخازن فروع بهذا النص."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"No branch stores were found with this governorate text and فرع in their "
+"name."
+msgstr "لم يتم العثور على مخازن فروع بهذه المحافظة وكلمة فرع في الاسم."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "No matching inventory lines were updated."
+msgstr "لم يتم تحديث أي بنود جرد متطابقة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No self inventory process has been created yet."
+msgstr "لم يتم إنشاء عملية جرد ذاتي بعد."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No stock rows were returned from B-Connect for branch %s."
+msgstr "لم يتم إرجاع أي صفوف مخزون من B-Connect للفرع %s."
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_medicine_type__non_medicine
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_medicine_type__non_medicine
+msgid "Non-Medicine"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch_line__matched_by__none
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_line__matched_by__none
+msgid "Not Matched"
+msgstr "متطابق"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Not selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__note
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__note
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__note
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft batches can fetch branch stock."
+msgstr "يمكن للمجموعات في حالة المسودة فقط استيراد مخزون الفرع."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft batches can update branches."
+msgstr "يمكن للمجموعات في حالة المسودة فقط تحديث الفروع."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft batches can update fetched product lines."
+msgstr "يمكن للمجموعات في حالة المسودة فقط تحديث بنود المنتجات المستوردة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft requests can fetch branch stock."
+msgstr "يمكن لطلبات المسودة فقط استيراد مخزون الفرع."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft requests can update fetched product lines."
+msgstr "يمكن لطلبات المسودة فقط تحديث بنود المنتجات المستوردة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory batch lines can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory batch lines can be deleted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory process lines can be changed."
+msgstr "يمكن تعديل بنود عملية الجرد الذاتي في حالة المسودة فقط."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory process lines can be deleted."
+msgstr "يمكن حذف بنود عملية الجرد الذاتي في حالة المسودة فقط."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory processes can be changed."
+msgstr "يمكن تعديل عمليات الجرد الذاتي في حالة المسودة فقط."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Only draft self inventory processes can import actual counts."
+msgstr ""
+"يمكن لعمليات الجرد الذاتي في حالة المسودة فقط استيراد الأعداد الفعلية."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory processes can receive new lines."
+msgstr "يمكن لعمليات الجرد الذاتي في حالة المسودة فقط استقبال بنود جديدة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory request batches can be changed."
+msgstr "يمكن تعديل مجموعات طلبات الجرد الذاتي في حالة المسودة فقط."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory request lines can be changed."
+msgstr "يمكن تعديل بنود طلبات الجرد الذاتي في حالة المسودة فقط."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory request lines can be deleted."
+msgstr "يمكن حذف بنود طلبات الجرد الذاتي في حالة المسودة فقط."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory requests can be changed."
+msgstr "يمكن تعديل طلبات الجرد الذاتي في حالة المسودة فقط."
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Open Process"
+msgstr "فتح العملية"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"Open these lines from a self inventory batch before using bulk line actions."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_period_days
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_period_days
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Period (Days)"
+msgstr "الفترة (بالأيام)"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Please select a branch first."
+msgstr "يرجى اختيار فرع أولاً."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Please select at least one branch first."
+msgstr "يرجى اختيار فرع واحد على الأقل أولاً."
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__process_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__process_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__process_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__process_ids
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Process"
+msgstr "عملية"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__process_count
+msgid "Process Count"
+msgstr "عملية"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+msgid "Processed"
+msgstr "تمت المعالجة"
+
+#. module: ab_self_inventory
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_process
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+msgid "Processes"
+msgstr "تمت المعالجة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__product_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__product_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__product_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Product Code"
+msgstr "كود المنتج"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__product_codes_text
+msgid "Product Codes"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Product code already exists for this branch in the batch."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Progress"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__receiver_id
+msgid "Received By"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+msgid "Receiver"
+msgstr "المستلم"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__request_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__request_ids
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__request_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__request_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Request"
+msgstr "طلب"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__request_count
+msgid "Request Count"
+msgstr "طلب"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__request_note
+msgid "Request Note"
+msgstr "مطلوب"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Request note..."
+msgstr "مطلوب"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__requested
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Requested"
+msgstr "مطلوب"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Requested self inventory products cannot be deleted."
+msgstr "لا يمكن حذف منتجات الجرد الذاتي المطلوبة."
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__requester_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__requester_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__requester_id
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_requester
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Requester"
+msgstr "مقدم الطلب"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_request
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+msgid "Requests"
+msgstr "الطلبات"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Reset to Draft"
+msgstr "إعادة إلى المسودة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Run Analysis"
+msgstr "تشغيل التحليل"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Sales found: %d. Stock items: %d. Added to inventory: %d."
+msgstr "المبيعات الموجودة: %d. أصناف المخزون: %d. تمت الإضافة للجرد: %d."
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+msgid "Search Batches"
+msgstr "بحث في المجموعات"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Search Requests"
+msgstr "بحث في الطلبات"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:501
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Select All"
+msgstr "اختيار الكل"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Select at least one branch before adding branches."
+msgstr "اختر فرعًا واحدًا على الأقل قبل إضافة الفروع."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Select at least one branch before fetching stock."
+msgstr "اختر فرعًا واحدًا على الأقل قبل استيراد المخزون."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Select at least one matched product before submitting."
+msgstr "اختر منتجًا متطابقًا واحدًا على الأقل قبل التقديم."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__selected
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__selected
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_line_list
+msgid "Selected"
+msgstr "مُختار"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__selected_line_count
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__selected_line_count
+msgid "Selected Line Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Selected branch has no e-plus serial."
+msgstr "الفرع المحدد ليس لديه رقم تسلسلي E-plus."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Selected product is not available in this branch stock."
+msgstr "المنتج المحدد غير متوفر في مخزون هذا الفرع."
+
+#. module: ab_self_inventory
+#: model:ir.module.category,name:ab_self_inventory.module_category_ab_self_inventory
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_root
+#: model:res.groups.privilege,name:ab_self_inventory.privilege_ab_self_inventory
+msgid "Self Inventory"
+msgstr "الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_import_wizard
+msgid "Self Inventory Actual Count Import"
+msgstr "مجموعة طلبات الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_request_batch
+msgid "Self Inventory Batches"
+msgstr "مجموعات الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.actions.report,name:ab_self_inventory.action_self_inventory_count_sheet_xlsx
+msgid "Self Inventory Count Sheet"
+msgstr "طلب الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_report_ab_self_inventory_count_sheet_xlsx
+msgid "Self Inventory Count Sheet XLSX"
+msgstr "طلب الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Self Inventory Lines"
+msgstr "بنود الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_process
+msgid "Self Inventory Process"
+msgstr "عملية الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_process_line
+msgid "Self Inventory Process Line"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_process
+msgid "Self Inventory Processes"
+msgstr "عمليات الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request
+msgid "Self Inventory Request"
+msgstr "طلب الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request_batch
+msgid "Self Inventory Request Batch"
+msgstr "مجموعة طلبات الجرد الذاتي"
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request_batch_line
+msgid "Self Inventory Request Batch Line"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request_line
+msgid "Self Inventory Request Line"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_request
+msgid "Self Inventory Requests"
+msgstr "طلبات الجرد الذاتي"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid ""
+"Self inventory products cannot be changed after the request is received."
+msgstr "لا يمكن تغيير منتجات الجرد الذاتي بعد استلام الطلب."
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__sell_price
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__sell_price
+msgid "Sell Price"
+msgstr "سعر البيع"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+msgid "Shortage"
+msgstr "العجز"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__shortage_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__shortage_qty
+msgid "Shortage Cost"
+msgstr "تكلفة العجز"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__selected_branch_ids
+msgid "Showing Branches"
+msgstr "إضافة الفروع المتطابقة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Smart Inventory Analysis"
+msgstr "تحليل المخزون الذكي"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__sold_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__sold_qty
+msgid "Sold Qty"
+msgstr "الكمية المباعة"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__batch_state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__request_state
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Submit All"
+msgstr "تقديم الكل"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Submit Inventory"
+msgstr "تقديم الجرد"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Submit Request"
+msgstr "تقديم الطلب"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__submitted
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__submitted
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__state__submitted
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Submitted"
+msgstr "تم التقديم"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__submitted_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__submitted_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__submitted_date
+msgid "Submitted Date"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Submitted self inventory processes cannot be cancelled."
+msgstr "لا يمكن إلغاء عمليات الجرد الذاتي المُقدمة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Submitted self inventory processes cannot be reset to draft."
+msgstr "لا يمكن إعادة عمليات الجرد الذاتي المُقدمة إلى المسودة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "The Excel file is empty."
+msgstr "ملف Excel فارغ."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "The selected branch has no e-plus serial."
+msgstr "الفرع المحدد ليس لديه رقم تسلسلي E-plus."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "These branches have no e-plus serial: %s"
+msgstr "هذه الفروع ليس لديها رقم تسلسلي E-plus: %s"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Timeline"
+msgstr "الجدول الزمني"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_top_n
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_top_n
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Top N Items"
+msgstr "أعلى عدد من الأصناف"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__top_n
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_mode__top_n
+msgid "Top N Items Only"
+msgstr "أعلى عدد من الأصناف فقط"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Total Lines"
+msgstr "إجمالي البنود"
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__unit_cost
+msgid "Unit Cost"
+msgstr "تكلفة الوحدة"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Unmatched"
+msgstr "غير متطابق"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Unselect All"
+msgstr "إلغاء اختيار الكل"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Updated %s inventory lines."
+msgstr "تم تحديث %s بند جرد."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot cancel a batch after any inventory process is submitted."
+msgstr "لا يمكنك إلغاء مجموعة بعد تقديم أي عملية جرد."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot cancel a request after the inventory process is submitted."
+msgstr "لا يمكنك إلغاء طلب بعد تقديم عملية الجرد."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot reset a batch after any inventory process is submitted."
+msgstr "لا يمكنك إعادة مجموعة إلى المسودة بعد تقديم أي عملية جرد."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot reset a request after the inventory process is submitted."
+msgstr "لا يمكنك إعادة طلب إلى المسودة بعد تقديم عملية الجرد."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "already exists product"
+msgstr "المنتج موجود بالفعل"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "batch_id"
+msgstr "متطابق"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "by "
+msgstr "بواسطة "
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "id"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "openpyxl is required to import Excel files."
+msgstr "مكتبة openpyxl مطلوبة لاستيراد ملفات Excel."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:469
+msgid "All Branches"
+msgstr "كل الفروع"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:378
+msgid "Showing"
+msgstr "المعروض"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:499
+msgid "selected"
+msgstr "محدد"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:506
+msgid "Group"
+msgstr "تجميع"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:530
+msgid "Stock"
+msgstr "المخزون"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:578
+msgid "products"
+msgstr "منتجات"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:29
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:1020
+msgid "Search Branch..."
+msgstr "بحث في الفروع..."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:465
+msgid "Search branch..."
+msgstr "بحث في الفروع..."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:494
+msgid "Search products..."
+msgstr "بحث في المنتجات..."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:532
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:533
+msgid "Sold"
+msgstr "المباع"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:617
+msgid "No products found"
+msgstr "لم يتم العثور على منتجات"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:618
+msgid "Try changing the branch filter or search terms."
+msgstr "حاول تغيير فلتر الفرع أو كلمات البحث."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:624
+msgid "Load more"
+msgstr "تحميل المزيد"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:32
+msgid "Some product codes could not be found"
+msgstr "تعذر العثور على بعض أكواد المنتجات"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:77
+msgid "Download Missing Codes"
+msgstr "تنزيل الأكواد المفقودة"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:80
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:457
+msgid "Matched"
+msgstr "متطابق"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:623
+msgid "%(rows)s of %(total)s loaded"
+msgstr "تم تحميل %(rows)s من %(total)s"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Draft by %(name)s"
+msgstr "مسودة بواسطة %(name)s"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Submitted by %(details)s"
+msgstr "مُرسل بواسطة %(details)s"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Cancelled by %(name)s"
+msgstr "ملغى بواسطة %(name)s"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "No deadline"
+msgstr "بدون موعد نهائي"
+
+#~ msgid "Loading data..."
+#~ msgstr "جاري تحميل البيانات..."
+
+#~ msgid "Products"
+#~ msgstr "المنتجات"
+
+#~ msgid "Show less"
+#~ msgstr "عرض أقل"
+
+#~ msgid "Showing:"
+#~ msgstr "المعروض:"
+
+#~ msgid "Show All"
+#~ msgstr "عرض الكل"
+
+#~ msgid "Clear selection"
+#~ msgstr "مسح التحديد"
+
+#~ msgid "Clear"
+#~ msgstr "مسح"
+
+#~ msgid "products selected"
+#~ msgstr "منتجات محددة"
+
+#~ msgid "Self inventory batches: own requester records"
+#~ msgstr "مجموعات الجرد الذاتي: سجلات الطالب الخاص"
+
+#~ msgid "Self inventory batches: manager all"
+#~ msgstr "مجموعات الجرد الذاتي: المدير الكل"
+
+#~ msgid "Self inventory batch lines: own requester records"
+#~ msgstr "بنود مجموعات الجرد الذاتي: سجلات الطالب الخاص"
+
+#~ msgid "Self inventory batch lines: manager all"
+#~ msgstr "بنود مجموعات الجرد الذاتي: المدير الكل"
+
+#~ msgid "Self inventory requests: own requester records"
+#~ msgstr "طلبات الجرد الذاتي: سجلات الطالب الخاص"
+
+#~ msgid "Self inventory requests: receiver branch records"
+#~ msgstr "طلبات الجرد الذاتي: سجلات مستلم الفرع"
+
+#~ msgid "Self inventory requests: manager all"
+#~ msgstr "طلبات الجرد الذاتي: المدير الكل"
+
+#~ msgid "Self inventory request lines: own requester records"
+#~ msgstr "بنود طلبات الجرد الذاتي: سجلات الطالب الخاص"
+
+#~ msgid "Self inventory request lines: receiver branch records"
+#~ msgstr "بنود طلبات الجرد الذاتي: سجلات مستلم الفرع"
+
+#~ msgid "Self inventory request lines: manager all"
+#~ msgstr "بنود طلبات الجرد الذاتي: المدير الكل"
+
+#~ msgid "Self inventory processes: requester records"
+#~ msgstr "عمليات الجرد الذاتي: سجلات الطالب"
+
+#~ msgid "Self inventory processes: receiver branch records"
+#~ msgstr "عمليات الجرد الذاتي: سجلات مستلم الفرع"
+
+#~ msgid "Self inventory processes: manager all"
+#~ msgstr "عمليات الجرد الذاتي: المدير الكل"
+
+#~ msgid "Self inventory process lines: requester records"
+#~ msgstr "بنود عمليات الجرد الذاتي: سجلات الطالب"
+
+#~ msgid "Self inventory process lines: receiver branch records"
+#~ msgstr "بنود عمليات الجرد الذاتي: سجلات مستلم الفرع"
+
+#~ msgid "Self inventory process lines: manager all"
+#~ msgstr "بنود عمليات الجرد الذاتي: المدير الكل"
