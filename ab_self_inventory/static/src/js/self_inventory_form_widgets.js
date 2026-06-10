@@ -510,6 +510,7 @@ class DataGridWidget extends Component {
                         <span class="ab_saas_selection_pill" t-if="!state.groupByBranch &amp;&amp; selectedCount" t-on-click="() => this.unselectAll()" t-att-title="_t('Clear selection')">
                             &#x2611; <t t-esc="selectedCount"/> <t t-esc="_t('selected')"/> &#x2716;
                         </span>
+                        <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly"><t t-esc="_t('Add Line')"/></button>
                         <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
                                 <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedCount || isReadonly"><t t-esc="_t('Clear')"/></button>
                                 <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedCount || isReadonly"><t t-esc="_t('Delete')"/></button>
@@ -646,6 +647,7 @@ class DataGridWidget extends Component {
     setup() {
         this._t = _t;
         this.orm = useService("orm");
+        this.action = useService("action");
         this.notification = useService("notification");
         this.gridContainer = useRef("gridContainer");
         this.gridBody = useRef("gridBody");
@@ -961,6 +963,27 @@ class DataGridWidget extends Component {
             this.state.total = Math.max(0, this.state.total - selected.length);
         } catch (e) {
             this.notification.add(_t("Could not delete selected items."), { type: "danger" });
+        }
+    }
+
+    async openAddLine() {
+        if (!this.resId || this.isReadonly) return;
+        try {
+            const action = await this.orm.call(this.resModel, "action_open_manual_add_line_wizard", [[this.resId]], {});
+            await this.action.doAction(action, {
+                onClose: async () => {
+                    this.state.rows = [];
+                    this.state.groupedData = [];
+                    this.state.total = 0;
+                    if (this.state.groupByBranch) {
+                        await this._loadGrouped();
+                    } else {
+                        await this._load();
+                    }
+                },
+            });
+        } catch (e) {
+            this.notification.add(_t("Could not open Add Line."), { type: "danger" });
         }
     }
 
