@@ -15,6 +15,8 @@
         'views/ab_request_type_views.xml',
         'views/ab_request_ticket_views.xml',
         'views/ab_request_followup_wizard_views.xml',
+        'views/ab_request_website_views.xml',
+        'views/customer_request_templates.xml',
         'views/menus.xml',
     ],
     'assets': {

@@ -66,7 +66,7 @@ export class AbRequestDashboard extends Component {
     async loadDashboard() {
         this.state.loading = true;
         const nowIso = new Date().toISOString().slice(0, 19).replace("T", " ");
-        const [myRequests, pendingApproval, inProgress, overdue, byDepartment, byState, recent] = await Promise.all([
+        const [myRequests, pendingApproval, inProgress, overdue, websiteRequests, byDepartment, byState, recent] = await Promise.all([
             this.orm.searchCount("ab_request", [["user_id", "=", user.userId]]),
             this.orm.searchCount("ab_request", [
                 ["state", "=", "under_review"],
@@ -78,6 +78,7 @@ export class AbRequestDashboard extends Component {
                 ["deadline", "<", nowIso],
                 ["state", "not in", ["closed", "rejected", "satisfied", "resolved"]],
             ]),
+            this.orm.searchCount("ab_request_website", [["state", "=", "new"]]),
             this.orm.call(
                 "ab_request",
                 "read_group",
@@ -129,6 +130,15 @@ export class AbRequestDashboard extends Component {
                     ["deadline", "<", nowIso],
                     ["state", "not in", ["closed", "rejected", "satisfied", "resolved"]],
                 ],
+            },
+            {
+                key: "website_requests",
+                label: _t("Website Requests"),
+                value: websiteRequests,
+                icon: "fa fa-globe",
+                accent: "#1f8f8a",
+                model: "ab_request_website",
+                domain: [["state", "=", "new"]],
             },
         ];
 
@@ -229,11 +239,11 @@ export class AbRequestDashboard extends Component {
         this.savePreferences();
     }
 
-    async openList(domain) {
+    async openList(domain, model = "ab_request") {
         await this.env.services.action.doAction({
             type: "ir.actions.act_window",
             name: _t("Requests"),
-            res_model: "ab_request",
+            res_model: model,
             views: [[false, "list"], [false, "form"]],
             domain: domain,
             target: "current",
