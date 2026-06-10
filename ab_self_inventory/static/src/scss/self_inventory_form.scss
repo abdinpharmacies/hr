@@ -1485,6 +1485,17 @@ $saas-transition: 0.15s ease;
             background: $saas-danger-light;
         }
     }
+
+    &--primary {
+        background: $saas-primary;
+        border-color: $saas-primary;
+        color: #fff;
+
+        &:hover:not(:disabled) {
+            background: darken($saas-primary, 6%);
+            border-color: darken($saas-primary, 6%);
+        }
+    }
 }
 
 // Selection Bar

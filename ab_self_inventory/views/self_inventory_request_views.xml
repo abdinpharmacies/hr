@@ -103,6 +103,7 @@
                                 <notebook>
                                     <page string="Fetched Products">
                                         <div class="ab_form_row" invisible="state != 'draft'">
+                                            <button name="action_open_manual_add_line_wizard" type="object" string="Add Line" class="btn-primary"/>
                                             <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary"/>
                                             <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary"/>
                                             <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
