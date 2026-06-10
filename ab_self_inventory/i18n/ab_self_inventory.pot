@@ -1,0 +1,1638 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_self_inventory
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-09 12:43+0000\n"
+"PO-Revision-Date: 2026-06-09 12:43+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid " Missing product codes: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid " branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid " more"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%(a)s of %(b)s loaded"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%s branches selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "(no branch names available)"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "1 branch selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid ""
+"<i class=\"fa fa-info-circle\"/> Add branches to the batch to run analysis."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Branch</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Created</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Deadline</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "<span class=\"ab_form_info_label\">Receiver</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "<span class=\"ab_form_info_label\">Request</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Requester</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Status</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Submitted</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_kanban
+msgid "<span>·</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Actions"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__actual_qty
+msgid "Actual Qty"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Actual quantity cannot be negative."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Add Codes to Selected Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Add Matching Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Add a note..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Add at least one product line before submitting."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_medicine_type__all
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_medicine_type__all
+msgid "All"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "All branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "All matching branch stores were added."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Analysis Complete"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_is_collapsed
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_is_collapsed
+msgid "Analysis Is Collapsed"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_mode
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_mode
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Analysis Mode"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Assigned Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__batch_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__batch_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+msgid "Batch"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Batch Created"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_request_batch_line
+msgid "Batch Product Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_request_batch
+msgid "Batches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__both
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_mode__both
+msgid "Both Combined"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__branch_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__branch_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:523
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__branch_id
+msgid "Branch"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Branch %s has no e-plus serial."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_filter_mode
+msgid "Branch Filter"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__branch_filter_mode__branch_name
+msgid "Branch Names"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__branch_note
+msgid "Branch Note"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Branch Product Groups"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_receiver
+msgid "Branch Receiver"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Branch Selection"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Branch Stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__available_product_ids
+msgid "Branch Stock Products"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Branch note..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:445
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_ids
+msgid "Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Branches Added"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Branches: %d. Sales found: %d. Stock items: %d. Added: %d."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Bulk Product Codes"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Cancel"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__cancelled
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__cancelled
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__state__cancelled
+msgid "Cancelled"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__product_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__product_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__product_code
+msgid "Code"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+msgid "Code or Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Completed"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not clear selections."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not delete selected items."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Could not read Excel file: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not select all."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__create_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__create_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__deadline
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__deadline
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__deadline
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Deadline"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Delete"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete Selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete Unselected"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete all selected fetched products?"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Delete all unselected fetched products?"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Details"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__difference_qty
+msgid "Difference Qty"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_report_ab_self_inventory_count_sheet_xlsx__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__draft
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__draft
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__state__draft
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Draft"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Duplicate Product"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "E-plus Connection Error for %s: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "E-plus Connection Error: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch_line__matched_by__eplus_serial
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_line__matched_by__eplus_serial
+msgid "E-plus ID"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__eplus_item_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__eplus_item_code
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__eplus_item_code
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "E-plus Item Code"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__eplus_item_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__eplus_item_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__eplus_item_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "E-plus Item ID"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__system_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__system_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__system_qty
+msgid "E-stock Qty"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Enter a governorate name before adding branches."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Enter at least one product code."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid ""
+"Enter product codes separated by new lines, commas, semicolons, or spaces."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Excel must contain Product Code and Actual Qty columns."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__explanation
+msgid "Explanation"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Export Count Sheet"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+msgid "Extra"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__extra_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__extra_qty
+msgid "Extra Cost"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__extra_data
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__extra_data
+msgid "Extra Data"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Fetch Branch Stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Fetch Branch Stocks"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__line_ids
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Fetched Products"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__file
+msgid "File"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__filename
+msgid "Filename"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__filtered_line_ids
+msgid "Filtered Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+msgid "Governorate"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__branch_filter_mode__governorate_name
+msgid "Governorate Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_governorate_name
+msgid "Governorate Name Filter"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__min_price
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_mode__min_price
+msgid "High Price Items Only (> Min Price)"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_report_ab_self_inventory_count_sheet_xlsx__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_import_wizard_form
+msgid "Import"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_import_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Import Actual Counts"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Import Complete"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "In Progress"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__line_ids
+msgid "Inventory Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch_line__matched_by__code
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_line__matched_by__code
+msgid "Item Code"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Items"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__last_code_import_message
+msgid "Last Code Import Message"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__write_uid
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__write_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__line_count
+msgid "Line Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_manager
+msgid "Manager"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+msgid "Match"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__matched_by
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__matched_by
+msgid "Matched By"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__governorate_branch_count
+msgid "Matching Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_medicine_type__medicine
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_medicine_type__medicine
+msgid "Medicine"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_medicine_type
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_medicine_type
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Medicine Type"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_min_price
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_min_price
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Min Price (EGP)"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__name
+msgid "Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No branch stores were found with this branch name text."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"No branch stores were found with this governorate text and فرع in their "
+"name."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "No matching inventory lines were updated."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No self inventory process has been created yet."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No stock rows were returned from B-Connect for branch %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_medicine_type__non_medicine
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_medicine_type__non_medicine
+msgid "Non-Medicine"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch_line__matched_by__none
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_line__matched_by__none
+msgid "Not Matched"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Not selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__note
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__note
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__note
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__note
+msgid "Note"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Notes"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft batches can fetch branch stock."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft batches can update branches."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft batches can update fetched product lines."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft requests can fetch branch stock."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft requests can update fetched product lines."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory batch lines can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory batch lines can be deleted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory process lines can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory process lines can be deleted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory processes can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Only draft self inventory processes can import actual counts."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only draft self inventory processes can receive new lines."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory request batches can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory request lines can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory request lines can be deleted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Only draft self inventory requests can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Open Process"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"Open these lines from a self inventory batch before using bulk line actions."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_period_days
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_period_days
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Period (Days)"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Please select a branch first."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Please select at least one branch first."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__process_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__process_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__process_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__process_ids
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Process"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__process_count
+msgid "Process Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+msgid "Processed"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_process
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+msgid "Processes"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__product_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__product_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__product_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Product"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Product Code"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__product_codes_text
+msgid "Product Codes"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Product code already exists for this branch in the batch."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Progress"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__receiver_id
+msgid "Received By"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+msgid "Receiver"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__request_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__request_ids
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__request_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__request_id
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Request"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__request_count
+msgid "Request Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__request_note
+msgid "Request Note"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Request note..."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__requested
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+msgid "Requested"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Requested self inventory products cannot be deleted."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__requester_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__requester_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__requester_id
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_requester
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Requester"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_request
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+msgid "Requests"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Reset to Draft"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Run Analysis"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Sales found: %d. Stock items: %d. Added to inventory: %d."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+msgid "Search Batches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Search Requests"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:501
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Select All"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Select at least one branch before adding branches."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Select at least one branch before fetching stock."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Select at least one matched product before submitting."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__selected
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__selected
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_line_list
+msgid "Selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__selected_line_count
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__selected_line_count
+msgid "Selected Line Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Selected branch has no e-plus serial."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Selected product is not available in this branch stock."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.module.category,name:ab_self_inventory.module_category_ab_self_inventory
+#: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_root
+#: model:res.groups.privilege,name:ab_self_inventory.privilege_ab_self_inventory
+msgid "Self Inventory"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_import_wizard
+msgid "Self Inventory Actual Count Import"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_request_batch
+msgid "Self Inventory Batches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.actions.report,name:ab_self_inventory.action_self_inventory_count_sheet_xlsx
+msgid "Self Inventory Count Sheet"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_report_ab_self_inventory_count_sheet_xlsx
+msgid "Self Inventory Count Sheet XLSX"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Self Inventory Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_process
+msgid "Self Inventory Process"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_process_line
+msgid "Self Inventory Process Line"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_process
+msgid "Self Inventory Processes"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request
+msgid "Self Inventory Request"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request_batch
+msgid "Self Inventory Request Batch"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request_batch_line
+msgid "Self Inventory Request Batch Line"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_request_line
+msgid "Self Inventory Request Line"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_request
+msgid "Self Inventory Requests"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid ""
+"Self inventory products cannot be changed after the request is received."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__sell_price
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__sell_price
+msgid "Sell Price"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+msgid "Shortage"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__shortage_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__shortage_qty
+msgid "Shortage Cost"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__selected_branch_ids
+msgid "Showing Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Smart Inventory Analysis"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__sold_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__sold_qty
+msgid "Sold Qty"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__batch_state
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__request_state
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "State"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Status"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "Submit All"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Submit Inventory"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Submit Request"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__submitted
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__submitted
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__state__submitted
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
+msgid "Submitted"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__submitted_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__submitted_date
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__submitted_date
+msgid "Submitted Date"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Submitted self inventory processes cannot be cancelled."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Submitted self inventory processes cannot be reset to draft."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "The Excel file is empty."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "The selected branch has no e-plus serial."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "These branches have no e-plus serial: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Timeline"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__analysis_top_n
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__analysis_top_n
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Top N Items"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__top_n
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_mode__top_n
+msgid "Top N Items Only"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Total Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__unit_cost
+msgid "Unit Cost"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Unmatched"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Unselect All"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Updated %s inventory lines."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Value"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot cancel a batch after any inventory process is submitted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot cancel a request after the inventory process is submitted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot reset a batch after any inventory process is submitted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You cannot reset a request after the inventory process is submitted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "already exists product"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "batch_id"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "by "
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "id"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "openpyxl is required to import Excel files."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:469
+msgid "All Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:378
+msgid "Showing"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:499
+msgid "selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:506
+msgid "Group"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:530
+msgid "Stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:578
+msgid "products"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:29
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:1020
+msgid "Search Branch..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:465
+msgid "Search branch..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:494
+msgid "Search products..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:532
+msgid "Price"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:533
+msgid "Sold"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:617
+msgid "No products found"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:618
+msgid "Try changing the branch filter or search terms."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:624
+msgid "Load more"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:32
+msgid "Some product codes could not be found"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:77
+msgid "Download Missing Codes"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:80
+msgid "Close"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:457
+msgid "Matched"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:623
+msgid "%(rows)s of %(total)s loaded"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Draft by %(name)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Submitted by %(details)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "Cancelled by %(name)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
+msgid "No deadline"
+msgstr ""

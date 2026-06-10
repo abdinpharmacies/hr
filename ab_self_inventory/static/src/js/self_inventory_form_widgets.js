@@ -1,9 +1,22 @@
 /** @odoo-module **/
+import { _t } from "@web/core/l10n/translation";
+import { user } from "@web/core/user";
 import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { Component, useState, xml, useRef, onWillStart, onWillUnmount, onPatched, useExternalListener } from "@odoo/owl";
 import { useService } from "@web/core/utils/hooks";
 import { Dialog } from "@web/core/dialog/dialog";
+
+function getRecordValue(record, fieldName, fallback = null) {
+    const data = record?.data;
+    if (!data || !(fieldName in data)) return fallback;
+    return data[fieldName] ?? fallback;
+}
+
+function getUiLocale() {
+    const locale = (user.lang || document.documentElement.lang || navigator.language || "en-US").replace("_", "-");
+    return locale.toLowerCase().startsWith("ar") ? "ar-EG" : locale;
+}
 
 // ------------------------------------------------------------------
 // Form Hero Widget
@@ -24,7 +37,7 @@ class FormHeroWidget extends Component {
                     <t t-esc="stateLabel"/>
                 </span>
                 <div class="ab_form_hero_deadline" t-if="deadline">
-                    <div class="ab_form_hero_deadline_label">Deadline</div>
+                    <div class="ab_form_hero_deadline_label"><t t-esc="_t('Deadline')"/></div>
                     <div class="ab_form_hero_deadline_date"><t t-esc="deadlineDisplay"/></div>
                 </div>
             </div>
@@ -32,11 +45,11 @@ class FormHeroWidget extends Component {
                 <div class="ab_progress_stats">
                     <div class="ab_progress_stat">
                         <div class="ab_progress_stat_value"><t t-esc="requestCount"/></div>
-                        <div class="ab_progress_stat_label">Requests</div>
+                        <div class="ab_progress_stat_label"><t t-esc="_t('Requests')"/></div>
                     </div>
                     <div class="ab_progress_stat">
                         <div class="ab_progress_stat_value"><t t-esc="processCount"/></div>
-                        <div class="ab_progress_stat_label">Processed</div>
+                        <div class="ab_progress_stat_label"><t t-esc="_t('Processed')"/></div>
                     </div>
                 </div>
             </div>
@@ -44,12 +57,14 @@ class FormHeroWidget extends Component {
     `;
     static props = { ...standardFieldProps };
 
+    setup() { this._t = _t; }
+
     get recordName() {
-        return this.props.record.data[this.props.name] || "";
+        return getRecordValue(this.props.record, this.props.name, "");
     }
 
     get requesterName() {
-        const raw = this.props.record.data.requester_id;
+        const raw = getRecordValue(this.props.record, "requester_id", null);
         if (!raw) return "";
         if (Array.isArray(raw)) return raw[1] || "";
         if (typeof raw === "object") return raw.display_name || raw.name || "";
@@ -57,37 +72,37 @@ class FormHeroWidget extends Component {
     }
 
     get submittedDate() {
-        const raw = this.props.record.data.submitted_date;
+        const raw = getRecordValue(this.props.record, "submitted_date", null);
         if (!raw) return null;
         const d = new Date(raw);
         if (isNaN(d.getTime())) return null;
-        return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+        return d.toLocaleDateString(getUiLocale(), { month: "short", day: "numeric", year: "numeric" });
     }
 
     get subtitle() {
         const parts = [];
-        if (this.requesterName) parts.push("by " + this.requesterName);
+        if (this.requesterName) parts.push(_t("by ") + this.requesterName);
         if (this.submittedDate) parts.push(this.submittedDate);
         return parts.join(" · ") || null;
     }
 
     get stateValue() {
-        return this.props.record.data.state || "";
+        return getRecordValue(this.props.record, "state", "");
     }
 
     get stateLabel() {
         const labels = {
-            draft: "Draft",
-            submitted: "Submitted",
-            cancelled: "Cancelled",
-            in_progress: "In Progress",
-            completed: "Completed",
+            draft: _t("Draft"),
+            submitted: _t("Submitted"),
+            cancelled: _t("Cancelled"),
+            in_progress: _t("In Progress"),
+            completed: _t("Completed"),
         };
         return labels[this.stateValue] || this.stateValue;
     }
 
     get deadline() {
-        return this.props.record.data.deadline;
+        return getRecordValue(this.props.record, "deadline", null);
     }
 
     get deadlineDisplay() {
@@ -95,7 +110,7 @@ class FormHeroWidget extends Component {
         if (!raw) return "";
         const d = new Date(raw);
         if (isNaN(d.getTime())) return String(raw);
-        return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+        return d.toLocaleDateString(getUiLocale(), { month: "short", day: "numeric", year: "numeric" });
     }
 
     get showProgress() {
@@ -103,11 +118,11 @@ class FormHeroWidget extends Component {
     }
 
     get requestCount() {
-        return this.props.record.data.request_count || 0;
+        return Number(getRecordValue(this.props.record, "request_count", 0)) || 0;
     }
 
     get processCount() {
-        return this.props.record.data.process_count || 0;
+        return Number(getRecordValue(this.props.record, "process_count", 0)) || 0;
     }
 }
 
@@ -138,17 +153,19 @@ class KpiCardWidget extends Component {
         options: { type: Object, optional: true },
     };
 
+    setup() { this._t = _t; }
+
     static fieldTypeMap = {
-        selected_line_count: { type: "items", icon: "items", label: "Selected" },
-        request_count: { type: "requests", icon: "requests", label: "Requests" },
-        process_count: { type: "processes", icon: "processes", label: "Processed" },
-        line_count: { type: "items", icon: "items", label: "Total Lines" },
-        shortage_qty: { type: "shortage", icon: "shortage", label: "Shortage" },
-        extra_qty: { type: "extra", icon: "extra", label: "Extra" },
+        selected_line_count: { type: "items", icon: "items", label: _t("Selected") },
+        request_count: { type: "requests", icon: "requests", label: _t("Requests") },
+        process_count: { type: "processes", icon: "processes", label: _t("Processed") },
+        line_count: { type: "items", icon: "items", label: _t("Total Lines") },
+        shortage_qty: { type: "shortage", icon: "shortage", label: _t("Shortage") },
+        extra_qty: { type: "extra", icon: "extra", label: _t("Extra") },
     };
 
     get rawValue() {
-        return this.props.record.data[this.props.name] || 0;
+        return getRecordValue(this.props.record, this.props.name, 0) || 0;
     }
 
     get formattedValue() {
@@ -180,7 +197,7 @@ class KpiCardWidget extends Component {
         const mapped = KpiCardWidget.fieldTypeMap[this.props.name];
         if (this.props.cardLabel) return this.props.cardLabel;
         if (this.props.options?.label) return this.props.options.label;
-        return mapped ? mapped.label : "Value";
+        return mapped ? mapped.label : _t("Value");
     }
 }
 
@@ -207,7 +224,7 @@ class BranchFormWidget extends Component {
             </span>
             <div class="ab_form_empty" t-if="!state.branches.length">
                 <div class="ab_form_empty_icon">&#x1F3E2;</div>
-                <div class="ab_form_empty_text">No branches assigned yet</div>
+                <div class="ab_form_empty_text"><t t-esc="_t('No branches assigned yet')"/></div>
             </div>
         </div>
     `;
@@ -215,6 +232,7 @@ class BranchFormWidget extends Component {
     static components = {};
 
     setup() {
+        this._t = _t;
         this.state = useState({ branches: [], loaded: false });
         this._dialog = null;
         const record = this.props.record;
@@ -233,7 +251,7 @@ class BranchFormWidget extends Component {
     }
 
     _getRaw() {
-        return this.props.record ? this.props.record.data[this.props.name] : null;
+        return getRecordValue(this.props.record, this.props.name, null);
     }
 
     _extractNames() {
@@ -313,7 +331,7 @@ class BranchFormWidget extends Component {
     }
 
     get selectedBranchIds() {
-        const raw = this.props.record?.data?.selected_branch_ids;
+        const raw = getRecordValue(this.props.record, "selected_branch_ids", null);
         if (!raw) return [];
         if (raw.currentIds) return [...raw.currentIds];
         if (raw.records) {
@@ -367,20 +385,22 @@ class BranchFormWidget extends Component {
 
 class SelectedBranchFilterWidget extends Component {
     static template = xml`
-        <div class="ab_selected_branch_filter">
-            <div class="ab_selected_branch_filter_text">
-                <span class="ab_selected_branch_filter_label">Showing</span>
+            <div class="ab_selected_branch_filter">
+                <div class="ab_selected_branch_filter_text">
+                <span class="ab_selected_branch_filter_label"><t t-esc="_t('Showing')"/></span>
                 <span class="ab_selected_branch_filter_value"><t t-esc="selectedBranchNames"/></span>
             </div>
             <button t-if="hasSelection" type="button" class="btn btn-secondary btn-sm" t-on-click="clearBranch">
-                All Branches
+                <t t-esc="_t('All Branches')"/>
             </button>
         </div>
     `;
     static props = { ...standardFieldProps };
 
+    setup() { this._t = _t; }
+
     get selectedIds() {
-        const raw = this.props.record?.data?.[this.props.name];
+        const raw = getRecordValue(this.props.record, this.props.name, null);
         if (!raw) return [];
         if (raw.currentIds) return [...raw.currentIds];
         if (raw.records) return raw.records.map(r => Array.isArray(r) ? r[0] : (r && r.id));
@@ -392,9 +412,9 @@ class SelectedBranchFilterWidget extends Component {
 
     get selectedBranchNames() {
         const ids = this.selectedIds;
-        if (!ids.length) return "All branches";
-        if (ids.length === 1) return "1 branch selected";
-        return ids.length + " branches selected";
+        if (!ids.length) return _t("All branches");
+        if (ids.length === 1) return _t("1 branch selected");
+        return _t("%s branches selected").replace("%s", ids.length);
     }
 
     async clearBranch() {
@@ -426,7 +446,7 @@ class DataGridWidget extends Component {
         <div class="ab_saas_grid_wrapper">
             <div class="ab_saas_grid_loading" t-if="state.loading &amp;&amp; !state.rows.length">
                 <div class="ab_saas_grid_spinner"></div>
-                <span>Loading data...</span>
+                <span><t t-esc="_t('Loading data...')"/></span>
             </div>
 
             <div class="ab_saas_grid_content" t-if="state.analytics">
@@ -434,19 +454,19 @@ class DataGridWidget extends Component {
                 <div class="ab_saas_analytics_row">
                     <div class="ab_saas_analytics_card ab_saas_analytics_card--branches">
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.branch_count"/>
-                        <div class="ab_saas_analytics_label">Branches</div>
+                        <div class="ab_saas_analytics_label"><t t-esc="_t('Branches')"/></div>
                     </div>
                     <div class="ab_saas_analytics_card ab_saas_analytics_card--products">
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.total_products"/>
-                        <div class="ab_saas_analytics_label">Products</div>
+                        <div class="ab_saas_analytics_label"><t t-esc="_t('Products')"/></div>
                     </div>
                     <div class="ab_saas_analytics_card ab_saas_analytics_card--selected">
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.selected_products"/>
-                        <div class="ab_saas_analytics_label">Selected</div>
+                        <div class="ab_saas_analytics_label"><t t-esc="_t('Selected')"/></div>
                     </div>
                     <div class="ab_saas_analytics_card ab_saas_analytics_card--matched">
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.matched_pct + '%'"/>
-                        <div class="ab_saas_analytics_label">Matched</div>
+                        <div class="ab_saas_analytics_label"><t t-esc="_t('Matched')"/></div>
                     </div>
                 </div>
 
@@ -454,11 +474,11 @@ class DataGridWidget extends Component {
                 <!-- Branch Nav -->
                 <div class="ab_saas_branch_nav">
                     <div class="ab_saas_branch_search">
-                        <input type="text" placeholder="Search branch..." t-model="state.branchSearchText" class="o_input"/>
+                        <input type="text" t-att-placeholder="_t('Search branch...')" t-model="state.branchSearchText" class="o_input"/>
                     </div>
                     <div class="ab_saas_branch_chips_wrap">
                         <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_ids.length ? '' : ' ab_saas_branch_chip_active')" t-on-click="() => this.selectBranch(false)">
-                            All Branches
+                            <t t-esc="_t('All Branches')"/>
                         </button>
                         <t t-foreach="filteredBranches" t-as="b" t-key="b.id">
                             <button t-att-class="'ab_saas_branch_chip' + (state.selected_branch_ids.includes(b.id) ? ' ab_saas_branch_chip_active' : '')" t-on-click="() => this.selectBranch(b.id)">
@@ -467,15 +487,15 @@ class DataGridWidget extends Component {
                             </button>
                         </t>
                         <span class="ab_saas_branch_chip_more" t-if="filteredBranches.length > 8" t-on-click="() => this.state.showAllBranches = !this.state.showAllBranches">
-                            <t t-esc="state.showAllBranches ? 'Show less' : ('+' + (state.branches.length - 8) + ' more')"/>
+                            <t t-esc="state.showAllBranches ? _t('Show less') : ('+' + (state.branches.length - 8) + _t(' more'))"/>
                         </span>
                     </div>
                 </div>
 
                 <!-- Selected branch indicator -->
                 <div class="ab_saas_branch_selected" t-if="state.selected_branch_ids.length &amp;&amp; selectedBranchLabel">
-                    <span class="ab_saas_branch_selected_text">Showing: <t t-esc="selectedBranchLabel"/></span>
-                    <button class="ab_saas_branch_selected_clear" t-on-click="() => this.selectBranch(false)">Show All</button>
+                    <span class="ab_saas_branch_selected_text" t-esc="_t('Showing:') + ' ' + selectedBranchLabel"/>
+                    <button class="ab_saas_branch_selected_clear" t-on-click="() => this.selectBranch(false)"><t t-esc="_t('Show All')"/></button>
                 </div>
 
                 <!-- Toolbar -->
@@ -483,27 +503,27 @@ class DataGridWidget extends Component {
                     <div class="ab_saas_toolbar_left">
                         <div class="ab_saas_search">
                             <span class="ab_saas_search_icon">&#x1F50D;</span>
-                            <input type="text" placeholder="Search products..." t-model="state.searchText" t-on-input="onSearchInput" class="o_input"/>
+                            <input type="text" t-att-placeholder="_t('Search products...')" t-model="state.searchText" t-on-input="onSearchInput" class="o_input"/>
                         </div>
                     </div>
                     <div class="ab_saas_toolbar_right">
-                        <span class="ab_saas_selection_pill" t-if="!state.groupByBranch &amp;&amp; selectedCount" t-on-click="() => this.unselectAll()">
-                            &#x2611; <t t-esc="selectedCount"/> selected &#x2716;
+                        <span class="ab_saas_selection_pill" t-if="!state.groupByBranch &amp;&amp; selectedCount" t-on-click="() => this.unselectAll()" t-att-title="_t('Clear selection')">
+                            &#x2611; <t t-esc="selectedCount"/> <t t-esc="_t('selected')"/> &#x2716;
                         </span>
-                        <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly">Select All</button>
-                                <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedCount || isReadonly">Clear</button>
-                                <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedCount || isReadonly">Delete</button>
+                        <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
+                                <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedCount || isReadonly"><t t-esc="_t('Clear')"/></button>
+                                <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedCount || isReadonly"><t t-esc="_t('Delete')"/></button>
                         <button class="ab_saas_toolbar_btn" t-on-click="toggleGrouping">
-                            <t t-if="state.groupByBranch">&#x25BC;</t><t t-else="">&#x25B6;</t> Group
+                            <t t-if="state.groupByBranch">&#x25BC;</t><t t-else="">&#x25B6;</t> <t t-esc="_t('Group')"/>
                         </button>
                     </div>
                 </div>
 
                 <!-- Selection bar -->
                 <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedCount > 0 &amp;&amp; state.selected_branch_ids.length">
-                    <span class="ab_saas_selection_bar_count"><t t-esc="selectedCount"/> products selected</span>
-                    <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="() => this.deleteSelected()" t-att-disabled="isReadonly">Delete Selected</button>
-                    <button class="ab_saas_toolbar_btn" t-on-click="() => this.unselectAll()">Clear</button>
+                    <span class="ab_saas_selection_bar_count"><t t-esc="selectedCount"/> <t t-esc="_t('products selected')"/></span>
+                    <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="() => this.deleteSelected()" t-att-disabled="isReadonly"><t t-esc="_t('Delete Selected')"/></button>
+                    <button class="ab_saas_toolbar_btn" t-on-click="() => this.unselectAll()"><t t-esc="_t('Clear')"/></button>
                 </div>
 
                 <!-- Grid -->
@@ -512,19 +532,19 @@ class DataGridWidget extends Component {
                         <div class="ab_saas_grid_header_row">
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click="toggleAllCheck">&#x2611;</div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-on-click="() => this.sortBy('branch_name')">
-                                Branch <span class="ab_saas_sort_icon" t-esc="sortIcon('branch_name')"/>
+                                <t t-esc="_t('Branch')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('branch_name')"/>
                             </div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
-                                Product <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
+                                <t t-esc="_t('Product')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
                             </div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_code">Code</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_code"><t t-esc="_t('Code')"/></div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
-                                Stock <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
+                                <t t-esc="_t('Stock')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
                             </div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price">Price</div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">Sold</div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_match">Match</div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_note">Note</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price"><t t-esc="_t('Price')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold"><t t-esc="_t('Sold')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_match"><t t-esc="_t('Match')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_note"><t t-esc="_t('Note')"/></div>
                         </div>
                     </div>
                     <div class="ab_saas_grid_body" t-ref="gridBody" t-on-scroll="onGridScroll">
@@ -567,7 +587,7 @@ class DataGridWidget extends Component {
                                 <div class="ab_saas_grid_group_header" t-on-click="() => this.toggleGroup(group.branch_id)">
                                     <span class="ab_saas_grid_group_arrow"><t t-esc="state.expandedBranches[group.branch_id] ? '\u25BC' : '\u25B6'"/></span>
                                     <span class="ab_saas_grid_group_name"><t t-esc="group.branch_name"/></span>
-                                    <span class="ab_saas_grid_group_count"><t t-esc="group.count"/> / <t t-esc="group.total"/> products</span>
+                                    <span class="ab_saas_grid_group_count"><t t-esc="group.count"/> / <t t-esc="group.total"/> <t t-esc="_t('products')"/></span>
                                 </div>
                                 <t t-if="state.expandedBranches[group.branch_id]">
                                     <t t-foreach="group.rows" t-as="row" t-key="row.id">
@@ -606,14 +626,14 @@ class DataGridWidget extends Component {
                         <div class="ab_saas_grid_empty" t-if="(!state.groupByBranch &amp;&amp; !state.rows.length || state.groupByBranch &amp;&amp; !state.groupedData.length) &amp;&amp; !state.loading">
                             <div class="ab_saas_grid_empty_content">
                                 <div class="ab_saas_grid_empty_icon">&#x1F50D;</div>
-                                <div class="ab_saas_grid_empty_title">No products found</div>
-                                <div class="ab_saas_grid_empty_text">Try changing the branch filter or search terms.</div>
+                                <div class="ab_saas_grid_empty_title"><t t-esc="_t('No products found')"/></div>
+                                <div class="ab_saas_grid_empty_text"><t t-esc="_t('Try changing the branch filter or search terms.')"/></div>
                             </div>
                         </div>
                     </div>
                     <div class="ab_saas_grid_footer" t-if="!state.groupByBranch &amp;&amp; state.total > state.rows.length">
-                        <span class="ab_saas_grid_footer_text"><t t-esc="state.rows.length"/> of <t t-esc="state.total"/> loaded</span>
-                        <button class="ab_saas_load_more" t-on-click="loadMore">Load more</button>
+                        <span class="ab_saas_grid_footer_text"><t t-set="_rows" t-value="state.rows.length"/><t t-set="_total" t-value="state.total"/><t t-esc="_t('%(rows)s of %(total)s loaded').replace('%(rows)s', _rows).replace('%(total)s', _total)"/></span>
+                        <button class="ab_saas_load_more" t-on-click="loadMore"><t t-esc="_t('Load more')"/></button>
                     </div>
                 </div>
             </div>
@@ -623,6 +643,7 @@ class DataGridWidget extends Component {
     static props = { ...standardFieldProps };
 
     setup() {
+        this._t = _t;
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.gridContainer = useRef("gridContainer");
@@ -662,7 +683,7 @@ class DataGridWidget extends Component {
         const branchIds = this._getServerBranchIds();
         const key = branchIds.length ? branchIds.sort().join(",") : "all";
         const grp = this.state.groupByBranch ? "g" : "f";
-        const version = rec.data?.__last_update || rec.data?.write_date || "";
+        const version = getRecordValue(rec, "__last_update", "") || getRecordValue(rec, "write_date", "");
         const search = this.state.searchText || "";
         return `${rec.resId}:${key}:${version}:${search}:${grp}`;
     }
@@ -676,7 +697,7 @@ class DataGridWidget extends Component {
     }
 
     get isReadonly() {
-        const st = this.props.record?.data?.state;
+        const st = getRecordValue(this.props.record, "state", null);
         return st && st !== "draft";
     }
 
@@ -686,7 +707,7 @@ class DataGridWidget extends Component {
     }
 
     _getServerBranchIds() {
-        const raw = this.props.record?.data?.selected_branch_ids;
+        const raw = getRecordValue(this.props.record, "selected_branch_ids", null);
         if (!raw) return [];
         if (raw.currentIds) return [...raw.currentIds];
         if (raw.records) return raw.records.map(r => Array.isArray(r) ? r[0] : (r && r.id));
@@ -731,7 +752,6 @@ class DataGridWidget extends Component {
             this.state.total = result.total || 0;
             this.state.page = 0;
         } catch (e) {
-            console.warn("[DataGrid] load error", e);
             if (this._currentKey() !== this._loadKey) return;
             this.state.analytics = { branch_count: 0, total_products: 0, selected_products: 0, matched_pct: 0 };
             this.state.rows = [];
@@ -762,7 +782,6 @@ class DataGridWidget extends Component {
                 this.state.expandedBranches[g.branch_id] = true;
             }
         } catch (e) {
-            console.warn("[DataGrid] loadGrouped error", e);
             if (this._currentKey() !== this._loadKey) return;
             this.state.groupedData = [];
         } finally {
@@ -809,7 +828,6 @@ class DataGridWidget extends Component {
             this.state.rows = [...this.state.rows, ...(result.rows || [])];
             this.state.total = result.total || this.state.total;
         } catch (e) {
-            console.warn("[DataGrid] loadMore error", e);
         } finally {
             if (this._currentKey() === this._loadKey) {
                 this.state.loading = false;
@@ -842,9 +860,9 @@ class DataGridWidget extends Component {
         const ids = this.state.selected_branch_ids;
         if (!ids.length) return "";
         const names = this.state.branches.filter(b => ids.includes(b.id)).map(b => b.name);
-        if (!names.length) return ids.length + " branches";
+        if (!names.length) return ids.length + _t(" branches");
         if (names.length <= 3) return names.join(", ");
-        return names.slice(0, 2).join(", ") + " +" + (names.length - 2) + " more";
+        return names.slice(0, 2).join(", ") + " +" + (names.length - 2) + " + _t(" + _t(" more") + ") + ";
     }
 
     selectBranch(branchId) {
@@ -907,8 +925,7 @@ class DataGridWidget extends Component {
             for (const r of this.state.rows) r.selected = true;
             this.state.rows = [...this.state.rows];
         } catch (e) {
-            console.warn("[DataGrid] selectAll error", e);
-            this.notification.add("Could not select all.", { type: "danger" });
+            this.notification.add(_t("Could not select all."), { type: "danger" });
         }
     }
 
@@ -924,8 +941,7 @@ class DataGridWidget extends Component {
             for (const r of this.state.rows) r.selected = false;
             this.state.rows = [...this.state.rows];
         } catch (e) {
-            console.warn("[DataGrid] unselectAll error", e);
-            this.notification.add("Could not clear selections.", { type: "danger" });
+            this.notification.add(_t("Could not clear selections."), { type: "danger" });
         }
     }
 
@@ -943,8 +959,7 @@ class DataGridWidget extends Component {
             this.state.rows = this.state.rows.filter(r => !r.selected);
             this.state.total = Math.max(0, this.state.total - selected.length);
         } catch (e) {
-            console.warn("[DataGrid] deleteSelected error", e);
-            this.notification.add("Could not delete selected items.", { type: "danger" });
+            this.notification.add(_t("Could not delete selected items."), { type: "danger" });
         }
     }
 
@@ -981,8 +996,12 @@ class DataGridWidget extends Component {
     }
 
     matchLabel(value) {
-        const labels = { eplus_serial: "E-plus ID", code: "Item Code", none: "Unmatched" };
+        const labels = { eplus_serial: _t("E-plus ID"), code: _t("Item Code"), none: _t("Unmatched") };
         return labels[value] || value || "";
+    }
+
+    get footerText() {
+        return _t("%(a)s of %(b)s loaded").replace("%(a)s", this.state.rows.length).replace("%(b)s", this.state.total);
     }
 
     get groupedRows() {
@@ -1007,10 +1026,10 @@ registry.category("fields").add("ab_inventory_data_grid", {
 // Dialog for branch list (reuse from inline template)
 class BranchDialog extends Component {
     static template = xml`
-        <Dialog size="'md'" title="'Assigned Branches'">
+        <Dialog size="'md'" title.translate="Assigned Branches">
             <div class="ab_branch_dialog">
                 <div class="ab_branch_dialog_search">
-                    <input type="text" class="o_input" placeholder="Search Branch..." t-model="state.searchText"/>
+                    <input type="text" class="o_input" t-att-placeholder="_t('Search Branch...')" t-model="state.searchText"/>
                 </div>
                 <div class="ab_branch_dialog_list" t-if="filteredBranches.length">
                     <t t-foreach="filteredBranches" t-as="branch" t-key="branch.id || branch.name">
@@ -1033,6 +1052,7 @@ class BranchDialog extends Component {
         close: { type: Function, optional: true },
     };
     setup() {
+        this._t = _t;
         this.state = useState({ searchText: "" });
     }
     get branches() {
@@ -1088,23 +1108,25 @@ class FormProgressWidget extends Component {
             <div class="ab_progress_stats">
                 <div class="ab_progress_stat">
                     <div class="ab_progress_stat_value"><t t-esc="requestCount"/></div>
-                    <div class="ab_progress_stat_label">Requested</div>
+                    <div class="ab_progress_stat_label"><t t-esc="_t('Requested')"/></div>
                 </div>
                 <div class="ab_progress_stat">
                     <div class="ab_progress_stat_value"><t t-esc="processCount"/></div>
-                    <div class="ab_progress_stat_label">Processed</div>
+                    <div class="ab_progress_stat_label"><t t-esc="_t('Processed')"/></div>
                 </div>
             </div>
         </div>
     `;
     static props = { ...standardFieldProps };
 
+    setup() { this._t = _t; }
+
     get requestCount() {
-        return this.props.record.data.request_count || 0;
+        return Number(getRecordValue(this.props.record, "request_count", 0)) || 0;
     }
 
     get processCount() {
-        return this.props.record.data.process_count || 0;
+        return Number(getRecordValue(this.props.record, "process_count", 0)) || 0;
     }
 
     get percentage() {
@@ -1150,16 +1172,18 @@ class TimelineWidget extends Component {
     `;
     static props = { ...standardFieldProps };
 
+    setup() { this._t = _t; }
+
     get stateValue() {
-        return this.props.record.data.state || "";
+        return getRecordValue(this.props.record, "state", "");
     }
 
     get submittedDate() {
-        const raw = this.props.record.data.submitted_date;
+        const raw = getRecordValue(this.props.record, "submitted_date", null);
         if (!raw) return null;
         const d = new Date(raw);
         if (isNaN(d.getTime())) return null;
-        return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+        return d.toLocaleDateString(getUiLocale(), { month: "short", day: "numeric", year: "numeric" });
     }
 
     get cancelledDate() {
@@ -1174,14 +1198,14 @@ class TimelineWidget extends Component {
 
         items.push({
             type: "draft",
-            title: "Batch Created",
+            title: _t("Batch Created"),
             date: null,
         });
 
         if (state === "submitted" || state === "cancelled") {
             items.push({
                 type: "completed",
-                title: "Submitted",
+                title: _t("Submitted"),
                 date: this.submittedDate,
             });
         }
@@ -1189,7 +1213,7 @@ class TimelineWidget extends Component {
         if (state === "cancelled") {
             items.push({
                 type: "cancelled",
-                title: "Cancelled",
+                title: _t("Cancelled"),
                 date: this.cancelledDate,
             });
         }

@@ -1,4 +1,6 @@
 /** @odoo-module **/
+import { _t } from "@web/core/l10n/translation";
+import { user } from "@web/core/user";
 import { registry } from "@web/core/registry";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
 import { Component, useState, xml, useRef, onWillUnmount } from "@odoo/owl";
@@ -8,6 +10,17 @@ import { Dialog } from "@web/core/dialog/dialog";
 // ------------------------------------------------------------------
 // Helpers
 // ------------------------------------------------------------------
+
+function getRecordValue(record, fieldName, fallback = null) {
+    const data = record?.data;
+    if (!data || !(fieldName in data)) return fallback;
+    return data[fieldName] ?? fallback;
+}
+
+function getUiLocale() {
+    const locale = (user.lang || document.documentElement.lang || navigator.language || "en-US").replace("_", "-");
+    return locale.toLowerCase().startsWith("ar") ? "ar-EG" : locale;
+}
 
 function extractBranchList(raw) {
     if (!raw) return [];
@@ -22,10 +35,10 @@ function extractBranchList(raw) {
 
 class BranchDialog extends Component {
     static template = xml`
-        <Dialog size="'md'" title="'Assigned Branches'">
+        <Dialog size="'md'" title.translate="Assigned Branches">
             <div class="ab_branch_dialog">
                 <div class="ab_branch_dialog_search">
-                    <input type="text" class="o_input" placeholder="Search Branch..." t-model="state.searchText"/>
+                    <input type="text" class="o_input" t-att-placeholder="_t('Search Branch...')" t-model="state.searchText"/>
                 </div>
                 <div class="ab_branch_dialog_list" t-if="filteredBranches.length">
                     <t t-foreach="filteredBranches" t-as="name" t-key="name_index">
@@ -33,7 +46,7 @@ class BranchDialog extends Component {
                     </t>
                 </div>
                 <div class="ab_branch_dialog_empty" t-else="">
-                    No branches match your search.
+                    <t t-esc="_t('No branches match your search.')"/>
                 </div>
             </div>
         </Dialog>
@@ -45,6 +58,7 @@ class BranchDialog extends Component {
     };
 
     setup() {
+        this._t = _t;
         this.state = useState({ searchText: "" });
     }
 
@@ -77,14 +91,15 @@ class BranchPillsWidget extends Component {
             <span class="ab_branch_pills_widget">
                 <span class="ab_branch_pills_icon">&#x1F3E2;</span>
                 <t t-esc="branchCount"/>
-                <t t-if="branchCount === 1"> Branch</t>
-                <t t-else=""> Branches</t>
+                <t t-if="branchCount === 1"> <t t-esc="_t('Branch')"/></t>
+                <t t-else=""> <t t-esc="_t('Branches')"/></t>
             </span>
         </span>
     `;
     static props = { ...standardFieldProps };
 
     setup() {
+        this._t = _t;
         this._loaded = false;
         this._hideTimer = null;
         this.wrapperRef = useRef("wrapper");
@@ -117,7 +132,7 @@ class BranchPillsWidget extends Component {
     }
 
     get branchFieldData() {
-        return this.props.record.data[this.props.name];
+        return getRecordValue(this.props.record, this.props.name, null);
     }
 
     get branchCount() {
@@ -129,7 +144,7 @@ class BranchPillsWidget extends Component {
     _populate(names) {
         this.popover.innerHTML =
             '<div class="ab_branch_popover_arrow"></div>' +
-            '<div class="ab_branch_popover_header">Assigned Branches</div>' +
+            '<div class="ab_branch_popover_header">' + _t('Assigned Branches') + '</div>' +
             '<div class="ab_branch_popover_list">' +
             names.map(function (n) {
                 return '<div class="ab_branch_popover_item"><span class="ab_branch_popover_bullet">\u2022</span>' +
@@ -167,7 +182,6 @@ class BranchPillsWidget extends Component {
             );
             this._names = recs.map((r) => (r.display_name || r.name || String(r.id)).replace(/\*/g, ""));
         } catch (e) {
-            console.warn("[BranchPillsWidget] searchRead failed", e);
         }
     }
 
@@ -177,8 +191,6 @@ class BranchPillsWidget extends Component {
         if (!el) return;
         const rect = el.getBoundingClientRect();
         const estWidth = 280;
-        console.log("[BranchPillsWidget] rect:", rect);
-        console.log("[BranchPillsWidget] window.scrollX:", window.scrollX, "window.scrollY:", window.scrollY);
         await this._loadNames();
         const names = this._names || [];
         if (!names.length) return;
@@ -193,8 +205,6 @@ class BranchPillsWidget extends Component {
         if (top + estHeight > scrollY + vh - 8) {
             top = Math.max(8, rect.top + scrollY - estHeight - 8);
         }
-        console.log("[BranchPillsWidget] computed top:", top, "left:", left);
-        console.log("[BranchPillsWidget] popover parent:", this.popover.parentNode ? this.popover.parentNode.tagName : "none");
         this._populate(names);
         this.popover.style.left = (left | 0) + "px";
         this.popover.style.top = (top | 0) + "px";
@@ -221,7 +231,7 @@ class BranchPillsWidget extends Component {
         await this._loadNames();
         const names = this._names && this._names.length
             ? this._names
-            : ["(no branch names available)"];
+            : [_t("(no branch names available)")];
         this.dialog.add(BranchDialog, { branchNames: names });
     }
 }
@@ -254,7 +264,7 @@ class RelationPillWidget extends Component {
     };
 
     get rawValue() {
-        return this.props.record.data[this.props.name];
+        return getRecordValue(this.props.record, this.props.name, null);
     }
 
     get displayName() {
@@ -301,14 +311,14 @@ class MatchBadgeWidget extends Component {
     static props = { ...standardFieldProps };
 
     get matchValue() {
-        return this.props.record.data[this.props.name] || "none";
+        return getRecordValue(this.props.record, this.props.name, "none") || "none";
     }
 
     get matchLabel() {
         const labels = {
-            eplus_serial: "E-plus ID",
-            code: "Item Code",
-            none: "Unmatched",
+            eplus_serial: _t("E-plus ID"),
+            code: _t("Item Code"),
+            none: _t("Unmatched"),
         };
         return labels[this.matchValue] || this.matchValue;
     }
@@ -332,15 +342,15 @@ class BooleanLineBadgeWidget extends Component {
     };
 
     get isChecked() {
-        return Boolean(this.props.record.data[this.props.name]);
+        return Boolean(getRecordValue(this.props.record, this.props.name, false));
     }
 
     get yesLabel() {
-        return this.props.yesLabel || "Yes";
+        return this.props.yesLabel || _t("Yes");
     }
 
     get noLabel() {
-        return this.props.noLabel || "No";
+        return this.props.noLabel || _t("No");
     }
 }
 
@@ -349,8 +359,8 @@ registry.category("fields").add("ab_inventory_boolean_badge", {
     extractProps: ({ attrs }) => {
         const opts = attrs.options || {};
         return {
-            yesLabel: opts.yes || "Yes",
-            noLabel: opts.no || "No",
+            yesLabel: opts.yes || _t("Yes"),
+            noLabel: opts.no || _t("No"),
         };
     },
 });
@@ -359,7 +369,7 @@ class SelectedCheckWidget extends Component {
     static template = xml`
         <button type="button"
                 t-att-class="'ab_selected_check ' + (isSelected ? 'ab_selected_check--on' : 'ab_selected_check--off')"
-                t-att-title="isSelected ? 'Selected' : 'Not selected'"
+                t-att-title="isSelected ? _t('Selected') : _t('Not selected')"
                 t-att-aria-pressed="isSelected ? 'true' : 'false'"
                 t-att-disabled="isLocked || state.isUpdating"
                 t-on-pointerdown.stop="onPointerDown"
@@ -370,6 +380,7 @@ class SelectedCheckWidget extends Component {
     static props = { ...standardFieldProps };
 
     setup() {
+        this._t = _t;
         this.state = useState({
             optimisticValue: null,
             isUpdating: false,
@@ -380,11 +391,12 @@ class SelectedCheckWidget extends Component {
         if (this.state.optimisticValue !== null) {
             return this.state.optimisticValue;
         }
-        return Boolean(this.props.record.data[this.props.name]);
+        return Boolean(getRecordValue(this.props.record, this.props.name, false));
     }
 
     get isLocked() {
-        const parentState = this.props.record.data.request_state || this.props.record.data.batch_state;
+        const parentState = getRecordValue(this.props.record, "request_state", false)
+            || getRecordValue(this.props.record, "batch_state", false);
         return parentState && parentState !== "draft";
     }
 
@@ -439,7 +451,7 @@ class KpiWidget extends Component {
     };
 
     get rawValue() {
-        return this.props.record.data[this.props.name] || 0;
+        return getRecordValue(this.props.record, this.props.name, 0) || 0;
     }
 
     get formattedValue() {
@@ -462,11 +474,11 @@ registry.category("fields").add("ab_inventory_kpi", {
             extra: "\u2191",
         };
         const labels = {
-            items: "Items",
-            requests: "Requests",
-            processes: "Processed",
-            shortage: "Shortage",
-            extra: "Extra",
+            items: _t("Items"),
+            requests: _t("Requests"),
+            processes: _t("Processed"),
+            shortage: _t("Shortage"),
+            extra: _t("Extra"),
         };
         return {
             kpiIcon: icon,
@@ -492,16 +504,16 @@ class StateBadgeWidget extends Component {
     };
 
     get stateValue() {
-        return this.props.record.data[this.props.name] || "";
+        return getRecordValue(this.props.record, this.props.name, "") || "";
     }
 
     get stateLabel() {
         const labels = {
-            draft: "Draft",
-            submitted: "Submitted",
-            cancelled: "Cancelled",
-            in_progress: "In Progress",
-            completed: "Completed",
+            draft: _t("Draft"),
+            submitted: _t("Submitted"),
+            cancelled: _t("Cancelled"),
+            in_progress: _t("In Progress"),
+            completed: _t("Completed"),
         };
         return labels[this.stateValue] || this.stateValue;
     }
@@ -527,7 +539,7 @@ class RowTitleWidget extends Component {
                       t-on-click.stop="toggleMenu"
                       t-ref="actionsWrapper">
                     <button class="ab_quick_actions_btn"
-                            t-att-title="'Actions'"
+                            t-att-title="_t('Actions')"
                             aria-label="Actions">&#x22EE;</button>
                      <div t-att-class="'ab_quick_actions_menu' + (state.menuOpen ? ' ab_quick_actions_menu--open' : '')"
                          t-ref="menu">
@@ -554,6 +566,7 @@ class RowTitleWidget extends Component {
     };
 
     setup() {
+        this._t = _t;
         this.state = useState({ menuOpen: false });
         this.actionsWrapperRef = useRef("actionsWrapper");
         this.menuRef = useRef("menu");
@@ -565,11 +578,11 @@ class RowTitleWidget extends Component {
     }
 
     get recordName() {
-        return (this.props.record.data[this.props.name] || "").replace(/\*/g, "");
+        return String(getRecordValue(this.props.record, this.props.name, "") || "").replace(/\*/g, "");
     }
 
     get requesterName() {
-        const raw = this.props.record.data.requester_id;
+        const raw = getRecordValue(this.props.record, "requester_id", null);
         if (!raw) return "";
         let name = "";
         if (Array.isArray(raw)) name = raw[1] || "";
@@ -579,53 +592,53 @@ class RowTitleWidget extends Component {
     }
 
     get submittedDate() {
-        const raw = this.props.record.data.submitted_date;
+        const raw = getRecordValue(this.props.record, "submitted_date", null);
         if (!raw) return null;
         const d = new Date(raw);
         if (isNaN(d.getTime())) return null;
         const now = new Date();
         const diff = now - d;
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-        if (days === 0) return "Today";
-        if (days === 1) return "Yesterday";
-        if (days < 7) return days + " days ago";
-        return d.toLocaleDateString(undefined, { month: "short", day: "numeric" });
+        if (days === 0) return _t("Today");
+        if (days === 1) return _t("Yesterday");
+        if (days < 7) return _t("%s days ago").replace("%s", days);
+        return d.toLocaleDateString(getUiLocale(), { month: "short", day: "numeric" });
     }
 
     get subtitle() {
-        const state = this.props.record.data.state;
+        const state = getRecordValue(this.props.record, "state", "");
         if (state === "draft") {
             return this.requesterName
-                ? "Draft by " + this.requesterName
-                : "Draft";
+                ? _t("Draft by %(name)s").replace("%(name)s", this.requesterName)
+                : _t("Draft");
         }
         if (state === "submitted") {
             const parts = [];
             if (this.requesterName) parts.push(this.requesterName);
             if (this.submittedDate) parts.push(this.submittedDate);
-            return parts.length ? "Submitted by " + parts.join(", ") : "Submitted";
+            return parts.length ? _t("Submitted by %(details)s").replace("%(details)s", parts.join(", ")) : _t("Submitted");
         }
         if (state === "cancelled") {
             return this.requesterName
-                ? "Cancelled by " + this.requesterName
-                : "Cancelled";
+                ? _t("Cancelled by %(name)s").replace("%(name)s", this.requesterName)
+                : _t("Cancelled");
         }
-        return this.requesterName ? "by " + this.requesterName : "";
+        return this.requesterName ? _t("by ") + this.requesterName : "";
     }
 
     get actionItems() {
-        const state = this.props.record.data.state;
+        const state = getRecordValue(this.props.record, "state", "");
         const isDraft = state === "draft";
         const model = this.props.record.model;
         const resId = this.props.record.resId;
 
         const items = [];
-        items.push({ id: "open", label: "Open", icon: "\u2197", action: "open" });
+        items.push({ id: "open", label: _t("Open"), icon: "\u2197", action: "open" });
         if (isDraft) {
-            items.push({ id: "edit", label: "Edit", icon: "\u270E", action: "edit" });
+            items.push({ id: "edit", label: _t("Edit"), icon: "\u270E", action: "edit" });
         }
         if (this.props.allowDuplicate !== false) {
-            items.push({ id: "duplicate", label: "Duplicate", icon: "\uD83D\uDCCB", action: "duplicate" });
+            items.push({ id: "duplicate", label: _t("Duplicate"), icon: "\uD83D\uDCCB", action: "duplicate" });
         }
         return items;
     }
@@ -716,21 +729,21 @@ class DeadlineWidget extends Component {
     };
 
     get rawValue() {
-        return this.props.record.data[this.props.name];
+        return getRecordValue(this.props.record, this.props.name, null);
     }
 
     get displayText() {
-        if (!this.rawValue) return "No deadline";
+        if (!this.rawValue) return _t("No deadline");
         const d = new Date(this.rawValue);
-        if (isNaN(d.getTime())) return "Invalid date";
+        if (isNaN(d.getTime())) return _t("Invalid date");
         const now = new Date();
         const diff = d - now;
         const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-        if (days < 0) return Math.abs(days) + " day" + (Math.abs(days) === 1 ? "" : "s") + " overdue";
-        if (days === 0) return "Due today";
-        if (days === 1) return "Due tomorrow";
-        if (days <= 7) return "Due in " + days + " days";
-        return d.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+        if (days < 0) return _t("%s days overdue").replace("%s", Math.abs(days));
+        if (days === 0) return _t("Due today");
+        if (days === 1) return _t("Due tomorrow");
+        if (days <= 7) return _t("Due in %s days").replace("%s", days);
+        return d.toLocaleDateString(getUiLocale(), { month: "short", day: "numeric", year: "numeric" });
     }
 
     get icon() {
