@@ -1,5 +1,6 @@
 /** @odoo-module **/
 import { registry } from "@web/core/registry";
+import { _t } from "@web/core/l10n/translation";
 import { Component, useState, xml } from "@odoo/owl";
 import { Dialog } from "@web/core/dialog/dialog";
 
@@ -8,42 +9,42 @@ class BulkImportResultsDialog extends Component {
         <Dialog size="'lg'">
             <div class="ab_bulk_dialog">
                 <div class="ab_bulk_header">
-                    <h3 class="ab_bulk_title">Bulk Product Import Results</h3>
+                    <h3 class="ab_bulk_title"><t t-esc="_t('Bulk Product Import Results')"/></h3>
                 </div>
 
                 <div class="ab_bulk_summary_row">
                     <div class="ab_bulk_summary_card ab_bulk_summary_card--branches">
                         <div class="ab_bulk_summary_value"><t t-esc="props.branches_processed"/></div>
-                        <div class="ab_bulk_summary_label">Branches Processed</div>
+                        <div class="ab_bulk_summary_label"><t t-esc="_t('Branches Processed')"/></div>
                     </div>
                     <div class="ab_bulk_summary_card ab_bulk_summary_card--added">
                         <div class="ab_bulk_summary_value"><t t-esc="props.products_added"/></div>
-                        <div class="ab_bulk_summary_label">Products Added</div>
+                        <div class="ab_bulk_summary_label"><t t-esc="_t('Products Added')"/></div>
                     </div>
                     <div class="ab_bulk_summary_card ab_bulk_summary_card--missing">
                         <div class="ab_bulk_summary_value"><t t-esc="props.products_missing"/></div>
-                        <div class="ab_bulk_summary_label">Products Missing</div>
+                        <div class="ab_bulk_summary_label"><t t-esc="_t('Products Missing')"/></div>
                     </div>
                 </div>
 
                 <div class="ab_bulk_warning" t-if="props.has_missing">
                     <span class="ab_bulk_warning_icon">&#x26A0;</span>
-                    Some product codes could not be found
+                    <t t-esc="_t('Some product codes could not be found')"/>
                 </div>
 
                 <div class="ab_bulk_empty" t-if="props.is_empty">
                     <div class="ab_bulk_empty_icon">&#x1F50D;</div>
-                    <div class="ab_bulk_empty_title">No Matching Products Found</div>
-                    <div class="ab_bulk_empty_desc">The entered product codes do not exist in the selected branches.</div>
+                    <div class="ab_bulk_empty_title"><t t-esc="_t('No Matching Products Found')"/></div>
+                    <div class="ab_bulk_empty_desc"><t t-esc="_t('The entered product codes do not exist in the selected branches.')"/></div>
                 </div>
 
                 <div class="ab_bulk_table_wrapper" t-if="!props.is_empty">
                     <table class="ab_bulk_table">
                         <thead>
                             <tr>
-                                <th>Branch</th>
-                                <th class="ab_bulk_cell_added">Added</th>
-                                <th class="ab_bulk_cell_missing">Missing</th>
+                                <th><t t-esc="_t('Branch')"/></th>
+                                <th class="ab_bulk_cell_added"><t t-esc="_t('Added')"/></th>
+                                <th class="ab_bulk_cell_missing"><t t-esc="_t('Missing')"/></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -60,8 +61,8 @@ class BulkImportResultsDialog extends Component {
 
                 <div class="ab_bulk_missing_section" t-if="props.has_missing">
                     <div class="ab_bulk_missing_header" t-on-click="toggleMissing">
-                        <span t-if="!state.showMissing">Show Missing Product Codes</span>
-                        <span t-else="">Hide Missing Product Codes</span>
+                        <span t-if="!state.showMissing"><t t-esc="_t('Show Missing Product Codes')"/></span>
+                        <span t-else=""><t t-esc="_t('Hide Missing Product Codes')"/></span>
                         <span class="ab_bulk_chevron" t-att-class="state.showMissing ? 'ab_bulk_chevron--open' : ''">&#x25B6;</span>
                     </div>
                     <div class="ab_bulk_missing_body" t-if="state.showMissing">
@@ -73,10 +74,10 @@ class BulkImportResultsDialog extends Component {
 
                 <div class="ab_bulk_footer">
                     <button class="btn btn-secondary" t-on-click="downloadMissing" t-if="props.has_missing">
-                        Download Missing Codes
+                        <t t-esc="_t('Download Missing Codes')"/>
                     </button>
                     <button class="btn btn-primary" t-on-click="close">
-                        Close
+                        <t t-esc="_t('Close')"/>
                     </button>
                 </div>
             </div>
@@ -95,6 +96,7 @@ class BulkImportResultsDialog extends Component {
     };
 
     setup() {
+        this._t = _t;
         this.state = useState({ showMissing: false });
     }
 
