@@ -540,13 +540,13 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     .ab_analysis_filter_grid {
         display: grid !important;
         grid-template-columns:
-            minmax(240px, 1.8fr)
-            minmax(0, 0.85fr)
-            minmax(0, 0.95fr)
+            minmax(150px, 1fr)
+            minmax(150px, 1fr)
             minmax(0, 1fr)
             minmax(0, 0.9fr)
             minmax(124px, 0.85fr);
         column-gap: 10px;
+        row-gap: 14px;
         margin-right: 0;
         margin-left: 0;
         max-width: 100%;
@@ -580,9 +580,9 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     }
 
     .o_field_radio {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        align-items: stretch;
         gap: 8px 10px;
         min-width: 0;
     }
@@ -600,7 +600,8 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
         background: $si-card;
         box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
         transition: border-color $si-transition, background $si-transition, box-shadow $si-transition;
-        white-space: nowrap;
+        white-space: normal;
+        min-height: 38px;
 
         &:hover {
             border-color: rgba($si-primary, 0.35);
@@ -627,6 +628,8 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
         font-size: 12px;
         font-weight: 600;
         line-height: 1.35;
+        white-space: normal;
+        overflow-wrap: anywhere;
     }
 
     .o_field_widget:not(.o_field_radio),
@@ -661,12 +664,12 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
 .ab_analysis_mode_filter {
+    grid-column: 1 / -1;
     min-width: 0;
 }
 
 .ab_analysis_action_filter {
     align-self: flex-end;
-    grid-column: 6;
     min-width: 0;
 
     .btn {
@@ -678,10 +681,6 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     .ab_analysis_toolbar {
         .ab_analysis_filter_grid {
             grid-template-columns: minmax(260px, 2fr) repeat(3, minmax(130px, 1fr));
-        }
-
-        .ab_analysis_action_filter {
-            grid-column: 4;
         }
     }
 }
@@ -695,10 +694,6 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
         .ab_analysis_mode_filter {
             grid-column: 1 / -1;
         }
-
-        .ab_analysis_action_filter {
-            grid-column: 2;
-        }
     }
 }
 
@@ -706,10 +701,6 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     .ab_analysis_toolbar {
         .ab_analysis_filter_grid {
             grid-template-columns: minmax(0, 1fr);
-        }
-
-        .ab_analysis_action_filter {
-            grid-column: 1;
         }
     }
 }
