@@ -62,7 +62,7 @@ msgstr "تم تحديد فرع واحد"
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
 msgid ""
 "<i class=\"fa fa-info-circle\"/> Add branches to the batch to run analysis."
-msgstr ""
+msgstr "<i class=\"fa fa-info-circle\"/> أضف الفروع إلى المجموعة لتشغيل التحليل."
 
 #. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
