@@ -29,6 +29,13 @@ class AbRequestFollowupWizard(models.TransientModel):
             subtype_xmlid="mail.mt_note",
         )
         message.ab_is_followup_message = True
+        self.env["ab_request_followup"].with_context(skip_request_followup_chatter=True).create(
+            {
+                "request_id": request.id,
+                "description": self.description,
+                "source": "accept_changes",
+            }
+        )
         request.with_context(allow_state_write=True).write({"state": "in_progress"})
         request._notify_requester_confirmation()
         return True

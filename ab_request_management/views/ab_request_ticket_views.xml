@@ -296,13 +296,17 @@
                         <button name="action_confirm_resolution" type="object" string="Confirm Resolution"
                                 class="btn-primary"
                                 invisible="not can_confirm_resolution"/>
+                        <button name="action_viewer_close_lock" type="object" string="Close / Lock"
+                                class="btn-secondary"
+                                groups="ab_request_management.group_ab_request_management_viewer"
+                                invisible="not can_viewer_close"/>
                         <field name="state" widget="statusbar" class="ab_request_statusbar"
                                statusbar_visible="draft,under_review,scheduled,in_progress,under_requester_confirmation,satisfied,resolved,rejected,closed"/>
                     </header>
                     <sheet class="ab_request_sheet">
                         <div class="oe_button_box" name="button_box">
                             <button name="action_view_followups" type="object" class="oe_stat_button" icon="fa-list-alt"
-                                    invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                                    invisible="not is_request_admin and not is_department_manager and not is_assigned_employee and not is_request_viewer">
                                 <field name="followup_count" widget="statinfo" string="Follow-ups"/>
                             </button>
                             <button name="action_approve" type="object" class="oe_stat_button" icon="fa-check"
@@ -321,24 +325,31 @@
                                     invisible="not can_confirm_resolution">
                                 <span>Confirm</span>
                             </button>
+                            <button name="action_viewer_close_lock" type="object" class="oe_stat_button" icon="fa-lock"
+                                    groups="ab_request_management.group_ab_request_management_viewer"
+                                    invisible="not can_viewer_close">
+                                <span>Close / Lock</span>
+                            </button>
                         </div>
                         <field name="is_requester" invisible="1"/>
                         <field name="is_department_manager" invisible="1"/>
                         <field name="is_assigned_employee" invisible="1"/>
                         <field name="is_request_admin" invisible="1"/>
+                        <field name="is_request_viewer" invisible="1"/>
                         <field name="can_assign" invisible="1"/>
                         <field name="can_work_on_request" invisible="1"/>
                         <field name="can_mark_resolved" invisible="1"/>
                         <field name="can_confirm_resolution" invisible="1"/>
                         <field name="can_add_followup" invisible="1"/>
                         <field name="can_edit_assignment_details" invisible="1"/>
+                        <field name="can_viewer_close" invisible="1"/>
                         <field name="is_overdue" invisible="1"/>
                         <field name="request_role_summary" invisible="1"/>
                         <field name="request_deadline_label" invisible="1"/>
                         <field name="available_request_type_ids" invisible="1"/>
 
                         <div class="oe_title ab_request_title_block"
-                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee and not is_request_viewer">
                             <div class="ab_request_title_meta">
                                 <span class="ab_request_title_role">
                                     <field name="request_role_summary" readonly="1"/>
@@ -354,7 +365,7 @@
                         <div class="ab_request_grid_container">
                             <!-- USER CREATE FORM -->
                             <div class="ab_request_grid_user_form"
-                                 invisible="is_request_admin or is_department_manager or is_assigned_employee">
+                                 invisible="is_request_admin or is_department_manager or is_assigned_employee or is_request_viewer">
                                 <div class="ab_request_card">
                                     <div class="ab_request_card_body">
                                         <div class="ab_request_grid_row">
@@ -419,7 +430,7 @@
 
                             <!-- ADMIN/MANAGER VIEW -->
                             <div class="ab_request_grid_admin"
-                                 invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                                 invisible="not is_request_admin and not is_department_manager and not is_assigned_employee and not is_request_viewer">
                                 <div class="ab_request_card">
                                     <div class="ab_request_card_header">
                                         <span class="ab_request_card_title">Request Info</span>
@@ -572,6 +583,7 @@
                                             <field name="user_id"/>
                                             <field name="description"/>
                                             <field name="is_resolved_solution"/>
+                                            <field name="source"/>
                                             <templates>
                                                 <t t-name="card">
                                                     <div t-attf-class="o_kanban_record ab_request_followup_card #{record.is_resolved_solution.raw_value ? 'ab_request_followup_resolved' : ''}">
@@ -583,6 +595,10 @@
                                                             <span t-if="record.is_resolved_solution.raw_value" class="ab_request_resolved_badge">
                                                                 <i class="fa fa-check-circle" aria-hidden="true"/>
                                                                 <span>Official Solution</span>
+                                                            </span>
+                                                            <span t-elif="record.source.raw_value == 'accept_changes'" class="ab_request_resolved_badge">
+                                                                <i class="fa fa-reply" aria-hidden="true"/>
+                                                                <span>Requester Changes</span>
                                                             </span>
                                                         </div>
                                                         <div class="ab_request_followup_card_body">
@@ -597,6 +613,7 @@
                                               class="ab_request_followup_list"
                                               decoration-success="is_resolved_solution">
                                             <field name="is_resolved_solution" column_invisible="1"/>
+                                            <field name="source" column_invisible="1"/>
                                             <button name="action_mark_as_solution" type="object" icon="fa-circle-o"
                                                     class="ab_request_followup_solution_node"
                                                     title="Set as Official Solution"
@@ -615,6 +632,7 @@
                                                     <group>
                                                         <field name="date" readonly="1"/>
                                                         <field name="user_id" readonly="1"/>
+                                                        <field name="source" readonly="1"/>
                                                     </group>
                                                 </group>
                                                 <group>
