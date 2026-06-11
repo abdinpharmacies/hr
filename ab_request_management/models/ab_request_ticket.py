@@ -167,6 +167,8 @@ class AbRequest(models.Model):
     can_confirm_resolution = fields.Boolean(compute="_compute_access_flags")
     can_add_followup = fields.Boolean(compute="_compute_access_flags")
     can_edit_assignment_details = fields.Boolean(compute="_compute_access_flags")
+    is_request_viewer = fields.Boolean(compute="_compute_access_flags")
+    can_viewer_close = fields.Boolean(compute="_compute_access_flags")
 
     _ab_request_name_uniq = models.Constraint("UNIQUE(name)", "Request number must be unique.")
 
@@ -265,9 +267,11 @@ class AbRequest(models.Model):
     def _compute_access_flags(self):
         current_user = self.env.user
         is_request_admin = current_user.has_group("ab_request_management.group_ab_request_management_admin")
+        is_request_viewer = current_user.has_group("ab_request_management.group_ab_request_management_viewer")
         is_hr_resolution_user = current_user.has_group(HR_RESOLUTION_GROUP)
         for record in self:
             record.is_request_admin = is_request_admin
+            record.is_request_viewer = is_request_viewer
             record.is_requester = record.user_id == current_user
             record.is_department_manager = record._is_current_user_department_manager()
             record.is_assigned_employee = current_user in record._get_effective_assigned_users()
@@ -286,6 +290,7 @@ class AbRequest(models.Model):
             record.can_edit_assignment_details = (
                     (record.is_department_manager or is_request_admin) and record.state not in NON_CLOSABLE_STATES
             )
+            record.can_viewer_close = is_request_viewer and record.state not in NON_CLOSABLE_STATES
 
     @api.depends_context("uid")
     @api.depends(
@@ -302,6 +307,7 @@ class AbRequest(models.Model):
         "is_department_manager",
         "is_assigned_employee",
         "is_request_admin",
+        "is_request_viewer",
     )
     def _compute_ui_state(self):
         now = fields.Datetime.now()
@@ -310,6 +316,8 @@ class AbRequest(models.Model):
             role_labels = []
             if record.is_request_admin:
                 role_labels.append(_("Admin"))
+            if record.is_request_viewer:
+                role_labels.append(_("HR Request Visibility User"))
             if record.is_department_manager:
                 role_labels.append(_("Department Manager"))
             if record.is_assigned_employee:
@@ -437,6 +445,7 @@ class AbRequest(models.Model):
             return super().write(vals)
 
         vals = self._prepare_request_category_vals(vals)
+        self._check_request_viewer_write(vals)
         self._check_immutable_fields(vals)
         self._check_assignment_write(vals)
         self._check_state_write(vals)
@@ -576,6 +585,37 @@ class AbRequest(models.Model):
             if not record.can_edit_assignment_details:
                 raise UserError(_("Only the department manager or request admin can update assignees or deadline."))
 
+    def _check_request_viewer_write(self, vals):
+        """Prevent viewer-only access from becoming general request edit access."""
+        if self.env.context.get("allow_state_write") and set(vals) == {"state"}:
+            return
+        if self._is_followup_create_write(vals):
+            return
+        if not self.env.user.has_group("ab_request_management.group_ab_request_management_viewer"):
+            return
+        for record in self:
+            if (
+                record.is_request_admin
+                or record.is_department_manager
+                or record.is_assigned_employee
+                or record.is_requester
+            ):
+                continue
+            raise UserError(
+                _(
+                    "HR Request Visibility Users can add follow-up notes and use the Close / Lock action, "
+                    "but cannot edit request details directly."
+                )
+            )
+
+    @api.model
+    def _is_followup_create_write(self, vals):
+        """Allow inline one2many saves that only create follow-up notes."""
+        if set(vals) != {"followup_ids"}:
+            return False
+        commands = vals.get("followup_ids") or []
+        return bool(commands) and all(command and command[0] == Command.CREATE for command in commands)
+
     def _check_state_write(self, vals):
         """Force state changes through workflow actions."""
         if self.env.context.get("allow_state_write") or "state" not in vals:
@@ -622,6 +662,10 @@ class AbRequest(models.Model):
         self.ensure_one()
         if self.is_request_admin:
             return self.state != "closed"
+        if self.env.user.has_group(HR_RESOLUTION_GROUP):
+            return self.state not in NON_CLOSABLE_STATES
+        if self.is_request_viewer:
+            return self.state not in NON_CLOSABLE_STATES
         if self.is_department_manager or self.is_assigned_employee:
             return self.state in {"under_review", "scheduled", "in_progress", "under_requester_confirmation",
                                   "satisfied"}
@@ -633,10 +677,17 @@ class AbRequest(models.Model):
         """Validate follow-up creation permissions."""
         for record in self:
             if not record._can_current_user_add_followup():
+                if record.is_request_viewer:
+                    raise UserError(
+                        _(
+                            "HR Request Visibility Users can only add follow-ups on requests that are not closed, "
+                            "rejected, or resolved."
+                        )
+                    )
                 if record.is_requester:
                     raise UserError(_("The requester cannot add follow-ups on rejected or closed requests."))
                 raise UserError(
-                    _("Only the assigned employee, department manager, or request admin can add follow-ups."))
+                    _("Only HR, the assigned employee, department manager, or request admin can add follow-ups."))
 
     def _subscribe_request_partners(self):
         """Subscribe requester, manager, and assigned employee to chatter."""
@@ -828,6 +879,24 @@ class AbRequest(models.Model):
     def action_close(self):
         """Backward-compatible close action routed through requester confirmation."""
         return self.action_confirm_resolution()
+
+    def action_viewer_close_lock(self):
+        """Allow HR Request Visibility Users to close and lock any still-open request."""
+        for record in self:
+            if not self.env.user.has_group("ab_request_management.group_ab_request_management_viewer"):
+                raise UserError(_("Only HR Request Visibility Users can use this close/lock action."))
+            if record.state in NON_CLOSABLE_STATES:
+                raise UserError(
+                    _("Closed, rejected, or resolved requests cannot be closed by HR Request Visibility Users.")
+                )
+            record.with_context(allow_state_write=True).write({"state": "closed"})
+            record._post_notification(
+                _("Request %(request)s was closed and locked by HR Request Visibility User %(user)s.") % {
+                    "request": record.name,
+                    "user": self.env.user.display_name,
+                }
+            )
+        return True
 
     @api.model
     def _cron_auto_close_resolved_complaints(self):

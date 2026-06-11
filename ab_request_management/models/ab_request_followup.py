@@ -26,6 +26,16 @@ class AbRequestFollowup(models.Model):
     description = fields.Text(required=True)
     date = fields.Datetime(required=True, default=fields.Datetime.now, readonly=True)
     is_resolved_solution = fields.Boolean(string="Resolved", readonly=True, copy=False, index=True)
+    source = fields.Selection(
+        [
+            ("manual", "Manual Note"),
+            ("accept_changes", "Requester Changes"),
+        ],
+        default="manual",
+        required=True,
+        readonly=True,
+        copy=False,
+    )
     relative_time_label = fields.Char(compute="_compute_relative_time_label", string="Relative Time")
     resolution_label = fields.Char(compute="_compute_resolution_label", string="Status")
 
@@ -55,10 +65,15 @@ class AbRequestFollowup(models.Model):
             else:
                 record.relative_time_label = fields.Datetime.to_string(record.date)
 
-    @api.depends("is_resolved_solution")
+    @api.depends("is_resolved_solution", "source")
     def _compute_resolution_label(self):
         for record in self:
-            record.resolution_label = _("Official Solution") if record.is_resolved_solution else _("Note")
+            if record.is_resolved_solution:
+                record.resolution_label = _("Official Solution")
+            elif record.source == "accept_changes":
+                record.resolution_label = _("Requester Changes")
+            else:
+                record.resolution_label = _("Note")
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -67,13 +82,16 @@ class AbRequestFollowup(models.Model):
         requests._check_followup_creation_rights()
         prepared_vals_list = [self._prepare_vals(vals) for vals in vals_list]
         records = super().create(prepared_vals_list)
+        if self.env.context.get("skip_request_followup_chatter"):
+            return records
         for record in records:
-            message = record.request_id.message_post(
+            message = record.request_id.sudo().message_post(
                 body=record.description,
                 message_type="comment",
                 subtype_xmlid="mail.mt_note",
+                author_id=record.user_id.partner_id.id,
             )
-            message.ab_is_followup_message = True
+            message.sudo().ab_is_followup_message = True
         return records
 
     def write(self, vals):
