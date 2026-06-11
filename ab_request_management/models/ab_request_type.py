@@ -22,6 +22,11 @@ class AbRequestType(models.Model):
     )
 
     category_id = fields.Many2one('ab_request_category')
+    category_type = fields.Selection(
+        related="category_id.type",
+        string="Category Type",
+        readonly=True,
+    )
     question_ids = fields.One2many(
         "ab_request_type_question",
         "request_type_id",

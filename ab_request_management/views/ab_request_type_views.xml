@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <record id="ab_request_category_view_list" model="ir.ui.view">
+            <field name="name">ab_request_category.list</field>
+            <field name="model">ab_request_category</field>
+            <field name="arch" type="xml">
+                <list string="Request Categories">
+                    <field name="name"/>
+                    <field name="type"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_request_category_view_form" model="ir.ui.view">
+            <field name="name">ab_request_category.form</field>
+            <field name="model">ab_request_category</field>
+            <field name="arch" type="xml">
+                <form string="Request Category">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="type"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_request_category_action" model="ir.actions.act_window">
+            <field name="name">Request Categories</field>
+            <field name="res_model">ab_request_category</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
         <record id="ab_request_type_view_search" model="ir.ui.view">
             <field name="name">ab_request_type.search</field>
             <field name="model">ab_request_type</field>
@@ -25,6 +57,7 @@
                     <field name="department_id" optional="show"/>
                     <field name="manager_id" optional="show"/>
                     <field name="category_id" optional="show"/>
+                    <field name="category_type" optional="show"/>
 
                 </list>
             </field>
@@ -48,6 +81,7 @@
                         <group col="2" class="ab_request_section_grid">
                             <group string="Configuration" class="ab_request_section">
                                 <field name="category_id" placeholder="Choose the category that owns this request type"/>
+                                <field name="category_type"/>
                                 <field name="department_id" placeholder="Choose the department that owns this request type"/>
                             </group>
                             <group string="Approval Routing" class="ab_request_section">

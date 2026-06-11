@@ -66,5 +66,12 @@
                   action="ab_request_type_action"
                   sequence="10"
                   groups="ab_request_management.group_ab_request_management_admin"/>
+
+        <menuitem id="ab_request_management_menu_request_categories"
+                  name="Request Categories"
+                  parent="ab_request_management_menu_settings"
+                  action="ab_request_category_action"
+                  sequence="20"
+                  groups="ab_request_management.group_ab_request_management_admin"/>
     </data>
 </odoo>
