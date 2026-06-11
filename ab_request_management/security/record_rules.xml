@@ -39,10 +39,10 @@
         </record>
 
         <record id="rule_ab_request_viewer_request" model="ir.rule">
-            <field name="name">HR Request Visibility Requests</field>
+            <field name="name">HR Complaint Visibility Requests</field>
             <field name="model_id" ref="model_ab_request"/>
             <field name="groups" eval="[(4, ref('ab_request_management.group_ab_request_management_viewer'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="domain_force">[('request_category_id.type', '=', 'complaint')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -64,7 +64,7 @@
             <field name="name">HR Request Read Access</field>
             <field name="model_id" ref="model_ab_request"/>
             <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_personnel_spec'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="domain_force">[(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -96,10 +96,10 @@
         </record>
 
         <record id="rule_ab_request_viewer_followup" model="ir.rule">
-            <field name="name">HR Request Visibility Follow-ups</field>
+            <field name="name">HR Complaint Visibility Follow-ups</field>
             <field name="model_id" ref="model_ab_request_followup"/>
             <field name="groups" eval="[(4, ref('ab_request_management.group_ab_request_management_viewer'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="domain_force">[('request_id.request_category_id.type', '=', 'complaint')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>
@@ -110,7 +110,7 @@
             <field name="name">HR Request Follow-ups</field>
             <field name="model_id" ref="model_ab_request_followup"/>
             <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_personnel_spec'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="domain_force">[(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>
@@ -129,10 +129,10 @@
         </record>
 
         <record id="rule_ab_request_viewer_question_answer" model="ir.rule">
-            <field name="name">HR Request Visibility Question Answers</field>
+            <field name="name">HR Complaint Visibility Question Answers</field>
             <field name="model_id" ref="model_ab_request_question_answer"/>
             <field name="groups" eval="[(4, ref('ab_request_management.group_ab_request_management_viewer'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="domain_force">[('request_id.request_category_id.type', '=', 'complaint')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -143,7 +143,7 @@
             <field name="name">HR Request Question Answers</field>
             <field name="model_id" ref="model_ab_request_question_answer"/>
             <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_personnel_spec'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="domain_force">[(0, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
