@@ -56,6 +56,7 @@ class EmployeeTools(models.Model):
     )
     termination_notified = fields.Boolean(default=False)
     notes = fields.Text()
+    active = fields.Boolean(default=True)
 
     @api.depends("employee_id", "delivery_date")
     def _compute_display_name(self):
