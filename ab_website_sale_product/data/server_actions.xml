@@ -7,7 +7,7 @@
             <field name="binding_model_id" ref="ab_product.model_ab_product"/>
             <field name="binding_view_types">list,form</field>
             <field name="state">code</field>
-            <field name="code">action = records.action_sync_website_product()</field>
+            <field name="code">action = records.sudo().action_sync_website_product()</field>
         </record>
     </data>
 </odoo>
