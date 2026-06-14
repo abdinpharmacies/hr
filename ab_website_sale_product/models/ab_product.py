@@ -416,6 +416,7 @@ class AbProduct(models.Model):
         return synced_templates
 
     def action_sync_website_product(self):
+        self = self.sudo()
         templates = self._sync_website_products()
         if len(self) == 1 and templates:
             return {
