@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_ab_website_seo_optimization_all" model="ir.actions.act_window">
+            <field name="name">SEO Records</field>
+            <field name="res_model">ab.product.seo</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_filter_active': 1}</field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_published" model="ir.actions.act_window">
+            <field name="name">Published SEO</field>
+            <field name="res_model">ab.product.seo</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'published')]</field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_versions" model="ir.actions.act_window">
+            <field name="name">SEO Versions</field>
+            <field name="res_model">ab.product.seo.version</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_publish_logs" model="ir.actions.act_window">
+            <field name="name">Publish Logs</field>
+            <field name="res_model">ab.product.seo.publish.log</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_snapshots" model="ir.actions.act_window">
+            <field name="name">Source Snapshots</field>
+            <field name="res_model">ab.product.seo.source.snapshot</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_matches" model="ir.actions.act_window">
+            <field name="name">Matches</field>
+            <field name="res_model">ab.product.seo.match</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_bulk_optimization" model="ir.actions.act_window">
+            <field name="name">Bulk SEO Optimization</field>
+            <field name="res_model">ab.product.seo.bulk.optimization</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_filter_active': 1}</field>
+        </record>
+
+        <record id="action_ab_product_drug_data" model="ir.actions.act_window">
+            <field name="name">Drug Data</field>
+            <field name="res_model">ab.product.drug.data</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_filter_active': 1}</field>
+        </record>
+
+        <record id="action_ab_seo_assistant" model="ir.actions.act_window">
+            <field name="name">SEO Assistants</field>
+            <field name="res_model">ab.seo.assistant</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_ab_seo_ai_assistant" model="ir.actions.act_window">
+            <field name="name">AI Assistants</field>
+            <field name="res_model">ab.seo.assistant</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('assistant_type', '=', 'ai')]</field>
+            <field name="context">{'default_assistant_type': 'ai', 'search_default_filter_active': 1}</field>
+        </record>
+
+        <record id="action_ab_seo_data_source" model="ir.actions.act_window">
+            <field name="name">Data Sources</field>
+            <field name="res_model">ab.seo.assistant</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('assistant_type', '=', 'data_source')]</field>
+            <field name="context">{'default_assistant_type': 'data_source', 'search_default_filter_active': 1}</field>
+        </record>
+
+        <menuitem id="ab_website_seo_optimization_menu_root"
+                  name="SEO Optimization"
+                  sequence="35"
+                  groups="ab_website_seo_optimization.group_ab_website_seo_optimization_user,ab_website_seo_optimization.group_ab_website_seo_optimization_reviewer,ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_all"
+                  name="All SEO Records"
+                  parent="ab_website_seo_optimization_menu_root"
+                  action="action_ab_website_seo_optimization_all"
+                  sequence="10"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_bulk_optimization"
+                  name="Bulk Optimization"
+                  parent="ab_website_seo_optimization_menu_root"
+                  action="action_ab_website_seo_optimization_bulk_optimization"
+                  sequence="15"
+                  groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_published"
+                  name="Published"
+                  parent="ab_website_seo_optimization_menu_root"
+                  action="action_ab_website_seo_optimization_published"
+                  sequence="30"/>
+
+        <menuitem id="ab_product_drug_data_menu"
+                  name="Drug Data"
+                  parent="ab_website_seo_optimization_menu_root"
+                  action="action_ab_product_drug_data"
+                  sequence="35"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_history"
+                  name="History"
+                  parent="ab_website_seo_optimization_menu_root"
+                  sequence="50"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_versions"
+                  name="Versions"
+                  parent="ab_website_seo_optimization_menu_history"
+                  action="action_ab_website_seo_optimization_versions"
+                  sequence="10"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_logs"
+                  name="Publish Logs"
+                  parent="ab_website_seo_optimization_menu_history"
+                  action="action_ab_website_seo_optimization_publish_logs"
+                  sequence="20"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_sources"
+                  name="Source Snapshots"
+                  parent="ab_website_seo_optimization_menu_history"
+                  action="action_ab_website_seo_optimization_snapshots"
+                  sequence="30"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_matches"
+                  name="Matches"
+                  parent="ab_website_seo_optimization_menu_history"
+                  action="action_ab_website_seo_optimization_matches"
+                  sequence="40"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_settings"
+                  name="Settings"
+                  parent="ab_website_seo_optimization_menu_root"
+                  sequence="90"
+                  groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_ai_assistants"
+                  name="AI Assistants"
+                  parent="ab_website_seo_optimization_menu_settings"
+                  action="action_ab_seo_ai_assistant"
+                  sequence="10"
+                  groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+
+        <menuitem id="ab_website_seo_optimization_menu_data_sources"
+                  name="Data Sources"
+                  parent="ab_website_seo_optimization_menu_settings"
+                  action="action_ab_seo_data_source"
+                  sequence="20"
+                  groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+    </data>
+</odoo>

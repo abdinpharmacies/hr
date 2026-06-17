@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_product_drug_data_list" model="ir.ui.view">
+            <field name="name">ab.product.drug.data.list</field>
+            <field name="model">ab.product.drug.data</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="product_template_id"/>
+                    <field name="scientific_name"/>
+                    <field name="commercial_names"/>
+                    <field name="regulatory_status"/>
+                    <field name="source_type"/>
+                    <field name="is_published"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_product_drug_data_form" model="ir.ui.view">
+            <field name="name">ab.product.drug.data.form</field>
+            <field name="model">ab.product.drug.data</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_generate_from_product"
+                                type="object"
+                                string="Generate From Product"
+                                class="btn-primary"
+                                groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="active"/>
+                                <field name="is_published"/>
+                                <field name="product_template_id"/>
+                                <field name="ab_product_id"/>
+                                <field name="scientific_name"/>
+                                <field name="commercial_names"/>
+                                <field name="active_ingredient"/>
+                                <field name="drug_class"/>
+                                <field name="regulatory_status"/>
+                            </group>
+                            <group>
+                                <field name="source_type"/>
+                                <field name="source_label"/>
+                                <field name="source_url"/>
+                                <field name="assistant_id"/>
+                                <field name="last_generated_at"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Uses">
+                                <field name="common_uses"/>
+                            </page>
+                            <page string="Safety">
+                                <group>
+                                    <field name="side_effects"/>
+                                    <field name="warnings"/>
+                                    <field name="pregnancy"/>
+                                    <field name="breastfeeding"/>
+                                </group>
+                            </page>
+                            <page string="Storage and Interactions">
+                                <group>
+                                    <field name="storage"/>
+                                    <field name="interactions"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_product_drug_data_search" model="ir.ui.view">
+            <field name="name">ab.product.drug.data.search</field>
+            <field name="model">ab.product.drug.data</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="product_template_id"/>
+                    <field name="scientific_name"/>
+                    <field name="commercial_names"/>
+                    <filter name="filter_published" string="Published" domain="[('is_published', '=', True)]"/>
+                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

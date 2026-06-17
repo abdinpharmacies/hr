@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_seo_assistant_list" model="ir.ui.view">
+            <field name="name">ab.seo.assistant.list</field>
+            <field name="model">ab.seo.assistant</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="assistant_type"/>
+                    <field name="provider"/>
+                    <field name="model_name"/>
+                    <field name="base_url"/>
+                    <field name="api_key_name"/>
+                    <field name="free_tier"/>
+                    <field name="daily_limit"/>
+                    <field name="daily_token_limit"/>
+                    <field name="test_status"/>
+                    <field name="last_test_at"/>
+                    <field name="used_today"/>
+                    <field name="total_tokens_today"/>
+                    <field name="lifetime_total_tokens"/>
+                    <field name="last_used_date"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_seo_assistant_form" model="ir.ui.view">
+            <field name="name">ab.seo.assistant.form</field>
+            <field name="model">ab.seo.assistant</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_apply_provider_defaults" type="object"
+                                string="Apply Provider Defaults"
+                                class="btn-secondary"
+                                groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                        <button name="action_test_configuration" type="object"
+                                string="Test Configuration"
+                                class="btn-primary"
+                                groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                                <field name="assistant_type"/>
+                                <field name="provider"/>
+                                <field name="model_name"/>
+                                <field name="base_url"/>
+                                <field name="endpoint_path"/>
+                            </group>
+                            <group>
+                                <field name="api_key" password="True"
+                                       groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                                <field name="api_key_name"/>
+                                <field name="free_tier"/>
+                                <field name="daily_limit"/>
+                                <field name="daily_token_limit"/>
+                                <field name="used_today" readonly="1"/>
+                                <field name="prompt_tokens_today" readonly="1"/>
+                                <field name="completion_tokens_today" readonly="1"/>
+                                <field name="total_tokens_today" readonly="1"/>
+                                <field name="last_used_date" readonly="1"/>
+                                <field name="temperature"/>
+                                <field name="max_output_tokens"/>
+                                <field name="test_status" readonly="1"/>
+                                <field name="last_test_at" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Token Usage">
+                            <group>
+                                <field name="last_prompt_tokens" readonly="1"/>
+                                <field name="last_completion_tokens" readonly="1"/>
+                                <field name="last_total_tokens" readonly="1"/>
+                                <field name="last_token_usage_at" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="lifetime_prompt_tokens" readonly="1"/>
+                                <field name="lifetime_completion_tokens" readonly="1"/>
+                                <field name="lifetime_total_tokens" readonly="1"/>
+                            </group>
+                        </group>
+                        <field name="last_test_message" readonly="1"/>
+                        <field name="notes"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_seo_assistant_search" model="ir.ui.view">
+            <field name="name">ab.seo.assistant.search</field>
+            <field name="model">ab.seo.assistant</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="provider"/>
+                    <field name="assistant_type"/>
+                    <filter name="filter_ai" string="AI Assistants" domain="[('assistant_type', '=', 'ai')]"/>
+                    <filter name="filter_data_sources" string="Data Sources" domain="[('assistant_type', '=', 'data_source')]"/>
+                    <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+    </data>
+</odoo>

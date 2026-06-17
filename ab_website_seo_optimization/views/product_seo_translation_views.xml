@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_website_seo_optimization_translation_list" model="ir.ui.view">
+            <field name="name">ab.product.seo.translation.list</field>
+            <field name="model">ab.product.seo.translation</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="seo_id"/>
+                    <field name="lang_code"/>
+                    <field name="meta_title"/>
+                    <field name="meta_description"/>
+                    <field name="content_source"/>
+                    <field name="current_version_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_website_seo_optimization_translation_form" model="ir.ui.view">
+            <field name="name">ab.product.seo.translation.form</field>
+            <field name="model">ab.product.seo.translation</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="seo_id"/>
+                            <field name="lang_code"/>
+                            <field name="content_source"/>
+                            <field name="current_version_id" readonly="1"/>
+                        </group>
+                        <notebook>
+                            <page string="SEO">
+                                <group>
+                                    <field name="meta_title"/>
+                                    <field name="meta_description"/>
+                                    <field name="keyword_text"/>
+                                    <field name="seo_name"/>
+                                </group>
+                            </page>
+                            <page string="Content">
+                                <group>
+                                    <field name="short_description"/>
+                                    <field name="public_description" widget="html"/>
+                                    <field name="active_ingredient"/>
+                                    <field name="warnings"/>
+                                    <field name="contraindications"/>
+                                    <field name="storage"/>
+                                </group>
+                            </page>
+                            <page string="Review">
+                                <group>
+                                    <field name="source_summary" readonly="1"/>
+                                    <field name="review_notes"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

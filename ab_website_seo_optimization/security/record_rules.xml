@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_website_seo_optimization_user" model="ir.rule">
+            <field name="name">Website SEO User Access</field>
+            <field name="model_id" ref="model_ab_product_seo"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_website_seo_optimization_translation_user" model="ir.rule">
+            <field name="name">Website SEO Translation User Access</field>
+            <field name="model_id" ref="model_ab_product_seo_translation"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_website_seo_optimization_history_user" model="ir.rule">
+            <field name="name">Website SEO History User Access</field>
+            <field name="model_id" ref="model_ab_product_seo_version"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_website_seo_optimization_publish_log_user" model="ir.rule">
+            <field name="name">Website SEO Publish Log User Access</field>
+            <field name="model_id" ref="model_ab_product_seo_publish_log"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_website_seo_optimization_match_user" model="ir.rule">
+            <field name="name">Website SEO Match User Access</field>
+            <field name="model_id" ref="model_ab_product_seo_match"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_website_seo_optimization_snapshot_user" model="ir.rule">
+            <field name="name">Website SEO Source Snapshot User Access</field>
+            <field name="model_id" ref="model_ab_product_seo_source_snapshot"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_website_seo_optimization_bulk_optimization_user" model="ir.rule">
+            <field name="name">Bulk Website SEO Optimization User Access</field>
+            <field name="model_id" ref="model_ab_product_seo_bulk_optimization"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_website_seo_optimization_bulk_optimization_line_user" model="ir.rule">
+            <field name="name">Bulk Website SEO Optimization Line User Access</field>
+            <field name="model_id" ref="model_ab_product_seo_bulk_optimization_line"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_product_drug_data_user" model="ir.rule">
+            <field name="name">Product Drug Data User Access</field>
+            <field name="model_id" ref="model_ab_product_drug_data"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_seo_assistant_user" model="ir.rule">
+            <field name="name">SEO Assistant User Access</field>
+            <field name="model_id" ref="model_ab_seo_assistant"/>
+            <field name="groups" eval="[(4, ref('ab_website_seo_optimization.group_ab_website_seo_optimization_user'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</odoo>

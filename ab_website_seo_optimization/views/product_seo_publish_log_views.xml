@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_website_seo_optimization_publish_log_list" model="ir.ui.view">
+            <field name="name">ab.product.seo.publish.log.list</field>
+            <field name="model">ab.product.seo.publish.log</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="published_at"/>
+                    <field name="seo_id"/>
+                    <field name="product_template_id"/>
+                    <field name="version_id"/>
+                    <field name="lang_code"/>
+                    <field name="field_name"/>
+                    <field name="operation"/>
+                    <field name="published_by"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_website_seo_optimization_publish_log_form" model="ir.ui.view">
+            <field name="name">ab.product.seo.publish.log.form</field>
+            <field name="model">ab.product.seo.publish.log</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="seo_id" readonly="1"/>
+                            <field name="product_template_id" readonly="1"/>
+                            <field name="version_id" readonly="1"/>
+                            <field name="lang_code" readonly="1"/>
+                            <field name="field_name" readonly="1"/>
+                            <field name="operation" readonly="1"/>
+                            <field name="published_by" readonly="1"/>
+                            <field name="published_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <field name="old_value" readonly="1"/>
+                            <field name="new_value" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="product_drug_data_product_page" inherit_id="website_sale.product_title" name="Product Drug Data">
+        <xpath expr="//div[@t-field='product.description_ecommerce']" position="after">
+            <t t-set="drug_data" t-value="product.sudo().ab_drug_data_id"/>
+            <section t-if="drug_data" class="ab_product_drug_data mt-4 mb-3">
+                <div class="border-top pt-3">
+                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-3">
+                        <div>
+                            <h2 class="h5 mb-1">
+                                <t t-out="drug_data.scientific_name or drug_data.active_ingredient or product.name"/>
+                            </h2>
+                            <div t-if="drug_data.commercial_names" class="text-muted small">
+                                <t t-out="drug_data.commercial_names"/>
+                            </div>
+                        </div>
+                        <span t-if="drug_data.regulatory_status" class="badge text-bg-light border">
+                            <t t-out="drug_data.regulatory_status"/>
+                        </span>
+                    </div>
+                    <p t-if="drug_data.source_label" class="small text-muted mb-3">
+                        <t t-out="drug_data.source_label"/>
+                    </p>
+                    <div class="row g-3">
+                        <div t-if="drug_data.common_uses" class="col-12 col-lg-6">
+                            <h3 class="h6">Common Uses</h3>
+                            <p class="mb-0" t-out="drug_data.common_uses"/>
+                        </div>
+                        <div t-if="drug_data.side_effects" class="col-12 col-lg-6">
+                            <h3 class="h6">Side Effects</h3>
+                            <p class="mb-0" t-out="drug_data.side_effects"/>
+                        </div>
+                        <div t-if="drug_data.warnings" class="col-12">
+                            <h3 class="h6">Warnings</h3>
+                            <p class="mb-0" t-out="drug_data.warnings"/>
+                        </div>
+                        <div t-if="drug_data.pregnancy" class="col-12 col-lg-6">
+                            <h3 class="h6">Pregnancy</h3>
+                            <p class="mb-0" t-out="drug_data.pregnancy"/>
+                        </div>
+                        <div t-if="drug_data.breastfeeding" class="col-12 col-lg-6">
+                            <h3 class="h6">Breastfeeding</h3>
+                            <p class="mb-0" t-out="drug_data.breastfeeding"/>
+                        </div>
+                        <div t-if="drug_data.storage" class="col-12 col-lg-6">
+                            <h3 class="h6">Storage</h3>
+                            <p class="mb-0" t-out="drug_data.storage"/>
+                        </div>
+                        <div t-if="drug_data.interactions" class="col-12 col-lg-6">
+                            <h3 class="h6">Interactions</h3>
+                            <p class="mb-0" t-out="drug_data.interactions"/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+</odoo>

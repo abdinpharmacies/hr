@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="assistant_google_gemini_free" model="ab.seo.assistant">
+            <field name="name">Google Gemini Free SEO Drafts</field>
+            <field name="sequence">10</field>
+            <field name="assistant_type">ai</field>
+            <field name="provider">google_gemini</field>
+            <field name="model_name">gemini-3.5-flash</field>
+            <field name="base_url">https://generativelanguage.googleapis.com/v1beta</field>
+            <field name="endpoint_path">/models/{model}:generateContent</field>
+            <field name="api_key_name">GOOGLE_API_KEY</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">300</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">Recommended first free-tier candidate for Arabic and English SEO drafts. Enter a Google AI Studio API key before enabling live generation.</field>
+        </record>
+
+        <record id="assistant_groq_free" model="ab.seo.assistant">
+            <field name="name">Groq Fast Free SEO Drafts</field>
+            <field name="sequence">20</field>
+            <field name="assistant_type">ai</field>
+            <field name="provider">groq</field>
+            <field name="model_name">llama-3.1-8b-instant</field>
+            <field name="base_url">https://api.groq.com/openai/v1</field>
+            <field name="endpoint_path">/chat/completions</field>
+            <field name="api_key_name">GROQ_API_KEY</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">1000</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">Fast OpenAI-compatible endpoint. Good for low-cost draft generation and batch testing.</field>
+        </record>
+
+        <record id="assistant_openrouter_free" model="ab.seo.assistant">
+            <field name="name">OpenRouter Free Model SEO Drafts</field>
+            <field name="sequence">30</field>
+            <field name="assistant_type">ai</field>
+            <field name="provider">openrouter</field>
+            <field name="model_name">nex-agi/nex-n2-pro:free</field>
+            <field name="base_url">https://openrouter.ai/api/v1</field>
+            <field name="endpoint_path">/chat/completions</field>
+            <field name="api_key_name">OPENROUTER_API_KEY</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">300</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">Router for free or low-cost models. Confirm the selected :free model is still available before production use.</field>
+        </record>
+
+        <record id="assistant_huggingface_free" model="ab.seo.assistant">
+            <field name="name">Hugging Face Open Model SEO Drafts</field>
+            <field name="sequence">40</field>
+            <field name="assistant_type">ai</field>
+            <field name="provider">huggingface</field>
+            <field name="model_name">meta-llama/Llama-3.1-8B-Instruct</field>
+            <field name="base_url">https://api-inference.huggingface.co/models</field>
+            <field name="endpoint_path">/{model}</field>
+            <field name="api_key_name">HF_TOKEN</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">300</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">Useful for experiments with hosted open models. Availability depends on Hugging Face provider limits.</field>
+        </record>
+
+        <record id="assistant_ready_api_trial" model="ab.seo.assistant">
+            <field name="name">Ready API Trial Enrichment</field>
+            <field name="sequence">50</field>
+            <field name="assistant_type">data_source</field>
+            <field name="provider">ready_api</field>
+            <field name="model_name">ready-api</field>
+            <field name="base_url">https://ready-api.vercel.app</field>
+            <field name="endpoint_path">/api/drugs-eg</field>
+            <field name="api_key_name">READY_API_KEY</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">300</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">Pharmaceutical enrichment only. Keep cached, rate-limited, manually controlled, and never source of truth.</field>
+        </record>
+    </data>
+</odoo>
