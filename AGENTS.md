@@ -21,6 +21,213 @@ Module creation rules:
 - Use module technical names with underscores `_`, not dots `.`.
 - All new modules use `author = "Alhassan Hossny"`.
 
+## Pharmacy ERP Data Protection Rules
+
+### Rule #1
+
+No operation may risk inventory corruption, pricing corruption, or branch data leakage.
+
+When uncertain, preserve data and reject destructive changes. For a pharmacy chain, inventory integrity is usually the single most important technical rule; wrong stock quantities replicated across branches can be more expensive than an obvious table failure.
+
+### Critical Business Data
+
+The following records must never be physically deleted:
+
+- Products
+- Product Categories
+- Suppliers
+- Purchase Orders
+- Sales Orders
+- Inventory Adjustments
+- Inventory Transfers
+- Stock Recycling Records
+- Contracts
+- Price Lists
+- Branches
+- Warehouses
+
+Use:
+
+```python
+active = fields.Boolean(default=True)
+```
+
+instead of deletion whenever possible.
+
+### Inventory Protection Rules
+
+Agents must never directly modify computed or system-managed inventory quantities:
+
+- `qty_available`
+- `virtual_available`
+- `free_qty`
+- `incoming_qty`
+- `outgoing_qty`
+
+Forbidden:
+
+```python
+product.qty_available = 100
+```
+
+Inventory changes must occur through:
+
+- Stock Move
+- Inventory Adjustment
+- Transfer
+- Receipt
+- Internal Transfer
+- Approved Stock Recycling Process
+
+Direct quantity edits are one of the most common causes of corrupted stock in pharmacy systems.
+
+### External Database Integration Rules
+
+External databases, including B-Connect and SQL integration sources, are **read-only** unless explicitly stated otherwise.
+
+Agents must:
+
+- Read from B-Connect or external SQL sources.
+- Process and validate inside Odoo.
+- Store business operations inside Odoo PostgreSQL.
+
+Agents must not run external database writes such as:
+
+```sql
+UPDATE BConnect_Table ...
+DELETE FROM BConnect_Table ...
+TRUNCATE BConnect_Table ...
+```
+
+without explicit approval.
+
+### Replication Safety Rules
+
+Use an integration queue pattern:
+
+```text
+External DB
+  -> Import Queue
+  -> Validation
+  -> Odoo Business Logic
+  -> Final Records
+```
+
+Avoid direct writes:
+
+```text
+External DB
+  -> Direct Write
+  -> Production Tables
+```
+
+Queue-based imports make troubleshooting and recovery much safer.
+
+### Product Master Protection
+
+After product creation, the following fields should not be editable by normal users:
+
+- Product Code
+- Barcode
+- External Reference
+
+Only Inventory Manager or System Administrator users should be able to modify them. This prevents inventory mismatches across branches and external systems.
+
+### Branch Security Rules
+
+Users assigned to a branch can view their branch data only.
+
+They cannot view other branches unless they belong to an authorized higher-level group, such as:
+
+- Manager
+- Regional Manager
+- Administrator
+
+See the detailed inherited-admin guard rule in Development Rules before implementing branch restrictions.
+
+### Pricing Protection
+
+Every price modification should log:
+
+- `old_price`
+- `new_price`
+- `changed_by`
+- `change_date`
+
+Prefer creating a dedicated history model such as `ab_product_price_history` instead of overwriting prices without traceability.
+
+### PostgreSQL Backup Rules
+
+Recommended pharmacy production backup retention:
+
+- Hourly: 72 backups
+- Daily: 60 backups
+- Weekly: 24 backups
+- Monthly: 24 backups
+
+Inventory and pricing mistakes may only be discovered several weeks later.
+
+Create a dedicated PostgreSQL backup before:
+
+- Mass Price Update
+- Mass Product Import
+- Mass Barcode Update
+- Inventory Adjustment Import
+- Stock Recycling Batch
+- Supplier Synchronization
+
+Example:
+
+```bash
+pg_dump \
+  -U odoo19 \
+  -F c \
+  -d abdin_prod \
+  -f before_mass_import_$(date +%F_%H-%M).backup
+```
+
+### Odoo Upgrade Rules
+
+Never run this during normal module development:
+
+```bash
+-u base
+```
+
+Use targeted upgrades only:
+
+```bash
+-u ab_stock_recycling
+-u module1,module2
+```
+
+Reason: `-u base` validates every view and inherited XML across the database and can expose unrelated issues during a focused module change.
+
+### Git Rules For Hotfix Transfers
+
+Before cherry-picking between branches such as `dev`, `ab_stock_recycling`, `ab_quality_assurance`, and `ab_orders_management`:
+
+```bash
+git log --oneline branch_name
+```
+
+Identify exact commits and prefer:
+
+```bash
+git cherry-pick <commit_hash>
+```
+
+Avoid merging a whole feature branch for hotfix transfers unless explicitly requested. This keeps module histories isolated.
+
+### Translation Rules
+
+For translation files such as `ar.po` and `ar_001.po`, agents must:
+
+- Preserve existing `msgid` values.
+- Append translations when needed.
+- Avoid mass regeneration.
+- Never delete `ar.po` or `ar_001.po` during upgrades.
+
 ## Odoo 19 Compatibility Notes
 
 ### Views
@@ -424,6 +631,347 @@ Most modules use `19.0.1.0.0` instead of `19.0`. This is cosmetic, not a functio
 - **OWL template operators**: Use JavaScript operators (`&&`, `||`, `!`) with XML entity escaping (`&amp;` for `&`). Do NOT use QWeb-style `and`/`or`/`not` — OWL's expression parser treats those as property access (`ctx['not']`), breaking logic.
 - **SCSS `@import url()`**: Odoo 19's libsass cannot fetch external URLs (e.g. Google Fonts). Any `@import url(...)` silently breaks the entire `web.assets_backend` bundle, causing blank/HTML-rendered screens. Use font-face declarations as CSS hints or inline fonts.
 - **Bulk code results**: Use `ir.actions.client` + OWL Dialog (not `ValidationError` popup or `TransientModel` wizard form) for modern UX.
+
+## Phase 0 Findings — `ab_product_seo`
+
+These facts were measured during the SEO discovery phase for the future `ab_product_seo` module. Use them as the baseline for architecture and implementation decisions.
+
+### Strategic Conclusion
+
+Ready API is no longer the primary value source. E-Plus/B-Connect already contains enough structured pharmaceutical data to build a professional internal SEO platform.
+
+First business value is not AI, Ready API, or RAG. First business value is:
+
+- Populate native Odoo SEO fields correctly.
+- Govern review and approval of pharmacy SEO content.
+- Publish approved Arabic and English SEO content safely.
+
+### Odoo Product and Website Metrics
+
+| Metric | Count |
+|--------|------:|
+| `product.template` total | 110 |
+| Linked to `ab_product` | 25 |
+| Published website products | 106 |
+| Active + saleable templates | 107 |
+| Meta title filled | 0 |
+| Meta description filled | 0 |
+| Ecommerce description filled | 24 |
+| Website description filled | 24 |
+| Product images in Odoo | 1 |
+| SEO optimized products | 0 |
+
+SEO coverage is effectively zero for native meta fields. Image coverage is also a major issue and should be handled before heavy AI investment.
+
+### `ab_product` Metrics
+
+| Metric | Count |
+|--------|------:|
+| `ab_product` total | 102,834 |
+| Active + saleable | 30,420 |
+| With product code | 102,834 |
+| With `eplus_serial` | 102,833 |
+| Barcode rows | 10,000 |
+| Products linked to barcode | 4,025 |
+| With effective material | 7,485 |
+| With description | 38,280 |
+| With scientific group | 1 |
+
+Identifier matching is strong by product code and `eplus_serial`; barcode coverage is useful but not enough as the primary key.
+
+### Installed Languages
+
+Installed languages:
+
+- `ar_001`
+- `en_US`
+
+Arabic and English must be supported from day one.
+
+### E-Plus `Item_Catalog` Findings
+
+`Item_Catalog` contains 103,846 rows and 77 columns.
+
+Useful fields discovered:
+
+- `itm_code`
+- `itm_name_ar_encrypt`
+- `itm_name_en_encrypt`
+- `com_id`
+- `itm_com_code`
+- `itm_ismedicine`
+- `itm_scientific_n1`
+- `itm_scientific_n2`
+- `itm_scientific_group_id`
+- `itm_usage_manner_id`
+- `itm_effictive`
+- `itm_effictive_perc`
+- `itm_g1`
+- `itm_g2`
+- `itm_g3`
+- `itm_origin`
+- `itm_notes`
+- `itm_image`
+
+Coverage highlights:
+
+| E-Plus Field | Count |
+|--------------|------:|
+| Product code | 103,846 |
+| Plain Arabic name | 0 |
+| Plain English name | 0 |
+| Encrypted Arabic name | 103,846 |
+| Encrypted English name | 103,843 |
+| Manufacturer/company id | 103,794 |
+| Group 1 | 73,918 |
+| Group 2 | 73,697 |
+| Group 3 | 68,976 |
+| Scientific name 1 | 89,848 |
+| Scientific group id | 65,370 |
+| Usage manner id | 58,251 |
+| Effective material | 7,509 |
+| Notes | 38,280 |
+| Origin | 103,846 |
+| Image | 0 |
+
+Important: plain Arabic and English name columns are empty. Product names appear to be stored in encrypted columns. Do not assume plain name columns are usable without confirming decryption logic.
+
+### Useful E-Plus Lookup Tables
+
+The following lookup tables exist and should be considered internal SEO data sources before using external APIs:
+
+- `Company`
+- `Groups`
+- `Scientific_Groups`
+- `item_usage_manner`
+- `Usage_Causes`
+- `Item_Usage_Causes`
+- `Item_Origins`
+
+### Existing Ecommerce Boundary
+
+`ab_website_sale_product` already synchronizes `ab_product` into native `product.template`.
+
+It already owns:
+
+- Product template creation and update.
+- Product name and code sync.
+- Price and cost sync.
+- Sale/purchase flags.
+- Active state.
+- `description`
+- `description_sale`
+- `description_ecommerce`
+- `website_description`
+- `is_published`
+- Public categories.
+- Product tags.
+- Images.
+- E-Plus stock snapshots.
+
+`ab_product_seo` must not duplicate this functionality. It should govern approved SEO content and publish into native Odoo fields after review.
+
+### Native Odoo SEO Fields
+
+Odoo 19 already provides:
+
+- `website_meta_title`
+- `website_meta_description`
+- `website_meta_keywords`
+- `website_meta_og_img`
+- `seo_name`
+- `description_ecommerce`
+
+Odoo already handles:
+
+- Canonical URLs.
+- OpenGraph.
+- Twitter cards.
+- `hreflang`.
+- Sitemap.
+- Product JSON-LD.
+- Breadcrumb JSON-LD.
+
+The SEO module must populate and govern these fields, not replace Odoo website SEO rendering.
+
+### `ab_product_seo` Ownership Rules
+
+`ab_product_seo` owns:
+
+- SEO content lifecycle.
+- SEO drafts.
+- Arabic and English SEO content.
+- Review workflow.
+- Approval workflow.
+- Publishing decisions.
+- Versioning.
+- Rollback.
+- SEO publish logs.
+- SEO audit logs.
+- Enrichment tracking.
+- Future AI/RAG readiness.
+
+`ab_product_seo` does not own:
+
+- Product master data.
+- Stock quantities.
+- Pricing.
+- E-Plus synchronization.
+- Website product synchronization.
+- Product image synchronization.
+- Automatic publishing of medical content.
+
+### Required Workflow
+
+Use this lifecycle:
+
+```text
+draft
+-> generated
+-> under_review
+-> approved
+-> published
+-> rejected
+-> archived
+```
+
+Generated pharmacy content must remain reviewable. No medical claims may be auto-published.
+
+### Recommended Roadmap
+
+Phase 1: `ab_product_seo` core framework only.
+
+- Models.
+- SEO records.
+- SEO translations.
+- SEO versions.
+- SEO publish logs.
+- SEO audit logs.
+- Review workflow.
+- Approval workflow.
+- Publishing into native Odoo SEO fields.
+
+Phase 2: internal SEO generator.
+
+- Generate SEO drafts from internal product/E-Plus data:
+  - Product name.
+  - Scientific name.
+  - Manufacturer.
+  - Origin.
+  - Usage.
+  - Product group.
+  - Notes.
+
+Phase 3: Arabic SEO.
+
+- Arabic meta title.
+- Arabic meta description.
+- Arabic short description.
+- Arabic FAQ.
+- Arabic public description.
+
+Phase 4: queue architecture.
+
+Use `queue_job` / `integration_queue_job`.
+
+Pipeline:
+
+```text
+Snapshot
+-> Generate
+-> Review
+-> Publish
+```
+
+Recommended batch size:
+
+```text
+100 products/job
+```
+
+Recommended identity key:
+
+```text
+seo_product_<product_id>_<lang>
+```
+
+Phase 5: Ready API pilot only.
+
+- Test 100 products.
+- Measure match rate.
+- Measure data quality.
+- Measure Arabic quality.
+- Measure scientific data quality.
+- Keep Ready API only if it provides better enrichment than E-Plus.
+
+### Ready API Rules
+
+Ready API is optional enrichment only.
+
+Free plan constraints:
+
+- 300 requests/day.
+- 7-day trial.
+- Localhost-only test key.
+
+Ready API must be:
+
+- Cached.
+- Rate limited.
+- Queue driven.
+- Manually controlled.
+- Never the source of truth.
+- Never called during website page load.
+- Never used for automatic full-catalog publishing.
+
+### Matching Priority
+
+Use this order for enrichment/matching:
+
+1. Barcode.
+2. `eplus_serial`.
+3. Product code.
+4. Scientific grouping.
+5. Normalized product name.
+6. Fuzzy match.
+
+### Future RAG Direction
+
+The product catalog is a strong future knowledge base because it contains 102,834 products and large coverage for scientific names, manufacturers, categories, origins, and notes.
+
+Future architecture:
+
+```text
+ab_product
+  -> ab_product_seo
+  -> approved SEO content
+  -> embedding pipeline
+  -> pgvector
+  -> pharmacy AI assistant
+```
+
+Only approved public content should be embedded for customer-facing RAG. Separate retrieval-safe fields from non-public medical/internal fields.
+
+### Architecture-Only Prompt Guardrail
+
+Before implementing `ab_product_seo`, ask for an architecture document only. The prompt must include:
+
+- Do not write code.
+- Do not modify files.
+- Do not create commits.
+- Return architecture only.
+- Use Phase 0 metrics as facts.
+- Follow AGENTS.md exactly.
+- Design governance-first architecture.
+- Use native Odoo SEO field publishing.
+- Support Arabic + English.
+- Include queue-based generation.
+- Include versioning and rollback.
+- Include audit trail.
+- Keep Ready API optional.
+- Include future pgvector/RAG compatibility.
+- Stay compatible with `ab_website_sale_product`.
+- Do not directly modify source product data.
 
 ## Session Summary — ab_self_inventory SaaS UI Redesign
 
