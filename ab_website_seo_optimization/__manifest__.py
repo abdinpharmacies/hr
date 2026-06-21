@@ -19,6 +19,7 @@
         "views/menus.xml",
         "data/seo_assistant_data.xml",
         "data/seo_bulk_cron.xml",
+        "views/product_seo_optimize_confirm_wizard_views.xml",
         "views/product_seo_views.xml",
         "views/product_seo_translation_views.xml",
         "views/product_seo_version_views.xml",
@@ -27,8 +28,13 @@
         "views/product_seo_source_snapshot_views.xml",
         "views/product_seo_bulk_optimization_views.xml",
         "views/product_drug_data_views.xml",
-        "views/product_drug_data_website_templates.xml",
+        "views/drug_eg_import_dashboard_views.xml",
         "views/seo_assistant_views.xml",
     ],
+    "assets": {
+        "website.assets_editor": [
+            "ab_website_seo_optimization/static/src/js/seo_dialog_ai_patch.js",
+        ],
+    },
     "installable": True,
 }

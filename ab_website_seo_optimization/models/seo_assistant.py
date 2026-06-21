@@ -1,10 +1,13 @@
 import json
+import re
+from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import html_escape
 from odoo.tools.translate import _
 
 
@@ -22,7 +25,10 @@ class AbSeoAssistant(models.Model):
             ("groq", "Groq"),
             ("openrouter", "OpenRouter"),
             ("huggingface", "Hugging Face"),
+            ("alibaba_qwen", "Alibaba Qwen"),
             ("ready_api", "Ready API"),
+            ("openfda", "openFDA"),
+            ("openfda_cosmetic_event", "openFDA Cosmetic Event"),
             ("openai", "OpenAI"),
             ("other", "Other"),
         ],
@@ -128,6 +134,18 @@ class AbSeoAssistant(models.Model):
                     "Useful for experiments with hosted open models. Availability depends on Hugging Face provider limits."
                 ),
             },
+            "alibaba_qwen": {
+                "assistant_type": "ai",
+                "model_name": "Qwen",
+                "base_url": "https://ws-eish2a8n2iixd1b3.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1",
+                "endpoint_path": "/chat/completions",
+                "api_key_name": "ALIBABA_QWEN_API_KEY",
+                "daily_limit": 300,
+                "notes": _(
+                    "Alibaba Model Studio workspace endpoint for the Singapore international deployment scope. "
+                    "Uses the OpenAI-compatible chat completions API."
+                ),
+            },
             "ready_api": {
                 "assistant_type": "data_source",
                 "model_name": "ready-api",
@@ -137,6 +155,30 @@ class AbSeoAssistant(models.Model):
                 "daily_limit": 300,
                 "notes": _(
                     "Pharmaceutical enrichment only. Keep cached, rate-limited, manually controlled, and never source of truth."
+                ),
+            },
+            "openfda": {
+                "assistant_type": "data_source",
+                "model_name": "openfda-drug-label",
+                "base_url": "https://api.fda.gov",
+                "endpoint_path": "/drug/label.json",
+                "api_key_name": "OPENFDA_API_KEY",
+                "daily_limit": 120000,
+                "notes": _(
+                    "openFDA drug label source. API key is passed as api_key query parameter. "
+                    "Use for OTC/Rx label enrichment only, not as product source of truth."
+                ),
+            },
+            "openfda_cosmetic_event": {
+                "assistant_type": "data_source",
+                "model_name": "openfda-cosmetic-event",
+                "base_url": "https://api.fda.gov",
+                "endpoint_path": "/cosmetic/event.json",
+                "api_key_name": "OPENFDA_API_KEY",
+                "daily_limit": 120000,
+                "notes": _(
+                    "openFDA cosmetic adverse-event reports. Use only for safety signal context. "
+                    "Falls back to /home/abdin_04/Downloads/cosmetic-event-0001-of-0001.json when the API is unavailable."
                 ),
             },
             "openai": {
@@ -229,9 +271,40 @@ class AbSeoAssistant(models.Model):
 
     def _get_endpoint_url(self):
         self.ensure_one()
-        base_url = (self.base_url or "").rstrip("/")
+        base_url = self._normalize_base_url(self.base_url)
         endpoint_path = (self.endpoint_path or "").replace("{model}", self.model_name or "").lstrip("/")
+        if self._is_alibaba_maas_url(base_url):
+            base_url = self._normalize_alibaba_maas_base_url(base_url)
+            if "generateContent" in endpoint_path or endpoint_path.startswith("models/"):
+                endpoint_path = "chat/completions"
         return "%s/%s" % (base_url, endpoint_path)
+
+    def _normalize_base_url(self, base_url):
+        base_url = (base_url or "").strip().rstrip("/")
+        if base_url and not base_url.startswith(("http://", "https://")):
+            base_url = "https://%s" % base_url
+        return base_url
+
+    def _is_alibaba_maas_url(self, base_url):
+        return ".maas.aliyuncs.com" in (base_url or "")
+
+    def _normalize_alibaba_maas_base_url(self, base_url):
+        base_url = (base_url or "").rstrip("/")
+        if "/compatible-mode/" not in base_url:
+            base_url = "%s/compatible-mode/v1" % base_url
+        return base_url
+
+    def _get_local_data_source_path(self):
+        self.ensure_one()
+        base_path = Path(self.base_url or "")
+        endpoint_path = (self.endpoint_path or "").lstrip("/")
+        return base_path / endpoint_path
+
+    def _get_cosmetic_event_fallback_path(self):
+        return Path(
+            self.env.context.get("cosmetic_event_fallback_path")
+            or "/home/abdin_04/Downloads/cosmetic-event-0001-of-0001.json"
+        )
 
     def generate_product_content(self, product_name, lang_code, product_context=None):
         self.ensure_one()
@@ -241,6 +314,19 @@ class AbSeoAssistant(models.Model):
             token_usage = {}
         else:
             result, token_usage = self._request_ai_product(product_name, lang_code, product_context=product_context)
+        self._increment_usage(token_usage=token_usage)
+        return result
+
+    def generate_seo_component_content(self, component_name, lang_code, component_context=None):
+        self.ensure_one()
+        if self.assistant_type != "ai":
+            raise UserError(_("%s is not an AI assistant.") % self.display_name)
+        self._validate_live_request()
+        result, token_usage = self._request_ai_seo_component(
+            component_name,
+            lang_code,
+            component_context=component_context,
+        )
         self._increment_usage(token_usage=token_usage)
         return result
 
@@ -289,6 +375,10 @@ class AbSeoAssistant(models.Model):
 
     def _request_data_source_product(self, product_name):
         self.ensure_one()
+        if self.provider == "openfda":
+            return self._request_openfda_product(product_name)
+        if self.provider == "openfda_cosmetic_event":
+            return self._request_cosmetic_event_product(product_name)
         query = {
             "search": product_name or "",
             "limit": 1,
@@ -301,6 +391,121 @@ class AbSeoAssistant(models.Model):
             raise UserError(_("No drug data source result was found for %s.") % (product_name or _("the product")))
         return self._normalize_data_source_item(item)
 
+    def _request_openfda_product(self, product_name):
+        self.ensure_one()
+        searches = [
+            'openfda.brand_name:"%s"' % self._escape_openfda_search_value(product_name),
+            product_name or "",
+        ]
+        response = False
+        last_error = False
+        for search in searches:
+            query = [
+                ("api_key", self.api_key),
+                ("search", search),
+                ("limit", 1),
+            ]
+            url = "%s?%s" % (self._get_endpoint_url(), urlencode(query))
+            try:
+                response = self._http_json("GET", url)
+            except UserError as error:
+                last_error = error
+                continue
+            item = self._extract_first_data_source_item(response)
+            if item:
+                return self._normalize_openfda_item(item)
+        if last_error:
+            raise UserError(_("No openFDA label result was found for %(product)s. Last response: %(error)s") % {
+                "product": product_name or _("the product"),
+                "error": last_error,
+            })
+        raise UserError(_("No openFDA label result was found for %s.") % (product_name or _("the product")))
+
+    def _escape_openfda_search_value(self, value):
+        return str(value or "").replace("\\", "\\\\").replace('"', '\\"').strip()
+
+    def _request_cosmetic_event_product(self, product_name):
+        self.ensure_one()
+        search_text = self._normalize_match_text(product_name)
+        if not search_text:
+            raise UserError(_("No product name was provided for cosmetic event search."))
+        api_result = self._request_cosmetic_event_api_product(product_name)
+        if api_result:
+            return api_result
+        return self._request_cosmetic_event_file_product(product_name)
+
+    def _request_cosmetic_event_api_product(self, product_name):
+        searches = [
+            'products.product_name:"%s"' % self._escape_openfda_search_value(product_name),
+            product_name or "",
+        ]
+        for search in searches:
+            query = [
+                ("api_key", self.api_key),
+                ("search", search),
+                ("limit", 25),
+            ]
+            url = "%s?%s" % (self._get_endpoint_url(), urlencode(query))
+            try:
+                response = self._http_json("GET", url)
+            except UserError:
+                continue
+            events = response.get("results") if isinstance(response, dict) else []
+            if events:
+                matched_product_name = self._get_first_cosmetic_product_name(events) or product_name
+                return self._normalize_cosmetic_event_items(matched_product_name, events)
+        return False
+
+    def _request_cosmetic_event_file_product(self, product_name):
+        search_text = self._normalize_match_text(product_name)
+        path = self._get_cosmetic_event_fallback_path()
+        try:
+            with path.open("r", encoding="utf-8") as handle:
+                payload = json.load(handle)
+        except OSError as error:
+            raise UserError(_("%(assistant)s could not read local cosmetic event file: %(error)s") % {
+                "assistant": self.display_name,
+                "error": error,
+            }) from error
+        events = payload.get("results") if isinstance(payload, dict) else []
+        matched_events = []
+        matched_product_name = product_name
+        for event in events:
+            for product in event.get("products") or []:
+                event_product_name = product.get("product_name") or ""
+                if self._cosmetic_event_matches(search_text, event_product_name):
+                    matched_events.append(event)
+                    matched_product_name = event_product_name or matched_product_name
+                    break
+            if len(matched_events) >= 25:
+                break
+        if not matched_events:
+            raise UserError(_("No FDA cosmetic event report was found for %s.") % product_name)
+        return self._normalize_cosmetic_event_items(matched_product_name, matched_events)
+
+    def _get_first_cosmetic_product_name(self, events):
+        for event in events:
+            products = event.get("products") or []
+            for product in products:
+                if product.get("product_name"):
+                    return product["product_name"]
+        return False
+
+    def _normalize_match_text(self, value):
+        return " ".join(re.findall(r"[a-z0-9]+", str(value or "").lower()))
+
+    def _cosmetic_event_matches(self, search_text, product_name):
+        product_text = self._normalize_match_text(product_name)
+        if not product_text:
+            return False
+        if search_text in product_text or product_text in search_text:
+            return True
+        search_terms = {term for term in search_text.split() if len(term) > 2}
+        product_terms = {term for term in product_text.split() if len(term) > 2}
+        if not search_terms:
+            return False
+        return len(search_terms & product_terms) >= min(2, len(search_terms))
+
     def _request_ai_product(self, product_name, lang_code, product_context=None):
         self.ensure_one()
         prompt = self._build_ai_product_prompt(product_name, lang_code, product_context=product_context)
@@ -309,7 +514,25 @@ class AbSeoAssistant(models.Model):
         content = self._extract_ai_text(response)
         if not content:
             raise UserError(_("%s returned an empty AI response.") % self.display_name)
-        return self._parse_ai_content(content), self._extract_token_usage(response)
+        return self._parse_ai_content(content, product_name=product_name, lang_code=lang_code), self._extract_token_usage(response)
+
+    def _request_ai_seo_component(self, component_name, lang_code, component_context=None):
+        self.ensure_one()
+        prompt = self._build_ai_seo_component_prompt(
+            component_name,
+            lang_code,
+            component_context=component_context,
+        )
+        payload = self._build_ai_payload(prompt)
+        response = self._http_json("POST", self._get_endpoint_url(), payload=payload)
+        content = self._extract_ai_text(response)
+        if not content:
+            raise UserError(_("%s returned an empty AI response.") % self.display_name)
+        return self._parse_ai_seo_component_content(
+            content,
+            component_name=component_name,
+            lang_code=lang_code,
+        ), self._extract_token_usage(response)
 
     def _build_ai_product_prompt(self, product_name, lang_code, product_context=None):
         language = "Arabic" if lang_code == "ar_001" else "English"
@@ -357,6 +580,41 @@ class AbSeoAssistant(models.Model):
         ) % {
             "language": language,
             "product_name": product_name or "",
+            "context": context_text,
+        }
+
+    def _build_ai_seo_component_prompt(self, component_name, lang_code, component_context=None):
+        language = "Arabic" if lang_code == "ar_001" else "English"
+        context_text = json.dumps(
+            self._prepare_prompt_context(component_context),
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        )
+        return (
+            "Return compact valid JSON only, no markdown. "
+            "Task: generate safe SEO fields for the Odoo Search Engine Optimization popup. "
+            "Target component=%(component_name)s. Language=%(language)s. Context=%(context)s. "
+            "Use only the supplied page/product context and broadly safe public knowledge. "
+            "Do not invent medical claims, ingredient claims, pricing, stock, dosage, or guarantees. "
+            "For medicines, use pharmacist/leaflet wording and avoid treatment promises. "
+            "For cosmetics, devices, supplements, and personal-care products, describe product type and general benefits only when supported by context. "
+            "This is NOT the product description generator. "
+            "Never return meta_title, meta_description, short_description, public_description, active_ingredient, warnings, storage, or drug_data. "
+            "Return this schema exactly: "
+            "{"
+            "\"title\":\"\","
+            "\"description\":\"\","
+            "\"keywords\":[\"\"],"
+            "\"slug\":\"\""
+            "}. "
+            "Do not put JSON text inside any field. "
+            "Description must be one plain meta-description sentence, not a formatted product overview and not bullet points. "
+            "Ignore stock quantity, price, shipping, cart, and terms text from the page body. "
+            "Title max 70 characters. Description 50-160 characters. Keywords max 7 concise phrases. Slug lowercase URL text without the database id."
+        ) % {
+            "component_name": component_name or "",
+            "language": language,
             "context": context_text,
         }
 
@@ -416,7 +674,7 @@ class AbSeoAssistant(models.Model):
         }
         if self.api_key and self.provider == "google_gemini":
             headers["x-goog-api-key"] = self.api_key
-        elif self.api_key:
+        elif self.api_key and self.provider not in ("openfda", "openfda_cosmetic_event"):
             headers["Authorization"] = "Bearer %s" % self.api_key
         data = None
         if payload is not None:
@@ -430,6 +688,11 @@ class AbSeoAssistant(models.Model):
             raise UserError(self._format_http_error(error)) from error
         except URLError as error:
             raise UserError(_("Could not connect to %s: %s") % (self.display_name, error.reason)) from error
+        except ValueError as error:
+            raise UserError(_("%(assistant)s has an invalid endpoint URL: %(url)s. Check that the base URL starts with https://.") % {
+                "assistant": self.display_name,
+                "url": url,
+            }) from error
         except TimeoutError as error:
             raise UserError(_("%s request timed out.") % self.display_name) from error
         try:
@@ -541,29 +804,227 @@ class AbSeoAssistant(models.Model):
             "total_tokens": total_tokens,
         }
 
-    def _parse_ai_content(self, content):
+    def _parse_ai_content(self, content, product_name=False, lang_code=False):
         clean_content = self._extract_json_text(content)
-        try:
-            data = json.loads(clean_content)
-        except json.JSONDecodeError as error:
-            raise UserError(_("%s did not return valid JSON content.") % self.display_name) from error
-        if not isinstance(data, dict):
-            raise UserError(_("%s returned JSON but not an object.") % self.display_name)
-        return self._normalize_generated_content(data, source_type="assistant")
+        data = self._loads_ai_json(clean_content)
+        if isinstance(data, str):
+            data = self._loads_ai_json(data)
+        if isinstance(data, list):
+            data = next((item for item in data if isinstance(item, dict)), {})
+        if not isinstance(data, dict) or not data:
+            data = self._fallback_content_from_text(content, product_name=product_name, lang_code=lang_code)
+        normalized = self._normalize_generated_content(data, source_type="assistant")
+        return self._ensure_product_content_minimums(
+            normalized,
+            product_name=product_name,
+            lang_code=lang_code,
+            raw_content=content,
+        )
 
-    def _extract_json_text(self, content):
-        clean_content = (content or "").strip()
-        if clean_content.startswith("```"):
-            clean_content = clean_content.strip()
-            lines = clean_content.splitlines()
+    def _parse_ai_seo_component_content(self, content, component_name=False, lang_code=False):
+        data = self._extract_first_ai_dict(content)
+        data = self._unwrap_json_field_payload(data)
+        if not isinstance(data, dict) or not data:
+            data = self._extract_seo_component_fields_from_text(content)
+        keywords = self._first_value(data, "keywords", "keyword_text")
+        if isinstance(data.get("keywords"), list):
+            keywords = ", ".join(str(keyword) for keyword in data["keywords"] if keyword)
+        title = self._clean_seo_component_text(self._first_value(data, "title", "meta_title")) or component_name
+        description = self._clean_seo_component_text(self._first_value(data, "description", "meta_description", "short_description"))
+        if not description:
+            description = self._build_default_seo_component_description(title, lang_code)
+        return {
+            "title": (title or "")[:70],
+            "description": (description or "")[:160],
+            "keywords": self._split_keywords(keywords),
+            "slug": self._clean_seo_component_text(self._first_value(data, "slug", "seo_name")) or component_name or "",
+            "assistant_id": self.id,
+            "assistant_name": self.display_name,
+        }
+
+    def _extract_seo_component_fields_from_text(self, content):
+        text = self._strip_ai_formatting(content)
+        return {
+            "title": self._extract_json_string_field(text, "title") or self._extract_json_string_field(text, "meta_title"),
+            "description": (
+                self._extract_json_string_field(text, "description")
+                or self._extract_json_string_field(text, "meta_description")
+                or self._extract_json_string_field(text, "short_description")
+            ),
+            "keywords": self._extract_json_list_or_string_field(text, "keywords"),
+            "slug": self._extract_json_string_field(text, "slug") or self._extract_json_string_field(text, "seo_name"),
+        }
+
+    def _extract_json_string_field(self, text, field_name):
+        pattern = r'"%s"\s*:\s*"((?:\\.|[^"\\])*)"' % re.escape(field_name)
+        match = re.search(pattern, text or "", flags=re.DOTALL)
+        if not match:
+            return False
+        value = match.group(1)
+        try:
+            return json.loads('"%s"' % value)
+        except json.JSONDecodeError:
+            return value.replace('\\"', '"').replace("\\n", " ").strip()
+
+    def _extract_json_list_or_string_field(self, text, field_name):
+        string_value = self._extract_json_string_field(text, field_name)
+        if string_value:
+            return string_value
+        pattern = r'"%s"\s*:\s*\[(.*?)\]' % re.escape(field_name)
+        match = re.search(pattern, text or "", flags=re.DOTALL)
+        if not match:
+            return False
+        values = re.findall(r'"((?:\\.|[^"\\])*)"', match.group(1))
+        return ", ".join(value.replace('\\"', '"') for value in values if value)
+
+    def _build_default_seo_component_description(self, title, lang_code=False):
+        return _("Shop %(product)s from Abdin Pharmacies with clear and updated product information.") % {
+            "product": title or _("this product"),
+        }
+
+    def _extract_first_ai_dict(self, content):
+        values = [self._strip_ai_formatting(content), self._extract_json_text(content)]
+        for value in values:
+            data = self._loads_ai_json(value)
+            for _index in range(3):
+                if isinstance(data, str):
+                    data = self._loads_ai_json(data)
+                    continue
+                if isinstance(data, list):
+                    data = next((item for item in data if isinstance(item, dict)), {})
+                if isinstance(data, dict):
+                    return data
+                break
+        text = self._strip_ai_formatting(content)
+        decoder = json.JSONDecoder()
+        for index, char in enumerate(text):
+            if char != "{":
+                continue
+            try:
+                data, _end = decoder.raw_decode(text[index:])
+            except json.JSONDecodeError:
+                continue
+            if isinstance(data, dict):
+                return data
+        return {}
+
+    def _unwrap_json_field_payload(self, data):
+        if not isinstance(data, dict):
+            return data
+        for key in ("title", "description", "meta_title", "meta_description"):
+            value = data.get(key)
+            if not isinstance(value, str):
+                continue
+            nested = self._extract_first_ai_dict(value)
+            if isinstance(nested, dict) and nested:
+                merged = dict(data)
+                merged.update({nested_key: nested_value for nested_key, nested_value in nested.items() if nested_value not in (None, False, "", [])})
+                return merged
+        return data
+
+    def _clean_seo_component_text(self, value):
+        text = re.sub(r"\s+", " ", str(value or "")).strip()
+        if not text:
+            return ""
+        nested = self._loads_ai_json(self._extract_json_text(text))
+        if isinstance(nested, dict) and nested:
+            return self._clean_seo_component_text(
+                nested.get("description")
+                or nested.get("meta_description")
+                or nested.get("title")
+                or nested.get("meta_title")
+            )
+        text = re.sub(r"^```(?:json)?|```$", "", text).strip()
+        if text.startswith("{") or text.startswith("["):
+            return ""
+        return text
+
+    def _split_keywords(self, keywords):
+        if isinstance(keywords, (list, tuple)):
+            values = keywords
+        else:
+            values = str(keywords or "").split(",")
+        clean_values = []
+        for value in values:
+            text = str(value or "").strip()
+            if text and text not in clean_values:
+                clean_values.append(text[:60])
+            if len(clean_values) >= 7:
+                break
+        return clean_values
+
+    def _loads_ai_json(self, content):
+        try:
+            return json.loads(content or "")
+        except (TypeError, json.JSONDecodeError):
+            pass
+        repaired = self._repair_json_text(content)
+        if repaired != content:
+            try:
+                return json.loads(repaired)
+            except json.JSONDecodeError:
+                pass
+        return {}
+
+    def _repair_json_text(self, content):
+        text = (content or "").strip()
+        text = re.sub(r",(\s*[}\]])", r"\1", text)
+        return text
+
+    def _fallback_content_from_text(self, content, product_name=False, lang_code=False):
+        clean_text = self._strip_ai_formatting(content)
+        compact_text = re.sub(r"\s+", " ", clean_text).strip()
+        if not compact_text:
+            compact_text = product_name or _("Product information is available from Abdin Pharmacies.")
+        title = product_name or self._first_sentence(compact_text, max_length=70)
+        description = self._first_sentence(compact_text, max_length=255)
+        public_description = "<p>%s</p>" % html_escape(compact_text[:1200])
+        source_label = _("AI generated educational product summary")
+        return {
+            "meta_title": title,
+            "meta_description": description,
+            "keyword_text": ", ".join(part for part in [product_name, self.display_name] if part),
+            "seo_name": product_name or title,
+            "short_description": description,
+            "public_description": public_description,
+            "content_source": "assistant",
+            "source_summary": _("%s returned non-JSON content; safe SEO fallback was generated.") % self.display_name,
+            "drug_data": {
+                "commercial_names": product_name or title,
+                "common_uses": description,
+                "warnings": _("Review the product leaflet and ask a pharmacist before use."),
+                "storage": _("Follow the storage instructions on the package or leaflet."),
+                "source_label": source_label,
+                "source_type": "assistant",
+            },
+        }
+
+    def _strip_ai_formatting(self, content):
+        text = (content or "").strip()
+        if text.startswith("```"):
+            lines = text.splitlines()
             if lines and lines[0].strip().startswith("```"):
                 lines = lines[1:]
             if lines and lines[-1].strip() == "```":
                 lines = lines[:-1]
-            clean_content = "\n".join(lines).strip()
-        if clean_content.lower().startswith("json"):
-            clean_content = clean_content[4:].strip()
+            text = "\n".join(lines).strip()
+        if text.lower().startswith("json"):
+            text = text[4:].strip()
+        return text
+
+    def _first_sentence(self, text, max_length=160):
+        clean_text = re.sub(r"\s+", " ", text or "").strip()
+        if not clean_text:
+            return ""
+        sentence_end = re.search(r"(?<=[.!؟。])\s", clean_text)
+        sentence = clean_text[:sentence_end.start()].strip() if sentence_end else clean_text
+        return sentence[:max_length].strip()
+
+    def _extract_json_text(self, content):
+        clean_content = self._strip_ai_formatting(content)
         if clean_content.startswith("{") and clean_content.endswith("}"):
+            return clean_content
+        if clean_content.startswith("[") and clean_content.endswith("]"):
             return clean_content
         start = clean_content.find("{")
         end = clean_content.rfind("}")
@@ -587,6 +1048,122 @@ class AbSeoAssistant(models.Model):
         data["source_url"] = self._get_endpoint_url()
         data["source_label"] = data.get("source_label") or _("Ready API Drugs Egypt")
         return data
+
+    def _normalize_openfda_item(self, item):
+        get = self._first_value
+        openfda = item.get("openfda") if isinstance(item.get("openfda"), dict) else {}
+        brand_name = get(openfda, "brand_name") or get(item, "brand_name")
+        generic_name = get(openfda, "generic_name", "substance_name") or get(item, "generic_name")
+        manufacturer = get(openfda, "manufacturer_name", "labeler_name") or get(item, "manufacturer")
+        active_ingredient = get(item, "active_ingredient", "active_ingredients") or generic_name
+        inactive_ingredients = get(item, "inactive_ingredient", "inactive_ingredients")
+        common_uses = get(item, "indications_and_usage", "purpose")
+        warnings = " ".join(part for part in [
+            get(item, "warnings"),
+            get(item, "do_not_use"),
+            get(item, "ask_doctor"),
+            get(item, "ask_doctor_or_pharmacist"),
+            get(item, "stop_use"),
+        ] if part)
+        storage = get(item, "storage_and_handling")
+        interactions = get(item, "drug_interactions")
+        side_effects = get(item, "adverse_reactions")
+        pregnancy = get(item, "pregnancy", "pregnancy_or_breast_feeding")
+        route = get(openfda, "route")
+        product_type = get(openfda, "product_type")
+        description = common_uses or get(item, "description") or get(item, "spl_product_data_elements")
+        public_parts = [
+            description,
+            _("Active ingredient: %s") % active_ingredient if active_ingredient else "",
+            _("Inactive ingredients: %s") % inactive_ingredients if inactive_ingredients else "",
+            _("Warnings: %s") % warnings if warnings else "",
+            _("Storage: %s") % storage if storage else "",
+        ]
+        data = {
+            "name": brand_name,
+            "scientific_name": generic_name,
+            "manufacturer": manufacturer,
+            "drug_class": product_type,
+            "description": description,
+            "keywords": ", ".join(part for part in [brand_name, generic_name, manufacturer, product_type, route] if part),
+            "public_description": self._html_paragraph("\n".join(part for part in public_parts if part)),
+            "active_ingredient": active_ingredient,
+            "warnings": warnings,
+            "storage": storage,
+            "source_summary": _("Generated from openFDA drug label data."),
+            "drug_data": {
+                "scientific_name": generic_name,
+                "commercial_names": brand_name,
+                "active_ingredient": active_ingredient,
+                "drug_class": product_type,
+                "regulatory_status": get(openfda, "product_type"),
+                "common_uses": common_uses,
+                "side_effects": side_effects,
+                "warnings": warnings,
+                "pregnancy": pregnancy,
+                "breastfeeding": pregnancy,
+                "storage": storage,
+                "interactions": interactions,
+                "source_label": "openFDA Drug Label",
+            },
+        }
+        normalized = self._normalize_generated_content(data, source_type="openfda")
+        normalized["source_url"] = self._get_endpoint_url()
+        normalized["source_label"] = _("openFDA Drug Label")
+        return normalized
+
+    def _normalize_cosmetic_event_items(self, product_name, events):
+        reactions = []
+        outcomes = []
+        for event in events:
+            reactions += event.get("reactions") or []
+            outcomes += event.get("outcomes") or []
+        reaction_summary = self._summarize_terms(reactions)
+        outcome_summary = self._summarize_terms(outcomes)
+        report_count = len(events)
+        description = _(
+            "FDA cosmetic adverse-event reports were found for %(product)s. Reported reactions include: %(reactions)s."
+        ) % {
+            "product": product_name,
+            "reactions": reaction_summary or _("not specified"),
+        }
+        public_description = "\n".join(part for part in [
+            description,
+            _("Report count reviewed: %s") % report_count,
+            _("Reported outcomes: %s") % outcome_summary if outcome_summary else "",
+            _("This source is for safety signal context only and does not prove the product caused the reported event."),
+        ] if part)
+        data = {
+            "name": product_name,
+            "drug_class": "cosmetic",
+            "description": description,
+            "keywords": ", ".join(part for part in [product_name, "cosmetic safety", reaction_summary] if part),
+            "public_description": self._html_paragraph(public_description),
+            "warnings": description,
+            "source_summary": _("Generated from local openFDA cosmetic adverse-event report data."),
+            "drug_data": {
+                "commercial_names": product_name,
+                "drug_class": "cosmetic",
+                "common_uses": _("Cosmetic product safety reference."),
+                "side_effects": reaction_summary,
+                "warnings": description,
+                "source_label": "openFDA Cosmetic Event Reports",
+            },
+        }
+        normalized = self._normalize_generated_content(data, source_type="openfda_cosmetic_event")
+        normalized["source_url"] = self._get_endpoint_url()
+        normalized["source_label"] = _("openFDA Cosmetic Event Reports")
+        return normalized
+
+    def _summarize_terms(self, values, limit=8):
+        counts = {}
+        for value in values:
+            text = str(value or "").strip()
+            if not text:
+                continue
+            counts[text] = counts.get(text, 0) + 1
+        ordered = sorted(counts.items(), key=lambda item: (-item[1], item[0].lower()))
+        return ", ".join("%s (%s)" % (term, count) for term, count in ordered[:limit])
 
     def _normalize_generated_content(self, data, source_type):
         get = self._first_value
@@ -615,8 +1192,8 @@ class AbSeoAssistant(models.Model):
             "warnings": warnings,
             "contraindications": get(data, "contraindications"),
             "storage": storage,
-            "content_source": "ready_api" if source_type == "drugs_eg" else "assistant",
-            "source_summary": _("Generated from %s") % self.display_name,
+            "content_source": "ready_api" if source_type in ("drugs_eg", "openfda") else "assistant",
+            "source_summary": get(data, "source_summary") or _("Generated from %s") % self.display_name,
             "drug_data": {
                 "scientific_name": scientific,
                 "commercial_names": get(data, "commercial_names", "brand_names") or get(nested, "commercial_names", "brand_names") or product_name,
@@ -634,6 +1211,28 @@ class AbSeoAssistant(models.Model):
                 "source_type": source_type,
             },
         }
+
+    def _ensure_product_content_minimums(self, content, product_name=False, lang_code=False, raw_content=False):
+        title = content.get("meta_title") or product_name or self._first_sentence(raw_content, max_length=70)
+        description = content.get("meta_description") or content.get("short_description") or self._first_sentence(raw_content, max_length=255)
+        if not description:
+            description = _("Buy %(product)s from Abdin Pharmacies with updated product information.") % {
+                "product": product_name or title or _("this product"),
+            }
+        content["meta_title"] = title or description[:70]
+        content["meta_description"] = description
+        content["keyword_text"] = content.get("keyword_text") or ", ".join(part for part in [product_name, content.get("active_ingredient")] if part)
+        content["seo_name"] = content.get("seo_name") or product_name or title
+        content["short_description"] = content.get("short_description") or description
+        content["public_description"] = content.get("public_description") or "<p>%s</p>" % html_escape(description)
+        content["content_source"] = content.get("content_source") or "assistant"
+        return content
+
+    def _html_paragraph(self, text):
+        if not text:
+            return False
+        lines = str(html_escape(text)).splitlines() or [""]
+        return "<p>%s</p>" % "<br/>".join(lines)
 
     def _first_value(self, data, *keys):
         for key in keys:

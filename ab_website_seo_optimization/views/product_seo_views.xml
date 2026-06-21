@@ -4,6 +4,7 @@
         <record id="view_ab_website_seo_optimization_list" model="ir.ui.view">
             <field name="name">ab.product.seo.list</field>
             <field name="model">ab.product.seo</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <list decoration-success="state == 'published'"
                       decoration-warning="state == 'under_review'"
@@ -13,11 +14,21 @@
                     <field name="ab_product_id"/>
                     <field name="product_template_id"/>
                     <field name="website_id"/>
-                    <field name="source_quality"/>
-                    <field name="seo_score"/>
-                    <field name="ready_for_publish"/>
-                    <field name="has_conflict"/>
-                    <field name="last_published_at"/>
+                    <field name="assistant_id"/>
+                    <field name="lang_mode"/>
+                    <field name="product_optimization_state" widget="badge"
+                           decoration-success="product_optimization_state == 'optimized'"
+                           decoration-warning="product_optimization_state == 'partial'"
+                           decoration-danger="product_optimization_state == 'missing'"/>
+                    <field name="result_status" widget="badge"
+                           decoration-success="result_status == 'optimized'"
+                           decoration-warning="result_status in ('skipped', 'deferred')"
+                           decoration-danger="result_status == 'error'"
+                           decoration-muted="result_status in ('not_run', 'cancelled')"/>
+                    <field name="optimized_count"/>
+                    <field name="skipped_count"/>
+                    <field name="error_count"/>
+                    <field name="finished_at"/>
                 </list>
             </field>
         </record>
@@ -25,109 +36,77 @@
         <record id="view_ab_website_seo_optimization_form" model="ir.ui.view">
             <field name="name">ab.product.seo.form</field>
             <field name="model">ab.product.seo</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <form>
                     <header>
-                        <button name="action_create_source_snapshot" type="object" string="Snapshot"
-                                class="btn-secondary" invisible="state == 'archived'"/>
-                        <button name="action_fill_with_ai" type="object" string="Fill with AI"
-                                class="btn-secondary" invisible="state not in ('draft', 'generated', 'rejected')"/>
-                        <button name="action_submit_review" type="object" string="Submit Review"
-                                class="btn-primary" invisible="state not in ('draft', 'generated', 'rejected')"/>
-                        <button name="action_approve" type="object" string="Approve"
-                                class="btn-primary" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_reviewer"
-                                invisible="state != 'under_review'"/>
-                        <button name="action_reject" type="object" string="Reject"
-                                class="btn-secondary" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_reviewer"
-                                invisible="state != 'under_review'"/>
-                        <button name="action_publish" type="object" string="Publish"
-                                class="btn-primary" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"
-                                invisible="state not in ('approved', 'published')"/>
-                        <button name="action_force_publish" type="object" string="Force Publish"
-                                class="btn-secondary" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"
-                                invisible="not has_conflict"/>
+                        <button name="action_fill_with_ai" type="object" string="Optimize Product"
+                                class="btn-success" invisible="state == 'archived'"
+                                groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
                         <button name="action_reset_to_draft" type="object" string="Reset to Draft"
-                                class="btn-secondary" invisible="state not in ('rejected', 'generated')"/>
+                                class="btn-secondary" invisible="state not in ('rejected', 'generated', 'published')"/>
                         <button name="action_archive" type="object" string="Archive"
                                 class="btn-secondary" groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"
                                 invisible="state == 'archived'"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
+                        <field name="available_product_template_ids" invisible="1"/>
                         <group>
                             <group>
-                                <field name="name" readonly="1"/>
-                                <field name="ab_product_id" readonly="state not in ('draft', 'generated')"/>
-                                <field name="product_template_id" readonly="state not in ('draft', 'generated')"/>
-                                <field name="website_id" readonly="state not in ('draft', 'generated')"/>
-                                <field name="assistant_id" readonly="state not in ('draft', 'generated', 'rejected')"/>
-                                <field name="company_id"/>
+                                <field name="name"/>
                                 <field name="active"/>
+                                <field name="target"/>
+                                <field name="website_id" readonly="state not in ('draft', 'generated', 'rejected')"/>
+                                <field name="product_template_id" readonly="state not in ('draft', 'generated', 'rejected')"
+                                       domain="[('id', 'in', available_product_template_ids)]"/>
+                                <field name="assistant_id" readonly="state not in ('draft', 'generated', 'rejected')"
+                                       domain="[('assistant_type', '=', 'ai'), ('active', '=', True)]"/>
+                                <field name="lang_mode" readonly="state not in ('draft', 'generated', 'rejected')"/>
                             </group>
                             <group>
-                                <field name="source_quality" readonly="1"/>
-                                <field name="seo_score" readonly="1"/>
-                                <field name="ready_for_publish" readonly="1"/>
-                                <field name="current_version_id" readonly="1"/>
-                                <field name="published_version_id" readonly="1"/>
-                                <field name="last_published_at" readonly="1"/>
-                                <field name="last_published_by" readonly="1"/>
+                                <field name="only_missing_seo"/>
+                                <field name="publish_description"/>
+                                <field name="started_at" readonly="1"/>
+                                <field name="finished_at" readonly="1"/>
                             </group>
                         </group>
-                        <group invisible="not has_conflict">
-                            <field name="has_conflict" readonly="1"/>
-                            <field name="conflict_note" readonly="1" nolabel="1"/>
+                        <group string="Results">
+                            <field name="product_optimization_state" readonly="1" widget="badge"
+                                   decoration-success="product_optimization_state == 'optimized'"
+                                   decoration-warning="product_optimization_state == 'partial'"
+                                   decoration-danger="product_optimization_state == 'missing'"/>
+                            <field name="result_status" readonly="1" widget="badge"
+                                   decoration-success="result_status == 'optimized'"
+                                   decoration-warning="result_status in ('skipped', 'deferred')"
+                                   decoration-danger="result_status == 'error'"
+                                   decoration-muted="result_status in ('not_run', 'cancelled')"/>
+                            <field name="last_bulk_id" readonly="1"/>
+                            <field name="website_url" readonly="1"/>
+                            <field name="processed_count" readonly="1"/>
+                            <field name="optimized_count" readonly="1"/>
+                            <field name="skipped_count" readonly="1"/>
+                            <field name="error_count" readonly="1"/>
                         </group>
+                        <field name="result_message" readonly="1"/>
                         <notebook>
-                            <page string="Translations">
-                                <field name="translation_ids" context="{'default_seo_id': id}">
-                                    <list editable="bottom">
-                                        <field name="lang_code"/>
-                                        <field name="meta_title"/>
-                                        <field name="meta_description"/>
-                                        <field name="keyword_text"/>
-                                        <field name="seo_name"/>
-                                        <field name="content_source"/>
-                                        <field name="current_version_id" readonly="1"/>
-                                    </list>
-                                </field>
+                            <page string="English Result">
+                                <group>
+                                    <field name="en_meta_title" readonly="1"/>
+                                    <field name="en_meta_description" readonly="1"/>
+                                    <field name="en_keyword_text" readonly="1"/>
+                                    <field name="en_seo_name" readonly="1"/>
+                                </group>
+                                <field name="en_public_description" readonly="1"/>
                             </page>
-                            <page string="Versions">
-                                <field name="version_ids" readonly="1">
-                                    <list>
-                                        <field name="version_number"/>
-                                        <field name="lang_code"/>
-                                        <field name="meta_title"/>
-                                        <field name="approved_by"/>
-                                        <field name="approved_at"/>
-                                        <field name="is_published"/>
-                                        <field name="published_at"/>
-                                    </list>
-                                </field>
-                            </page>
-                            <page string="Source">
-                                <field name="source_snapshot_ids" readonly="1">
-                                    <list>
-                                        <field name="snapshot_date"/>
-                                        <field name="product_code"/>
-                                        <field name="eplus_serial"/>
-                                        <field name="manufacturer"/>
-                                        <field name="scientific_name"/>
-                                        <field name="usage_manner"/>
-                                        <field name="origin"/>
-                                    </list>
-                                </field>
-                            </page>
-                            <page string="Publish Logs">
-                                <field name="publish_log_ids" readonly="1">
-                                    <list>
-                                        <field name="published_at"/>
-                                        <field name="lang_code"/>
-                                        <field name="field_name"/>
-                                        <field name="operation"/>
-                                        <field name="published_by"/>
-                                    </list>
-                                </field>
+                            <page string="Arabic Result">
+                                <group>
+                                    <field name="ar_meta_title" readonly="1"/>
+                                    <field name="ar_meta_description" readonly="1"/>
+                                    <field name="ar_keyword_text" readonly="1"/>
+                                    <field name="ar_seo_name" readonly="1"/>
+                                </group>
+                                <field name="ar_public_description" readonly="1"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -139,6 +118,7 @@
         <record id="view_ab_website_seo_optimization_search" model="ir.ui.view">
             <field name="name">ab.product.seo.search</field>
             <field name="model">ab.product.seo</field>
+            <field name="priority">1</field>
             <field name="arch" type="xml">
                 <search string="Website SEO">
                     <field name="name"/>
@@ -157,6 +137,20 @@
                     <filter string="Website" name="group_website" context="{'group_by': 'website_id'}"/>
                 </search>
             </field>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_all_view_list" model="ir.actions.act_window.view">
+            <field name="sequence" eval="1"/>
+            <field name="view_mode">list</field>
+            <field name="view_id" ref="view_ab_website_seo_optimization_list"/>
+            <field name="act_window_id" ref="action_ab_website_seo_optimization_all"/>
+        </record>
+
+        <record id="action_ab_website_seo_optimization_all_view_form" model="ir.actions.act_window.view">
+            <field name="sequence" eval="2"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_ab_website_seo_optimization_form"/>
+            <field name="act_window_id" ref="action_ab_website_seo_optimization_all"/>
         </record>
     </data>
 </odoo>

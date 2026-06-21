@@ -54,23 +54,15 @@ class AbProductSeoTranslation(models.Model):
         scientific = snapshot.scientific_name or snapshot.effective_material or ""
         usage = snapshot.usage_manner or ""
         origin = snapshot.origin or ""
-        brand_name = "صيدليات عابدين" if self.lang_code == "ar_001" else "Abdin Pharmacies"
+        brand_name = _("Abdin Pharmacies")
         title_parts = [part for part in [product_name, scientific, brand_name] if part]
         meta_title = " | ".join(title_parts[:3])
-        if self.lang_code == "ar_001":
-            description_parts = [
-                "اشتري %(product)s من صيدليات عابدين." % {"product": product_name} if product_name else "",
-                "الشركة المنتجة: %s." % manufacturer if manufacturer else "",
-                "الاسم العلمي: %s." % scientific if scientific else "",
-                "طريقة الاستخدام: %s." % usage if usage else "",
-            ]
-        else:
-            description_parts = [
-                _("Buy %(product)s from Abdin Pharmacies.") % {"product": product_name} if product_name else "",
-                _("Manufacturer: %s.") % manufacturer if manufacturer else "",
-                _("Scientific name: %s.") % scientific if scientific else "",
-                _("Usage: %s.") % usage if usage else "",
-            ]
+        description_parts = [
+            _("Buy %(product)s from Abdin Pharmacies.") % {"product": product_name} if product_name else "",
+            _("Manufacturer: %s.") % manufacturer if manufacturer else "",
+            _("Scientific name: %s.") % scientific if scientific else "",
+            _("Usage: %s.") % usage if usage else "",
+        ]
         meta_description = " ".join(part for part in description_parts if part).strip()
         keywords = ", ".join(part for part in [product_name, scientific, manufacturer, usage, origin] if part)
         public_description = snapshot.notes and seo._html_paragraph(snapshot.notes) or False

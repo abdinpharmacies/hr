@@ -1,3 +1,5 @@
+import json
+import tempfile
 from urllib.error import HTTPError
 
 from odoo.tests.common import TransactionCase, tagged
@@ -23,32 +25,122 @@ class TestProductSeo(TransactionCase):
             "name": "Panadol Extra",
             "ab_product_id": self.ab_product.id,
             "sale_ok": True,
+            "is_published": True,
         })
 
-    def test_generate_approve_publish_native_fields(self):
+    def test_seo_record_uses_one_product_bulk_optimization(self):
         seo = self.env["ab.product.seo"].create({
-            "ab_product_id": self.ab_product.id,
+            "product_template_id": self.template.id,
         })
 
         seo.action_generate_draft()
-        self.assertEqual(seo.state, "generated")
-        self.assertTrue(seo.translation_ids.filtered(lambda rec: rec.meta_title))
-
-        seo.action_submit_review()
-        seo.action_approve()
-        self.assertEqual(seo.state, "approved")
-        self.assertTrue(seo.translation_ids.mapped("current_version_id"))
-
-        seo.action_publish()
         self.assertEqual(seo.state, "published")
+        self.assertEqual(seo.target, "products")
+        self.assertEqual(seo.batch_limit, 1)
+        self.assertEqual(seo.lang_mode, "all")
+        self.assertTrue(seo.only_missing_seo)
+        self.assertTrue(seo.publish_description)
+        self.assertEqual(seo.rate_limit_retry_count, 3)
+        self.assertEqual(seo.rate_limit_wait_seconds, 0)
+        self.assertTrue(seo.last_bulk_id)
+        self.assertEqual(seo.last_bulk_id.batch_limit, 1)
+        self.assertEqual(seo.result_status, "optimized")
+        self.assertTrue(seo.translation_ids.filtered(lambda rec: rec.meta_title))
         self.assertTrue(self.template.website_meta_title)
         self.assertTrue(self.template.website_meta_description)
         self.assertTrue(self.template.website_meta_keywords)
-        self.assertTrue(seo.publish_log_ids)
+        self.assertTrue(seo.published_version_id)
+        self.assertTrue(seo.en_meta_title)
+        self.assertTrue(seo.ar_meta_title)
+
+    def test_seo_record_complete_product_requires_confirmation(self):
+        self.template.write({
+            "website_meta_title": "Complete SEO Product",
+            "website_meta_description": "Complete description",
+            "website_meta_keywords": "complete, seo",
+            "description_ecommerce": "<p>Complete ecommerce description</p>",
+        })
+        self.template.with_context(lang="ar_001").write({
+            "website_meta_title": "منتج مكتمل",
+            "website_meta_description": "وصف مكتمل",
+            "website_meta_keywords": "مكتمل, سيو",
+            "description_ecommerce": "<p>وصف مكتمل</p>",
+        })
+        seo = self.env["ab.product.seo"].create({
+            "product_template_id": self.template.id,
+            "only_missing_seo": True,
+        })
+
+        action = seo.action_generate_draft()
+
+        self.assertEqual(action["res_model"], "ab.product.seo.optimize.confirm.wizard")
+        self.assertEqual(action["target"], "new")
+        self.assertEqual(seo.result_status, "not_run")
+        self.assertFalse(seo.en_meta_title)
+        self.assertFalse(seo.ar_meta_title)
+
+    def test_seo_record_confirmation_updates_complete_product(self):
+        self.template.write({
+            "website_meta_title": "Complete SEO Product",
+            "website_meta_description": "Complete description",
+            "website_meta_keywords": "complete, seo",
+            "description_ecommerce": "<p>Complete ecommerce description</p>",
+        })
+        self.template.with_context(lang="ar_001").write({
+            "website_meta_title": "منتج مكتمل",
+            "website_meta_description": "وصف مكتمل",
+            "website_meta_keywords": "مكتمل, سيو",
+            "description_ecommerce": "<p>وصف مكتمل</p>",
+        })
+        seo = self.env["ab.product.seo"].create({
+            "product_template_id": self.template.id,
+            "only_missing_seo": True,
+        })
+        action = seo.action_generate_draft()
+        wizard = self.env[action["res_model"]].browse(action["res_id"])
+
+        wizard.action_optimize_and_update()
+
+        self.assertEqual(seo.result_status, "optimized")
+        self.assertEqual(seo.optimized_count, 1)
+        self.assertEqual(seo.state, "published")
+        self.assertNotEqual(seo.en_meta_title, "Complete SEO Product")
+        self.assertNotEqual(seo.ar_meta_title, "منتج مكتمل")
+
+    def test_seo_record_product_selector_contains_published_products(self):
+        complete_product = self.env["ab_product"].create({
+            "product_card_id": self.product_card.id,
+            "code": "SEO-SELECTOR-COMPLETE",
+            "default_price": 60.0,
+            "allow_sale": True,
+        })
+        complete_template = self.env["product.template"].create({
+            "name": "Selector Complete SEO Product",
+            "ab_product_id": complete_product.id,
+            "sale_ok": True,
+            "is_published": True,
+            "website_meta_title": "Complete SEO Product",
+            "website_meta_description": "Complete description",
+            "website_meta_keywords": "complete, seo",
+            "description_ecommerce": "<p>Complete ecommerce description</p>",
+        })
+        complete_template.with_context(lang="ar_001").write({
+            "website_meta_title": "منتج مكتمل",
+            "website_meta_description": "وصف مكتمل",
+            "website_meta_keywords": "مكتمل, سيو",
+            "description_ecommerce": "<p>وصف مكتمل</p>",
+        })
+        seo = self.env["ab.product.seo"].create({
+            "product_template_id": self.template.id,
+            "only_missing_seo": True,
+        })
+
+        self.assertIn(self.template, seo.available_product_template_ids)
+        self.assertIn(complete_template, seo.available_product_template_ids)
 
     def test_seo_records_are_archived_not_deleted(self):
         seo = self.env["ab.product.seo"].create({
-            "ab_product_id": self.ab_product.id,
+            "product_template_id": self.template.id,
         })
         with self.assertRaises(UserError):
             seo.unlink()
@@ -58,8 +150,6 @@ class TestProductSeo(TransactionCase):
             "name": "Unpublished SEO Product",
             "sale_ok": True,
         })
-        self.template.write({"is_published": True})
-
         bulk = self.env["ab.product.seo.bulk.optimization"].create({
             "name": "Bulk SEO Test",
             "batch_limit": 1,
@@ -76,9 +166,6 @@ class TestProductSeo(TransactionCase):
         self.assertTrue(self.template.website_meta_keywords)
         self.assertFalse(unpublished_template.website_meta_title)
 
-        self.assertTrue(self.template.ab_drug_data_id)
-        self.assertTrue(self.template.ab_drug_data_id.common_uses)
-
     def test_bulk_optimization_batches_only_abdin_linked_products(self):
         unlinked_templates = self.env["product.template"]
         for index in range(3):
@@ -87,8 +174,6 @@ class TestProductSeo(TransactionCase):
                 "sale_ok": True,
                 "is_published": True,
             })
-        self.template.write({"is_published": True})
-
         bulk = self.env["ab.product.seo.bulk.optimization"].create({
             "name": "Bulk Linked Product Test",
             "batch_limit": 1,
@@ -101,7 +186,6 @@ class TestProductSeo(TransactionCase):
         self.assertTrue(all(selected_templates.mapped("ab_product_id")))
 
     def test_only_missing_seo_filters_complete_products_before_limit(self):
-        self.template.write({"is_published": True})
         complete_product = self.env["ab_product"].create({
             "product_card_id": self.product_card.id,
             "code": "SEO-COMPLETE",
@@ -155,8 +239,6 @@ class TestProductSeo(TransactionCase):
             "website_meta_keywords": "قديم",
             "description_ecommerce": False,
         })
-        self.template.write({"is_published": True})
-
         bulk = self.env["ab.product.seo.bulk.optimization"].create({
             "name": "Arabic Bulk SEO Test",
             "batch_limit": 1,
@@ -172,7 +254,6 @@ class TestProductSeo(TransactionCase):
         self.assertTrue(arabic_template.description_ecommerce)
         self.assertIn("صيدليات عابدين", arabic_template.website_meta_title)
         self.assertIn("صيدليات عابدين", arabic_template.website_meta_description)
-        self.assertTrue(self.template.ab_drug_data_id.with_context(lang="ar_001").warnings)
 
     def test_bulk_optimization_updates_published_website_pages(self):
         view = self.env["ir.ui.view"].create({
@@ -230,33 +311,35 @@ class TestProductSeo(TransactionCase):
         gemini.action_test_configuration()
         self.assertEqual(gemini.test_status, "missing_key")
 
-    def test_generated_drug_data_uses_structured_response(self):
-        drug_data = self.env["ab.product.drug.data"].create({
-            "product_template_id": self.template.id,
-        })
-        drug_data._apply_generated_content({
-            "drug_data": {
-                "scientific_name": "Ibuprofen",
-                "commercial_names": "Advil, Brufen",
-                "drug_class": "medicine",
-                "regulatory_status": "OTC",
-                "common_uses": "Pain, fever, and inflammation relief.",
-                "side_effects": "Stomach upset and dizziness may occur.",
-                "warnings": "Avoid with active stomach ulcer unless directed by a physician.",
-                "pregnancy": "Avoid in third trimester.",
-                "breastfeeding": "Ask a pharmacist before use.",
-                "storage": "Store below 30C away from moisture.",
-                "interactions": "May interact with anticoagulants.",
-                "source_label": "Structured API Test",
-                "source_type": "assistant",
-            }
-        }, lang_code="en_US")
+    def test_drug_eg_api_data_upsert_uses_structured_response(self):
+        item = {
+            "commercial_name_en": "1 2 3 (ONE TWO THREE) 20 F.C.TABS.",
+            "commercial_name_ar": "1 2 3",
+            "scientific_name": "CHLORPHENIRAMINE+PARACETAMOL(ACETAMINOPHEN)+PSEUDOEPHEDRINE",
+            "manufacturer": "HIKMA PHARMA",
+            "drug_class": "COLD PRODUCTS",
+            "route": "oral",
+            "price_egp": 10,
+        }
 
-        self.assertEqual(drug_data.scientific_name, "Ibuprofen")
-        self.assertEqual(drug_data.regulatory_status, "OTC")
-        self.assertIn("Pain", drug_data.common_uses)
-        self.assertIn("ulcer", drug_data.warnings)
-        self.assertNotIn("See product leaflet", drug_data.common_uses)
+        drug_data = self.env["ab.product.drug.data"].upsert_from_drug_eg_item(
+            item,
+            source_url="https://ready-api.vercel.app/api/drugs-eg?page=1&limit=100",
+        )
+        updated = self.env["ab.product.drug.data"].upsert_from_drug_eg_item({
+            **item,
+            "price_egp": 64,
+        })
+
+        self.assertEqual(drug_data, updated)
+        self.assertEqual(drug_data.product_name, "1 2 3 (ONE TWO THREE) 20 F.C.TABS.")
+        self.assertEqual(drug_data.commercial_name_en, "1 2 3 (ONE TWO THREE) 20 F.C.TABS.")
+        self.assertEqual(drug_data.commercial_name_ar, "1 2 3")
+        self.assertEqual(drug_data.scientific_name, "CHLORPHENIRAMINE+PARACETAMOL(ACETAMINOPHEN)+PSEUDOEPHEDRINE")
+        self.assertEqual(drug_data.manufacturer, "HIKMA PHARMA")
+        self.assertEqual(drug_data.drug_class, "COLD PRODUCTS")
+        self.assertEqual(drug_data.price, 64.0)
+        self.assertIn("commercial_name_ar", drug_data.raw_payload)
 
     def test_assistant_token_usage_is_tracked(self):
         assistant = self.env["ab.seo.assistant"].create({
@@ -324,6 +407,113 @@ class TestProductSeo(TransactionCase):
         self.assertEqual(result["meta_title"], "Panadol")
         self.assertEqual(result["drug_data"]["common_uses"], "Pain relief")
 
+    def test_ai_parser_falls_back_for_plain_text(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "Gemini Plain Text Parser Test",
+            "provider": "google_gemini",
+            "assistant_type": "ai",
+            "model_name": "gemini-3.5-flash",
+            "base_url": "https://generativelanguage.googleapis.com/v1beta",
+            "endpoint_path": "/models/{model}:generateContent",
+        })
+
+        result = assistant._parse_ai_content(
+            "Panadol Extra is a pain relief product available from Abdin Pharmacies.",
+            product_name="Panadol Extra",
+            lang_code="en_US",
+        )
+
+        self.assertEqual(result["meta_title"], "Panadol Extra")
+        self.assertIn("pain relief", result["meta_description"])
+        self.assertIn("non-JSON", result["source_summary"])
+
+    def test_ai_parser_accepts_json_array(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "Gemini Array Parser Test",
+            "provider": "google_gemini",
+            "assistant_type": "ai",
+            "model_name": "gemini-3.5-flash",
+            "base_url": "https://generativelanguage.googleapis.com/v1beta",
+            "endpoint_path": "/models/{model}:generateContent",
+        })
+
+        result = assistant._parse_ai_content('[{"meta_title":"Panadol","meta_description":"Pain relief"}]')
+
+        self.assertEqual(result["meta_title"], "Panadol")
+        self.assertEqual(result["meta_description"], "Pain relief")
+
+    def test_ai_parser_normalizes_seo_component_response(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "SEO Component Parser Test",
+            "provider": "google_gemini",
+            "assistant_type": "ai",
+            "model_name": "gemini-3.5-flash",
+            "base_url": "https://generativelanguage.googleapis.com/v1beta",
+            "endpoint_path": "/models/{model}:generateContent",
+        })
+
+        result = assistant._parse_ai_seo_component_content(
+            '{"title":"Dove Powder Stick 74g","description":"Shop Dove Powder Stick 74g with clear product information from Abdin Pharmacies.","keywords":["Dove Powder","deodorant","personal care"],"slug":"dove-powder-stick-74g"}',
+            component_name="Dove Powder Stick 74g",
+            lang_code="en_US",
+        )
+
+        self.assertEqual(result["title"], "Dove Powder Stick 74g")
+        self.assertIn("Abdin Pharmacies", result["description"])
+        self.assertEqual(result["keywords"][0], "Dove Powder")
+        self.assertEqual(result["slug"], "dove-powder-stick-74g")
+
+    def test_ai_parser_removes_nested_json_from_seo_component_fields(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "SEO Component Nested JSON Parser Test",
+            "provider": "google_gemini",
+            "assistant_type": "ai",
+            "model_name": "gemini-3.5-flash",
+            "base_url": "https://generativelanguage.googleapis.com/v1beta",
+            "endpoint_path": "/models/{model}:generateContent",
+        })
+
+        result = assistant._parse_ai_seo_component_content(
+            '{"title":"{\\"title\\":\\"Luna Emollient Collagen & Vitamin E Cream 20gm | Abdeen\\",\\"description\\":\\"Shop Luna Emollient Collagen and Vitamin E Cream 20gm for daily skin hydration from Abdin Pharmacies.\\",\\"keywords\\":[\\"Luna cream\\",\\"collagen cream\\"],\\"slug\\":\\"luna-emollient-collagen-vitamin-e-cream-20gm\\"}"}',
+            component_name="Luna Emollient Collagen & Vitamin E Cream 20gm",
+            lang_code="en_US",
+        )
+
+        self.assertNotIn("{", result["title"])
+        self.assertNotIn('"title"', result["description"])
+        self.assertEqual(result["title"], "Luna Emollient Collagen & Vitamin E Cream 20gm | Abdeen")
+        self.assertIn("daily skin hydration", result["description"])
+
+    def test_ai_parser_maps_malformed_product_schema_to_seo_component_fields(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "SEO Component Malformed Product Schema Test",
+            "provider": "google_gemini",
+            "assistant_type": "ai",
+            "model_name": "gemini-3.5-flash",
+            "base_url": "https://generativelanguage.googleapis.com/v1beta",
+            "endpoint_path": "/models/{model}:generateContent",
+        })
+        content = (
+            '{"meta_title":"LUNA EMOLLIENT COLLAGEN &VITAMIN E CREAM 20GM 1 UNIT",'
+            '"meta_description":"LUNA EMOLLIENT COLLAGEN &VITAMIN E CREAM 20GM 1 UNIT product details and benefits",'
+            '"keywords":"LUNA EMOLLIENT COLLAGEN &VITAMIN E CREAM 20GM 1 UNIT",'
+            '"slug":"luna-emollient-collagen-vitamin-e-cream-20gm-1-unit",'
+            '"short_description":"Moisturizing cream with collagen and vitamin E for skin care",'
+            '"public_description":"LUNA EMOLLIENT COLLAGEN &VITAMIN E CREAM 20GM 1 UNIT is a rich and nourishing moisturizing cream.",'
+            '"drug_data":{"drug_class":"cosmetic","warnings":"Avoid using on broken or irritated skin",}'
+        )
+
+        result = assistant._parse_ai_seo_component_content(
+            content,
+            component_name="Luna Emollient Collagen & Vitamin E Cream 20gm",
+            lang_code="en_US",
+        )
+
+        self.assertNotIn("{", result["description"])
+        self.assertEqual(result["title"], "LUNA EMOLLIENT COLLAGEN &VITAMIN E CREAM 20GM 1 UNIT"[:70])
+        self.assertIn("product details and benefits", result["description"])
+        self.assertEqual(result["slug"], "luna-emollient-collagen-vitamin-e-cream-20gm-1-unit")
+
     def test_gemini_payload_requests_json_response(self):
         assistant = self.env["ab.seo.assistant"].create({
             "name": "Gemini JSON Payload Test",
@@ -337,6 +527,113 @@ class TestProductSeo(TransactionCase):
         payload = assistant._build_ai_payload("Return JSON")
 
         self.assertEqual(payload["generationConfig"]["responseMimeType"], "application/json")
+
+    def test_assistant_endpoint_adds_missing_https_scheme(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "URL Normalization Test",
+            "provider": "other",
+            "assistant_type": "ai",
+            "model_name": "demo-model",
+            "base_url": "api.example.com/v1",
+            "endpoint_path": "/chat/completions",
+        })
+
+        self.assertEqual(
+            assistant._get_endpoint_url(),
+            "https://api.example.com/v1/chat/completions",
+        )
+
+    def test_alibaba_qwen_endpoint_uses_workspace_compatible_mode(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "Qwen URL Normalization Test",
+            "provider": "alibaba_qwen",
+            "assistant_type": "ai",
+            "model_name": "Qwen",
+            "base_url": "ws-eish2a8n2iixd1b3.ap-southeast-1.maas.aliyuncs.com",
+            "endpoint_path": "/models/{model}:generateContent",
+        })
+
+        self.assertEqual(
+            assistant._get_endpoint_url(),
+            "https://ws-eish2a8n2iixd1b3.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1/chat/completions",
+        )
+
+    def test_alibaba_qwen_defaults_use_singapore_workspace(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "Qwen Defaults Test",
+            "provider": "alibaba_qwen",
+        })
+
+        assistant.action_apply_provider_defaults()
+
+        self.assertEqual(assistant.assistant_type, "ai")
+        self.assertEqual(assistant.model_name, "Qwen")
+        self.assertEqual(
+            assistant.base_url,
+            "https://ws-eish2a8n2iixd1b3.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1",
+        )
+        self.assertEqual(assistant.endpoint_path, "/chat/completions")
+
+    def test_openfda_defaults_use_drug_label_endpoint(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "openFDA Defaults Test",
+            "provider": "openfda",
+        })
+
+        assistant.action_apply_provider_defaults()
+
+        self.assertEqual(assistant.assistant_type, "data_source")
+        self.assertEqual(assistant.base_url, "https://api.fda.gov")
+        self.assertEqual(assistant.endpoint_path, "/drug/label.json")
+        self.assertEqual(assistant.api_key_name, "OPENFDA_API_KEY")
+        self.assertEqual(assistant.daily_limit, 120000)
+
+    def test_cosmetic_event_defaults_use_openfda_endpoint(self):
+        assistant = self.env["ab.seo.assistant"].create({
+            "name": "Cosmetic Event Defaults Test",
+            "provider": "openfda_cosmetic_event",
+        })
+
+        assistant.action_apply_provider_defaults()
+
+        self.assertEqual(assistant.assistant_type, "data_source")
+        self.assertEqual(assistant.base_url, "https://api.fda.gov")
+        self.assertEqual(assistant.endpoint_path, "/cosmetic/event.json")
+        self.assertEqual(assistant.api_key_name, "OPENFDA_API_KEY")
+        self.assertEqual(assistant.daily_limit, 120000)
+
+    def test_cosmetic_event_file_fallback_summarizes_reactions(self):
+        payload = {
+            "results": [
+                {
+                    "reactions": ["Inflammation", "Purpura", "Inflammation"],
+                    "outcomes": ["Other Serious or Important Medical Event"],
+                    "products": [{"product_name": "Dove Powder Stick 74g"}],
+                }
+            ]
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            path = "%s/cosmetic-event.json" % directory
+            with open(path, "w", encoding="utf-8") as handle:
+                json.dump(payload, handle)
+            assistant = self.env["ab.seo.assistant"].create({
+                "name": "Cosmetic Event File Test",
+                "provider": "openfda_cosmetic_event",
+                "assistant_type": "data_source",
+                "model_name": "openfda-cosmetic-event",
+                "base_url": "https://api.fda.gov",
+                "endpoint_path": "/cosmetic/event.json",
+                "api_key": "test-key",
+            })
+            status, message = assistant._test_configuration()
+            result = assistant.with_context(
+                cosmetic_event_fallback_path=path,
+            )._request_cosmetic_event_file_product("Dove Powder Stick 74g")
+
+        self.assertEqual(status, "ready", message)
+        self.assertIn("Dove Powder Stick 74g", result["meta_title"])
+        self.assertIn("Inflammation", result["warnings"])
+        self.assertIn("safety signal", result["public_description"])
 
     def test_openrouter_404_error_mentions_model(self):
         assistant = self.env["ab.seo.assistant"].create({

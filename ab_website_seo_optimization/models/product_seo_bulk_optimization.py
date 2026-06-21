@@ -54,8 +54,8 @@ class AbProductSeoBulkOptimization(models.Model):
     )
     publish_description = fields.Boolean(default=True)
     generate_drug_data = fields.Boolean(
-        default=True,
-        help="Create or refresh the public drug information block shown under the product description.",
+        default=False,
+        help="Deprecated. Drug-EG API data is now stored as a catalog cache and is not generated into product pages.",
     )
     request_delay_seconds = fields.Float(
         string="Delay Between Products",
@@ -250,6 +250,29 @@ class AbProductSeoBulkOptimization(models.Model):
                 self._finish_bulk_optimization()
         return True
 
+    def _run_single_template_optimization(self, template):
+        self.ensure_one()
+        if self.batch_limit <= 0:
+            self.batch_limit = 1
+        if not self.started_at:
+            self.started_at = fields.Datetime.now()
+        self.state = "running"
+        result = self._run_record_with_retries(lambda: self._optimize_template(template), template=template)
+        counters = {
+            "optimized": 1 if result == "optimized" else 0,
+            "skipped": 1 if result == "skipped" else 0,
+            "errors": 1 if result == "errors" else 0,
+            "processed": 0 if result == "deferred" else 1,
+        }
+        self.write({
+            "processed_count": self.processed_count + counters["processed"],
+            "optimized_count": self.optimized_count + counters["optimized"],
+            "skipped_count": self.skipped_count + counters["skipped"],
+            "error_count": self.error_count + counters["errors"],
+        })
+        self._finish_bulk_optimization()
+        return result
+
     def _get_cron_chunk_size(self):
         self.ensure_one()
         if self.assistant_id:
@@ -420,8 +443,6 @@ class AbProductSeoBulkOptimization(models.Model):
             generated_content_by_lang[lang_code] = content
             self._write_native_product_seo(template, content, lang_code)
             optimized = True
-        if self.generate_drug_data:
-            self._generate_product_drug_data(template, generated_content_by_lang=generated_content_by_lang)
         if not optimized:
             self._create_line("skipped", _("Native SEO fields are already complete."), template=template)
             return "skipped"
@@ -565,22 +586,14 @@ class AbProductSeoBulkOptimization(models.Model):
         usage = context.get("usage_manner") or ""
         origin = context.get("origin") or ""
         notes = context.get("notes") or ""
-        brand_name = "صيدليات عابدين" if lang_code == "ar_001" else "Abdin Pharmacies"
+        brand_name = _("Abdin Pharmacies")
         title_parts = [part for part in [product_name, scientific, brand_name] if part]
-        if lang_code == "ar_001":
-            description_parts = [
-                "اشتري %(product)s من صيدليات عابدين." % {"product": product_name} if product_name else "",
-                "الشركة المنتجة: %s." % manufacturer if manufacturer else "",
-                "الاسم العلمي: %s." % scientific if scientific else "",
-                "طريقة الاستخدام: %s." % usage if usage else "",
-            ]
-        else:
-            description_parts = [
-                _("Buy %(product)s from Abdin Pharmacies.") % {"product": product_name} if product_name else "",
-                _("Manufacturer: %s.") % manufacturer if manufacturer else "",
-                _("Scientific name: %s.") % scientific if scientific else "",
-                _("Usage: %s.") % usage if usage else "",
-            ]
+        description_parts = [
+            _("Buy %(product)s from Abdin Pharmacies.") % {"product": product_name} if product_name else "",
+            _("Manufacturer: %s.") % manufacturer if manufacturer else "",
+            _("Scientific name: %s.") % scientific if scientific else "",
+            _("Usage: %s.") % usage if usage else "",
+        ]
         description = " ".join(part for part in description_parts if part).strip()
         public_description = notes or description
         return {
@@ -653,25 +666,6 @@ class AbProductSeoBulkOptimization(models.Model):
             return False
         lines = str(html_escape(text)).splitlines() or [""]
         return "<p>%s</p>" % "<br/>".join(lines)
-
-    def _generate_product_drug_data(self, template, generated_content_by_lang=None):
-        self.ensure_one()
-        DrugData = self.env["ab.product.drug.data"].sudo()
-        drug_data = DrugData.search([
-            ("product_template_id", "=", template.id),
-            ("active", "=", True),
-        ], limit=1)
-        if not drug_data:
-            drug_data = DrugData.create({"product_template_id": template.id})
-        lang_codes = self._get_selected_lang_codes()
-        generated_content_by_lang = generated_content_by_lang or {}
-        for lang_code in lang_codes:
-            content = generated_content_by_lang.get(lang_code)
-            if content and (content.get("drug_data") or content.get("content_source") in ("assistant", "ready_api")):
-                drug_data._apply_generated_content(content, assistant=self.assistant_id, lang_code=lang_code)
-            else:
-                drug_data.with_context(lang=lang_code)._generate_from_product(lang_code)
-        return drug_data
 
     def _create_line(self, status, message, template=False, page=False):
         self.ensure_one()

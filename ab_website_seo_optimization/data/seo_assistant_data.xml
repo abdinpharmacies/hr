@@ -65,6 +65,22 @@
             <field name="notes">Useful for experiments with hosted open models. Availability depends on Hugging Face provider limits.</field>
         </record>
 
+        <record id="assistant_alibaba_qwen" model="ab.seo.assistant">
+            <field name="name">Alibaba Qwen SEO Drafts</field>
+            <field name="sequence">45</field>
+            <field name="assistant_type">ai</field>
+            <field name="provider">alibaba_qwen</field>
+            <field name="model_name">Qwen</field>
+            <field name="base_url">https://ws-eish2a8n2iixd1b3.ap-southeast-1.maas.aliyuncs.com/compatible-mode/v1</field>
+            <field name="endpoint_path">/chat/completions</field>
+            <field name="api_key_name">ALIBABA_QWEN_API_KEY</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">300</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">Alibaba Model Studio workspace endpoint for Singapore international deployment scope. Uses OpenAI-compatible chat completions.</field>
+        </record>
+
         <record id="assistant_ready_api_trial" model="ab.seo.assistant">
             <field name="name">Ready API Trial Enrichment</field>
             <field name="sequence">50</field>
@@ -79,6 +95,38 @@
             <field name="temperature">0.2</field>
             <field name="max_output_tokens">800</field>
             <field name="notes">Pharmaceutical enrichment only. Keep cached, rate-limited, manually controlled, and never source of truth.</field>
+        </record>
+
+        <record id="assistant_openfda_drug_label" model="ab.seo.assistant">
+            <field name="name">openFDA Drug Label Data</field>
+            <field name="sequence">55</field>
+            <field name="assistant_type">data_source</field>
+            <field name="provider">openfda</field>
+            <field name="model_name">openfda-drug-label</field>
+            <field name="base_url">https://api.fda.gov</field>
+            <field name="endpoint_path">/drug/label.json</field>
+            <field name="api_key_name">OPENFDA_API_KEY</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">120000</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">openFDA drug label source. API key is passed as api_key query parameter. Use for OTC/Rx label enrichment only, not as product source of truth. Standard limits: 240 requests/minute and 120,000 requests/day with API key.</field>
+        </record>
+
+        <record id="assistant_openfda_cosmetic_event" model="ab.seo.assistant">
+            <field name="name">openFDA Cosmetic Event Reports</field>
+            <field name="sequence">60</field>
+            <field name="assistant_type">data_source</field>
+            <field name="provider">openfda_cosmetic_event</field>
+            <field name="model_name">openfda-cosmetic-event</field>
+            <field name="base_url">https://api.fda.gov</field>
+            <field name="endpoint_path">/cosmetic/event.json</field>
+            <field name="api_key_name">OPENFDA_API_KEY</field>
+            <field name="free_tier">1</field>
+            <field name="daily_limit">120000</field>
+            <field name="temperature">0.2</field>
+            <field name="max_output_tokens">800</field>
+            <field name="notes">openFDA cosmetic adverse-event reports. API key is passed as api_key query parameter. Use only for safety signal context; this is not a cosmetic product catalog and does not provide ingredients, benefits, or official product descriptions. Falls back to the downloaded JSON file when the API is unavailable.</field>
         </record>
     </data>
 </odoo>

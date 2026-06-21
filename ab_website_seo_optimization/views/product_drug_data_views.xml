@@ -5,13 +5,16 @@
             <field name="name">ab.product.drug.data.list</field>
             <field name="model">ab.product.drug.data</field>
             <field name="arch" type="xml">
-                <list>
-                    <field name="product_template_id"/>
+                <list create="0" edit="0" delete="0">
+                    <field name="commercial_name_en"/>
+                    <field name="commercial_name_ar"/>
                     <field name="scientific_name"/>
-                    <field name="commercial_names"/>
+                    <field name="manufacturer"/>
+                    <field name="drug_class"/>
+                    <field name="route"/>
+                    <field name="price"/>
                     <field name="regulatory_status"/>
-                    <field name="source_type"/>
-                    <field name="is_published"/>
+                    <field name="last_synced_at"/>
                     <field name="active"/>
                 </list>
             </field>
@@ -21,52 +24,36 @@
             <field name="name">ab.product.drug.data.form</field>
             <field name="model">ab.product.drug.data</field>
             <field name="arch" type="xml">
-                <form>
-                    <header>
-                        <button name="action_generate_from_product"
-                                type="object"
-                                string="Generate From Product"
-                                class="btn-primary"
-                                groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
-                    </header>
+                <form create="0" edit="0" delete="0">
                     <sheet>
                         <group>
                             <group>
                                 <field name="active"/>
-                                <field name="is_published"/>
-                                <field name="product_template_id"/>
-                                <field name="ab_product_id"/>
+                                <field name="external_id"/>
+                                <field name="product_name"/>
+                                <field name="commercial_name_en"/>
+                                <field name="commercial_name_ar"/>
                                 <field name="scientific_name"/>
-                                <field name="commercial_names"/>
                                 <field name="active_ingredient"/>
+                                <field name="manufacturer"/>
                                 <field name="drug_class"/>
-                                <field name="regulatory_status"/>
                             </group>
                             <group>
-                                <field name="source_type"/>
-                                <field name="source_label"/>
+                                <field name="route"/>
+                                <field name="category"/>
+                                <field name="dosage_form"/>
+                                <field name="strength"/>
+                                <field name="package_size"/>
+                                <field name="price"/>
+                                <field name="currency"/>
+                                <field name="regulatory_status"/>
                                 <field name="source_url"/>
-                                <field name="assistant_id"/>
-                                <field name="last_generated_at"/>
+                                <field name="last_synced_at"/>
                             </group>
                         </group>
                         <notebook>
-                            <page string="Uses">
-                                <field name="common_uses"/>
-                            </page>
-                            <page string="Safety">
-                                <group>
-                                    <field name="side_effects"/>
-                                    <field name="warnings"/>
-                                    <field name="pregnancy"/>
-                                    <field name="breastfeeding"/>
-                                </group>
-                            </page>
-                            <page string="Storage and Interactions">
-                                <group>
-                                    <field name="storage"/>
-                                    <field name="interactions"/>
-                                </group>
+                            <page string="Raw API Payload">
+                                <field name="raw_payload" readonly="1"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -79,11 +66,17 @@
             <field name="model">ab.product.drug.data</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="product_template_id"/>
+                    <field name="product_name"/>
+                    <field name="commercial_name_en"/>
+                    <field name="commercial_name_ar"/>
                     <field name="scientific_name"/>
-                    <field name="commercial_names"/>
-                    <filter name="filter_published" string="Published" domain="[('is_published', '=', True)]"/>
+                    <field name="manufacturer"/>
+                    <field name="active_ingredient"/>
+                    <field name="drug_class"/>
                     <filter name="filter_active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="group_manufacturer" string="Manufacturer" context="{'group_by': 'manufacturer'}"/>
+                    <filter name="group_drug_class" string="Drug Class" context="{'group_by': 'drug_class'}"/>
+                    <filter name="group_route" string="Route" context="{'group_by': 'route'}"/>
                 </search>
             </field>
         </record>

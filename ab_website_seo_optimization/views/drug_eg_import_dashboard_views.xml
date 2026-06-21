@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="ab_drug_eg_import_dashboard_singleton" model="ab.drug.eg.import.dashboard">
+            <field name="name">Drug-EG Import Dashboard</field>
+        </record>
+
+        <record id="view_ab_drug_eg_import_dashboard_form" model="ir.ui.view">
+            <field name="name">ab.drug.eg.import.dashboard.form</field>
+            <field name="model">ab.drug.eg.import.dashboard</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="1" delete="0">
+                    <header>
+                        <button name="action_start_import"
+                                type="object"
+                                string="Start Import"
+                                class="btn-primary"
+                                groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                        <button name="action_continue_import"
+                                type="object"
+                                string="Continue Later"
+                                class="btn-success"
+                                groups="ab_website_seo_optimization.group_ab_website_seo_optimization_manager"/>
+                        <button name="action_check_checkpoint"
+                                type="object"
+                                string="Check Checkpoint"
+                                class="btn-secondary"/>
+                    </header>
+                    <sheet>
+                        <group string="Drug-EG Import Status" col="4">
+                            <field name="all_drugs" readonly="1"/>
+                            <field name="imported_count" readonly="1"/>
+                            <field name="remaining_count" readonly="1"/>
+                            <field name="last_checkpoint_at" readonly="1"/>
+                        </group>
+                        <group string="Checkpoint">
+                            <group>
+                                <field name="next_page" readonly="1"/>
+                                <field name="request_count" readonly="1"/>
+                                <field name="done" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="api_url"/>
+                                <field name="page_size"/>
+                                <field name="max_requests_per_run"/>
+                                <field name="request_delay_seconds"/>
+                            </group>
+                        </group>
+                        <field name="last_message" readonly="1" nolabel="1"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_drug_eg_import_dashboard" model="ir.actions.act_window">
+            <field name="name">Drug-EG Import Dashboard</field>
+            <field name="res_model">ab.drug.eg.import.dashboard</field>
+            <field name="view_mode">form</field>
+            <field name="res_id" ref="ab_drug_eg_import_dashboard_singleton"/>
+            <field name="view_id" ref="view_ab_drug_eg_import_dashboard_form"/>
+        </record>
+
+        <menuitem id="ab_drug_eg_menu_root"
+                  name="Drug-EG API Data"
+                  parent="ab_website_seo_optimization_menu_root"
+                  sequence="35"/>
+
+        <menuitem id="ab_drug_eg_import_dashboard_menu"
+                  name="Import Dashboard"
+                  parent="ab_drug_eg_menu_root"
+                  action="action_ab_drug_eg_import_dashboard"
+                  sequence="10"/>
+
+        <menuitem id="ab_product_drug_data_imported_menu"
+                  name="Imported Drugs"
+                  parent="ab_drug_eg_menu_root"
+                  action="action_ab_product_drug_data"
+                  sequence="20"/>
+    </data>
+</odoo>

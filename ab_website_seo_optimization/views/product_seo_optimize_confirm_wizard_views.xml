@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_product_seo_optimize_confirm_wizard_form" model="ir.ui.view">
+            <field name="name">ab.product.seo.optimize.confirm.wizard.form</field>
+            <field name="model">ab.product.seo.optimize.confirm.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Confirm SEO Update">
+                    <sheet>
+                        <group>
+                            <field name="message" readonly="1" nolabel="1"/>
+                            <field name="seo_id" readonly="1"/>
+                            <field name="product_template_id" readonly="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button name="action_optimize_and_update" type="object" string="Optimize and Update Product"
+                                class="btn-primary"/>
+                        <button name="action_discard" type="object" string="Discard" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
