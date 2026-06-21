@@ -1,4 +1,5 @@
 import base64
+from unittest.mock import patch
 
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
@@ -89,7 +90,6 @@ class TestAbQualityAssurance(TransactionCase):
                 "max_score": 30,
             }
         )
-
     def _create_user(self, name, login, extra_groups):
         partner_vals = {
             "name": name,
@@ -134,6 +134,60 @@ class TestAbQualityAssurance(TransactionCase):
             set(self.Standards.search([]).ids),
         )
 
+    def test_visit_creation_does_not_send_telegram_notification(self):
+        self.env["ab_hr_bot"].sudo().create(
+            {
+                "employee_id": self.section_manager_employee.id,
+                "chat_id": "556677",
+            }
+        )
+        sent_messages = []
+
+        def _capture_send(service_self, chat_id, message):
+            sent_messages.append((chat_id, message))
+            return True
+
+        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+            self.Visits.with_user(self.member_user).create(
+                {
+                    "department_id": self.visited_department.id,
+                }
+            )
+
+        self.assertEqual(sent_messages, [])
+
+    def test_visit_submit_does_not_notify_visited_branch_manager(self):
+        self.visited_department.manager_id = self.outsider_employee.id
+        self.env["ab_hr_bot"].sudo().create(
+            {
+                "employee_id": self.section_manager_employee.id,
+                "chat_id": "556677",
+            }
+        )
+        self.env["ab_hr_bot"].sudo().create(
+            {
+                "employee_id": self.outsider_employee.id,
+                "chat_id": "998877",
+            }
+        )
+        sent_messages = []
+
+        def _capture_send(service_self, chat_id, message):
+            sent_messages.append((chat_id, message))
+            return True
+
+        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+            visit = self.Visits.with_user(self.member_user).create(
+                {
+                    "department_id": self.visited_department.id,
+                }
+            )
+            for line in visit.visit_section_ids.mapped("visit_line_ids"):
+                line.with_user(self.member_user).write({"score": line.max_score})
+            visit.with_user(self.member_user).action_submit_visit()
+
+        self.assertEqual([chat_id for chat_id, _message in sent_messages], ["556677"])
+
     def test_visit_department_change_updates_generated_name(self):
         other_department = self.Departments.create({"name": "فرع المتابعة"})
         visit = self.Visits.with_user(self.member_user).create(
@@ -160,6 +214,61 @@ class TestAbQualityAssurance(TransactionCase):
         visit.with_user(self.admin_user).action_submit_visit()
 
         self.assertEqual(visit.employee_id, self.admin_employee)
+
+    def test_visit_submission_sends_submitted_telegram_to_section_manager(self):
+        self.env["ab_hr_bot"].sudo().create(
+            {
+                "employee_id": self.section_manager_employee.id,
+                "chat_id": "556677",
+            }
+        )
+        sent_messages = []
+
+        def _capture_send(service_self, chat_id, message):
+            sent_messages.append((chat_id, message))
+            return True
+
+        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+            visit = self.Visits.with_user(self.member_user).create(
+                {
+                    "department_id": self.visited_department.id,
+                }
+            )
+            for line in visit.visit_section_ids.mapped("visit_line_ids"):
+                line.with_user(self.member_user).write({"score": line.max_score})
+            visit.with_user(self.member_user).action_submit_visit()
+
+        self.assertEqual(len(sent_messages), 1)
+        self.assertEqual(sent_messages[0][0], "556677")
+        self.assertIn("Submitted", sent_messages[0][1])
+        self.assertIn("Cleanliness", sent_messages[0][1])
+        self.assertIn("Documentation", sent_messages[0][1])
+
+    def test_repeated_same_status_notification_is_not_sent_twice(self):
+        self.env["ab_hr_bot"].sudo().create(
+            {
+                "employee_id": self.section_manager_employee.id,
+                "chat_id": "556677",
+            }
+        )
+        sent_messages = []
+
+        def _capture_send(service_self, chat_id, message):
+            sent_messages.append((chat_id, message))
+            return True
+
+        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+            visit = self.Visits.with_user(self.member_user).create(
+                {
+                    "department_id": self.visited_department.id,
+                }
+            )
+            for line in visit.visit_section_ids.mapped("visit_line_ids"):
+                line.with_user(self.member_user).write({"score": line.max_score})
+            visit.with_user(self.member_user).action_submit_visit()
+            visit._notify_section_department_managers_telegram("submitted")
+
+        self.assertEqual(len(sent_messages), 1)
 
     def test_visit_creation_hides_sections_without_active_standards(self):
         empty_section = self.Sections.with_user(self.quality_manager_user).create(
