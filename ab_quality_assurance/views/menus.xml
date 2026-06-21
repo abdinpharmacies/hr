@@ -27,6 +27,13 @@
                   action="ab_quality_assurance_dashboard_action"
                   sequence="20"/>
 
+        <menuitem id="ab_quality_assurance_department_response_menu"
+                  name="Department Responses"
+                  parent="ab_quality_assurance_root_menu"
+                  action="ab_quality_assurance_visit_line_response_action"
+                  sequence="22"
+                  groups="ab_quality_assurance.group_ab_quality_assurance_department_manager"/>
+
         <menuitem id="ab_quality_assurance_section_menu"
                   name="Standards"
                   parent="ab_quality_assurance_root_menu"

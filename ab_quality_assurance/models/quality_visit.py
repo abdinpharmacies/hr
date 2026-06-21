@@ -3,6 +3,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from uuid import uuid4
 
 VISIT_SEQUENCE_CODE = "ab_quality_assurance.visit"
+VISIT_NAME_DEPARTMENT_SEPARATOR = " - "
 BRANCH_PREFIX = "فرع"
 QUALITY_EDITOR_GROUPS = (
     "ab_quality_assurance.group_ab_quality_assurance_user",
@@ -62,6 +63,7 @@ class AbQualityAssuranceVisit(models.Model):
     visit_date = fields.Date(required=True, default=fields.Date.today)
     notes = fields.Text(copy=False)
     can_edit_evaluation = fields.Boolean(compute="_compute_can_edit_evaluation")
+    can_reply_department_response = fields.Boolean(compute="_compute_can_reply_department_response")
     state = fields.Selection(
         [("draft", _("Draft")), ("submitted", _("Submitted"))],
         default="draft",
@@ -108,6 +110,18 @@ class AbQualityAssuranceVisit(models.Model):
         can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
         for record in self:
             record.can_edit_evaluation = bool(can_manage_all or (can_edit_own and record.user_id == user))
+
+    @api.depends("state", "visit_section_ids.department_manager_id.user_id")
+    @api.depends_context("uid")
+    def _compute_can_reply_department_response(self):
+        user = self.env.user
+        is_department_manager = user.has_group("ab_quality_assurance.group_ab_quality_assurance_department_manager")
+        for record in self:
+            record.can_reply_department_response = bool(
+                is_department_manager
+                and record.state == "submitted"
+                and user in record.visit_section_ids.mapped("department_manager_id.user_id")
+            )
 
     @api.depends("state", "name")
     @api.depends_context("lang")
@@ -206,35 +220,45 @@ class AbQualityAssuranceVisit(models.Model):
                 raise ValidationError(
                     _("Visits can only evaluate branch departments whose names start with '%s'.") % BRANCH_PREFIX)
 
-    # @api.model_create_multi
-    # def create(self, vals_list):
-    #     prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
-    #     records = super().create(prepared_vals_list)
-    #     records._validate_visit_sections()
-    #     records._sync_section_department_followers()
-    #     return records
-    #
-    # def write(self, vals):
-    #     if not self._is_quality_editor() or not self._can_manage_visit():
-    #         raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
-    #
-    #     if any(record.state == "submitted" for record in self) and not self.env.context.get(
-    #             "allow_submitted_visit_write"):
-    #         raise UserError(_("Submitted visits cannot be modified."))
-    #
-    #     prepared_vals = self._prepare_create_or_write_vals(vals, for_create=False)
-    #     if prepared_vals.get("department_id") and "visit_section_ids" not in prepared_vals:
-    #         sections = self._get_active_sections()
-    #         prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
-    #     result = super().write(prepared_vals)
-    #     self._validate_visit_sections()
-    #     self._sync_section_department_followers()
-    #     return result
-    #
-    # def unlink(self):
-    #     if any(record.state == "submitted" for record in self):
-    #         raise UserError(_("Submitted visits cannot be deleted."))
-    #     return super().unlink()
+    @api.model_create_multi
+    def create(self, vals_list):
+        prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
+        records = super().create(prepared_vals_list)
+        records._validate_visit_sections()
+        records._sync_section_department_followers()
+        return records
+
+    def write(self, vals):
+        if not self._is_quality_editor() or not self._can_manage_visit():
+            raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
+
+        if any(record.state == "submitted" for record in self) and not self.env.context.get(
+                "allow_submitted_visit_write"):
+            raise UserError(_("Submitted visits cannot be modified."))
+
+        prepared_vals = self._prepare_create_or_write_vals(vals, for_create=False)
+        if prepared_vals.get("department_id") and "visit_section_ids" not in prepared_vals:
+            sections = self._get_active_sections()
+            prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
+        if prepared_vals.get("department_id") and "name" not in prepared_vals:
+            for record in self:
+                record_vals = dict(prepared_vals)
+                record_vals["name"] = record._format_visit_name(
+                    record.name or record._next_visit_name(),
+                    record_vals["department_id"],
+                )
+                super(AbQualityAssuranceVisit, record).write(record_vals)
+            result = True
+        else:
+            result = super().write(prepared_vals)
+        self._validate_visit_sections()
+        self._sync_section_department_followers()
+        return result
+
+    def unlink(self):
+        if any(record.state == "submitted" for record in self):
+            raise UserError(_("Submitted visits cannot be deleted."))
+        return super().unlink()
 
     def _is_quality_editor(self):
         return any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
@@ -299,12 +323,37 @@ class AbQualityAssuranceVisit(models.Model):
         return "QA-VISIT-%s" % uuid4().hex[:8].upper()
 
     @api.model
+    def _format_visit_name(self, base_name, department_id=False):
+        name = (base_name or "").strip()
+        department_name = self._get_department_name(department_id)
+        if not department_name:
+            return name
+        sequence_name = self._strip_department_from_visit_name(name)
+        return "%s%s%s" % (sequence_name, VISIT_NAME_DEPARTMENT_SEPARATOR, department_name)
+
+    @api.model
+    def _strip_department_from_visit_name(self, name):
+        return (name or "").split(VISIT_NAME_DEPARTMENT_SEPARATOR, 1)[0].strip()
+
+    @api.model
+    def _get_department_name(self, department_id):
+        if not department_id:
+            return ""
+        department = self.env["ab_hr_department"].sudo().browse(department_id)
+        return (department.exists().name or "").strip()
+
+    @api.model
     def _prepare_create_or_write_vals(self, vals, for_create=False):
         prepared_vals = dict(vals or {})
         if for_create and not prepared_vals.get("name"):
             prepared_vals["name"] = self._next_visit_name()
         elif for_create and prepared_vals.get("name") in {"New", "جديد"}:
             prepared_vals["name"] = self._next_visit_name()
+        if for_create and prepared_vals.get("department_id"):
+            prepared_vals["name"] = self._format_visit_name(
+                prepared_vals.get("name") or self._next_visit_name(),
+                prepared_vals["department_id"],
+            )
         if for_create and not prepared_vals.get("user_id"):
             prepared_vals["user_id"] = self.env.user.id
         if for_create and not prepared_vals.get("employee_id"):
