@@ -17,13 +17,20 @@ class TestAbQualityAssurance(TransactionCase):
         self.group_user = self.env.ref("base.group_user")
         self.ro_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_ro")
         self.member_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_user")
+        self.department_manager_group = self.env.ref(
+            "ab_quality_assurance.group_ab_quality_assurance_department_manager"
+        )
         self.admin_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_manager")
         self.manager_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_manager")
 
         self.member_user = self._create_user("QA Member", "qa_member_test", [self.member_group.id])
         self.admin_user = self._create_user("QA Admin", "qa_admin_test", [self.admin_group.id])
         self.quality_manager_user = self._create_user("QA Manager", "qa_manager_test", [])
-        self.section_manager_user = self._create_user("Section Manager", "qa_section_manager_test", [])
+        self.section_manager_user = self._create_user(
+            "Section Manager",
+            "qa_section_manager_test",
+            [self.department_manager_group.id],
+        )
         self.outsider_user = self._create_user("QA Outsider", "qa_outsider_test", [])
 
         self.member_employee = self._create_employee("QA Member Employee", self.member_user)
@@ -120,11 +127,25 @@ class TestAbQualityAssurance(TransactionCase):
             }
         )
         self.assertEqual(visit.employee_id, self.member_employee)
+        self.assertIn(self.visited_department.name, visit.name)
         self.assertEqual(len(visit.visit_section_ids), 2)
         self.assertSetEqual(
             set(visit.visit_section_ids.mapped("visit_line_ids.standard_id").ids),
             set(self.Standards.search([]).ids),
         )
+
+    def test_visit_department_change_updates_generated_name(self):
+        other_department = self.Departments.create({"name": "فرع المتابعة"})
+        visit = self.Visits.with_user(self.member_user).create(
+            {
+                "department_id": self.visited_department.id,
+            }
+        )
+        sequence_name = visit.name.split(" - ", 1)[0]
+
+        visit.with_user(self.member_user).write({"department_id": other_department.id})
+
+        self.assertEqual(visit.name, "%s - %s" % (sequence_name, other_department.name))
 
     def test_visit_submission_sets_performer_to_submitter_employee(self):
         visit = self.Visits.with_user(self.admin_user).create(
@@ -237,6 +258,35 @@ class TestAbQualityAssurance(TransactionCase):
         first_line = visit.visit_section_ids.mapped("visit_line_ids").sorted("id")[0]
         with self.assertRaises(AccessError):
             first_line.with_user(self.section_manager_user).write({"score": 0})
+
+    def test_department_manager_can_reply_to_submitted_standard_line(self):
+        visit = self.Visits.with_user(self.member_user).create(
+            {
+                "department_id": self.visited_department.id,
+            }
+        )
+        for line in visit.visit_section_ids.mapped("visit_line_ids"):
+            line.with_user(self.member_user).write({"score": line.max_score})
+        visit.with_user(self.member_user).action_submit_visit()
+
+        line = visit.visit_section_ids.mapped("visit_line_ids").filtered(
+            lambda current_line: current_line.standard_id == self.standard
+        )
+        action = line.with_user(self.section_manager_user).action_open_department_response()
+        self.assertEqual(action["res_model"], "ab_quality_assurance_visit_line")
+        self.assertEqual(action["res_id"], line.id)
+        self.assertEqual(action["target"], "new")
+
+        line.with_user(self.section_manager_user).write(
+            {"department_response": "The department reviewed the score and started corrective action."}
+        )
+
+        self.assertEqual(
+            line.department_response,
+            "The department reviewed the score and started corrective action.",
+        )
+        with self.assertRaises(AccessError):
+            line.with_user(self.section_manager_user).write({"score": 0})
 
     def test_submitted_visit_scores_are_locked(self):
         visit = self.Visits.with_user(self.member_user).create(

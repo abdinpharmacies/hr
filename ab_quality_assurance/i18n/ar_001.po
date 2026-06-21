@@ -1200,13 +1200,14 @@ msgstr "يجب أن يكون مرجع الزيارة فريدًا."
 #: code:addons/ab_quality_assurance/models/quality_visit.py:0
 #: code:addons/ab_quality_assurance/static/src/js/ab_quality_assurance_form_controller.js:0
 #: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit__employee_id
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_line__employee_id
 msgid "Visited By"
 msgstr "منفذ الزيارة"
 
 #. module: ab_quality_assurance
 #: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
 msgid "Visited By:"
-msgstr "بواسطة:"
+msgstr "منفذ الزيارة:"
 
 #. module: ab_quality_assurance
 #. odoo-python
@@ -1244,3 +1245,106 @@ msgstr "الموظف"
 #: code:addons/ab_quality_assurance/models/quality_visit.py:0
 msgid "submitted"
 msgstr "معتمد"
+
+#. module: ab_quality_assurance
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit__can_reply_department_response
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_line__can_reply_department_response
+msgid "Can Reply Department Response"
+msgstr "يمكنه الرد على استجابة الإدارة"
+
+#. module: ab_quality_assurance
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_line__department_response
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_response_view_form
+#. odoo-python
+#: code:addons/ab_quality_assurance/models/quality_visit_line.py:0
+msgid "Department Response"
+msgstr "رد الإدارة"
+
+#. module: ab_quality_assurance
+#: model:ir.actions.act_window,name:ab_quality_assurance.ab_quality_assurance_visit_line_response_action
+#: model:ir.ui.menu,name:ab_quality_assurance.ab_quality_assurance_department_response_menu
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_response_view_list
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_response_view_search
+msgid "Department Responses"
+msgstr "ردود الإدارات"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_response_view_form
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_section_view_form
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_view_form
+msgid "Add the department response to this standard score..."
+msgstr "أضف رد الإدارة على درجة هذا المعيار..."
+
+#. module: ab_quality_assurance
+#. odoo-python
+#: code:addons/ab_quality_assurance/models/quality_visit_line.py:0
+msgid ""
+"Department managers can only update Department Response on their submitted "
+"standards."
+msgstr "يمكن لمديري الإدارات تحديث رد الإدارة فقط على المعايير المعتمدة الخاصة بهم."
+
+#. module: ab_quality_assurance
+#: model:res.groups,name:ab_quality_assurance.group_ab_quality_assurance_department_manager
+msgid "Quality Assurance Department Manager"
+msgstr "مدير إدارة ضمان الجودة"
+
+#. module: ab_quality_assurance
+#: model:ir.rule,name:ab_quality_assurance.rule_ab_quality_assurance_department_manager_visit_read
+msgid "Quality Assurance Department Manager Visit Read"
+msgstr "قراءة زيارات مدير إدارة ضمان الجودة"
+
+#. module: ab_quality_assurance
+#: model:ir.rule,name:ab_quality_assurance.rule_ab_quality_assurance_department_manager_section_read
+msgid "Quality Assurance Department Manager Section Read"
+msgstr "قراءة بنود مدير إدارة ضمان الجودة"
+
+#. module: ab_quality_assurance
+#: model:ir.rule,name:ab_quality_assurance.rule_ab_quality_assurance_department_manager_standard_read
+msgid "Quality Assurance Department Manager Standard Read"
+msgstr "قراءة معايير مدير إدارة ضمان الجودة"
+
+#. module: ab_quality_assurance
+#: model:ir.rule,name:ab_quality_assurance.rule_ab_quality_assurance_department_manager_visit_section_read
+msgid "Quality Assurance Department Manager Visit Section Read"
+msgstr "قراءة بنود زيارات مدير إدارة ضمان الجودة"
+
+#. module: ab_quality_assurance
+#: model:ir.rule,name:ab_quality_assurance.rule_ab_quality_assurance_department_manager_visit_line_response
+msgid "Quality Assurance Department Manager Visit Line Response"
+msgstr "رد مدير إدارة ضمان الجودة على معيار الزيارة"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_section_view_form
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_view_form
+msgid "Reply"
+msgstr "رد"
+
+#. module: ab_quality_assurance
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_section__department_id
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_section__department_id
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_section_view_search
+msgid "Responsible Department"
+msgstr "الإدارة المسؤولة"
+
+#. module: ab_quality_assurance
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_section__department_manager_id
+msgid "Responsible Manager"
+msgstr "المدير المسؤول"
+
+#. module: ab_quality_assurance
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_response_view_search
+msgid "Visitor"
+msgstr "منفذ الزيارة"
+
+#. module: ab_quality_assurance
+#: model:ir.model.fields,field_description:ab_quality_assurance.field_ab_quality_assurance_visit_line__note
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_response_view_form
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_response_view_list
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_line_view_form
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_section_view_form
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.ab_quality_assurance_visit_view_form
+#: model_terms:ir.ui.view,arch_db:ab_quality_assurance.report_ab_quality_assurance_visit_document
+#. odoo-python
+#: code:addons/ab_quality_assurance/models/quality_visit.py:0
+msgid "Score Note"
+msgstr "ملاحظة الدرجة"
