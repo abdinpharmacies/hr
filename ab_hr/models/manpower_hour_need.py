@@ -56,10 +56,23 @@ class ManpowerHourNeed(models.Model):
             rec.shortage_hours = max(rec.required_operating_hours - rec.actual_available_hours, 0.0)
 
     def _compute_kanban_labels(self):
+        is_arabic = (self.env.lang or '').startswith('ar')
+        if is_arabic:
+            labels = {
+                'required': 'الساعات المطلوبة',
+                'actual': 'الساعات الفعلية',
+                'shortage': 'ساعات العجز',
+            }
+        else:
+            labels = {
+                'required': _('Required Hours'),
+                'actual': _('Actual Hours'),
+                'shortage': _('Shortage Hours'),
+            }
         for rec in self:
-            rec.required_hours_label = _('Required Hours')
-            rec.actual_hours_label = _('Actual Hours')
-            rec.shortage_hours_label = _('Shortage Hours')
+            rec.required_hours_label = labels['required']
+            rec.actual_hours_label = labels['actual']
+            rec.shortage_hours_label = labels['shortage']
 
     @api.onchange('workplace', 'job_title', 'required_operating_hours', 'default_actual_daily_hours')
     def _onchange_capacity_inputs(self):
