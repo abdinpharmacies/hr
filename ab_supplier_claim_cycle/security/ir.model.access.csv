@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+invoice_user,invoice_user,model_ab_supplier_claim_cycle,supplier_claim_group_user,1,1,1,0
+invoice_admin,invoice_admin,model_ab_supplier_claim_cycle,supplier_claim_group_admin,1,1,1,1
+invoice_reviewer,invoice_reviewer,model_ab_supplier_claim_cycle,supplier_claim_group_reviewer,1,0,0,0
+ab_supplier_admin,ab_supplier_admin,ab_supplier.model_ab_supplier,supplier_claim_group_admin,1,1,1,0
+ab_supplier_user,ab_supplier_user,ab_supplier.model_ab_supplier,supplier_claim_group_user,1,0,0,0
+

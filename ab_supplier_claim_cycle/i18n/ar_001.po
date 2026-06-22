@@ -1,0 +1,304 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_supplier_claim_cycle
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-25 11:16+0000\n"
+"PO-Revision-Date: 2025-02-25 11:16+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "After closed you can't edit again"
+msgstr "لا يمكن التعديل بعد اختيار تسليم الشيك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__amount_of_check
+msgid "Amount Of Check"
+msgstr "قيمة الشيك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__area
+msgid "Area"
+msgstr "الاقليم"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__bank_acc
+msgid "Bank Acc"
+msgstr "حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Bank acc"
+msgstr "حسابات البنوك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.invoice_menu
+msgid "Claim"
+msgstr "المطالبات"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.claim_sub_menu
+msgid "Claim details"
+msgstr "تفاصيل المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__closed
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Closed"
+msgstr "تسليم الشيك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__copy
+msgid "Copy"
+msgstr "صورة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__create_uid
+msgid "Created by"
+msgstr "الموظف"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__create_date
+msgid "Created on"
+msgstr "تاريخ المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__display_name
+msgid "Display Name"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__id
+msgid "ID"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__inventory
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Inventory"
+msgstr "المخزون"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle____last_update
+msgid "Last Modified on"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
+msgid "Last Update Date"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_main_attachment_id
+msgid "Main Attachment"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__area__north
+msgid "North"
+msgstr "الاقليم الشمالى"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__num_of_invoice
+msgid "Num Of Invoice"
+msgstr "عدد فواتير المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_needaction_counter
+msgid "Number of messages which requires an action"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,help:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread_counter
+msgid "Number of unread messages"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__type_of_invoice__original
+msgid "Original"
+msgstr "اصل"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__purchase
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Purchase"
+msgstr "المشتريات"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
+msgid "Received Date"
+msgstr "تاريخ استلام المطالبة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__sign_check
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Sign check"
+msgstr "توقيع الشيك"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__area__south
+msgid "South"
+msgstr "الاقليم الجنوبى"
+
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__status
+msgid "Status"
+msgstr "المرحلة"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_id
+msgid "Supplier"
+msgstr "نوع مستند الفواتير"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__type_of_invoice
+msgid "Type Of Invoice"
+msgstr "نوع مستند الفواتير"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread
+msgid "Unread Messages"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_unread_counter
+msgid "Unread Messages Counter"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__user_id
+msgid "User"
+msgstr "الموظف"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.module.category,name:ab_supplier_claim_cycle.ab_supplier_claim_cycle_category
+#: model:ir.ui.menu,name:ab_supplier_claim_cycle.claim_menu_root
+msgid "Supplier Claim"
+msgstr "مطالبات الموردين(سكرتارية)"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__suppliers
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "Suppliers"
+msgstr "المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model,name:ab_supplier_claim_cycle.model_ab_supplier_claim_cycle
+msgid "ab_supplier_claim_cycle"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.actions.act_window,name:ab_supplier_claim_cycle.invoice_action
+msgid "invoice"
+msgstr "المطالبات"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "invoice_form"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
+msgid "invoice_tree"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_user
+msgid "supplier claim User"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_admin
+msgid "supplier claim admin"
+msgstr ""
+
+#. module: ab_supplier_claim_cycle
+#: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_reviewer
+msgid "supplier claim reviewer"
+msgstr ""

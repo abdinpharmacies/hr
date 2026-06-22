@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="rule_suppliers_pervent" model="ir.rule">
+            <field name="name">rule_suppliers_pervent</field>
+            <field  name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user'))]"/>
+            <field name="domain_force">[(0, '=', 1 )]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+        <record id="rule_closed_allow" model="ir.rule">
+            <field name="name">rule_closed_allow</field>
+            <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user'))]"/>
+            <field name="domain_force">
+                [('status', '!=', 'closed'),('user_id', '=', user.id)]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+
+        <record id="rule_closed_status" model="ir.rule">
+            <field name="name">rule_closed_status</field>
+            <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user'))]"/>
+            <field name="domain_force">
+                [('status', '=', 'closed'),
+                ('user_id', '=', user.id)]
+            </field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+            <!--<field name="global" eval="1"/> -->
+        </record>
+
+
+    </data>
+</odoo>
