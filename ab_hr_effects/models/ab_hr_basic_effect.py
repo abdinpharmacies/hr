@@ -52,6 +52,37 @@ class AbHrPayrollEffect(models.Model):
         day_off_number = [('1', '1'), ('2', '2'), ('3', '3'), ('4', '4'), ('5', '5'), ('6', '6')]
         return day_off_number
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._sync_manpower_hour_need_if_basic_working_hour()
+        return records
+
+    def write(self, vals):
+        tracked_fields = {'employee_id', 'effect_type_id', 'effect_value', 'active'}
+        employees = self.mapped('employee_id')
+        was_basic = self.filtered(lambda rec: rec.basic_working_hour_number)
+        result = super().write(vals)
+        if tracked_fields.intersection(vals) and (was_basic or self.filtered(lambda rec: rec.basic_working_hour_number)):
+            employees |= self.mapped('employee_id')
+            self._sync_manpower_hour_need(employees)
+        return result
+
+    def unlink(self):
+        employees = self.filtered(lambda rec: rec.basic_working_hour_number).mapped('employee_id')
+        result = super().unlink()
+        self._sync_manpower_hour_need(employees)
+        return result
+
+    def _sync_manpower_hour_need_if_basic_working_hour(self):
+        basic_records = self.filtered(lambda rec: rec.basic_working_hour_number)
+        basic_records._sync_manpower_hour_need(basic_records.mapped('employee_id'))
+
+    def _sync_manpower_hour_need(self, employees):
+        if not employees or 'ab_hr_manpower_hour_need' not in self.env.registry.models:
+            return
+        self.env['ab_hr_manpower_hour_need'].sudo()._refresh_actual_hours_for_employees(employees.sudo())
+
     @api.constrains('employee_id', 'effect_type_id', 'effect_value',
                     'is_day_off_date', 'weekly_day_off_integer', 'active')
     def _validate_all_constraints(self):
