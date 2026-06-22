@@ -1,0 +1,132 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_product_seo_enhancement
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-22 00:00+0000\n"
+"PO-Revision-Date: 2026-06-22 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "active ingredient unavailable"
+msgstr "المادة الفعالة غير متاحة"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "barcode missing"
+msgstr "الباركود غير موجود"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "category missing"
+msgstr "التصنيف غير موجود"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "manufacturer missing"
+msgstr "الشركة المصنعة غير موجودة"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "product name missing"
+msgstr "اسم المنتج غير موجود"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "scientific name unavailable"
+msgstr "الاسم العلمي غير متاح"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Generated from enriched trusted product context. Factual medical fields are source-only."
+msgstr "تم الإنشاء من سياق منتج موثوق وموسع. الحقول الطبية الواقعية تعتمد على المصدر فقط."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Trusted Odoo product facts with AI-generated SEO copy"
+msgstr "حقائق منتج موثوقة من أودو مع محتوى SEO منشأ بالذكاء الاصطناعي"
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Shop %(product)s, a fragrance product, from Abdin Pharmacies with clear product details."
+msgstr "تسوق %(product)s، منتج عطور، من صيدليات عابدين مع تفاصيل واضحة عن المنتج."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Shop %(product)s for daily personal care from Abdin Pharmacies with clear product details."
+msgstr "تسوق %(product)s للعناية الشخصية اليومية من صيدليات عابدين مع تفاصيل واضحة عن المنتج."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Find %(product)s device information at Abdin Pharmacies with clear product details."
+msgstr "اعرف معلومات جهاز %(product)s لدى صيدليات عابدين مع تفاصيل واضحة عن المنتج."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Find product information for %(product)s at Abdin Pharmacies. Always follow leaflet or pharmacist guidance."
+msgstr "اعرف معلومات منتج %(product)s لدى صيدليات عابدين. اتبع دائما النشرة الداخلية أو إرشادات الصيدلي."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Shop %(product)s from Abdin Pharmacies with clear and updated product information."
+msgstr "تسوق %(product)s من صيدليات عابدين مع معلومات واضحة ومحدثة عن المنتج."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "%s is a fragrance product available from Abdin Pharmacies."
+msgstr "%s منتج عطور متوفر في صيدليات عابدين."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Brand or manufacturer: %s."
+msgstr "العلامة التجارية أو الشركة المصنعة: %s."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Suitable for customers looking for a refined personal fragrance choice."
+msgstr "مناسب للعملاء الباحثين عن اختيار عطر شخصي أنيق."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Review the product packaging for full details before use."
+msgstr "راجع عبوة المنتج لمعرفة التفاصيل الكاملة قبل الاستخدام."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "%s is a personal care product available from Abdin Pharmacies."
+msgstr "%s منتج عناية شخصية متوفر في صيدليات عابدين."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Category: %s."
+msgstr "التصنيف: %s."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "Use according to the product packaging instructions."
+msgstr "استخدمه وفقا لتعليمات عبوة المنتج."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "%s is a medical device product available from Abdin Pharmacies. Review the product manual and packaging before use."
+msgstr "%s منتج جهاز طبي متوفر في صيدليات عابدين. راجع دليل المنتج والعبوة قبل الاستخدام."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "%s product information is available from Abdin Pharmacies. Always follow the leaflet or ask a pharmacist before use."
+msgstr "معلومات منتج %s متوفرة لدى صيدليات عابدين. اتبع دائما النشرة الداخلية أو اسأل الصيدلي قبل الاستخدام."
+
+#. module: ab_product_seo_enhancement
+#: code:addons/ab_product_seo_enhancement/models/seo_assistant.py:0
+msgid "%s is available from Abdin Pharmacies with clear and updated product information."
+msgstr "%s متوفر في صيدليات عابدين مع معلومات واضحة ومحدثة عن المنتج."
