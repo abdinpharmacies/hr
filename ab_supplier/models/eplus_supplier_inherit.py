@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import fields, models
 
 
 class Supplier(models.Model):
@@ -9,5 +9,7 @@ class Supplier(models.Model):
     eplus_serial = fields.Integer(index=True)
     last_update_date = fields.Datetime(index=True)
 
-    _sql_constraints = [
-        ('ab_supplier_eplus_serial_unique', 'unique(eplus_serial)', 'ePlus Serial CAN NOT BE DUPLICATED!')]
+    _ab_supplier_eplus_serial_unique = models.Constraint(
+        'UNIQUE(eplus_serial)',
+        'ePlus Serial CAN NOT BE DUPLICATED!',
+    )

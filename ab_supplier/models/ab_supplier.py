@@ -45,16 +45,15 @@ class Supplier(models.Model):
     description = fields.Text()
 
     @api.model
-    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
-        args = list(args or [])
-        code_args = args + [('code', '=ilike', name), ]
-        ids = self._search(code_args, limit=limit,
-                           access_rights_uid=name_get_uid)
-        if not ids:
-            args += [('name', operator, name), ]
-            ids = self._search(args, limit=limit,
-                               access_rights_uid=name_get_uid)
-        return ids
+    @api.readonly
+    def name_search(self, name='', domain=None, operator='ilike', limit=100):
+        domain = list(domain or [])
+        code_domain = domain + [('code', '=ilike', name)]
+        records = self.search_fetch(code_domain, ['display_name'], limit=limit)
+        if not records:
+            name_domain = domain + [('name', operator, name)]
+            records = self.search_fetch(name_domain, ['display_name'], limit=limit)
+        return [(record.id, record.display_name) for record in records.sudo()]
 
     @api.model
     def create(self, vals):

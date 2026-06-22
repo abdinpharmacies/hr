@@ -5,14 +5,14 @@
             <field name="name">ab_supplier_bracket_view_tree</field>
             <field name="model">ab_supplier_bracket</field>
             <field name="arch" type="xml">
-                <tree string="ab_supplier_bracket_tree" multi_edit="1">
+                <list string="ab_supplier_bracket_tree" multi_edit="1">
                     <field name="supplier_id" optional="show"/>
                     <field name="payment_type" optional="show"/>
                     <field name="termination_day" optional="show"/>
                     <field name="credit_days" optional="show"/>
                     <field name="discount" optional="show"/>
                     <field name="withdrawal_bracket" optional="show"/>
-                </tree>
+                </list>
             </field>
         </record>
 
@@ -61,7 +61,7 @@
             <field name="name">Supplier Bracket</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_supplier_bracket</field>
-            <field name="view_mode">tree,form,pivot</field>
+            <field name="view_mode">list,form,pivot</field>
         </record>
 
 
