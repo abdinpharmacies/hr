@@ -44,6 +44,11 @@
     "application": True,
     "installable": True,
     "auto_install": True,
+    'assets': {
+        'web.assets_backend': [
+            'ab_hr/static/src/scss/manpower_hour_need_dashboard.scss',
+        ],
+    },
 
     'web.assets_backend': [
         # 'ab_hr/static/src/scss/hr.scss',
