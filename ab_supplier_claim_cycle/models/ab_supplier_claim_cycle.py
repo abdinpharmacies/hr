@@ -1,4 +1,4 @@
-from odoo import api, fields, models, _
+from odoo import fields, models
 
 
 class ab_supplier_claim_cycle(models.Model):
@@ -30,4 +30,5 @@ class ab_supplier_claim_cycle(models.Model):
 
     def btn_status(self):
         status = self.env.context.get('action')
-        self.status = status
+        if status:
+            self.write({'status': status})
