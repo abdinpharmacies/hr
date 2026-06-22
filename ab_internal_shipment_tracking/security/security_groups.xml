@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="category_ab_internal_shipment" model="ir.module.category">
+            <field name="name">Internal Shipment Tracking</field>
+            <field name="description">Track internal movement of documents, files, and devices.</field>
+            <field name="sequence">55</field>
+        </record>
+
+        <record id="privilege_ab_internal_shipment" model="res.groups.privilege">
+            <field name="name">Internal Shipment Tracking</field>
+            <field name="category_id" ref="category_ab_internal_shipment"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_ab_internal_shipment_sender" model="res.groups">
+            <field name="name">Shipment Sender</field>
+            <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
+        </record>
+
+        <record id="group_ab_internal_shipment_recipient" model="res.groups">
+            <field name="name">Shipment Recipient</field>
+            <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
+            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_sender'))]"/>
+        </record>
+
+        <record id="group_ab_internal_shipment_department_manager" model="res.groups">
+            <field name="name">Shipment Department Manager</field>
+            <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
+            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_recipient'))]"/>
+        </record>
+
+        <record id="group_ab_internal_shipment_admin" model="res.groups">
+            <field name="name">Shipment Administrator</field>
+            <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
+            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_department_manager'))]"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
+        </record>
+    </data>
+</odoo>
