@@ -411,10 +411,12 @@ class AbProduct(models.Model):
 
             variant = template.product_variant_id or template.with_context(active_test=False).product_variant_ids[:1]
             if variant:
+                product_dict = product._prepare_website_product_variant_vals()
                 try:
-                    variant.sudo().write(product._prepare_website_product_variant_vals())
+                    variant.sudo().write(product_dict)
                 except:
-                    pass
+                    product_dict.pop("barcode", None)
+                    variant.sudo().write(product_dict)
             synced_templates |= template
         return synced_templates
 
