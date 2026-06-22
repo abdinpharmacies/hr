@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+
+        <record model="ir.module.category" id="ab_supplier_claim_cycle_category">
+            <field name="name">Supplier Claim</field>
+            <field name="sequence">1</field>
+        </record>
+
+
+        <!--  user -->
+        <record id="supplier_claim_group_user" model="res.groups">
+            <field name="name">supplier claim User</field>
+            <field name="category_id" ref="ab_supplier_claim_cycle_category"/>
+        </record>
+
+
+        <record id="supplier_claim_group_reviewer" model="res.groups">
+            <field name="name">supplier claim reviewer</field>
+            <field name="category_id" ref="ab_supplier_claim_cycle_category"/>
+
+        </record>
+
+        <!--  admin -->
+        <record id="supplier_claim_group_admin" model="res.groups">
+            <field name="name">supplier claim admin</field>
+            <field name="category_id" ref="ab_supplier_claim_cycle_category"/>
+        </record>
+    </data>
+</odoo>
+
+
