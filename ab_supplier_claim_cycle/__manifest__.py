@@ -1,7 +1,10 @@
 {
     'name': 'Supplier Claim Cycle',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'mail','ab_supplier','ab_management_tools'],
+    'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter'],
 
     'data': [
         'security/groups.xml',
@@ -10,7 +13,8 @@
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
 
-    ]
+    ],
+    'installable': True,
 
 
 }
