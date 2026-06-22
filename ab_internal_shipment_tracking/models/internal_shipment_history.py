@@ -19,7 +19,7 @@ class InternalShipmentHistory(models.Model):
             ("sent", "Sent"),
             ("in_transit", "In Transit"),
             ("delivered", "Delivered"),
-            ("received", "Confirmed"),
+            ("received", "Received"),
             ("closed", "Closed"),
             ("note", "Note"),
         ],

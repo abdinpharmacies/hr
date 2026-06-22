@@ -59,8 +59,8 @@ class InternalShipment(models.Model):
             ("draft", "Draft"),
             ("sent", "Sent"),
             ("in_transit", "In Transit"),
-            ("awaiting_receipt", "Awaiting Receipt"),
-            ("received", "Confirmed"),
+            ("delivered", "Delivered"),
+            ("received", "Received"),
             ("closed", "Closed"),
         ],
         required=True,
@@ -90,18 +90,6 @@ class InternalShipment(models.Model):
         "ab_hr_employee",
         string="Sender Employee",
         tracking=True,
-    )
-    sender_employee_selection_type = fields.Selection(
-        [("all", "All"), ("specific", "Specific Employees")],
-        string="Send to",
-        default="all",
-    )
-    sender_selected_employee_ids = fields.Many2many(
-        "ab_hr_employee",
-        "ab_internal_shipment_sender_employee_selected_rel",
-        "shipment_id",
-        "employee_id",
-        string="Selected Sender Employees",
     )
     sender_user_id = fields.Many2one(
         "res.users",
@@ -133,23 +121,6 @@ class InternalShipment(models.Model):
         string="Recipient Employee",
         tracking=True,
     )
-    recipient_employee_selection_type = fields.Selection(
-        [("all", "All"), ("specific", "Specific Employees")],
-        string="Send to",
-        default="all",
-    )
-    recipient_selected_employee_ids = fields.Many2many(
-        "ab_hr_employee",
-        "ab_internal_shipment_recipient_employee_selected_rel",
-        "shipment_id",
-        "employee_id",
-        string="Selected Recipient Employees",
-    )
-    recipient_confirmation_employee_ids = fields.Many2many(
-        "ab_hr_employee",
-        compute="_compute_recipient_confirmation_employee_ids",
-        string="Receipt Confirmation Employees",
-    )
     recipient_user_id = fields.Many2one(
         "res.users",
         compute="_compute_party_users",
@@ -157,15 +128,6 @@ class InternalShipment(models.Model):
         index=True,
     )
     recipient_display = fields.Char(compute="_compute_party_displays", store=True)
-    can_current_user_receive = fields.Boolean(
-        compute="_compute_can_current_user_receive",
-    )
-    can_current_user_manage_workflow = fields.Boolean(
-        compute="_compute_current_user_action_permissions",
-    )
-    can_current_user_close = fields.Boolean(
-        compute="_compute_current_user_action_permissions",
-    )
 
     created_by_id = fields.Many2one(
         "res.users",
@@ -253,88 +215,12 @@ class InternalShipment(models.Model):
         self.sender_store_id = False
         self.sender_department_id = False
         self.sender_employee_id = False
-        self.sender_employee_selection_type = "all"
-        self.sender_selected_employee_ids = [(5, 0, 0)]
 
     @api.onchange("recipient_type")
     def _onchange_recipient_type(self):
         self.recipient_store_id = False
         self.recipient_department_id = False
         self.recipient_employee_id = False
-        self.recipient_employee_selection_type = "all"
-        self.recipient_selected_employee_ids = [(5, 0, 0)]
-
-    @api.onchange("sender_department_id")
-    def _onchange_sender_department_id(self):
-        self.sender_employee_selection_type = "all"
-        self.sender_selected_employee_ids = [(5, 0, 0)]
-        if self.sender_department_id:
-            return {
-                "domain": {
-                    "sender_selected_employee_ids": [
-                        ("department_id", "=", self.sender_department_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "sender_selected_employee_ids": [],
-            },
-        }
-
-    @api.onchange("recipient_department_id")
-    def _onchange_recipient_department_id(self):
-        self.recipient_employee_selection_type = "all"
-        self.recipient_selected_employee_ids = [(5, 0, 0)]
-        if self.recipient_department_id:
-            return {
-                "domain": {
-                    "recipient_selected_employee_ids": [
-                        ("department_id", "=", self.recipient_department_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "recipient_selected_employee_ids": [],
-            },
-        }
-
-    @api.onchange("sender_store_id")
-    def _onchange_sender_store_id(self):
-        self.sender_employee_selection_type = "all"
-        self.sender_selected_employee_ids = [(5, 0, 0)]
-        if self.sender_store_id:
-            return {
-                "domain": {
-                    "sender_selected_employee_ids": [
-                        ("department_id.store_id", "=", self.sender_store_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "sender_selected_employee_ids": [],
-            },
-        }
-
-    @api.onchange("recipient_store_id")
-    def _onchange_recipient_store_id(self):
-        self.recipient_employee_selection_type = "all"
-        self.recipient_selected_employee_ids = [(5, 0, 0)]
-        if self.recipient_store_id:
-            return {
-                "domain": {
-                    "recipient_selected_employee_ids": [
-                        ("department_id.store_id", "=", self.recipient_store_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "recipient_selected_employee_ids": [],
-            },
-        }
 
     @api.constrains(
         "sender_type",
@@ -365,14 +251,10 @@ class InternalShipment(models.Model):
             )
 
     @api.depends(
-        "sender_type",
         "sender_employee_id.user_id",
         "sender_department_id.manager_id.user_id",
-        "sender_store_id",
-        "recipient_type",
         "recipient_employee_id.user_id",
         "recipient_department_id.manager_id.user_id",
-        "recipient_store_id",
     )
     def _compute_party_users(self):
         for record in self:
@@ -395,24 +277,6 @@ class InternalShipment(models.Model):
             record.recipient_display = record._get_party_display("recipient")
 
     @api.depends(
-        "recipient_type",
-        "recipient_store_id",
-        "recipient_department_id",
-        "recipient_employee_id",
-        "recipient_employee_selection_type",
-        "recipient_selected_employee_ids",
-    )
-    def _compute_recipient_confirmation_employee_ids(self):
-        for record in self:
-            if (
-                record.recipient_type in ("department", "branch")
-                and record.recipient_employee_selection_type == "all"
-            ):
-                record.recipient_confirmation_employee_ids = record._get_party_employees("recipient")
-            else:
-                record.recipient_confirmation_employee_ids = self.env["ab_hr_employee"]
-
-    @api.depends(
         "current_holder_type",
         "current_holder_store_id",
         "current_holder_department_id",
@@ -429,153 +293,22 @@ class InternalShipment(models.Model):
             else:
                 record.current_holder_display = False
 
-    @api.depends(
-        "state",
-        "recipient_type",
-        "recipient_store_id",
-        "recipient_department_id",
-        "recipient_department_id.manager_id.user_id",
-        "recipient_employee_id.user_id",
-        "recipient_employee_selection_type",
-        "recipient_selected_employee_ids",
-    )
-    @api.depends_context("uid")
-    def _compute_can_current_user_receive(self):
-        user = self.env.user
-        employee_ids = set(user.ab_employee_ids.ids)
-        branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
-        for record in self:
-            can_receive = False
-            if record.state == "awaiting_receipt":
-                if record.recipient_type == "employee":
-                    can_receive = record.recipient_employee_id.id in employee_ids
-                elif record.recipient_type == "department":
-                    can_receive = record.recipient_department_id.manager_id.user_id == user
-                    if not can_receive:
-                        recipient_employees = record._get_party_employees("recipient")
-                        can_receive = bool(set(recipient_employees.ids) & employee_ids)
-                elif record.recipient_type == "branch":
-                    can_receive = record.recipient_store_id.id in branch_account_store_ids
-                    if not can_receive:
-                        recipient_employees = record._get_party_employees("recipient")
-                        can_receive = bool(set(recipient_employees.ids) & employee_ids)
-            record.can_current_user_receive = can_receive
-
-    @api.depends("state", "created_by_id")
-    @api.depends_context("uid")
-    def _compute_current_user_action_permissions(self):
-        user = self.env.user
-        for record in self:
-            record.can_current_user_manage_workflow = record.created_by_id == user
-            record.can_current_user_close = record.state == "received"
-
     def action_send(self):
-        self._check_current_user_can_manage_workflow()
-        for record in self:
-            recipient_users = record._get_party_users("recipient")
-            if recipient_users:
-                record.message_subscribe(partner_ids=recipient_users.partner_id.ids)
         self._move_state("draft", "sent", "sent_by_id", "sent_date", "sent")
 
     def action_mark_in_transit(self):
-        self._check_current_user_can_manage_workflow()
         self._move_state(("sent",), "in_transit", False, False, "in_transit")
 
     def action_deliver(self):
-        self._check_current_user_can_manage_workflow()
-        redirect_after_delivery = self._should_redirect_after_branch_delivery()
+        self._move_state(("sent", "in_transit"), "delivered", "delivered_by_id", "delivered_date", "delivered")
         for record in self:
-            if record.state not in ("sent", "in_transit"):
-                raise UserError(
-                    _("Shipment %(name)s cannot move from %(current)s to %(target)s.")
-                    % {
-                        "name": record.display_name,
-                        "current": record.state,
-                        "target": "awaiting_receipt",
-                    }
-                )
             record._schedule_receipt_activity()
-        self._move_state(
-            ("sent", "in_transit"),
-            "awaiting_receipt",
-            "delivered_by_id",
-            "delivered_date",
-            "delivered",
-        )
-        if redirect_after_delivery:
-            return {
-                "type": "ir.actions.act_window",
-                "name": _("Internal Shipments"),
-                "res_model": "ab_internal_shipment",
-                "view_mode": "list,form,pivot,graph",
-                "search_view_id": self.env.ref(
-                    "ab_internal_shipment_tracking.ab_internal_shipment_view_search"
-                ).id,
-            }
-        return False
 
     def action_receive(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_receive)
-        if unauthorized:
-            raise UserError(_("Only the designated recipient can confirm receipt for this shipment."))
-        now = fields.Datetime.now()
-        for record in self:
-            if record.state != "awaiting_receipt":
-                raise UserError(
-                    _("Shipment %(name)s cannot move from %(current)s to received.")
-                    % {
-                        "name": record.display_name,
-                        "current": record.state,
-                    }
-                )
-            old_state = record.state
-            old_holder = record.current_holder_display
-            vals = {
-                "state": "received",
-                "received_by_id": self.env.uid,
-                "received_date": now,
-            }
-            vals.update(record._holder_values_for_state("received"))
-            record.write(vals)
-            record._create_history(
-                "received",
-                old_state,
-                "received",
-                _("State changed."),
-                old_holder=old_holder,
-            )
+        self._move_state("delivered", "received", "received_by_id", "received_date", "received")
 
     def action_close(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_close)
-        if unauthorized:
-            raise UserError(_("Only confirmed shipments can be closed."))
-        now = fields.Datetime.now()
-        action_uid = self.env.uid
-        for record in self:
-            if record.state != "received":
-                raise UserError(
-                    _("Shipment %(name)s cannot move from %(current)s to closed.")
-                    % {
-                        "name": record.display_name,
-                        "current": record.state,
-                    }
-                )
-            old_state = record.state
-            old_holder = record.current_holder_display
-            vals = {
-                "state": "closed",
-                "closed_by_id": action_uid,
-                "closed_date": now,
-            }
-            vals.update(record._holder_values_for_state("closed"))
-            record.sudo().write(vals)
-            record.sudo().with_context(ab_internal_shipment_action_uid=action_uid)._create_history(
-                "closed",
-                old_state,
-                "closed",
-                _("State changed."),
-                old_holder=old_holder,
-            )
+        self._move_state("received", "closed", "closed_by_id", "closed_date", "closed")
 
     def action_add_tracking_note(self):
         for record in self:
@@ -604,20 +337,6 @@ class InternalShipment(models.Model):
             vals.update(record._holder_values_for_state(target_state))
             record.write(vals)
             record._create_history(action, old_state, target_state, _("State changed."), old_holder=old_holder)
-
-    def _check_current_user_can_manage_workflow(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_manage_workflow)
-        if unauthorized:
-            raise UserError(_("Only the shipment creator can perform this action."))
-
-    def _should_redirect_after_branch_delivery(self):
-        user = self.env.user
-        branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
-        return any(
-            record.recipient_type == "branch"
-            and record.recipient_store_id.id not in branch_account_store_ids
-            for record in self
-        )
 
     def _holder_values_for_state(self, state):
         self.ensure_one()
@@ -667,65 +386,6 @@ class InternalShipment(models.Model):
             return self[f"{party}_department_id"].manager_id.user_id
         return self.env["res.users"]
 
-    def _get_party_employees(self, party):
-        self.ensure_one()
-        party_type = self[f"{party}_type"]
-        if party_type == "employee":
-            return self[f"{party}_employee_id"]
-        if party_type == "department":
-            dept = self[f"{party}_department_id"]
-            if not dept:
-                return self.env["ab_hr_employee"]
-            if self[f"{party}_employee_selection_type"] == "specific":
-                return self[f"{party}_selected_employee_ids"]
-            employees = self.env["ab_hr_employee"]
-            dept_occupied = dept.occupied_job_ids.mapped("employee_id")
-            if dept_occupied:
-                employees |= dept_occupied
-            direct = self.env["ab_hr_employee"].search([
-                ("department_id", "=", dept.id),
-            ])
-            if direct:
-                employees |= direct
-            return employees
-        if party_type == "branch":
-            store = self[f"{party}_store_id"]
-            if not store:
-                return self.env["ab_hr_employee"]
-            if self[f"{party}_employee_selection_type"] == "specific":
-                return self[f"{party}_selected_employee_ids"]
-            branch_depts = self.env["ab_hr_department"].search([
-                ("store_id", "=", store.id),
-            ])
-            employees = self.env["ab_hr_employee"]
-            if branch_depts:
-                dept_occupied = branch_depts.mapped("occupied_job_ids").mapped("employee_id")
-                if dept_occupied:
-                    employees |= dept_occupied
-                direct = self.env["ab_hr_employee"].search([
-                    ("department_id", "in", branch_depts.ids),
-                ])
-                if direct:
-                    employees |= direct
-            return employees
-        return self.env["ab_hr_employee"]
-
-    def _get_party_users(self, party):
-        self.ensure_one()
-        employees = self._get_party_employees(party)
-        users = employees.mapped("user_id").filtered(lambda u: u)
-        if self[f"{party}_type"] == "branch":
-            store = self[f"{party}_store_id"]
-            if store:
-                branch_depts = self.env["ab_hr_department"].search([
-                    ("store_id", "=", store.id),
-                ])
-                if branch_depts:
-                    account_users = branch_depts.mapped("user_id").filtered(lambda u: u)
-                    manager_users = branch_depts.mapped("manager_id.user_id").filtered(lambda u: u)
-                    users |= account_users | manager_users
-        return users
-
     def _validate_party(self, party):
         self.ensure_one()
         party_type = self[f"{party}_type"]
@@ -744,14 +404,13 @@ class InternalShipment(models.Model):
                 )
 
     def _create_history(self, action, state_from, state_to, notes=False, old_holder=False):
-        History = self.env["ab_internal_shipment.history"]
-        action_uid = self.env.context.get("ab_internal_shipment_action_uid", self.env.uid)
+        History = self.env["ab_internal_shipment.history"].sudo()
         for record in self:
             History.create(
                 {
                     "shipment_id": record.id,
                     "action": action,
-                    "action_by_id": action_uid,
+                    "action_by_id": self.env.uid,
                     "action_date": fields.Datetime.now(),
                     "state_to": state_to or "",
                     "state_from": state_from or "",
@@ -763,19 +422,14 @@ class InternalShipment(models.Model):
 
     def _schedule_receipt_activity(self):
         self.ensure_one()
+        if not self.recipient_user_id:
+            return
         activity_type = self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
         if not activity_type:
             return
-        recipient_users = self._get_party_users("recipient")
-        for user in recipient_users:
-            existing = self.activity_ids.filtered(
-                lambda a, u=user, at=activity_type: a.activity_type_id == at and a.user_id == u
-            )
-            if existing:
-                continue
-            self.activity_schedule(
-                activity_type_id=activity_type.id,
-                user_id=user.id,
-                summary=_("Shipment delivered, confirm receipt"),
-                note=_("Shipment %s has been delivered and is awaiting receipt confirmation.") % self.name,
-            )
+        self.activity_schedule(
+            activity_type_id=activity_type.id,
+            user_id=self.recipient_user_id.id,
+            summary=_("Shipment delivered, confirm receipt"),
+            note=_("Shipment %s has been delivered and is awaiting receipt confirmation.") % self.name,
+        )
