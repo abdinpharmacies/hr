@@ -5,7 +5,7 @@
             <field name="name">ab_supplier_view_tree</field>
             <field name="model">ab_supplier</field>
             <field name="arch" type="xml">
-                <list multi_edit="1">
+                <tree multi_edit="1">
                     <field name="name" optional="show"/>
                     <field name="costcenter_id" optional="show"/>
                     <field name="telephone" optional="show"/>
@@ -22,7 +22,7 @@
                     <field name="active" optional="show"/>
                     <field name="code" optional="show"/>
                     <field name="parent_id" optional="show"/>
-                </list>
+                </tree>
             </field>
         </record>
         <record model="ir.ui.view" id="ab_supplier_Form">
@@ -75,7 +75,7 @@
         <record model="ir.actions.act_window" id="supplier_action_window">
             <field name="name">Suppliers</field>
             <field name="res_model">ab_supplier</field>
-            <field name="view_mode">list,form</field>
+            <field name="view_mode">tree,form</field>
         </record>
     </data>
 </odoo>

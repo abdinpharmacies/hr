@@ -5,11 +5,11 @@
             <field name="name">ab_supplier_schedule_note_view_tree</field>
             <field name="model">ab_supplier_schedule_note</field>
             <field name="arch" type="xml">
-                <list string="ab_supplier_schedule_note_tree">
+                <tree string="ab_supplier_schedule_note_tree">
                     <field name="supplier_id" optional="show"/>
                     <field name="supplier_note_id" optional="show"/>
                     <field name="closed" optional="show"/>
-                </list>
+                </tree>
             </field>
         </record>
 
@@ -53,7 +53,7 @@
             <field name="name">Supplier Schedule Note</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_supplier_schedule_note</field>
-            <field name="view_mode">list,form,pivot</field>
+            <field name="view_mode">tree,form,pivot</field>
         </record>
 
 

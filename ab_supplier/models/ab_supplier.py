@@ -45,11 +45,16 @@ class Supplier(models.Model):
     description = fields.Text()
 
     @api.model
-    def _search_display_name(self, operator, value):
-        code_ids = self._search([('code', '=ilike', value)])
-        if code_ids:
-            return [('id', 'in', code_ids)]
-        return [('name', operator, value)]
+    def _name_search(self, name='', args=None, operator='ilike', limit=100, name_get_uid=None):
+        args = list(args or [])
+        code_args = args + [('code', '=ilike', name), ]
+        ids = self._search(code_args, limit=limit,
+                           access_rights_uid=name_get_uid)
+        if not ids:
+            args += [('name', operator, name), ]
+            ids = self._search(args, limit=limit,
+                               access_rights_uid=name_get_uid)
+        return ids
 
     @api.model
     def create(self, vals):

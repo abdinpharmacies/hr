@@ -1,5 +1,4 @@
-from odoo import api, fields, models
-from odoo.tools.translate import _
+from odoo import api, fields, models, _
 
 
 class AbSupplierBracket(models.Model):
@@ -21,7 +20,8 @@ class AbSupplierBracket(models.Model):
     discount = fields.Float(digits=(5, 2))
     withdrawal_bracket = fields.Float(default=0.0, required=True)
 
-    @api.depends('supplier_id.name', 'payment_type_id.name')
-    def _compute_display_name(self):
+    def name_get(self):
+        res = []
         for rec in self:
-            rec.display_name = f"{rec.supplier_id.name} [{rec.payment_type_id.name}]"
+            res.append((rec.id, f"{rec.supplier_id.name} [{rec.payment_type_id.name}]"))
+        return res
