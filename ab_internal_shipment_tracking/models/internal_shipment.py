@@ -1,5 +1,5 @@
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 
 
 class InternalShipment(models.Model):
@@ -48,6 +48,10 @@ class InternalShipment(models.Model):
     )
     expected_delivery_date = fields.Date(tracking=True)
     is_delayed = fields.Boolean(compute="_compute_is_delayed", store=True)
+    is_receipt_confirmation_user = fields.Boolean(
+        compute="_compute_is_receipt_confirmation_user",
+        search="_search_is_receipt_confirmation_user",
+    )
     shipment_count = fields.Integer(
         string="Shipment Count",
         default=1,
@@ -59,7 +63,7 @@ class InternalShipment(models.Model):
             ("draft", "Draft"),
             ("sent", "Sent"),
             ("in_transit", "In Transit"),
-            ("delivered", "Delivered"),
+            ("awaiting_receipt", "Awaiting Receipt"),
             ("received", "Received"),
             ("closed", "Closed"),
         ],
@@ -251,15 +255,87 @@ class InternalShipment(models.Model):
             )
 
     @api.depends(
+        "state",
+        "recipient_type",
+        "recipient_employee_id",
+        "recipient_department_id.manager_id.user_id",
+        "recipient_store_id",
+    )
+    @api.depends_context("uid")
+    def _compute_is_receipt_confirmation_user(self):
+        user = self.env.user
+        employee_ids, employee_store_ids = self._receipt_confirmation_employee_data(user)
+        for record in self:
+            record.is_receipt_confirmation_user = (
+                record.state == "awaiting_receipt"
+                and (
+                    (
+                        record.recipient_type == "employee"
+                        and record.recipient_employee_id.id in employee_ids
+                    )
+                    or record.recipient_department_id.manager_id.user_id == user
+                    or (
+                        record.recipient_type == "branch"
+                        and record.recipient_store_id.id in employee_store_ids
+                    )
+                )
+            )
+
+    @api.depends(
+        "sender_type",
         "sender_employee_id.user_id",
         "sender_department_id.manager_id.user_id",
+        "sender_store_id",
+        "recipient_type",
         "recipient_employee_id.user_id",
         "recipient_department_id.manager_id.user_id",
+        "recipient_store_id",
     )
     def _compute_party_users(self):
         for record in self:
             record.sender_user_id = record._get_party_user("sender")
             record.recipient_user_id = record._get_party_user("recipient")
+
+    @api.model
+    def _search_is_receipt_confirmation_user(self, operator, value):
+        eligible_domain = self._receipt_confirmation_domain(self.env.user)
+        is_positive = (
+            (operator not in fields.Domain.NEGATIVE_OPERATORS and bool(value))
+            or (operator in fields.Domain.NEGATIVE_OPERATORS and not bool(value))
+        )
+        if is_positive:
+            return eligible_domain
+        return ["!"] + eligible_domain
+
+    @api.model
+    def _receipt_confirmation_employee_data(self, user):
+        employees = user.sudo().ab_employee_ids
+        return set(employees.ids), set(employees.mapped("department_id.store_id").ids)
+
+    @api.model
+    def _receipt_confirmation_domain(self, user):
+        employee_ids, employee_store_ids = self._receipt_confirmation_employee_data(user)
+        domains = [
+            [
+                ("recipient_type", "=", "department"),
+                ("recipient_department_id.manager_id.user_id", "=", user.id),
+            ],
+        ]
+        if employee_ids:
+            domains.append(
+                [
+                    ("recipient_type", "=", "employee"),
+                    ("recipient_employee_id", "in", list(employee_ids)),
+                ]
+            )
+        if employee_store_ids:
+            domains.append(
+                [
+                    ("recipient_type", "=", "branch"),
+                    ("recipient_store_id", "in", list(employee_store_ids)),
+                ]
+            )
+        return fields.Domain("state", "=", "awaiting_receipt") & fields.Domain.OR(domains)
 
     @api.depends(
         "sender_type",
@@ -300,12 +376,46 @@ class InternalShipment(models.Model):
         self._move_state(("sent",), "in_transit", False, False, "in_transit")
 
     def action_deliver(self):
-        self._move_state(("sent", "in_transit"), "delivered", "delivered_by_id", "delivered_date", "delivered")
+        self._move_state(
+            ("sent", "in_transit"),
+            "awaiting_receipt",
+            "delivered_by_id",
+            "delivered_date",
+            "delivered",
+        )
         for record in self:
             record._schedule_receipt_activity()
 
     def action_receive(self):
-        self._move_state("delivered", "received", "received_by_id", "received_date", "received")
+        now = fields.Datetime.now()
+        for record in self:
+            if not record.is_receipt_confirmation_user:
+                raise AccessError(_("Only the shipment recipient can confirm receipt."))
+            if record.state != "awaiting_receipt":
+                raise UserError(
+                    _("Shipment %(name)s cannot move from %(current)s to received.")
+                    % {
+                        "name": record.display_name,
+                        "current": record.state,
+                    }
+                )
+            old_state = record.state
+            old_holder = record.current_holder_display
+            vals = {
+                "state": "received",
+                "received_by_id": self.env.uid,
+                "received_date": now,
+            }
+            vals.update(record._holder_values_for_state("received"))
+            sudo_record = record.sudo().with_context(ab_internal_shipment_action_uid=self.env.uid)
+            sudo_record.write(vals)
+            sudo_record._create_history(
+                "received",
+                old_state,
+                "received",
+                _("State changed."),
+                old_holder=old_holder,
+            )
 
     def action_close(self):
         self._move_state("received", "closed", "closed_by_id", "closed_date", "closed")
@@ -405,12 +515,13 @@ class InternalShipment(models.Model):
 
     def _create_history(self, action, state_from, state_to, notes=False, old_holder=False):
         History = self.env["ab_internal_shipment.history"].sudo()
+        action_uid = self.env.context.get("ab_internal_shipment_action_uid", self.env.uid)
         for record in self:
             History.create(
                 {
                     "shipment_id": record.id,
                     "action": action,
-                    "action_by_id": self.env.uid,
+                    "action_by_id": action_uid,
                     "action_date": fields.Datetime.now(),
                     "state_to": state_to or "",
                     "state_from": state_from or "",

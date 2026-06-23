@@ -44,14 +44,15 @@
                         <button name="action_deliver" type="object" string="Mark Delivered" class="btn-primary"
                                 invisible="state not in ('sent', 'in_transit')"/>
                         <button name="action_receive" type="object" string="Confirm Receipt" class="btn-primary"
-                                invisible="state != 'delivered'"/>
+                                invisible="state != 'awaiting_receipt' or not is_receipt_confirmation_user"/>
                         <button name="action_close" type="object" string="Close"
                                 invisible="state != 'received'"/>
                         <field name="state" widget="statusbar"
-                               statusbar_visible="draft,sent,in_transit,delivered,received,closed"/>
+                               statusbar_visible="draft,sent,in_transit,awaiting_receipt,received,closed"/>
                     </header>
                     <sheet>
                         <field name="is_delayed" invisible="1"/>
+                        <field name="is_receipt_confirmation_user" invisible="1"/>
                         <widget name="web_ribbon" title="Delayed" bg_color="text-bg-danger"
                                 invisible="not is_delayed"/>
                         <widget name="web_ribbon" title="Closed"
@@ -177,16 +178,16 @@
                     <field name="recipient_display"/>
                     <field name="current_holder_display"/>
                     <filter name="my_shipments" string="My Shipments"
-                            domain="['|', '|', '|', ('created_by_id', '=', uid), ('sender_user_id', '=', uid), ('recipient_user_id', '=', uid), ('current_holder_user_id', '=', uid)]"/>
+                            domain="[('created_by_id', '=', uid)]"/>
                     <filter name="awaiting_receipt" string="Awaiting Receipt"
-                            domain="[('state', '=', 'delivered')]"/>
+                            domain="[('is_receipt_confirmation_user', '=', True)]"/>
                     <filter name="delayed" string="Delayed"
                             domain="[('is_delayed', '=', True)]"/>
                     <separator/>
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
                     <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
                     <filter name="in_transit" string="In Transit" domain="[('state', '=', 'in_transit')]"/>
-                    <filter name="delivered" string="Delivered" domain="[('state', '=', 'delivered')]"/>
+                    <filter name="awaiting_receipt_state" string="Awaiting Receipt" domain="[('state', '=', 'awaiting_receipt')]"/>
                     <filter name="received" string="Received" domain="[('state', '=', 'received')]"/>
                     <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
                     <separator/>
@@ -228,6 +229,7 @@
             <field name="name">Internal Shipments</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form,pivot,graph</field>
+            <field name="domain">[('created_by_id', '=', uid)]</field>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
         </record>
 
@@ -235,9 +237,9 @@
             <field name="name">Awaiting Receipt</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('state', '=', 'delivered')]</field>
+            <field name="domain">[('is_receipt_confirmation_user', '=', True)]</field>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
-            <field name="context">{'search_default_awaiting_receipt': 1}</field>
+            <field name="context">{'search_default_awaiting_receipt': 1, 'ab_awaiting_receipt_tab': 1}</field>
         </record>
 
         <record id="ab_internal_shipment_reporting_action" model="ir.actions.act_window">
