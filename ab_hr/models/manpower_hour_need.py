@@ -248,8 +248,9 @@ class ManpowerHourNeed(models.Model):
         if not self.workplace:
             return employees
 
-        if self.workplace.user_id:
-            employees |= self.workplace.user_id.ab_employee_ids.sudo()
+        workplace = self.workplace.sudo()
+        if workplace.user_id:
+            employees |= workplace.user_id.ab_employee_ids.sudo()
 
         employee_domain = [
             ('department_id', '=', self.workplace.id),
