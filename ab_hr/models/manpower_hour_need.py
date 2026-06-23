@@ -5,6 +5,7 @@ from odoo import _, api, fields, models
 
 class ManpowerHourNeed(models.Model):
     _name = 'ab_hr_manpower_hour_need'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Manpower Need Per Hour'
     _rec_name = 'workplace'
 
