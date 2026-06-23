@@ -1362,10 +1362,15 @@ msgid "Inactive"
 msgstr "غير نشط"
 
 #. module: ab_hr
+#: code:addons/ab_hr/models/manpower_hour_need.py:0
 #: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_action_type__manpower_effect_type__increase
 #: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_history_report__manpower_effect__increase
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_hour_need__employee_capacity_status__increase
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_hour_need__hours_capacity_status__increase
+#: selection:ab_hr_manpower_hour_need,employee_capacity_status:0
+#: selection:ab_hr_manpower_hour_need,hours_capacity_status:0
 msgid "Increase"
-msgstr ""
+msgstr "زيادة"
 
 #. module: ab_hr
 #: model:ir.model,name:ab_hr.model_excel_writer
@@ -3251,14 +3256,42 @@ msgid "Required Hours"
 msgstr "الساعات المطلوبة"
 
 #. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__required_employee_count
+msgid "Required Employees Count"
+msgstr "عدد الموظفين المطلوب"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__current_employee_count
+msgid "Current Employees Count"
+msgstr "عدد الموظفين الحالي"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__employee_shortage_count
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__employee_shortage_display
+#: code:addons/ab_hr/models/manpower_hour_need.py:0
+msgid "Employees Shortage / Increase"
+msgstr "عجز / زيادة الموظفين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__employee_capacity_status
+msgid "Employees Status"
+msgstr "حالة الموظفين"
+
+#. module: ab_hr
 #: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__actual_available_hours
 msgid "Actual Hours"
 msgstr "الساعات الفعلية"
 
 #. module: ab_hr
 #: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__shortage_hours
-msgid "Shortage Hours"
-msgstr "ساعات العجز"
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__shortage_hours_display
+msgid "Shortage / Increase Hours"
+msgstr "عجز / زيادة الساعات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__hours_capacity_status
+msgid "Hours Status"
+msgstr "حالة الساعات"
 
 #. module: ab_hr
 #: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__default_actual_daily_hours
@@ -3279,6 +3312,65 @@ msgstr "عنوان الساعات الفعلية"
 #: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__shortage_hours_label
 msgid "Shortage Hours Label"
 msgstr "عنوان ساعات العجز"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__required_employees_label
+msgid "Required Employees Label"
+msgstr "عنوان الموظفين المطلوبين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__current_employees_label
+msgid "Current Employees Label"
+msgstr "عنوان الموظفين الحاليين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__employee_shortage_label
+msgid "Employees Shortage / Increase Label"
+msgstr "عنوان عجز / زيادة الموظفين"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__hours_status_label
+msgid "Hours Status Label"
+msgstr "عنوان حالة الساعات"
+
+#. module: ab_hr
+#: model:ir.model.fields,field_description:ab_hr.field_ab_hr_manpower_hour_need__employee_status_label
+msgid "Employees Status Label"
+msgstr "عنوان حالة الموظفين"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/manpower_hour_need.py:0
+msgid "Required Employees"
+msgstr "الموظفون المطلوبون"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/manpower_hour_need.py:0
+msgid "Current Employees"
+msgstr "الموظفون الحاليون"
+
+#. module: ab_hr
+#: model:res.groups,name:ab_hr.group_ab_hr_manpower_hour_need
+msgid "HR Manpower Hour Need"
+msgstr "احتياج العمالة بالساعة"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/manpower_hour_need.py:0
+#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_hour_need_view_kanban
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_hour_need__employee_capacity_status__shortage
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_hour_need__hours_capacity_status__shortage
+#: selection:ab_hr_manpower_hour_need,employee_capacity_status:0
+#: selection:ab_hr_manpower_hour_need,hours_capacity_status:0
+msgid "Shortage"
+msgstr "عجز"
+
+#. module: ab_hr
+#: code:addons/ab_hr/models/manpower_hour_need.py:0
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_hour_need__employee_capacity_status__balanced
+#: model:ir.model.fields.selection,name:ab_hr.selection__ab_hr_manpower_hour_need__hours_capacity_status__balanced
+#: selection:ab_hr_manpower_hour_need,employee_capacity_status:0
+#: selection:ab_hr_manpower_hour_need,hours_capacity_status:0
+msgid "Balanced"
+msgstr "متوازن"
 
 #. module: ab_hr
 #: model_terms:ir.ui.view,arch_db:ab_hr.manpower_hour_need_view_form
@@ -3319,8 +3411,3 @@ msgstr "المطلوب"
 #: model_terms:ir.ui.view,arch_db:ab_hr.manpower_hour_need_view_kanban
 msgid "Actual"
 msgstr "الفعلي"
-
-#. module: ab_hr
-#: model_terms:ir.ui.view,arch_db:ab_hr.manpower_hour_need_view_kanban
-msgid "Shortage"
-msgstr "العجز"

@@ -12,6 +12,31 @@ class ManpowerHourNeed(models.Model):
     workplace_region = fields.Many2one(related='workplace.workplace_region', store=True)
     job_title = fields.Many2one('ab_hr_job', index=True, string='Job Title')
 
+    required_employee_count = fields.Integer(string='Required Employees Count')
+    current_employee_count = fields.Integer(
+        string='Current Employees Count',
+        compute='_compute_current_employee_count',
+        store=True,
+    )
+    employee_shortage_count = fields.Integer(
+        string='Employees Shortage / Increase',
+        compute='_compute_employee_shortage_count',
+        store=True,
+    )
+    employee_shortage_display = fields.Char(
+        string='Employees Shortage / Increase',
+        compute='_compute_capacity_displays',
+    )
+    employee_capacity_status = fields.Selection(
+        selection=[
+            ('shortage', 'Shortage'),
+            ('increase', 'Increase'),
+            ('balanced', 'Balanced'),
+        ],
+        string='Employees Status',
+        compute='_compute_employee_shortage_count',
+        store=True,
+    )
     required_operating_hours = fields.Float(string='Required Hours')
     default_actual_daily_hours = fields.Float(string='Fallback Actual Daily Hours', default=8.0)
     actual_employee_ids = fields.Many2many(
@@ -27,7 +52,22 @@ class ManpowerHourNeed(models.Model):
         string='Actual Hours',
     )
     shortage_hours = fields.Float(
-        string='Shortage Hours',
+        string='Shortage / Increase Hours',
+        compute='_compute_shortage_hours',
+        compute_sudo=True,
+        store=True,
+    )
+    shortage_hours_display = fields.Char(
+        string='Shortage / Increase Hours',
+        compute='_compute_capacity_displays',
+    )
+    hours_capacity_status = fields.Selection(
+        selection=[
+            ('shortage', 'Shortage'),
+            ('increase', 'Increase'),
+            ('balanced', 'Balanced'),
+        ],
+        string='Hours Status',
         compute='_compute_shortage_hours',
         compute_sudo=True,
         store=True,
@@ -44,16 +84,69 @@ class ManpowerHourNeed(models.Model):
         string='Shortage Hours Label',
         compute='_compute_kanban_labels',
     )
+    required_employees_label = fields.Char(
+        string='Required Employees Label',
+        compute='_compute_kanban_labels',
+    )
+    current_employees_label = fields.Char(
+        string='Current Employees Label',
+        compute='_compute_kanban_labels',
+    )
+    employee_shortage_label = fields.Char(
+        string='Employees Shortage / Increase Label',
+        compute='_compute_kanban_labels',
+    )
+    hours_status_label = fields.Char(
+        string='Hours Status Label',
+        compute='_compute_status_labels',
+    )
+    employee_status_label = fields.Char(
+        string='Employees Status Label',
+        compute='_compute_status_labels',
+    )
 
     _unique_workplace_job_title = models.Constraint(
         'UNIQUE(workplace, job_title)',
         'Only one manpower per-hour plan is allowed for the same branch and job title.',
     )
 
+    @api.depends('employee_line_ids.employee_id', 'actual_employee_ids')
+    def _compute_current_employee_count(self):
+        for rec in self:
+            employees = rec.employee_line_ids.mapped('employee_id') or rec.actual_employee_ids
+            rec.current_employee_count = len(employees)
+
+    @api.depends('required_employee_count', 'current_employee_count')
+    def _compute_employee_shortage_count(self):
+        for rec in self:
+            rec.employee_shortage_count = rec.required_employee_count - rec.current_employee_count
+            rec.employee_capacity_status = rec._get_capacity_status(rec.employee_shortage_count)
+
     @api.depends('required_operating_hours', 'actual_available_hours')
     def _compute_shortage_hours(self):
         for rec in self:
-            rec.shortage_hours = max(rec.required_operating_hours - rec.actual_available_hours, 0.0)
+            rec.shortage_hours = rec.required_operating_hours - rec.actual_available_hours
+            rec.hours_capacity_status = rec._get_capacity_status(rec.shortage_hours)
+
+    def _get_capacity_status(self, value):
+        if value > 0:
+            return 'shortage'
+        if value < 0:
+            return 'increase'
+        return 'balanced'
+
+    @api.depends('shortage_hours', 'employee_shortage_count')
+    def _compute_capacity_displays(self):
+        for rec in self:
+            rec.shortage_hours_display = rec._format_capacity_display(rec.shortage_hours)
+            rec.employee_shortage_display = rec._format_capacity_display(rec.employee_shortage_count)
+
+    def _format_capacity_display(self, value):
+        amount = abs(value)
+        prefix = '-' if value > 0 else '+' if value < 0 else ''
+        if isinstance(amount, float):
+            amount = f'{amount:g}'
+        return f'{prefix}{amount}'
 
     def _compute_kanban_labels(self):
         is_arabic = (self.env.lang or '').startswith('ar')
@@ -61,32 +154,53 @@ class ManpowerHourNeed(models.Model):
             labels = {
                 'required': 'الساعات المطلوبة',
                 'actual': 'الساعات الفعلية',
-                'shortage': 'ساعات العجز',
+                'shortage': 'عجز / زيادة الساعات',
+                'required_employees': 'الموظفون المطلوبون',
+                'current_employees': 'الموظفون الحاليون',
+                'employee_shortage': 'عجز / زيادة الموظفين',
             }
         else:
             labels = {
                 'required': _('Required Hours'),
                 'actual': _('Actual Hours'),
-                'shortage': _('Shortage Hours'),
+                'shortage': _('Shortage / Increase Hours'),
+                'required_employees': _('Required Employees'),
+                'current_employees': _('Current Employees'),
+                'employee_shortage': _('Employees Shortage / Increase'),
             }
         for rec in self:
             rec.required_hours_label = labels['required']
             rec.actual_hours_label = labels['actual']
             rec.shortage_hours_label = labels['shortage']
+            rec.required_employees_label = labels['required_employees']
+            rec.current_employees_label = labels['current_employees']
+            rec.employee_shortage_label = labels['employee_shortage']
+
+    @api.depends('hours_capacity_status', 'employee_capacity_status')
+    def _compute_status_labels(self):
+        is_arabic = (self.env.lang or '').startswith('ar')
+        label_map = {
+            'shortage': 'عجز' if is_arabic else _('Shortage'),
+            'increase': 'زيادة' if is_arabic else _('Increase'),
+            'balanced': 'متوازن' if is_arabic else _('Balanced'),
+        }
+        for rec in self:
+            rec.hours_status_label = label_map.get(rec.hours_capacity_status, label_map['balanced'])
+            rec.employee_status_label = label_map.get(rec.employee_capacity_status, label_map['balanced'])
 
     @api.onchange('workplace', 'job_title', 'required_operating_hours', 'default_actual_daily_hours')
     def _onchange_capacity_inputs(self):
         for rec in self:
-            employees = rec._get_actual_employees()
-            actual_hours = sum(rec._get_employee_actual_hours(employee) for employee in employees)
-            rec.actual_employee_ids = [(6, 0, employees.ids)]
-            rec.actual_available_hours = actual_hours
-            rec.shortage_hours = max(rec.required_operating_hours - actual_hours, 0.0)
+            values = rec._get_actual_capacity_values()
+            rec.actual_employee_ids = values['actual_employee_ids']
+            rec.employee_line_ids = values['employee_line_ids']
+            rec.actual_available_hours = values['actual_available_hours']
+            rec.shortage_hours = rec.required_operating_hours - values['actual_available_hours']
 
     @api.onchange('required_operating_hours', 'actual_available_hours')
     def _onchange_hours(self):
         for rec in self:
-            rec.shortage_hours = max(rec.required_operating_hours - rec.actual_available_hours, 0.0)
+            rec.shortage_hours = rec.required_operating_hours - rec.actual_available_hours
 
     @api.depends('workplace.name', 'job_title.name')
     def _compute_display_name(self):
@@ -95,6 +209,23 @@ class ManpowerHourNeed(models.Model):
                 rec.workplace.name or '',
                 rec.job_title.name or '',
             )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        records = super().create(vals_list)
+        records._auto_fetch_actual_capacity()
+        return records
+
+    def write(self, vals):
+        result = super().write(vals)
+        if {'workplace', 'job_title', 'default_actual_daily_hours'}.intersection(vals):
+            self._auto_fetch_actual_capacity()
+        return result
+
+    def _auto_fetch_actual_capacity(self):
+        for rec in self:
+            if rec.workplace:
+                rec.with_context(skip_manpower_hour_auto_fetch=True).write(rec._get_actual_capacity_values())
 
     def _get_actual_workforce_domain(self):
         self.ensure_one()
@@ -131,6 +262,18 @@ class ManpowerHourNeed(models.Model):
 
     def action_fetch_employees(self):
         self.ensure_one()
+        self.write(self._get_actual_capacity_values())
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Manpower Need Per Hour',
+            'res_model': self._name,
+            'res_id': self.id,
+            'view_mode': 'form',
+            'target': 'current',
+        }
+
+    def _get_actual_capacity_values(self):
+        self.ensure_one()
         employees = self._get_actual_employees()
         line_commands = [(5, 0, 0)]
         actual_hours = 0.0
@@ -141,18 +284,10 @@ class ManpowerHourNeed(models.Model):
                 'employee_id': employee.id,
                 'actual_hours': employee_hours,
             }))
-        self.write({
+        return {
             'actual_employee_ids': [(6, 0, employees.ids)],
             'employee_line_ids': line_commands,
             'actual_available_hours': actual_hours,
-        })
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Manpower Need Per Hour',
-            'res_model': self._name,
-            'res_id': self.id,
-            'view_mode': 'form',
-            'target': 'current',
         }
 
     @api.model
