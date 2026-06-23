@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <function model="ab_internal_shipment" name="write">
+            <function model="ab_internal_shipment" name="search">
+                <value eval="[('state', '=', 'delivered')]"/>
+            </function>
+            <value eval="{'state': 'awaiting_receipt'}"/>
+        </function>
+    </data>
+</odoo>
