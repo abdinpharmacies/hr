@@ -25,12 +25,25 @@
             <field name="perm_unlink" eval="0"/>
         </record>
 
+        <record id="rule_ab_quality_assurance_report" model="ir.rule">
+            <field name="name">Rule quality assurance Report</field>
+            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
+            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_report'))]"/>
+            <field name="domain_force">[
+                (1, '=', 1),
+            ]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
         <record id="rule_ab_quality_assurance_user_r_their_dept" model="ir.rule">
             <field name="name">rule_ab_quality_assurance_user_r_their_dept</field>
             <field name="model_id" ref="model_ab_quality_assurance_visit"/>
             <field name="groups" eval="[(4, ref('group_ab_quality_assurance_ro'))]"/>
             <field name="domain_force">[
-                ('department_id', 'in', user.ab_employee_ids.department_id.ids),
+                ('department_id', 'child_of', user.ab_employee_ids.department_id.ids),
             ]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -49,70 +62,6 @@
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_department_manager_visit_read" model="ir.rule">
-            <field name="name">Quality Assurance Department Manager Visit Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit"/>
-            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_department_manager'))]"/>
-            <field name="domain_force">[
-                ('state', '=', 'submitted'),
-                ('visit_section_ids.department_manager_id.user_id', '=', user.id),
-            ]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_department_manager_section_read" model="ir.rule">
-            <field name="name">Quality Assurance Department Manager Section Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_section"/>
-            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_department_manager'))]"/>
-            <field name="domain_force">[('department_manager_id.user_id', '=', user.id)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_department_manager_standard_read" model="ir.rule">
-            <field name="name">Quality Assurance Department Manager Standard Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_standard"/>
-            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_department_manager'))]"/>
-            <field name="domain_force">[('section_id.department_manager_id.user_id', '=', user.id)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_department_manager_visit_section_read" model="ir.rule">
-            <field name="name">Quality Assurance Department Manager Visit Section Read</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_section"/>
-            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_department_manager'))]"/>
-            <field name="domain_force">[
-                ('visit_id.state', '=', 'submitted'),
-                ('department_manager_id.user_id', '=', user.id),
-            ]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_quality_assurance_department_manager_visit_line_response" model="ir.rule">
-            <field name="name">Quality Assurance Department Manager Visit Line Response</field>
-            <field name="model_id" ref="model_ab_quality_assurance_visit_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_quality_assurance_department_manager'))]"/>
-            <field name="domain_force">[
-                ('visit_state', '=', 'submitted'),
-                ('visit_section_id.department_manager_id.user_id', '=', user.id),
-            ]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 

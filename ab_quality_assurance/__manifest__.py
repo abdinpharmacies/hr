@@ -4,7 +4,7 @@
     "license": "LGPL-3",
     "category": "Operations",
     "application": True,
-    "depends": ["base", "web", "mail", "ab_hr", "ab_request_telegram"],
+    "depends": ["base", "web", "mail", "ab_hr"],
     "icon": "ab_quality_assurance/static/description/icon.svg",
     "data": [
         "security/security_groups.xml",
@@ -26,6 +26,5 @@
             "ab_quality_assurance/static/src/scss/ab_quality_assurance.scss",
         ],
     },
-    "post_init_hook": "post_init_hook",
     "installable": True,
 }

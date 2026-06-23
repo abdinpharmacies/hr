@@ -125,7 +125,7 @@ patch(FormController.prototype, {
             body: buildScoreSummary(this.model.root),
             confirmLabel: _t("Submit Visit"),
             confirm: async () => {
-                const saved = await this.save();
+                const saved = await this.save({ reload: false });
                 if (!saved || !this.model.root.resId) {
                     return false;
                 }

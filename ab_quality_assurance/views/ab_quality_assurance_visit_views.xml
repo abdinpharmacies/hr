@@ -21,31 +21,21 @@
                                 <field name="percentage" readonly="1"/>
                             </group>
                         </div>
-                        <field name="visit_line_ids"
-                               readonly="(visit_id.state == 'draft' and not visit_id.can_edit_evaluation) or (visit_id.state == 'submitted' and not visit_id.can_reply_department_response)">
+                        <field name="visit_line_ids" readonly="visit_id.state == 'submitted'">
                             <list class="o_qa_visit_line_list" editable="bottom">
                                 <field name="visit_section_id" column_invisible="1"/>
                                 <field name="visit_id" column_invisible="1"/>
                                 <field name="visit_state" column_invisible="1"/>
-                                <field name="can_reply_department_response" column_invisible="1"/>
                                 <field name="can_upload_attachment" column_invisible="1"/>
                                 <field name="section_id" column_invisible="1"/>
                                 <field name="standard_id" column_invisible="1"/>
-                                <field name="sequence" widget="handle" readonly="visit_state == 'submitted'"/>
+                                <field name="sequence" widget="handle"/>
                                 <field name="title" readonly="1"/>
                                 <field name="max_score" readonly="1"/>
-                                <field name="score" readonly="visit_state == 'submitted'"
-                                       options="{'type': 'number', 'step': 1}" class="o_qa_score_column"/>
+                                <field name="score" options="{'type': 'number', 'step': 1}" class="o_qa_score_column"/>
                                 <field name="percentage" readonly="1" class="o_qa_percentage_column"/>
-                                <field name="note" string="Score Note" optional="show"
-                                       readonly="visit_state == 'submitted'"/>
-                                <field name="department_response" optional="show"
-                                       readonly="1"
-                                       invisible="visit_state != 'submitted'"/>
-                                <button name="action_open_department_response" type="object" string="Reply"
-                                        icon="fa-reply" invisible="not can_reply_department_response"/>
-                                <field name="attachment" widget="qa_list_binary" filename="attachment_name"
-                                       readonly="visit_state == 'submitted'"/>
+                                <field name="note" string="Score Note" optional="show"/>
+                                <field name="attachment" widget="qa_list_binary" filename="attachment_name"/>
                                 <field name="attachment_name" optional="hide"/>
                             </list>
                             <form string="Standard Evaluation">
@@ -54,8 +44,6 @@
                                     <field name="visit_section_id" invisible="1"/>
                                     <field name="section_id" invisible="1"/>
                                     <field name="standard_id" invisible="1"/>
-                                    <field name="visit_state" invisible="1"/>
-                                    <field name="can_reply_department_response" invisible="1"/>
                                     <group>
                                         <group>
                                             <field name="section_id" readonly="1"/>
@@ -76,11 +64,6 @@
                                         <field name="note" string="Score Note"
                                                placeholder="Clarify the reason for this score..."
                                                readonly="visit_id.state == 'submitted'"/>
-                                    </group>
-                                    <group invisible="visit_state != 'submitted'">
-                                        <field name="department_response"
-                                               placeholder="Add the department response to this standard score..."
-                                               readonly="not can_reply_department_response"/>
                                     </group>
                                     <group>
                                         <field name="attachment" filename="attachment_name"
@@ -105,8 +88,6 @@
                         <field name="visit_section_id" invisible="1"/>
                         <field name="section_id" invisible="1"/>
                         <field name="standard_id" invisible="1"/>
-                        <field name="visit_state" invisible="1"/>
-                        <field name="can_reply_department_response" invisible="1"/>
                         <group>
                             <group>
                                 <field name="section_id" readonly="1"/>
@@ -126,11 +107,6 @@
                             <field name="note" string="Score Note" placeholder="Clarify the reason for this score..."
                                    readonly="visit_id.state == 'submitted'"/>
                         </group>
-                        <group invisible="visit_state != 'submitted'">
-                            <field name="department_response"
-                                   placeholder="Add the department response to this standard score..."
-                                   readonly="not can_reply_department_response"/>
-                        </group>
                         <group>
                             <field name="attachment" filename="attachment_name"
                                    readonly="visit_id.state == 'submitted'"/>
@@ -139,91 +115,6 @@
                     </sheet>
                 </form>
             </field>
-        </record>
-
-        <record id="ab_quality_assurance_visit_line_response_view_form" model="ir.ui.view">
-            <field name="name">ab_quality_assurance_visit_line.response.form</field>
-            <field name="model">ab_quality_assurance_visit_line</field>
-            <field name="arch" type="xml">
-                <form string="Department Response">
-                    <sheet>
-                        <field name="visit_state" invisible="1"/>
-                        <field name="can_reply_department_response" invisible="1"/>
-                        <group>
-                            <group>
-                                <field name="visit_id" readonly="1"/>
-                                <field name="department_id" readonly="1"/>
-                                <field name="employee_id" readonly="1"/>
-                            </group>
-                            <group>
-                                <field name="section_id" readonly="1"/>
-                                <field name="title" readonly="1"/>
-                                <field name="score" readonly="1"/>
-                            </group>
-                        </group>
-                        <group>
-                            <field name="note" readonly="1"/>
-                        </group>
-                        <group>
-                            <field name="department_response"
-                                   placeholder="Add the department response to this standard score..."
-                                   readonly="not can_reply_department_response"/>
-                        </group>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="ab_quality_assurance_visit_line_response_view_list" model="ir.ui.view">
-            <field name="name">ab_quality_assurance_visit_line.response.list</field>
-            <field name="model">ab_quality_assurance_visit_line</field>
-            <field name="arch" type="xml">
-                <list string="Department Responses" editable="bottom" default_order="id desc">
-                    <field name="visit_id" readonly="1"/>
-                    <field name="department_id" readonly="1"/>
-                    <field name="employee_id" readonly="1"/>
-                    <field name="visit_section_id" column_invisible="1"/>
-                    <field name="visit_state" column_invisible="1"/>
-                    <field name="can_reply_department_response" column_invisible="1"/>
-                    <field name="section_id" readonly="1"/>
-                    <field name="title" readonly="1"/>
-                    <field name="max_score" readonly="1"/>
-                    <field name="score" readonly="1"/>
-                    <field name="percentage" readonly="1"/>
-                    <field name="note" readonly="1"/>
-                    <field name="department_response" readonly="not can_reply_department_response"/>
-                </list>
-            </field>
-        </record>
-
-        <record id="ab_quality_assurance_visit_line_response_view_search" model="ir.ui.view">
-            <field name="name">ab_quality_assurance_visit_line.response.search</field>
-            <field name="model">ab_quality_assurance_visit_line</field>
-            <field name="arch" type="xml">
-                <search string="Department Responses">
-                    <field name="visit_id"/>
-                    <field name="department_id"/>
-                    <field name="employee_id"/>
-                    <field name="section_id"/>
-                    <field name="title"/>
-                    <filter name="group_by_visit" string="Visit" context="{'group_by': 'visit_id'}"/>
-                    <filter name="group_by_department" string="Visited Department" context="{'group_by': 'department_id'}"/>
-                    <filter name="group_by_visitor" string="Visitor" context="{'group_by': 'employee_id'}"/>
-                </search>
-            </field>
-        </record>
-
-        <record id="ab_quality_assurance_visit_line_response_action" model="ir.actions.act_window">
-            <field name="name">Department Responses</field>
-            <field name="res_model">ab_quality_assurance_visit_line</field>
-            <field name="view_mode">list,form</field>
-            <field name="domain">[('visit_state', '=', 'submitted')]</field>
-            <field name="search_view_id" ref="ab_quality_assurance_visit_line_response_view_search"/>
-            <field name="views" eval="[
-                (ref('ab_quality_assurance_visit_line_response_view_list'), 'list'),
-                (ref('ab_quality_assurance_visit_line_response_view_form'), 'form')
-            ]"/>
-            <field name="context">{'create': False, 'delete': False, 'search_default_group_by_visit': 1}</field>
         </record>
 
         <record id="ab_quality_assurance_visit_view_list" model="ir.ui.view">
@@ -277,7 +168,6 @@
                         <field name="user_id" invisible="1"/>
                         <field name="state" invisible="1"/>
                         <field name="can_edit_evaluation" invisible="1"/>
-                        <field name="can_reply_department_response" invisible="1"/>
                         <div class="o_qa_visit_hero">
                             <div class="o_qa_visit_hero__content">
                                 <div class="o_form_label o_qa_visit_hero__eyebrow">
@@ -438,7 +328,7 @@
                                     </div>
                                 </div>
                                 <field name="visit_section_ids"
-                                       readonly="(state == 'draft' and not can_edit_evaluation) or (state == 'submitted' and not can_reply_department_response)">
+                                       readonly="state == 'submitted' or not can_edit_evaluation">
                                     <list class="o_qa_visit_section_list" open_form_view="True">
                                         <field name="section_id" column_invisible="1"/>
                                         <field name="sequence" widget="handle"/>
@@ -465,36 +355,25 @@
                                                     <field name="percentage" readonly="1"/>
                                                 </group>
                                             </div>
-                                            <field name="visit_line_ids"
-                                                   readonly="(visit_id.state == 'draft' and not visit_id.can_edit_evaluation) or (visit_id.state == 'submitted' and not visit_id.can_reply_department_response)">
+                                            <field name="visit_line_ids" readonly="visit_id.state == 'submitted'">
                                                 <list class="o_qa_visit_line_list" editable="bottom">
                                                     <field name="visit_section_id" column_invisible="1"/>
                                                     <field name="visit_id" column_invisible="1"/>
                                                     <field name="visit_state" column_invisible="1"/>
-                                                    <field name="can_reply_department_response" column_invisible="1"/>
                                                     <field name="can_upload_attachment" column_invisible="1"/>
                                                     <field name="section_id" column_invisible="1"/>
                                                     <field name="standard_id" column_invisible="1"/>
-                                                    <field name="sequence" widget="handle"
-                                                           readonly="visit_state == 'submitted'"/>
+                                                    <field name="sequence" widget="handle"/>
                                                     <field name="title" readonly="1"/>
                                                     <field name="max_score" readonly="1"/>
-                                                    <field name="score" readonly="visit_state == 'submitted'"
-                                                           options="{'type': 'number', 'step': 1}"
+                                                    <field name="score" options="{'type': 'number', 'step': 1}"
                                                            class="o_qa_score_column"/>
                                                     <field name="percentage" readonly="1"
                                                            class="o_qa_percentage_column"/>
-                                                    <field name="note" string="Score Note" optional="show"
-                                                           readonly="visit_state == 'submitted'"/>
-                                                    <field name="department_response" optional="show"
-                                                           readonly="1"
-                                                           invisible="visit_state != 'submitted'"/>
-                                                    <button name="action_open_department_response" type="object"
-                                                            string="Reply" icon="fa-reply"
-                                                            invisible="not can_reply_department_response"/>
+                                                    <field name="note" string="Score Note" optional="show"/>
                                                     <field name="attachment" widget="qa_list_binary"
-                                                           filename="attachment_name"
-                                                           readonly="visit_state == 'submitted'"/>
+                                                           filename="attachment_name" optional="show"/>
+                                                    
                                                     <field name="attachment_name" optional="hide"/>
                                                 </list>
                                                 <form string="Visit Standard Score">
@@ -503,8 +382,6 @@
                                                         <field name="visit_section_id" invisible="1"/>
                                                         <field name="section_id" invisible="1"/>
                                                         <field name="standard_id" invisible="1"/>
-                                                        <field name="visit_state" invisible="1"/>
-                                                        <field name="can_reply_department_response" invisible="1"/>
                                                         <group>
                                                             <group>
                                                                 <field name="section_id" readonly="1"/>
@@ -527,11 +404,6 @@
                                                             <field name="note" string="Score Note"
                                                                    placeholder="Clarify the reason for this score..."
                                                                    readonly="visit_id.state == 'submitted'"/>
-                                                        </group>
-                                                        <group invisible="visit_state != 'submitted'">
-                                                            <field name="department_response"
-                                                                   placeholder="Add the department response to this standard score..."
-                                                                   readonly="not can_reply_department_response"/>
                                                         </group>
                                                         <group>
                                                             <field name="attachment" filename="attachment_name"

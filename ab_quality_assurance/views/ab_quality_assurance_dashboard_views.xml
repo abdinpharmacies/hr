@@ -21,7 +21,7 @@
             <field name="name">ab_quality_assurance_department_dashboard.kanban</field>
             <field name="model">ab_quality_assurance_department_dashboard</field>
             <field name="arch" type="xml">
-                <kanban class="o_qa_dashboard_kanban" sample="1" create="false" string="Quality Assurance Dashboard">
+                <kanban class="o_qa_dashboard_kanban" sample="1" string="Quality Assurance Dashboard">
                     <field name="department_id"/>
                     <field name="visit_count"/>
                     <field name="submitted_visit_count"/>
@@ -63,12 +63,16 @@
 
                                 <div class="o_qa_dashboard_card__primary">
                                     <div class="o_qa_dashboard_metric">
-                                        <span class="o_qa_dashboard_metric__label"><field name="ui_average_score_label"/></span>
-                                        <span class="o_qa_dashboard_metric__value"><field name="avg_percentage"/>%</span>
+                                        <span class="o_qa_dashboard_metric__label"><field
+                                                name="ui_average_score_label"/></span>
+                                        <span class="o_qa_dashboard_metric__value"><field name="avg_percentage"/>
+                                            %</span>
                                     </div>
                                     <div class="o_qa_dashboard_metric is-secondary">
-                                        <span class="o_qa_dashboard_metric__label"><field name="ui_best_recorded_label"/></span>
-                                        <span class="o_qa_dashboard_metric__value"><field name="best_percentage"/>%</span>
+                                        <span class="o_qa_dashboard_metric__label"><field
+                                                name="ui_best_recorded_label"/></span>
+                                        <span class="o_qa_dashboard_metric__value"><field name="best_percentage"/>
+                                            %</span>
                                     </div>
                                 </div>
 
@@ -78,25 +82,30 @@
                                         <strong><field name="submission_rate"/>%</strong>
                                     </div>
                                     <div class="o_qa_dashboard_progress__track">
-                                        <div class="o_qa_dashboard_progress__fill" t-att-style="'width: ' + Math.min(Math.max(rate, 0), 100) + '%'"/>
+                                        <div class="o_qa_dashboard_progress__fill"
+                                             t-att-style="'width: ' + Math.min(Math.max(rate, 0), 100) + '%'"/>
                                     </div>
                                 </div>
 
                                 <div class="o_qa_dashboard_stats">
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label"><field name="ui_total_visits_label"/></span>
+                                        <span class="o_qa_dashboard_stats__label"><field
+                                                name="ui_total_visits_label"/></span>
                                         <strong><field name="visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label"><field name="ui_submitted_label"/></span>
+                                        <span class="o_qa_dashboard_stats__label"><field
+                                                name="ui_submitted_label"/></span>
                                         <strong><field name="submitted_visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
                                         <span class="o_qa_dashboard_stats__label"><field name="ui_draft_label"/></span>
-                                        <strong t-att-class="drafts > 0 ? 'text-warning' : ''"><field name="draft_visit_count"/></strong>
+                                        <strong t-att-class="drafts > 0 ? 'text-warning' : ''"><field
+                                                name="draft_visit_count"/></strong>
                                     </div>
                                     <div class="o_qa_dashboard_stats__item">
-                                        <span class="o_qa_dashboard_stats__label"><field name="ui_avg_earned_label"/></span>
+                                        <span class="o_qa_dashboard_stats__label"><field
+                                                name="ui_avg_earned_label"/></span>
                                         <strong><field name="avg_earned_score"/></strong>
                                     </div>
                                 </div>

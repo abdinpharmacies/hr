@@ -1,5 +1,4 @@
 import base64
-from unittest.mock import patch
 
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
@@ -18,20 +17,13 @@ class TestAbQualityAssurance(TransactionCase):
         self.group_user = self.env.ref("base.group_user")
         self.ro_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_ro")
         self.member_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_user")
-        self.department_manager_group = self.env.ref(
-            "ab_quality_assurance.group_ab_quality_assurance_department_manager"
-        )
         self.admin_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_manager")
         self.manager_group = self.env.ref("ab_quality_assurance.group_ab_quality_assurance_manager")
 
         self.member_user = self._create_user("QA Member", "qa_member_test", [self.member_group.id])
         self.admin_user = self._create_user("QA Admin", "qa_admin_test", [self.admin_group.id])
         self.quality_manager_user = self._create_user("QA Manager", "qa_manager_test", [])
-        self.section_manager_user = self._create_user(
-            "Section Manager",
-            "qa_section_manager_test",
-            [self.department_manager_group.id],
-        )
+        self.section_manager_user = self._create_user("Section Manager", "qa_section_manager_test", [])
         self.outsider_user = self._create_user("QA Outsider", "qa_outsider_test", [])
 
         self.member_employee = self._create_employee("QA Member Employee", self.member_user)
@@ -90,6 +82,7 @@ class TestAbQualityAssurance(TransactionCase):
                 "max_score": 30,
             }
         )
+
     def _create_user(self, name, login, extra_groups):
         partner_vals = {
             "name": name,
@@ -127,79 +120,11 @@ class TestAbQualityAssurance(TransactionCase):
             }
         )
         self.assertEqual(visit.employee_id, self.member_employee)
-        self.assertIn(self.visited_department.name, visit.name)
         self.assertEqual(len(visit.visit_section_ids), 2)
         self.assertSetEqual(
             set(visit.visit_section_ids.mapped("visit_line_ids.standard_id").ids),
             set(self.Standards.search([]).ids),
         )
-
-    def test_visit_creation_does_not_send_telegram_notification(self):
-        self.env["ab_hr_bot"].sudo().create(
-            {
-                "employee_id": self.section_manager_employee.id,
-                "chat_id": "556677",
-            }
-        )
-        sent_messages = []
-
-        def _capture_send(service_self, chat_id, message):
-            sent_messages.append((chat_id, message))
-            return True
-
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
-            self.Visits.with_user(self.member_user).create(
-                {
-                    "department_id": self.visited_department.id,
-                }
-            )
-
-        self.assertEqual(sent_messages, [])
-
-    def test_visit_submit_does_not_notify_visited_branch_manager(self):
-        self.visited_department.manager_id = self.outsider_employee.id
-        self.env["ab_hr_bot"].sudo().create(
-            {
-                "employee_id": self.section_manager_employee.id,
-                "chat_id": "556677",
-            }
-        )
-        self.env["ab_hr_bot"].sudo().create(
-            {
-                "employee_id": self.outsider_employee.id,
-                "chat_id": "998877",
-            }
-        )
-        sent_messages = []
-
-        def _capture_send(service_self, chat_id, message):
-            sent_messages.append((chat_id, message))
-            return True
-
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
-            visit = self.Visits.with_user(self.member_user).create(
-                {
-                    "department_id": self.visited_department.id,
-                }
-            )
-            for line in visit.visit_section_ids.mapped("visit_line_ids"):
-                line.with_user(self.member_user).write({"score": line.max_score})
-            visit.with_user(self.member_user).action_submit_visit()
-
-        self.assertEqual([chat_id for chat_id, _message in sent_messages], ["556677"])
-
-    def test_visit_department_change_updates_generated_name(self):
-        other_department = self.Departments.create({"name": "فرع المتابعة"})
-        visit = self.Visits.with_user(self.member_user).create(
-            {
-                "department_id": self.visited_department.id,
-            }
-        )
-        sequence_name = visit.name.split(" - ", 1)[0]
-
-        visit.with_user(self.member_user).write({"department_id": other_department.id})
-
-        self.assertEqual(visit.name, "%s - %s" % (sequence_name, other_department.name))
 
     def test_visit_submission_sets_performer_to_submitter_employee(self):
         visit = self.Visits.with_user(self.admin_user).create(
@@ -214,61 +139,6 @@ class TestAbQualityAssurance(TransactionCase):
         visit.with_user(self.admin_user).action_submit_visit()
 
         self.assertEqual(visit.employee_id, self.admin_employee)
-
-    def test_visit_submission_sends_submitted_telegram_to_section_manager(self):
-        self.env["ab_hr_bot"].sudo().create(
-            {
-                "employee_id": self.section_manager_employee.id,
-                "chat_id": "556677",
-            }
-        )
-        sent_messages = []
-
-        def _capture_send(service_self, chat_id, message):
-            sent_messages.append((chat_id, message))
-            return True
-
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
-            visit = self.Visits.with_user(self.member_user).create(
-                {
-                    "department_id": self.visited_department.id,
-                }
-            )
-            for line in visit.visit_section_ids.mapped("visit_line_ids"):
-                line.with_user(self.member_user).write({"score": line.max_score})
-            visit.with_user(self.member_user).action_submit_visit()
-
-        self.assertEqual(len(sent_messages), 1)
-        self.assertEqual(sent_messages[0][0], "556677")
-        self.assertIn("Submitted", sent_messages[0][1])
-        self.assertIn("Cleanliness", sent_messages[0][1])
-        self.assertIn("Documentation", sent_messages[0][1])
-
-    def test_repeated_same_status_notification_is_not_sent_twice(self):
-        self.env["ab_hr_bot"].sudo().create(
-            {
-                "employee_id": self.section_manager_employee.id,
-                "chat_id": "556677",
-            }
-        )
-        sent_messages = []
-
-        def _capture_send(service_self, chat_id, message):
-            sent_messages.append((chat_id, message))
-            return True
-
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
-            visit = self.Visits.with_user(self.member_user).create(
-                {
-                    "department_id": self.visited_department.id,
-                }
-            )
-            for line in visit.visit_section_ids.mapped("visit_line_ids"):
-                line.with_user(self.member_user).write({"score": line.max_score})
-            visit.with_user(self.member_user).action_submit_visit()
-            visit._notify_section_department_managers_telegram("submitted")
-
-        self.assertEqual(len(sent_messages), 1)
 
     def test_visit_creation_hides_sections_without_active_standards(self):
         empty_section = self.Sections.with_user(self.quality_manager_user).create(
@@ -367,35 +237,6 @@ class TestAbQualityAssurance(TransactionCase):
         first_line = visit.visit_section_ids.mapped("visit_line_ids").sorted("id")[0]
         with self.assertRaises(AccessError):
             first_line.with_user(self.section_manager_user).write({"score": 0})
-
-    def test_department_manager_can_reply_to_submitted_standard_line(self):
-        visit = self.Visits.with_user(self.member_user).create(
-            {
-                "department_id": self.visited_department.id,
-            }
-        )
-        for line in visit.visit_section_ids.mapped("visit_line_ids"):
-            line.with_user(self.member_user).write({"score": line.max_score})
-        visit.with_user(self.member_user).action_submit_visit()
-
-        line = visit.visit_section_ids.mapped("visit_line_ids").filtered(
-            lambda current_line: current_line.standard_id == self.standard
-        )
-        action = line.with_user(self.section_manager_user).action_open_department_response()
-        self.assertEqual(action["res_model"], "ab_quality_assurance_visit_line")
-        self.assertEqual(action["res_id"], line.id)
-        self.assertEqual(action["target"], "new")
-
-        line.with_user(self.section_manager_user).write(
-            {"department_response": "The department reviewed the score and started corrective action."}
-        )
-
-        self.assertEqual(
-            line.department_response,
-            "The department reviewed the score and started corrective action.",
-        )
-        with self.assertRaises(AccessError):
-            line.with_user(self.section_manager_user).write({"score": 0})
 
     def test_submitted_visit_scores_are_locked(self):
         visit = self.Visits.with_user(self.member_user).create(

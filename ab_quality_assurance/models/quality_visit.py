@@ -1,14 +1,8 @@
-import html
-import logging
-
 from odoo import _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 from uuid import uuid4
 
-_logger = logging.getLogger(__name__)
-
 VISIT_SEQUENCE_CODE = "ab_quality_assurance.visit"
-VISIT_NAME_DEPARTMENT_SEPARATOR = " - "
 BRANCH_PREFIX = "فرع"
 QUALITY_EDITOR_GROUPS = (
     "ab_quality_assurance.group_ab_quality_assurance_user",
@@ -68,7 +62,6 @@ class AbQualityAssuranceVisit(models.Model):
     visit_date = fields.Date(required=True, default=fields.Date.today)
     notes = fields.Text(copy=False)
     can_edit_evaluation = fields.Boolean(compute="_compute_can_edit_evaluation")
-    can_reply_department_response = fields.Boolean(compute="_compute_can_reply_department_response")
     state = fields.Selection(
         [("draft", _("Draft")), ("submitted", _("Submitted"))],
         default="draft",
@@ -83,7 +76,6 @@ class AbQualityAssuranceVisit(models.Model):
     total_percentage = fields.Float(compute="_compute_totals", store=True)
     line_count = fields.Integer(compute="_compute_totals", store=True)
     section_count = fields.Integer(compute="_compute_totals", store=True)
-    telegram_submitted_manager_ids = fields.Char(readonly=True, copy=False)
     active = fields.Boolean(default=True)
 
     _ab_quality_assurance_visit_name_uniq = models.Constraint(
@@ -116,18 +108,6 @@ class AbQualityAssuranceVisit(models.Model):
         can_manage_all = user.has_group("ab_quality_assurance.group_ab_quality_assurance_manager")
         for record in self:
             record.can_edit_evaluation = bool(can_manage_all or (can_edit_own and record.user_id == user))
-
-    @api.depends("state", "visit_section_ids.department_manager_id.user_id")
-    @api.depends_context("uid")
-    def _compute_can_reply_department_response(self):
-        user = self.env.user
-        is_department_manager = user.has_group("ab_quality_assurance.group_ab_quality_assurance_department_manager")
-        for record in self:
-            record.can_reply_department_response = bool(
-                is_department_manager
-                and record.state == "submitted"
-                and user in record.visit_section_ids.mapped("department_manager_id.user_id")
-            )
 
     @api.depends("state", "name")
     @api.depends_context("lang")
@@ -226,45 +206,35 @@ class AbQualityAssuranceVisit(models.Model):
                 raise ValidationError(
                     _("Visits can only evaluate branch departments whose names start with '%s'.") % BRANCH_PREFIX)
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
-        records = super().create(prepared_vals_list)
-        records._validate_visit_sections()
-        records._sync_section_department_followers()
-        return records
-
-    def write(self, vals):
-        if not self._is_quality_editor() or not self._can_manage_visit():
-            raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
-
-        if any(record.state == "submitted" for record in self) and not self.env.context.get(
-                "allow_submitted_visit_write"):
-            raise UserError(_("Submitted visits cannot be modified."))
-
-        prepared_vals = self._prepare_create_or_write_vals(vals, for_create=False)
-        if prepared_vals.get("department_id") and "visit_section_ids" not in prepared_vals:
-            sections = self._get_active_sections()
-            prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
-        if prepared_vals.get("department_id") and "name" not in prepared_vals:
-            for record in self:
-                record_vals = dict(prepared_vals)
-                record_vals["name"] = record._format_visit_name(
-                    record.name or record._next_visit_name(),
-                    record_vals["department_id"],
-                )
-                super(AbQualityAssuranceVisit, record).write(record_vals)
-            result = True
-        else:
-            result = super().write(prepared_vals)
-        self._validate_visit_sections()
-        self._sync_section_department_followers()
-        return result
-
-    def unlink(self):
-        if any(record.state == "submitted" for record in self):
-            raise UserError(_("Submitted visits cannot be deleted."))
-        return super().unlink()
+    # @api.model_create_multi
+    # def create(self, vals_list):
+    #     prepared_vals_list = [self._prepare_create_or_write_vals(vals, for_create=True) for vals in vals_list]
+    #     records = super().create(prepared_vals_list)
+    #     records._validate_visit_sections()
+    #     records._sync_section_department_followers()
+    #     return records
+    #
+    # def write(self, vals):
+    #     if not self._is_quality_editor() or not self._can_manage_visit():
+    #         raise AccessError(_("Only quality assurance users can modify visit evaluation data."))
+    #
+    #     if any(record.state == "submitted" for record in self) and not self.env.context.get(
+    #             "allow_submitted_visit_write"):
+    #         raise UserError(_("Submitted visits cannot be modified."))
+    #
+    #     prepared_vals = self._prepare_create_or_write_vals(vals, for_create=False)
+    #     if prepared_vals.get("department_id") and "visit_section_ids" not in prepared_vals:
+    #         sections = self._get_active_sections()
+    #         prepared_vals["visit_section_ids"] = [fields.Command.clear(), *self._build_section_commands(sections)]
+    #     result = super().write(prepared_vals)
+    #     self._validate_visit_sections()
+    #     self._sync_section_department_followers()
+    #     return result
+    #
+    # def unlink(self):
+    #     if any(record.state == "submitted" for record in self):
+    #         raise UserError(_("Submitted visits cannot be deleted."))
+    #     return super().unlink()
 
     def _is_quality_editor(self):
         return any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
@@ -303,7 +273,6 @@ class AbQualityAssuranceVisit(models.Model):
                     "submitted_at": fields.Datetime.now(),
                 }
             )
-            record._notify_section_department_managers_telegram("submitted")
         return True
 
     def action_export_pdf(self):
@@ -330,37 +299,12 @@ class AbQualityAssuranceVisit(models.Model):
         return "QA-VISIT-%s" % uuid4().hex[:8].upper()
 
     @api.model
-    def _format_visit_name(self, base_name, department_id=False):
-        name = (base_name or "").strip()
-        department_name = self._get_department_name(department_id)
-        if not department_name:
-            return name
-        sequence_name = self._strip_department_from_visit_name(name)
-        return "%s%s%s" % (sequence_name, VISIT_NAME_DEPARTMENT_SEPARATOR, department_name)
-
-    @api.model
-    def _strip_department_from_visit_name(self, name):
-        return (name or "").split(VISIT_NAME_DEPARTMENT_SEPARATOR, 1)[0].strip()
-
-    @api.model
-    def _get_department_name(self, department_id):
-        if not department_id:
-            return ""
-        department = self.env["ab_hr_department"].sudo().browse(department_id)
-        return (department.exists().name or "").strip()
-
-    @api.model
     def _prepare_create_or_write_vals(self, vals, for_create=False):
         prepared_vals = dict(vals or {})
         if for_create and not prepared_vals.get("name"):
             prepared_vals["name"] = self._next_visit_name()
         elif for_create and prepared_vals.get("name") in {"New", "جديد"}:
             prepared_vals["name"] = self._next_visit_name()
-        if for_create and prepared_vals.get("department_id"):
-            prepared_vals["name"] = self._format_visit_name(
-                prepared_vals.get("name") or self._next_visit_name(),
-                prepared_vals["department_id"],
-            )
         if for_create and not prepared_vals.get("user_id"):
             prepared_vals["user_id"] = self.env.user.id
         if for_create and not prepared_vals.get("employee_id"):
@@ -414,123 +358,6 @@ class AbQualityAssuranceVisit(models.Model):
         return self.visit_section_ids.mapped("department_manager_id.user_id.partner_id").filtered(
             lambda partner: partner
         )
-
-    def _notify_section_department_managers_telegram(self, status):
-        TelegramService = self.env["ab.telegram.service"]
-        BotLink = self.env["ab_hr_bot"].sudo()
-        for record in self:
-            manager_sections = record._get_unique_section_department_managers()
-            if not manager_sections:
-                _logger.info(
-                    "ab_quality_assurance: visit %s has no section department managers for Telegram notification.",
-                    record.id,
-                )
-                continue
-
-            sent_chat_ids = set()
-            notified_manager_ids = record._get_telegram_notified_manager_ids(status)
-            for manager_data in manager_sections.values():
-                manager = manager_data["manager"]
-                sections = manager_data["sections"]
-                if manager.id in notified_manager_ids:
-                    continue
-                try:
-                    bot_link = BotLink.find_or_register_employee_chat(manager)
-                except ValidationError as exc:
-                    _logger.warning(
-                        "ab_quality_assurance: manager Telegram binding conflict visit_id=%s manager_employee_id=%s reason=%s",
-                        record.id,
-                        manager.id,
-                        str(exc),
-                    )
-                    continue
-                if not bot_link or not bot_link.chat_id:
-                    _logger.info(
-                        "ab_quality_assurance: no Telegram mapping found for section manager employee_id=%s visit_id=%s",
-                        manager.id,
-                        record.id,
-                    )
-                    continue
-                if bot_link.chat_id in sent_chat_ids:
-                    continue
-
-                message = record._build_section_manager_telegram_message(status, sections)
-                sent = TelegramService.send_telegram_message(bot_link.chat_id, message)
-                if sent:
-                    sent_chat_ids.add(bot_link.chat_id)
-                    record._mark_telegram_manager_notified(status, manager.id)
-                _logger.info(
-                    "ab_quality_assurance: section manager notification visit_id=%s manager_employee_id=%s chat_id=%s status=%s sent=%s",
-                    record.id,
-                    manager.id,
-                    bot_link.chat_id,
-                    status,
-                    sent,
-                )
-
-    def _get_telegram_notified_manager_ids(self, status):
-        self.ensure_one()
-        field_name = self._get_telegram_status_field_name(status)
-        raw_value = self[field_name] or ""
-        return {
-            int(manager_id)
-            for manager_id in raw_value.split(",")
-            if manager_id.strip().isdigit()
-        }
-
-    def _mark_telegram_manager_notified(self, status, manager_id):
-        self.ensure_one()
-        field_name = self._get_telegram_status_field_name(status)
-        notified_manager_ids = self._get_telegram_notified_manager_ids(status)
-        notified_manager_ids.add(manager_id)
-        value = ",".join(str(current_id) for current_id in sorted(notified_manager_ids))
-        super(AbQualityAssuranceVisit, self.sudo()).write({field_name: value})
-
-    def _get_telegram_status_field_name(self, status):
-        if status == "submitted":
-            return "telegram_submitted_manager_ids"
-        raise ValidationError(_("Unsupported Telegram notification status."))
-
-    def _get_unique_section_department_managers(self):
-        self.ensure_one()
-        manager_sections = {}
-        for section in self.visit_section_ids:
-            manager = section.department_manager_id
-            if not manager:
-                continue
-            if manager.id not in manager_sections:
-                manager_sections[manager.id] = {
-                    "manager": manager,
-                    "sections": self.env["ab_quality_assurance_visit_section"],
-                }
-            manager_sections[manager.id]["sections"] |= section
-        return manager_sections
-
-    def _build_section_manager_telegram_message(self, status, sections):
-        self.ensure_one()
-        status_label = _("Submitted")
-        title = _("Quality Assurance Visit Submitted")
-        section_names = [
-            section.name
-            for section in sections.sorted(lambda current_section: (current_section.sequence, current_section.id))
-            if section.name
-        ]
-        lines = [
-            "📋 <b>%s</b>" % html.escape(title),
-            "<b>%s:</b> %s" % (html.escape(_("Reference")), html.escape(self.name or "N/A")),
-            "<b>%s:</b> %s" % (html.escape(_("Department")), html.escape(self.department_id.name or "N/A")),
-            "<b>%s:</b> %s" % (html.escape(_("Status")), html.escape(status_label)),
-        ]
-        if section_names:
-            lines.append("<b>%s:</b> %s" % (html.escape(_("Sections")), html.escape(", ".join(section_names))))
-        lines.extend(
-            [
-                "",
-                html.escape(_("A Quality Assurance Visit requires your review.")),
-                html.escape(_("Please review the assigned standards/evaluations and take the required action.")),
-            ]
-        )
-        return "\n".join(lines)
 
     def _sync_section_department_followers(self):
         for record in self:

@@ -19,19 +19,15 @@ class AbQualityAssuranceVisitLine(models.Model):
     section_id = fields.Many2one(related="visit_section_id.section_id", store=True, readonly=True)
     standard_id = fields.Many2one("ab_quality_assurance_standard", required=True, ondelete="restrict")
     department_id = fields.Many2one(related="visit_id.department_id", store=True, readonly=True)
-    employee_id = fields.Many2one(related="visit_id.employee_id", store=True, readonly=True, string="Visited By")
     title = fields.Char(related="standard_id.title", store=True, readonly=True)
     max_score = fields.Float(related="standard_id.max_score", store=True, readonly=True, string="Max Score")
     percentage = fields.Float(compute="_compute_percentage", store=True, readonly=True)
     score = fields.Float(default=False)
     note = fields.Text(string="Score Note", copy=False)
-    department_response = fields.Text(string="Department Response", copy=False)
     attachment = fields.Binary(attachment=True)
-    attachments = fields.Binary(string='Other Attachments')
     attachment_name = fields.Char()
     has_attachment = fields.Boolean(compute="_compute_has_attachment")
     can_upload_attachment = fields.Boolean(compute="_compute_can_upload_attachment")
-    can_reply_department_response = fields.Boolean(compute="_compute_can_reply_department_response")
     active = fields.Boolean(default=True)
 
     _ab_quality_assurance_visit_line_section_standard_uniq = models.Constraint(
@@ -53,18 +49,6 @@ class AbQualityAssuranceVisitLine(models.Model):
         for record in self:
             can_manage_visit = bool(can_manage_all or (can_edit_own and record.visit_id.user_id == user))
             record.can_upload_attachment = bool(can_manage_visit and record.visit_state != "submitted")
-
-    @api.depends("visit_state", "visit_section_id.department_manager_id.user_id")
-    @api.depends_context("uid")
-    def _compute_can_reply_department_response(self):
-        user = self.env.user
-        is_department_manager = user.has_group("ab_quality_assurance.group_ab_quality_assurance_department_manager")
-        for record in self:
-            record.can_reply_department_response = bool(
-                is_department_manager
-                and record.visit_state == "submitted"
-                and record.visit_section_id.department_manager_id.user_id == user
-            )
 
     @api.depends("score", "max_score")
     def _compute_percentage(self):
@@ -102,45 +86,6 @@ class AbQualityAssuranceVisitLine(models.Model):
             ),
             "target": "self",
         }
-
-    def action_open_department_response(self):
-        self.ensure_one()
-        return {
-            "type": "ir.actions.act_window",
-            "name": _("Department Response"),
-            "res_model": self._name,
-            "res_id": self.id,
-            "view_mode": "form",
-            "view_id": self.env.ref(
-                "ab_quality_assurance.ab_quality_assurance_visit_line_response_view_form"
-            ).id,
-            "target": "new",
-            "context": {
-                "create": False,
-                "delete": False,
-            },
-        }
-
-    def write(self, vals):
-        if vals and set(vals) <= {"department_response"} and self._can_write_department_response():
-            return super().write(vals)
-        if (
-            self.env.user.has_group("ab_quality_assurance.group_ab_quality_assurance_department_manager")
-            and not any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
-        ):
-            raise AccessError(_("Department managers can only update Department Response on their submitted standards."))
-        self._check_visit_is_editable()
-        return super().write(vals)
-
-    def _can_write_department_response(self):
-        user = self.env.user
-        if not user.has_group("ab_quality_assurance.group_ab_quality_assurance_department_manager"):
-            return False
-        return all(
-            line.visit_state == "submitted"
-            and line.visit_section_id.department_manager_id.user_id == user
-            for line in self
-        )
 
     def _check_visit_is_editable(self):
         if any(line.visit_id.state == "submitted" for line in self):
