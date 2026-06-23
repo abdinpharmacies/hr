@@ -7,10 +7,11 @@
     "application": True,
     "depends": ["base", "mail", "ab_hr", "ab_store"],
     "data": [
-        "security/security_groups.xml",
+        "security/groups.xml",
         "security/ir.model.access.csv",
         "security/record_rules.xml",
         "data/sequence.xml",
+        "data/state_migration.xml",
         "views/internal_shipment_views.xml",
         "views/menus.xml",
     ],
