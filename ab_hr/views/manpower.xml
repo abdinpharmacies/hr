@@ -159,11 +159,23 @@
                     <field name="workplace"/>
                     <field name="workplace_region" optional="hide"/>
                     <field name="job_title"/>
+                    <field name="required_employee_count" sum="Required Employees"/>
+                    <field name="current_employee_count" sum="Current Employees"/>
+                    <field name="employee_shortage_count"
+                           sum="Employees Shortage / Increase"
+                           decoration-danger="employee_shortage_count &gt; 0"
+                           decoration-success="employee_shortage_count &lt; 0"/>
                     <field name="required_operating_hours" sum="Required Hours"/>
                     <field name="actual_available_hours" sum="Actual Hours"/>
                     <field name="shortage_hours"
-                           sum="Shortage Hours"
-                           decoration-danger="shortage_hours &gt; 0"/>
+                           sum="Shortage / Increase Hours"
+                           decoration-danger="shortage_hours &gt; 0"
+                           decoration-success="shortage_hours &lt; 0"/>
+                    <field name="hours_capacity_status"
+                           widget="badge"
+                           decoration-danger="hours_capacity_status == 'shortage'"
+                           decoration-success="hours_capacity_status == 'increase'"
+                           decoration-info="hours_capacity_status == 'balanced'"/>
                 </list>
             </field>
         </record>
@@ -173,12 +185,6 @@
             <field name="model">ab_hr_manpower_hour_need</field>
             <field name="arch" type="xml">
                 <form string="Manpower Need Per Hour">
-                    <header>
-                        <button name="action_fetch_employees"
-                                type="object"
-                                string="Fetch Employees"
-                                class="btn-primary"/>
-                    </header>
                     <sheet>
                         <group>
                             <group string="Planning Scope">
@@ -187,20 +193,26 @@
                                 <field name="job_title"/>
                             </group>
                             <group string="Manual Planning">
+                                <field name="required_employee_count"/>
+                                <field name="current_employee_count" readonly="1"/>
+                                <field name="employee_shortage_display" readonly="1"/>
                                 <field name="required_operating_hours"/>
                                 <field name="default_actual_daily_hours"/>
                             </group>
                         </group>
+                        <group string="Hours Summary">
+                            <group>
+                                <field name="actual_available_hours"/>
+                                <field name="shortage_hours_display" readonly="1"/>
+                                <field name="hours_capacity_status"
+                                       widget="badge"
+                                       readonly="1"
+                                       decoration-danger="hours_capacity_status == 'shortage'"
+                                       decoration-success="hours_capacity_status == 'increase'"
+                                       decoration-info="hours_capacity_status == 'balanced'"/>
+                            </group>
+                        </group>
                         <notebook>
-                            <page string="Hours Summary">
-                                <group>
-                                    <group>
-                                        <field name="required_operating_hours"/>
-                                        <field name="actual_available_hours"/>
-                                        <field name="shortage_hours"/>
-                                    </group>
-                                </group>
-                            </page>
                             <page string="Employees">
                                 <field name="employee_line_ids" readonly="1">
                                     <list string="Employees">
@@ -228,9 +240,19 @@
                     <field name="required_operating_hours"/>
                     <field name="actual_available_hours"/>
                     <field name="shortage_hours"/>
+                    <field name="shortage_hours_display"/>
+                    <field name="hours_capacity_status"/>
+                    <field name="required_employee_count"/>
+                    <field name="current_employee_count"/>
+                    <field name="employee_shortage_count"/>
+                    <field name="employee_shortage_display"/>
                     <field name="required_hours_label"/>
                     <field name="actual_hours_label"/>
                     <field name="shortage_hours_label"/>
+                    <field name="required_employees_label"/>
+                    <field name="current_employees_label"/>
+                    <field name="employee_shortage_label"/>
+                    <field name="hours_status_label"/>
                     <templates>
                         <t t-name="card">
                             <div class="p-2">
@@ -238,14 +260,34 @@
                                     <strong class="text-truncate">
                                         <field name="job_title"/>
                                     </strong>
-                                    <span t-att-class="record.shortage_hours.raw_value ? 'badge text-bg-danger' : 'badge text-bg-success'">
-                                        <field name="shortage_hours"/>
+                                    <span t-att-class="record.hours_capacity_status.raw_value == 'shortage' ? 'badge text-bg-danger' : (record.hours_capacity_status.raw_value == 'increase' ? 'badge text-bg-success' : 'badge text-bg-info')">
+                                        <field name="hours_status_label"/>
                                     </span>
                                 </div>
                                 <div class="text-muted small mt-1">
                                     <field name="workplace"/>
                                 </div>
                                 <div class="d-grid gap-1 mt-3">
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">
+                                            <field name="required_employees_label"/>
+                                        </span>
+                                        <strong><field name="required_employee_count"/></strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">
+                                            <field name="current_employees_label"/>
+                                        </span>
+                                        <strong><field name="current_employee_count"/></strong>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <span class="text-muted">
+                                            <field name="employee_shortage_label"/>
+                                        </span>
+                                        <strong t-att-class="record.employee_shortage_count.raw_value &gt; 0 ? 'text-danger' : (record.employee_shortage_count.raw_value &lt; 0 ? 'text-success' : 'text-info')">
+                                            <field name="employee_shortage_display"/>
+                                        </strong>
+                                    </div>
                                     <div class="d-flex justify-content-between">
                                         <span class="text-muted">
                                             <field name="required_hours_label"/>
@@ -262,8 +304,8 @@
                                         <span class="text-muted">
                                             <field name="shortage_hours_label"/>
                                         </span>
-                                        <strong t-att-class="record.shortage_hours.raw_value ? 'text-danger' : 'text-success'">
-                                            <field name="shortage_hours"/>
+                                        <strong t-att-class="record.shortage_hours.raw_value &gt; 0 ? 'text-danger' : (record.shortage_hours.raw_value &lt; 0 ? 'text-success' : 'text-info')">
+                                            <field name="shortage_hours_display"/>
                                         </strong>
                                     </div>
                                 </div>
@@ -329,6 +371,7 @@
                   parent="manpower_root_menu"
                   id="ab_hr_manpower_hour_need_menu"
                   action="ab_hr_manpower_hour_need_action"
+                  groups="ab_hr.group_ab_hr_manpower_hour_need"
                   sequence="35"/>
 
         <delete model="ir.ui.menu"
