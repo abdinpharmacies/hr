@@ -51,7 +51,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
 
     def _move_to_inventory(self, claim):
         self._set_workflow_group(self.group_secretarial)
-        claim.with_user(self.workflow_user).action_secretarial_force_next()
+        claim.with_user(self.workflow_user).action_done()
 
     def test_department_confirm_moves_only_to_next_stage(self):
         claim = self._create_claim()
@@ -85,7 +85,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
         with self.assertRaises(AccessError):
             claim.with_user(self.workflow_user).write({'status': 'bank_acc'})
 
-        claim.with_user(self.workflow_user).action_secretarial_force_next()
+        claim.with_user(self.workflow_user).action_done()
         self.assertEqual(claim.status, 'inventory')
 
     def test_rejection_requires_reason(self):
