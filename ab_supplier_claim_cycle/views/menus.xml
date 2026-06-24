@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <menuitem id="claim_menu_root" name="Supplier Claim" sequence="100"/>
-        <menuitem id="supplier_claim_cycle_sub_menu" name="Claim Cycle" parent="claim_menu_root" sequence="100"/>
+        <menuitem id="claim_menu_root" name="Supplier Claim" sequence="100"
+                  groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+        <menuitem id="supplier_claim_cycle_sub_menu" name="Claim Cycle" parent="claim_menu_root" sequence="100"
+                  groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
     </data>
 </odoo>
