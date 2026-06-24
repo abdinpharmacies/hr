@@ -3,7 +3,7 @@ from datetime import timedelta
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 
-STAGE_SEQUENCE = ('secretarial', 'inventory', 'purchase', 'suppliers', 'bank_acc', 'sign_check', 'closed')
+STAGE_SEQUENCE = ('secretarial', 'inventory', 'purchase', 'suppliers', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')
 STAGE_LABELS = {
     'secretarial': 'Secretarial',
     'inventory': 'Inventory',
@@ -11,6 +11,7 @@ STAGE_LABELS = {
     'suppliers': 'Suppliers',
     'bank_acc': 'Bank Account',
     'sign_check': 'Sign Check',
+    'supplier_notification': 'Supplier Notification',
     'closed': 'Check delivery',
 }
 STAGE_ORDER = {s: i for i, s in enumerate(STAGE_SEQUENCE)}
@@ -54,6 +55,17 @@ class SupplierClaimCycle(models.Model):
         string="Cheque Delivery Status",
         tracking=True,
     )
+    supplier_notified = fields.Boolean(string="Supplier Notified", readonly=True, copy=False)
+    supplier_notified_by = fields.Many2one('res.users', string="Notified By", readonly=True, copy=False)
+    supplier_notification_date = fields.Datetime(string="Notification Date", readonly=True, copy=False)
+    contact_name = fields.Char(string='Contact Name', readonly=True, copy=False)
+    contact_phone = fields.Char(string='Contact Phone', readonly=True, copy=False)
+    contact_result = fields.Selection(
+        selection=[('contacted', 'Contacted'), ('already_delivered', 'Already Delivered')],
+        string='Contact Result',
+        tracking=True,
+    )
+    notification_notes = fields.Text(string="Notification Notes", tracking=True)
     can_current_user_edit = fields.Boolean(compute='_compute_workflow_access')
     can_current_user_act = fields.Boolean(compute='_compute_workflow_access')
     can_secretarial_override = fields.Boolean(compute='_compute_workflow_access')
@@ -70,6 +82,7 @@ class SupplierClaimCycle(models.Model):
             'suppliers': 'ab_supplier_claim_cycle.supplier_claim_group_suppliers',
             'bank_acc': 'ab_supplier_claim_cycle.supplier_claim_group_bank_acc',
             'sign_check': 'ab_supplier_claim_cycle.supplier_claim_group_user',
+            'supplier_notification': 'ab_supplier_claim_cycle.supplier_claim_group_user',
         }
 
     @api.depends_context('uid')
@@ -181,6 +194,41 @@ class SupplierClaimCycle(models.Model):
                     'target': 'new',
                     'context': {'default_claim_id': rec.id},
                 }
+            rec._move_to_next_stage()
+
+    def action_supplier_notified(self):
+        for rec in self:
+            rec._check_can_act_current_stage()
+            if rec.status != 'supplier_notification':
+                raise UserError(_("Supplier notification is only available at the Supplier Notification stage."))
+            if not rec.contact_result:
+                raise UserError(_("Please select a Contact Result before confirming supplier notification."))
+            if not rec.contact_name:
+                raise UserError(_("Please enter your contact name."))
+            if not rec.contact_phone:
+                raise UserError(_("Please enter your contact phone."))
+            rec.with_context(supplier_claim_internal_write=True).write({
+                'supplier_notified': True,
+                'supplier_notified_by': self.env.user.id,
+                'supplier_notification_date': fields.Datetime.now(),
+            })
+            rec._create_stage_history('supplier_notification', 'accepted', rec.notification_notes or '')
+            rec.message_post(
+                body=_("Supplier notified by %(name)s (%(phone)s). Result: %(result)s. Notes: %(notes)s") % {
+                    'name': rec.contact_name,
+                    'phone': rec.contact_phone,
+                    'result': dict(rec._fields['contact_result'].selection).get(rec.contact_result, ''),
+                    'notes': rec.notification_notes or _("No notes"),
+                }
+            )
+
+    def action_close_claim(self):
+        for rec in self:
+            rec._check_can_act_current_stage()
+            if not rec.supplier_notified:
+                raise UserError(_("Supplier must be marked as notified before closing the claim."))
+            if not rec.check_delivery_status:
+                raise UserError(_("Cheque Delivery Status must be set before closing the claim."))
             rec._move_to_next_stage()
 
     def _move_to_next_stage(self):
@@ -372,6 +420,12 @@ class SupplierClaimCycle(models.Model):
                         '<div style="font-size:11px;color:#555;margin-top:1px;">%s</div>'
                         % entry['notes']
                     )
+                if entry['stage'] == 'supplier_notification' and self.supplier_notified:
+                    L.append(
+                        '<div style="font-size:12px;color:#333;margin-top:4px;padding-top:4px;border-top:1px dashed #ddd;">'
+                        '<div>%s</div><div>%s</div></div>'
+                        % (self.contact_name or '', self.contact_phone or '')
+                    )
                 L.append('</div>')
                 L.append('</div>')
 
@@ -462,6 +516,23 @@ class SupplierClaimCycle(models.Model):
                     '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">Notes: </span>'
                     '<span style="color:#333;font-size:13px;">%s</span></div>'
                     % current_stage['notes']
+                )
+            if current_stage['stage'] == 'sign_check' and (self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()):
+                L.append(
+                    '<div style="margin-top:12px;padding:8px 12px;background:#fff3cd;border-radius:6px;'
+                    'border:1px solid #ffc107;font-size:13px;color:#856404;">'
+                    '⚠ Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.</div>'
+                )
+            if current_stage['stage'] == 'supplier_notification' and self.supplier_notified:
+                L.append(
+                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">Contact: </span>'
+                    '<span style="color:#333;font-size:13px;">%s</span></div>'
+                    % self.contact_name or ''
+                )
+                L.append(
+                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">Phone: </span>'
+                    '<span style="color:#333;font-size:13px;">%s</span></div>'
+                    % self.contact_phone or ''
                 )
             L.append('</div>')
         else:
