@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="0">
-
         <record model="ir.module.category" id="ab_supplier_claim_cycle_category">
             <field name="name">Supplier Claim</field>
             <field name="sequence">1</field>
@@ -13,25 +12,43 @@
             <field name="sequence">10</field>
         </record>
 
-        <!--  user -->
         <record id="supplier_claim_group_user" model="res.groups">
-            <field name="name">supplier claim User</field>
+            <field name="name">Supplier Claim Secretarial</field>
             <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
         </record>
-
 
         <record id="supplier_claim_group_reviewer" model="res.groups">
-            <field name="name">supplier claim reviewer</field>
+            <field name="name">Supplier Claim Reviewer</field>
             <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
-
         </record>
 
-        <!--  admin -->
-        <record id="supplier_claim_group_admin" model="res.groups">
-            <field name="name">supplier claim admin</field>
+        <record id="supplier_claim_group_inventory" model="res.groups">
+            <field name="name">Supplier Claim Inventory</field>
             <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        </record>
+
+        <record id="supplier_claim_group_purchase" model="res.groups">
+            <field name="name">Supplier Claim Purchase</field>
+            <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        </record>
+
+        <record id="supplier_claim_group_suppliers" model="res.groups">
+            <field name="name">Supplier Claim Suppliers</field>
+            <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        </record>
+
+        <record id="supplier_claim_group_bank_acc" model="res.groups">
+            <field name="name">Supplier Claim Bank Acc</field>
+            <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        </record>
+
+        <record id="supplier_claim_group_admin" model="res.groups">
+            <field name="name">Supplier Claim Admin</field>
+            <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('supplier_claim_group_admin'))]"/>
         </record>
     </data>
 </odoo>
-
-
