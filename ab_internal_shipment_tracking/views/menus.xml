@@ -23,8 +23,12 @@
         <menuitem id="ab_internal_shipment_menu_reporting"
                   name="Reporting"
                   parent="ab_internal_shipment_menu_root"
-                  action="ab_internal_shipment_reporting_action"
+                  action="ab_internal_shipment_reporting_server_action"
                   sequence="30"
                   groups="ab_internal_shipment_tracking.group_ab_internal_shipment_admin"/>
+
+        <record id="ab_internal_shipment_menu_reporting" model="ir.ui.menu">
+            <field name="group_ids" eval="[(6, 0, [ref('ab_internal_shipment_tracking.group_ab_internal_shipment_admin')])]"/>
+        </record>
     </data>
 </odoo>

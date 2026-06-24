@@ -6,8 +6,9 @@
             <field name="model">ab_internal_shipment</field>
             <field name="arch" type="xml">
                 <list string="Internal Shipments"
-                      decoration-muted="state == 'closed'"
-                      decoration-danger="is_delayed"
+                      decoration-muted="state == 'draft'"
+                      decoration-danger="state == 'cancelled' or is_delayed"
+                      decoration-warning="state == 'awaiting_receipt'"
                       decoration-success="state in ('received', 'closed')"
                       decoration-info="state in ('sent', 'in_transit')">
                     <field name="name"/>
@@ -44,15 +45,14 @@
                         <button name="action_deliver" type="object" string="Mark Delivered" class="btn-primary"
                                 invisible="state not in ('sent', 'in_transit')"/>
                         <button name="action_receive" type="object" string="Confirm Receipt" class="btn-primary"
-                                invisible="state != 'awaiting_receipt' or not is_receipt_confirmation_user"/>
+                                invisible="state != 'awaiting_receipt' or recipient_user_id != uid"/>
                         <button name="action_close" type="object" string="Close"
-                                invisible="state != 'received'"/>
+                                invisible="state != 'received' or received_by_id != uid"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="draft,sent,in_transit,awaiting_receipt,received,closed"/>
                     </header>
                     <sheet>
                         <field name="is_delayed" invisible="1"/>
-                        <field name="is_receipt_confirmation_user" invisible="1"/>
                         <widget name="web_ribbon" title="Delayed" bg_color="text-bg-danger"
                                 invisible="not is_delayed"/>
                         <widget name="web_ribbon" title="Closed"
@@ -179,8 +179,6 @@
                     <field name="current_holder_display"/>
                     <filter name="my_shipments" string="My Shipments"
                             domain="[('created_by_id', '=', uid)]"/>
-                    <filter name="awaiting_receipt" string="Awaiting Receipt"
-                            domain="[('is_receipt_confirmation_user', '=', True)]"/>
                     <filter name="delayed" string="Delayed"
                             domain="[('is_delayed', '=', True)]"/>
                     <separator/>
@@ -188,7 +186,7 @@
                     <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
                     <filter name="in_transit" string="In Transit" domain="[('state', '=', 'in_transit')]"/>
                     <filter name="awaiting_receipt_state" string="Awaiting Receipt" domain="[('state', '=', 'awaiting_receipt')]"/>
-                    <filter name="received" string="Received" domain="[('state', '=', 'received')]"/>
+                    <filter name="received" string="Confirmed" domain="[('state', '=', 'received')]"/>
                     <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
                     <separator/>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
@@ -229,17 +227,47 @@
             <field name="name">Internal Shipments</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form,pivot,graph</field>
-            <field name="domain">[('created_by_id', '=', uid)]</field>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
+        </record>
+
+        <record id="ab_internal_shipment_view_list_awaiting_receipt" model="ir.ui.view">
+            <field name="name">ab_internal_shipment.list.awaiting_receipt</field>
+            <field name="model">ab_internal_shipment</field>
+            <field name="arch" type="xml">
+                <list create="false" string="Awaiting Receipt"
+                      decoration-muted="state == 'draft'"
+                      decoration-danger="state == 'cancelled' or is_delayed"
+                      decoration-warning="state == 'awaiting_receipt'"
+                      decoration-success="state in ('received', 'closed')"
+                      decoration-info="state in ('sent', 'in_transit')">
+                    <field name="name"/>
+                    <field name="shipment_date"/>
+                    <field name="subject"/>
+                    <field name="shipment_type"/>
+                    <field name="delivery_method"/>
+                    <field name="sender_display"/>
+                    <field name="recipient_display"/>
+                    <field name="current_holder_display"/>
+                    <field name="expected_delivery_date" optional="show"/>
+                    <field name="is_delayed" optional="hide"/>
+                    <field name="state"/>
+                    <field name="created_by_id" optional="hide"/>
+                    <field name="sent_by_id" optional="hide"/>
+                    <field name="delivered_by_id" optional="hide"/>
+                    <field name="received_by_id" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
         </record>
 
         <record id="ab_internal_shipment_awaiting_receipt_action" model="ir.actions.act_window">
             <field name="name">Awaiting Receipt</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('is_receipt_confirmation_user', '=', True)]</field>
+            <field name="domain">[('state', '=', 'awaiting_receipt')]</field>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
-            <field name="context">{'search_default_awaiting_receipt': 1, 'ab_awaiting_receipt_tab': 1}</field>
+            <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list_awaiting_receipt')})]"/>
         </record>
 
         <record id="ab_internal_shipment_reporting_action" model="ir.actions.act_window">
@@ -247,6 +275,33 @@
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">pivot,graph,list</field>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
+        </record>
+
+        <record id="ab_internal_shipment_reporting_server_action" model="ir.actions.server">
+            <field name="name">Shipment Statistics</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[
+domain = []
+if not env.user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin"):
+    employee_ids = env.user.ab_employee_ids.ids
+    store_ids = env.user.ab_employee_ids.department_id.store_id.ids
+    domain = [
+        "|", "|", "|",
+        ("created_by_id", "=", env.uid),
+        "&", ("recipient_type", "=", "employee"), ("recipient_employee_id", "in", employee_ids),
+        "&", ("recipient_type", "=", "department"), ("recipient_department_id.manager_id.user_id", "=", env.uid),
+        "&", ("recipient_type", "=", "branch"), ("recipient_store_id", "in", store_ids),
+    ]
+action = {
+    "type": "ir.actions.act_window",
+    "name": "Shipment Statistics",
+    "res_model": "ab_internal_shipment",
+    "view_mode": "pivot,graph,list",
+    "domain": domain,
+    "search_view_id": env.ref("ab_internal_shipment_tracking.ab_internal_shipment_view_search").id,
+}
+            ]]></field>
         </record>
     </data>
 </odoo>
