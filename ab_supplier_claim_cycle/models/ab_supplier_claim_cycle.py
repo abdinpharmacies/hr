@@ -392,9 +392,8 @@ class SupplierClaimCycle(models.Model):
         timeline = data['timeline']
         current_stage = next((s for s in timeline if s.get('type') == 'stage' and s.get('is_current')), None)
 
-        L = ['<div style="display:flex;gap:32px;min-height:420px;">']
-
-        L.append('<div style="flex:0 0 280px;position:relative;padding:8px 0 8px 0;">')
+        L = ['<div class="scc-timeline">']
+        L.append('<div class="scc-timeline-column">')
 
         for i, entry in enumerate(timeline):
             is_last = i == len(timeline) - 1
@@ -403,95 +402,84 @@ class SupplierClaimCycle(models.Model):
                 is_comp = entry['is_completed']
                 is_curr = entry['is_current']
                 is_overdue = entry.get('is_overdue', False)
-                accent = '#dc3545' if is_overdue else '#e67e22'
-                dot_color = '#28a745' if is_comp else (accent if is_curr else '#d0d0d0')
-                bg_color = '#28a745' if is_comp else (accent if is_curr else '#fff')
-                border = '2px solid #28a745' if is_comp else ('2px solid %s' % accent if is_curr else '2px solid #d0d0d0')
-                txt_color = '#28a745' if is_comp and not is_curr else (accent if is_curr else '#999')
-                icon = '✈' if (is_comp and entry['stage'] == 'closed') else ('✓' if is_comp else ('●' if is_curr else '○'))
-                icon_text_color = '#fff' if is_comp else txt_color
 
-                L.append('<div style="display:flex;align-items:stretch;min-height:%s;position:relative;">'
-                         % ('52px' if not entry['notes'] else '66px'))
-                L.append('<div style="display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0;">')
-                L.append(
-                    '<div style="width:28px;height:28px;border-radius:50%%;display:flex;align-items:center;'
-                    'justify-content:center;background:%s;border:%s;color:%s;font-size:13px;font-weight:700;'
-                    'flex-shrink:0;z-index:1;">%s</div>'
-                    % (bg_color, border, icon_text_color, icon)
-                )
-                if not is_last:
-                    L.append('<div style="width:2px;flex:1;background:%s;margin:2px 0 0 0;"></div>' % dot_color)
-                L.append('</div>')
-                L.append('<div style="padding:2px 0 0 12px;flex:1;min-width:0;">')
-                label_color = '#333' if is_comp or is_curr else '#bbb'
-                L.append(
-                    '<div style="font-weight:600;font-size:14px;color:%s;line-height:1.3;">%s</div>'
-                    % (label_color, entry['label'])
-                )
+                dot_class = 'scc-timeline-dot'
+                if is_overdue:
+                    dot_class += ' is-overdue'
+                elif is_comp:
+                    dot_class += ' is-completed'
+                elif is_curr:
+                    dot_class += ' is-current'
+                else:
+                    dot_class += ' is-pending'
+
+                line_class = 'scc-timeline-line'
+                if is_comp:
+                    line_class += ' completed'
+                elif is_curr:
+                    line_class += ' current'
+                else:
+                    line_class += ' pending'
+
+                label_class = 'scc-timeline-stage-label'
+                if is_overdue:
+                    label_class += ' overdue'
+                elif is_comp:
+                    label_class += ' completed'
+                elif is_curr:
+                    label_class += ' current'
+                else:
+                    label_class += ' pending'
+
+                icon = '✈' if (is_comp and entry['stage'] == 'closed') else ('✓' if is_comp else ('●' if is_curr else '○'))
+
+                stage_class = 'scc-timeline-stage'
                 if entry['notes']:
-                    L.append(
-                        '<div style="font-size:11px;color:#555;margin-top:1px;">%s</div>'
-                        % entry['notes']
-                    )
+                    stage_class += ' has-notes'
+
+                L.append('<div class="%s">' % stage_class)
+                L.append('<div class="scc-timeline-dot-col">')
+                L.append('<div class="%s">%s</div>' % (dot_class, icon))
+                if not is_last:
+                    L.append('<div class="%s"></div>' % line_class)
+                L.append('</div>')
+                L.append('<div class="scc-timeline-label-col">')
+                L.append('<div class="%s">%s</div>' % (label_class, entry['label']))
+                if entry['notes']:
+                    L.append('<div class="scc-timeline-notes">%s</div>' % entry['notes'])
                 if entry['stage'] == 'supplier_notification' and self.supplier_notified:
-                    L.append(
-                        '<div style="font-size:12px;color:#333;margin-top:4px;padding-top:4px;border-top:1px dashed #ddd;">'
-                        '<div>%s</div><div>%s</div></div>'
-                        % (self.contact_name or '', self.contact_phone or '')
-                    )
+                    L.append('<div class="scc-timeline-divider">%s<br/>%s</div>' % (self.contact_name or '', self.contact_phone or ''))
                 L.append('</div>')
                 L.append('</div>')
 
             else:
-                L.append('<div style="display:flex;align-items:stretch;min-height:60px;position:relative;">')
-                L.append('<div style="display:flex;flex-direction:column;align-items:center;width:28px;flex-shrink:0;">')
-
+                dot_class = 'scc-timeline-dot'
                 if entry['event_type'] == 'rejection':
-                    ev_bg = '#dc3545'
-                    ev_border = '2px solid #dc3545'
+                    dot_class += ' is-event-rejection'
                     ev_icon = '✗'
-                    ev_color = '#fff'
                 elif entry['event_type'] == 'delay':
-                    ev_bg = '#ffc107'
-                    ev_border = '2px solid #ffc107'
+                    dot_class += ' is-event-delay'
                     ev_icon = '⚠'
-                    ev_color = '#fff'
                 else:
-                    ev_bg = '#6c757d'
-                    ev_border = '2px solid #6c757d'
+                    dot_class += ' is-event-other'
                     ev_icon = '💬'
-                    ev_color = '#fff'
 
-                L.append(
-                    '<div style="width:28px;height:28px;border-radius:50%%;display:flex;align-items:center;'
-                    'justify-content:center;background:%s;border:%s;color:%s;font-size:13px;font-weight:700;'
-                    'flex-shrink:0;z-index:1;">%s</div>'
-                    % (ev_bg, ev_border, ev_color, ev_icon)
-                )
+                L.append('<div class="scc-timeline-stage">')
+                L.append('<div class="scc-timeline-dot-col">')
+                L.append('<div class="%s">%s</div>' % (dot_class, ev_icon))
                 if not is_last:
-                    L.append('<div style="width:2px;flex:1;background:#d0d0d0;margin:2px 0 0 0;"></div>')
+                    L.append('<div class="scc-timeline-line pending"></div>')
                 L.append('</div>')
-                L.append('<div style="padding:2px 0 0 12px;flex:1;min-width:0;">')
+                L.append('<div class="scc-timeline-label-col">')
                 event_title = {
                     'rejection': _('Rejection'),
                     'delay': _('Delay'),
                 }.get(entry.get('event_type'), _('Event'))
-                L.append(
-                    '<div style="font-weight:600;font-size:13px;color:#dc3545;line-height:1.3;">%s</div>'
-                    % event_title
-                )
+                L.append('<div class="scc-timeline-event-label">%s</div>' % event_title)
                 if entry.get('user_name'):
-                    L.append(
-                        '<div style="font-size:11px;color:#666;margin-top:1px;">%s %s</div>'
-                        % (_('User:'), entry['user_name'])
-                    )
+                    L.append('<div class="scc-timeline-meta">%s %s</div>' % (_('User:'), entry['user_name']))
                 if entry.get('notes'):
-                    L.append(
-                        '<div style="font-size:11px;color:#666;margin-top:1px;word-break:break-word;">'
-                        '%s %s</div>'
-                        % (_('Reason:'), entry['notes'])
-                    )
+                    L.append('<div class="scc-timeline-notes">%s %s</div>' % (_('Reason:'), entry['notes']))
                 L.append('</div>')
                 L.append('</div>')
 
@@ -501,65 +489,49 @@ class SupplierClaimCycle(models.Model):
             is_overdue = current_stage.get('is_overdue', False)
             overdue_badge = ''
             if is_overdue:
-                overdue_badge = (
-                    '<span style="display:inline-block;margin-left:8px;padding:2px 8px;'
-                    'background:#dc3545;color:#fff;border-radius:4px;font-size:11px;font-weight:600;'
-                    'vertical-align:middle;">⚠ %s</span>' % _('Overdue')
-                )
-            L.append(
-                '<div style="flex:1;padding:16px 20px;background:%s;border-radius:8px;border:1px solid %s;">'
-                % ('#fff5f5' if is_overdue else '#f8f9fa', '#f5c6cb' if is_overdue else '#e9ecef')
-            )
-            L.append(
-                '<h3 style="margin:0 0 16px 0;font-size:16px;color:%s;font-weight:600;border-bottom:2px solid %s;'
-                'padding-bottom:8px;">%s %s</h3>'
-                % ('#dc3545' if is_overdue else '#333', '#dc3545' if is_overdue else '#dee2e6',
-                   current_stage['label'], overdue_badge)
-                )
-            if current_stage.get('user_name'):
-                L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
-                    '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % (_('User:'), current_stage['user_name'])
-                )
-            if current_stage.get('action_date'):
-                L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
-                    '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % (_('Date:'), current_stage['action_date'])
-                )
+                overdue_badge = '<span class="scc-overdue-badge">⚠ %s</span>' % _('Overdue')
+
+            detail_class = 'scc-detail-card'
+            if is_overdue:
+                detail_class += ' is-overdue'
+
+            title_class = 'scc-detail-title'
+            if is_overdue:
+                title_class += ' is-overdue'
+
+            L.append('<div class="%s">' % detail_class)
+            L.append('<h3 class="%s">%s %s</h3>' % (title_class, current_stage['label'], overdue_badge))
+
+            user_html = current_stage['user_name']
+            date_str = current_stage['action_date']
+
+            if user_html or date_str:
+                L.append('<div class="scc-stage-grid">')
+            if user_html:
+                L.append('<div class="scc-stage-field"><span class="scc-stage-field-label">%s</span><span class="scc-stage-field-value">%s</span></div>' % (_('User'), user_html))
+            if date_str:
+                L.append('<div class="scc-stage-field"><span class="scc-stage-field-label">%s</span><span class="scc-stage-field-value">%s</span></div>' % (_('Date'), date_str))
+            if user_html or date_str:
+                L.append('</div>')
+
             if current_stage.get('notes'):
-                L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
-                    '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % (_('Notes:'), current_stage['notes'])
-                )
+                L.append('<div class="scc-detail-field"><span class="scc-detail-field-label">%s</span><span class="scc-detail-field-value">%s</span></div>' % (_('Notes'), current_stage['notes']))
+
             if current_stage['stage'] == 'sign_check' and (self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()):
-                L.append(
-                    '<div style="margin-top:12px;padding:8px 12px;background:#fff3cd;border-radius:6px;'
-                    'border:1px solid #ffc107;font-size:13px;color:#856404;">'
-                    '⚠ %s</div>' % _(
-                        'Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.'
-                    )
-                )
+                L.append('<div class="scc-detail-alert"><span class="scc-detail-alert-icon">⚠</span><span>%s</span></div>' % _(
+                    'Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.'
+                ))
+
             if current_stage['stage'] == 'supplier_notification' and self.supplier_notified:
-                L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
-                    '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % (_('Contact:'), self.contact_name or '')
-                )
-                L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
-                    '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % (_('Phone:'), self.contact_phone or '')
-                )
+                L.append('<div class="scc-notification-card">')
+                L.append('<div class="scc-notification-card-title">📞 %s</div>' % _('Supplier Contacted'))
+                L.append('<div class="scc-notification-card-row"><strong>%s:</strong> %s</div>' % (_('Contact'), self.contact_name or ''))
+                L.append('<div class="scc-notification-card-row"><strong>%s:</strong> %s</div>' % (_('Phone'), self.contact_phone or ''))
+                L.append('</div>')
+
             L.append('</div>')
         else:
-            L.append(
-                '<div style="flex:1;padding:16px 20px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;'
-                'display:flex;align-items:center;justify-content:center;color:#999;">'
-                '%s</div>' % _('No active stage')
-            )
+            L.append('<div class="scc-detail-card is-empty">%s</div>' % _('No active stage'))
 
         L.append('</div>')
         return '\n'.join(L)

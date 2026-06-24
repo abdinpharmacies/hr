@@ -6,20 +6,20 @@
             <field name="name">invoice_view_tree</field>
             <field name="model">ab_supplier_claim_cycle</field>
             <field name="arch" type="xml">
-                <list string="invoice_tree">
+                <list string="invoice_tree" class="scc-list-view" decoration-danger="status == 'closed' and department_decision == 'rejected'" decoration-bf="status == 'secretarial'">
                     <field name="supplier_id"/>
-                    <field name="num_of_invoice"/>
-                    <field name="create_date" string="Received Date"/>
-                    <field name="status"/>
-                    <field name="department_decision"/>
-                    <field name="amount_of_check"/>
-                    <field name="contact_result"/>
-                    <field name="contact_name"/>
-                    <field name="contact_phone"/>
-                    <field name="write_date" string="Last Update Date"/>
-                    <field name="user_id"/>
-                    <field name="area"/>
-                    <field name="supplier_claim_number"/>
+                    <field name="supplier_claim_number" string="Supplier Ref"/>
+                    <field name="num_of_invoice" string="Invoices"/>
+                    <field name="create_date" string="Received" optional="show"/>
+                    <field name="status" widget="badge" decoration-success="status not in ('closed', 'supplier_notification', 'secretarial')" decoration-info="status == 'secretarial'" decoration-warning="status == 'supplier_notification'" decoration-danger="status == 'closed'"/>
+                    <field name="department_decision" widget="badge" decoration-success="department_decision == 'accepted'" decoration-warning="department_decision == 'pending'" decoration-danger="department_decision == 'rejected'"/>
+                    <field name="amount_of_check" string="Amount" optional="show"/>
+                    <field name="contact_result" optional="hide"/>
+                    <field name="contact_name" optional="hide"/>
+                    <field name="contact_phone" optional="hide"/>
+                    <field name="write_date" string="Updated" optional="show"/>
+                    <field name="user_id" optional="hide"/>
+                    <field name="area" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -28,8 +28,8 @@
             <field name="name">invoice_view_form</field>
             <field name="model">ab_supplier_claim_cycle</field>
             <field name="arch" type="xml">
-                <form string="Supplier Claim">
-                    <header>
+                <form string="Supplier Claim" class="scc-form-container">
+                    <header class="scc-header-buttons">
                         <button name="action_accept" type="object" string="Accept" class="btn-primary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                 invisible="status in ('closed', 'supplier_notification', 'secretarial') or department_decision == 'accepted' or not can_current_user_act"/>
@@ -72,46 +72,141 @@
                     </header>
 
                     <sheet>
-                        <group string="Claim Details">
-                            <field name="can_current_user_edit" invisible="1"/>
-                            <field name="can_current_user_act" invisible="1"/>
-                            <field name="can_secretarial_override" invisible="1"/>
-                            <field name="supplier_id" readonly="not can_current_user_edit"/>
-                            <field name="num_of_invoice" readonly="not can_current_user_edit"/>
-                            <field name="amount_of_check" readonly="not can_current_user_edit"/>
-                            <field name="area" readonly="not can_current_user_edit"/>
-                            <field name="type_of_invoice" readonly="not can_current_user_edit"/>
-                            <field name="supplier_claim_number" readonly="not can_current_user_edit"/>
-                            <field name="user_id" readonly="1"/>
-                        </group>
+                        <field name="can_current_user_edit" invisible="1"/>
+                        <field name="can_current_user_act" invisible="1"/>
+                        <field name="can_secretarial_override" invisible="1"/>
+                        <field name="supplier_notified" invisible="1"/>
 
-                        <group string="Workflow">
-                            <field name="department_decision" readonly="1"/>
-                            <field name="delay_reason" readonly="not can_current_user_edit"
-                                   groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer"
-                                   required="department_decision == 'rejected'"/>
-                            <field name="supplier_notified" invisible="1"/>
-                            <field name="contact_result" string="Contact Result"
-                                   invisible="status not in ('supplier_notification', 'closed')"
-                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                            <field name="contact_name" string="Contact Name"
-                                   invisible="status not in ('supplier_notification', 'closed')"
-                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                            <field name="contact_phone" string="Contact Phone"
-                                   invisible="status not in ('supplier_notification', 'closed')"
-                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                            <field name="notification_notes" string="Notification Notes"
-                                   invisible="status not in ('supplier_notification', 'closed')"
-                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                            <field name="supplier_notified_by" string="Notified By"
-                                   invisible="status not in ('supplier_notification', 'closed')"
-                                   readonly="1"/>
-                            <field name="supplier_notification_date" string="Notification Date"
-                                   invisible="status not in ('supplier_notification', 'closed')"
-                                   readonly="1"/>
-                        </group>
+                        <!-- Supplier Summary Card -->
+                        <div class="scc-supplier-card scc-animate-in">
+                            <div class="scc-supplier-card-header">
+                                <div class="scc-supplier-avatar">S</div>
+                                <div>
+                                    <div class="scc-supplier-name">
+                                        <field name="supplier_id" readonly="not can_current_user_edit"/>
+                                    </div>
+                                    <div class="scc-supplier-sub">
+                                        <field name="area" readonly="not can_current_user_edit"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="scc-supplier-grid">
+                                <div class="scc-supplier-info">
+                                    <div class="scc-supplier-info-icon">📄</div>
+                                    <div>
+                                        <div class="scc-supplier-info-label">Supplier Ref</div>
+                                        <div class="scc-supplier-info-value">
+                                            <field name="supplier_claim_number" readonly="not can_current_user_edit" placeholder="—"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="scc-supplier-info">
+                                    <div class="scc-supplier-info-icon">📋</div>
+                                    <div>
+                                        <div class="scc-supplier-info-label">Invoices</div>
+                                        <div class="scc-supplier-info-value">
+                                            <field name="num_of_invoice" readonly="not can_current_user_edit"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="scc-supplier-info">
+                                    <div class="scc-supplier-info-icon">💰</div>
+                                    <div>
+                                        <div class="scc-supplier-info-label">Check Amount</div>
+                                        <div class="scc-supplier-info-value">
+                                            <field name="amount_of_check" readonly="not can_current_user_edit"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="scc-supplier-info">
+                                    <div class="scc-supplier-info-icon">🧾</div>
+                                    <div>
+                                        <div class="scc-supplier-info-label">Invoice Type</div>
+                                        <div class="scc-supplier-info-value">
+                                            <field name="type_of_invoice" readonly="not can_current_user_edit"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-                        <field name="timeline_display" nolabel="1"/>
+                        <!-- Workflow Section -->
+                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-1">
+                            <div class="scc-form-section-title">
+                                <span class="scc-form-section-title-icon">⚙</span>
+                                Workflow
+                            </div>
+                            <div class="scc-stage-grid">
+                                <div class="scc-stage-field">
+                                    <span class="scc-stage-field-label">Department Decision</span>
+                                    <span class="scc-stage-field-value">
+                                        <field name="department_decision" readonly="1"/>
+                                    </span>
+                                </div>
+                                <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer">
+                                    <span class="scc-stage-field-label">Delay / Rejection Reason</span>
+                                    <span class="scc-stage-field-value">
+                                        <field name="delay_reason" readonly="not can_current_user_edit"
+                                               required="department_decision == 'rejected'"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Supplier Notification Fields -->
+                            <div invisible="status not in ('supplier_notification', 'closed')" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
+                                <div class="scc-form-section-title" style="margin-bottom:12px;">
+                                    <span style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📞</span>
+                                    Supplier Notification
+                                </div>
+                                <div class="scc-stage-grid" style="margin-bottom:12px;">
+                                    <div class="scc-stage-field">
+                                        <span class="scc-stage-field-label">Contact Name</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="contact_name" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                        </span>
+                                    </div>
+                                    <div class="scc-stage-field">
+                                        <span class="scc-stage-field-label">Contact Phone</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="contact_phone" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                        </span>
+                                    </div>
+                                    <div class="scc-stage-field">
+                                        <span class="scc-stage-field-label">Contact Result</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="contact_result" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                        </span>
+                                    </div>
+                                    <div class="scc-stage-field">
+                                        <span class="scc-stage-field-label">Notified By</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="supplier_notified_by" readonly="1"/>
+                                        </span>
+                                    </div>
+                                    <div class="scc-stage-field" style="grid-column:span 2;">
+                                        <span class="scc-stage-field-label">Notification Notes</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="notification_notes" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                        </span>
+                                    </div>
+                                    <div class="scc-stage-field">
+                                        <span class="scc-stage-field-label">Notification Date</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="supplier_notification_date" readonly="1"/>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline -->
+                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2">
+                            <div class="scc-form-section-title">
+                                <span class="scc-form-section-title-icon">📊</span>
+                                Workflow Timeline
+                            </div>
+                            <field name="timeline_display" nolabel="1"/>
+                        </div>
                     </sheet>
 
                     <chatter groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
@@ -123,8 +218,8 @@
             <field name="name">check_delivery_wizard_form</field>
             <field name="model">ab.check.delivery.wizard</field>
             <field name="arch" type="xml">
-                <form string="Confirmation">
-                    <p style="margin-bottom:8px;font-size:13px;white-space:pre-wrap;">
+                <form string="Confirmation" class="scc-wizard">
+                    <p>
                         This moves the supplier claim to the next workflow stage.
                     </p>
                     <field name="claim_id" invisible="1"/>
