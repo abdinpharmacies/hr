@@ -66,6 +66,7 @@ class SupplierClaimCycle(models.Model):
         tracking=True,
     )
     notification_notes = fields.Text(string="Notification Notes", tracking=True)
+    supplier_claim_number = fields.Char(string="Supplier Claim Number", tracking=True)
     can_current_user_edit = fields.Boolean(compute='_compute_workflow_access')
     can_current_user_act = fields.Boolean(compute='_compute_workflow_access')
     can_secretarial_override = fields.Boolean(compute='_compute_workflow_access')
@@ -296,7 +297,20 @@ class SupplierClaimCycle(models.Model):
         )
 
     def _get_stage_label(self, stage):
-        return _(STAGE_LABELS.get(stage, stage))
+        return self._get_translated_stage_label(stage)
+
+    def _get_translated_stage_label(self, stage):
+        labels = {
+            'secretarial': _('Secretarial'),
+            'inventory': _('Inventory'),
+            'purchase': _('Purchase'),
+            'suppliers': _('Suppliers'),
+            'bank_acc': _('Bank Account'),
+            'sign_check': _('Sign Check'),
+            'supplier_notification': _('Supplier Notification'),
+            'closed': _('Check delivery'),
+        }
+        return labels.get(stage, stage)
 
     def _get_visible_event_stages(self):
         if self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial():
@@ -343,12 +357,12 @@ class SupplierClaimCycle(models.Model):
             is_overdue = False
             if is_current and last and last.action_date:
                 can_see_overdue = self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()
-                is_overdue = can_see_overdue and fields.Datetime.now() - last.action_date > timedelta(seconds=9)
+                is_overdue = can_see_overdue and fields.Datetime.now() - last.action_date > timedelta(hours=24)
 
             timeline.append({
                 'type': 'stage',
                 'stage': stage,
-                'label': STAGE_LABELS.get(stage, stage),
+                'label': self._get_translated_stage_label(stage),
                 'is_current': is_current,
                 'is_completed': is_completed,
                 'is_overdue': is_overdue,
@@ -459,21 +473,24 @@ class SupplierClaimCycle(models.Model):
                     L.append('<div style="width:2px;flex:1;background:#d0d0d0;margin:2px 0 0 0;"></div>')
                 L.append('</div>')
                 L.append('<div style="padding:2px 0 0 12px;flex:1;min-width:0;">')
-                event_title = entry.get('event_type', 'Event').title()
+                event_title = {
+                    'rejection': _('Rejection'),
+                    'delay': _('Delay'),
+                }.get(entry.get('event_type'), _('Event'))
                 L.append(
                     '<div style="font-weight:600;font-size:13px;color:#dc3545;line-height:1.3;">%s</div>'
                     % event_title
                 )
                 if entry.get('user_name'):
                     L.append(
-                        '<div style="font-size:11px;color:#666;margin-top:1px;">User: %s</div>'
-                        % entry['user_name']
+                        '<div style="font-size:11px;color:#666;margin-top:1px;">%s %s</div>'
+                        % (_('User:'), entry['user_name'])
                     )
                 if entry.get('notes'):
                     L.append(
                         '<div style="font-size:11px;color:#666;margin-top:1px;word-break:break-word;">'
-                        'Reason: %s</div>'
-                        % entry['notes']
+                        '%s %s</div>'
+                        % (_('Reason:'), entry['notes'])
                     )
                 L.append('</div>')
                 L.append('</div>')
@@ -487,7 +504,7 @@ class SupplierClaimCycle(models.Model):
                 overdue_badge = (
                     '<span style="display:inline-block;margin-left:8px;padding:2px 8px;'
                     'background:#dc3545;color:#fff;border-radius:4px;font-size:11px;font-weight:600;'
-                    'vertical-align:middle;">⚠ Overdue</span>'
+                    'vertical-align:middle;">⚠ %s</span>' % _('Overdue')
                 )
             L.append(
                 '<div style="flex:1;padding:16px 20px;background:%s;border-radius:8px;border:1px solid %s;">'
@@ -498,48 +515,50 @@ class SupplierClaimCycle(models.Model):
                 'padding-bottom:8px;">%s %s</h3>'
                 % ('#dc3545' if is_overdue else '#333', '#dc3545' if is_overdue else '#dee2e6',
                    current_stage['label'], overdue_badge)
-            )
+                )
             if current_stage.get('user_name'):
                 L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">User: </span>'
+                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
                     '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % current_stage['user_name']
+                    % (_('User:'), current_stage['user_name'])
                 )
             if current_stage.get('action_date'):
                 L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">Date: </span>'
+                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
                     '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % current_stage['action_date']
+                    % (_('Date:'), current_stage['action_date'])
                 )
             if current_stage.get('notes'):
                 L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">Notes: </span>'
+                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
                     '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % current_stage['notes']
+                    % (_('Notes:'), current_stage['notes'])
                 )
             if current_stage['stage'] == 'sign_check' and (self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()):
                 L.append(
                     '<div style="margin-top:12px;padding:8px 12px;background:#fff3cd;border-radius:6px;'
                     'border:1px solid #ffc107;font-size:13px;color:#856404;">'
-                    '⚠ Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.</div>'
+                    '⚠ %s</div>' % _(
+                        'Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.'
+                    )
                 )
             if current_stage['stage'] == 'supplier_notification' and self.supplier_notified:
                 L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">Contact: </span>'
+                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
                     '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % self.contact_name or ''
+                    % (_('Contact:'), self.contact_name or '')
                 )
                 L.append(
-                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">Phone: </span>'
+                    '<div style="margin-bottom:8px;"><span style="font-weight:600;color:#555;font-size:12px;">%s </span>'
                     '<span style="color:#333;font-size:13px;">%s</span></div>'
-                    % self.contact_phone or ''
+                    % (_('Phone:'), self.contact_phone or '')
                 )
             L.append('</div>')
         else:
             L.append(
                 '<div style="flex:1;padding:16px 20px;background:#f8f9fa;border-radius:8px;border:1px solid #e9ecef;'
                 'display:flex;align-items:center;justify-content:center;color:#999;">'
-                'No active stage</div>'
+                '%s</div>' % _('No active stage')
             )
 
         L.append('</div>')

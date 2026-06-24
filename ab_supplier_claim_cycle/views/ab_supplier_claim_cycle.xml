@@ -19,6 +19,7 @@
                     <field name="write_date" string="Last Update Date"/>
                     <field name="user_id"/>
                     <field name="area"/>
+                    <field name="supplier_claim_number"/>
                 </list>
             </field>
         </record>
@@ -80,6 +81,7 @@
                             <field name="amount_of_check" readonly="not can_current_user_edit"/>
                             <field name="area" readonly="not can_current_user_edit"/>
                             <field name="type_of_invoice" readonly="not can_current_user_edit"/>
+                            <field name="supplier_claim_number" readonly="not can_current_user_edit"/>
                             <field name="user_id" readonly="1"/>
                         </group>
 
