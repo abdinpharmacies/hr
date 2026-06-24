@@ -17,4 +17,9 @@
     ],
 
     'installable': True,
+    'assets': {
+        'web.assets_backend': [
+            'ab_supplier_claim_cycle/static/src/scss/supplier_claim_cycle.scss',
+        ],
+    },
 }
