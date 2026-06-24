@@ -1,52 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <delete id="rule_ab_internal_shipment_relevant_user" model="ir.rule"/>
-        <delete id="rule_ab_internal_shipment_department_manager" model="ir.rule"/>
-        <delete id="rule_ab_internal_shipment_line_relevant_user" model="ir.rule"/>
-        <delete id="rule_ab_internal_shipment_line_department_manager" model="ir.rule"/>
-        <delete id="rule_ab_internal_shipment_history_relevant_user" model="ir.rule"/>
-        <delete id="rule_ab_internal_shipment_history_department_manager" model="ir.rule"/>
-        <delete id="access_ab_internal_shipment_sender" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_recipient" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_department_manager" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_line_sender" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_line_recipient" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_line_department_manager" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_history_sender" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_history_recipient" model="ir.model.access"/>
-        <delete id="access_ab_internal_shipment_history_department_manager" model="ir.model.access"/>
-        <delete id="group_ab_internal_shipment_sender" model="res.groups"/>
-        <delete id="group_ab_internal_shipment_recipient" model="res.groups"/>
-        <delete id="group_ab_internal_shipment_department_manager" model="res.groups"/>
-
-        <record id="rule_ab_internal_shipment_user_created" model="ir.rule">
-            <field name="name">Internal shipments created by me</field>
+        <!-- Shipment record rules -->
+        <record id="rule_ab_internal_shipment_user" model="ir.rule">
+            <field name="name">Internal shipments: user read access</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
             <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
-            <field name="domain_force">[('created_by_id', '=', user.id)]</field>
+            <field name="domain_force">['|', '|', '|', '|', '|', '|',
+                ('created_by_id', '=', user.id),
+                '&amp;', ('sender_type', '=', 'employee'), ('sender_employee_id', 'in', user.ab_employee_ids.ids),
+                '&amp;', ('sender_type', '=', 'employee'), ('sender_employee_id.department_id.manager_id.user_id', '=', user.id),
+                '&amp;', ('sender_type', '=', 'employee'), ('sender_employee_id.department_id.store_id', 'in', user.ab_employee_ids.department_id.store_id.ids),
+                '&amp;', ('sender_type', '=', 'department'), ('sender_department_id.manager_id.user_id', '=', user.id),
+                '&amp;', ('sender_type', '=', 'branch'), ('sender_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids),
+                '|', '|',
+                    '&amp;', ('recipient_type', '=', 'employee'), ('recipient_employee_id', 'in', user.ab_employee_ids.ids),
+                    '&amp;', ('recipient_type', '=', 'department'), ('recipient_department_id.manager_id.user_id', '=', user.id),
+                    '&amp;', ('recipient_type', '=', 'branch'), ('recipient_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
             <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_user_created_write" model="ir.rule">
+            <field name="name">Internal shipments: creator workflow write</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="domain_force">[('created_by_id', '=', user.id), ('state', 'in', ('draft', 'sent', 'in_transit'))]</field>
+            <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
-        <record id="rule_ab_internal_shipment_user_awaiting_receipt" model="ir.rule">
-            <field name="name">Internal shipments awaiting my receipt</field>
+        <record id="rule_ab_internal_shipment_user_recipient_write" model="ir.rule">
+            <field name="name">Internal shipments: recipient receipt write</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
             <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
             <field name="domain_force">['&amp;', ('state', '=', 'awaiting_receipt'), '|', '|',
                 '&amp;', ('recipient_type', '=', 'employee'), ('recipient_employee_id', 'in', user.ab_employee_ids.ids),
                 '&amp;', ('recipient_type', '=', 'department'), ('recipient_department_id.manager_id.user_id', '=', user.id),
                 '&amp;', ('recipient_type', '=', 'branch'), ('recipient_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
         <record id="rule_ab_internal_shipment_admin" model="ir.rule">
-            <field name="name">Internal shipments administrator all</field>
+            <field name="name">Internal shipments: administrator all</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
             <field name="groups" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
@@ -56,33 +59,63 @@
             <field name="perm_unlink" eval="1"/>
         </record>
 
-        <record id="rule_ab_internal_shipment_line_user_created" model="ir.rule">
-            <field name="name">Internal shipment lines created by me</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
+        <record id="rule_ab_internal_shipment_recipient_received_read" model="ir.rule">
+            <field name="name">Internal shipments: confirmed recipient read</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
             <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
-            <field name="domain_force">[('shipment_id.created_by_id', '=', user.id)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_line_user_awaiting_receipt" model="ir.rule">
-            <field name="name">Internal shipment lines awaiting my receipt</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
-            <field name="domain_force">['&amp;', ('shipment_id.state', '=', 'awaiting_receipt'), '|', '|',
-                '&amp;', ('shipment_id.recipient_type', '=', 'employee'), ('shipment_id.recipient_employee_id', 'in', user.ab_employee_ids.ids),
-                '&amp;', ('shipment_id.recipient_type', '=', 'department'), ('shipment_id.recipient_department_id.manager_id.user_id', '=', user.id),
-                '&amp;', ('shipment_id.recipient_type', '=', 'branch'), ('shipment_id.recipient_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="domain_force">[('received_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_recipient_received_close_write" model="ir.rule">
+            <field name="name">Internal shipments: confirmed recipient close write</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="domain_force">[('state', '=', 'received'), ('received_by_id', '=', user.id)]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Shipment line record rules -->
+        <record id="rule_ab_internal_shipment_line_user" model="ir.rule">
+            <field name="name">Internal shipment lines: user read access</field>
+            <field name="model_id" ref="model_ab_internal_shipment_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="domain_force">['|', '|', '|', '|', '|', '|',
+                ('shipment_id.created_by_id', '=', user.id),
+                '&amp;', ('shipment_id.sender_type', '=', 'employee'), ('shipment_id.sender_employee_id', 'in', user.ab_employee_ids.ids),
+                '&amp;', ('shipment_id.sender_type', '=', 'employee'), ('shipment_id.sender_employee_id.department_id.manager_id.user_id', '=', user.id),
+                '&amp;', ('shipment_id.sender_type', '=', 'employee'), ('shipment_id.sender_employee_id.department_id.store_id', 'in', user.ab_employee_ids.department_id.store_id.ids),
+                '&amp;', ('shipment_id.sender_type', '=', 'department'), ('shipment_id.sender_department_id.manager_id.user_id', '=', user.id),
+                '&amp;', ('shipment_id.sender_type', '=', 'branch'), ('shipment_id.sender_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids),
+                '|', '|',
+                    '&amp;', ('shipment_id.recipient_type', '=', 'employee'), ('shipment_id.recipient_employee_id', 'in', user.ab_employee_ids.ids),
+                    '&amp;', ('shipment_id.recipient_type', '=', 'department'), ('shipment_id.recipient_department_id.manager_id.user_id', '=', user.id),
+                    '&amp;', ('shipment_id.recipient_type', '=', 'branch'), ('shipment_id.recipient_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_line_user_created_write" model="ir.rule">
+            <field name="name">Internal shipment lines: creator draft write</field>
+            <field name="model_id" ref="model_ab_internal_shipment_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="domain_force">[('shipment_id.created_by_id', '=', user.id), ('shipment_id.state', '=', 'draft')]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
         <record id="rule_ab_internal_shipment_line_admin" model="ir.rule">
-            <field name="name">Internal shipment lines administrator all</field>
+            <field name="name">Internal shipment lines: administrator all</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
             <field name="groups" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
@@ -92,33 +125,52 @@
             <field name="perm_unlink" eval="1"/>
         </record>
 
-        <record id="rule_ab_internal_shipment_history_user_created" model="ir.rule">
-            <field name="name">Internal shipment history created by me</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+        <record id="rule_ab_internal_shipment_line_recipient_received_read" model="ir.rule">
+            <field name="name">Internal shipment lines: confirmed recipient read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_line"/>
             <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
-            <field name="domain_force">[('shipment_id.created_by_id', '=', user.id)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="0"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_history_user_awaiting_receipt" model="ir.rule">
-            <field name="name">Internal shipment history awaiting my receipt</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
-            <field name="domain_force">['&amp;', ('shipment_id.state', '=', 'awaiting_receipt'), '|', '|',
-                '&amp;', ('shipment_id.recipient_type', '=', 'employee'), ('shipment_id.recipient_employee_id', 'in', user.ab_employee_ids.ids),
-                '&amp;', ('shipment_id.recipient_type', '=', 'department'), ('shipment_id.recipient_department_id.manager_id.user_id', '=', user.id),
-                '&amp;', ('shipment_id.recipient_type', '=', 'branch'), ('shipment_id.recipient_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="domain_force">[('shipment_id.received_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
+        <!-- Shipment history record rules -->
+        <record id="rule_ab_internal_shipment_history_user" model="ir.rule">
+            <field name="name">Internal shipment history: user read access</field>
+            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="domain_force">['|', '|', '|', '|', '|', '|',
+                ('shipment_id.created_by_id', '=', user.id),
+                '&amp;', ('shipment_id.sender_type', '=', 'employee'), ('shipment_id.sender_employee_id', 'in', user.ab_employee_ids.ids),
+                '&amp;', ('shipment_id.sender_type', '=', 'employee'), ('shipment_id.sender_employee_id.department_id.manager_id.user_id', '=', user.id),
+                '&amp;', ('shipment_id.sender_type', '=', 'employee'), ('shipment_id.sender_employee_id.department_id.store_id', 'in', user.ab_employee_ids.department_id.store_id.ids),
+                '&amp;', ('shipment_id.sender_type', '=', 'department'), ('shipment_id.sender_department_id.manager_id.user_id', '=', user.id),
+                '&amp;', ('shipment_id.sender_type', '=', 'branch'), ('shipment_id.sender_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids),
+                '|', '|',
+                    '&amp;', ('shipment_id.recipient_type', '=', 'employee'), ('shipment_id.recipient_employee_id', 'in', user.ab_employee_ids.ids),
+                    '&amp;', ('shipment_id.recipient_type', '=', 'department'), ('shipment_id.recipient_department_id.manager_id.user_id', '=', user.id),
+                    '&amp;', ('shipment_id.recipient_type', '=', 'branch'), ('shipment_id.recipient_store_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_history_user_create" model="ir.rule">
+            <field name="name">Internal shipment history: workflow create</field>
+            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="domain_force">['|', ('shipment_id.created_by_id', '=', user.id), ('shipment_id.received_by_id', '=', user.id)]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
         <record id="rule_ab_internal_shipment_history_admin" model="ir.rule">
-            <field name="name">Internal shipment history administrator all</field>
+            <field name="name">Internal shipment history: administrator all</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
             <field name="groups" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
@@ -126,6 +178,17 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_history_recipient_received_read" model="ir.rule">
+            <field name="name">Internal shipment history: confirmed recipient read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="domain_force">[('shipment_id.received_by_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
         </record>
     </data>
 </odoo>

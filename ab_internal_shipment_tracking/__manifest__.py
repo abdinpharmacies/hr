@@ -1,7 +1,7 @@
 {
     "name": "Internal Shipment Tracking",
     "summary": "Track internal movement of documents, files, and devices",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.3",
     "category": "AbdinSupplyChain",
     "license": "LGPL-3",
     "application": True,
