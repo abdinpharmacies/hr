@@ -13,6 +13,9 @@
                     <field name="status"/>
                     <field name="department_decision"/>
                     <field name="amount_of_check"/>
+                    <field name="contact_result"/>
+                    <field name="contact_name"/>
+                    <field name="contact_phone"/>
                     <field name="write_date" string="Last Update Date"/>
                     <field name="user_id"/>
                     <field name="area"/>
@@ -28,10 +31,10 @@
                     <header>
                         <button name="action_accept" type="object" string="Accept" class="btn-primary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status == 'closed' or department_decision == 'accepted' or not can_current_user_act"/>
+                                invisible="status in ('closed', 'supplier_notification', 'secretarial') or department_decision == 'accepted' or not can_current_user_act"/>
                         <button name="action_reject" type="object" string="Reject" class="btn-secondary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status == 'closed' or department_decision == 'rejected' or not can_current_user_act"/>
+                                invisible="status in ('closed', 'supplier_notification', 'secretarial') or department_decision == 'rejected' or not can_current_user_act"/>
                         <button name="action_done" type="object" string="Send to Inventory"
                                 class="btn-warning"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -47,14 +50,23 @@
                                 invisible="status != 'suppliers' or department_decision != 'accepted' or not can_current_user_act"/>
                         <button name="action_done" type="object" string="Send to Sign Check"
                                 class="btn-success"
+                                confirm="This moves the supplier claim to the next workflow stage. Please ensure Secretarial contacts the supplier."
                                 invisible="status != 'bank_acc' or department_decision != 'accepted' or not can_current_user_act"/>
                         <button name="action_done" type="object" string="Complete Sign Check"
                                 class="btn-success"
                                 invisible="status != 'sign_check' or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_supplier_notified" type="object" string="Supplier Notified"
+                                class="btn-success"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status != 'supplier_notification' or supplier_notified == True or not can_current_user_act"/>
+                        <button name="action_close_claim" type="object" string="Close Claim"
+                                class="btn-primary"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status != 'supplier_notification' or supplier_notified == False or not can_current_user_act"/>
                         <button name="action_admin_force_next" type="object" string="Move to Next Stage"
                                 class="btn-info"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status == 'closed' or not can_current_user_act"/>
+                                 invisible="status in ('closed', 'supplier_notification', 'secretarial') or not can_current_user_act"/>
                         <field name="status" invisible="1"/>
                     </header>
 
@@ -74,8 +86,27 @@
                         <group string="Workflow">
                             <field name="department_decision" readonly="1"/>
                             <field name="delay_reason" readonly="not can_current_user_edit"
-                                   groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                   groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer"
                                    required="department_decision == 'rejected'"/>
+                            <field name="supplier_notified" invisible="1"/>
+                            <field name="contact_result" string="Contact Result"
+                                   invisible="status not in ('supplier_notification', 'closed')"
+                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                            <field name="contact_name" string="Contact Name"
+                                   invisible="status not in ('supplier_notification', 'closed')"
+                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                            <field name="contact_phone" string="Contact Phone"
+                                   invisible="status not in ('supplier_notification', 'closed')"
+                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                            <field name="notification_notes" string="Notification Notes"
+                                   invisible="status not in ('supplier_notification', 'closed')"
+                                   readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                            <field name="supplier_notified_by" string="Notified By"
+                                   invisible="status not in ('supplier_notification', 'closed')"
+                                   readonly="1"/>
+                            <field name="supplier_notification_date" string="Notification Date"
+                                   invisible="status not in ('supplier_notification', 'closed')"
+                                   readonly="1"/>
                         </group>
 
                         <field name="timeline_display" nolabel="1"/>
