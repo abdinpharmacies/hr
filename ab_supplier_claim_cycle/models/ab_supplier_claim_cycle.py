@@ -11,7 +11,7 @@ STAGE_LABELS = {
     'suppliers': 'Suppliers',
     'bank_acc': 'Bank Account',
     'sign_check': 'Sign Check',
-    'closed': 'Closed',
+    'closed': 'Check delivery',
 }
 STAGE_ORDER = {s: i for i, s in enumerate(STAGE_SEQUENCE)}
 
@@ -50,7 +50,7 @@ class SupplierClaimCycle(models.Model):
     )
     delay_reason = fields.Text(string="Delay / Rejection Reason", tracking=True)
     check_delivery_status = fields.Selection(
-        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer')],
+        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'), ('check_delivered', 'Check Delivered'), ('shipped', 'Shipped')],
         string="Cheque Delivery Status",
         tracking=True,
     )
@@ -150,6 +150,15 @@ class SupplierClaimCycle(models.Model):
             rec._check_can_act_current_stage()
             if rec.department_decision != 'accepted':
                 raise UserError(_("The current department must accept before confirming."))
+            if rec.status == 'sign_check':
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Confirmation'),
+                    'res_model': 'ab.check.delivery.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {'default_claim_id': rec.id},
+                }
             rec._move_to_next_stage()
 
     def action_secretarial_force_next(self):
@@ -158,11 +167,29 @@ class SupplierClaimCycle(models.Model):
         for rec in self:
             rec._move_to_next_stage()
 
+    def action_admin_force_next(self):
+        if not self._is_supplier_claim_secretarial() and not self._is_supplier_claim_admin():
+            raise AccessError(_("Only Secretarial or Admin users can override the workflow."))
+        for rec in self:
+            rec._check_can_act_current_stage()
+            if rec.status == 'sign_check':
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Confirmation'),
+                    'res_model': 'ab.check.delivery.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {'default_claim_id': rec.id},
+                }
+            rec._move_to_next_stage()
+
     def _move_to_next_stage(self):
         self.ensure_one()
         next_stage = self._get_next_stage()
         if not next_stage:
             raise UserError(_("This supplier claim is already closed."))
+        if next_stage == 'closed' and not self.check_delivery_status:
+            raise ValidationError(_("Cheque Delivery Status must be set before closing the claim."))
         old_status = self.status
         self.with_context(supplier_claim_internal_write=True).write({
             'status': next_stage,
@@ -319,7 +346,7 @@ class SupplierClaimCycle(models.Model):
                 bg_color = '#28a745' if is_comp else (accent if is_curr else '#fff')
                 border = '2px solid #28a745' if is_comp else ('2px solid %s' % accent if is_curr else '2px solid #d0d0d0')
                 txt_color = '#28a745' if is_comp and not is_curr else (accent if is_curr else '#999')
-                icon = '✓' if is_comp else ('●' if is_curr else '○')
+                icon = '✈' if (is_comp and entry['stage'] == 'closed') else ('✓' if is_comp else ('●' if is_curr else '○'))
                 icon_text_color = '#fff' if is_comp else txt_color
 
                 L.append('<div style="display:flex;align-items:stretch;min-height:%s;position:relative;">'

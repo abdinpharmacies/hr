@@ -13,7 +13,6 @@
                     <field name="status"/>
                     <field name="department_decision"/>
                     <field name="amount_of_check"/>
-                    <field name="check_delivery_status"/>
                     <field name="write_date" string="Last Update Date"/>
                     <field name="user_id"/>
                     <field name="area"/>
@@ -28,18 +27,34 @@
                 <form string="Supplier Claim">
                     <header>
                         <button name="action_accept" type="object" string="Accept" class="btn-primary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                 invisible="status == 'closed' or department_decision == 'accepted' or not can_current_user_act"/>
                         <button name="action_reject" type="object" string="Reject" class="btn-secondary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                 invisible="status == 'closed' or department_decision == 'rejected' or not can_current_user_act"/>
-                        <button name="action_done" type="object" string="Done / Confirm" class="btn-success"
-                                invisible="status in ('secretarial', 'closed') or department_decision != 'accepted' or not can_current_user_act"/>
-                        <button name="action_secretarial_force_next" type="object" string="Start Claim Cycle"
+                        <button name="action_done" type="object" string="Send to Inventory"
                                 class="btn-warning"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status == 'closed' or not can_secretarial_override"
-                                confirm="This moves the supplier claim to the next workflow stage."/>
+                                invisible="status != 'secretarial' or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_done" type="object" string="Send to Purchase"
+                                class="btn-success"
+                                invisible="status != 'inventory' or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_done" type="object" string="Send to Suppliers"
+                                class="btn-success"
+                                invisible="status != 'purchase' or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_done" type="object" string="Send to Bank Account"
+                                class="btn-success"
+                                invisible="status != 'suppliers' or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_done" type="object" string="Send to Sign Check"
+                                class="btn-success"
+                                invisible="status != 'bank_acc' or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_done" type="object" string="Complete Sign Check"
+                                class="btn-success"
+                                invisible="status != 'sign_check' or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_admin_force_next" type="object" string="Move to Next Stage"
+                                class="btn-info"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status == 'closed' or not can_current_user_act"/>
                         <field name="status" invisible="1"/>
                     </header>
 
@@ -61,15 +76,30 @@
                             <field name="delay_reason" readonly="not can_current_user_edit"
                                    groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                    required="department_decision == 'rejected'"/>
-                            <field name="check_delivery_status" readonly="not can_current_user_edit"
-                                   groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                   invisible="status not in ('sign_check', 'closed')"/>
                         </group>
 
                         <field name="timeline_display" nolabel="1"/>
                     </sheet>
 
                     <chatter groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                </form>
+            </field>
+        </record>
+
+        <record id="check_delivery_wizard_form" model="ir.ui.view">
+            <field name="name">check_delivery_wizard_form</field>
+            <field name="model">ab.check.delivery.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Confirmation">
+                    <p style="margin-bottom:8px;font-size:13px;white-space:pre-wrap;">
+                        This moves the supplier claim to the next workflow stage.
+                    </p>
+                    <field name="claim_id" invisible="1"/>
+                    <field name="check_delivery_status" required="1"/>
+                    <footer>
+                        <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                    </footer>
                 </form>
             </field>
         </record>
