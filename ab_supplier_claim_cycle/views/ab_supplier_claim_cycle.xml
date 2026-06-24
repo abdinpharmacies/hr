@@ -94,7 +94,7 @@
                                 <div class="scc-supplier-info">
                                     <div class="scc-supplier-info-icon">📄</div>
                                     <div>
-                                        <div class="scc-supplier-info-label">Supplier Ref</div>
+                                        <div class="scc-supplier-info-label o_translate_inline">Supplier Ref</div>
                                         <div class="scc-supplier-info-value">
                                             <field name="supplier_claim_number" readonly="not can_current_user_edit" placeholder="—"/>
                                         </div>
@@ -103,7 +103,7 @@
                                 <div class="scc-supplier-info">
                                     <div class="scc-supplier-info-icon">📋</div>
                                     <div>
-                                        <div class="scc-supplier-info-label">Invoices</div>
+                                        <div class="scc-supplier-info-label o_translate_inline">Invoices</div>
                                         <div class="scc-supplier-info-value">
                                             <field name="num_of_invoice" readonly="not can_current_user_edit"/>
                                         </div>
@@ -112,7 +112,7 @@
                                 <div class="scc-supplier-info">
                                     <div class="scc-supplier-info-icon">💰</div>
                                     <div>
-                                        <div class="scc-supplier-info-label">Check Amount</div>
+                                        <div class="scc-supplier-info-label o_translate_inline">Check Amount</div>
                                         <div class="scc-supplier-info-value">
                                             <field name="amount_of_check" readonly="not can_current_user_edit"/>
                                         </div>
@@ -121,7 +121,7 @@
                                 <div class="scc-supplier-info">
                                     <div class="scc-supplier-info-icon">🧾</div>
                                     <div>
-                                        <div class="scc-supplier-info-label">Invoice Type</div>
+                                        <div class="scc-supplier-info-label o_translate_inline">Invoice Type</div>
                                         <div class="scc-supplier-info-value">
                                             <field name="type_of_invoice" readonly="not can_current_user_edit"/>
                                         </div>
@@ -134,17 +134,17 @@
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-1">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">⚙</span>
-                                Workflow
+                                <span class="o_translate_inline">Workflow</span>
                             </div>
                             <div class="scc-stage-grid">
                                 <div class="scc-stage-field">
-                                    <span class="scc-stage-field-label">Department Decision</span>
+                                    <span class="scc-stage-field-label o_translate_inline">Department Decision</span>
                                     <span class="scc-stage-field-value">
                                         <field name="department_decision" readonly="1"/>
                                     </span>
                                 </div>
                                 <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer">
-                                    <span class="scc-stage-field-label">Delay / Rejection Reason</span>
+                                    <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
                                     <span class="scc-stage-field-value">
                                         <field name="delay_reason" readonly="not can_current_user_edit"
                                                required="department_decision == 'rejected'"/>
@@ -156,41 +156,41 @@
                             <div invisible="status not in ('supplier_notification', 'closed')" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
                                 <div class="scc-form-section-title" style="margin-bottom:12px;">
                                     <span style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📞</span>
-                                    Supplier Notification
+                                    <span class="o_translate_inline">Supplier Notification</span>
                                 </div>
                                 <div class="scc-stage-grid" style="margin-bottom:12px;">
                                     <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label">Contact Name</span>
+                                        <span class="scc-stage-field-label o_translate_inline">Contact Name</span>
                                         <span class="scc-stage-field-value">
                                             <field name="contact_name" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label">Contact Phone</span>
+                                        <span class="scc-stage-field-label o_translate_inline">Contact Phone</span>
                                         <span class="scc-stage-field-value">
                                             <field name="contact_phone" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label">Contact Result</span>
+                                        <span class="scc-stage-field-label o_translate_inline">Contact Result</span>
                                         <span class="scc-stage-field-value">
                                             <field name="contact_result" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label">Notified By</span>
+                                        <span class="scc-stage-field-label o_translate_inline">Notified By</span>
                                         <span class="scc-stage-field-value">
                                             <field name="supplier_notified_by" readonly="1"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field" style="grid-column:span 2;">
-                                        <span class="scc-stage-field-label">Notification Notes</span>
+                                        <span class="scc-stage-field-label o_translate_inline">Notification Notes</span>
                                         <span class="scc-stage-field-value">
                                             <field name="notification_notes" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label">Notification Date</span>
+                                        <span class="scc-stage-field-label o_translate_inline">Notification Date</span>
                                         <span class="scc-stage-field-value">
                                             <field name="supplier_notification_date" readonly="1"/>
                                         </span>
@@ -203,7 +203,7 @@
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-2">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">📊</span>
-                                Workflow Timeline
+                                <span class="o_translate_inline">Workflow Timeline</span>
                             </div>
                             <field name="timeline_display" nolabel="1"/>
                         </div>

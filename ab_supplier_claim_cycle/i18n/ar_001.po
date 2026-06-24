@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-24 11:40+0000\n"
+"POT-Creation-Date: 2026-06-24 12:27+0000\n"
 "PO-Revision-Date: 2026-06-24 11:27+0000\n"
 "Last-Translator: Alhassan Hossny\n"
 "Language-Team: Arabic\n"
@@ -35,6 +35,115 @@ msgstr "تم رفض مطالبة المورد بواسطة %(stage)s. السبب
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Check Amount</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">قيمة الشيك</div>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Invoice Type</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">نوع الفاتورة</div>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Invoices</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">الفواتير</div>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Supplier Ref</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">مرجع المورد</div>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                                <span class=\"o_translate_inline\">Workflow</"
+"span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                                <span class=\"o_translate_inline\">سير العمل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">📊</span>\n"
+"                                <span class=\"o_translate_inline\">Workflow "
+"Timeline</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">📊</span>\n"
+"                                <span class=\"o_translate_inline\">الخط الزمني لسير العمل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Contact Name</span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">اسم مسؤول التواصل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Contact Phone</span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">هاتف التواصل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Contact Result</"
+"span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">نتيجة التواصل</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Delay / Rejection "
+"Reason</span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">سبب التأخير / الرفض</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Department "
+"Decision</span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">قرار القسم</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Notification Date</"
+"span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">تاريخ الإخطار</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Notification Notes</"
+"span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">ملاحظات الإخطار</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Notified By</span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">تم الإخطار بواسطة</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
+"<span style=\"width:24px;height:24px;border-radius:6px;background:linear-"
+"gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;"
+"justify-content:center;font-size:13px;flex-shrink:0;\">📞</span>\n"
+"                                    <span "
+"class=\"o_translate_inline\">Supplier Notification</span>"
+msgstr ""
+"<span style=\"width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;\">📞</span>\n"
+"                                    <span class=\"o_translate_inline\">إخطار المورد</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Accept"
 msgstr "قبول"
 
@@ -58,6 +167,11 @@ msgstr "إجراء مطلوب"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__contact_result__already_delivered
 msgid "Already Delivered"
 msgstr "تم التسليم بالفعل"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
+msgid "Amount"
+msgstr "القيمة"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__amount_of_check
@@ -165,11 +279,6 @@ msgstr "دورة المطالبة"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
-msgid "Claim Details"
-msgstr "تفاصيل المطالبة"
-
-#. module: ab_supplier_claim_cycle
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Close Claim"
 msgstr "إغلاق المطالبة"
 
@@ -202,28 +311,25 @@ msgid "Confirmation"
 msgstr "تأكيد"
 
 #. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Contact"
+msgstr "التواصل"
+
+#. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__contact_name
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Contact Name"
 msgstr "اسم مسؤول التواصل"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__contact_phone
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Contact Phone"
 msgstr "هاتف التواصل"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__contact_result
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Contact Result"
 msgstr "نتيجة التواصل"
-
-#. module: ab_supplier_claim_cycle
-#. odoo-python
-#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
-msgid "Contact:"
-msgstr "التواصل:"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__contact_result__contacted
@@ -258,8 +364,8 @@ msgstr "تاريخ الإنشاء"
 #. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
-msgid "Date:"
-msgstr "التاريخ:"
+msgid "Date"
+msgstr "التاريخ"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_stage_history__decision
@@ -337,14 +443,14 @@ msgid "Inventory"
 msgstr "المخزون"
 
 #. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_is_follower
 msgid "Is Follower"
 msgstr "متابع"
-
-#. module: ab_supplier_claim_cycle
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
-msgid "Last Update Date"
-msgstr "تاريخ آخر تحديث"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_check_delivery_wizard__write_uid
@@ -399,31 +505,24 @@ msgid "North"
 msgstr "الشمال"
 
 #. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_stage_history__notes
 msgid "Notes"
 msgstr "ملاحظات"
 
 #. module: ab_supplier_claim_cycle
-#. odoo-python
-#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
-msgid "Notes:"
-msgstr "الملاحظات:"
-
-#. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_notification_date
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Notification Date"
 msgstr "تاريخ الإخطار"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__notification_notes
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Notification Notes"
 msgstr "ملاحظات الإخطار"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__supplier_notified_by
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Notified By"
 msgstr "تم الإخطار بواسطة"
 
@@ -497,8 +596,8 @@ msgstr "قيد الانتظار"
 #. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
-msgid "Phone:"
-msgstr "الهاتف:"
+msgid "Phone"
+msgstr "الهاتف"
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
@@ -555,8 +654,8 @@ msgstr "السبب:"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
-msgid "Received Date"
-msgstr "تاريخ الاستلام"
+msgid "Received"
+msgstr "تم الاستلام"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
@@ -580,6 +679,11 @@ msgstr "رفض"
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "Rejection reason is required."
 msgstr "سبب الرفض مطلوب."
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "S"
+msgstr ""
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__message_has_sms_error
@@ -724,6 +828,12 @@ msgstr "مطالبات المورد - الموردون"
 #. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Supplier Contacted"
+msgstr "تم التواصل مع المورد"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__supplier_notification
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_stage_history__stage__supplier_notification
 msgid "Supplier Notification"
@@ -734,6 +844,11 @@ msgstr "إخطار المورد"
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "Supplier Notified"
 msgstr "تم إخطار المورد"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
+msgid "Supplier Ref"
+msgstr "مرجع المورد"
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
@@ -809,12 +924,19 @@ msgid "Unknown stage: %s"
 msgstr "مرحلة غير معروفة: %s"
 
 #. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
+msgid "Updated"
+msgstr "تم التحديث"
+
+#. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "Use workflow actions to move supplier claims between stages."
 msgstr "استخدم إجراءات سير العمل لنقل مطالبات المورد بين المراحل."
 
 #. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_cycle__user_id
 #: model:ir.model.fields,field_description:ab_supplier_claim_cycle.field_ab_supplier_claim_stage_history__user_id
 msgid "User"
@@ -837,11 +959,18 @@ msgid "Website communication history"
 msgstr "سجل تواصل الموقع"
 
 #. module: ab_supplier_claim_cycle
-#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
-msgid "Workflow"
-msgstr "سير العمل"
-
-#. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_tree
 msgid "invoice_tree"
 msgstr "قائمة الفواتير"
+
+#~ msgid "Claim Details"
+#~ msgstr "تفاصيل المطالبة"
+
+#~ msgid "Last Update Date"
+#~ msgstr "تاريخ آخر تحديث"
+
+#~ msgid "Notes:"
+#~ msgstr "الملاحظات:"
+
+#~ msgid "Workflow"
+#~ msgstr "سير العمل"
