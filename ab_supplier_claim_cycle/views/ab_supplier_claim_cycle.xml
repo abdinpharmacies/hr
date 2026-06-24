@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
         <record id="invoice_view_tree" model="ir.ui.view">
             <field name="name">invoice_view_tree</field>
             <field name="model">ab_supplier_claim_cycle</field>
@@ -10,13 +11,12 @@
                     <field name="num_of_invoice"/>
                     <field name="create_date" string="Received Date"/>
                     <field name="status"/>
+                    <field name="department_decision"/>
                     <field name="amount_of_check"/>
+                    <field name="check_delivery_status"/>
                     <field name="write_date" string="Last Update Date"/>
                     <field name="user_id"/>
                     <field name="area"/>
-
-
-                    <!--                    <field name="write_date"/>-->
                 </list>
             </field>
         </record>
@@ -25,62 +25,67 @@
             <field name="name">invoice_view_form</field>
             <field name="model">ab_supplier_claim_cycle</field>
             <field name="arch" type="xml">
-                <form string="invoice_form">
-
+                <form string="Supplier Claim">
                     <header>
-                        <button name="btn_status" type="object" string="Inventory" class="btn-success mr-1 ml-5"
-                                context="{'action':'inventory'}"
-                        />
-                        <button name="btn_status" type="object" string="Purchase" class="btn-success mr-1"
-                                context="{'action':'purchase'}"
-                        />
-
-                        <button name="btn_status" type="object" string="Suppliers" class="btn-success mr-1"
-                                context="{'action':'suppliers'}"
-                        />
-                        <button name="btn_status" type="object" string="Bank acc" class="btn-success mr-2"
-                                context="{'action':'bank_acc'}"
-                        />
-                        <button name="btn_status" type="object" string="Sign check" class="btn-warning mr-1"
-                                context="{'action':'sign_check'}"
-                        />
-                        <button name="btn_status" type="object" string="Closed" class="btn-danger mr-1"
-                                context="{'action':'closed'}"
-                                confirm="After closed you can't edit again"
-                        />
+                        <button name="action_accept" type="object" string="Accept" class="btn-primary"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status == 'closed' or department_decision == 'accepted' or not can_current_user_act"/>
+                        <button name="action_reject" type="object" string="Reject" class="btn-secondary"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status == 'closed' or department_decision == 'rejected' or not can_current_user_act"/>
+                        <button name="action_done" type="object" string="Done / Confirm" class="btn-success"
+                                invisible="status in ('secretarial', 'closed') or department_decision != 'accepted' or not can_current_user_act"/>
+                        <button name="action_secretarial_force_next" type="object" string="Start Claim Cycle"
+                                class="btn-warning"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status == 'closed' or not can_secretarial_override"
+                                confirm="This moves the supplier claim to the next workflow stage."/>
+                        <field name="status" invisible="1"/>
                     </header>
 
                     <sheet>
-                        <group>
-                            <field name="supplier_id" readonly="status == 'closed'"/>
-                            <field name="num_of_invoice" readonly="status == 'closed'"/>
-                            <field name="status" readonly="1"/>
-                            <field name="amount_of_check"/>
-                            <field name="area"/>
-                            <field name="type_of_invoice"/>
-                            <!--                            <field name="attachment" filename="attachment_name"/>-->
-
+                        <group string="Claim Details">
+                            <field name="can_current_user_edit" invisible="1"/>
+                            <field name="can_current_user_act" invisible="1"/>
+                            <field name="can_secretarial_override" invisible="1"/>
+                            <field name="supplier_id" readonly="not can_current_user_edit"/>
+                            <field name="num_of_invoice" readonly="not can_current_user_edit"/>
+                            <field name="amount_of_check" readonly="not can_current_user_edit"/>
+                            <field name="area" readonly="not can_current_user_edit"/>
+                            <field name="type_of_invoice" readonly="not can_current_user_edit"/>
+                            <field name="user_id" readonly="1"/>
                         </group>
+
+                        <group string="Workflow">
+                            <field name="department_decision" readonly="1"/>
+                            <field name="delay_reason" readonly="not can_current_user_edit"
+                                   groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                   required="department_decision == 'rejected'"/>
+                            <field name="check_delivery_status" readonly="not can_current_user_edit"
+                                   groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                   invisible="status not in ('sign_check', 'closed')"/>
+                        </group>
+
+                        <field name="timeline_display" nolabel="1"/>
                     </sheet>
 
-                    <chatter/>
+                    <chatter groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
                 </form>
             </field>
         </record>
 
-
         <record id="invoice_action" model="ir.actions.act_window">
-            <field name="name">invoice</field>
+            <field name="name">Claim Cycle</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_supplier_claim_cycle</field>
             <field name="view_mode">list,form</field>
         </record>
 
-
         <menuitem id="invoice_menu"
                   name="Claim Cycle"
                   parent="supplier_claim_cycle_sub_menu"
                   action="invoice_action"
+                  groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
                   sequence="100"/>
 
     </data>
