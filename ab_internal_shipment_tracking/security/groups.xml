@@ -19,7 +19,7 @@
         </record>
 
         <record id="base.group_user" model="res.groups">
-            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="implied_ids" eval="[(3, ref('group_ab_internal_shipment_user'))]"/>
         </record>
 
         <record id="group_ab_internal_shipment_admin" model="res.groups">

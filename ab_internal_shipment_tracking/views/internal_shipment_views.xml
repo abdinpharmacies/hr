@@ -39,15 +39,15 @@
                 <form string="Internal Shipment">
                     <header>
                         <button name="action_send" type="object" string="Send" class="btn-primary"
-                                invisible="state != 'draft'"/>
+                                invisible="state != 'draft' or not can_current_user_manage_workflow"/>
                         <button name="action_mark_in_transit" type="object" string="Mark In Transit"
-                                invisible="state != 'sent'"/>
+                                invisible="state != 'sent' or not can_current_user_manage_workflow"/>
                         <button name="action_deliver" type="object" string="Mark Delivered" class="btn-primary"
-                                invisible="state not in ('sent', 'in_transit')"/>
+                                invisible="state not in ('sent', 'in_transit') or not can_current_user_manage_workflow"/>
                         <button name="action_receive" type="object" string="Confirm Receipt" class="btn-primary"
-                                invisible="state != 'awaiting_receipt' or recipient_user_id != uid"/>
+                                invisible="not can_current_user_receive"/>
                         <button name="action_close" type="object" string="Close"
-                                invisible="state != 'received' or received_by_id != uid"/>
+                                invisible="not can_current_user_close"/>
                         <field name="state" widget="statusbar"
                                statusbar_visible="draft,sent,in_transit,awaiting_receipt,received,closed"/>
                     </header>
@@ -65,6 +65,8 @@
                         </div>
                         <group>
                             <group string="Shipment Information">
+                                <field name="can_current_user_manage_workflow" invisible="1"/>
+                                <field name="can_current_user_close" invisible="1"/>
                                 <field name="subject" readonly="state != 'draft'"/>
                                 <field name="shipment_date" readonly="state != 'draft'"/>
                                 <field name="expected_delivery_date" readonly="state in ('received', 'closed')"/>
@@ -96,6 +98,7 @@
                                 <field name="sender_user_id" readonly="1"/>
                             </group>
                             <group string="Recipient">
+                                <field name="can_current_user_receive" invisible="1"/>
                                 <field name="recipient_type" readonly="state != 'draft'"/>
                                 <field name="recipient_store_id"
                                        invisible="recipient_type != 'branch'"
@@ -227,6 +230,7 @@
             <field name="name">Internal Shipments</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form,pivot,graph</field>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
         </record>
 
@@ -266,6 +270,7 @@
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('state', '=', 'awaiting_receipt')]</field>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
             <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list_awaiting_receipt')})]"/>
         </record>
@@ -274,24 +279,26 @@
             <field name="name">Shipment Statistics</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">pivot,graph,list</field>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_admin'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
         </record>
 
         <record id="ab_internal_shipment_reporting_server_action" model="ir.actions.server">
             <field name="name">Shipment Statistics</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_admin'))]"/>
             <field name="state">code</field>
             <field name="code"><![CDATA[
 domain = []
 if not env.user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin"):
     employee_ids = env.user.ab_employee_ids.ids
-    store_ids = env.user.ab_employee_ids.department_id.store_id.ids
+    branch_account_store_ids = env.user.ab_department_ids.store_id.ids
     domain = [
         "|", "|", "|",
         ("created_by_id", "=", env.uid),
         "&", ("recipient_type", "=", "employee"), ("recipient_employee_id", "in", employee_ids),
         "&", ("recipient_type", "=", "department"), ("recipient_department_id.manager_id.user_id", "=", env.uid),
-        "&", ("recipient_type", "=", "branch"), ("recipient_store_id", "in", store_ids),
+        "&", ("recipient_type", "=", "branch"), ("recipient_store_id", "in", branch_account_store_ids),
     ]
 action = {
     "type": "ir.actions.act_window",
