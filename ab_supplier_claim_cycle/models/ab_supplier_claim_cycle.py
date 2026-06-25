@@ -20,9 +20,10 @@ STAGE_ORDER = {s: i for i, s in enumerate(STAGE_SEQUENCE)}
 class SupplierClaimCycle(models.Model):
     _name = 'ab_supplier_claim_cycle'
     _description = 'Supplier Claim Cycle'
-    _rec_name = 'supplier_id'
+    _rec_name = 'name'
     _inherit = ['mail.thread']
 
+    name = fields.Char(string='Claim Number', default=lambda self: self.env['ir.sequence'].next_by_code('ab.supplier.claim.cycle') or _('New'), required=True, readonly=True, copy=False, unique=True)
     stage_history_ids = fields.One2many('ab_supplier_claim_stage_history', 'claim_id', string='Stage History', copy=False)
 
     supplier_id = fields.Many2one("ab_costcenter", required=True, tracking=True, domain=[("code", "=like", "1-%")])
@@ -44,7 +45,8 @@ class SupplierClaimCycle(models.Model):
         selection=[('south', 'South'), ('north', 'North')],
         required=True,
     )
-    amount_of_check = fields.Char(required=True)
+    amount_of_check = fields.Monetary(string='Check Amount', currency_field='currency_id', required=True)
+    currency_id = fields.Many2one('res.currency', string='Currency', default=lambda self: self.env.company.currency_id)
     type_of_invoice = fields.Selection(
         selection=[('original', 'Original'), ('copy', 'Copy')],
         required=True,
@@ -59,17 +61,24 @@ class SupplierClaimCycle(models.Model):
     supplier_notified_by = fields.Many2one('res.users', string="Notified By", readonly=True, copy=False)
     supplier_notification_date = fields.Datetime(string="Notification Date", readonly=True, copy=False)
     contact_name = fields.Char(string='Contact Name', readonly=True, copy=False)
-    contact_phone = fields.Char(string='Contact Phone', readonly=True, copy=False)
+    contact_phone = fields.Char(string='Contact Phone', readonly=True, copy=False, sanitize=True)
     contact_result = fields.Selection(
         selection=[('contacted', 'Contacted'), ('already_delivered', 'Already Delivered')],
         string='Contact Result',
         tracking=True,
     )
     notification_notes = fields.Text(string="Notification Notes", tracking=True)
-    supplier_claim_number = fields.Char(string="Supplier Claim Number", tracking=True)
+    supplier_claim_number = fields.Char(string="Supplier Reference Number", tracking=True)
+    claim_document = fields.Binary(string="Claim Document", attachment=True, copy=False)
+    claim_document_filename = fields.Char(string="Claim Document Filename")
+    cheque_image = fields.Binary(string="Cheque Image", attachment=True, copy=False)
+    cheque_image_filename = fields.Char(string="Cheque Image Filename")
+    supplier_id_image = fields.Binary(string="Supplier ID Image", attachment=True, copy=False)
+    supplier_id_image_filename = fields.Char(string="Supplier ID Image Filename")
     can_current_user_edit = fields.Boolean(compute='_compute_workflow_access')
     can_current_user_act = fields.Boolean(compute='_compute_workflow_access')
     can_secretarial_override = fields.Boolean(compute='_compute_workflow_access')
+    can_edit_documents = fields.Boolean(compute='_compute_workflow_access')
     timeline_display = fields.Html(
         compute='_compute_timeline_display',
         sanitize=False,
@@ -97,6 +106,7 @@ class SupplierClaimCycle(models.Model):
             rec.can_current_user_act = can_handle
             rec.can_secretarial_override = rec.status != 'closed' and (is_admin or is_secretarial)
             rec.can_current_user_edit = is_admin or (rec.status != 'closed' and (is_secretarial or can_handle))
+            rec.can_edit_documents = is_admin or (is_secretarial and rec.status != 'closed')
 
     def _create_stage_history(self, stage, decision, notes=None):
         self.ensure_one()
@@ -109,6 +119,18 @@ class SupplierClaimCycle(models.Model):
             'action_date': fields.Datetime.now(),
             'notes': notes,
         })
+
+    def name_get(self):
+        result = []
+        for rec in self:
+            name = rec.name or _('New')
+            supplier = rec.supplier_id.display_name or ''
+            if supplier:
+                display = '%s - %s' % (name, supplier)
+            else:
+                display = name
+            result.append((rec.id, display))
+        return result
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -164,6 +186,25 @@ class SupplierClaimCycle(models.Model):
             rec._check_can_act_current_stage()
             if rec.department_decision != 'accepted':
                 raise UserError(_("The current department must accept before confirming."))
+            if rec.status == 'secretarial':
+                if not rec.claim_document and not self.env['ir.attachment'].search_count([
+                    ('res_model', '=', self._name),
+                    ('res_id', '=', rec.id),
+                ], limit=1):
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Missing Required Information'),
+                        'res_model': 'ab.claim.error.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_error_message': _(
+                                'Please upload the supplier claim document in the Claim Documents section before starting the cycle.'
+                            ),
+                        },
+                    }
+                rec._move_to_next_stage()
+                return
             if rec.status == 'sign_check':
                 return {
                     'type': 'ir.actions.act_window',
@@ -208,6 +249,19 @@ class SupplierClaimCycle(models.Model):
                 raise UserError(_("Please enter your contact name."))
             if not rec.contact_phone:
                 raise UserError(_("Please enter your contact phone."))
+            if not rec.cheque_image or not rec.supplier_id_image:
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Missing Required Documents'),
+                    'res_model': 'ab.claim.error.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_error_message': _(
+                            'Please attach both the cheque image and supplier ID image before confirming supplier notification.'
+                        ),
+                    },
+                }
             rec.with_context(supplier_claim_internal_write=True).write({
                 'supplier_notified': True,
                 'supplier_notified_by': self.env.user.id,
@@ -230,6 +284,9 @@ class SupplierClaimCycle(models.Model):
                 raise UserError(_("Supplier must be marked as notified before closing the claim."))
             if not rec.check_delivery_status:
                 raise UserError(_("Cheque Delivery Status must be set before closing the claim."))
+            error = rec._validate_cheque_delivery_documents()
+            if error:
+                return error
             rec._move_to_next_stage()
 
     def _move_to_next_stage(self):
@@ -535,3 +592,34 @@ class SupplierClaimCycle(models.Model):
 
         L.append('</div>')
         return '\n'.join(L)
+
+    def _validate_cheque_delivery_documents(self):
+        self.ensure_one()
+        if self.check_delivery_status != 'check_delivered':
+            return
+        if not self.cheque_image:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Missing Required Documents'),
+                'res_model': 'ab.claim.error.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_error_message': _(
+                        'Please attach the cheque image before confirming cheque delivery.'
+                    ),
+                },
+            }
+        if not self.supplier_id_image:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Missing Required Documents'),
+                'res_model': 'ab.claim.error.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_error_message': _(
+                        'Please attach the supplier ID image before confirming cheque delivery.'
+                    ),
+                },
+            }

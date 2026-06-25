@@ -1,4 +1,4 @@
-from odoo.exceptions import AccessError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
 
@@ -52,6 +52,27 @@ class TestSupplierClaimWorkflow(TransactionCase):
     def _move_to_inventory(self, claim):
         self._set_workflow_group(self.group_secretarial)
         claim.with_user(self.workflow_user).action_done()
+
+    def _move_to_next_n_stages(self, claim, count):
+        """Helper: move claim through N accepted stages starting from current status.
+        Assumes each department auto accepts and moves forward.
+        """
+        stages = ['inventory', 'purchase', 'suppliers', 'bank_acc', 'sign_check']
+        idx = stages.index(claim.status) if claim.status in stages else 0
+        for i in range(count):
+            if idx + i >= len(stages):
+                break
+            next_stage = stages[idx + i]
+            group_map = {
+                'inventory': self.group_inventory,
+                'purchase': self.group_purchase,
+                'suppliers': self.group_suppliers,
+                'bank_acc': self.group_bank_acc,
+                'sign_check': self.group_secretarial,
+            }
+            self._set_workflow_group(group_map.get(next_stage, self.group_secretarial))
+            claim.with_user(self.workflow_user).action_accept()
+            claim.with_user(self.workflow_user).action_done()
 
     def test_department_confirm_moves_only_to_next_stage(self):
         claim = self._create_claim()
@@ -117,3 +138,39 @@ class TestSupplierClaimWorkflow(TransactionCase):
         inv_history = claim.stage_history_ids.filtered(lambda h: h.stage == 'inventory')
         self.assertTrue(inv_history)
         self.assertEqual(inv_history[-1].decision, 'accepted')
+
+    def test_cheque_delivery_documents_required(self):
+        """Verify cheque delivery validates both required images."""
+        claim = self._create_claim()
+        self._move_to_inventory(claim)
+
+        # Move through inventory, purchase, suppliers, bank_acc → sign_check
+        self._move_to_next_n_stages(claim, 4)
+        self.assertEqual(claim.status, 'sign_check')
+
+        # Accept at sign_check
+        self._set_workflow_group(self.group_secretarial)
+        claim.with_user(self.workflow_user).action_accept()
+
+        # Open wizard — simulates Complete Sign Check button
+        wizard = self.env['ab.check.delivery.wizard'].with_user(self.workflow_user).create({
+            'claim_id': claim.id,
+            'check_delivery_status': 'check_delivered',
+        })
+
+        # Validate returns error wizard (dict) because no images
+        action = wizard.action_confirm()
+        self.assertEqual(action['res_model'], 'ab.claim.error.wizard')
+        self.assertTrue('cheque image' in action['context'].get('default_error_message', '').lower()
+                        or 'supplier id image' in action['context'].get('default_error_message', '').lower())
+
+        # Add images and retry
+        claim.with_user(self.workflow_user).write({
+            'cheque_image': b'fake_cheque_png',
+            'cheque_image_filename': 'cheque.png',
+            'supplier_id_image': b'fake_id_png',
+            'supplier_id_image_filename': 'id.png',
+        })
+        action = wizard.action_confirm()
+        self.assertEqual(action['type'], 'ir.actions.act_window_close')
+        self.assertEqual(claim.status, 'supplier_notification')
