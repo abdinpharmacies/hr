@@ -128,6 +128,15 @@ class InternalShipment(models.Model):
         index=True,
     )
     recipient_display = fields.Char(compute="_compute_party_displays", store=True)
+    can_current_user_receive = fields.Boolean(
+        compute="_compute_can_current_user_receive",
+    )
+    can_current_user_manage_workflow = fields.Boolean(
+        compute="_compute_current_user_action_permissions",
+    )
+    can_current_user_close = fields.Boolean(
+        compute="_compute_current_user_action_permissions",
+    )
 
     created_by_id = fields.Many2one(
         "res.users",
@@ -297,13 +306,49 @@ class InternalShipment(models.Model):
             else:
                 record.current_holder_display = False
 
+    @api.depends(
+        "state",
+        "recipient_type",
+        "recipient_store_id",
+        "recipient_department_id.manager_id.user_id",
+        "recipient_employee_id.user_id",
+    )
+    @api.depends_context("uid")
+    def _compute_can_current_user_receive(self):
+        user = self.env.user
+        employee_ids = set(user.ab_employee_ids.ids)
+        branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
+        for record in self:
+            can_receive = False
+            if record.state == "awaiting_receipt":
+                if record.recipient_type == "employee":
+                    can_receive = record.recipient_employee_id.id in employee_ids
+                elif record.recipient_type == "department":
+                    can_receive = record.recipient_department_id.manager_id.user_id == user
+                elif record.recipient_type == "branch":
+                    can_receive = record.recipient_store_id.id in branch_account_store_ids
+            record.can_current_user_receive = can_receive
+
+    @api.depends("state", "created_by_id")
+    @api.depends_context("uid")
+    def _compute_current_user_action_permissions(self):
+        user = self.env.user
+        is_admin = user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin")
+        for record in self:
+            record.can_current_user_manage_workflow = is_admin or record.created_by_id == user
+            record.can_current_user_close = record.state == "received"
+
     def action_send(self):
+        self._check_current_user_can_manage_workflow()
         self._move_state("draft", "sent", "sent_by_id", "sent_date", "sent")
 
     def action_mark_in_transit(self):
+        self._check_current_user_can_manage_workflow()
         self._move_state(("sent",), "in_transit", False, False, "in_transit")
 
     def action_deliver(self):
+        self._check_current_user_can_manage_workflow()
+        redirect_after_delivery = self._should_redirect_after_branch_delivery()
         for record in self:
             if record.state not in ("sent", "in_transit"):
                 raise UserError(
@@ -322,8 +367,22 @@ class InternalShipment(models.Model):
             "delivered_date",
             "delivered",
         )
+        if redirect_after_delivery:
+            return {
+                "type": "ir.actions.act_window",
+                "name": _("Internal Shipments"),
+                "res_model": "ab_internal_shipment",
+                "view_mode": "list,form,pivot,graph",
+                "search_view_id": self.env.ref(
+                    "ab_internal_shipment_tracking.ab_internal_shipment_view_search"
+                ).id,
+            }
+        return False
 
     def action_receive(self):
+        unauthorized = self.filtered(lambda record: not record.can_current_user_receive)
+        if unauthorized:
+            raise UserError(_("Only the designated recipient can confirm receipt for this shipment."))
         now = fields.Datetime.now()
         for record in self:
             if record.state != "awaiting_receipt":
@@ -352,7 +411,36 @@ class InternalShipment(models.Model):
             )
 
     def action_close(self):
-        self._move_state("received", "closed", "closed_by_id", "closed_date", "closed")
+        unauthorized = self.filtered(lambda record: not record.can_current_user_close)
+        if unauthorized:
+            raise UserError(_("Only confirmed shipments can be closed."))
+        now = fields.Datetime.now()
+        action_uid = self.env.uid
+        for record in self:
+            if record.state != "received":
+                raise UserError(
+                    _("Shipment %(name)s cannot move from %(current)s to closed.")
+                    % {
+                        "name": record.display_name,
+                        "current": record.state,
+                    }
+                )
+            old_state = record.state
+            old_holder = record.current_holder_display
+            vals = {
+                "state": "closed",
+                "closed_by_id": action_uid,
+                "closed_date": now,
+            }
+            vals.update(record._holder_values_for_state("closed"))
+            record.sudo().write(vals)
+            record.sudo().with_context(ab_internal_shipment_action_uid=action_uid)._create_history(
+                "closed",
+                old_state,
+                "closed",
+                _("State changed."),
+                old_holder=old_holder,
+            )
 
     def action_add_tracking_note(self):
         for record in self:
@@ -381,6 +469,22 @@ class InternalShipment(models.Model):
             vals.update(record._holder_values_for_state(target_state))
             record.write(vals)
             record._create_history(action, old_state, target_state, _("State changed."), old_holder=old_holder)
+
+    def _check_current_user_can_manage_workflow(self):
+        unauthorized = self.filtered(lambda record: not record.can_current_user_manage_workflow)
+        if unauthorized:
+            raise UserError(_("Only the shipment creator or a shipment administrator can perform this action."))
+
+    def _should_redirect_after_branch_delivery(self):
+        user = self.env.user
+        if user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin"):
+            return False
+        branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
+        return any(
+            record.recipient_type == "branch"
+            and record.recipient_store_id.id not in branch_account_store_ids
+            for record in self
+        )
 
     def _holder_values_for_state(self, state):
         self.ensure_one()
