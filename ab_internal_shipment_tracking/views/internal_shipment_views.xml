@@ -7,27 +7,21 @@
             <field name="arch" type="xml">
                 <list string="Internal Shipments"
                       decoration-muted="state == 'draft'"
-                      decoration-danger="state == 'cancelled' or is_delayed"
+                      decoration-danger="is_delayed"
                       decoration-warning="state == 'awaiting_receipt'"
                       decoration-success="state in ('received', 'closed')"
                       decoration-info="state in ('sent', 'in_transit')">
                     <field name="name"/>
                     <field name="shipment_date"/>
                     <field name="subject"/>
-                    <field name="shipment_type"/>
-                    <field name="delivery_method"/>
                     <field name="sender_display"/>
                     <field name="recipient_display"/>
                     <field name="current_holder_display"/>
                     <field name="expected_delivery_date" optional="show"/>
-                    <field name="is_delayed" optional="hide"/>
-                    <field name="state"/>
+                    <field name="state" widget="badge" decoration-danger="is_delayed"/>
+                    <field name="shipment_type" optional="hide"/>
+                    <field name="delivery_method" optional="hide"/>
                     <field name="created_by_id" optional="hide"/>
-                    <field name="sent_by_id" optional="hide"/>
-                    <field name="delivered_by_id" optional="hide"/>
-                    <field name="received_by_id" optional="hide"/>
-                    <field name="create_date" optional="hide"/>
-                    <field name="write_date" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -141,6 +135,7 @@
                                         <field name="closed_date"/>
                                     </group>
                                 </group>
+                                <separator string="Movement History"/>
                                 <field name="history_ids" nolabel="1">
                                     <list>
                                         <field name="action_date"/>
@@ -165,7 +160,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <chatter/>
+                    <chatter groups="ab_internal_shipment_tracking.group_ab_internal_shipment_admin"/>
                 </form>
             </field>
         </record>
@@ -209,7 +204,7 @@
             <field name="arch" type="xml">
                 <pivot string="Shipment Statistics">
                     <field name="state" type="row"/>
-                    <field name="shipment_type" type="col"/>
+                    <field name="delivery_method" type="col"/>
                     <field name="shipment_count" type="measure"/>
                 </pivot>
             </field>
@@ -219,7 +214,7 @@
             <field name="name">ab_internal_shipment.graph</field>
             <field name="model">ab_internal_shipment</field>
             <field name="arch" type="xml">
-                <graph string="Shipment Statistics" type="bar">
+                <graph string="Shipments by State" type="pie">
                     <field name="state"/>
                     <field name="shipment_count" type="measure"/>
                 </graph>
@@ -240,27 +235,21 @@
             <field name="arch" type="xml">
                 <list create="false" string="Awaiting Receipt"
                       decoration-muted="state == 'draft'"
-                      decoration-danger="state == 'cancelled' or is_delayed"
+                      decoration-danger="is_delayed"
                       decoration-warning="state == 'awaiting_receipt'"
                       decoration-success="state in ('received', 'closed')"
                       decoration-info="state in ('sent', 'in_transit')">
                     <field name="name"/>
                     <field name="shipment_date"/>
                     <field name="subject"/>
-                    <field name="shipment_type"/>
-                    <field name="delivery_method"/>
                     <field name="sender_display"/>
                     <field name="recipient_display"/>
                     <field name="current_holder_display"/>
                     <field name="expected_delivery_date" optional="show"/>
-                    <field name="is_delayed" optional="hide"/>
-                    <field name="state"/>
+                    <field name="state" widget="badge" decoration-danger="is_delayed"/>
+                    <field name="shipment_type" optional="hide"/>
+                    <field name="delivery_method" optional="hide"/>
                     <field name="created_by_id" optional="hide"/>
-                    <field name="sent_by_id" optional="hide"/>
-                    <field name="delivered_by_id" optional="hide"/>
-                    <field name="received_by_id" optional="hide"/>
-                    <field name="create_date" optional="hide"/>
-                    <field name="write_date" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -278,7 +267,7 @@
         <record id="ab_internal_shipment_reporting_action" model="ir.actions.act_window">
             <field name="name">Shipment Statistics</field>
             <field name="res_model">ab_internal_shipment</field>
-            <field name="view_mode">pivot,graph,list</field>
+            <field name="view_mode">graph,pivot</field>
             <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_admin'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
         </record>
@@ -304,7 +293,7 @@ action = {
     "type": "ir.actions.act_window",
     "name": "Shipment Statistics",
     "res_model": "ab_internal_shipment",
-    "view_mode": "pivot,graph,list",
+    "view_mode": "graph,pivot",
     "domain": domain,
     "search_view_id": env.ref("ab_internal_shipment_tracking.ab_internal_shipment_view_search").id,
 }
