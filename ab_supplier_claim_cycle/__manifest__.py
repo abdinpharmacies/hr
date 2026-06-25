@@ -12,6 +12,7 @@
         'security/groups.xml',
         'security/ir.model.access.csv',
         'security/record_rules.xml',
+        'data/sequence.xml',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
     ],
