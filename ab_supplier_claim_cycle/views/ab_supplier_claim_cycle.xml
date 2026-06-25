@@ -7,16 +7,17 @@
             <field name="model">ab_supplier_claim_cycle</field>
             <field name="arch" type="xml">
                 <list string="invoice_tree" class="scc-list-view" decoration-danger="status == 'closed' and department_decision == 'rejected'" decoration-bf="status == 'secretarial'">
+                    <field name="name" string="Claim #"/>
                     <field name="supplier_id"/>
                     <field name="supplier_claim_number" string="Supplier Ref"/>
                     <field name="num_of_invoice" string="Invoices"/>
                     <field name="create_date" string="Received" optional="show"/>
                     <field name="status" widget="badge" decoration-success="status not in ('closed', 'supplier_notification', 'secretarial')" decoration-info="status == 'secretarial'" decoration-warning="status == 'supplier_notification'" decoration-danger="status == 'closed'"/>
                     <field name="department_decision" widget="badge" decoration-success="department_decision == 'accepted'" decoration-warning="department_decision == 'pending'" decoration-danger="department_decision == 'rejected'"/>
-                    <field name="amount_of_check" string="Amount" optional="show"/>
+                    <field name="amount_of_check" string="Amount" optional="show" widget="monetary"/>
                     <field name="contact_result" optional="hide"/>
                     <field name="contact_name" optional="hide"/>
-                    <field name="contact_phone" optional="hide"/>
+                    <field name="contact_phone" optional="hide" widget="phone"/>
                     <field name="write_date" string="Updated" optional="show"/>
                     <field name="user_id" optional="hide"/>
                     <field name="area" optional="hide"/>
@@ -51,7 +52,6 @@
                                 invisible="status != 'suppliers' or department_decision != 'accepted' or not can_current_user_act"/>
                         <button name="action_done" type="object" string="Send to Sign Check"
                                 class="btn-success"
-                                confirm="This moves the supplier claim to the next workflow stage. Please ensure Secretarial contacts the supplier."
                                 invisible="status != 'bank_acc' or department_decision != 'accepted' or not can_current_user_act"/>
                         <button name="action_done" type="object" string="Complete Sign Check"
                                 class="btn-success"
@@ -77,13 +77,25 @@
                         <field name="can_secretarial_override" invisible="1"/>
                         <field name="supplier_notified" invisible="1"/>
 
+                        <div class="scc-detail-alert" style="margin-bottom:16px;"
+                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                             invisible="status not in ('sign_check', 'supplier_notification')">
+                            <span class="scc-detail-alert-icon" t-translation="off">⚠</span>
+                            <span class="o_translate_inline">Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.</span>
+                        </div>
+
                         <!-- Supplier Summary Card -->
                         <div class="scc-supplier-card scc-animate-in">
                             <div class="scc-supplier-card-header">
                                 <div class="scc-supplier-avatar">S</div>
-                                <div>
-                                    <div class="scc-supplier-name">
-                                        <field name="supplier_id" readonly="not can_current_user_edit"/>
+                                <div style="flex:1;">
+                                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                                        <span class="scc-supplier-name">
+                                            <field name="supplier_id" readonly="not can_current_user_edit"/>
+                                        </span>
+                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
+                                            🔖 <field name="name"/>
+                                        </span>
                                     </div>
                                     <div class="scc-supplier-sub">
                                         <field name="area" readonly="not can_current_user_edit"/>
@@ -113,8 +125,9 @@
                                     <div class="scc-supplier-info-icon">💰</div>
                                     <div>
                                         <div class="scc-supplier-info-label o_translate_inline">Check Amount</div>
-                                        <div class="scc-supplier-info-value">
-                                            <field name="amount_of_check" readonly="not can_current_user_edit"/>
+                                        <div class="scc-supplier-info-value" style="display:flex;align-items:center;gap:6px;">
+                                            <field name="amount_of_check" readonly="not can_current_user_edit" style="flex:1;min-width:80px;"/>
+                                            <field name="currency_id" readonly="not can_current_user_edit" options="{'no_create': True}" style="width:90px;"/>
                                         </div>
                                     </div>
                                 </div>
@@ -130,8 +143,36 @@
                             </div>
                         </div>
 
-                        <!-- Workflow Section -->
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-1">
+                            <div class="scc-form-section-title">
+                                <span class="scc-form-section-title-icon">📎</span>
+                                <span class="o_translate_inline">Claim Documents</span>
+                            </div>
+                            <div style="padding:20px;background:linear-gradient(135deg,#f0f4ff 0%,#e8ecff 100%);border:2px dashed #6366f1;border-radius:10px;">
+                                <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
+                                    <div style="font-size:28px;">📄</div>
+                                    <div style="flex:1;">
+                                        <div style="font-size:14px;font-weight:600;color:#4f46e5;margin-bottom:2px;">
+                                            <span class="o_translate_inline">Supplier Claim Document</span>
+                                        </div>
+                                        <div style="font-size:12px;color:#6b7280;">
+                                            <span class="o_translate_inline">Upload the supplier's claim document (PDF, image, etc.)</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <field name="claim_document" filename="claim_document_filename"
+                                       placeholder="Choose file or drop here"
+                                       readonly="not can_edit_documents"
+                                       style="padding:16px;background:#fff;border:1px solid #c7d2fe;border-radius:8px;width:100%;"/>
+                                <field name="claim_document_filename" invisible="1"/>
+                                <div style="margin-top:8px;font-size:12px;color:#9ca3af;">
+                                    <span class="o_translate_inline">The cycle cannot start without an attached document.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Workflow Section -->
+                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">⚙</span>
                                 <span class="o_translate_inline">Workflow</span>
@@ -199,6 +240,57 @@
                             </div>
                         </div>
 
+                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
+                             invisible="status not in ('sign_check', 'supplier_notification', 'closed')">
+                            <div class="scc-form-section-title">
+                                <span class="scc-form-section-title-icon">📎</span>
+                                <span class="o_translate_inline">Cheque Delivery Documents</span>
+                            </div>
+                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+                                <div style="padding:20px;background:linear-gradient(135deg,#f0f4ff 0%,#e8ecff 100%);border:2px dashed #6366f1;border-radius:10px;">
+                                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                                        <div style="font-size:24px;">🏦</div>
+                                        <div style="flex:1;">
+                                            <div style="font-size:14px;font-weight:600;color:#4f46e5;margin-bottom:2px;">
+                                                <span class="o_translate_inline">Cheque Image</span>
+                                                <span style="color:#ef4444;">*</span>
+                                            </div>
+                                            <div style="font-size:12px;color:#6b7280;">
+                                                <span class="o_translate_inline">Upload a clear image of the signed cheque</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <field name="cheque_image" filename="cheque_image_filename"
+                                           placeholder="Choose file or drop here"
+                                           readonly="not can_edit_documents"
+                                           style="padding:16px;background:#fff;border:1px solid #c7d2fe;border-radius:8px;width:100%;"/>
+                                    <field name="cheque_image_filename" invisible="1"/>
+                                </div>
+                                <div style="padding:20px;background:linear-gradient(135deg,#f0f4ff 0%,#e8ecff 100%);border:2px dashed #6366f1;border-radius:10px;">
+                                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                                        <div style="font-size:24px;">🪪</div>
+                                        <div style="flex:1;">
+                                            <div style="font-size:14px;font-weight:600;color:#4f46e5;margin-bottom:2px;">
+                                                <span class="o_translate_inline">Supplier ID Image</span>
+                                                <span style="color:#ef4444;">*</span>
+                                            </div>
+                                            <div style="font-size:12px;color:#6b7280;">
+                                                <span class="o_translate_inline">Upload the supplier's personal ID image</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <field name="supplier_id_image" filename="supplier_id_image_filename"
+                                           placeholder="Choose file or drop here"
+                                           readonly="not can_edit_documents"
+                                           style="padding:16px;background:#fff;border:1px solid #c7d2fe;border-radius:8px;width:100%;"/>
+                                    <field name="supplier_id_image_filename" invisible="1"/>
+                                </div>
+                            </div>
+                            <div style="margin-top:8px;font-size:12px;color:#9ca3af;">
+                                <span class="o_translate_inline">Both images are required when marking the cheque as delivered.</span>
+                            </div>
+                        </div>
+
                         <!-- Timeline -->
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-2">
                             <div class="scc-form-section-title">
@@ -218,16 +310,51 @@
             <field name="name">check_delivery_wizard_form</field>
             <field name="model">ab.check.delivery.wizard</field>
             <field name="arch" type="xml">
-                <form string="Confirmation" class="scc-wizard">
-                    <p>
-                        This moves the supplier claim to the next workflow stage.
-                    </p>
-                    <field name="claim_id" invisible="1"/>
-                    <field name="check_delivery_status" required="1"/>
-                    <footer>
-                        <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
-                        <button string="Cancel" class="btn-secondary" special="cancel"/>
-                    </footer>
+                <form class="scc-clean-dialog">
+                    <div class="scc-dialog-body">
+                        <div class="scc-dialog-header">
+                            <div class="scc-dialog-icon">🚀</div>
+                            <div>
+                                <div class="scc-dialog-title o_translate_inline">Move To Next Stage</div>
+                                <div class="scc-dialog-sub o_translate_inline">Set the cheque delivery status to proceed</div>
+                            </div>
+                        </div>
+                        <div class="scc-dialog-field">
+                            <field name="claim_id" invisible="1"/>
+                            <field name="check_delivery_status" required="1" placeholder="Select delivery status..."/>
+                        </div>
+                        <div class="scc-dialog-footer">
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                            <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
+                        </div>
+                    </div>
+                </form>
+            </field>
+        </record>
+
+
+        <record id="claim_error_wizard_form" model="ir.ui.view">
+            <field name="name">claim_error_wizard_form</field>
+            <field name="model">ab.claim.error.wizard</field>
+            <field name="arch" type="xml">
+                <form class="scc-clean-dialog">
+                    <div class="scc-dialog-body">
+                        <div class="scc-dialog-header">
+                            <div class="scc-dialog-icon is-error">⚠</div>
+                            <div>
+                                <div class="scc-dialog-title o_translate_inline">Missing Required Information</div>
+                                <div class="scc-dialog-sub o_translate_inline">Please review the details below</div>
+                            </div>
+                        </div>
+                        <div class="scc-dialog-field">
+                            <div class="scc-error-card">
+                                <field name="error_message" class="scc-error-text"/>
+                            </div>
+                        </div>
+                        <div class="scc-dialog-footer">
+                            <button name="action_ok" type="object" string="OK" class="btn-primary"/>
+                        </div>
+                    </div>
                 </form>
             </field>
         </record>

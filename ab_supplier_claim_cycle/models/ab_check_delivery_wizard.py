@@ -21,5 +21,9 @@ class CheckDeliveryWizard(models.TransientModel):
         self.claim_id.with_context(supplier_claim_internal_write=True).write({
             'check_delivery_status': self.check_delivery_status,
         })
+        if self.check_delivery_status == 'check_delivered':
+            error = self.claim_id._validate_cheque_delivery_documents()
+            if error:
+                return error
         self.claim_id._move_to_next_stage()
         return {'type': 'ir.actions.act_window_close'}
