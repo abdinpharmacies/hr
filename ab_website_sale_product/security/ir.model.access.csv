@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_ab_eplus_stock_snapshot_user,access_ab_eplus_stock_snapshot_user,model_ab_eplus_stock_snapshot,base.group_user,1,0,0,0
-access_ab_website_sale_add_many_by_codes_wizard_user,access_ab_website_sale_add_many_by_codes_wizard_user,model_ab_website_sale_add_many_by_codes_wizard,base.group_user,1,1,1,1
