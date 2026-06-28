@@ -1,0 +1,14 @@
+.o_list_renderer {
+    th.o_list_column_order_draggable {
+        cursor: grab;
+    }
+
+    th.o_list_column_order_draggable:active {
+        cursor: grabbing;
+    }
+
+    .o_list_column_order_placeholder {
+        background: rgba(1, 126, 132, 0.08);
+        outline: 1px dashed #017e84;
+    }
+}

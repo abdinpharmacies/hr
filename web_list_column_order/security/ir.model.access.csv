@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_list_column_order_pref_user,list.column.order.pref user,model_list_column_order_pref,base.group_user,1,1,1,1
