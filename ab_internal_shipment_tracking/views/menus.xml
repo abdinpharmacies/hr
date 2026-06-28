@@ -4,6 +4,7 @@
         <menuitem id="ab_internal_shipment_menu_root"
                   name="Internal Shipments"
                   sequence="35"
+                  web_icon="ab_internal_shipment_tracking,static/description/icon.png"
                   groups="ab_internal_shipment_tracking.group_ab_internal_shipment_user,ab_internal_shipment_tracking.group_ab_internal_shipment_admin"/>
 
         <menuitem id="ab_internal_shipment_menu_shipments"
