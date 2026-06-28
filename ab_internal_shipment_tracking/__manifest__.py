@@ -15,5 +15,10 @@
         "views/internal_shipment_views.xml",
         "views/menus.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ab_internal_shipment_tracking/static/src/scss/internal_shipment_design.scss",
+        ],
+    },
     "installable": True,
 }

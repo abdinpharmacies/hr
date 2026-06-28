@@ -856,26 +856,10 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
             min-height: 30px;
         }
 
-        & > .o_cell_custom {
-            position: absolute;
-            inset-inline-end: 14px;
-            top: 12px;
-            width: auto;
-            height: auto;
-            padding: 0;
-            margin: 0;
-            border: 0;
-            background: transparent;
-
-            .o_ais_party_label {
-                position: static;
-            }
-        }
-
         .o_td_label {
             width: 38%;
             min-width: 128px;
-            padding-inline-end: 18px;
+            padding-right: 18px;
         }
 
         .o_td_label .o_form_label,
@@ -909,7 +893,7 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
     .o_ais_party_label {
         position: absolute;
         top: 12px;
-        inset-inline-end: 14px;
+        right: 14px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
@@ -932,35 +916,6 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         background: rgba($ais-success, 0.09);
         color: #15803d;
         box-shadow: inset 0 0 0 1px rgba($ais-success, 0.16);
-    }
-
-    .o_rtl &,
-    [dir="rtl"] & {
-        .o_ais_route_line {
-            direction: rtl;
-
-            i {
-                background: linear-gradient(90deg, rgba($ais-success, 0.72), rgba($ais-cyan, 0.72));
-            }
-        }
-
-        .o_ais_party_grid {
-            direction: ltr;
-        }
-
-        .o_ais_card_sender {
-            order: 1;
-        }
-
-        .o_ais_route_arrow {
-            order: 2;
-            transform: rotate(180deg);
-        }
-
-        .o_ais_card_recipient {
-            order: 3;
-        }
-
     }
 
     .o_ais_notebook {
@@ -1562,414 +1517,47 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
 
 .o_list_view.o_ais_list,
 .o_ais_list {
-    --ais-list-border: #e5e7eb;
-    --ais-list-row-bg: rgba(255, 255, 255, 0.96);
-    --ais-list-row-alt: rgba(249, 250, 251, 0.72);
-    --ais-list-header-bg: rgba(248, 250, 252, 0.98);
-
-    overflow: auto;
-    border: 1px solid var(--ais-list-border);
-    border-radius: 10px;
-    background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.92));
-    box-shadow: 0 10px 28px rgba(32, 36, 42, 0.06);
-
     .o_list_table {
-        width: 100%;
         border-collapse: separate;
-        border-spacing: 0;
-        background: transparent;
-        table-layout: auto;
-    }
-
-    &.o_list_table {
-        width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
-        background: transparent;
-        table-layout: auto;
+        border-spacing: 0 4px;
     }
 
     .o_list_table thead th {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        padding: 13px 14px;
-        border: 0;
-        border-bottom: 1px solid var(--ais-list-border);
-        background: var(--ais-list-header-bg);
-        color: rgba($ais-muted, 0.96);
-        font-size: 0.73rem;
-        font-weight: 760;
+        border-bottom: 1px solid $ais-border;
+        background: rgba(248, 250, 252, 0.94);
+        color: $ais-muted;
+        font-size: 0.74rem;
+        font-weight: 780;
         letter-spacing: 0;
-        line-height: 1.25;
         text-transform: uppercase;
-        vertical-align: middle;
-        white-space: nowrap;
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.84);
-    }
-
-    &.o_list_table thead th {
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        padding: 13px 14px;
-        border: 0;
-        border-bottom: 1px solid var(--ais-list-border);
-        background: var(--ais-list-header-bg);
-        color: rgba($ais-muted, 0.96);
-        font-size: 0.73rem;
-        font-weight: 760;
-        letter-spacing: 0;
-        line-height: 1.25;
-        text-transform: uppercase;
-        vertical-align: middle;
-        white-space: nowrap;
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.84);
     }
 
     .o_data_row {
-        height: 56px;
-        background: var(--ais-list-row-bg);
         transition:
             background-color 160ms $ais-ease,
             box-shadow 160ms $ais-ease,
             transform 160ms $ais-ease;
     }
 
-    .o_data_row:nth-child(even) {
-        background: var(--ais-list-row-alt);
-    }
-
     .o_data_row:hover {
-        background: rgba(255, 255, 255, 1);
-        box-shadow:
-            inset 3px 0 0 rgba($ais-timeline-value-blue, 0.78),
-            0 8px 22px rgba(32, 36, 42, 0.07);
-    }
-
-    .o_data_row.o_selected_row,
-    .o_data_row.table-active {
-        background: rgba($ais-timeline-value-blue, 0.08);
-        box-shadow: inset 3px 0 0 rgba($ais-timeline-value-blue, 0.9);
+        background: rgba($ais-primary, 0.045);
+        box-shadow: 0 8px 18px rgba(32, 36, 42, 0.07);
+        transform: translateY(-1px);
     }
 
     .o_data_cell {
-        max-width: 260px;
-        padding: 13px 14px;
-        border: 0;
-        border-bottom: 1px solid rgba(229, 231, 235, 0.72);
-        color: $ais-ink;
-        font-size: 0.9rem;
-        line-height: 1.35;
+        padding-top: 10px;
+        padding-bottom: 10px;
         vertical-align: middle;
-    }
-
-    .o_data_row:last-child .o_data_cell {
-        border-bottom-color: transparent;
-    }
-
-    .o_data_cell .o_field_widget,
-    .o_data_cell .o_field_widget *,
-    .o_data_cell .o_form_uri {
-        max-width: 100%;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    td[name="name"] {
-        min-width: 150px;
-        color: $ais-ink;
-        font-weight: 790;
-
-        .o_field_widget,
-        .o_form_uri {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            color: $ais-ink;
-            font-weight: 790;
-            text-decoration: none;
-            transition:
-                color 160ms $ais-ease,
-                transform 160ms $ais-ease;
-
-            &::before {
-                content: "";
-                display: inline-block;
-                flex: 0 0 auto;
-                width: 15px;
-                height: 15px;
-                border: 1.7px solid rgba($ais-timeline-value-blue, 0.86);
-                border-radius: 4px;
-                background:
-                    linear-gradient(180deg, rgba($ais-timeline-value-blue, 0.18), rgba($ais-timeline-value-blue, 0.05));
-                box-shadow:
-                    inset 0 4px 0 rgba(255, 255, 255, 0.55),
-                    0 3px 8px rgba($ais-timeline-value-blue, 0.12);
-            }
-
-            &:hover {
-                color: $ais-timeline-value-blue;
-            }
-        }
-    }
-
-    td[name="shipment_date"],
-    td[name="expected_delivery_date"],
-    td[name="created_by_id"],
-    td[name="shipment_type"],
-    td[name="delivery_method"] {
-        color: rgba($ais-muted, 0.86);
-        font-size: 0.84rem;
-        font-weight: 560;
-    }
-
-    td[name="subject"] {
-        min-width: 190px;
-        color: rgba($ais-ink, 0.86);
-
-        .o_field_widget {
-            display: block;
-        }
-    }
-
-    td[name="sender_display"],
-    td[name="recipient_display"],
-    td[name="current_holder_display"] {
-        min-width: 170px;
-
-        .o_field_widget {
-            display: inline-flex;
-            align-items: center;
-            gap: 7px;
-            max-width: 100%;
-            min-height: 28px;
-            padding: 5px 9px;
-            border-radius: 999px;
-            color: #365f7a;
-            font-size: 0.84rem;
-            font-weight: 690;
-            background: rgba($ais-timeline-value-blue, 0.1);
-            box-shadow: inset 0 0 0 1px rgba($ais-timeline-value-blue, 0.14);
-
-            &::before {
-                content: "";
-                display: inline-block;
-                flex: 0 0 auto;
-                width: 13px;
-                height: 13px;
-                border: 1.5px solid currentColor;
-                border-radius: 3px;
-                opacity: 0.7;
-                background:
-                    linear-gradient(currentColor, currentColor) 3px 3px / 2px 2px no-repeat,
-                    linear-gradient(currentColor, currentColor) 8px 3px / 2px 2px no-repeat,
-                    linear-gradient(currentColor, currentColor) 3px 8px / 2px 2px no-repeat,
-                    linear-gradient(currentColor, currentColor) 8px 8px / 2px 2px no-repeat;
-            }
-        }
-    }
-
-    td[name="recipient_display"] .o_field_widget {
-        color: #25735a;
-        background: rgba($ais-success, 0.1);
-        box-shadow: inset 0 0 0 1px rgba($ais-success, 0.14);
-    }
-
-    td[name="current_holder_display"] .o_field_widget {
-        color: #7a5a16;
-        background: rgba($ais-timeline-yellow, 0.14);
-        box-shadow: inset 0 0 0 1px rgba($ais-timeline-yellow, 0.22);
     }
 
     td[name="state"] .badge,
     .o_field_badge .badge,
     .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        min-height: 28px;
-        padding: 0.34rem 0.66rem;
+        padding: 0.34rem 0.58rem;
         border-radius: 999px;
-        border: 1px solid transparent;
-        font-size: 0.78rem;
-        font-weight: 760;
+        font-weight: 720;
         letter-spacing: 0;
-        line-height: 1;
-
-        &::before {
-            content: "";
-            display: inline-block;
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: currentColor;
-            opacity: 0.82;
-        }
-    }
-
-    td[name="state"] .text-bg-success,
-    td[name="state"] .badge-success {
-        border-color: rgba($ais-success, 0.18);
-        background: rgba($ais-success, 0.11) !important;
-        color: #15803d !important;
-    }
-
-    td[name="state"] .text-bg-info,
-    td[name="state"] .badge-info {
-        border-color: rgba($ais-timeline-value-blue, 0.2);
-        background: rgba($ais-timeline-value-blue, 0.12) !important;
-        color: #386dd8 !important;
-    }
-
-    td[name="state"] .text-bg-warning,
-    td[name="state"] .badge-warning {
-        border-color: rgba($ais-timeline-yellow, 0.3);
-        background: rgba($ais-timeline-yellow, 0.17) !important;
-        color: #8a5a00 !important;
-    }
-
-    td[name="state"] .text-bg-danger,
-    td[name="state"] .badge-danger {
-        border-color: rgba($ais-danger, 0.2);
-        background: rgba($ais-danger, 0.1) !important;
-        color: #b91c1c !important;
-    }
-
-    td[name="state"] .text-bg-muted,
-    td[name="state"] .badge-muted,
-    td[name="state"] .text-bg-secondary,
-    td[name="state"] .badge-secondary {
-        border-color: rgba(148, 163, 184, 0.24);
-        background: rgba(148, 163, 184, 0.12) !important;
-        color: #64748b !important;
-    }
-
-    td:focus-within {
-        outline: 2px solid rgba($ais-timeline-value-blue, 0.28);
-        outline-offset: -2px;
-    }
-
-    .o_optional_columns_dropdown_toggle {
-        border: 0;
-        background: transparent;
-        color: rgba($ais-muted, 0.78);
-    }
-
-    .o_rtl &,
-    [dir="rtl"] & {
-        direction: rtl;
-
-        .o_list_table {
-            direction: rtl;
-        }
-
-        .o_data_row:hover {
-            box-shadow:
-                inset -3px 0 0 rgba($ais-timeline-value-blue, 0.78),
-                0 8px 22px rgba(32, 36, 42, 0.07);
-        }
-
-        .o_data_row.o_selected_row,
-        .o_data_row.table-active {
-            box-shadow: inset -3px 0 0 rgba($ais-timeline-value-blue, 0.9);
-        }
-    }
-}
-
-html[dir="rtl"] .o_ais_form,
-body.o_rtl .o_ais_form,
-.o_web_client.o_rtl .o_ais_form {
-    .o_ais_route_header {
-        text-align: right;
-    }
-
-    .o_ais_route_line {
-        direction: rtl;
-
-        i {
-            background: linear-gradient(90deg, rgba($ais-success, 0.72), rgba($ais-cyan, 0.72));
-        }
-    }
-
-    .o_ais_party_grid {
-        direction: ltr;
-    }
-
-    .o_ais_card_sender {
-        order: 1;
-        grid-column: 1;
-    }
-
-    .o_ais_route_arrow {
-        order: 2;
-        grid-column: 2;
-        transform: rotate(180deg);
-    }
-
-    .o_ais_card_recipient {
-        order: 3;
-        grid-column: 3;
-    }
-
-    .o_ais_card_sender,
-    .o_ais_card_recipient {
-        direction: rtl;
-        grid-template-columns: minmax(0, 1fr) minmax(128px, 38%);
-        text-align: right;
-
-        > .g-col-sm-2 {
-            grid-column: 1 / -1;
-            justify-self: stretch;
-            text-align: right;
-            width: 100%;
-        }
-
-        .o_horizontal_separator {
-            direction: rtl;
-            text-align: right !important;
-            width: 100%;
-        }
-
-        & > .o_cell_custom {
-            inset-inline-start: 14px;
-            inset-inline-end: auto;
-        }
-
-        .o_td_label {
-            padding-inline-start: 18px;
-            padding-inline-end: 0;
-            text-align: right;
-        }
-
-        .o_wrap_label {
-            grid-column: 2;
-        }
-
-        .o_wrap_input {
-            grid-column: 1;
-        }
-
-        .o_td_label .o_form_label,
-        .o_form_label,
-        .o_field_widget,
-        .o_form_uri {
-            text-align: right;
-        }
-
-        .o_field_widget,
-        .o_field_widget *,
-        .o_tag,
-        .badge {
-            direction: rtl;
-        }
-    }
-
-    .o_ais_party_label {
-        inset-inline-start: 14px;
-        inset-inline-end: auto;
     }
 }
 
