@@ -316,12 +316,15 @@ class InternalShipment(models.Model):
     @api.depends_context("uid")
     def _compute_can_current_user_receive(self):
         user = self.env.user
+        is_admin = user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin")
         employee_ids = set(user.ab_employee_ids.ids)
         branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
         for record in self:
             can_receive = False
             if record.state == "awaiting_receipt":
-                if record.recipient_type == "employee":
+                if is_admin:
+                    can_receive = True
+                elif record.recipient_type == "employee":
                     can_receive = record.recipient_employee_id.id in employee_ids
                 elif record.recipient_type == "department":
                     can_receive = record.recipient_department_id.manager_id.user_id == user
