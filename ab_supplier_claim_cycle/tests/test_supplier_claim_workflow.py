@@ -49,122 +49,146 @@ class TestSupplierClaimWorkflow(TransactionCase):
             'type_of_invoice': 'original',
         })
 
-    def _move_to_inventory(self, claim):
+    def _start_cycle(self, claim):
         self._set_workflow_group(self.group_secretarial)
         claim.with_user(self.workflow_user).action_done()
 
-    def _move_to_next_n_stages(self, claim, count):
-        """Helper: move claim through N accepted stages starting from current status.
-        Assumes each department auto accepts and moves forward.
-        """
-        stages = ['inventory', 'purchase', 'suppliers', 'bank_acc', 'sign_check']
-        idx = stages.index(claim.status) if claim.status in stages else 0
-        for i in range(count):
-            if idx + i >= len(stages):
-                break
-            next_stage = stages[idx + i]
-            group_map = {
-                'inventory': self.group_inventory,
-                'purchase': self.group_purchase,
-                'suppliers': self.group_suppliers,
-                'bank_acc': self.group_bank_acc,
-                'sign_check': self.group_secretarial,
-            }
-            self._set_workflow_group(group_map.get(next_stage, self.group_secretarial))
-            claim.with_user(self.workflow_user).action_accept()
-            claim.with_user(self.workflow_user).action_done()
+    def _department_accept(self, claim, group):
+        self._set_workflow_group(group)
+        claim.with_user(self.workflow_user).action_accept()
 
-    def test_department_confirm_moves_only_to_next_stage(self):
+    def _department_finish(self, claim, group):
+        self._set_workflow_group(group)
+        claim.with_user(self.workflow_user).action_finish()
+
+    def _department_accept_and_finish(self, claim, group):
+        self._department_accept(claim, group)
+        self._department_finish(claim, group)
+
+    def _all_departments_finish(self, claim):
+        for group in (self.group_inventory, self.group_purchase, self.group_suppliers, self.group_bank_acc):
+            self._department_accept_and_finish(claim, group)
+
+    def test_secretarial_starts_cycle(self):
         claim = self._create_claim()
         self.assertEqual(claim.status, 'secretarial')
-
-        self._move_to_inventory(claim)
+        self._start_cycle(claim)
         self.assertEqual(claim.status, 'inventory')
+
+    def test_department_accept_marks_own_decision_only(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        self._department_accept(claim, self.group_inventory)
+        self.assertEqual(claim.inv_decision, 'accepted')
+        self.assertEqual(claim.pur_decision, 'pending')
+        self.assertEqual(claim.sup_decision, 'pending')
+        self.assertEqual(claim.bank_decision, 'pending')
+        self.assertEqual(claim.status, 'inventory')
+
+        self._department_accept(claim, self.group_purchase)
+        self.assertEqual(claim.pur_decision, 'accepted')
+        self.assertEqual(claim.status, 'inventory')
+
+    def test_accept_alone_does_not_advance(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        self._department_accept(claim, self.group_inventory)
+        self._department_accept(claim, self.group_purchase)
+        self._department_accept(claim, self.group_suppliers)
+        self._department_accept(claim, self.group_bank_acc)
+        # All accepted but none finished — should NOT advance
+        self.assertEqual(claim.status, 'inventory')
+
+    def test_finish_requires_accept_first(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
 
         self._set_workflow_group(self.group_inventory)
-        claim.with_user(self.workflow_user).action_accept()
-        self.assertEqual(claim.department_decision, 'accepted')
+        with self.assertRaises(UserError):
+            claim.with_user(self.workflow_user).action_finish()
 
-        claim.with_user(self.workflow_user).action_done()
-        self.assertEqual(claim.status, 'purchase')
-        self.assertEqual(claim.department_decision, 'pending')
-
-    def test_non_current_department_cannot_edit_or_move(self):
+    def test_all_finish_advances_to_sign_check(self):
         claim = self._create_claim()
-        self._move_to_inventory(claim)
+        self._start_cycle(claim)
+        self._all_departments_finish(claim)
+        self.assertEqual(claim.status, 'sign_check')
 
-        self._set_workflow_group(self.group_purchase)
-        with self.assertRaises(AccessError):
-            claim.with_user(self.workflow_user).write({'amount_of_check': '1200'})
-
-        with self.assertRaises(AccessError):
-            claim.with_user(self.workflow_user).action_accept()
-
-    def test_direct_status_jump_is_blocked(self):
+    def test_department_finish_sets_finished_flag(self):
         claim = self._create_claim()
+        self._start_cycle(claim)
 
-        with self.assertRaises(AccessError):
-            claim.with_user(self.workflow_user).write({'status': 'bank_acc'})
-
-        claim.with_user(self.workflow_user).action_done()
+        self._department_accept_and_finish(claim, self.group_inventory)
+        self.assertTrue(claim.inv_finished)
+        self.assertFalse(claim.pur_finished)
         self.assertEqual(claim.status, 'inventory')
 
-    def test_rejection_requires_reason(self):
+    def test_department_rejection_requires_reason(self):
         claim = self._create_claim()
-        self._move_to_inventory(claim)
+        self._start_cycle(claim)
 
         self._set_workflow_group(self.group_inventory)
         with self.assertRaises(ValidationError):
             claim.with_user(self.workflow_user).action_reject()
 
-        claim.with_user(self.workflow_user).write({'delay_reason': 'Missing supplier documents.'})
+    def test_department_rejection_sets_individual_decision(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        self._set_workflow_group(self.group_inventory)
+        claim.with_user(self.workflow_user).write({'delay_reason': 'Missing documents.'})
         claim.with_user(self.workflow_user).action_reject()
-        self.assertEqual(claim.department_decision, 'rejected')
+        self.assertEqual(claim.inv_decision, 'rejected')
+        self.assertEqual(claim.pur_decision, 'pending')
+
+    def test_all_departments_can_act_simultaneously(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        self._set_workflow_group(self.group_purchase)
+        claim.with_user(self.workflow_user).action_accept()
+        self.assertEqual(claim.pur_decision, 'accepted')
+
+        self._set_workflow_group(self.group_suppliers)
+        claim.with_user(self.workflow_user).action_accept()
+        self.assertEqual(claim.sup_decision, 'accepted')
+
+    def test_direct_status_jump_is_blocked(self):
+        claim = self._create_claim()
+        with self.assertRaises(AccessError):
+            claim.with_user(self.workflow_user).write({'status': 'sign_check'})
 
     def test_stage_history_created_on_create(self):
         claim = self._create_claim()
-        histories = claim.stage_history_ids
-        self.assertEqual(len(histories), 1)
-        stages = histories.mapped('stage')
-        self.assertIn('secretarial', stages)
+        self.assertEqual(len(claim.stage_history_ids), 1)
+        self.assertIn('secretarial', claim.stage_history_ids.mapped('stage'))
 
     def test_stage_history_on_accept(self):
         claim = self._create_claim()
-        self._move_to_inventory(claim)
+        self._start_cycle(claim)
 
-        self._set_workflow_group(self.group_inventory)
-        claim.with_user(self.workflow_user).action_accept()
-
+        self._department_accept(claim, self.group_inventory)
         inv_history = claim.stage_history_ids.filtered(lambda h: h.stage == 'inventory')
         self.assertTrue(inv_history)
         self.assertEqual(inv_history[-1].decision, 'accepted')
 
     def test_cheque_delivery_documents_required(self):
-        """Verify cheque delivery validates both required images."""
         claim = self._create_claim()
-        self._move_to_inventory(claim)
-
-        # Move through inventory, purchase, suppliers, bank_acc → sign_check
-        self._move_to_next_n_stages(claim, 4)
+        self._start_cycle(claim)
+        self._all_departments_finish(claim)
         self.assertEqual(claim.status, 'sign_check')
 
-        # Accept at sign_check
-        self._set_workflow_group(self.group_secretarial)
-        claim.with_user(self.workflow_user).action_accept()
-
-        # Open wizard — simulates Complete Sign Check button
         wizard = self.env['ab.check.delivery.wizard'].with_user(self.workflow_user).create({
             'claim_id': claim.id,
             'check_delivery_status': 'check_delivered',
         })
 
-        # Validate returns error wizard (dict) because no images
         action = wizard.action_confirm()
         self.assertEqual(action['res_model'], 'ab.claim.error.wizard')
         self.assertTrue('cheque image' in action['context'].get('default_error_message', '').lower()
                         or 'supplier id image' in action['context'].get('default_error_message', '').lower())
 
-        # Add images and retry
         claim.with_user(self.workflow_user).write({
             'cheque_image': b'fake_cheque_png',
             'cheque_image_filename': 'cheque.png',

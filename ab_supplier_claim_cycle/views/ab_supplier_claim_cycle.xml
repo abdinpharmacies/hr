@@ -33,29 +33,20 @@
                     <header class="scc-header-buttons">
                         <button name="action_accept" type="object" string="Accept" class="btn-primary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status in ('closed', 'supplier_notification', 'secretarial') or department_decision == 'accepted' or not can_current_user_act"/>
+                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc') or not can_current_user_act"/>
                         <button name="action_reject" type="object" string="Reject" class="btn-secondary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status in ('closed', 'supplier_notification', 'secretarial') or department_decision == 'rejected' or not can_current_user_act"/>
-                        <button name="action_done" type="object" string="Send to Inventory"
+                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc') or not can_current_user_act"/>
+                        <button name="action_finish" type="object" string="Finish" class="btn-success"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc') or not can_finish"/>
+                        <button name="action_done" type="object" string="Start the Cycle"
                                 class="btn-warning"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status != 'secretarial' or department_decision != 'accepted' or not can_current_user_act"/>
-                        <button name="action_done" type="object" string="Send to Purchase"
-                                class="btn-success"
-                                invisible="status != 'inventory' or department_decision != 'accepted' or not can_current_user_act"/>
-                        <button name="action_done" type="object" string="Send to Suppliers"
-                                class="btn-success"
-                                invisible="status != 'purchase' or department_decision != 'accepted' or not can_current_user_act"/>
-                        <button name="action_done" type="object" string="Send to Bank Account"
-                                class="btn-success"
-                                invisible="status != 'suppliers' or department_decision != 'accepted' or not can_current_user_act"/>
-                        <button name="action_done" type="object" string="Send to Sign Check"
-                                class="btn-success"
-                                invisible="status != 'bank_acc' or department_decision != 'accepted' or not can_current_user_act"/>
+                                invisible="status != 'secretarial' or not can_current_user_act"/>
                         <button name="action_done" type="object" string="Complete Sign Check"
                                 class="btn-success"
-                                invisible="status != 'sign_check' or department_decision != 'accepted' or not can_current_user_act"/>
+                                invisible="status != 'sign_check' or not can_current_user_act"/>
                         <button name="action_supplier_notified" type="object" string="Supplier Notified"
                                 class="btn-success"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -64,16 +55,17 @@
                                 class="btn-primary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                 invisible="status != 'supplier_notification' or supplier_notified == False or not can_current_user_act"/>
-                        <button name="action_admin_force_next" type="object" string="Move to Next Stage"
+                        <button name="action_secretarial_force_next" type="object" string="Move to Next Stage"
                                 class="btn-info"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                 invisible="status in ('closed', 'supplier_notification', 'secretarial') or not can_current_user_act"/>
+                                 invisible="status in ('closed', 'secretarial') or not can_secretarial_override"/>
                         <field name="status" invisible="1"/>
                     </header>
 
                     <sheet>
                         <field name="can_current_user_edit" invisible="1"/>
                         <field name="can_current_user_act" invisible="1"/>
+                        <field name="can_finish" invisible="1"/>
                         <field name="can_secretarial_override" invisible="1"/>
                         <field name="supplier_notified" invisible="1"/>
 
@@ -177,20 +169,48 @@
                                 <span class="scc-form-section-title-icon">⚙</span>
                                 <span class="o_translate_inline">Workflow</span>
                             </div>
-                            <div class="scc-stage-grid">
-                                <div class="scc-stage-field">
-                                    <span class="scc-stage-field-label o_translate_inline">Department Decision</span>
-                                    <span class="scc-stage-field-value">
-                                        <field name="department_decision" readonly="1"/>
-                                    </span>
-                                </div>
-                                <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer">
-                                    <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
-                                    <span class="scc-stage-field-value">
-                                        <field name="delay_reason" readonly="not can_current_user_edit"
-                                               required="department_decision == 'rejected'"/>
-                                    </span>
-                                </div>
+
+                            <!-- Parallel Status Summary -->
+                            <div class="scc-form-section-title" style="margin-bottom:12px;margin-top:12px;">
+                                <span style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🔄</span>
+                                <span class="o_translate_inline">Department Decisions</span>
+                            </div>
+                            <field name="parallel_status_summary" nolabel="1"
+                                   invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')"/>
+
+                            <div class="scc-stage-field">
+                                <span class="scc-stage-field-label o_translate_inline">Department Decision</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="department_decision" readonly="1"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="inv_reason" readonly="inv_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_purchase"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="pur_reason" readonly="pur_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_suppliers"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="sup_reason" readonly="sup_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_acc"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="bank_reason" readonly="bank_decision == 'accepted'"/>
+                                </span>
                             </div>
 
                             <!-- Supplier Notification Fields -->
