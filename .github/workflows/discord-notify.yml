@@ -1,0 +1,34 @@
+name: Discord Notifications
+
+on:
+  push:
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Discord
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          AUTHOR: ${{ github.actor }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          COMMIT_SHA: ${{ github.sha }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+          COMMIT_URL: https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+        run: |
+          PAYLOAD=$(jq -n '
+            {
+              embeds: [{
+                title: "🚀 New Push to \(env.REPO)",
+                url: env.COMMIT_URL,
+                description: "👤 **Author:** \(env.AUTHOR)\n🌿 **Branch:** `\(env.BRANCH)`\n🔖 **Commit:** `\(env.COMMIT_SHA)`\n\n📝 **Message:**\n\(env.COMMIT_MSG)",
+                color: 3447003
+              }]
+            }
+          ')
+
+          curl -H "Content-Type: application/json" \
+               -X POST \
+               -d "$PAYLOAD" \
+               "$DISCORD_WEBHOOK"
