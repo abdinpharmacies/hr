@@ -241,7 +241,7 @@
                         </div>
 
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="status not in ('sign_check', 'supplier_notification', 'closed')">
+                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status in ('cash', 'bank_transfer')">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">📎</span>
                                 <span class="o_translate_inline">Cheque Delivery Documents</span>
