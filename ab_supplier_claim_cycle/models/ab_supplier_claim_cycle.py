@@ -249,19 +249,20 @@ class SupplierClaimCycle(models.Model):
                 raise UserError(_("Please enter your contact name."))
             if not rec.contact_phone:
                 raise UserError(_("Please enter your contact phone."))
-            if not rec.cheque_image or not rec.supplier_id_image:
-                return {
-                    'type': 'ir.actions.act_window',
-                    'name': _('Missing Required Documents'),
-                    'res_model': 'ab.claim.error.wizard',
-                    'view_mode': 'form',
-                    'target': 'new',
-                    'context': {
-                        'default_error_message': _(
-                            'Please attach both the cheque image and supplier ID image before confirming supplier notification.'
-                        ),
-                    },
-                }
+            if rec.check_delivery_status not in ('cash', 'bank_transfer'):
+                if not rec.cheque_image or not rec.supplier_id_image:
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Missing Required Documents'),
+                        'res_model': 'ab.claim.error.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_error_message': _(
+                                'Please attach both the cheque image and supplier ID image before confirming supplier notification.'
+                            ),
+                        },
+                    }
             rec.with_context(supplier_claim_internal_write=True).write({
                 'supplier_notified': True,
                 'supplier_notified_by': self.env.user.id,
