@@ -2,18 +2,6 @@
 <odoo>
     <data>
 
-        <record id="rule_ab_request_user_crud" model="ir.rule">
-            <field name="name">rule_ab_request_user_crud</field>
-            <field name="model_id" ref="model_ab_request"/>
-            <field name="groups" eval="[(4, ref('group_ab_request_management_user'))]"/>
-            <field name="domain_force">[('user_id', 'in', user.ab_employee_ids.user_id.ids)] if user.ab_employee_ids else [(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="1"/>
-            <field name="perm_unlink" eval="1"/>
-            <!--<field name="global" eval="1"/> -->
-        </record>
-
         <record id="rule_ab_request_user_request" model="ir.rule">
             <field name="name">Request User Requests</field>
             <field name="model_id" ref="model_ab_request"/>
@@ -64,7 +52,7 @@
             <field name="name">HR Request Read Access</field>
             <field name="model_id" ref="model_ab_request"/>
             <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_personnel_spec'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="domain_force">[(1, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -110,7 +98,7 @@
             <field name="name">HR Request Follow-ups</field>
             <field name="model_id" ref="model_ab_request_followup"/>
             <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_personnel_spec'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="domain_force">[(1, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>
@@ -143,7 +131,7 @@
             <field name="name">HR Request Question Answers</field>
             <field name="model_id" ref="model_ab_request_question_answer"/>
             <field name="groups" eval="[(4, ref('ab_hr.group_ab_hr_personnel_spec'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
+            <field name="domain_force">[(1, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
