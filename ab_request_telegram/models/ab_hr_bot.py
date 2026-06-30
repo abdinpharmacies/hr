@@ -36,10 +36,10 @@ class AbHrBot(models.Model):
     chat_id = fields.Char(required=True, index=True, copy=False)
     telegram_username = fields.Char(index=True, copy=False)
 
-    @api.depends("employee_id")
+    @api.depends("employee_id.costcenter_id.bc_id")
     def _compute_employee_ref_id(self):
         for record in self:
-            record.employee_ref_id = record.employee_id.id or 0
+            record.employee_ref_id = record.employee_id.costcenter_id.bc_id or 0
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -171,6 +171,31 @@ class AbHrBot(models.Model):
             if not record.chat_id:
                 raise ValidationError("Telegram chat ID is required.")
 
+    def unlink(self):
+        employees_to_clear = []
+        for record in self:
+            employee = record.employee_id.sudo()
+            if not employee:
+                continue
+            clear_vals = {}
+            if employee.telegram_chat_id and employee.telegram_chat_id == record.chat_id:
+                clear_vals["telegram_chat_id"] = False
+            if employee.telegram_username and employee.telegram_username == record.telegram_username:
+                clear_vals["telegram_username"] = False
+            if clear_vals:
+                clear_vals.update(
+                    {
+                        "telegram_user_id": False,
+                        "telegram_linked_at": False,
+                    }
+                )
+                employees_to_clear.append((employee, clear_vals))
+
+        result = super().unlink()
+        for employee, clear_vals in employees_to_clear:
+            employee.with_context(replication=True).write(clear_vals)
+        return result
+
     @api.model
     def register_employee_chat(self, employee_id, chat_id, telegram_username=False):
         employee = self.env["ab_hr_employee"].search([("id", "=", int(employee_id))], limit=1)
@@ -187,10 +212,11 @@ class AbHrBot(models.Model):
         return result["link"]
 
     @api.model
-    def try_register_employee_chat(self, employee_id, chat_id, telegram_username=False):
+    def try_register_employee_chat(self, employee_id, chat_id, telegram_username=False, telegram_user_id=False):
         employee = self.env["ab_hr_employee"].search([("id", "=", int(employee_id))], limit=1)
         normalized_chat_id = str(chat_id or "").strip()
         normalized_username = str(telegram_username or "").strip().lstrip("@")
+        normalized_user_id = str(telegram_user_id or "").strip()
         if not employee:
             return {"status": "invalid_employee_id", "link": self.browse()}
         if not normalized_chat_id:
@@ -201,6 +227,12 @@ class AbHrBot(models.Model):
             if existing_chat_link.employee_id and existing_chat_link.employee_id != employee:
                 self._notify_chat_employee_conflict(existing_chat_link, employee)
                 return {"status": "chat_conflict", "link": existing_chat_link}
+            self._sync_employee_telegram_fields(
+                employee,
+                normalized_chat_id,
+                telegram_username=normalized_username,
+                telegram_user_id=normalized_user_id,
+            )
             return {"status": "existing", "link": existing_chat_link}
 
         existing_employee_link = self.search([("employee_id", "=", employee.id)], limit=1)
@@ -208,6 +240,12 @@ class AbHrBot(models.Model):
             if existing_employee_link.chat_id != normalized_chat_id:
                 self._notify_employee_chat_conflict(employee, existing_employee_link, normalized_chat_id)
                 return {"status": "employee_conflict", "link": existing_employee_link}
+            self._sync_employee_telegram_fields(
+                employee,
+                normalized_chat_id,
+                telegram_username=normalized_username,
+                telegram_user_id=normalized_user_id,
+            )
             return {"status": "existing", "link": existing_employee_link}
 
         try:
@@ -226,7 +264,52 @@ class AbHrBot(models.Model):
                 str(exc),
             )
             return {"status": "binding_conflict", "link": self.browse()}
+        self._sync_employee_telegram_fields(
+            employee,
+            normalized_chat_id,
+            telegram_username=normalized_username,
+            telegram_user_id=normalized_user_id,
+        )
         return {"status": "created", "link": link}
+
+    @api.model
+    def _sync_employee_telegram_fields(self, employee, chat_id, telegram_username=False, telegram_user_id=False):
+        employee = employee.sudo().exists()
+        if not employee:
+            return
+        vals = {
+            "telegram_chat_id": str(chat_id or "").strip() or False,
+            "telegram_linked_at": fields.Datetime.now(),
+        }
+        normalized_username = str(telegram_username or "").strip().lstrip("@")
+        normalized_user_id = str(telegram_user_id or "").strip()
+        if normalized_username:
+            vals["telegram_username"] = normalized_username
+        if normalized_user_id:
+            vals["telegram_user_id"] = normalized_user_id
+        employee.with_context(replication=True).write(vals)
+
+    @api.model
+    def _find_employee_by_bot_code(self, code):
+        Employee = self.env["ab_hr_employee"].sudo()
+        if hasattr(Employee, "_find_employee_by_telegram_code"):
+            return Employee._find_employee_by_telegram_code(code)
+        try:
+            return Employee.search([("id", "=", int(code))], limit=1)
+        except (TypeError, ValueError):
+            return Employee.browse()
+
+    @api.model
+    def try_register_employee_chat_by_code(self, code, chat_id, telegram_username=False, telegram_user_id=False):
+        employee = self._find_employee_by_bot_code(code)
+        if not employee:
+            return {"status": "invalid_employee_id", "link": self.browse()}
+        return self.try_register_employee_chat(
+            employee.id,
+            chat_id,
+            telegram_username=telegram_username,
+            telegram_user_id=telegram_user_id,
+        )
 
     @api.model
     def find_or_register_employee_chat(self, employee):
@@ -266,6 +349,7 @@ class AbHrBot(models.Model):
             employee.id,
             match["chat_id"],
             telegram_username=match.get("telegram_username"),
+            telegram_user_id=match.get("telegram_user_id"),
         )
         return result["link"] if result["status"] in {"created", "existing"} else self.browse()
 
@@ -340,7 +424,7 @@ class AbHrBot(models.Model):
     def _get_employee_telegram_identifiers(self, employee):
         employee = employee.sudo()
         values = {
-            str(employee.id),
+            str(employee.costcenter_id.bc_id or ""),
             employee.name or "",
             employee.english_name or "",
             employee.barcode or "",
@@ -400,6 +484,7 @@ class AbHrBot(models.Model):
                         )
                     exact_username_match = {
                         "chat_id": chat.get("id"),
+                        "telegram_user_id": sender.get("id") or False,
                         "telegram_username": sender.get("username") or False,
                     }
                     break
@@ -413,6 +498,7 @@ class AbHrBot(models.Model):
                         )
                     exact_text_match = {
                         "chat_id": chat.get("id"),
+                        "telegram_user_id": sender.get("id") or False,
                         "telegram_username": sender.get("username") or False,
                     }
             if exact_username_match:
@@ -435,12 +521,22 @@ class AbHrBot(models.Model):
             chat_type=chat.get("type") or "",
             text=(message.get("text") or "").strip(),
             telegram_username=(sender.get("username") or "").strip(),
+            telegram_user_id=str(sender.get("id") or "").strip(),
             is_bot=bool(sender.get("is_bot")),
             send_feedback=True,
         )
 
     @api.model
-    def _process_private_message(self, chat_id, chat_type, text, telegram_username=False, is_bot=False, send_feedback=True):
+    def _process_private_message(
+        self,
+        chat_id,
+        chat_type,
+        text,
+        telegram_username=False,
+        telegram_user_id=False,
+        is_bot=False,
+        send_feedback=True,
+    ):
         if is_bot or not chat_id or chat_type != "private":
             return {"ok": True, "message": "ignored"}
 
@@ -465,10 +561,15 @@ class AbHrBot(models.Model):
                 )
             return {"ok": False, "message": "invalid_employee_id"}
 
-        result = self.try_register_employee_chat(int(text), chat_id, telegram_username=telegram_username)
+        result = self.try_register_employee_chat_by_code(
+            text,
+            chat_id,
+            telegram_username=telegram_username,
+            telegram_user_id=telegram_user_id,
+        )
         if result["status"] == "invalid_employee_id":
             _logger.warning(
-                "ab_request_telegram: employee link failed for chat_id=%s employee_id=%s reason=invalid_employee_id",
+                "ab_request_telegram: employee link failed for chat_id=%s employee_code=%s reason=invalid_employee_id",
                 chat_id,
                 text,
             )
@@ -521,6 +622,7 @@ class AbHrBot(models.Model):
             chat_type=chat_type,
             text=(text or "").strip(),
             telegram_username=username,
+            telegram_user_id=telegram_user_id,
             is_bot=False,
             send_feedback=False,
         )
