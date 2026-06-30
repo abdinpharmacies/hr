@@ -47,6 +47,7 @@ class SelfInventoryRequest(models.Model):
     state = fields.Selection(
         selection=[
             ('draft', 'Draft'),
+            ('in_progress', 'In Progress'),
             ('submitted', 'Submitted'),
             ('cancelled', 'Cancelled'),
         ],
@@ -58,6 +59,7 @@ class SelfInventoryRequest(models.Model):
     selected_line_count = fields.Integer(compute='_compute_selected_line_count')
     batch_id = fields.Many2one('ab_self_inventory_request_batch', readonly=True, copy=False, index=True)
     process_id = fields.Many2one('ab_self_inventory_process', readonly=True, copy=False)
+    can_open_process = fields.Boolean(compute='_compute_can_open_process')
     submitted_date = fields.Datetime(readonly=True, copy=False)
 
     # Smart Inventory Analysis Fields
@@ -93,13 +95,49 @@ class SelfInventoryRequest(models.Model):
         for rec in self:
             rec.selected_line_count = len(rec.line_ids.filtered('selected'))
 
+    @api.depends('process_id', 'state')
+    @api.depends_context('uid')
+    def _compute_can_open_process(self):
+        can_receive = self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_receiver')
+        is_manager = self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_manager')
+        for rec in self:
+            rec.can_open_process = bool(
+                rec.process_id
+                and rec.state == 'in_progress'
+                and can_receive
+                and not is_manager
+            )
+
     def write(self, vals):
-        protected_fields = {'branch_id', 'line_ids'}
+        protected_fields = {
+            'branch_id',
+            'line_ids',
+            'deadline',
+            'note',
+            'analysis_mode',
+            'analysis_top_n',
+            'analysis_min_price',
+            'analysis_period_days',
+            'analysis_medicine_type',
+            'analysis_is_collapsed',
+        }
         if protected_fields.intersection(vals):
             for rec in self:
                 if rec.state != 'draft':
                     raise ValidationError(_("Only draft self inventory requests can be changed."))
+        self._check_manager_can_edit_in_progress_request()
         return super().write(vals)
+
+    def _check_manager_can_edit_in_progress_request(self):
+        if (
+            self.env.context.get('ab_self_inventory_allow_in_progress_manager_write')
+            or not self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_manager')
+        ):
+            return
+        if self.filtered(lambda rec: rec.state == 'in_progress'):
+            raise ValidationError(_(
+                "In-progress self inventory requests are handled by the branch receiver and cannot be edited by managers."
+            ))
 
     def action_fetch_branch_stock(self):
         for rec in self:
@@ -138,10 +176,21 @@ class SelfInventoryRequest(models.Model):
             process = rec._create_process_from_request(selected_lines)
             rec.line_ids.filtered(lambda line: not line.selected).unlink()
             rec.write({
-                'state': 'submitted',
-                'submitted_date': fields.Datetime.now(),
+                'state': 'in_progress',
                 'process_id': process.id,
             })
+        if (
+            self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_requester')
+            and not self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_manager')
+        ):
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Self Inventory Requests'),
+                'res_model': 'ab_self_inventory_request',
+                'view_mode': 'list,kanban,form',
+                'domain': [('state', 'in', ['draft', 'cancelled'])],
+                'context': {'create': True},
+            }
         return True
 
     def action_select_all_lines(self):
@@ -187,14 +236,14 @@ class SelfInventoryRequest(models.Model):
 
     def action_cancel(self):
         for rec in self:
-            if rec.process_id and rec.process_id.state != 'draft':
+            if rec.process_id and rec.process_id.state not in ('draft', 'in_progress'):
                 raise ValidationError(_("You cannot cancel a request after the inventory process is submitted."))
             rec.state = 'cancelled'
         return True
 
     def action_reset_to_draft(self):
         for rec in self:
-            if rec.process_id and rec.process_id.state != 'draft':
+            if rec.process_id and rec.process_id.state not in ('draft', 'in_progress'):
                 raise ValidationError(_("You cannot reset a request after the inventory process is submitted."))
             rec.state = 'draft'
         return True
@@ -203,6 +252,8 @@ class SelfInventoryRequest(models.Model):
         self.ensure_one()
         if not self.process_id:
             raise UserError(_("No self inventory process has been created yet."))
+        if not self.can_open_process:
+            raise UserError(_("Only the branch receiver can open the active self inventory process from the request."))
         return {
             'name': self.process_id.display_name,
             'type': 'ir.actions.act_window',
@@ -437,7 +488,7 @@ class SelfInventoryRequest(models.Model):
             'branch_id': self.branch_id.id,
             'request_note': self.note,
             'deadline': self.deadline,
-            'state': 'draft',
+            'state': 'in_progress',
             'line_ids': [(5, 0, 0)] + [
                 (0, 0, {
                     'product_id': line.product_id.id,
@@ -450,7 +501,7 @@ class SelfInventoryRequest(models.Model):
                 for line in selected_lines
             ],
         }
-        if process and process.state == 'draft':
+        if process and process.state in ('draft', 'in_progress'):
             process.write(vals)
         else:
             process = Process.create(vals)
@@ -647,7 +698,27 @@ class SelfInventoryRequestBatch(models.Model):
             for rec in self:
                 if rec.state != 'draft':
                     raise ValidationError(_("Only draft self inventory request batches can be changed."))
+        self._check_manager_can_edit_active_batch()
         return super().write(vals)
+
+    def _check_manager_can_edit_active_batch(self):
+        if (
+            self.env.context.get('ab_self_inventory_allow_in_progress_manager_write')
+            or not self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_manager')
+        ):
+            return
+        active_batches = self.filtered(lambda rec: rec._has_active_branch_inventory())
+        if active_batches:
+            raise ValidationError(_(
+                "In-progress self inventory batches are handled by the branch receiver and cannot be edited by managers."
+            ))
+
+    def _has_active_branch_inventory(self):
+        self.ensure_one()
+        return bool(
+            self.request_ids.filtered(lambda request: request.state == 'in_progress')
+            or self.process_ids.filtered(lambda process: process.state in ('draft', 'in_progress'))
+        )
 
     @api.onchange('branch_ids')
     def _onchange_branch_ids_clear_selected_branch(self):
@@ -785,7 +856,7 @@ class SelfInventoryRequestBatch(models.Model):
                 })
                 request.action_submit_request()
                 branch_lines.write({'request_id': request.id})
-            rec.write({
+            rec.with_context(ab_self_inventory_allow_in_progress_manager_write=True).write({
                 'state': 'submitted',
                 'submitted_date': fields.Datetime.now(),
             })
@@ -938,13 +1009,43 @@ class SelfInventoryRequestBatch(models.Model):
         branches.sort(key=lambda b: b['name'])
         return branches
 
-    def action_get_grouped_rows(self, search=None, limit=50, branch_id=None):
+    def _get_batch_line_domain(self, branch_id=None, branch_ids=None, search=None, selected=None):
         self.ensure_one()
         domain = [('batch_id', '=', self.id)]
+        if branch_ids:
+            domain += [('branch_id', 'in', [int(branch_id) for branch_id in branch_ids if branch_id])]
+        elif branch_id:
+            domain += [('branch_id', '=', int(branch_id))]
+        if selected is not None:
+            domain += [('selected', '=', bool(selected))]
         if search:
-            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
-        if branch_id:
-            domain += [('branch_id', '=', branch_id)]
+            domain += [
+                '|', '|',
+                ('product_id.name', 'ilike', search),
+                ('product_code', 'ilike', search),
+                ('eplus_item_code', 'ilike', search),
+            ]
+        return domain
+
+    def _get_batch_line_grid_values(self, line):
+        return {
+            'id': line.id,
+            'branch_id': line.branch_id.id,
+            'branch_name': line.branch_id.display_name or line.branch_id.name or '',
+            'selected': line.selected,
+            'product_name': line.product_id.display_name or line.product_id.name or '' if line.product_id else '',
+            'product_code': line.product_code or '',
+            'eplus_item_code': line.eplus_item_code or '',
+            'system_qty': line.system_qty,
+            'sell_price': line.sell_price,
+            'sold_qty': line.sold_qty,
+            'matched_by': line.matched_by,
+            'note': line.note or '',
+        }
+
+    def action_get_grouped_rows(self, search=None, limit=50, branch_id=None, branch_ids=None):
+        self.ensure_one()
+        domain = self._get_batch_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
         Line = self.env['ab_self_inventory_request_batch_line']
         branch_ids = Line.search(domain).mapped('branch_id')
         groups = []
@@ -952,18 +1053,7 @@ class SelfInventoryRequestBatch(models.Model):
             bd = domain + [('branch_id', '=', branch.id)]
             lines = Line.search(bd, limit=limit, order='selected DESC, product_id asc')
             total = Line.search_count(bd)
-            rows = [{
-                'id': l.id,
-                'branch_id': l.branch_id.id,
-                'branch_name': l.branch_id.display_name or l.branch_id.name or '',
-                'selected': l.selected,
-                'product_name': l.product_id.display_name or l.product_id.name or '' if l.product_id else '',
-                'product_code': l.product_code or '',
-                'eplus_item_code': l.eplus_item_code or '',
-                'system_qty': l.system_qty,
-                'matched_by': l.matched_by,
-                'note': l.note or '',
-            } for l in lines]
+            rows = [self._get_batch_line_grid_values(line) for line in lines]
             groups.append({
                 'branch_id': branch.id,
                 'branch_name': branch.display_name or branch.name or '',
@@ -975,40 +1065,35 @@ class SelfInventoryRequestBatch(models.Model):
 
     def action_get_grid_rows(self, branch_id=None, branch_ids=None, search=None, offset=0, limit=50, sort_by='branch_id', sort_order='asc'):
         self.ensure_one()
-        domain = [('batch_id', '=', self.id)]
-        if branch_ids:
-            domain += [('branch_id', 'in', branch_ids)]
-        elif branch_id:
-            domain += [('branch_id', '=', branch_id)]
-        if search:
-            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
+        domain = self._get_batch_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
         sort_map = {
+            'branch_id': 'branch_id',
             'branch_name': 'branch_id.name',
+            'product_id': 'product_id',
             'product_name': 'product_id.name',
+            'product_code': 'product_code',
+            'eplus_item_code': 'eplus_item_code',
+            'system_qty': 'system_qty',
+            'sell_price': 'sell_price',
+            'sold_qty': 'sold_qty',
+            'matched_by': 'matched_by',
+            'selected': 'selected',
         }
-        sort_field = sort_map.get(sort_by, sort_by)
+        sort_field = sort_map.get(sort_by, 'branch_id')
+        sort_order = sort_order if sort_order in ('asc', 'desc') else 'asc'
+        offset = max(0, int(offset or 0))
+        limit = max(1, min(int(limit or 50), 500))
         order_parts = []
-        if not branch_id:
+        if sort_field != 'selected':
             order_parts.append('selected DESC')
-        order_parts.append(f'{sort_field} {sort_order}')
+        order_parts.append('%s %s' % (sort_field, sort_order))
+        order_parts.append('id asc')
         Line = self.env['ab_self_inventory_request_batch_line']
         lines = Line.search(domain, offset=offset, limit=limit, order=', '.join(order_parts))
         total = Line.search_count(domain)
-        rows = [{
-            'id': l.id,
-            'branch_id': l.branch_id.id,
-            'branch_name': l.branch_id.display_name or l.branch_id.name or '',
-            'selected': l.selected,
-            'product_name': l.product_id.display_name or l.product_id.name or '' if l.product_id else '',
-            'product_code': l.product_code or '',
-            'eplus_item_code': l.eplus_item_code or '',
-            'system_qty': l.system_qty,
-            'sell_price': l.sell_price,
-            'sold_qty': l.sold_qty,
-            'matched_by': l.matched_by,
-            'note': l.note or '',
-        } for l in lines]
-        return {'rows': rows, 'total': total}
+        selected_total = Line.search_count(domain + [('selected', '=', True)])
+        rows = [self._get_batch_line_grid_values(line) for line in lines]
+        return {'rows': rows, 'total': total, 'selected_total': selected_total}
 
     def action_toggle_line_selection(self, line_id):
         self.ensure_one()
@@ -1022,41 +1107,32 @@ class SelfInventoryRequestBatch(models.Model):
     def action_select_all_filtered(self, branch_id=None, branch_ids=None, search=None):
         self.ensure_one()
         self._check_can_update_lines()
-        domain = [('batch_id', '=', self.id)]
-        if branch_ids:
-            domain += [('branch_id', 'in', branch_ids)]
-        elif branch_id:
-            domain += [('branch_id', '=', branch_id)]
-        if search:
-            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
-        self.env['ab_self_inventory_request_batch_line'].search(domain).write({'selected': True})
-        return True
+        domain = self._get_batch_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
+        lines = self.env['ab_self_inventory_request_batch_line'].search(domain)
+        lines.write({'selected': True})
+        return {'count': len(lines)}
 
     def action_unselect_all_filtered(self, branch_id=None, branch_ids=None, search=None):
         self.ensure_one()
         self._check_can_update_lines()
-        domain = [('batch_id', '=', self.id)]
-        if branch_ids:
-            domain += [('branch_id', 'in', branch_ids)]
-        elif branch_id:
-            domain += [('branch_id', '=', branch_id)]
-        if search:
-            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
-        self.env['ab_self_inventory_request_batch_line'].search(domain).write({'selected': False})
-        return True
+        domain = self._get_batch_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
+        lines = self.env['ab_self_inventory_request_batch_line'].search(domain)
+        lines.write({'selected': False})
+        return {'count': len(lines)}
 
     def action_delete_selected_filtered(self, branch_id=None, branch_ids=None, search=None):
         self.ensure_one()
         self._check_can_update_lines()
-        domain = [('batch_id', '=', self.id), ('selected', '=', True)]
-        if branch_ids:
-            domain += [('branch_id', 'in', branch_ids)]
-        elif branch_id:
-            domain += [('branch_id', '=', branch_id)]
-        if search:
-            domain += ['|', '|', ('product_id.name', 'ilike', search), ('product_code', 'ilike', search), ('eplus_item_code', 'ilike', search)]
-        self.env['ab_self_inventory_request_batch_line'].search(domain).unlink()
-        return True
+        domain = self._get_batch_line_domain(
+            branch_id=branch_id,
+            branch_ids=branch_ids,
+            search=search,
+            selected=True,
+        )
+        lines = self.env['ab_self_inventory_request_batch_line'].search(domain)
+        count = len(lines)
+        lines.unlink()
+        return {'count': count}
 
     def _get_governorate_branch_domain(self):
         return self._get_branch_selection_domain()

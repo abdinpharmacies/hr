@@ -304,6 +304,221 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
 }
 
 // ===================================================================
+// 4.5. REQUEST COMPACT SUMMARY
+// ===================================================================
+.ab_request_compact_summary {
+    margin-bottom: 14px;
+    min-width: 0;
+}
+
+.ab_request_summary_unified {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.1fr) minmax(130px, 150px) minmax(320px, 1.5fr) minmax(220px, 0.8fr);
+    gap: 12px;
+    align-items: stretch;
+    padding: 12px;
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    min-width: 0;
+
+    .ab_form_hero {
+        height: 100%;
+        margin-bottom: 0;
+        padding: 14px 16px;
+        background: transparent;
+        border: 0;
+        border-radius: 8px;
+        box-shadow: none;
+    }
+
+    .ab_form_hero_title {
+        font-size: 18px;
+    }
+
+    .ab_form_hero_subtitle {
+        font-size: 12px;
+    }
+
+    .ab_kpi_card {
+        height: 100%;
+        padding: 14px;
+        justify-content: center;
+        background: $si-neutral-light;
+        border: 0;
+        border-radius: 8px;
+        box-shadow: none;
+
+        &:hover {
+            box-shadow: none;
+            transform: none;
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+
+    .ab_kpi_card_icon {
+        display: none;
+    }
+
+    .ab_kpi_card_value {
+        font-size: 22px;
+    }
+
+    .ab_kpi_card_label {
+        font-size: 10px;
+    }
+}
+
+.ab_request_summary_primary,
+.ab_request_summary_metric,
+.ab_request_summary_info,
+.ab_request_summary_note,
+.ab_request_summary_timeline {
+    min-width: 0;
+}
+
+.ab_request_summary_info,
+.ab_request_summary_note,
+.ab_request_summary_timeline {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.ab_request_summary_info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    padding: 8px 12px;
+}
+
+.ab_request_summary_item,
+.ab_request_summary_note {
+    display: flex;
+    min-width: 0;
+    gap: 8px;
+}
+
+.ab_request_summary_item {
+    align-items: center;
+    padding: 7px 8px;
+
+    .ab_form_info_label {
+        width: 72px;
+        color: $si-text-secondary;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex: 0 0 auto;
+    }
+
+    .ab_form_info_value {
+        min-width: 0;
+        max-width: none;
+        color: $si-text;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: start;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1 1 auto;
+
+        .o_field_widget,
+        .o_many2one,
+        .o_field_many2one_selection,
+        .o-autocomplete,
+        .o-autocomplete--input {
+            max-width: 100%;
+            min-width: 0;
+        }
+    }
+}
+
+.ab_request_summary_note {
+    grid-column: 1 / span 3;
+    align-items: flex-start;
+    padding: 10px 8px 0;
+    border-top: 1px solid $si-border;
+
+    .ab_form_info_label {
+        width: 58px;
+        padding-top: 3px;
+        color: $si-text-secondary;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex: 0 0 auto;
+    }
+
+    .o_field_widget {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    textarea,
+    span {
+        line-height: 1.35;
+    }
+}
+
+.ab_request_summary_timeline {
+    grid-column: 4;
+    grid-row: 1 / span 2;
+    padding: 10px 12px;
+    border-left: 1px solid $si-border;
+    overflow: hidden;
+
+    .ab_timeline {
+        padding: 0;
+    }
+
+    .ab_timeline_item {
+        gap: 8px;
+        padding-bottom: 10px;
+    }
+
+    .ab_timeline_title {
+        font-size: 12px;
+    }
+
+    .ab_timeline_date {
+        font-size: 10px;
+    }
+}
+
+.ab_request_full_width_notebook,
+.ab_batch_full_width_notebook {
+    width: 100%;
+    min-width: 0;
+}
+
+.ab_batch_full_width_notebook {
+    clear: both;
+    margin-top: 4px;
+}
+
+.ab_modern_table_panel--batch-full {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    .ab_saas_grid_container,
+    .ab_saas_grid_header,
+    .ab_saas_grid_body {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+// ===================================================================
 // 5. TWO-COLUMN LAYOUT
 // ===================================================================
 .ab_form_two_column {
@@ -923,6 +1138,10 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     &.ab_timeline_dot--draft::before {
         background: $si-neutral;
     }
+
+    &.ab_timeline_dot--in_progress::before {
+        background: $si-warning;
+    }
 }
 
 .ab_timeline_content {
@@ -1099,6 +1318,22 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
             grid-template-columns: 1fr;
         }
 
+        .ab_request_summary_unified {
+            grid-template-columns: minmax(0, 1fr) minmax(130px, 160px);
+        }
+
+        .ab_request_summary_info,
+        .ab_request_summary_note,
+        .ab_request_summary_timeline {
+            grid-column: 1 / -1;
+        }
+
+        .ab_request_summary_timeline {
+            grid-row: auto;
+            border-left: 0;
+            border-top: 1px solid $si-border;
+        }
+
         .ab_form_sidebar {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1121,6 +1356,14 @@ $si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
         .ab_form_kpi_row {
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+        }
+
+        .ab_request_summary_unified {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .ab_request_summary_info {
+            grid-template-columns: minmax(0, 1fr);
         }
 
         .ab_kpi_card {
@@ -1540,7 +1783,6 @@ $saas-transition: 0.15s ease;
 .ab_saas_grid_container {
     border: 1px solid $saas-border;
     border-radius: $saas-radius;
-    overflow: hidden;
     background: $saas-card;
     box-shadow: $saas-shadow;
     max-width: 100%;
@@ -1555,21 +1797,24 @@ $saas-transition: 0.15s ease;
     position: sticky;
     top: 0;
     z-index: 2;
+    min-width: 900px;
 }
 
 .ab_saas_grid_header_row {
     display: flex;
     align-items: center;
     min-height: 44px;
-    min-width: 900px;
+    min-width: 100%;
 }
 
 // Grid Body
 .ab_saas_grid_body {
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
     max-height: 440px;
     min-height: 200px;
     position: relative;
+    min-width: 900px;
 }
 
 // Grid Row
@@ -1581,7 +1826,7 @@ $saas-transition: 0.15s ease;
     cursor: pointer;
     transition: background 0.1s ease;
     position: relative;
-    min-width: 900px;
+    min-width: 100%;
 
     &:hover {
         background: #FAFBFC;
@@ -1851,9 +2096,11 @@ $saas-transition: 0.15s ease;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 12px;
     padding: 10px 16px;
     background: #FAFBFC;
     border-top: 1px solid $saas-border;
+    min-width: 900px;
 }
 
 .ab_saas_grid_footer_text {
@@ -1862,7 +2109,8 @@ $saas-transition: 0.15s ease;
     font-weight: 500;
 }
 
-.ab_saas_load_more {
+.ab_saas_load_more,
+.ab_saas_pagination_btn {
     padding: 6px 18px;
     background: $saas-primary;
     color: #fff;
@@ -1876,6 +2124,27 @@ $saas-transition: 0.15s ease;
     &:hover {
         background: #1D4ED8;
     }
+
+    &:disabled {
+        cursor: not-allowed;
+        background: $saas-neutral-light;
+        color: $saas-text-secondary;
+    }
+}
+
+.ab_saas_pagination {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.ab_saas_pagination_label {
+    font-size: 12px;
+    font-weight: 700;
+    color: $saas-text;
+    white-space: nowrap;
 }
 
 // Empty State
@@ -2163,15 +2432,25 @@ $saas-transition: 0.15s ease;
     }
 
     &--process {
+        width: 100%;
+
         .ab_modern_table_body {
             border: 1px solid $saas-border;
             border-radius: $saas-radius;
             background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 100%);
             box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+            width: 100%;
+            max-width: 100%;
         }
 
         .o_x2m_control_panel {
             display: none;
+        }
+
+        .o_field_x2many {
+            display: block;
+            width: 100%;
+            max-width: 100%;
         }
 
         .o_list_renderer {
@@ -2179,6 +2458,8 @@ $saas-transition: 0.15s ease;
             border-radius: 0;
             box-shadow: none;
             background: transparent;
+            width: 100%;
+            max-width: 100%;
             overflow-x: auto;
             scrollbar-color: rgba($saas-primary, 0.45) transparent;
             scrollbar-width: thin;

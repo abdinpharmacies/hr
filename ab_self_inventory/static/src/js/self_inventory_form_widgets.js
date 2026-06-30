@@ -507,13 +507,13 @@ class DataGridWidget extends Component {
                         </div>
                     </div>
                     <div class="ab_saas_toolbar_right">
-                        <span class="ab_saas_selection_pill" t-if="!state.groupByBranch &amp;&amp; selectedCount" t-on-click="() => this.unselectAll()" t-att-title="_t('Clear selection')">
-                            &#x2611; <t t-esc="selectedCount"/> <t t-esc="_t('selected')"/> &#x2716;
+                        <span class="ab_saas_selection_pill" t-if="!state.groupByBranch &amp;&amp; selectedTotal" t-on-click="() => this.unselectAll()" t-att-title="_t('Clear selection')">
+                            &#x2611; <t t-esc="selectedTotal"/> <t t-esc="_t('selected')"/> &#x2716;
                         </span>
                         <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly"><t t-esc="_t('Add Line')"/></button>
                         <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
-                                <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedCount || isReadonly"><t t-esc="_t('Clear')"/></button>
-                                <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedCount || isReadonly"><t t-esc="_t('Delete')"/></button>
+                        <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Clear')"/></button>
+                        <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Delete')"/></button>
                         <button class="ab_saas_toolbar_btn" t-on-click="toggleGrouping">
                             <t t-if="state.groupByBranch">&#x25BC;</t><t t-else="">&#x25B6;</t> <t t-esc="_t('Group')"/>
                         </button>
@@ -521,8 +521,8 @@ class DataGridWidget extends Component {
                 </div>
 
                 <!-- Selection bar -->
-                <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedCount > 0 &amp;&amp; state.selected_branch_ids.length">
-                    <span class="ab_saas_selection_bar_count"><t t-esc="selectedCount"/> <t t-esc="_t('products selected')"/></span>
+                <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedTotal > 0 &amp;&amp; state.selected_branch_ids.length">
+                    <span class="ab_saas_selection_bar_count"><t t-esc="selectedTotal"/> <t t-esc="_t('products selected')"/></span>
                     <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="() => this.deleteSelected()" t-att-disabled="isReadonly"><t t-esc="_t('Delete Selected')"/></button>
                     <button class="ab_saas_toolbar_btn" t-on-click="() => this.unselectAll()"><t t-esc="_t('Clear')"/></button>
                 </div>
@@ -632,9 +632,22 @@ class DataGridWidget extends Component {
                             </div>
                         </div>
                     </div>
-                    <div class="ab_saas_grid_footer" t-if="!state.groupByBranch &amp;&amp; state.total > state.rows.length">
-                        <span class="ab_saas_grid_footer_text"><t t-set="_rows" t-value="state.rows.length"/><t t-set="_total" t-value="state.total"/><t t-esc="_t('%(rows)s of %(total)s loaded').replace('%(rows)s', _rows).replace('%(total)s', _total)"/></span>
-                        <button class="ab_saas_load_more" t-on-click="loadMore"><t t-esc="_t('Load more')"/></button>
+                    <div class="ab_saas_grid_footer" t-if="!state.groupByBranch &amp;&amp; state.total">
+                        <span class="ab_saas_grid_footer_text">
+                            <t t-esc="rangeLabel"/>
+                            <t t-if="selectedTotal"> · <t t-esc="selectedLabel"/></t>
+                        </span>
+                        <div class="ab_saas_pagination">
+                            <button class="ab_saas_pagination_btn" t-on-click="previousPage" t-att-disabled="!hasPreviousPage || loading.state.isLoading">
+                                <t t-esc="_t('Previous')"/>
+                            </button>
+                            <span class="ab_saas_pagination_label">
+                                <t t-esc="_t('Page')"/> <t t-esc="currentPage"/> / <t t-esc="pageCount"/>
+                            </span>
+                            <button class="ab_saas_pagination_btn" t-on-click="nextPage" t-att-disabled="!hasNextPage || loading.state.isLoading">
+                                <t t-esc="_t('Next')"/>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -657,23 +670,25 @@ class DataGridWidget extends Component {
         this.state = useState({
             analytics: null,
             branches: [],
-            selected_branch_id: false,
             selected_branch_ids: [],
             branchSearchText: "",
             searchText: "",
             rows: [],
             groupedData: [],
             total: 0,
+            selectedTotal: 0,
             page: 0,
             sortBy: "branch_id",
             sortOrder: "asc",
             groupByBranch: false,
             expandedBranches: {},
             showAllBranches: false,
+            branchSelectionInitialized: false,
+            serverBranchKey: "",
         });
         onWillStart(() => this._load());
         useExternalListener(window, "keydown", (e) => {
-            if (e.key === "Escape" && this.selectedCount) {
+            if (e.key === "Escape" && this.selectedTotal) {
                 this.unselectAll();
             }
         });
@@ -683,12 +698,13 @@ class DataGridWidget extends Component {
     _currentKey() {
         const rec = this.props.record;
         if (!rec || !rec.resId) return "";
-        const branchIds = this._getServerBranchIds();
-        const key = branchIds.length ? branchIds.sort().join(",") : "all";
+        const branchIds = this.state.selected_branch_ids || [];
+        const key = branchIds.length ? [...branchIds].sort((a, b) => a - b).join(",") : "all";
         const grp = this.state.groupByBranch ? "g" : "f";
         const version = getRecordValue(rec, "__last_update", "") || getRecordValue(rec, "write_date", "");
+        const lineCount = getRecordValue(rec, this.props.name, "");
         const search = this.state.searchText || "";
-        return `${rec.resId}:${key}:${version}:${search}:${grp}`;
+        return `${rec.resId}:${key}:${version}:${lineCount}:${search}:${grp}:${this.state.page}:${this.state.sortBy}:${this.state.sortOrder}`;
     }
 
     get resModel() {
@@ -704,11 +720,6 @@ class DataGridWidget extends Component {
         return st && st !== "draft";
     }
 
-    _getServerBranchId() {
-        const ids = this._getServerBranchIds();
-        return ids.length ? ids[0] : false;
-    }
-
     _getServerBranchIds() {
         const raw = getRecordValue(this.props.record, "selected_branch_ids", null);
         if (!raw) return [];
@@ -718,27 +729,38 @@ class DataGridWidget extends Component {
         return [];
     }
 
+    _branchKey(branchIds) {
+        return branchIds.length ? [...branchIds].sort((a, b) => a - b).join(",") : "";
+    }
+
+    _syncServerBranchSelection() {
+        const serverBranchIds = this._getServerBranchIds();
+        const serverBranchKey = this._branchKey(serverBranchIds);
+        if (!this.state.branchSelectionInitialized || serverBranchKey !== this.state.serverBranchKey) {
+            this.state.selected_branch_ids = serverBranchIds;
+            this.state.serverBranchKey = serverBranchKey;
+            this.state.branchSelectionInitialized = true;
+            this.state.page = 0;
+        }
+    }
+
     async _load(silent = false) {
+        this._syncServerBranchSelection();
         const key = this._currentKey();
         if (!key) return;
         this._loadKey = key;
         const id = this.resId;
         if (!id) return;
-        const branchId = this.state.selected_branch_id || false;
-        const serverBranchIds = this._getServerBranchIds();
-        if (serverBranchIds.length) {
-            this.state.selected_branch_ids = serverBranchIds;
-        }
+        const branchIds = this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false;
         if (!silent) this.loading.show();
         try {
             const [analytics, branches, result] = await Promise.all([
                 this.orm.call(this.resModel, "action_get_analytics", [[id]], {}),
                 this.orm.call(this.resModel, "action_get_branch_counts", [[id]], {}),
                 this.orm.call(this.resModel, "action_get_grid_rows", [[id]], {
-                    branch_id: branchId,
-                    branch_ids: serverBranchIds.length ? serverBranchIds : false,
+                    branch_ids: branchIds,
                     search: this.state.searchText || false,
-                    offset: 0,
+                    offset: this.state.page * PAGE_SIZE,
                     limit: PAGE_SIZE,
                     sort_by: this.state.sortBy,
                     sort_order: this.state.sortOrder,
@@ -753,12 +775,17 @@ class DataGridWidget extends Component {
             rows.sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1));
             this.state.rows = rows;
             this.state.total = result.total || 0;
-            this.state.page = 0;
+            this.state.selectedTotal = result.selected_total || 0;
+            if (!rows.length && this.state.total && this.state.page > 0) {
+                this.state.page = Math.max(0, this.pageCount - 1);
+                await this._load(silent);
+            }
         } catch (e) {
             if (this._currentKey() !== this._loadKey) return;
             this.state.analytics = { branch_count: 0, total_products: 0, selected_products: 0, matched_pct: 0 };
             this.state.rows = [];
             this.state.total = 0;
+            this.state.selectedTotal = 0;
         } finally {
             if (this._currentKey() === this._loadKey) {
                 if (!silent) this.loading.hide();
@@ -767,16 +794,18 @@ class DataGridWidget extends Component {
     }
 
     async _loadGrouped(silent = false) {
+        this._syncServerBranchSelection();
         const key = this._currentKey();
         if (!key) return;
         this._loadKey = key;
         const id = this.resId;
         if (!id) return;
+        const branchIds = this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false;
         if (!silent) this.loading.show();
         try {
             const groups = await this.orm.call(this.resModel, "action_get_grouped_rows", [[id]], {
                 search: this.state.searchText || false,
-                branch_id: this.state.selected_branch_id || false,
+                branch_ids: branchIds,
             });
             if (this._currentKey() !== this._loadKey) return;
             this.state.groupedData = groups || [];
@@ -795,14 +824,7 @@ class DataGridWidget extends Component {
     }
 
     _onPatched() {
-        // Sync state with record's selected_branch_id (handles sidebar chip clicks)
-        // Skip in group mode — branch_id is already in state from chip click or stays false for all
-        if (!this.state.groupByBranch) {
-            const recBranch = this._getServerBranchId();
-            if (recBranch && recBranch !== this.state.selected_branch_id) {
-                this.state.selected_branch_id = recBranch;
-            }
-        }
+        this._syncServerBranchSelection();
         const key = this._currentKey();
         if (key && key !== this._loadKey) {
             if (this.state.groupByBranch) {
@@ -813,29 +835,20 @@ class DataGridWidget extends Component {
         }
     }
 
-    async loadMore() {
-        if (this.state.rows.length >= this.state.total || this.loading.state.isLoading) return;
-        const id = this.resId;
-        if (!id) return;
-        this.loading.show();
-        try {
-            const result = await this.orm.call(this.resModel, "action_get_grid_rows", [[id]], {
-                branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
-                search: this.state.searchText || false,
-                offset: this.state.rows.length,
-                limit: PAGE_SIZE,
-                sort_by: this.state.sortBy,
-                sort_order: this.state.sortOrder,
-            });
-            if (this._currentKey() !== this._loadKey) return;
-            this.state.rows = [...this.state.rows, ...(result.rows || [])];
-            this.state.total = result.total || this.state.total;
-        } catch (e) {
-        } finally {
-            if (this._currentKey() === this._loadKey) {
-                this.loading.hide();
-            }
-        }
+    async goToPage(page) {
+        if (this.loading.state.isLoading || this.state.groupByBranch) return;
+        const nextPage = Math.max(0, Math.min(page, this.pageCount - 1));
+        if (nextPage === this.state.page) return;
+        this.state.page = nextPage;
+        await this._load();
+    }
+
+    async previousPage() {
+        await this.goToPage(this.state.page - 1);
+    }
+
+    async nextPage() {
+        await this.goToPage(this.state.page + 1);
     }
 
     get filteredBranches() {
@@ -846,6 +859,50 @@ class DataGridWidget extends Component {
             filtered = filtered.slice(0, 8);
         }
         return filtered;
+    }
+
+    get pageCount() {
+        return Math.max(1, Math.ceil((this.state.total || 0) / PAGE_SIZE));
+    }
+
+    get currentPage() {
+        return Math.min(this.state.page + 1, this.pageCount);
+    }
+
+    get hasPreviousPage() {
+        return this.state.page > 0;
+    }
+
+    get hasNextPage() {
+        return this.state.page + 1 < this.pageCount;
+    }
+
+    get rangeStart() {
+        if (!this.state.total) return 0;
+        return this.state.page * PAGE_SIZE + 1;
+    }
+
+    get rangeEnd() {
+        return Math.min((this.state.page + 1) * PAGE_SIZE, this.state.total || 0);
+    }
+
+    get rangeLabel() {
+        return _t("%(start)s-%(end)s of %(total)s")
+            .replace("%(start)s", this.rangeStart)
+            .replace("%(end)s", this.rangeEnd)
+            .replace("%(total)s", this.state.total || 0);
+    }
+
+    get selectedTotal() {
+        return Number(this.state.selectedTotal || 0);
+    }
+
+    get selectedLabel() {
+        return _t("%s selected").replace("%s", this.selectedTotal);
+    }
+
+    get allFilteredSelected() {
+        return Boolean(this.state.total && this.selectedTotal >= this.state.total);
     }
 
     get selectedCount() {
@@ -865,7 +922,7 @@ class DataGridWidget extends Component {
         const names = this.state.branches.filter(b => ids.includes(b.id)).map(b => b.name);
         if (!names.length) return ids.length + _t(" branches");
         if (names.length <= 3) return names.join(", ");
-        return names.slice(0, 2).join(", ") + " +" + (names.length - 2) + " + _t(" + _t(" more") + ") + ";
+        return names.slice(0, 2).join(", ") + " +" + (names.length - 2) + _t(" more");
     }
 
     selectBranch(branchId) {
@@ -880,6 +937,16 @@ class DataGridWidget extends Component {
                 this.state.selected_branch_ids = [...ids, branchId];
             }
         }
+        this.state.page = 0;
+        this.state.rows = [];
+        this.state.groupedData = [];
+        this.state.total = 0;
+        this.state.selectedTotal = 0;
+        if (this.state.groupByBranch) {
+            this._loadGrouped();
+        } else {
+            this._load();
+        }
     }
 
     onSearchInput(ev) {
@@ -887,6 +954,7 @@ class DataGridWidget extends Component {
         const value = ev.target.value;
         this._searchTimer = setTimeout(() => {
             this.state.searchText = value;
+            this.state.page = 0;
             if (this.state.groupByBranch) {
                 this.state.groupedData = [];
                 this._loadGrouped(true);
@@ -906,6 +974,8 @@ class DataGridWidget extends Component {
         try {
             const result = await this.orm.call(this.resModel, "action_toggle_line_selection", [[this.resId], row.id], {});
             row.selected = result.selected;
+            this.state.selectedTotal += row.selected ? 1 : -1;
+            this.state.selectedTotal = Math.max(0, Math.min(this.state.selectedTotal, this.state.total));
             this.state.rows = [...this.state.rows];
         } catch (e) {
             row.selected = current;
@@ -913,12 +983,13 @@ class DataGridWidget extends Component {
         }
     }
 
-    toggleAllCheck() {
-        const visible = this.state.rows;
-        if (!visible.length) return;
-        const allSelected = visible.every(r => r.selected);
-        for (const r of visible) r.selected = !allSelected;
-        this.state.rows = [...this.state.rows];
+    async toggleAllCheck() {
+        if (this.isReadonly || this.state.groupByBranch || !this.state.total) return;
+        if (this.allFilteredSelected) {
+            await this.unselectAll();
+        } else {
+            await this.selectAll();
+        }
     }
 
     async selectAll() {
@@ -927,8 +998,7 @@ class DataGridWidget extends Component {
                 branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
                 search: this.state.searchText || false,
             });
-            for (const r of this.state.rows) r.selected = true;
-            this.state.rows = [...this.state.rows];
+            await this._load(true);
         } catch (e) {
             this.notification.add(_t("Could not select all."), { type: "danger" });
         }
@@ -939,12 +1009,10 @@ class DataGridWidget extends Component {
         if (!id) return;
         try {
             await this.orm.call(this.resModel, "action_unselect_all_filtered", [[this.resId]], {
-                branch_id: this.state.selected_branch_id || false,
                 branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
                 search: this.state.searchText || false,
             });
-            for (const r of this.state.rows) r.selected = false;
-            this.state.rows = [...this.state.rows];
+            await this._load(true);
         } catch (e) {
             this.notification.add(_t("Could not clear selections."), { type: "danger" });
         }
@@ -953,16 +1021,13 @@ class DataGridWidget extends Component {
     async deleteSelected() {
         const id = this.resId;
         if (!id) return;
-        const selected = this.state.rows.filter(r => r.selected);
-        if (!selected.length) return;
+        if (!this.selectedTotal) return;
         try {
             await this.orm.call(this.resModel, "action_delete_selected_filtered", [[this.resId]], {
-                branch_id: this.state.selected_branch_id || false,
                 branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
                 search: this.state.searchText || false,
             });
-            this.state.rows = this.state.rows.filter(r => !r.selected);
-            this.state.total = Math.max(0, this.state.total - selected.length);
+            await this._load(true);
         } catch (e) {
             this.notification.add(_t("Could not delete selected items."), { type: "danger" });
         }
@@ -1011,6 +1076,7 @@ class DataGridWidget extends Component {
             this.state.sortBy = field;
             this.state.sortOrder = "asc";
         }
+        this.state.page = 0;
         this.state.rows = [];
         this.state.total = 0;
         this._load();
@@ -1227,6 +1293,14 @@ class TimelineWidget extends Component {
             title: _t("Batch Created"),
             date: null,
         });
+
+        if (state === "in_progress" || state === "submitted" || state === "cancelled") {
+            items.push({
+                type: "in_progress",
+                title: _t("In Progress"),
+                date: null,
+            });
+        }
 
         if (state === "submitted" || state === "cancelled") {
             items.push({

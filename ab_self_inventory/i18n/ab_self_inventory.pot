@@ -1636,3 +1636,76 @@ msgstr ""
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
 msgid "No deadline"
 msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%(start)s-%(end)s of %(total)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%s selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Previous"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Page"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Next"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
+msgid "Fetching branch stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
+msgid "Running inventory analysis"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
+msgid "Fetching branch stocks"
+msgstr ""
+
+#. module: ab_self_inventory
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Receiver is set automatically and cannot be changed manually."
+msgstr ""
+
+#. module: ab_self_inventory
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Duplicate product code in Excel: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "System quantity cannot be changed for product code %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "System quantity must be numeric for product code %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Actual quantity must be numeric for product code %s."
+msgstr ""

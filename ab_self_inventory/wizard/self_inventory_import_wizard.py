@@ -22,8 +22,8 @@ class SelfInventoryImportWizard(models.TransientModel):
         self.ensure_one()
         if not openpyxl:
             raise UserError(_("openpyxl is required to import Excel files."))
-        if self.process_id.state != 'draft':
-            raise ValidationError(_("Only draft self inventory processes can import actual counts."))
+        if self.process_id.state not in ('draft', 'in_progress'):
+            raise ValidationError(_("Only active self inventory processes can import actual counts."))
 
         try:
             workbook = openpyxl.load_workbook(io.BytesIO(base64.b64decode(self.file)), data_only=True)
@@ -37,7 +37,7 @@ class SelfInventoryImportWizard(models.TransientModel):
         headers = {str(value or '').strip().lower(): index for index, value in enumerate(header_row)}
         code_index = self._first_header(headers, 'product code', 'e-plus item code', 'item code')
         actual_index = self._first_header(headers, 'actual qty', 'actual quantity')
-        explanation_index = self._first_header(headers, 'explanation', 'note')
+        system_qty_index = self._first_header(headers, 'system qty', 'e-stock qty')
         if code_index is None or actual_index is None:
             raise ValidationError(_("Excel must contain Product Code and Actual Qty columns."))
 
@@ -49,18 +49,23 @@ class SelfInventoryImportWizard(models.TransientModel):
 
         updated = 0
         missing_codes = []
+        seen_codes = set()
         for row in sheet.iter_rows(min_row=2, values_only=True):
             code = str(row[code_index] or '').strip()
             if not code:
                 continue
+            if code in seen_codes:
+                raise ValidationError(_("Duplicate product code in Excel: %s") % code)
+            seen_codes.add(code)
             line = lines_by_code.get(code)
             if not line:
                 missing_codes.append(code)
                 continue
-            vals = {'actual_qty': float(row[actual_index] or 0.0)}
-            if explanation_index is not None:
-                vals['explanation'] = str(row[explanation_index] or '').strip()
-            line.write(vals)
+            if system_qty_index is not None and row[system_qty_index] not in (None, ''):
+                system_qty = self._to_float(row[system_qty_index], code, 'system')
+                if abs(system_qty - line.system_qty) > 0.0001:
+                    raise ValidationError(_("System quantity cannot be changed for product code %s.") % code)
+            line.write({'actual_qty': self._to_float(row[actual_index], code, 'actual')})
             updated += 1
 
         if not updated:
@@ -79,6 +84,14 @@ class SelfInventoryImportWizard(models.TransientModel):
             if name in headers:
                 return headers[name]
         return None
+
+    def _to_float(self, value, code, column_type):
+        try:
+            return float(value or 0.0)
+        except (TypeError, ValueError):
+            if column_type == 'system':
+                raise ValidationError(_("System quantity must be numeric for product code %s.") % code)
+            raise ValidationError(_("Actual quantity must be numeric for product code %s.") % code)
 
 
 class SelfInventoryBatchAddLineWizard(models.TransientModel):
