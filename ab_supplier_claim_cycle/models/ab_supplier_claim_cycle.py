@@ -126,6 +126,10 @@ class SupplierClaimCycle(models.Model):
         sanitize=False,
         readonly=True,
     )
+    department_decision_display = fields.Char(
+        compute='_compute_department_decision_display',
+        readonly=True,
+    )
     timeline_display = fields.Html(
         compute='_compute_timeline_display',
         sanitize=False,
@@ -173,13 +177,34 @@ class SupplierClaimCycle(models.Model):
             rec.can_current_user_edit = is_admin or (rec.status != 'closed' and (is_secretarial or can_handle))
             rec.can_edit_documents = is_admin or (is_secretarial and rec.status != 'closed')
 
+    @api.depends('inv_decision', 'pur_decision', 'sup_decision', 'bank_decision')
+    def _compute_department_decision_display(self):
+        for rec in self:
+            decisions = [rec[df] for _, df in PARALLEL_DECISION_FIELDS]
+            if all(d == 'pending' for d in decisions):
+                rec.department_decision_display = _('Pending')
+            elif all(d == 'accepted' for d in decisions):
+                rec.department_decision_display = _('Accepted')
+            elif any(d == 'rejected' for d in decisions):
+                rec.department_decision_display = _('Rejected')
+            else:
+                rec.department_decision_display = _('In Progress')
+
     @api.depends('inv_decision', 'pur_decision', 'sup_decision', 'bank_decision', 'inv_finished', 'pur_finished', 'sup_finished', 'bank_finished', 'status')
     def _compute_parallel_status_summary(self):
         for rec in self:
             if rec.status not in DEPARTMENT_STAGES:
                 rec.parallel_status_summary = False
                 continue
+            any_decided = any(
+                rec[decision_field] != 'pending'
+                for stage_key, decision_field in PARALLEL_DECISION_FIELDS
+            )
+            if not any_decided:
+                rec.parallel_status_summary = '<div class="scc-parallel-pending"><span class="scc-parallel-icon">⏳</span><span class="o_translate_inline">Pending</span></div>'
+                continue
             L = ['<div class="scc-parallel-grid">']
+            has_pending = False
             for stage_key, decision_field in PARALLEL_DECISION_FIELDS:
                 decision = rec[decision_field]
                 finished = rec[FINISHED_FIELD_MAP[stage_key]]
@@ -201,14 +226,15 @@ class SupplierClaimCycle(models.Model):
                     status_text = 'Rejected'
                     css_class = 'scc-parallel-card is-rejected'
                 else:
-                    icon = '⏳'
-                    status_text = 'Pending'
-                    css_class = 'scc-parallel-card is-pending'
+                    has_pending = True
+                    continue
                 L.append('<div class="%s">' % css_class)
                 L.append('<div class="scc-parallel-icon">%s</div>' % icon)
                 L.append('<div class="scc-parallel-label">%s</div>' % label)
                 L.append('<div class="scc-parallel-status">%s</div>' % status_text)
                 L.append('</div>')
+            if has_pending:
+                L.append('<div class="scc-parallel-card is-pending"><div class="scc-parallel-icon">⏳</div><div class="scc-parallel-label o_translate_inline">Pending</div></div>')
             L.append('</div>')
             rec.parallel_status_summary = '\n'.join(L)
 
@@ -298,14 +324,35 @@ class SupplierClaimCycle(models.Model):
                         user_reason = rec[REASON_FIELD_MAP[stage_key]]
                         break
                 if not user_reason:
-                    raise ValidationError(_("Rejection reason is required."))
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Missing Required Information'),
+                        'res_model': 'ab.claim.error.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_error_message': _(
+                                'The Delay / Rejection Reason field is required when rejecting a department request.'
+                            ),
+                        },
+                    }
                 rec._set_parallel_department_decision('rejected')
                 reason_field = REASON_FIELD_MAP[user_stage]
                 rec.with_context(supplier_claim_internal_write=True).write({reason_field: False})
-                rec._create_stage_history(rec.status, 'rejected', user_reason)
             else:
                 if not rec.delay_reason:
-                    raise ValidationError(_("Rejection reason is required."))
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Missing Required Information'),
+                        'res_model': 'ab.claim.error.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_error_message': _(
+                                'The Delay / Rejection Reason field is required when rejecting.'
+                            ),
+                        },
+                    }
                 rec.with_context(supplier_claim_internal_write=True).write({'department_decision': 'rejected'})
                 rec._create_stage_history(rec.status, 'rejected', rec.delay_reason)
                 rec.message_post(
@@ -343,17 +390,18 @@ class SupplierClaimCycle(models.Model):
             group_xmlid = stage_groups.get(stage_key)
             if group_xmlid and self.env.user.has_group(group_xmlid):
                 vals = {decision_field: decision}
+                dept_reason = self[REASON_FIELD_MAP[stage_key]] or ''
                 if decision == 'rejected':
-                    vals[REASON_FIELD_MAP[stage_key]] = self[REASON_FIELD_MAP[stage_key]]
+                    vals[REASON_FIELD_MAP[stage_key]] = dept_reason
                 self.with_context(supplier_claim_internal_write=True).write(vals)
-                self._create_stage_history(stage_key, decision, self.delay_reason if decision == 'rejected' else None)
+                self._create_stage_history(stage_key, decision, dept_reason if decision == 'rejected' else None)
                 if decision == 'accepted':
                     self._notify_secretarial_department_accepted(stage_key)
                 elif decision == 'rejected':
                     self.message_post(
                         body=_("%(stage)s rejected this supplier claim. Reason: %(reason)s") % {
                             'stage': self._get_stage_label(stage_key),
-                            'reason': self.delay_reason,
+                            'reason': dept_reason,
                         }
                     )
                 return
@@ -638,17 +686,27 @@ class SupplierClaimCycle(models.Model):
 
         timeline = []
         for stage in STAGE_SEQUENCE:
+            for event in events_by_stage.get(stage, []):
+                timeline.append(event)
+
             stage_histories_all = histories.filtered(lambda h: h.stage == stage)
 
             last = stage_histories_all[-1] if stage_histories_all else self.env['ab_supplier_claim_stage_history']
-            is_current = stage == self.status
-            is_completed = (
-                some_history_exists
-                and (
-                    STAGE_ORDER.get(stage, 0) < STAGE_ORDER.get(self.status, 0)
-                    or (self.status == 'closed' and stage == 'closed')
+
+            if stage in DEPARTMENT_STAGES:
+                dept_df = dict(PARALLEL_DECISION_FIELDS).get(stage, 'inv_decision')
+                dept_decision = self[dept_df]
+                is_current = dept_decision == 'pending' and self.status in DEPARTMENT_STAGES
+                is_completed = dept_decision == 'accepted'
+            else:
+                is_current = stage == self.status
+                is_completed = (
+                    some_history_exists
+                    and (
+                        STAGE_ORDER.get(stage, 0) < STAGE_ORDER.get(self.status, 0)
+                        or (self.status == 'closed' and stage == 'closed')
+                    )
                 )
-            )
 
             stage_notes = last.notes or ''
 
@@ -678,9 +736,6 @@ class SupplierClaimCycle(models.Model):
                 'parallel_decisions': parallel_decisions,
             })
 
-            for event in events_by_stage.get(stage, []):
-                timeline.append(event)
-
         return {
             'timeline': timeline,
             'can_act': self.can_current_user_act,
@@ -709,7 +764,6 @@ class SupplierClaimCycle(models.Model):
                 is_comp = entry['is_completed']
                 is_curr = entry['is_current']
                 is_overdue = entry.get('is_overdue', False)
-                parallel_decisions = entry.get('parallel_decisions')
 
                 dot_class = 'scc-timeline-dot'
                 if is_overdue:
@@ -755,31 +809,6 @@ class SupplierClaimCycle(models.Model):
                 L.append('<div class="%s">%s</div>' % (label_class, entry['label']))
                 if entry['notes']:
                     L.append('<div class="scc-timeline-notes">%s</div>' % entry['notes'])
-
-                if parallel_decisions:
-                    L.append('<div class="scc-timeline-parallel">')
-                    for sk, df in PARALLEL_DECISION_FIELDS:
-                        pd = parallel_decisions.get(sk, {})
-                        decision = pd.get('decision', 'pending')
-                        finished = pd.get('finished', False)
-                        label = STAGE_LABELS.get(sk, sk)
-                        if decision == 'accepted' and finished:
-                            icon_p = '✔'
-                            p_class = 'scc-timeline-pdept is-accepted'
-                        elif decision == 'accepted' and not finished:
-                            icon_p = '✔'
-                            p_class = 'scc-timeline-pdept is-accepted'
-                        elif decision == 'rejected' and finished:
-                            icon_p = '✗'
-                            p_class = 'scc-timeline-pdept is-rejected'
-                        elif decision == 'rejected' and not finished:
-                            icon_p = '✗'
-                            p_class = 'scc-timeline-pdept is-rejected'
-                        else:
-                            icon_p = '⏳'
-                            p_class = 'scc-timeline-pdept is-pending'
-                        L.append('<div class="%s">%s %s</div>' % (p_class, icon_p, label))
-                    L.append('</div>')
 
                 if entry['stage'] == 'supplier_notification' and self.supplier_notified:
                     L.append('<div class="scc-timeline-divider">%s<br/>%s</div>' % (self.contact_name or '', self.contact_phone or ''))

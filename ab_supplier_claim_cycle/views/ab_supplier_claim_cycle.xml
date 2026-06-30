@@ -57,7 +57,7 @@
                                 invisible="status != 'supplier_notification' or supplier_notified == False or not can_current_user_act"/>
                         <button name="action_secretarial_force_next" type="object" string="Move to Next Stage"
                                 class="btn-info"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
                                  invisible="status in ('closed', 'secretarial') or not can_secretarial_override"/>
                         <field name="status" invisible="1"/>
                     </header>
@@ -170,20 +170,14 @@
                                 <span class="o_translate_inline">Workflow</span>
                             </div>
 
-                            <!-- Parallel Status Summary -->
-                            <div class="scc-form-section-title" style="margin-bottom:12px;margin-top:12px;">
-                                <span style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">🔄</span>
-                                <span class="o_translate_inline">Department Decisions</span>
-                            </div>
-                            <field name="parallel_status_summary" nolabel="1"
-                                   invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')"/>
-
-                            <div class="scc-stage-field">
+                            <!-- Department Decision Status -->
+                            <div class="scc-stage-field" invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Department Decision</span>
                                 <span class="scc-stage-field-value">
-                                    <field name="department_decision" readonly="1"/>
+                                    <field name="department_decision_display" nolabel="1"/>
                                 </span>
                             </div>
+
                             <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
