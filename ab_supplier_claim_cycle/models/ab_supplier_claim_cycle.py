@@ -94,9 +94,13 @@ class SupplierClaimCycle(models.Model):
     sup_reason = fields.Text(string="Suppliers Reason", copy=False)
     bank_reason = fields.Text(string="Bank Account Reason", copy=False)
     check_delivery_status = fields.Selection(
-        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'), ('check_delivered', 'Check Delivered'), ('shipped', 'Shipped')],
+        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'), ('check_delivered', 'Issue Check Delivery'), ('shipped', 'Shipped')],
         string="Cheque Delivery Status",
         tracking=True,
+    )
+    sub_delivery_status = fields.Selection(
+        selection=[('ready', 'Ready'), ('shipped', 'Shipped')],
+        string="Delivery Sub Status",
     )
     supplier_notified = fields.Boolean(string="Supplier Notified", readonly=True, copy=False)
     supplier_notified_by = fields.Many2one('res.users', string="Notified By", readonly=True, copy=False)
@@ -126,7 +130,8 @@ class SupplierClaimCycle(models.Model):
         sanitize=False,
         readonly=True,
     )
-    department_decision_display = fields.Char(
+    department_decision_display = fields.Selection(
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('in_progress', 'In Progress')],
         compute='_compute_department_decision_display',
         readonly=True,
     )
@@ -182,13 +187,13 @@ class SupplierClaimCycle(models.Model):
         for rec in self:
             decisions = [rec[df] for _, df in PARALLEL_DECISION_FIELDS]
             if all(d == 'pending' for d in decisions):
-                rec.department_decision_display = _('Pending')
+                rec.department_decision_display = 'pending'
             elif all(d == 'accepted' for d in decisions):
-                rec.department_decision_display = _('Accepted')
+                rec.department_decision_display = 'accepted'
             elif any(d == 'rejected' for d in decisions):
-                rec.department_decision_display = _('Rejected')
+                rec.department_decision_display = 'rejected'
             else:
-                rec.department_decision_display = _('In Progress')
+                rec.department_decision_display = 'in_progress'
 
     @api.depends('inv_decision', 'pur_decision', 'sup_decision', 'bank_decision', 'inv_finished', 'pur_finished', 'sup_finished', 'bank_finished', 'status')
     def _compute_parallel_status_summary(self):
@@ -526,6 +531,19 @@ class SupplierClaimCycle(models.Model):
             if not rec.contact_phone:
                 raise UserError(_("Please enter your contact phone."))
             if rec.check_delivery_status not in ('cash', 'bank_transfer'):
+                if rec.check_delivery_status == 'check_delivered' and not rec.sub_delivery_status:
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Missing Required Information'),
+                        'res_model': 'ab.claim.error.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_error_message': _(
+                                'Please select a sub status (Ready or Shipped) for cheque delivery.'
+                            ),
+                        },
+                    }
                 if not rec.cheque_image or not rec.supplier_id_image:
                     return {
                         'type': 'ir.actions.act_window',
@@ -903,6 +921,19 @@ class SupplierClaimCycle(models.Model):
         self.ensure_one()
         if self.check_delivery_status != 'check_delivered':
             return
+        if not self.sub_delivery_status:
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Missing Required Information'),
+                'res_model': 'ab.claim.error.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_error_message': _(
+                        'Please select a sub status (Ready or Shipped) for cheque delivery.'
+                    ),
+                },
+            }
         if not self.cheque_image:
             return {
                 'type': 'ir.actions.act_window',
