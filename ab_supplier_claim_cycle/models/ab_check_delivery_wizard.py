@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import _, fields, models
 from odoo.exceptions import ValidationError
 
 
@@ -8,8 +8,8 @@ class CheckDeliveryWizard(models.TransientModel):
 
     claim_id = fields.Many2one('ab_supplier_claim_cycle', required=True)
     check_delivery_status = fields.Selection(
-        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
-                   ('check_delivered', 'Check Delivered'), ('shipped', 'Shipped')],
+        selection=[('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
+                   ('check_delivered', 'Issue Check Delivery')],
         string='Cheque Delivery Status',
         required=True,
     )
@@ -21,9 +21,5 @@ class CheckDeliveryWizard(models.TransientModel):
         self.claim_id.with_context(supplier_claim_internal_write=True).write({
             'check_delivery_status': self.check_delivery_status,
         })
-        if self.check_delivery_status == 'check_delivered':
-            error = self.claim_id._validate_cheque_delivery_documents()
-            if error:
-                return error
         self.claim_id._move_to_next_stage()
         return {'type': 'ir.actions.act_window_close'}

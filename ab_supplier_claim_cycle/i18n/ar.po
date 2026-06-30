@@ -44,11 +44,11 @@ msgstr ""
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.check_delivery_wizard_form
 msgid ""
-"<div class=\"scc-dialog-title o_translate_inline\">Move To Next Stage</div>\n"
-"                                <div class=\"scc-dialog-sub o_translate_inline\">Set the cheque delivery status to proceed</div>"
+"<div class=\"scc-dialog-title o_translate_inline\">Payment Method</div>\n"
+"                                <div class=\"scc-dialog-sub o_translate_inline\">Select the cheque delivery payment method</div>"
 msgstr ""
-"<div class=\"scc-dialog-title o_translate_inline\">نقل إلى المرحلة التالية</div>\n"
-"                                <div class=\"scc-dialog-sub o_translate_inline\">حدد حالة تسليم الشيك للمتابعة</div>"
+"<div class=\"scc-dialog-title o_translate_inline\">طريقة السداد</div>\n"
+"                                <div class=\"scc-dialog-sub o_translate_inline\">اختر طريقة سداد تسليم الشيك</div>"
 
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
@@ -174,6 +174,20 @@ msgstr ""
 #. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid ""
+"<span class=\"scc-form-section-title-icon\">🚚</span>\n"
+"                                <span class=\"o_translate_inline\">Delivery Status</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">🚚</span>\n"
+"                                <span class=\"o_translate_inline\">حالة التسليم</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid "<span class=\"scc-stage-field-label o_translate_inline\">Sub Status</span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">الحالة الفرعية</span>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
+msgid ""
 "<span class=\"scc-form-section-title-icon\">📎</span>\n"
 "                                <span class=\"o_translate_inline\">Cheque Delivery Documents</span>"
 msgstr ""
@@ -273,6 +287,7 @@ msgstr "قبول"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__department_decision__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__department_decision_display__accepted
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_stage_history__decision__accepted
 msgid "Accepted"
 msgstr "مقبول"
@@ -360,8 +375,8 @@ msgstr "قيمة الشيك"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_check_delivery_wizard__check_delivery_status__check_delivered
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__check_delivery_status__check_delivered
-msgid "Check Delivered"
-msgstr "تم تسليم الشيك"
+msgid "Issue Check Delivery"
+msgstr "اصدار تسليم الشيك"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model,name:ab_supplier_claim_cycle.model_ab_check_delivery_wizard
@@ -796,9 +811,15 @@ msgstr "متأخر"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__department_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__department_decision_display__pending
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_stage_history__decision__pending
 msgid "Pending"
 msgstr "قيد الانتظار"
+
+#. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__department_decision_display__in_progress
+msgid "In Progress"
+msgstr "قيد التقدم"
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
@@ -829,6 +850,12 @@ msgstr "يرجى إرفاق صورة بطاقة المورد قبل تأكيد �
 #. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Please select a sub status (Ready or Shipped) for cheque delivery."
+msgstr "يرجى تحديد حالة فرعية (جاهز أو تم الشحن) لتسليم الشيك."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid ""
 "Please confirm that the supplier has been notified to visit the office and "
 "collect the cheque before closing the claim."
@@ -841,12 +868,6 @@ msgstr ""
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "Please enter your contact name."
 msgstr "يرجى إدخال اسم مسؤول التواصل."
-
-#. module: ab_supplier_claim_cycle
-#. odoo-python
-#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
-msgid "Please enter your contact phone."
-msgstr "يرجى إدخال هاتف التواصل."
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
@@ -879,6 +900,7 @@ msgstr "التقييمات"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_check_delivery_wizard__check_delivery_status__ready
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__check_delivery_status__ready
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__sub_delivery_status__ready
 msgid "Ready"
 msgstr "جاهز"
 
@@ -900,6 +922,7 @@ msgstr "رفض"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__department_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__department_decision_display__rejected
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_stage_history__decision__rejected
 msgid "Rejected"
 msgstr "مرفوض"
@@ -978,6 +1001,7 @@ msgstr "التسلسل"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_check_delivery_wizard__check_delivery_status__shipped
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__check_delivery_status__shipped
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__sub_delivery_status__shipped
 msgid "Shipped"
 msgstr "تم الشحن"
 
