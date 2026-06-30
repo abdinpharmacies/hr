@@ -618,6 +618,9 @@ class RowTitleWidget extends Component {
             if (this.submittedDate) parts.push(this.submittedDate);
             return parts.length ? _t("Submitted by %(details)s").replace("%(details)s", parts.join(", ")) : _t("Submitted");
         }
+        if (state === "in_progress") {
+            return _t("In Progress");
+        }
         if (state === "cancelled") {
             return this.requesterName
                 ? _t("Cancelled by %(name)s").replace("%(name)s", this.requesterName)

@@ -6,7 +6,7 @@
             <field name="name">Self inventory batches: own requester records</field>
             <field name="model_id" ref="model_ab_self_inventory_request_batch"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
-            <field name="domain_force">[('requester_id', '=', user.id)]</field>
+            <field name="domain_force">[('requester_id', '=', user.id), ('state', 'in', ['draft', 'cancelled'])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
@@ -60,7 +60,7 @@
             <field name="name">Self inventory requests: receiver branch records</field>
             <field name="model_id" ref="model_ab_self_inventory_request"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_receiver'))]"/>
-            <field name="domain_force">['|', ('branch_id', 'in', user.ab_department_ids.store_id.ids), ('branch_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="domain_force">[('branch_id', 'in', user.ab_self_inventory_branch_ids.ids), ('state', '=', 'in_progress'), ('process_id.state', '=', 'in_progress')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -82,7 +82,7 @@
             <field name="name">Self inventory request lines: own requester records</field>
             <field name="model_id" ref="model_ab_self_inventory_request_line"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
-            <field name="domain_force">[('request_id.requester_id', '=', user.id)]</field>
+            <field name="domain_force">[('request_id.requester_id', '=', user.id), ('request_id.state', 'in', ['draft', 'cancelled'])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
@@ -93,7 +93,7 @@
             <field name="name">Self inventory request lines: receiver branch records</field>
             <field name="model_id" ref="model_ab_self_inventory_request_line"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_receiver'))]"/>
-            <field name="domain_force">['|', ('request_id.branch_id', 'in', user.ab_department_ids.store_id.ids), ('request_id.branch_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="domain_force">[('request_id.branch_id', 'in', user.ab_self_inventory_branch_ids.ids), ('request_id.state', '=', 'in_progress'), ('request_id.process_id.state', '=', 'in_progress')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -115,7 +115,7 @@
             <field name="name">Self inventory processes: requester records</field>
             <field name="model_id" ref="model_ab_self_inventory_process"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
-            <field name="domain_force">[('requester_id', '=', user.id)]</field>
+            <field name="domain_force">[('id', '=', 0)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -126,7 +126,7 @@
             <field name="name">Self inventory processes: receiver branch records</field>
             <field name="model_id" ref="model_ab_self_inventory_process"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_receiver'))]"/>
-            <field name="domain_force">['|', ('branch_id', 'in', user.ab_department_ids.store_id.ids), ('branch_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="domain_force">[('branch_id', 'in', user.ab_self_inventory_branch_ids.ids), ('state', 'in', ['in_progress', 'submitted'])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -148,7 +148,7 @@
             <field name="name">Self inventory process lines: requester records</field>
             <field name="model_id" ref="model_ab_self_inventory_process_line"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
-            <field name="domain_force">[('process_id.requester_id', '=', user.id)]</field>
+            <field name="domain_force">[('id', '=', 0)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
@@ -159,7 +159,7 @@
             <field name="name">Self inventory process lines: receiver branch records</field>
             <field name="model_id" ref="model_ab_self_inventory_process_line"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_receiver'))]"/>
-            <field name="domain_force">['|', ('process_id.branch_id', 'in', user.ab_department_ids.store_id.ids), ('process_id.branch_id', 'in', user.ab_employee_ids.department_id.store_id.ids)]</field>
+            <field name="domain_force">[('process_id.branch_id', 'in', user.ab_self_inventory_branch_ids.ids), ('process_id.state', 'in', ['in_progress', 'submitted'])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>

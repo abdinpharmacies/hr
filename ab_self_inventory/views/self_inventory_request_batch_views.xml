@@ -149,13 +149,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <notebook>
-                                    <page string="Branch Product Groups">
-                                        <div class="ab_modern_table_panel ab_modern_table_panel--batch">
-                                            <field name="line_count" widget="ab_inventory_data_grid" nolabel="1"/>
-                                        </div>
-                                    </page>
-                                </notebook>
                             </div>
                             <div class="ab_form_sidebar">
                                 <div class="ab_form_card">
@@ -203,6 +196,13 @@
                                 </div>
                             </div>
                         </div>
+                        <notebook class="ab_batch_full_width_notebook">
+                            <page string="Branch Product Groups">
+                                <div class="ab_modern_table_panel ab_modern_table_panel--batch ab_modern_table_panel--batch-full">
+                                    <field name="line_count" widget="ab_inventory_data_grid" nolabel="1"/>
+                                </div>
+                            </page>
+                        </notebook>
                     </sheet>
                 </form>
             </field>

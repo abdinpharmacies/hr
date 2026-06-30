@@ -18,7 +18,7 @@
                     <field name="shortage_qty" readonly="1"/>
                     <field name="extra_qty" readonly="1"/>
                     <field name="explanation"/>
-                    <button name="action_delete_manual_line" type="object" icon="fa-trash" string="Delete" title="Delete" invisible="requested or parent.state != 'draft'"/>
+                    <button name="action_delete_manual_line" type="object" icon="fa-trash" string="Delete" title="Delete" invisible="requested or parent.state not in ('draft', 'in_progress')"/>
                 </list>
             </field>
         </record>
@@ -48,18 +48,18 @@
             <field name="arch" type="xml">
                 <form class="ab_self_inventory_form">
                     <header>
-                        <button name="action_submit_process" string="Submit Inventory" type="object" class="btn-primary" invisible="state != 'draft'"/>
-                        <button name="action_export_count_sheet" string="Export Count Sheet" type="object" class="btn-secondary"/>
-                        <button name="action_open_import_wizard" string="Import Actual Counts" type="object" class="btn-secondary" invisible="state != 'draft'"/>
-                        <button name="action_cancel" string="Cancel" type="object" invisible="state != 'draft'"/>
+                        <button name="action_submit_process" string="Submit Inventory" type="object" class="btn-primary" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_export_count_sheet" string="Export Count Sheet" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_open_import_wizard" string="Import Actual Counts" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('draft', 'in_progress')"/>
                         <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,submitted"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,submitted"/>
                     </header>
                     <sheet>
                         <div class="ab_form_hero_row">
                             <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
                         </div>
-                        <div class="ab_form_kpi_row" invisible="not create_date or state == 'draft'">
+                        <div class="ab_form_kpi_row" invisible="not create_date or state in ('draft', 'in_progress')">
                             <field name="shortage_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'shortage', 'icon': 'shortage', 'label': 'Shortage'}"/>
                             <field name="extra_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'extra', 'icon': 'extra', 'label': 'Extra'}"/>
                         </div>
@@ -70,16 +70,20 @@
                                     <div class="ab_form_section_body">
                                         <field name="request_id"/>
                                         <field name="branch_id"/>
-                                        <field name="receiver_id" readonly="state != 'draft'"/>
+                                        <field name="receiver_id" readonly="1"/>
                                         <field name="deadline"/>
                                         <field name="request_note" nolabel="1" placeholder="Request note..."/>
-                                        <field name="branch_note" nolabel="1" placeholder="Branch note..." readonly="state != 'draft'"/>
+                                        <field name="branch_note" nolabel="1" placeholder="Branch note..." readonly="state not in ('draft', 'in_progress')"/>
                                     </div>
                                 </div>
                                 <notebook>
                                     <page string="Self Inventory Lines">
                                         <field name="available_product_ids" invisible="1"/>
-                                        <field name="line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_process_line_list'}" readonly="state != 'draft'" create="0"/>
+                                        <div class="ab_modern_table_panel ab_modern_table_panel--process">
+                                            <div class="ab_modern_table_body">
+                                                <field name="line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_process_line_list'}" readonly="state not in ('draft', 'in_progress')" create="0"/>
+                                            </div>
+                                        </div>
                                     </page>
                                 </notebook>
                             </div>
@@ -109,7 +113,7 @@
                                         </div>
                                         <div class="ab_form_info_row">
                                             <span class="ab_form_info_label">Receiver</span>
-                                            <span class="ab_form_info_value"><field name="receiver_id" nolabel="1"/></span>
+                                            <span class="ab_form_info_value"><field name="receiver_id" nolabel="1" readonly="1"/></span>
                                         </div>
                                         <div class="ab_form_info_row">
                                             <span class="ab_form_info_label">Created</span>
@@ -145,6 +149,7 @@
                     <field name="requester_id"/>
                     <field name="receiver_id"/>
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
                     <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
                     <filter name="group_branch" string="Branch" context="{'group_by': 'branch_id'}"/>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>

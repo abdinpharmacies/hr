@@ -39,17 +39,18 @@ class SelfInventoryProcess(models.Model):
     request_id = fields.Many2one('ab_self_inventory_request', readonly=True, index=True, ondelete='set null')
     requester_id = fields.Many2one('res.users', readonly=True, index=True)
     branch_id = fields.Many2one('ab_store', string='Branch', required=True, readonly=True, index=True)
-    receiver_id = fields.Many2one('res.users', string='Received By', default=lambda self: self.env.user)
+    receiver_id = fields.Many2one('res.users', string='Received By')
     deadline = fields.Datetime(readonly=True)
     request_note = fields.Text(readonly=True)
     branch_note = fields.Text()
     state = fields.Selection(
         selection=[
             ('draft', 'Draft'),
+            ('in_progress', 'In Progress'),
             ('submitted', 'Submitted'),
             ('cancelled', 'Cancelled'),
         ],
-        default='draft',
+        default='in_progress',
         required=True,
         index=True,
     )
@@ -68,7 +69,19 @@ class SelfInventoryProcess(models.Model):
         for vals in vals_list:
             if vals.get('name', 'New') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('ab_self_inventory_process') or 'New'
+            if vals.get('branch_id') and not vals.get('receiver_id'):
+                vals['receiver_id'] = self._get_branch_receiver_user_id(vals['branch_id'])
         return super().create(vals_list)
+
+    @api.model
+    def _get_branch_receiver_user_id(self, branch_id):
+        if not branch_id:
+            return False
+        department = self.env['ab_hr_department'].sudo().search([
+            ('store_id', '=', branch_id),
+            ('user_id', '!=', False),
+        ], limit=1)
+        return department.user_id.id if department else False
 
     @api.depends('line_ids.shortage_qty', 'line_ids.extra_qty')
     def _compute_totals(self):
@@ -82,24 +95,54 @@ class SelfInventoryProcess(models.Model):
             rec.available_product_ids = rec._get_branch_stock_products()
 
     def write(self, vals):
+        auto_receiver = False
+        if vals.get('branch_id') and 'receiver_id' not in vals:
+            vals = dict(vals)
+            vals['receiver_id'] = self._get_branch_receiver_user_id(vals['branch_id'])
+            auto_receiver = True
         protected_fields = {'branch_id', 'request_id', 'requester_id', 'line_ids', 'branch_note'}
+        if (
+            'receiver_id' in vals
+            and not auto_receiver
+            and not self.env.context.get('ab_self_inventory_allow_receiver_write')
+        ):
+            raise ValidationError(_("Receiver is set automatically and cannot be changed manually."))
         if protected_fields.intersection(vals):
             for rec in self:
-                if rec.state != 'draft':
-                    raise ValidationError(_("Only draft self inventory processes can be changed."))
+                if rec.state not in ('draft', 'in_progress'):
+                    raise ValidationError(_("Only active self inventory processes can be changed."))
         return super().write(vals)
 
     def action_submit_process(self):
         for rec in self:
-            if rec.state != 'draft':
+            if rec.state not in ('draft', 'in_progress'):
                 continue
             if not rec.line_ids:
                 raise ValidationError(_("Add at least one product line before submitting."))
-            rec.write({
+            request = rec.sudo().request_id
+            submitted_date = fields.Datetime.now()
+            rec.with_context(ab_self_inventory_allow_receiver_write=True).write({
                 'state': 'submitted',
-                'submitted_date': fields.Datetime.now(),
+                'submitted_date': submitted_date,
                 'receiver_id': self.env.user.id,
             })
+            if request:
+                request.with_context(ab_self_inventory_allow_in_progress_manager_write=True).write({
+                    'state': 'submitted',
+                    'submitted_date': submitted_date,
+                })
+        if (
+            self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_receiver')
+            and not self.env.user.has_group('ab_self_inventory.group_ab_self_inventory_manager')
+        ):
+            return {
+                'type': 'ir.actions.act_window',
+                'name': _('Self Inventory Processes'),
+                'res_model': 'ab_self_inventory_process',
+                'view_mode': 'list,kanban,form',
+                'domain': [('state', 'in', ['in_progress', 'submitted'])],
+                'context': {'create': False},
+            }
         return True
 
     def action_cancel(self):
@@ -223,22 +266,22 @@ class SelfInventoryProcessLine(models.Model):
         self._check_duplicate_products(vals_list)
         for vals in vals_list:
             process = self.env['ab_self_inventory_process'].browse(vals.get('process_id')).exists()
-            if process and process.state != 'draft':
-                raise ValidationError(_("Only draft self inventory processes can receive new lines."))
+            if process and process.state not in ('draft', 'in_progress'):
+                raise ValidationError(_("Only active self inventory processes can receive new lines."))
             self._prepare_product_values(vals)
         return super().create(vals_list)
 
     def write(self, vals):
         for rec in self:
-            if rec.process_id.state != 'draft':
-                raise ValidationError(_("Only draft self inventory process lines can be changed."))
+            if rec.process_id.state not in ('draft', 'in_progress'):
+                raise ValidationError(_("Only active self inventory process lines can be changed."))
             rec._check_locked_fields(vals)
         return super().write(vals)
 
     def unlink(self):
         for rec in self:
-            if rec.process_id.state != 'draft':
-                raise ValidationError(_("Only draft self inventory process lines can be deleted."))
+            if rec.process_id.state not in ('draft', 'in_progress'):
+                raise ValidationError(_("Only active self inventory process lines can be deleted."))
             if rec.requested:
                 raise ValidationError(_("Requested self inventory products cannot be deleted."))
         return super().unlink()
