@@ -917,6 +917,12 @@ msgid "Rejection reason is required."
 msgstr "سبب الرفض مطلوب."
 
 #. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "The Delay / Rejection Reason field is required when rejecting a department request."
+msgstr "حقل سبب التأخير / الرفض مطلوب عند رفض طلب الإدارة."
+
+#. module: ab_supplier_claim_cycle
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.invoice_view_form
 msgid "S"
 msgstr ""
