@@ -375,8 +375,8 @@ msgstr "قيمة الشيك"
 #. module: ab_supplier_claim_cycle
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_check_delivery_wizard__check_delivery_status__check_delivered
 #: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__check_delivery_status__check_delivered
-msgid "Issue Check Delivery"
-msgstr "اصدار تسليم الشيك"
+msgid "Issue Check"
+msgstr "اصدار شيك"
 
 #. module: ab_supplier_claim_cycle
 #: model:ir.model,name:ab_supplier_claim_cycle.model_ab_check_delivery_wizard
@@ -866,8 +866,14 @@ msgstr ""
 #. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
-msgid "Please enter your contact name."
+msgid "Please enter the contact name."
 msgstr "يرجى إدخال اسم مسؤول التواصل."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter the contact phone."
+msgstr "يرجى إدخال هاتف مسؤول التواصل."
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
@@ -883,6 +889,18 @@ msgid ""
 "Please upload the supplier claim document in the Claim Documents section "
 "before starting the cycle."
 msgstr "يرجى رفع مستند مطالبة المورد في قسم مستندات المطالبة قبل بدء الدورة."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter the number of invoices."
+msgstr "يرجى إدخال عدد الفواتير."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter the cheque amount."
+msgstr "يرجى إدخال قيمة الشيك."
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python

@@ -9,7 +9,7 @@ class CheckDeliveryWizard(models.TransientModel):
     claim_id = fields.Many2one('ab_supplier_claim_cycle', required=True)
     check_delivery_status = fields.Selection(
         selection=[('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
-                   ('check_delivered', 'Issue Check Delivery')],
+                   ('check_delivered', 'Issue Check')],
         string='Cheque Delivery Status',
         required=True,
     )
