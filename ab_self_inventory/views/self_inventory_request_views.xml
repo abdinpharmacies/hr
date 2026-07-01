@@ -53,81 +53,98 @@
                     </header>
                     <sheet>
                         <field name="can_open_process" invisible="1"/>
-                        <div class="ab_request_compact_summary">
-                            <div class="ab_request_summary_unified">
-                                <div class="ab_request_summary_primary">
-                                    <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
-                                </div>
-                                <div class="ab_request_summary_metric">
-                                    <field name="selected_line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'items', 'icon': 'items', 'label': 'Selected'}"/>
-                                </div>
-                                <div class="ab_request_summary_info">
-                                    <div class="ab_request_summary_item">
-                                        <span class="ab_form_info_label">Branch</span>
-                                        <span class="ab_form_info_value"><field name="branch_id" nolabel="1" readonly="state != 'draft'"/></span>
-                                    </div>
-                                    <div class="ab_request_summary_item">
-                                        <span class="ab_form_info_label">Deadline</span>
-                                        <span class="ab_form_info_value"><field name="deadline" nolabel="1" readonly="state != 'draft'"/></span>
-                                    </div>
-                                    <div class="ab_request_summary_item">
-                                        <span class="ab_form_info_label">Status</span>
-                                        <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
-                                    </div>
-                                    <div class="ab_request_summary_item">
-                                        <span class="ab_form_info_label">Requester</span>
-                                        <span class="ab_form_info_value"><field name="requester_id" nolabel="1"/></span>
-                                    </div>
-                                    <div class="ab_request_summary_item" invisible="not process_id">
-                                        <span class="ab_form_info_label">Process</span>
-                                        <span class="ab_form_info_value"><field name="process_id" nolabel="1"/></span>
-                                    </div>
-                                    <div class="ab_request_summary_item">
-                                        <span class="ab_form_info_label">Created</span>
-                                        <span class="ab_form_info_value"><field name="create_date" nolabel="1"/></span>
-                                    </div>
-                                    <div class="ab_request_summary_item" invisible="not submitted_date">
-                                        <span class="ab_form_info_label">Submitted</span>
-                                        <span class="ab_form_info_value"><field name="submitted_date" nolabel="1"/></span>
+                        <div class="ab_form_two_column">
+                            <div class="ab_form_main">
+                                <div class="ab_form_section" invisible="state != 'draft'">
+                                    <div class="ab_form_section_title">Branch Selection</div>
+                                    <div class="ab_form_section_body">
+                                        <field name="branch_id" readonly="state != 'draft'"/>
                                     </div>
                                 </div>
-                                <div class="ab_request_summary_note">
-                                    <span class="ab_form_info_label">Note</span>
-                                    <field name="note" nolabel="1" placeholder="Add a note..." readonly="state != 'draft'"/>
+                                <div class="ab_form_section">
+                                    <div class="ab_form_section_title">Schedule &amp; Notes</div>
+                                    <div class="ab_form_section_body">
+                                        <div class="ab_form_row">
+                                            <label for="deadline" string="Deadline"/>
+                                            <field name="deadline" readonly="state != 'draft'"/>
+                                        </div>
+                                        <field name="note" nolabel="1" placeholder="Add a note..." readonly="state != 'draft'"/>
+                                    </div>
                                 </div>
-                                <div class="ab_request_summary_timeline">
-                                    <field name="write_date" widget="ab_inventory_timeline" nolabel="1"/>
+                                <div class="ab_form_section" invisible="state != 'draft'" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager">
+                                    <div class="ab_form_section_title">Smart Inventory Analysis</div>
+                                    <div class="ab_form_section_body">
+                                        <div class="ab_analysis_toolbar" style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                                            <div class="row align-items-end g-2 ab_analysis_filter_grid">
+                                                <div class="col-lg-4 col-md-12 ab_analysis_mode_filter">
+                                                    <label for="analysis_mode" class="form-label font-weight-bold">Analysis Mode</label>
+                                                    <field name="analysis_mode" widget="radio" options="{'horizontal': true}"/>
+                                                </div>
+                                                <div class="col-lg-2 col-md-3 ab_analysis_optional_filter">
+                                                    <label for="analysis_top_n" class="form-label font-weight-bold" invisible="analysis_mode == 'min_price'">Top N Items</label>
+                                                    <field name="analysis_top_n" invisible="analysis_mode == 'min_price'"/>
+                                                </div>
+                                                <div class="col-lg-2 col-md-3 ab_analysis_optional_filter">
+                                                    <label for="analysis_min_price" class="form-label font-weight-bold" invisible="analysis_mode == 'top_n'">Min Price (EGP)</label>
+                                                    <field name="analysis_min_price" invisible="analysis_mode == 'top_n'"/>
+                                                </div>
+                                                <div class="col-lg-2 col-md-3">
+                                                    <label for="analysis_medicine_type" class="form-label font-weight-bold">Medicine Type</label>
+                                                    <field name="analysis_medicine_type"/>
+                                                </div>
+                                                <div class="col-lg-2 col-md-3">
+                                                    <label for="analysis_period_days" class="form-label font-weight-bold">Period (Days)</label>
+                                                    <field name="analysis_period_days"/>
+                                                </div>
+                                                <div class="col-lg-2 col-md-3 ab_analysis_action_filter">
+                                                    <button name="action_run_inventory_analysis" type="object" string="Run Analysis" class="btn-primary w-100" invisible="not branch_id"/>
+                                                </div>
+                                            </div>
+                                            <div class="mt-2 text-muted small" invisible="branch_id">
+                                                <i class="fa fa-info-circle"/> Select a branch to run analysis.
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="ab_form_section" invisible="state != 'draft'" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager">
-                            <div class="ab_form_section_title">Smart Inventory Analysis</div>
-                            <div class="ab_form_section_body">
-                                <div class="ab_analysis_toolbar" style="background: rgba(0,0,0,0.03); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
-                                    <div class="row align-items-end g-2 ab_analysis_filter_grid">
-                                        <div class="col-lg-4 col-md-12 ab_analysis_mode_filter">
-                                            <label for="analysis_mode" class="form-label font-weight-bold">Analysis Mode</label>
-                                            <field name="analysis_mode" widget="radio" options="{'horizontal': true}"/>
+                            <div class="ab_form_sidebar">
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Details</div>
+                                    <div class="ab_form_card_body">
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Request</span>
+                                            <span class="ab_form_info_value"><field name="name" nolabel="1"/></span>
                                         </div>
-                                        <div class="col-lg-2 col-md-3 ab_analysis_optional_filter">
-                                            <label for="analysis_top_n" class="form-label font-weight-bold" invisible="analysis_mode == 'min_price'">Top N Items</label>
-                                            <field name="analysis_top_n" invisible="analysis_mode == 'min_price'"/>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Requester</span>
+                                            <span class="ab_form_info_value"><field name="requester_id" nolabel="1"/></span>
                                         </div>
-                                        <div class="col-lg-2 col-md-3 ab_analysis_optional_filter">
-                                            <label for="analysis_min_price" class="form-label font-weight-bold" invisible="analysis_mode == 'top_n'">Min Price (EGP)</label>
-                                            <field name="analysis_min_price" invisible="analysis_mode == 'top_n'"/>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Status</span>
+                                            <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
                                         </div>
-                                        <div class="col-lg-2 col-md-3">
-                                            <label for="analysis_medicine_type" class="form-label font-weight-bold">Medicine Type</label>
-                                            <field name="analysis_medicine_type"/>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Branch</span>
+                                            <span class="ab_form_info_value"><field name="branch_id" nolabel="1" readonly="state != 'draft'"/></span>
                                         </div>
-                                        <div class="col-lg-2 col-md-3">
-                                            <label for="analysis_period_days" class="form-label font-weight-bold">Period (Days)</label>
-                                            <field name="analysis_period_days"/>
+                                        <div class="ab_form_info_row" invisible="not process_id">
+                                            <span class="ab_form_info_label">Process</span>
+                                            <span class="ab_form_info_value"><field name="process_id" nolabel="1"/></span>
                                         </div>
-                                        <div class="col-lg-2 col-md-3 ab_analysis_action_filter">
-                                            <button name="action_run_inventory_analysis" type="object" string="Run Analysis" class="btn-primary w-100"/>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Created</span>
+                                            <span class="ab_form_info_value"><field name="create_date" nolabel="1"/></span>
                                         </div>
+                                        <div class="ab_form_info_row" invisible="not submitted_date">
+                                            <span class="ab_form_info_label">Submitted</span>
+                                            <span class="ab_form_info_value"><field name="submitted_date" nolabel="1"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Timeline</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="write_date" widget="ab_inventory_timeline" nolabel="1"/>
                                     </div>
                                 </div>
                             </div>
@@ -135,21 +152,7 @@
                         <notebook class="ab_request_full_width_notebook">
                             <page string="Fetched Products">
                                 <div class="ab_modern_table_panel ab_modern_table_panel--request">
-                                    <div class="ab_modern_table_toolbar" invisible="state != 'draft'" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager">
-                                        <div class="ab_modern_table_toolbar_title">
-                                            <span class="ab_modern_table_toolbar_label">Fetched Products</span>
-                                        </div>
-                                        <div class="ab_modern_table_toolbar_actions">
-                                            <button name="action_open_manual_add_line_wizard" type="object" string="Add Line" class="btn-primary"/>
-                                            <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary"/>
-                                            <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary"/>
-                                            <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" confirm="Delete all selected fetched products?"/>
-                                            <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" confirm="Delete all unselected fetched products?"/>
-                                        </div>
-                                    </div>
-                                    <div class="ab_modern_table_body">
-                                        <field name="line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_request_line_list'}" readonly="state != 'draft'" create="0"/>
-                                    </div>
+                                    <field name="line_count" widget="ab_inventory_data_grid" nolabel="1" options="{'request_columns': true, 'hide_branch_summary': true}"/>
                                 </div>
                             </page>
                         </notebook>

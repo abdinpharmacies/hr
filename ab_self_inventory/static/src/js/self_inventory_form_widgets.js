@@ -437,6 +437,56 @@ class SelectedBranchFilterWidget extends Component {
 const ROW_HEIGHT = 56;
 const PAGE_SIZE = 50;
 
+// ------------------------------------------------------------------
+// Analysis Mode Cards Widget
+// Selectable card-style radio group for analysis mode
+// ------------------------------------------------------------------
+
+class AnalysisModeCards extends Component {
+    static template = xml`
+        <div class="ab_mode_card_grid">
+            <label t-att-class="'ab_mode_card' + (fieldValue === 'top_n' ? ' ab_mode_card--active' : '')" t-on-click="() => this.selectMode('top_n')">
+                <div class="ab_mode_card_icon">📈</div>
+                <div class="ab_mode_card_title">Top Selling</div>
+                <div class="ab_mode_card_desc">Most sold products by qty</div>
+            </label>
+            <label t-att-class="'ab_mode_card' + (fieldValue === 'min_price' ? ' ab_mode_card--active' : '')" t-on-click="() => this.selectMode('min_price')">
+                <div class="ab_mode_card_icon">💰</div>
+                <div class="ab_mode_card_title">High Value</div>
+                <div class="ab_mode_card_desc">Products above min price</div>
+            </label>
+            <label t-att-class="'ab_mode_card' + (fieldValue === 'both' ? ' ab_mode_card--active' : '')" t-on-click="() => this.selectMode('both')">
+                <div class="ab_mode_card_icon">⚡</div>
+                <div class="ab_mode_card_title">Combined</div>
+                <div class="ab_mode_card_desc">Top selling + high value</div>
+            </label>
+        </div>
+    `;
+    static props = { ...standardFieldProps };
+
+    get fieldValue() {
+        return getRecordValue(this.props.record, this.props.name, "top_n");
+    }
+
+    async selectMode(value) {
+        if (!this.props.record) return;
+        const { model, resId, resModel } = this.props.record;
+        if (!model || !model.orm || !resId || !resModel) return;
+        await model.orm.write(
+            resModel, [resId],
+            { [this.props.name]: value },
+            { context: model.context }
+        );
+        if (typeof model.load === 'function') {
+            await model.load();
+        }
+    }
+}
+
+registry.category("fields").add("ab_inventory_analysis_mode", {
+    component: AnalysisModeCards,
+});
+
 // ===================================================================
 // Data Grid Widget - Modern SaaS grid replacing O2M
 // Features: analytics header, branch nav, search, selection, l/loading
@@ -451,7 +501,7 @@ class DataGridWidget extends Component {
 
             <div class="ab_saas_grid_content" t-if="state.analytics">
                 <!-- Analytics Header -->
-                <div class="ab_saas_analytics_row">
+                <div class="ab_saas_analytics_row" t-if="!hideBranchSummary">
                     <div class="ab_saas_analytics_card ab_saas_analytics_card--branches">
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.branch_count"/>
                         <div class="ab_saas_analytics_label"><t t-esc="_t('Branches')"/></div>
@@ -472,7 +522,7 @@ class DataGridWidget extends Component {
 
 
                 <!-- Branch Nav -->
-                <div class="ab_saas_branch_nav">
+                <div class="ab_saas_branch_nav" t-if="!hideBranchSummary">
                     <div class="ab_saas_branch_search">
                         <input type="text" t-att-placeholder="_t('Search branch...')" t-model="state.branchSearchText" class="o_input"/>
                     </div>
@@ -493,7 +543,7 @@ class DataGridWidget extends Component {
                 </div>
 
                 <!-- Selected branch indicator -->
-                <div class="ab_saas_branch_selected" t-if="state.selected_branch_ids.length &amp;&amp; selectedBranchLabel">
+                <div class="ab_saas_branch_selected" t-if="!hideBranchSummary &amp;&amp; state.selected_branch_ids.length &amp;&amp; selectedBranchLabel">
                     <span class="ab_saas_branch_selected_text" t-esc="_t('Showing:') + ' ' + selectedBranchLabel"/>
                     <button class="ab_saas_branch_selected_clear" t-on-click="() => this.selectBranch(false)"><t t-esc="_t('Show All')"/></button>
                 </div>
@@ -501,68 +551,66 @@ class DataGridWidget extends Component {
                 <!-- Toolbar -->
                 <div class="ab_saas_toolbar">
                     <div class="ab_saas_toolbar_left">
-                        <div class="ab_saas_search">
+                        <div t-att-class="'ab_saas_search' + (state.searchGlow ? ' ab_saas_search--glow' : '')">
                             <span class="ab_saas_search_icon">&#x1F50D;</span>
-                            <input type="text" t-att-placeholder="_t('Search products...')" t-on-input="onSearchInput" class="o_input"/>
+                            <input type="text" t-ref="searchInput" t-att-placeholder="_t('Search products...')" t-on-input="onSearchInput" class="o_input"/>
                         </div>
                     </div>
                     <div class="ab_saas_toolbar_right">
-                        <span class="ab_saas_selection_pill" t-if="!state.groupByBranch &amp;&amp; selectedTotal" t-on-click="() => this.unselectAll()" t-att-title="_t('Clear selection')">
-                            &#x2611; <t t-esc="selectedTotal"/> <t t-esc="_t('selected')"/> &#x2716;
-                        </span>
                         <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly"><t t-esc="_t('Add Line')"/></button>
                         <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
-                        <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Clear')"/></button>
-                        <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Delete')"/></button>
-                        <button class="ab_saas_toolbar_btn" t-on-click="toggleGrouping">
+                        <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Unselect All')"/></button>
+                        <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Delete Selected')"/></button>
+                        <button class="ab_saas_toolbar_btn" t-if="!hideBranchSummary" t-on-click="toggleGrouping">
                             <t t-if="state.groupByBranch">&#x25BC;</t><t t-else="">&#x25B6;</t> <t t-esc="_t('Group')"/>
                         </button>
                     </div>
                 </div>
 
                 <!-- Selection bar -->
-                <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedTotal > 0 &amp;&amp; state.selected_branch_ids.length">
-                    <span class="ab_saas_selection_bar_count"><t t-esc="selectedTotal"/> <t t-esc="_t('products selected')"/></span>
-                    <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="() => this.deleteSelected()" t-att-disabled="isReadonly"><t t-esc="_t('Delete Selected')"/></button>
+                <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedTotal > 0">
+                    <span class="ab_saas_selection_bar_count">
+                        <span class="ab_selection_badge"><t t-esc="selectedTotal"/></span>
+                        <t t-esc="_t('products selected')"/>
+                    </span>
+                    <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-on-click="() => this.deleteSelected()" t-att-disabled="isReadonly"><t t-esc="_t('Delete')"/></button>
                     <button class="ab_saas_toolbar_btn" t-on-click="() => this.unselectAll()"><t t-esc="_t('Clear')"/></button>
                 </div>
 
                 <!-- Grid -->
                 <div class="ab_saas_grid_container" t-ref="gridContainer">
-                    <div class="ab_saas_grid_header">
-                        <div class="ab_saas_grid_header_row">
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click="toggleAllCheck">&#x2611;</div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-on-click="() => this.sortBy('branch_name')">
+                    <div t-att-class="'ab_saas_grid_header' + (isRequestColumns ? ' ab_saas_grid_header--request' : '')">
+                        <div t-att-class="'ab_saas_grid_header_row' + (isRequestColumns ? ' ab_saas_grid_header_row--request' : '')">
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click="toggleAllCheck">☑</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns" t-on-click="() => this.sortBy('branch_name')">
                                 <t t-esc="_t('Branch')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('branch_name')"/>
                             </div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
                                 <t t-esc="_t('Product')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
                             </div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_code"><t t-esc="_t('Code')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus"><t t-esc="_t('Code')"/></div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
-                                <t t-esc="_t('Stock')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
+                                <t t-esc="_t('E-stock Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
                             </div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price"><t t-esc="_t('Price')"/></div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold"><t t-esc="_t('Sold')"/></div>
-                            <div class="ab_saas_grid_cell ab_saas_grid_cell_match"><t t-esc="_t('Match')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price"><t t-esc="_t('Sell Price')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold"><t t-esc="_t('Sold Qty')"/></div>
                             <div class="ab_saas_grid_cell ab_saas_grid_cell_note"><t t-esc="_t('Note')"/></div>
                         </div>
                     </div>
-                    <div class="ab_saas_grid_body" t-ref="gridBody" t-on-scroll="onGridScroll">
+                    <div t-att-class="'ab_saas_grid_body' + (isRequestColumns ? ' ab_saas_grid_body--request' : '')" t-ref="gridBody" t-on-scroll="onGridScroll">
                         <t t-if="!state.groupByBranch">
                             <t t-foreach="state.rows" t-as="row" t-key="row.id">
-                                <div t-att-class="'ab_saas_grid_row' + (row.selected ? ' ab_saas_grid_row_selected' : '') + (row._highlight ? ' ab_saas_grid_row_highlight' : '')" t-on-click="() => this.toggleRow(row)">
+                                <div t-att-class="'ab_saas_grid_row' + (isRequestColumns ? ' ab_saas_grid_row--request' : '') + (row.selected ? ' ab_saas_grid_row_selected' : '') + (row._highlight ? ' ab_saas_grid_row_highlight' : '')" t-on-click="() => this.toggleRow(row)">
                                     <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
                                         <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
                                     </div>
-                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_branch">
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns">
                                         <span class="ab_saas_branch_pill"><t t-esc="row.branch_name"/></span>
                                     </div>
                                     <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
                                         <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
-                                        <div class="ab_saas_product_code" t-if="row.product_code"><t t-esc="row.product_code"/></div>
                                     </div>
-                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_code">
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
                                         <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
                                     </div>
                                     <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
@@ -573,9 +621,6 @@ class DataGridWidget extends Component {
                                     </div>
                                     <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
                                         <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
-                                    </div>
-                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_match">
-                                        <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + row.matched_by"><t t-esc="matchLabel(row.matched_by)"/></span>
                                     </div>
                                     <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
                                         <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
@@ -592,16 +637,15 @@ class DataGridWidget extends Component {
                                 </div>
                                 <t t-if="state.expandedBranches[group.branch_id]">
                                     <t t-foreach="group.rows" t-as="row" t-key="row.id">
-                                        <div t-att-class="'ab_saas_grid_row' + (row.selected ? ' ab_saas_grid_row_selected' : '')" t-on-click="() => this.toggleRow(row)">
+                                        <div t-att-class="'ab_saas_grid_row' + (isRequestColumns ? ' ab_saas_grid_row--request' : '') + (row.selected ? ' ab_saas_grid_row_selected' : '')" t-on-click="() => this.toggleRow(row)">
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
                                                 <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch"/>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns"/>
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
                                                 <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
-                                                <div class="ab_saas_product_code" t-if="row.product_code"><t t-esc="row.product_code"/></div>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_code">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
                                                 <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
                                             </div>
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
@@ -613,9 +657,6 @@ class DataGridWidget extends Component {
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
                                                 <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_match">
-                                                <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + row.matched_by"><t t-esc="matchLabel(row.matched_by)"/></span>
-                                            </div>
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
                                                 <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
                                             </div>
@@ -626,9 +667,25 @@ class DataGridWidget extends Component {
                         </t>
                         <div class="ab_saas_grid_empty" t-if="(!state.groupByBranch &amp;&amp; !state.rows.length || state.groupByBranch &amp;&amp; !state.groupedData.length) &amp;&amp; !loading.state.isLoading">
                             <div class="ab_saas_grid_empty_content">
-                                <div class="ab_saas_grid_empty_icon">&#x1F50D;</div>
+                                <svg class="ab_saas_empty_svg" width="120" height="100" viewBox="0 0 120 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="20" y="30" width="80" height="55" rx="8" stroke="#CBD5E1" stroke-width="1.5" fill="#F8FAFC"/>
+                                    <rect x="36" y="48" width="18" height="6" rx="3" fill="#E2E8F0"/>
+                                    <rect x="58" y="48" width="18" height="6" rx="3" fill="#E2E8F0"/>
+                                    <rect x="80" y="48" width="10" height="6" rx="3" fill="#E2E8F0"/>
+                                    <rect x="36" y="60" width="14" height="6" rx="3" fill="#E2E8F0"/>
+                                    <rect x="54" y="60" width="22" height="6" rx="3" fill="#E2E8F0"/>
+                                    <rect x="80" y="60" width="10" height="6" rx="3" fill="#E2E8F0"/>
+                                    <circle cx="14" cy="42" r="6" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.2"/>
+                                    <circle cx="106" cy="42" r="6" fill="#DBEAFE" stroke="#93C5FD" stroke-width="1.2"/>
+                                    <path d="M60 18 L66 26 L54 26 Z" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1"/>
+                                    <circle cx="60" cy="12" r="3" fill="#E2E8F0" stroke="#CBD5E1" stroke-width="1"/>
+                                    <path d="M56 12 C56 6, 64 6, 64 12" fill="none" stroke="#CBD5E1" stroke-width="1.2"/>
+                                </svg>
                                 <div class="ab_saas_grid_empty_title"><t t-esc="_t('No products found')"/></div>
-                                <div class="ab_saas_grid_empty_text"><t t-esc="_t('Try changing the branch filter or search terms.')"/></div>
+                                <div class="ab_saas_grid_empty_text"><t t-esc="_t('Try changing the branch filter or search terms to find products.')"/></div>
+                                <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly" t-if="!state.searchText &amp;&amp; !state.selected_branch_ids.length" style="margin-top: 16px;">
+                                    <t t-esc="_t('Add Products')"/>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -655,7 +712,10 @@ class DataGridWidget extends Component {
     `;
 
     static components = { BatchesLoadingOverlay };
-    static props = { ...standardFieldProps };
+    static props = {
+        ...standardFieldProps,
+        options: { type: Object, optional: true },
+    };
 
     setup() {
         this._t = _t;
@@ -664,7 +724,9 @@ class DataGridWidget extends Component {
         this.notification = useService("notification");
         this.gridContainer = useRef("gridContainer");
         this.gridBody = useRef("gridBody");
+        this.searchInput = useRef("searchInput");
         this._searchTimer = null;
+        this._searchGlowTimer = null;
         this._loadKey = "";
         this.loading = useBatchLoading({ minDuration: 600 });
         this.state = useState({
@@ -685,14 +747,28 @@ class DataGridWidget extends Component {
             showAllBranches: false,
             branchSelectionInitialized: false,
             serverBranchKey: "",
+            bulkDropdownOpen: false,
+            searchGlow: false,
         });
         onWillStart(() => this._load());
         useExternalListener(window, "keydown", (e) => {
             if (e.key === "Escape" && this.selectedTotal) {
                 this.unselectAll();
             }
+            if (e.key === "Escape" && this.state.bulkDropdownOpen) {
+                this.state.bulkDropdownOpen = false;
+            }
+        });
+        useExternalListener(window, "click", (e) => {
+            if (this.state.bulkDropdownOpen) {
+                this.state.bulkDropdownOpen = false;
+            }
         });
         onPatched(() => this._onPatched());
+        onWillUnmount(() => {
+            if (this._searchTimer) clearTimeout(this._searchTimer);
+            if (this._searchGlowTimer) clearTimeout(this._searchGlowTimer);
+        });
     }
 
     _currentKey() {
@@ -718,6 +794,14 @@ class DataGridWidget extends Component {
     get isReadonly() {
         const st = getRecordValue(this.props.record, "state", null);
         return st && st !== "draft";
+    }
+
+    get isRequestColumns() {
+        return this.resModel === "ab_self_inventory_request" || Boolean(this.props.options && this.props.options.request_columns);
+    }
+
+    get hideBranchSummary() {
+        return this.resModel === "ab_self_inventory_request" || Boolean(this.props.options && this.props.options.hide_branch_summary);
     }
 
     _getServerBranchIds() {
@@ -1060,6 +1144,36 @@ class DataGridWidget extends Component {
             this.state.groupedData = [];
             this._loadGrouped();
         }
+    }
+
+    toggleBulkDropdown() {
+        this.state.bulkDropdownOpen = !this.state.bulkDropdownOpen;
+    }
+
+    closeDropdown(fn) {
+        this.state.bulkDropdownOpen = false;
+        if (typeof fn === "function") fn.call(this);
+    }
+
+    async selectAllMatching() {
+        await this.selectAll();
+        this.focusProductSearch();
+    }
+
+    focusProductSearch() {
+        this.state.searchGlow = true;
+        if (this._searchGlowTimer) clearTimeout(this._searchGlowTimer);
+        setTimeout(() => {
+            const input = this.searchInput.el;
+            if (input) {
+                input.focus();
+                input.select?.();
+            }
+        }, 0);
+        this._searchGlowTimer = setTimeout(() => {
+            this.state.searchGlow = false;
+            this._searchGlowTimer = null;
+        }, 3000);
     }
 
     toggleGroup(branchId) {
