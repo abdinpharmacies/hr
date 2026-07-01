@@ -78,9 +78,6 @@
                     </header>
                     <sheet>
                         <field name="selected_branch_ids" widget="many2many_tags" invisible="1"/>
-                        <div class="ab_form_hero_row">
-                            <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
-                        </div>
                         <div class="ab_form_kpi_row" invisible="not create_date or state == 'draft'">
                             <field name="selected_line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'items', 'icon': 'items', 'label': 'Items'}"/>
                             <field name="request_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'requests', 'icon': 'requests', 'label': 'Requests'}"/>
@@ -102,8 +99,12 @@
                                     </div>
                                 </div>
                                 <div class="ab_form_section">
-                                    <div class="ab_form_section_title">Notes</div>
+                                    <div class="ab_form_section_title">Schedule &amp; Notes</div>
                                     <div class="ab_form_section_body">
+                                        <div class="ab_form_row">
+                                            <label for="deadline" string="Deadline"/>
+                                            <field name="deadline" readonly="state != 'draft'"/>
+                                        </div>
                                         <field name="note" nolabel="1" placeholder="Add a note..." readonly="state != 'draft'"/>
                                     </div>
                                 </div>
@@ -155,16 +156,16 @@
                                     <div class="ab_form_card_title">Details</div>
                                     <div class="ab_form_card_body">
                                         <div class="ab_form_info_row">
-                                            <span class="ab_form_info_label">Status</span>
-                                            <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
-                                        </div>
-                                        <div class="ab_form_info_row">
-                                            <span class="ab_form_info_label">Deadline</span>
-                                            <span class="ab_form_info_value"><field name="deadline" nolabel="1"/></span>
+                                            <span class="ab_form_info_label">Batch</span>
+                                            <span class="ab_form_info_value"><field name="name" nolabel="1"/></span>
                                         </div>
                                         <div class="ab_form_info_row">
                                             <span class="ab_form_info_label">Requester</span>
                                             <span class="ab_form_info_value"><field name="requester_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Status</span>
+                                            <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
                                         </div>
                                         <div class="ab_form_info_row">
                                             <span class="ab_form_info_label">Created</span>
@@ -174,12 +175,6 @@
                                             <span class="ab_form_info_label">Submitted</span>
                                             <span class="ab_form_info_value"><field name="submitted_date" nolabel="1"/></span>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="ab_form_card">
-                                    <div class="ab_form_card_title">Branches</div>
-                                    <div class="ab_form_card_body">
-                                        <field name="branch_ids" widget="ab_inventory_branch_form" nolabel="1"/>
                                     </div>
                                 </div>
                                 <div class="ab_form_card" invisible="not request_count">

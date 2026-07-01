@@ -57,6 +57,7 @@ class SelfInventoryRequest(models.Model):
     )
     line_ids = fields.One2many('ab_self_inventory_request_line', 'request_id', string='Fetched Products')
     selected_line_count = fields.Integer(compute='_compute_selected_line_count')
+    line_count = fields.Integer(compute='_compute_line_count')
     batch_id = fields.Many2one('ab_self_inventory_request_batch', readonly=True, copy=False, index=True)
     process_id = fields.Many2one('ab_self_inventory_process', readonly=True, copy=False)
     can_open_process = fields.Boolean(compute='_compute_can_open_process')
@@ -94,6 +95,11 @@ class SelfInventoryRequest(models.Model):
     def _compute_selected_line_count(self):
         for rec in self:
             rec.selected_line_count = len(rec.line_ids.filtered('selected'))
+
+    @api.depends('line_ids')
+    def _compute_line_count(self):
+        for rec in self:
+            rec.line_count = len(rec.line_ids)
 
     @api.depends('process_id', 'state')
     @api.depends_context('uid')
@@ -233,6 +239,153 @@ class SelfInventoryRequest(models.Model):
             'res_id': wizard.id,
             'target': 'new',
         }
+
+    def action_get_analytics(self):
+        self.ensure_one()
+        lines = self.line_ids
+        total = len(lines)
+        return {
+            'branch_count': 1 if self.branch_id and total else 0,
+            'total_products': total,
+            'selected_products': len(lines.filtered('selected')),
+            'matched_pct': round(len(lines.filtered(lambda line: line.matched_by != 'none')) / total * 100) if total else 0,
+        }
+
+    def action_get_branch_counts(self):
+        self.ensure_one()
+        if not self.branch_id:
+            return []
+        line_count = len(self.line_ids)
+        return [{
+            'id': self.branch_id.id,
+            'name': self.branch_id.display_name or self.branch_id.name or '',
+            'count': line_count,
+        }] if line_count else []
+
+    def _get_request_line_domain(self, branch_id=None, branch_ids=None, search=None, selected=None):
+        self.ensure_one()
+        domain = [('request_id', '=', self.id)]
+        active_branch_ids = []
+        if branch_ids:
+            active_branch_ids = [int(branch_id) for branch_id in branch_ids if branch_id]
+        elif branch_id:
+            active_branch_ids = [int(branch_id)]
+        if active_branch_ids and self.branch_id.id not in active_branch_ids:
+            domain += [('id', '=', 0)]
+        if selected is not None:
+            domain += [('selected', '=', bool(selected))]
+        if search:
+            domain += [
+                '|', '|',
+                ('product_id.name', 'ilike', search),
+                ('product_code', 'ilike', search),
+                ('eplus_item_code', 'ilike', search),
+            ]
+        return domain
+
+    def _get_request_line_grid_values(self, line):
+        return {
+            'id': line.id,
+            'branch_id': self.branch_id.id,
+            'branch_name': self.branch_id.display_name or self.branch_id.name or '',
+            'selected': line.selected,
+            'product_name': line.product_id.display_name or line.product_id.name or '' if line.product_id else '',
+            'product_code': line.product_code or '',
+            'eplus_item_code': line.eplus_item_code or '',
+            'system_qty': line.system_qty,
+            'sell_price': line.sell_price,
+            'sold_qty': line.sold_qty,
+            'matched_by': line.matched_by,
+            'note': line.note or '',
+        }
+
+    def action_get_grouped_rows(self, search=None, limit=50, branch_id=None, branch_ids=None):
+        self.ensure_one()
+        domain = self._get_request_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
+        Line = self.env['ab_self_inventory_request_line']
+        lines = Line.search(domain, limit=limit, order='selected DESC, product_id asc')
+        total = Line.search_count(domain)
+        if not total:
+            return []
+        return [{
+            'branch_id': self.branch_id.id,
+            'branch_name': self.branch_id.display_name or self.branch_id.name or '',
+            'rows': [self._get_request_line_grid_values(line) for line in lines],
+            'count': len(lines),
+            'total': total,
+        }]
+
+    def action_get_grid_rows(self, branch_id=None, branch_ids=None, search=None, offset=0, limit=50, sort_by='branch_id', sort_order='asc'):
+        self.ensure_one()
+        domain = self._get_request_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
+        sort_map = {
+            'branch_id': 'id',
+            'branch_name': 'id',
+            'product_id': 'product_id',
+            'product_name': 'product_id.name',
+            'product_code': 'product_code',
+            'eplus_item_code': 'eplus_item_code',
+            'system_qty': 'system_qty',
+            'sell_price': 'sell_price',
+            'sold_qty': 'sold_qty',
+            'matched_by': 'matched_by',
+            'selected': 'selected',
+        }
+        sort_field = sort_map.get(sort_by, 'id')
+        sort_order = sort_order if sort_order in ('asc', 'desc') else 'asc'
+        offset = max(0, int(offset or 0))
+        limit = max(1, min(int(limit or 50), 500))
+        order_parts = []
+        if sort_field != 'selected':
+            order_parts.append('selected DESC')
+        order_parts.append('%s %s' % (sort_field, sort_order))
+        order_parts.append('id asc')
+        Line = self.env['ab_self_inventory_request_line']
+        lines = Line.search(domain, offset=offset, limit=limit, order=', '.join(order_parts))
+        total = Line.search_count(domain)
+        selected_total = Line.search_count(domain + [('selected', '=', True)])
+        return {
+            'rows': [self._get_request_line_grid_values(line) for line in lines],
+            'total': total,
+            'selected_total': selected_total,
+        }
+
+    def action_toggle_line_selection(self, line_id):
+        self.ensure_one()
+        self._check_can_update_lines()
+        line = self.env['ab_self_inventory_request_line'].browse(line_id)
+        if line.request_id != self:
+            return {'selected': False}
+        line.write({'selected': not line.selected})
+        return {'selected': line.selected}
+
+    def action_select_all_filtered(self, branch_id=None, branch_ids=None, search=None):
+        self.ensure_one()
+        self._check_can_update_lines()
+        lines = self.env['ab_self_inventory_request_line'].search(
+            self._get_request_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
+        )
+        lines.write({'selected': True})
+        return {'count': len(lines)}
+
+    def action_unselect_all_filtered(self, branch_id=None, branch_ids=None, search=None):
+        self.ensure_one()
+        self._check_can_update_lines()
+        lines = self.env['ab_self_inventory_request_line'].search(
+            self._get_request_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search)
+        )
+        lines.write({'selected': False})
+        return {'count': len(lines)}
+
+    def action_delete_selected_filtered(self, branch_id=None, branch_ids=None, search=None):
+        self.ensure_one()
+        self._check_can_update_lines()
+        lines = self.env['ab_self_inventory_request_line'].search(
+            self._get_request_line_domain(branch_id=branch_id, branch_ids=branch_ids, search=search, selected=True)
+        )
+        count = len(lines)
+        lines.unlink()
+        return {'count': count}
 
     def action_cancel(self):
         for rec in self:
