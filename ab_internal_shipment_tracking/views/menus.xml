@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="ab_internal_shipment_menu_root"
+                  name="Internal Shipments"
+                  sequence="35"
+                  web_icon="ab_internal_shipment_tracking,static/description/icon.png"
+                  groups="ab_internal_shipment_tracking.group_ab_internal_shipment_user,base.group_system"/>
+
+        <menuitem id="ab_internal_shipment_menu_shipments"
+                  name="Shipments"
+                  parent="ab_internal_shipment_menu_root"
+                  action="ab_internal_shipment_action"
+                  sequence="10"
+                  groups="ab_internal_shipment_tracking.group_ab_internal_shipment_user,base.group_system"/>
+
+        <menuitem id="ab_internal_shipment_menu_awaiting_receipt"
+                  name="Awaiting Receipt"
+                  parent="ab_internal_shipment_menu_root"
+                  action="ab_internal_shipment_awaiting_receipt_action"
+                  sequence="20"
+                  groups="ab_internal_shipment_tracking.group_ab_internal_shipment_user,base.group_system"/>
+
+        <menuitem id="ab_internal_shipment_menu_reporting"
+                  name="Reporting"
+                  parent="ab_internal_shipment_menu_root"
+                  action="ab_internal_shipment_reporting_server_action"
+                  sequence="30"
+                  groups="ab_internal_shipment_tracking.group_ab_internal_shipment_user,base.group_system"/>
+    </data>
+</odoo>

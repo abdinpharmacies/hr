@@ -94,7 +94,7 @@ class SupplierClaimCycle(models.Model):
     sup_reason = fields.Text(string="Suppliers Reason", copy=False)
     bank_reason = fields.Text(string="Bank Account Reason", copy=False)
     check_delivery_status = fields.Selection(
-        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'), ('check_delivered', 'Issue Check Delivery'), ('shipped', 'Shipped')],
+        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'), ('check_delivered', 'Issue Check'), ('shipped', 'Shipped')],
         string="Cheque Delivery Status",
         tracking=True,
     )
@@ -432,6 +432,32 @@ class SupplierClaimCycle(models.Model):
         for rec in self:
             rec._check_can_act_current_stage()
             if rec.status == 'secretarial':
+                if not rec.num_of_invoice:
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Missing Required Information'),
+                        'res_model': 'ab.claim.error.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_error_message': _(
+                                'Please enter the number of invoices.'
+                            ),
+                        },
+                    }
+                if not rec.amount_of_check:
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Missing Required Information'),
+                        'res_model': 'ab.claim.error.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_error_message': _(
+                                'Please enter the cheque amount.'
+                            ),
+                        },
+                    }
                 if not rec.claim_document and not self.env['ir.attachment'].search_count([
                     ('res_model', '=', self._name),
                     ('res_id', '=', rec.id),
@@ -525,11 +551,44 @@ class SupplierClaimCycle(models.Model):
             if rec.status != 'supplier_notification':
                 raise UserError(_("Supplier notification is only available at the Supplier Notification stage."))
             if not rec.contact_result:
-                raise UserError(_("Please select a Contact Result before confirming supplier notification."))
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Missing Required Information'),
+                    'res_model': 'ab.claim.error.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_error_message': _(
+                            'Please select a Contact Result before confirming supplier notification.'
+                        ),
+                    },
+                }
             if not rec.contact_name:
-                raise UserError(_("Please enter your contact name."))
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Missing Required Information'),
+                    'res_model': 'ab.claim.error.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_error_message': _(
+                            'Please enter the contact name.'
+                        ),
+                    },
+                }
             if not rec.contact_phone:
-                raise UserError(_("Please enter your contact phone."))
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Missing Required Information'),
+                    'res_model': 'ab.claim.error.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_error_message': _(
+                            'Please enter the contact phone.'
+                        ),
+                    },
+                }
             if rec.check_delivery_status not in ('cash', 'bank_transfer'):
                 if rec.check_delivery_status == 'check_delivered' and not rec.sub_delivery_status:
                     return {

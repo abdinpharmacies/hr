@@ -1,0 +1,586 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_internal_shipment_view_list" model="ir.ui.view">
+            <field name="name">ab_internal_shipment.list</field>
+            <field name="model">ab_internal_shipment</field>
+            <field name="arch" type="xml">
+                <list string="Internal Shipments"
+                      class="o_ais_list o_ais_shipments_list"
+                      decoration-muted="state == 'draft'"
+                      decoration-danger="is_delayed"
+                      decoration-warning="state == 'awaiting_receipt'"
+                      decoration-success="state in ('received', 'closed')"
+                      decoration-info="state in ('sent', 'in_transit')">
+                    <field name="name"/>
+                    <field name="shipment_date"/>
+                    <field name="subject"/>
+                    <field name="sender_display"/>
+                    <field name="recipient_display"/>
+                    <field name="current_holder_display"/>
+                    <field name="expected_delivery_date" optional="show"/>
+                    <field name="state" widget="badge"
+                           decoration-muted="state == 'draft'"
+                           decoration-danger="is_delayed"
+                           decoration-warning="state == 'awaiting_receipt'"
+                           decoration-success="state in ('received', 'closed')"
+                           decoration-info="state in ('sent', 'in_transit')"/>
+                    <field name="shipment_type" optional="hide"/>
+                    <field name="delivery_method" optional="hide"/>
+                    <field name="created_by_id" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_view_form" model="ir.ui.view">
+            <field name="name">ab_internal_shipment.form</field>
+            <field name="model">ab_internal_shipment</field>
+            <field name="arch" type="xml">
+                <form string="Internal Shipment" class="o_ais_form">
+                    <header class="o_ais_workflow_header">
+                        <button name="action_send" type="object" string="Send" class="btn-primary"
+                                confirm="Are you sure you want to send this shipment?"
+                                invisible="state != 'draft' or not can_current_user_manage_workflow"/>
+                        <button name="action_mark_in_transit" type="object" string="Mark In Transit"
+                                confirm="Are you sure you want to mark this shipment as in transit?"
+                                invisible="state != 'sent' or not can_current_user_manage_workflow"/>
+                        <button name="action_deliver" type="object" string="Mark Delivered" class="btn-primary"
+                                confirm="Are you sure you want to mark this shipment as delivered?"
+                                invisible="state not in ('sent', 'in_transit') or not can_current_user_manage_workflow"/>
+                        <button name="action_receive" type="object" string="Confirm Receipt" class="btn-primary"
+                                confirm="Are you sure you want to confirm receipt for this shipment?"
+                                invisible="not can_current_user_receive"/>
+                        <button name="action_close" type="object" string="Close"
+                                confirm="Are you sure you want to close this shipment?"
+                                invisible="not can_current_user_close"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,sent,in_transit,awaiting_receipt,received,closed"/>
+                    </header>
+                    <sheet class="o_ais_sheet">
+                        <field name="is_delayed" invisible="1"/>
+                        <widget name="web_ribbon" title="Delayed" bg_color="text-bg-danger"
+                                invisible="not is_delayed"/>
+                        <widget name="web_ribbon" title="Closed"
+                                invisible="state != 'closed'"/>
+                        <div class="o_ais_top_tracking">
+                            <div class="o_ais_top_tracking_header">
+                                <span class="o_ais_route_eyebrow">Shipment Timeline</span>
+                                <strong>Track the shipment story from creation through closure</strong>
+                            </div>
+                            <div class="o_ais_top_timeline o_ais_top_timeline_state_draft"
+                                 invisible="state != 'draft'">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_current">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Created</strong>
+                                    <field name="created_by_id" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Sent</strong>
+                                    <field name="sent_by_id" nolabel="1"/>
+                                    <field name="sent_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Delivered</strong>
+                                    <field name="delivered_by_id" nolabel="1"/>
+                                    <field name="delivered_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Received</strong>
+                                    <field name="received_by_id" nolabel="1"/>
+                                    <field name="received_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Closed</strong>
+                                    <field name="closed_by_id" nolabel="1"/>
+                                    <field name="closed_date" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="o_ais_top_timeline o_ais_top_timeline_state_sent"
+                                 invisible="state != 'sent'">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Created</strong>
+                                    <field name="created_by_id" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_current">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Sent</strong>
+                                    <field name="sent_by_id" nolabel="1"/>
+                                    <field name="sent_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Delivered</strong>
+                                    <field name="delivered_by_id" nolabel="1"/>
+                                    <field name="delivered_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Received</strong>
+                                    <field name="received_by_id" nolabel="1"/>
+                                    <field name="received_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Closed</strong>
+                                    <field name="closed_by_id" nolabel="1"/>
+                                    <field name="closed_date" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="o_ais_top_timeline o_ais_top_timeline_state_in_transit"
+                                 invisible="state != 'in_transit'">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Created</strong>
+                                    <field name="created_by_id" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Sent</strong>
+                                    <field name="sent_by_id" nolabel="1"/>
+                                    <field name="sent_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_current">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Delivered</strong>
+                                    <field name="delivered_by_id" nolabel="1"/>
+                                    <field name="delivered_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Received</strong>
+                                    <field name="received_by_id" nolabel="1"/>
+                                    <field name="received_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Closed</strong>
+                                    <field name="closed_by_id" nolabel="1"/>
+                                    <field name="closed_date" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="o_ais_top_timeline o_ais_top_timeline_state_awaiting_receipt"
+                                 invisible="state != 'awaiting_receipt'">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Created</strong>
+                                    <field name="created_by_id" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Sent</strong>
+                                    <field name="sent_by_id" nolabel="1"/>
+                                    <field name="sent_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Delivered</strong>
+                                    <field name="delivered_by_id" nolabel="1"/>
+                                    <field name="delivered_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_current">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Received</strong>
+                                    <field name="received_by_id" nolabel="1"/>
+                                    <field name="received_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Closed</strong>
+                                    <field name="closed_by_id" nolabel="1"/>
+                                    <field name="closed_date" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="o_ais_top_timeline o_ais_top_timeline_state_received"
+                                 invisible="state != 'received'">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Created</strong>
+                                    <field name="created_by_id" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Sent</strong>
+                                    <field name="sent_by_id" nolabel="1"/>
+                                    <field name="sent_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Delivered</strong>
+                                    <field name="delivered_by_id" nolabel="1"/>
+                                    <field name="delivered_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_current">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Received</strong>
+                                    <field name="received_by_id" nolabel="1"/>
+                                    <field name="received_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Closed</strong>
+                                    <field name="closed_by_id" nolabel="1"/>
+                                    <field name="closed_date" nolabel="1"/>
+                                </div>
+                            </div>
+                            <div class="o_ais_top_timeline o_ais_top_timeline_state_closed"
+                                 invisible="state != 'closed'">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Created</strong>
+                                    <field name="created_by_id" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Sent</strong>
+                                    <field name="sent_by_id" nolabel="1"/>
+                                    <field name="sent_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Delivered</strong>
+                                    <field name="delivered_by_id" nolabel="1"/>
+                                    <field name="delivered_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Received</strong>
+                                    <field name="received_by_id" nolabel="1"/>
+                                    <field name="received_date" nolabel="1"/>
+                                </div>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                    <span class="o_ais_top_timeline_dot"/>
+                                    <strong>Closed</strong>
+                                    <field name="closed_by_id" nolabel="1"/>
+                                    <field name="closed_date" nolabel="1"/>
+                                </div>
+                            </div>
+                        </div>
+                        <group class="o_ais_section_grid o_ais_overview_grid o_ais_overview_grid_single">
+                            <group string="Shipment Information" class="o_ais_card o_ais_card_overview">
+                                <field name="can_current_user_manage_workflow" invisible="1"/>
+                                <field name="can_current_user_close" invisible="1"/>
+                                <field name="subject" readonly="state != 'draft'" placeholder="Subject"/>
+                                <field name="shipment_date" readonly="state != 'draft'"/>
+                                <field name="expected_delivery_date" readonly="state in ('received', 'closed')"/>
+                                <field name="shipment_type" readonly="state != 'draft'"/>
+                                <field name="delivery_method" readonly="state != 'draft'"/>
+                            </group>
+                        </group>
+                        <div class="o_ais_route_section">
+                            <div class="o_ais_route_header">
+                                <div>
+                                    <span class="o_ais_route_eyebrow">Shipment Route</span>
+                                    <strong>From sender to recipient</strong>
+                                </div>
+                                <div class="o_ais_route_line" aria-hidden="true">
+                                    <span>From</span>
+                                    <i/>
+                                    <span>To</span>
+                                </div>
+                            </div>
+                            <div class="o_ais_route_progress" invisible="1">
+                                <field name="current_holder_display" readonly="1" invisible="1"/>
+                                <field name="current_holder_type" readonly="1" invisible="1"/>
+                                <field name="current_holder_user_id" readonly="1" invisible="1"/>
+                            </div>
+                            <group class="o_ais_section_grid o_ais_party_grid">
+                                <group string="Sender" class="o_ais_card o_ais_card_sender">
+                                    <div class="o_ais_party_label o_ais_party_label_from">From</div>
+                                    <field name="sender_type" readonly="state != 'draft'"/>
+                                    <field name="sender_store_id"
+                                           invisible="sender_type != 'branch'"
+                                           required="sender_type == 'branch'"
+                                           readonly="state != 'draft'"/>
+                                    <field name="sender_department_id"
+                                           invisible="sender_type != 'department'"
+                                           required="sender_type == 'department'"
+                                           readonly="state != 'draft'"/>
+                                    <field name="sender_employee_selection_type"
+                                           invisible="sender_type not in ('department', 'branch')"
+                                           readonly="state != 'draft'"/>
+                                    <field name="sender_selected_employee_ids"
+                                           widget="many2many_tags"
+                                           invisible="sender_type not in ('department', 'branch') or sender_employee_selection_type != 'specific'"
+                                           readonly="state != 'draft'"
+                                           placeholder="Select employees..."/>
+                                    <field name="sender_employee_id"
+                                           invisible="sender_type != 'employee'"
+                                           required="sender_type == 'employee'"
+                                           readonly="state != 'draft'"/>
+                                    <field name="sender_user_id" readonly="1" invisible="1"/>
+                                </group>
+                                <div class="o_ais_route_arrow" aria-hidden="true">&#8594;</div>
+                                <group string="Recipient" class="o_ais_card o_ais_card_recipient">
+                                    <div class="o_ais_party_label o_ais_party_label_to">To</div>
+                                    <field name="can_current_user_receive" invisible="1"/>
+                                    <field name="recipient_type" readonly="state != 'draft'"/>
+                                    <field name="recipient_store_id"
+                                           invisible="recipient_type != 'branch'"
+                                           required="recipient_type == 'branch'"
+                                           readonly="state != 'draft'"/>
+                                    <field name="recipient_department_id"
+                                           invisible="recipient_type != 'department'"
+                                           required="recipient_type == 'department'"
+                                           readonly="state != 'draft'"/>
+                                    <field name="recipient_employee_selection_type"
+                                           invisible="recipient_type not in ('department', 'branch')"
+                                           readonly="state != 'draft'"/>
+                                    <field name="recipient_confirmation_employee_ids"
+                                           widget="many2many_tags"
+                                           invisible="recipient_type not in ('department', 'branch') or recipient_employee_selection_type != 'all'"
+                                           readonly="1"/>
+                                    <field name="recipient_selected_employee_ids"
+                                           widget="many2many_tags"
+                                           invisible="recipient_type not in ('department', 'branch') or recipient_employee_selection_type != 'specific'"
+                                           readonly="state != 'draft'"
+                                           placeholder="Select employees..."/>
+                                    <field name="recipient_employee_id"
+                                           invisible="recipient_type != 'employee'"
+                                           required="recipient_type == 'employee'"
+                                           readonly="state != 'draft'"/>
+                                    <field name="recipient_user_id" readonly="1" invisible="1"/>
+                                </group>
+                            </group>
+                        </div>
+                        <notebook class="o_ais_notebook">
+                            <page string="Contents" class="o_ais_page o_ais_page_contents">
+                                <div class="o_ais_contents_grid">
+                                    <div class="o_ais_contents_empty">
+                                        <div class="o_ais_empty_icon">+</div>
+                                        <div>
+                                            <strong>No shipment items added yet.</strong>
+                                            <span>Add your first item to start tracking shipment contents.</span>
+                                        </div>
+                                    </div>
+                                    <field name="line_ids" readonly="state != 'draft'" class="o_ais_inline_lines">
+                                        <list editable="bottom" class="o_ais_embedded_list o_ais_contents_list">
+                                            <control>
+                                                <create string="Add Item"/>
+                                            </control>
+                                            <field name="item_name"/>
+                                            <field name="quantity"/>
+                                            <field name="description"/>
+                                            <field name="notes"/>
+                                        </list>
+                                    </field>
+                                </div>
+                            </page>
+                            <page string="Notes" class="o_ais_page o_ais_page_notes">
+                                <div class="o_ais_notes_panel">
+                                    <div class="o_ais_panel_header">
+                                        <div>
+                                            <span class="o_ais_route_eyebrow">Activity Notes</span>
+                                            <strong>Shipment context</strong>
+                                        </div>
+                                    </div>
+                                    <group class="o_ais_notes_grid">
+                                        <field name="description" nolabel="1" placeholder="Description"/>
+                                        <field name="notes" nolabel="1" placeholder="Notes"/>
+                                    </group>
+                                </div>
+                            </page>
+                            <page string="Delivery Proof" class="o_ais_page o_ais_page_attachments">
+                                <div class="o_ais_proof_panel">
+                                    <div class="o_ais_panel_header">
+                                        <div>
+                                            <span class="o_ais_route_eyebrow">Proof of Delivery</span>
+                                            <strong>Delivery evidence</strong>
+                                            <p>No delivery proof uploaded yet. Upload signed receipts, documents, or proof of delivery.</p>
+                                        </div>
+                                    </div>
+                                    <field name="delivery_proof_attachment_ids" widget="many2many_binary" nolabel="1"/>
+                                </div>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_view_search" model="ir.ui.view">
+            <field name="name">ab_internal_shipment.search</field>
+            <field name="model">ab_internal_shipment</field>
+            <field name="arch" type="xml">
+                <search string="Internal Shipments">
+                    <field name="name"/>
+                    <field name="subject"/>
+                    <field name="sender_display"/>
+                    <field name="recipient_display"/>
+                    <field name="current_holder_display"/>
+                    <separator/>
+                    <filter name="my_shipments" string="My Shipments"
+                            domain="[('created_by_id', '=', uid)]"/>
+                    <filter name="delayed" string="Delayed"
+                            domain="[('is_delayed', '=', True)]"/>
+                    <separator/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
+                    <filter name="in_transit" string="In Transit" domain="[('state', '=', 'in_transit')]"/>
+                    <filter name="awaiting_receipt_state" string="Awaiting Receipt" domain="[('state', '=', 'awaiting_receipt')]"/>
+                    <filter name="received" string="Confirmed" domain="[('state', '=', 'received')]"/>
+                    <filter name="closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                    <separator/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_sender_type" string="Sender Type" context="{'group_by': 'sender_type'}"/>
+                    <filter name="group_recipient_type" string="Recipient Type" context="{'group_by': 'recipient_type'}"/>
+                    <filter name="group_shipment_type" string="Shipment Type" context="{'group_by': 'shipment_type'}"/>
+                    <filter name="group_delivery_method" string="Delivery Method" context="{'group_by': 'delivery_method'}"/>
+                    <filter name="group_current_holder" string="Current Holder" context="{'group_by': 'current_holder_display'}"/>
+                    <filter name="group_shipment_date" string="Shipment Date" context="{'group_by': 'shipment_date'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_view_pivot" model="ir.ui.view">
+            <field name="name">ab_internal_shipment.pivot</field>
+            <field name="model">ab_internal_shipment</field>
+            <field name="arch" type="xml">
+                <pivot string="Shipment Statistics">
+                    <field name="state" type="row"/>
+                    <field name="delivery_method" type="col"/>
+                    <field name="shipment_count" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_view_graph" model="ir.ui.view">
+            <field name="name">ab_internal_shipment.graph</field>
+            <field name="model">ab_internal_shipment</field>
+            <field name="arch" type="xml">
+                <graph string="Shipments by State" type="pie">
+                    <field name="state"/>
+                    <field name="shipment_count" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_action" model="ir.actions.act_window">
+            <field name="name">Internal Shipments</field>
+            <field name="res_model">ab_internal_shipment</field>
+            <field name="view_mode">list,form,pivot,graph</field>
+            <field name="domain">[]</field>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
+            <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create an internal shipment
+                </p>
+                <p>
+                    Register the sender, recipient, shipment contents, and delivery details to track internal movement.
+                </p>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_view_list_awaiting_receipt" model="ir.ui.view">
+            <field name="name">ab_internal_shipment.list.awaiting_receipt</field>
+            <field name="model">ab_internal_shipment</field>
+            <field name="arch" type="xml">
+                <list create="false" string="Awaiting Receipt"
+                      class="o_ais_list o_ais_receipt_list"
+                      decoration-muted="state == 'draft'"
+                      decoration-danger="is_delayed"
+                      decoration-warning="state == 'awaiting_receipt'"
+                      decoration-success="state in ('received', 'closed')"
+                      decoration-info="state in ('sent', 'in_transit')">
+                    <field name="name"/>
+                    <field name="shipment_date"/>
+                    <field name="subject"/>
+                    <field name="sender_display"/>
+                    <field name="recipient_display"/>
+                    <field name="current_holder_display"/>
+                    <field name="expected_delivery_date" optional="show"/>
+                    <field name="state" widget="badge"
+                           decoration-muted="state == 'draft'"
+                           decoration-danger="is_delayed"
+                           decoration-warning="state == 'awaiting_receipt'"
+                           decoration-success="state in ('received', 'closed')"
+                           decoration-info="state in ('sent', 'in_transit')"/>
+                    <field name="shipment_type" optional="hide"/>
+                    <field name="delivery_method" optional="hide"/>
+                    <field name="created_by_id" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_awaiting_receipt_action" model="ir.actions.act_window">
+            <field name="name">Awaiting Receipt</field>
+            <field name="res_model">ab_internal_shipment</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('state', '=', 'awaiting_receipt')]</field>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
+            <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
+            <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list_awaiting_receipt')})]"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No shipments are awaiting receipt
+                </p>
+                <p>
+                    Delivered shipments that are pending receipt confirmation appear here.
+                </p>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_reporting_action" model="ir.actions.act_window">
+            <field name="name">Shipment Statistics</field>
+            <field name="res_model">ab_internal_shipment</field>
+            <field name="view_mode">graph,pivot</field>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
+            <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    No shipment statistics available
+                </p>
+                <p>
+                    Shipment statistics are generated from existing internal shipment records.
+                </p>
+            </field>
+        </record>
+
+        <record id="ab_internal_shipment_reporting_server_action" model="ir.actions.server">
+            <field name="name">Shipment Statistics</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
+            <field name="state">code</field>
+            <field name="code"><![CDATA[
+action = {
+    "type": "ir.actions.act_window",
+    "name": "Shipment Statistics",
+    "res_model": "ab_internal_shipment",
+    "view_mode": "graph,pivot",
+    "domain": [],
+    "search_view_id": env.ref("ab_internal_shipment_tracking.ab_internal_shipment_view_search").id,
+}
+            ]]></field>
+        </record>
+    </data>
+</odoo>
