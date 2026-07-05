@@ -324,11 +324,19 @@
                                            invisible="sender_type != 'department'"
                                            required="sender_type == 'department'"
                                            readonly="state != 'draft'"/>
+                                    <field name="sender_employee_selection_type"
+                                           invisible="sender_type not in ('department', 'branch')"
+                                           readonly="state != 'draft'"/>
+                                    <field name="sender_selected_employee_ids"
+                                           widget="many2many_tags"
+                                           invisible="sender_type not in ('department', 'branch') or sender_employee_selection_type != 'specific'"
+                                           readonly="state != 'draft'"
+                                           placeholder="Select employees..."/>
                                     <field name="sender_employee_id"
                                            invisible="sender_type != 'employee'"
                                            required="sender_type == 'employee'"
                                            readonly="state != 'draft'"/>
-                                    <field name="sender_user_id" readonly="1"/>
+                                    <field name="sender_user_id" readonly="1" invisible="1"/>
                                 </group>
                                 <div class="o_ais_route_arrow" aria-hidden="true">&#8594;</div>
                                 <group string="Recipient" class="o_ais_card o_ais_card_recipient">
@@ -343,11 +351,19 @@
                                            invisible="recipient_type != 'department'"
                                            required="recipient_type == 'department'"
                                            readonly="state != 'draft'"/>
+                                    <field name="recipient_employee_selection_type"
+                                           invisible="recipient_type not in ('department', 'branch')"
+                                           readonly="state != 'draft'"/>
+                                    <field name="recipient_selected_employee_ids"
+                                           widget="many2many_tags"
+                                           invisible="recipient_type not in ('department', 'branch') or recipient_employee_selection_type != 'specific'"
+                                           readonly="state != 'draft'"
+                                           placeholder="Select employees..."/>
                                     <field name="recipient_employee_id"
                                            invisible="recipient_type != 'employee'"
                                            required="recipient_type == 'employee'"
                                            readonly="state != 'draft'"/>
-                                    <field name="recipient_user_id" readonly="1"/>
+                                    <field name="recipient_user_id" readonly="1" invisible="1"/>
                                 </group>
                             </group>
                         </div>
@@ -402,7 +418,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <chatter groups="ab_internal_shipment_tracking.group_ab_internal_shipment_admin"/>
+                    <chatter/>
                 </form>
             </field>
         </record>
@@ -468,7 +484,8 @@
             <field name="name">Internal Shipments</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form,pivot,graph</field>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
+            <field name="domain">[]</field>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
@@ -516,7 +533,7 @@
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('state', '=', 'awaiting_receipt')]</field>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
             <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list_awaiting_receipt')})]"/>
             <field name="help" type="html">
@@ -533,7 +550,7 @@
             <field name="name">Shipment Statistics</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">graph,pivot</field>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_admin'))]"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
@@ -548,26 +565,15 @@
         <record id="ab_internal_shipment_reporting_server_action" model="ir.actions.server">
             <field name="name">Shipment Statistics</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_admin'))]"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="state">code</field>
             <field name="code"><![CDATA[
-domain = []
-if not env.user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin"):
-    employee_ids = env.user.ab_employee_ids.ids
-    branch_account_store_ids = env.user.ab_department_ids.store_id.ids
-    domain = [
-        "|", "|", "|",
-        ("created_by_id", "=", env.uid),
-        "&", ("recipient_type", "=", "employee"), ("recipient_employee_id", "in", employee_ids),
-        "&", ("recipient_type", "=", "department"), ("recipient_department_id.manager_id.user_id", "=", env.uid),
-        "&", ("recipient_type", "=", "branch"), ("recipient_store_id", "in", branch_account_store_ids),
-    ]
 action = {
     "type": "ir.actions.act_window",
     "name": "Shipment Statistics",
     "res_model": "ab_internal_shipment",
     "view_mode": "graph,pivot",
-    "domain": domain,
+    "domain": [],
     "search_view_id": env.ref("ab_internal_shipment_tracking.ab_internal_shipment_view_search").id,
 }
             ]]></field>
