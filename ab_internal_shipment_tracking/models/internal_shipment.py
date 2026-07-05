@@ -145,6 +145,11 @@ class InternalShipment(models.Model):
         "employee_id",
         string="Selected Recipient Employees",
     )
+    recipient_confirmation_employee_ids = fields.Many2many(
+        "ab_hr_employee",
+        compute="_compute_recipient_confirmation_employee_ids",
+        string="Receipt Confirmation Employees",
+    )
     recipient_user_id = fields.Many2one(
         "res.users",
         compute="_compute_party_users",
@@ -388,6 +393,24 @@ class InternalShipment(models.Model):
         for record in self:
             record.sender_display = record._get_party_display("sender")
             record.recipient_display = record._get_party_display("recipient")
+
+    @api.depends(
+        "recipient_type",
+        "recipient_store_id",
+        "recipient_department_id",
+        "recipient_employee_id",
+        "recipient_employee_selection_type",
+        "recipient_selected_employee_ids",
+    )
+    def _compute_recipient_confirmation_employee_ids(self):
+        for record in self:
+            if (
+                record.recipient_type in ("department", "branch")
+                and record.recipient_employee_selection_type == "all"
+            ):
+                record.recipient_confirmation_employee_ids = record._get_party_employees("recipient")
+            else:
+                record.recipient_confirmation_employee_ids = self.env["ab_hr_employee"]
 
     @api.depends(
         "current_holder_type",

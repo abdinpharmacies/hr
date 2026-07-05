@@ -354,6 +354,10 @@
                                     <field name="recipient_employee_selection_type"
                                            invisible="recipient_type not in ('department', 'branch')"
                                            readonly="state != 'draft'"/>
+                                    <field name="recipient_confirmation_employee_ids"
+                                           widget="many2many_tags"
+                                           invisible="recipient_type not in ('department', 'branch') or recipient_employee_selection_type != 'all'"
+                                           readonly="1"/>
                                     <field name="recipient_selected_employee_ids"
                                            widget="many2many_tags"
                                            invisible="recipient_type not in ('department', 'branch') or recipient_employee_selection_type != 'specific'"
