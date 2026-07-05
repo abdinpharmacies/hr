@@ -91,6 +91,18 @@ class InternalShipment(models.Model):
         string="Sender Employee",
         tracking=True,
     )
+    sender_employee_selection_type = fields.Selection(
+        [("all", "All"), ("specific", "Specific Employees")],
+        string="Send to",
+        default="all",
+    )
+    sender_selected_employee_ids = fields.Many2many(
+        "ab_hr_employee",
+        "ab_internal_shipment_sender_employee_selected_rel",
+        "shipment_id",
+        "employee_id",
+        string="Selected Sender Employees",
+    )
     sender_user_id = fields.Many2one(
         "res.users",
         compute="_compute_party_users",
@@ -120,6 +132,18 @@ class InternalShipment(models.Model):
         "ab_hr_employee",
         string="Recipient Employee",
         tracking=True,
+    )
+    recipient_employee_selection_type = fields.Selection(
+        [("all", "All"), ("specific", "Specific Employees")],
+        string="Send to",
+        default="all",
+    )
+    recipient_selected_employee_ids = fields.Many2many(
+        "ab_hr_employee",
+        "ab_internal_shipment_recipient_employee_selected_rel",
+        "shipment_id",
+        "employee_id",
+        string="Selected Recipient Employees",
     )
     recipient_user_id = fields.Many2one(
         "res.users",
@@ -224,12 +248,88 @@ class InternalShipment(models.Model):
         self.sender_store_id = False
         self.sender_department_id = False
         self.sender_employee_id = False
+        self.sender_employee_selection_type = "all"
+        self.sender_selected_employee_ids = [(5, 0, 0)]
 
     @api.onchange("recipient_type")
     def _onchange_recipient_type(self):
         self.recipient_store_id = False
         self.recipient_department_id = False
         self.recipient_employee_id = False
+        self.recipient_employee_selection_type = "all"
+        self.recipient_selected_employee_ids = [(5, 0, 0)]
+
+    @api.onchange("sender_department_id")
+    def _onchange_sender_department_id(self):
+        self.sender_employee_selection_type = "all"
+        self.sender_selected_employee_ids = [(5, 0, 0)]
+        if self.sender_department_id:
+            return {
+                "domain": {
+                    "sender_selected_employee_ids": [
+                        ("department_id", "=", self.sender_department_id.id),
+                    ],
+                },
+            }
+        return {
+            "domain": {
+                "sender_selected_employee_ids": [],
+            },
+        }
+
+    @api.onchange("recipient_department_id")
+    def _onchange_recipient_department_id(self):
+        self.recipient_employee_selection_type = "all"
+        self.recipient_selected_employee_ids = [(5, 0, 0)]
+        if self.recipient_department_id:
+            return {
+                "domain": {
+                    "recipient_selected_employee_ids": [
+                        ("department_id", "=", self.recipient_department_id.id),
+                    ],
+                },
+            }
+        return {
+            "domain": {
+                "recipient_selected_employee_ids": [],
+            },
+        }
+
+    @api.onchange("sender_store_id")
+    def _onchange_sender_store_id(self):
+        self.sender_employee_selection_type = "all"
+        self.sender_selected_employee_ids = [(5, 0, 0)]
+        if self.sender_store_id:
+            return {
+                "domain": {
+                    "sender_selected_employee_ids": [
+                        ("department_id.store_id", "=", self.sender_store_id.id),
+                    ],
+                },
+            }
+        return {
+            "domain": {
+                "sender_selected_employee_ids": [],
+            },
+        }
+
+    @api.onchange("recipient_store_id")
+    def _onchange_recipient_store_id(self):
+        self.recipient_employee_selection_type = "all"
+        self.recipient_selected_employee_ids = [(5, 0, 0)]
+        if self.recipient_store_id:
+            return {
+                "domain": {
+                    "recipient_selected_employee_ids": [
+                        ("department_id.store_id", "=", self.recipient_store_id.id),
+                    ],
+                },
+            }
+        return {
+            "domain": {
+                "recipient_selected_employee_ids": [],
+            },
+        }
 
     @api.constrains(
         "sender_type",
@@ -310,39 +410,48 @@ class InternalShipment(models.Model):
         "state",
         "recipient_type",
         "recipient_store_id",
+        "recipient_department_id",
         "recipient_department_id.manager_id.user_id",
         "recipient_employee_id.user_id",
+        "recipient_employee_selection_type",
+        "recipient_selected_employee_ids",
     )
     @api.depends_context("uid")
     def _compute_can_current_user_receive(self):
         user = self.env.user
-        is_admin = user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin")
         employee_ids = set(user.ab_employee_ids.ids)
         branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
         for record in self:
             can_receive = False
             if record.state == "awaiting_receipt":
-                if is_admin:
-                    can_receive = True
-                elif record.recipient_type == "employee":
+                if record.recipient_type == "employee":
                     can_receive = record.recipient_employee_id.id in employee_ids
                 elif record.recipient_type == "department":
                     can_receive = record.recipient_department_id.manager_id.user_id == user
+                    if not can_receive:
+                        recipient_employees = record._get_party_employees("recipient")
+                        can_receive = bool(set(recipient_employees.ids) & employee_ids)
                 elif record.recipient_type == "branch":
                     can_receive = record.recipient_store_id.id in branch_account_store_ids
+                    if not can_receive:
+                        recipient_employees = record._get_party_employees("recipient")
+                        can_receive = bool(set(recipient_employees.ids) & employee_ids)
             record.can_current_user_receive = can_receive
 
     @api.depends("state", "created_by_id")
     @api.depends_context("uid")
     def _compute_current_user_action_permissions(self):
         user = self.env.user
-        is_admin = user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin")
         for record in self:
-            record.can_current_user_manage_workflow = is_admin or record.created_by_id == user
+            record.can_current_user_manage_workflow = record.created_by_id == user
             record.can_current_user_close = record.state == "received"
 
     def action_send(self):
         self._check_current_user_can_manage_workflow()
+        for record in self:
+            recipient_users = record._get_party_users("recipient")
+            if recipient_users:
+                record.message_subscribe(partner_ids=recipient_users.partner_id.ids)
         self._move_state("draft", "sent", "sent_by_id", "sent_date", "sent")
 
     def action_mark_in_transit(self):
@@ -476,12 +585,10 @@ class InternalShipment(models.Model):
     def _check_current_user_can_manage_workflow(self):
         unauthorized = self.filtered(lambda record: not record.can_current_user_manage_workflow)
         if unauthorized:
-            raise UserError(_("Only the shipment creator or a shipment administrator can perform this action."))
+            raise UserError(_("Only the shipment creator can perform this action."))
 
     def _should_redirect_after_branch_delivery(self):
         user = self.env.user
-        if user.has_group("ab_internal_shipment_tracking.group_ab_internal_shipment_admin"):
-            return False
         branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
         return any(
             record.recipient_type == "branch"
@@ -537,6 +644,65 @@ class InternalShipment(models.Model):
             return self[f"{party}_department_id"].manager_id.user_id
         return self.env["res.users"]
 
+    def _get_party_employees(self, party):
+        self.ensure_one()
+        party_type = self[f"{party}_type"]
+        if party_type == "employee":
+            return self[f"{party}_employee_id"]
+        if party_type == "department":
+            dept = self[f"{party}_department_id"]
+            if not dept:
+                return self.env["ab_hr_employee"]
+            if self[f"{party}_employee_selection_type"] == "specific":
+                return self[f"{party}_selected_employee_ids"]
+            employees = self.env["ab_hr_employee"]
+            dept_occupied = dept.occupied_job_ids.mapped("employee_id")
+            if dept_occupied:
+                employees |= dept_occupied
+            direct = self.env["ab_hr_employee"].search([
+                ("department_id", "=", dept.id),
+            ])
+            if direct:
+                employees |= direct
+            return employees
+        if party_type == "branch":
+            store = self[f"{party}_store_id"]
+            if not store:
+                return self.env["ab_hr_employee"]
+            if self[f"{party}_employee_selection_type"] == "specific":
+                return self[f"{party}_selected_employee_ids"]
+            branch_depts = self.env["ab_hr_department"].search([
+                ("store_id", "=", store.id),
+            ])
+            employees = self.env["ab_hr_employee"]
+            if branch_depts:
+                dept_occupied = branch_depts.mapped("occupied_job_ids").mapped("employee_id")
+                if dept_occupied:
+                    employees |= dept_occupied
+                direct = self.env["ab_hr_employee"].search([
+                    ("department_id", "in", branch_depts.ids),
+                ])
+                if direct:
+                    employees |= direct
+            return employees
+        return self.env["ab_hr_employee"]
+
+    def _get_party_users(self, party):
+        self.ensure_one()
+        employees = self._get_party_employees(party)
+        users = employees.mapped("user_id").filtered(lambda u: u)
+        if self[f"{party}_type"] == "branch":
+            store = self[f"{party}_store_id"]
+            if store:
+                branch_depts = self.env["ab_hr_department"].search([
+                    ("store_id", "=", store.id),
+                ])
+                if branch_depts:
+                    account_users = branch_depts.mapped("user_id").filtered(lambda u: u)
+                    manager_users = branch_depts.mapped("manager_id.user_id").filtered(lambda u: u)
+                    users |= account_users | manager_users
+        return users
+
     def _validate_party(self, party):
         self.ensure_one()
         party_type = self[f"{party}_type"]
@@ -574,14 +740,19 @@ class InternalShipment(models.Model):
 
     def _schedule_receipt_activity(self):
         self.ensure_one()
-        if not self.recipient_user_id:
-            return
         activity_type = self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
         if not activity_type:
             return
-        self.activity_schedule(
-            activity_type_id=activity_type.id,
-            user_id=self.recipient_user_id.id,
-            summary=_("Shipment delivered, confirm receipt"),
-            note=_("Shipment %s has been delivered and is awaiting receipt confirmation.") % self.name,
-        )
+        recipient_users = self._get_party_users("recipient")
+        for user in recipient_users:
+            existing = self.activity_ids.filtered(
+                lambda a, u=user, at=activity_type: a.activity_type_id == at and a.user_id == u
+            )
+            if existing:
+                continue
+            self.activity_schedule(
+                activity_type_id=activity_type.id,
+                user_id=user.id,
+                summary=_("Shipment delivered, confirm receipt"),
+                note=_("Shipment %s has been delivered and is awaiting receipt confirmation.") % self.name,
+            )
