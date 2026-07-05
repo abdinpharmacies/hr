@@ -416,7 +416,7 @@ class AbQualityAssuranceVisit(models.Model):
         )
 
     def _notify_section_department_managers_telegram(self, status):
-        TelegramService = self.env["ab.telegram.service"]
+        TelegramService = self.env["ab_telegram_service"]
         BotLink = self.env["ab_hr_bot"].sudo()
         for record in self:
             manager_sections = record._get_unique_section_department_managers()
