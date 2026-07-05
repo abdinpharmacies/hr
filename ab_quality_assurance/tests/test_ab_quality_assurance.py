@@ -90,6 +90,7 @@ class TestAbQualityAssurance(TransactionCase):
                 "max_score": 30,
             }
         )
+
     def _create_user(self, name, login, extra_groups):
         partner_vals = {
             "name": name,
@@ -147,7 +148,7 @@ class TestAbQualityAssurance(TransactionCase):
             sent_messages.append((chat_id, message))
             return True
 
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
             self.Visits.with_user(self.member_user).create(
                 {
                     "department_id": self.visited_department.id,
@@ -176,7 +177,7 @@ class TestAbQualityAssurance(TransactionCase):
             sent_messages.append((chat_id, message))
             return True
 
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
             visit = self.Visits.with_user(self.member_user).create(
                 {
                     "department_id": self.visited_department.id,
@@ -228,7 +229,7 @@ class TestAbQualityAssurance(TransactionCase):
             sent_messages.append((chat_id, message))
             return True
 
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
             visit = self.Visits.with_user(self.member_user).create(
                 {
                     "department_id": self.visited_department.id,
@@ -257,7 +258,7 @@ class TestAbQualityAssurance(TransactionCase):
             sent_messages.append((chat_id, message))
             return True
 
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
             visit = self.Visits.with_user(self.member_user).create(
                 {
                     "department_id": self.visited_department.id,
