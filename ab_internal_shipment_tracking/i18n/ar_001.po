@@ -1198,6 +1198,12 @@ msgstr "موظفو المستلم المحددون"
 
 
 #. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,field_description:ab_internal_shipment_tracking.field_ab_internal_shipment__recipient_confirmation_employee_ids
+msgid "Receipt Confirmation Employees"
+msgstr "موظفو تأكيد الاستلام"
+
+
+#. module: ab_internal_shipment_tracking
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
 msgid "To"
 msgstr "إلى"
