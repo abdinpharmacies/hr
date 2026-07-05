@@ -228,7 +228,7 @@ msgstr "بنود منتجات المجموعة"
 #. module: ab_self_inventory
 #: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_request_batch
 msgid "Batches"
-msgstr "المجموعات"
+msgstr "طلبات الجرد المجمعة"
 
 #. module: ab_self_inventory
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__both
@@ -1001,7 +1001,7 @@ msgstr "تمت المعالجة"
 #: model:ir.ui.menu,name:ab_self_inventory.menu_ab_self_inventory_process
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
 msgid "Processes"
-msgstr "تمت المعالجة"
+msgstr "عمليات الجرد الحالية"
 
 #. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__product_id
