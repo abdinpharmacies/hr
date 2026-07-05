@@ -62,7 +62,6 @@ class AbQualityAssuranceVisitLine(models.Model):
             record.can_reply_department_response = bool(
                 is_department_manager
                 and record.visit_state == "submitted"
-                and record.visit_section_id.department_manager_id.user_id == user
             )
 
     @api.depends("score", "max_score")
@@ -124,10 +123,11 @@ class AbQualityAssuranceVisitLine(models.Model):
         if vals and set(vals) <= {"department_response"} and self._can_write_department_response():
             return super().write(vals)
         if (
-            self.env.user.has_group("ab_quality_assurance.group_ab_quality_assurance_department_manager")
-            and not any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
+                self.env.user.has_group("ab_quality_assurance.group_ab_quality_assurance_department_manager")
+                and not any(self.env.user.has_group(group) for group in QUALITY_EDITOR_GROUPS)
         ):
-            raise AccessError(_("Department managers can only update Department Response on their submitted standards."))
+            raise AccessError(
+                _("Department managers can only update Department Response on their submitted standards."))
         self._check_visit_is_editable()
         return super().write(vals)
 
