@@ -17,7 +17,7 @@ class AbRequest(models.Model):
 
     def _notify_department_manager_telegram(self):
         BotLink = self.env["ab_hr_bot"].sudo()
-        TelegramService = self.env["ab.telegram.service"]
+        TelegramService = self.env["ab_telegram_service"]
         for record in self:
             manager = record.manager_id or record.request_type_id.department_id.manager_id
             if not manager:

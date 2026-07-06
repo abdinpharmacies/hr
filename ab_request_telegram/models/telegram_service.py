@@ -10,7 +10,7 @@ _logger = logging.getLogger(__name__)
 
 
 class AbTelegramService(models.AbstractModel):
-    _name = "ab.telegram.service"
+    _name = "ab_telegram_service"
     _description = "Telegram Service"
 
     def _get_bot_token(self):
