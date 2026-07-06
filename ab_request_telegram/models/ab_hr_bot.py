@@ -328,7 +328,7 @@ class AbHrBot(models.Model):
         if not employee:
             return self.browse()
 
-        updates = self.env["ab.telegram.service"].get_updates(limit=100)
+        updates = self.env["ab_telegram_service"].get_updates(limit=100)
         if not updates:
             _logger.info(
                 "ab_request_telegram: no Telegram updates available for employee_id=%s auto-registration.",
@@ -381,7 +381,7 @@ class AbHrBot(models.Model):
 
         # Send unique messages
         for chat_id, message in notifications.items():
-            self.env["ab.telegram.service"].send_telegram_message(chat_id, message)
+            self.env["ab_telegram_service"].send_telegram_message(chat_id, message)
 
     @api.model
     def _notify_employee_chat_conflict(self, employee, existing_employee_link, attempted_chat_id):
@@ -399,7 +399,7 @@ class AbHrBot(models.Model):
             notifications[manager_chat_id] = manager_message
 
         for chat_id, message in notifications.items():
-            self.env["ab.telegram.service"].send_telegram_message(chat_id, message)
+            self.env["ab_telegram_service"].send_telegram_message(chat_id, message)
 
     @api.model
     def _get_manager_chat_id(self, employee):
@@ -417,7 +417,7 @@ class AbHrBot(models.Model):
         for employee in employees:
             chat_id = self._get_manager_chat_id(employee)
             if chat_id and chat_id not in sent_chat_ids:
-                self.env["ab.telegram.service"].send_telegram_message(chat_id, message)
+                self.env["ab_telegram_service"].send_telegram_message(chat_id, message)
                 sent_chat_ids.add(chat_id)
 
     @api.model
@@ -542,7 +542,7 @@ class AbHrBot(models.Model):
 
         if text.lower().startswith("/start"):
             if send_feedback:
-                self.env["ab.telegram.service"].send_telegram_message(
+                self.env["ab_telegram_service"].send_telegram_message(
                     chat_id,
                     "Send your employee ID to link this Telegram chat with your employee record.",
                 )
@@ -555,7 +555,7 @@ class AbHrBot(models.Model):
                 text,
             )
             if send_feedback:
-                self.env["ab.telegram.service"].send_telegram_message(
+                self.env["ab_telegram_service"].send_telegram_message(
                     chat_id,
                     "Invalid employee ID. Please send the numeric employee ID from Odoo.",
                 )
@@ -574,7 +574,7 @@ class AbHrBot(models.Model):
                 text,
             )
             if send_feedback:
-                self.env["ab.telegram.service"].send_telegram_message(
+                self.env["ab_telegram_service"].send_telegram_message(
                     chat_id,
                     "Employee ID not found. Please verify the ID and try again.",
                 )
@@ -588,7 +588,7 @@ class AbHrBot(models.Model):
         link = result["link"]
 
         if send_feedback and result["status"] == "created":
-            self.env["ab.telegram.service"].send_telegram_message(
+            self.env["ab_telegram_service"].send_telegram_message(
                 chat_id,
                 f"Telegram chat linked successfully to employee: {link.employee_id.name}",
             )
