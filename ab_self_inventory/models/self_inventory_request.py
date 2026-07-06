@@ -28,6 +28,60 @@ ANALYSIS_MEDICINE_TYPE_SELECTION = [
 ]
 
 
+def _validate_analysis_options(record):
+    if record.analysis_period_days <= 0:
+        raise ValidationError(_("Analysis period must be greater than zero."))
+    if record.analysis_mode in ('top_n', 'both') and record.analysis_top_n <= 0:
+        raise ValidationError(_("Top N items must be greater than zero."))
+    if record.analysis_mode in ('min_price', 'both') and record.analysis_min_price < 0:
+        raise ValidationError(_("Minimum price cannot be negative."))
+
+
+def _get_branch_eplus_serial(branch):
+    raw_serial = str(branch.eplus_serial or '').replace(',', '').strip()
+    if not raw_serial:
+        raise ValidationError(_("Branch %s has no e-plus serial.") % branch.display_name)
+    try:
+        return int(raw_serial)
+    except ValueError as error:
+        raise ValidationError(
+            _("Branch %s has invalid e-plus serial: %s") % (branch.display_name, branch.eplus_serial)
+        ) from error
+
+
+def _row_value(row, key, index, default=None):
+    if isinstance(row, dict):
+        return row.get(key) or row.get(key.upper()) or default
+    return row[index] if len(row) > index else default
+
+
+def _normalize_analysis_stock_row(row):
+    return {
+        'itm_id': int(_row_value(row, 'itm_id', 0, 0) or 0),
+        'itm_code': str(_row_value(row, 'itm_code', 1, '') or '').strip(),
+        'sell_price': float(_row_value(row, 'itm_def_sell_price', 2, 0.0) or 0.0),
+        'is_medicine': False,
+        'sold_qty': 0.0,
+        'stock_qty': float(_row_value(row, 'stock_qty', 3, 0.0) or 0.0),
+    }
+
+
+def _select_analysis_rows(rows, analysis_mode, top_n, min_price, sort_key):
+    selected_rows = list(rows)
+    if analysis_mode == 'top_n':
+        selected_rows.sort(key=lambda row: row.get(sort_key) or 0.0, reverse=True)
+        return selected_rows[:top_n]
+    if analysis_mode == 'min_price':
+        return [row for row in selected_rows if (row.get('itm_def_sell_price') or row.get('sell_price') or 0.0) > min_price]
+
+    selected_rows = [
+        row for row in selected_rows
+        if (row.get('itm_def_sell_price') or row.get('sell_price') or 0.0) > min_price
+    ]
+    selected_rows.sort(key=lambda row: row.get(sort_key) or 0.0, reverse=True)
+    return selected_rows[:top_n]
+
+
 class SelfInventoryRequest(models.Model):
     _name = 'ab_self_inventory_request'
     _inherit = ['ab_eplus_connect']
@@ -424,10 +478,11 @@ class SelfInventoryRequest(models.Model):
 
     def _run_inventory_analysis_logic(self, branch):
         self.ensure_one()
+        _validate_analysis_options(self)
         if not branch.eplus_serial:
             raise ValidationError(_("The selected branch has no e-plus serial."))
 
-        branch_id = int(branch.eplus_serial)
+        branch_id = _get_branch_eplus_serial(branch)
         period_days = self.analysis_period_days
         top_n = self.analysis_top_n
         min_price = self.analysis_min_price
@@ -459,15 +514,19 @@ class SelfInventoryRequest(models.Model):
         stock_sql = f"""
             SELECT
                 ics.itm_id,
+                ic2.itm_code,
+                ic2.itm_def_sell_price,
                 CAST(SUM(itm_qty / NULLIF(ic2.itm_unit1_unit3, 0)) AS DECIMAL(18,2)) AS stock_qty
             FROM Item_Class_Store ics WITH (NOLOCK)
             INNER JOIN Item_Catalog ic2 WITH (NOLOCK) ON ics.itm_id = ic2.itm_id
-            GROUP BY ics.itm_id
+            WHERE ics.sto_id = ?
+            GROUP BY ics.itm_id, ic2.itm_code, ic2.itm_def_sell_price
             HAVING SUM(itm_qty) > 0
         """
 
         sales_rows = []
         stock_rows = {}
+        stock_analysis_rows = []
         try:
             with self.connect_eplus(param_str='?', charset='CP1256') as conn:
                 with conn.cursor() as cursor:
@@ -476,23 +535,17 @@ class SelfInventoryRequest(models.Model):
                     for row in cursor.fetchall():
                         sales_rows.append(dict(zip(columns, row)))
                     
-                    cursor.execute(stock_sql)
+                    cursor.execute(stock_sql, [branch_id])
                     for row in cursor.fetchall():
-                        stock_rows[int(row[0])] = float(row[1])
+                        stock_row = _normalize_analysis_stock_row(row)
+                        stock_rows[stock_row['itm_id']] = stock_row['stock_qty']
+                        stock_analysis_rows.append(stock_row)
         except Exception as e:
             raise ValidationError(_("E-plus Connection Error: %s") % str(e))
 
         sales_rows = self._filter_analysis_rows_by_medicine_type(sales_rows, self.analysis_medicine_type)
 
-        if self.analysis_mode == 'top_n':
-            sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
-            sales_rows = sales_rows[:top_n]
-        elif self.analysis_mode == 'min_price':
-            sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
-        else:
-            sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
-            sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
-            sales_rows = sales_rows[:top_n]
+        sales_rows = _select_analysis_rows(sales_rows, self.analysis_mode, top_n, min_price, 'sold_qty')
 
         final_rows = []
         for row in sales_rows:
@@ -504,6 +557,23 @@ class SelfInventoryRequest(models.Model):
                 'sold_qty': float(row['sold_qty']),
                 'stock_qty': stock_rows.get(row['itm_id'], 0.0),
             })
+        if not final_rows:
+            stock_analysis_rows = self._filter_analysis_rows_by_medicine_type(
+                stock_analysis_rows,
+                self.analysis_medicine_type,
+            )
+            final_rows = _select_analysis_rows(
+                stock_analysis_rows,
+                self.analysis_mode,
+                top_n,
+                min_price,
+                'stock_qty',
+            )
+
+        if not final_rows:
+            raise ValidationError(_(
+                "No sales or stock rows matched the analysis filters for branch %s."
+            ) % branch.display_name)
 
         final_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
 
@@ -1401,22 +1471,25 @@ class SelfInventoryRequestBatch(models.Model):
 
     def action_run_inventory_analysis(self):
         self.ensure_one()
-        branches = self.selected_branch_ids or self.branch_ids
+        # selected_branch_ids is a UI filter for the grid; analysis must cover the batch branches.
+        branches = self.branch_ids
         if not branches:
             raise ValidationError(_("Please select at least one branch first."))
         return self._run_inventory_analysis_logic(branches)
 
     def _run_inventory_analysis_logic(self, branches):
         self.ensure_one()
+        _validate_analysis_options(self)
         all_line_commands = [(5, 0, 0)]
         total_sales = 0
         total_stock = 0
         total_matched = 0
+        skipped_branches = []
         for branch in branches:
             if not branch.eplus_serial:
                 raise ValidationError(_("Branch %s has no e-plus serial.") % branch.display_name)
 
-            branch_id = int(branch.eplus_serial)
+            branch_id = _get_branch_eplus_serial(branch)
             period_days = self.analysis_period_days
             top_n = self.analysis_top_n
             min_price = self.analysis_min_price
@@ -1444,15 +1517,19 @@ class SelfInventoryRequestBatch(models.Model):
             stock_sql = f"""
                 SELECT
                     ics.itm_id,
+                    ic2.itm_code,
+                    ic2.itm_def_sell_price,
                     CAST(SUM(itm_qty / NULLIF(ic2.itm_unit1_unit3, 0)) AS DECIMAL(18,2)) AS stock_qty
                 FROM Item_Class_Store ics WITH (NOLOCK)
                 INNER JOIN Item_Catalog ic2 WITH (NOLOCK) ON ics.itm_id = ic2.itm_id
-                GROUP BY ics.itm_id
+                WHERE ics.sto_id = ?
+                GROUP BY ics.itm_id, ic2.itm_code, ic2.itm_def_sell_price
                 HAVING SUM(itm_qty) > 0
             """
 
             sales_rows = []
             stock_rows = {}
+            stock_analysis_rows = []
             try:
                 with self.connect_eplus(param_str='?', charset='CP1256') as conn:
                     with conn.cursor() as cursor:
@@ -1460,9 +1537,11 @@ class SelfInventoryRequestBatch(models.Model):
                         columns = [column[0].lower() for column in cursor.description]
                         for row in cursor.fetchall():
                             sales_rows.append(dict(zip(columns, row)))
-                        cursor.execute(stock_sql)
+                        cursor.execute(stock_sql, [branch_id])
                         for row in cursor.fetchall():
-                            stock_rows[int(row[0])] = float(row[1])
+                            stock_row = _normalize_analysis_stock_row(row)
+                            stock_rows[stock_row['itm_id']] = stock_row['stock_qty']
+                            stock_analysis_rows.append(stock_row)
             except Exception as e:
                 raise ValidationError(_("E-plus Connection Error for %s: %s") % (branch.display_name, str(e)))
 
@@ -1471,15 +1550,7 @@ class SelfInventoryRequestBatch(models.Model):
                 self.analysis_medicine_type,
             )
 
-            if self.analysis_mode == 'top_n':
-                sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
-                sales_rows = sales_rows[:top_n]
-            elif self.analysis_mode == 'min_price':
-                sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
-            else:
-                sales_rows = [r for r in sales_rows if r['itm_def_sell_price'] > min_price]
-                sales_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
-                sales_rows = sales_rows[:top_n]
+            sales_rows = _select_analysis_rows(sales_rows, self.analysis_mode, top_n, min_price, 'sold_qty')
 
             final_rows = []
             for row in sales_rows:
@@ -1491,6 +1562,21 @@ class SelfInventoryRequestBatch(models.Model):
                     'sold_qty': float(row['sold_qty']),
                     'stock_qty': stock_rows.get(row['itm_id'], 0.0),
                 })
+            if not final_rows:
+                stock_analysis_rows = self.env['ab_self_inventory_request']._filter_analysis_rows_by_medicine_type(
+                    stock_analysis_rows,
+                    self.analysis_medicine_type,
+                )
+                final_rows = _select_analysis_rows(
+                    stock_analysis_rows,
+                    self.analysis_mode,
+                    top_n,
+                    min_price,
+                    'stock_qty',
+                )
+            if not final_rows:
+                skipped_branches.append(branch.display_name)
+                continue
 
             final_rows.sort(key=lambda r: r['sold_qty'], reverse=True)
             total_sales += len(sales_rows)
@@ -1520,19 +1606,28 @@ class SelfInventoryRequestBatch(models.Model):
                     'selected': True if product else False,
                 }))
 
+        if not total_matched:
+            raise ValidationError(_("No sales or stock rows matched the analysis filters for the batch branches."))
+
         self.write({
             'line_ids': all_line_commands,
             'analysis_is_collapsed': False,
         })
+        message = _('Branches: %d. Sales found: %d. Stock items: %d. Added: %d.') % (
+            len(branches), total_sales, total_stock, total_matched
+        )
+        if skipped_branches:
+            message = "%s %s" % (
+                message,
+                _("Skipped branches: %s.") % ", ".join(skipped_branches),
+            )
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
                 'title': _('Analysis Complete'),
-                'message': _('Branches: %d. Sales found: %d. Stock items: %d. Added: %d.') % (
-                    len(branches), total_sales, total_stock, total_matched
-                ),
+                'message': message,
                 'type': 'success' if total_matched else 'warning',
                 'sticky': False,
                 'next': {'type': 'ir.actions.client', 'tag': 'reload'},
