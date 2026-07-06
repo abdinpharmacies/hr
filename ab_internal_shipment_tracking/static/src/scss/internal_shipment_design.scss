@@ -820,11 +820,18 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         border-radius: 50%;
         background: rgba(255, 255, 255, 0.94);
         color: $ais-primary-strong;
-        font-size: 1.35rem;
+        font-size: 0;
         font-weight: 760;
+        line-height: 1;
+        transform: none;
         box-shadow:
             0 0 0 5px rgba($ais-primary, 0.035),
             0 10px 22px rgba(32, 36, 42, 0.08);
+
+        &::before {
+            content: "\2190";
+            font-size: 1.35rem;
+        }
     }
 
     .o_ais_route_progress {
@@ -945,20 +952,15 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         }
 
         .o_ais_party_grid {
-            direction: ltr;
-        }
-
-        .o_ais_card_sender {
-            order: 1;
+            direction: rtl;
         }
 
         .o_ais_route_arrow {
-            order: 2;
-            transform: rotate(180deg);
-        }
+            transform: none;
 
-        .o_ais_card_recipient {
-            order: 3;
+            &::before {
+                content: "\2192";
+            }
         }
 
     }
@@ -1895,29 +1897,20 @@ body.o_rtl .o_ais_form,
     }
 
     .o_ais_party_grid {
-        direction: ltr;
-    }
-
-    .o_ais_card_sender {
-        order: 1;
-        grid-column: 1;
+        direction: rtl;
     }
 
     .o_ais_route_arrow {
-        order: 2;
-        grid-column: 2;
-        transform: rotate(180deg);
-    }
+        transform: none;
 
-    .o_ais_card_recipient {
-        order: 3;
-        grid-column: 3;
+        &::before {
+            content: "\2192";
+        }
     }
 
     .o_ais_card_sender,
     .o_ais_card_recipient {
         direction: rtl;
-        grid-template-columns: minmax(0, 1fr) minmax(128px, 38%);
         text-align: right;
 
         > .g-col-sm-2 {
@@ -1944,14 +1937,6 @@ body.o_rtl .o_ais_form,
             text-align: right;
         }
 
-        .o_wrap_label {
-            grid-column: 2;
-        }
-
-        .o_wrap_input {
-            grid-column: 1;
-        }
-
         .o_td_label .o_form_label,
         .o_form_label,
         .o_field_widget,
@@ -1970,6 +1955,24 @@ body.o_rtl .o_ais_form,
     .o_ais_party_label {
         inset-inline-start: 14px;
         inset-inline-end: auto;
+    }
+}
+
+html[dir="ltr"] .o_ais_form {
+    .o_ais_route_line {
+        direction: ltr;
+    }
+
+    .o_ais_party_grid {
+        direction: ltr;
+    }
+
+    .o_ais_route_arrow {
+        transform: none;
+
+        &::before {
+            content: "\2190";
+        }
     }
 }
 
@@ -2048,12 +2051,31 @@ body.o_rtl .o_ais_form,
 
         .o_ais_route_arrow {
             justify-self: center;
-            transform: rotate(90deg);
+            transform: none;
+
+            &::before {
+                content: "\2193";
+            }
         }
 
         .o_ais_notebook .nav-tabs {
             overflow-x: auto;
             flex-wrap: nowrap;
+        }
+    }
+}
+
+@media (max-width: 992px) {
+    html[dir="ltr"] .o_ais_form,
+    html[dir="rtl"] .o_ais_form,
+    body.o_rtl .o_ais_form,
+    .o_web_client.o_rtl .o_ais_form {
+        .o_ais_route_arrow {
+            transform: none;
+
+            &::before {
+                content: "\2193";
+            }
         }
     }
 }

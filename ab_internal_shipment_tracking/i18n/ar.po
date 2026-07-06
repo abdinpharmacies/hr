@@ -41,11 +41,8 @@ msgstr ""
 #. module: ab_internal_shipment_tracking
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
 msgid ""
-"<span class=\"o_ais_route_eyebrow\">Shipment Route</span>\n"
-"                                    <strong>From sender to recipient</strong>"
-msgstr ""
-"<span class=\"o_ais_route_eyebrow\">مسار الشحنة</span>\n"
-"                                    <strong>من المرسل إلى المستلم</strong>"
+"<span class=\"o_ais_route_eyebrow\">Shipment Route</span>"
+msgstr "<span class=\"o_ais_route_eyebrow\">مسار الشحنة</span>"
 
 
 #. module: ab_internal_shipment_tracking

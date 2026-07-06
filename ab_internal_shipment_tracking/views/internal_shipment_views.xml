@@ -299,7 +299,6 @@
                             <div class="o_ais_route_header">
                                 <div>
                                     <span class="o_ais_route_eyebrow">Shipment Route</span>
-                                    <strong>From sender to recipient</strong>
                                 </div>
                                 <div class="o_ais_route_line" aria-hidden="true">
                                     <span>From</span>
@@ -338,7 +337,7 @@
                                            readonly="state != 'draft'"/>
                                     <field name="sender_user_id" readonly="1" invisible="1"/>
                                 </group>
-                                <div class="o_ais_route_arrow" aria-hidden="true">&#8594;</div>
+                                <div class="o_ais_route_arrow" aria-hidden="true">&#8592;</div>
                                 <group string="Recipient" class="o_ais_card o_ais_card_recipient">
                                     <div class="o_ais_party_label o_ais_party_label_to">To</div>
                                     <field name="can_current_user_receive" invisible="1"/>
@@ -422,7 +421,7 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <chatter/>
+                    <chatter groups="base.group_system"/>
                 </form>
             </field>
         </record>
