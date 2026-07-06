@@ -10,14 +10,14 @@ _logger = logging.getLogger(__name__)
 
 
 class AbTelegramService(models.AbstractModel):
-    _name = "ab.telegram.service"
+    _name = "ab_telegram_service"
     _description = "Telegram Service"
 
     def _get_bot_token(self):
         icp = self.env["ir.config_parameter"].sudo()
         return (
-            (icp.get_param("telegram.bot.token") or "").strip()
-            or (icp.get_param("telebot_api_key") or "").strip()
+                (icp.get_param("telegram.bot.token") or "").strip()
+                or (icp.get_param("telebot_api_key") or "").strip()
         )
 
     def _call_telegram_api(self, method, payload=None, query_params=None):

@@ -76,7 +76,7 @@ class TestAbRequestTelegram(TransactionCase):
         self.assertEqual(link.telegram_username, "original_name")
 
     def test_process_telegram_update_rejects_invalid_employee_id(self):
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", return_value=True):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", return_value=True):
             result = self.HrBot.process_telegram_update(
                 {
                     "message": {
@@ -103,7 +103,7 @@ class TestAbRequestTelegram(TransactionCase):
             sent_messages.append((chat_id, message))
             return True
 
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
             result = self.HrBot.process_telegram_update(
                 {
                     "message": {
@@ -149,7 +149,7 @@ class TestAbRequestTelegram(TransactionCase):
             sent_messages.append((chat_id, message))
             return True
 
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
             result = self.HrBot.process_telegram_update(
                 {
                     "message": {
@@ -188,7 +188,7 @@ class TestAbRequestTelegram(TransactionCase):
                     "request_type_id": self.request_type.id,
                 }
             )
-            with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+            with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
                 request.with_user(self.requester_user).action_submit_request()
 
         self.assertEqual(len(sent_messages), 1)
@@ -229,8 +229,8 @@ class TestAbRequestTelegram(TransactionCase):
                     "request_type_id": self.request_type.id,
                 }
             )
-            with patch.object(type(self.env["ab.telegram.service"]), "get_updates", return_value=updates):
-                with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+            with patch.object(type(self.env["ab_telegram_service"]), "get_updates", return_value=updates):
+                with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
                     request.with_user(self.requester_user).action_submit_request()
 
         bot_link = self.HrBot.search([("employee_id", "=", self.manager_employee.id)], limit=1)
@@ -249,8 +249,9 @@ class TestAbRequestTelegram(TransactionCase):
                     "request_type_id": self.request_type.id,
                 }
             )
-            with patch.object(type(self.env["ab.telegram.service"]), "get_updates", return_value=[]):
-                with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", return_value=True) as send_mock:
+            with patch.object(type(self.env["ab_telegram_service"]), "get_updates", return_value=[]):
+                with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message",
+                                  return_value=True) as send_mock:
                     request.with_user(self.requester_user).action_submit_request()
 
         self.assertFalse(self.HrBot.search([("employee_id", "=", self.manager_employee.id)], limit=1))
@@ -289,8 +290,8 @@ class TestAbRequestTelegram(TransactionCase):
                     "request_type_id": self.request_type.id,
                 }
             )
-            with patch.object(type(self.env["ab.telegram.service"]), "get_updates", return_value=updates):
-                with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+            with patch.object(type(self.env["ab_telegram_service"]), "get_updates", return_value=updates):
+                with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
                     request.with_user(self.requester_user).action_submit_request()
 
         bot_link = self.HrBot.search([("employee_id", "=", self.manager_employee.id)], limit=1)
@@ -305,7 +306,7 @@ class TestAbRequestTelegram(TransactionCase):
             sent_messages.append((chat_id, message))
             return True
 
-        with patch.object(type(self.env["ab.telegram.service"]), "send_telegram_message", _capture_send):
+        with patch.object(type(self.env["ab_telegram_service"]), "send_telegram_message", _capture_send):
             result = self.HrBot.process_telegram_update(
                 {
                     "message": {
