@@ -7,6 +7,8 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+REQUESTED_STOCK_SYNC_CHUNK_SIZE = 800
+
 
 BRANCH_PROCESS_STOCK_PRODUCTS_SQL = """
     SELECT
@@ -27,6 +29,18 @@ BRANCH_PROCESS_PRODUCT_STOCK_SQL = """
     WHERE main.sto_id = ? AND (main.itm_id = ? OR ic.itm_code = ?)
     HAVING SUM(main.itm_qty) <> 0
 """
+
+
+def _get_process_branch_eplus_serial(branch):
+    raw_serial = str(branch.eplus_serial or '').replace(',', '').strip()
+    if not raw_serial:
+        raise ValidationError(_("Branch %s has no e-plus serial.") % branch.display_name)
+    try:
+        return int(raw_serial)
+    except ValueError as error:
+        raise ValidationError(
+            _("Branch %s has invalid e-plus serial: %s") % (branch.display_name, branch.eplus_serial)
+        ) from error
 
 
 class SelfInventoryProcess(models.Model):
@@ -56,6 +70,7 @@ class SelfInventoryProcess(models.Model):
     )
     line_ids = fields.One2many('ab_self_inventory_process_line', 'process_id', string='Inventory Lines')
     submitted_date = fields.Datetime(readonly=True, copy=False)
+    can_sync_requested_stock = fields.Boolean(compute='_compute_can_sync_requested_stock')
     shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_totals', digits=(12, 2))
     extra_qty = fields.Float(string='Extra Cost', compute='_compute_totals', digits=(12, 2))
     available_product_ids = fields.Many2many(
@@ -88,6 +103,22 @@ class SelfInventoryProcess(models.Model):
         for rec in self:
             rec.shortage_qty = sum(rec.line_ids.mapped('shortage_qty'))
             rec.extra_qty = sum(rec.line_ids.mapped('extra_qty'))
+
+    @api.depends('state', 'branch_id')
+    @api.depends_context('uid')
+    def _compute_can_sync_requested_stock(self):
+        user = self.env.user
+        is_receiver = user.has_group('ab_self_inventory.group_ab_self_inventory_receiver')
+        is_manager = user.has_group('ab_self_inventory.group_ab_self_inventory_manager')
+        receiver_branches = user.ab_self_inventory_branch_ids
+        for rec in self:
+            rec.can_sync_requested_stock = bool(
+                rec.state in ('draft', 'in_progress')
+                and is_receiver
+                and not is_manager
+                and rec.branch_id
+                and rec.branch_id in receiver_branches
+            )
 
     @api.depends('branch_id', 'line_ids.product_id')
     def _compute_available_product_ids(self):
@@ -193,7 +224,7 @@ class SelfInventoryProcess(models.Model):
         self.ensure_one()
         with self.connect_eplus(param_str='?', charset='CP1256') as conn:
             with conn.cursor() as cursor:
-                cursor.execute(BRANCH_PROCESS_STOCK_PRODUCTS_SQL, (int(self.branch_id.eplus_serial),))
+                cursor.execute(BRANCH_PROCESS_STOCK_PRODUCTS_SQL, (_get_process_branch_eplus_serial(self.branch_id),))
                 columns = [column[0] for column in (cursor.description or [])]
                 rows = []
                 for row in cursor.fetchall():
@@ -216,7 +247,7 @@ class SelfInventoryProcess(models.Model):
             with conn.cursor() as cursor:
                 cursor.execute(
                     BRANCH_PROCESS_PRODUCT_STOCK_SQL,
-                    (int(self.branch_id.eplus_serial), int(product.eplus_serial or 0), product_code),
+                    (_get_process_branch_eplus_serial(self.branch_id), int(product.eplus_serial or 0), product_code),
                 )
                 row = cursor.fetchone()
                 if not row:
@@ -226,6 +257,133 @@ class SelfInventoryProcess(models.Model):
                 else:
                     stock_qty = row[0]
                 return float(stock_qty or 0.0)
+
+    def action_sync_requested_product_quantities(self):
+        total_updated = 0
+        total_unchanged = 0
+        total_missing_identifiers = 0
+        for rec in self:
+            rec._check_can_sync_requested_product_quantities()
+            requested_lines = rec.line_ids.filtered('requested')
+            if not requested_lines:
+                raise ValidationError(_("There are no requested products to sync."))
+
+            quantities_by_line = {}
+            try:
+                for offset in range(0, len(requested_lines), REQUESTED_STOCK_SYNC_CHUNK_SIZE):
+                    line_chunk = requested_lines[offset:offset + REQUESTED_STOCK_SYNC_CHUNK_SIZE]
+                    quantities_by_line.update(rec._fetch_requested_line_stock_quantities(line_chunk))
+            except ValidationError:
+                raise
+            except Exception as error:
+                _logger.exception("Could not sync requested product quantities for self inventory process %s", rec.id)
+                raise ValidationError(_("E-plus Connection Error: %s") % error) from error
+
+            total_missing_identifiers += len(requested_lines) - len(quantities_by_line)
+            for line in requested_lines:
+                if line.id not in quantities_by_line:
+                    continue
+                new_qty = quantities_by_line[line.id]
+                if abs((line.system_qty or 0.0) - new_qty) <= 0.0001:
+                    total_unchanged += 1
+                    continue
+                line.with_context(ab_self_inventory_allow_system_qty_sync=True).write({'system_qty': new_qty})
+                total_updated += 1
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Sync Complete'),
+                'message': _(
+                    'Requested product quantities synced. Updated: %(updated)d. Unchanged: %(unchanged)d. Missing identifiers: %(missing)d.'
+                ) % {
+                    'updated': total_updated,
+                    'unchanged': total_unchanged,
+                    'missing': total_missing_identifiers,
+                },
+                'type': 'success',
+                'sticky': False,
+                'next': {'type': 'ir.actions.client', 'tag': 'reload'},
+            },
+        }
+
+    def _check_can_sync_requested_product_quantities(self):
+        self.ensure_one()
+        if self.state not in ('draft', 'in_progress'):
+            raise ValidationError(_("Submitted self inventory processes cannot sync E-stock quantities."))
+        user = self.env.user
+        if user.has_group('ab_self_inventory.group_ab_self_inventory_manager'):
+            raise ValidationError(_("Managers cannot sync active branch self inventory quantities."))
+        if not user.has_group('ab_self_inventory.group_ab_self_inventory_receiver'):
+            raise ValidationError(_("Only the branch receiver can sync requested product quantities."))
+        if self.branch_id not in user.ab_self_inventory_branch_ids:
+            raise ValidationError(_("You can only sync self inventory quantities for your assigned branch."))
+        if not self.branch_id.eplus_serial:
+            raise ValidationError(_("Selected branch has no e-plus serial."))
+
+    def _fetch_requested_line_stock_quantities(self, lines):
+        self.ensure_one()
+        lines = lines.filtered(lambda line: line.process_id == self)
+        item_ids = sorted({
+            int(line.eplus_item_id or 0)
+            for line in lines
+            if int(line.eplus_item_id or 0)
+        })
+        item_codes = sorted({
+            (line.eplus_item_code or line.product_code or '').strip()
+            for line in lines
+            if (line.eplus_item_code or line.product_code or '').strip()
+        })
+        if not item_ids and not item_codes:
+            return {}
+
+        where_parts = []
+        params = [_get_process_branch_eplus_serial(self.branch_id)]
+        if item_ids:
+            where_parts.append("main.itm_id IN (%s)" % ', '.join(['?'] * len(item_ids)))
+            params.extend(item_ids)
+        if item_codes:
+            where_parts.append("ic.itm_code IN (%s)" % ', '.join(['?'] * len(item_codes)))
+            params.extend(item_codes)
+
+        stock_sql = """
+            SELECT
+                main.itm_id AS itm_id,
+                ic.itm_code AS itm_code,
+                SUM(main.itm_qty / NULLIF(ic.itm_unit1_unit3, 0)) AS system_qty
+            FROM Item_Class_Store main WITH (NOLOCK)
+            JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = main.itm_id
+            WHERE main.sto_id = ? AND (%s)
+            GROUP BY main.itm_id, ic.itm_code
+        """ % ' OR '.join(where_parts)
+
+        stock_by_item_id = {}
+        stock_by_code = {}
+        with self.connect_eplus(param_str='?', charset='CP1256') as conn:
+            with conn.cursor() as cursor:
+                cursor.execute(stock_sql, params)
+                columns = [column[0] for column in (cursor.description or [])]
+                for row in cursor.fetchall():
+                    if not isinstance(row, dict):
+                        row = dict(zip(columns, row))
+                    normalized = {str(key).lower(): value for key, value in row.items()}
+                    item_id = int(normalized.get('itm_id') or 0)
+                    item_code = str(normalized.get('itm_code') or '').strip()
+                    system_qty = float(normalized.get('system_qty') or 0.0)
+                    if item_id:
+                        stock_by_item_id[item_id] = system_qty
+                    if item_code:
+                        stock_by_code[item_code] = system_qty
+
+        result = {}
+        for line in lines:
+            item_id = int(line.eplus_item_id or 0)
+            item_code = (line.eplus_item_code or line.product_code or '').strip()
+            if not item_id and not item_code:
+                continue
+            result[line.id] = stock_by_item_id.get(item_id, stock_by_code.get(item_code, 0.0))
+        return result
 
     def action_export_count_sheet(self):
         return self.env.ref('ab_self_inventory.action_self_inventory_count_sheet_xlsx').report_action(self)
@@ -323,6 +481,8 @@ class SelfInventoryProcessLine(models.Model):
             'system_qty',
             'unit_cost',
         }
+        if self.env.context.get('ab_self_inventory_allow_system_qty_sync'):
+            locked_fields.discard('system_qty')
         if locked_fields.intersection(vals):
             raise ValidationError(_("Self inventory products cannot be changed after the request is received."))
 

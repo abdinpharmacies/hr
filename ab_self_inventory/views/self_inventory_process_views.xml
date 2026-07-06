@@ -48,11 +48,13 @@
             <field name="arch" type="xml">
                 <form class="ab_self_inventory_form">
                     <header>
-                        <button name="action_submit_process" string="Submit Inventory" type="object" class="btn-primary" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_submit_process" string="Submit Inventory" type="object" class="btn-success" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_sync_requested_product_quantities" string="ReSync Products" type="object" class="btn-warning" invisible="not can_sync_requested_stock"/>
                         <button name="action_export_count_sheet" string="Export Count Sheet" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')"/>
                         <button name="action_open_import_wizard" string="Import Actual Counts" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')"/>
-                        <button name="action_cancel" string="Cancel" type="object" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_cancel" string="Cancel" type="object" class="btn-danger" invisible="state not in ('draft', 'in_progress')" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
                         <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'"/>
+                        <field name="can_sync_requested_stock" invisible="1"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,submitted"/>
                     </header>
                     <sheet>

@@ -1743,6 +1743,63 @@ msgstr "يمكن تعديل بنود عمليات الجرد الذاتي الن
 msgid "Only active self inventory process lines can be deleted."
 msgstr "يمكن حذف بنود عمليات الجرد الذاتي النشطة فقط."
 
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "ReSync Products"
+msgstr "اعادة رصد"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Sync Complete"
+msgstr "اكتملت المزامنة"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid ""
+"Requested product quantities synced. Updated: %(updated)d. Unchanged: "
+"%(unchanged)d. Missing identifiers: %(missing)d."
+msgstr ""
+"تمت مزامنة كميات المنتجات المطلوبة. تم التحديث: %(updated)d. بدون تغيير: "
+"%(unchanged)d. معرفات مفقودة: %(missing)d."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "There are no requested products to sync."
+msgstr "لا توجد منتجات مطلوبة للمزامنة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Submitted self inventory processes cannot sync E-stock quantities."
+msgstr "لا يمكن مزامنة كميات E-stock لعمليات الجرد الذاتي المقدمة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Managers cannot sync active branch self inventory quantities."
+msgstr "لا يمكن للمديرين مزامنة كميات الجرد الذاتي النشطة للفرع."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only the branch receiver can sync requested product quantities."
+msgstr "يمكن لمستلم الفرع فقط مزامنة كميات المنتجات المطلوبة."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "You can only sync self inventory quantities for your assigned branch."
+msgstr "يمكنك مزامنة كميات الجرد الذاتي للفرع المخصص لك فقط."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Branch %s has invalid e-plus serial: %s"
+msgstr "الفرع %s لديه رقم E-plus غير صالح: %s"
+
 #~ msgid "Loading data..."
 #~ msgstr "جاري تحميل البيانات..."
 

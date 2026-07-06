@@ -1332,6 +1332,11 @@ msgid "Submit Inventory"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "ReSync Products"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Submit Request"
 msgstr ""
