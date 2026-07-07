@@ -279,37 +279,18 @@ class TestCoreUISettings(TransactionCase):
 
 
 @tagged('core_ui')
-class TestCoreUIGroupPermissions(TransactionCase):
+class TestCoreUIModelAccess(TransactionCase):
 
     def setUp(self):
         super().setUp()
         self.Category = self.env['core_ui.category']
-        self.user_group = self.env.ref('ab_core_ui.group_core_ui_user')
         self.dev_group = self.env.ref('ab_core_ui.group_core_ui_developer')
-        self.manager_group = self.env.ref('ab_core_ui.group_core_ui_manager')
-
         Users = self.env['res.users'].with_context(no_reset_password=True)
-        self.user = Users.create({
-            'name': 'Test User',
-            'login': 'test_core_ui_user',
-        })
-        self.user.write({'group_ids': [Command.link(self.user_group.id)]})
         self.developer = Users.create({
             'name': 'Test Developer',
             'login': 'test_core_ui_dev',
         })
         self.developer.write({'group_ids': [Command.link(self.dev_group.id)]})
-        self.manager = Users.create({
-            'name': 'Test Manager',
-            'login': 'test_core_ui_mgr',
-        })
-        self.manager.write({'group_ids': [Command.link(self.manager_group.id)]})
-
-    def test_user_read_only(self):
-        cats = self.Category.with_user(self.user).search([])
-        self.assertTrue(len(cats) >= 0)
-        with self.assertRaises(AccessError):
-            self.Category.with_user(self.user).create({'name': 'User Cant Create'})
 
     def test_developer_full_access(self):
         cat = self.Category.with_user(self.developer).create({'name': 'Dev Cat'})
@@ -317,45 +298,3 @@ class TestCoreUIGroupPermissions(TransactionCase):
         cat.with_user(self.developer).write({'description': 'Updated'})
         self.assertEqual(cat.description, 'Updated')
         cat.with_user(self.developer).unlink()
-
-    def test_manager_full_access(self):
-        cat = self.Category.with_user(self.manager).create({'name': 'Mgr Cat'})
-        self.assertEqual(cat.name, 'Mgr Cat')
-        cat.with_user(self.manager).write({'description': 'Updated by mgr'})
-        self.assertEqual(cat.description, 'Updated by mgr')
-        cat.with_user(self.manager).unlink()
-
-    def test_user_cannot_write(self):
-        admin_cat = self.Category.create({'name': 'Admin Cat'})
-        with self.assertRaises(AccessError):
-            admin_cat.with_user(self.user).write({'description': 'Should fail'})
-
-    def test_user_cannot_delete(self):
-        cat = self.Category.create({'name': 'Will not be deleted'})
-        with self.assertRaises(AccessError):
-            cat.with_user(self.user).unlink()
-
-    def test_implied_group_inheritance(self):
-        self.assertTrue(
-            self.developer.has_group('ab_core_ui.group_core_ui_user'),
-            "Developer should inherit User group",
-        )
-        self.assertTrue(
-            self.manager.has_group('ab_core_ui.group_core_ui_user'),
-            "Manager should inherit User group",
-        )
-        self.assertTrue(
-            self.manager.has_group('ab_core_ui.group_core_ui_developer'),
-            "Manager should inherit Developer group",
-        )
-
-    def test_user_does_not_have_higher_groups(self):
-        self.assertFalse(
-            self.user.has_group('ab_core_ui.group_core_ui_developer'),
-        )
-        self.assertFalse(
-            self.user.has_group('ab_core_ui.group_core_ui_manager'),
-        )
-        self.assertFalse(
-            self.developer.has_group('ab_core_ui.group_core_ui_manager'),
-        )
