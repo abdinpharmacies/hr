@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.alert">
+        <div t-att-class="'core_ui_alert ' + props.variant">
+            <i t-att-class="'fa ' + iconClass"/>
+            <div class="core_ui_alert_content">
+                <t t-if="props.title"><div class="core_ui_alert_title" t-esc="props.title"/></t>
+                <t t-esc="props.message || ''"/>
+            </div>
+        </div>
+    </t>
+</templates>

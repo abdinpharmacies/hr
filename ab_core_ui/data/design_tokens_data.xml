@@ -1,0 +1,409 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- Token Categories -->
+        <record id="tok_cat_colors" model="core_ui.token_category">
+            <field name="name">Colors</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-palette</field>
+        </record>
+
+        <record id="tok_cat_typography" model="core_ui.token_category">
+            <field name="name">Typography</field>
+            <field name="sequence">20</field>
+            <field name="icon">fa-font</field>
+        </record>
+
+        <record id="tok_cat_spacing" model="core_ui.token_category">
+            <field name="name">Spacing</field>
+            <field name="sequence">30</field>
+            <field name="icon">fa-arrows-alt-h</field>
+        </record>
+
+        <record id="tok_cat_radius" model="core_ui.token_category">
+            <field name="name">Border Radius</field>
+            <field name="sequence">40</field>
+            <field name="icon">fa-square</field>
+        </record>
+
+        <record id="tok_cat_shadow" model="core_ui.token_category">
+            <field name="name">Shadows</field>
+            <field name="sequence">50</field>
+            <field name="icon">fa-layer-group</field>
+        </record>
+
+        <record id="tok_cat_animation" model="core_ui.token_category">
+            <field name="name">Animations</field>
+            <field name="sequence">60</field>
+            <field name="icon">fa-play</field>
+        </record>
+
+        <!-- Color Tokens -->
+        <record id="token_primary" model="core_ui.design_token">
+            <field name="name">Primary</field>
+            <field name="token_name">--core-ui-primary</field>
+            <field name="value">#2563eb</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="token_primary_hover" model="core_ui.design_token">
+            <field name="name">Primary Hover</field>
+            <field name="token_name">--core-ui-primary-hover</field>
+            <field name="value">#1d4ed8</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">15</field>
+        </record>
+
+        <record id="token_primary_light" model="core_ui.design_token">
+            <field name="name">Primary Light</field>
+            <field name="token_name">--core-ui-primary-light</field>
+            <field name="value">#dbeafe</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="token_success" model="core_ui.design_token">
+            <field name="name">Success</field>
+            <field name="token_name">--core-ui-success</field>
+            <field name="value">#16a34a</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="token_warning" model="core_ui.design_token">
+            <field name="name">Warning</field>
+            <field name="token_name">--core-ui-warning</field>
+            <field name="value">#ea580c</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="token_danger" model="core_ui.design_token">
+            <field name="name">Danger</field>
+            <field name="token_name">--core-ui-danger</field>
+            <field name="value">#dc2626</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="token_info" model="core_ui.design_token">
+            <field name="name">Info</field>
+            <field name="token_name">--core-ui-info</field>
+            <field name="value">#0891b2</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="token_surface" model="core_ui.design_token">
+            <field name="name">Surface</field>
+            <field name="token_name">--core-ui-surface</field>
+            <field name="value">#ffffff</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="token_surface_alt" model="core_ui.design_token">
+            <field name="name">Surface Alt</field>
+            <field name="token_name">--core-ui-surface-alt</field>
+            <field name="value">#f8fafc</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="token_text" model="core_ui.design_token">
+            <field name="name">Text Primary</field>
+            <field name="token_name">--core-ui-text</field>
+            <field name="value">#1e293b</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <record id="token_text_secondary" model="core_ui.design_token">
+            <field name="name">Text Secondary</field>
+            <field name="token_name">--core-ui-text-secondary</field>
+            <field name="value">#64748b</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <record id="token_border" model="core_ui.design_token">
+            <field name="name">Border</field>
+            <field name="token_name">--core-ui-border</field>
+            <field name="value">#e2e8f0</field>
+            <field name="category_id" ref="tok_cat_colors"/>
+            <field name="type">color</field>
+            <field name="sequence">110</field>
+        </record>
+
+        <!-- Typography Tokens -->
+        <record id="token_font_family" model="core_ui.design_token">
+            <field name="name">Font Family</field>
+            <field name="token_name">--core-ui-font-family</field>
+            <field name="value">'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="token_font_mono" model="core_ui.design_token">
+            <field name="name">Font Monospace</field>
+            <field name="token_name">--core-ui-font-mono</field>
+            <field name="value">'JetBrains Mono', 'Fira Code', 'Consolas', monospace</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="token_font_size_xs" model="core_ui.design_token">
+            <field name="name">Font Size XS</field>
+            <field name="token_name">--core-ui-font-size-xs</field>
+            <field name="value">0.75rem</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="token_font_size_sm" model="core_ui.design_token">
+            <field name="name">Font Size SM</field>
+            <field name="token_name">--core-ui-font-size-sm</field>
+            <field name="value">0.875rem</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="token_font_size_base" model="core_ui.design_token">
+            <field name="name">Font Size Base</field>
+            <field name="token_name">--core-ui-font-size-base</field>
+            <field name="value">1rem</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="token_font_size_lg" model="core_ui.design_token">
+            <field name="name">Font Size LG</field>
+            <field name="token_name">--core-ui-font-size-lg</field>
+            <field name="value">1.125rem</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <record id="token_font_size_xl" model="core_ui.design_token">
+            <field name="name">Font Size XL</field>
+            <field name="token_name">--core-ui-font-size-xl</field>
+            <field name="value">1.25rem</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">70</field>
+        </record>
+
+        <record id="token_font_size_2xl" model="core_ui.design_token">
+            <field name="name">Font Size 2XL</field>
+            <field name="token_name">--core-ui-font-size-2xl</field>
+            <field name="value">1.5rem</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">80</field>
+        </record>
+
+        <record id="token_font_size_3xl" model="core_ui.design_token">
+            <field name="name">Font Size 3XL</field>
+            <field name="token_name">--core-ui-font-size-3xl</field>
+            <field name="value">1.875rem</field>
+            <field name="category_id" ref="tok_cat_typography"/>
+            <field name="type">typography</field>
+            <field name="sequence">90</field>
+        </record>
+
+        <!-- Spacing Tokens -->
+        <record id="token_space_xs" model="core_ui.design_token">
+            <field name="name">Space XS</field>
+            <field name="token_name">--core-ui-space-xs</field>
+            <field name="value">0.25rem</field>
+            <field name="category_id" ref="tok_cat_spacing"/>
+            <field name="type">spacing</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="token_space_sm" model="core_ui.design_token">
+            <field name="name">Space SM</field>
+            <field name="token_name">--core-ui-space-sm</field>
+            <field name="value">0.5rem</field>
+            <field name="category_id" ref="tok_cat_spacing"/>
+            <field name="type">spacing</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="token_space_md" model="core_ui.design_token">
+            <field name="name">Space MD</field>
+            <field name="token_name">--core-ui-space-md</field>
+            <field name="value">1rem</field>
+            <field name="category_id" ref="tok_cat_spacing"/>
+            <field name="type">spacing</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="token_space_lg" model="core_ui.design_token">
+            <field name="name">Space LG</field>
+            <field name="token_name">--core-ui-space-lg</field>
+            <field name="value">1.5rem</field>
+            <field name="category_id" ref="tok_cat_spacing"/>
+            <field name="type">spacing</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="token_space_xl" model="core_ui.design_token">
+            <field name="name">Space XL</field>
+            <field name="token_name">--core-ui-space-xl</field>
+            <field name="value">2rem</field>
+            <field name="category_id" ref="tok_cat_spacing"/>
+            <field name="type">spacing</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <record id="token_space_2xl" model="core_ui.design_token">
+            <field name="name">Space 2XL</field>
+            <field name="token_name">--core-ui-space-2xl</field>
+            <field name="value">3rem</field>
+            <field name="category_id" ref="tok_cat_spacing"/>
+            <field name="type">spacing</field>
+            <field name="sequence">60</field>
+        </record>
+
+        <!-- Border Radius Tokens -->
+        <record id="token_radius_sm" model="core_ui.design_token">
+            <field name="name">Radius SM</field>
+            <field name="token_name">--core-ui-radius-sm</field>
+            <field name="value">0.375rem</field>
+            <field name="category_id" ref="tok_cat_radius"/>
+            <field name="type">radius</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="token_radius_md" model="core_ui.design_token">
+            <field name="name">Radius MD</field>
+            <field name="token_name">--core-ui-radius-md</field>
+            <field name="value">0.5rem</field>
+            <field name="category_id" ref="tok_cat_radius"/>
+            <field name="type">radius</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="token_radius_lg" model="core_ui.design_token">
+            <field name="name">Radius LG</field>
+            <field name="token_name">--core-ui-radius-lg</field>
+            <field name="value">0.75rem</field>
+            <field name="category_id" ref="tok_cat_radius"/>
+            <field name="type">radius</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="token_radius_xl" model="core_ui.design_token">
+            <field name="name">Radius XL</field>
+            <field name="token_name">--core-ui-radius-xl</field>
+            <field name="value">1rem</field>
+            <field name="category_id" ref="tok_cat_radius"/>
+            <field name="type">radius</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="token_radius_full" model="core_ui.design_token">
+            <field name="name">Radius Full</field>
+            <field name="token_name">--core-ui-radius-full</field>
+            <field name="value">9999px</field>
+            <field name="category_id" ref="tok_cat_radius"/>
+            <field name="type">radius</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Shadow Tokens -->
+        <record id="token_shadow_sm" model="core_ui.design_token">
+            <field name="name">Shadow SM</field>
+            <field name="token_name">--core-ui-shadow-sm</field>
+            <field name="value">0 1px 2px 0 rgba(0,0,0,0.05)</field>
+            <field name="category_id" ref="tok_cat_shadow"/>
+            <field name="type">shadow</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="token_shadow_md" model="core_ui.design_token">
+            <field name="name">Shadow MD</field>
+            <field name="token_name">--core-ui-shadow-md</field>
+            <field name="value">0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)</field>
+            <field name="category_id" ref="tok_cat_shadow"/>
+            <field name="type">shadow</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="token_shadow_lg" model="core_ui.design_token">
+            <field name="name">Shadow LG</field>
+            <field name="token_name">--core-ui-shadow-lg</field>
+            <field name="value">0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)</field>
+            <field name="category_id" ref="tok_cat_shadow"/>
+            <field name="type">shadow</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="token_shadow_xl" model="core_ui.design_token">
+            <field name="name">Shadow XL</field>
+            <field name="token_name">--core-ui-shadow-xl</field>
+            <field name="value">0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)</field>
+            <field name="category_id" ref="tok_cat_shadow"/>
+            <field name="type">shadow</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="token_shadow_glow" model="core_ui.design_token">
+            <field name="name">Shadow Glow</field>
+            <field name="token_name">--core-ui-shadow-glow</field>
+            <field name="value">0 0 15px rgba(37,99,235,0.3)</field>
+            <field name="category_id" ref="tok_cat_shadow"/>
+            <field name="type">shadow</field>
+            <field name="sequence">50</field>
+        </record>
+
+        <!-- Animation Tokens -->
+        <record id="token_transition_fast" model="core_ui.design_token">
+            <field name="name">Transition Fast</field>
+            <field name="token_name">--core-ui-transition-fast</field>
+            <field name="value">150ms cubic-bezier(0.4, 0, 0.2, 1)</field>
+            <field name="category_id" ref="tok_cat_animation"/>
+            <field name="type">animation</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="token_transition_normal" model="core_ui.design_token">
+            <field name="name">Transition Normal</field>
+            <field name="token_name">--core-ui-transition-normal</field>
+            <field name="value">250ms cubic-bezier(0.4, 0, 0.2, 1)</field>
+            <field name="category_id" ref="tok_cat_animation"/>
+            <field name="type">animation</field>
+            <field name="sequence">20</field>
+        </record>
+
+        <record id="token_transition_slow" model="core_ui.design_token">
+            <field name="name">Transition Slow</field>
+            <field name="token_name">--core-ui-transition-slow</field>
+            <field name="value">350ms cubic-bezier(0.4, 0, 0.2, 1)</field>
+            <field name="category_id" ref="tok_cat_animation"/>
+            <field name="type">animation</field>
+            <field name="sequence">30</field>
+        </record>
+
+    </data>
+</odoo>

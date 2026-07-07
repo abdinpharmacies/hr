@@ -1,0 +1,16 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_core_ui_category_user,core_ui.category.user,model_core_ui_category,group_core_ui_user,1,0,0,0
+access_core_ui_category_developer,core_ui.category.developer,model_core_ui_category,group_core_ui_developer,1,1,1,1
+access_core_ui_category_manager,core_ui.category.manager,model_core_ui_category,group_core_ui_manager,1,1,1,1
+access_core_ui_component_user,core_ui.component.user,model_core_ui_component,group_core_ui_user,1,0,0,0
+access_core_ui_component_developer,core_ui.component.developer,model_core_ui_component,group_core_ui_developer,1,1,1,1
+access_core_ui_component_manager,core_ui.component.manager,model_core_ui_component,group_core_ui_manager,1,1,1,1
+access_core_ui_design_token_user,core_ui.design_token.user,model_core_ui_design_token,group_core_ui_user,1,0,0,0
+access_core_ui_design_token_developer,core_ui.design_token.developer,model_core_ui_design_token,group_core_ui_developer,1,1,1,1
+access_core_ui_design_token_manager,core_ui.design_token.manager,model_core_ui_design_token,group_core_ui_manager,1,1,1,1
+access_core_ui_token_category_user,core_ui.token_category.user,model_core_ui_token_category,group_core_ui_user,1,0,0,0
+access_core_ui_token_category_developer,core_ui.token_category.developer,model_core_ui_token_category,group_core_ui_developer,1,1,1,1
+access_core_ui_token_category_manager,core_ui.token_category.manager,model_core_ui_token_category,group_core_ui_manager,1,1,1,1
+access_core_ui_pattern_user,core_ui.pattern.user,model_core_ui_pattern,group_core_ui_user,1,0,0,0
+access_core_ui_pattern_developer,core_ui.pattern.developer,model_core_ui_pattern,group_core_ui_developer,1,1,1,1
+access_core_ui_pattern_manager,core_ui.pattern.manager,model_core_ui_pattern,group_core_ui_manager,1,1,1,1

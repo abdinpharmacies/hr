@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.timeline">
+        <div class="cu-timeline">
+            <t t-if="props.stages.length">
+                <div class="cu-timeline-column">
+                    <t t-foreach="props.stages" t-as="stage" t-key="stage_index">
+                        <div class="cu-timeline-stage"
+                            t-att-class="stage.notes ? 'has-notes' : ''">
+                            <div class="cu-timeline-dot-col">
+                                <div class="cu-timeline-dot"
+                                    t-att-class="stageStatusClass(stage)">
+                                    <t t-esc="dotContent(stage)"/>
+                                </div>
+                                <div t-if="!isLast(stage_index)"
+                                    class="cu-timeline-line"
+                                    t-att-class="lineStatusClass(stage)"/>
+                            </div>
+                            <div class="cu-timeline-label-col">
+                                <t t-if="stage.status === 'rejection' || stage.status === 'delay' || stage.status === 'other'">
+                                    <div class="cu-timeline-event-label" t-esc="stage.label"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="cu-timeline-stage-label"
+                                        t-att-class="stageLabelClass(stage)"
+                                        t-esc="stage.label"/>
+                                </t>
+                                <div t-if="stage.meta" class="cu-timeline-meta" t-esc="stage.meta"/>
+                                <div t-if="stage.notes" class="cu-timeline-notes" t-esc="stage.notes"/>
+                                <div t-if="stage.divider" class="cu-timeline-divider">
+                                    <t t-esc="stage.divider"/>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-if="hasDetailCard">
+                <div class="cu-detail-card" t-att-class="detailStatusClass">
+                    <h3 class="cu-detail-title" t-att-class="detailStatusClass">
+                        <t t-esc="props.detail.title"/>
+                        <span t-if="props.detail.badge" class="cu-overdue-badge">
+                            <t t-esc="props.detail.badge"/>
+                        </span>
+                    </h3>
+                    <t t-if="props.detail.fields &amp;&amp; props.detail.fields.length">
+                        <div class="cu-stage-grid">
+                            <t t-foreach="props.detail.fields" t-as="field" t-key="field_index">
+                                <div class="cu-stage-field">
+                                    <span class="cu-stage-field-label" t-esc="field.label"/>
+                                    <span class="cu-stage-field-value" t-esc="field.value"/>
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

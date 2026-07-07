@@ -1,0 +1,515 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- ==================== DIALOGS ==================== -->
+        <record id="comp_dialog_confirm" model="core_ui.component">
+            <field name="component_id">core_ui.dialog.confirm</field>
+            <field name="name">Confirm Dialog</field>
+            <field name="category_id" ref="cat_dialogs"/>
+            <field name="sequence">10</field>
+            <field name="description">Standard confirmation dialog with cancel and confirm actions.</field>
+            <field name="keywords">confirm, approve, yes, no, cancel, dialog</field>
+            <field name="tags">dialog, confirm, action</field>
+            <field name="template_ref">core_ui.dialog.confirm</field>
+            <field name="version">1.0.0</field>
+            <field name="status">stable</field>
+            <field name="author">Core UI</field>
+            <field name="dependencies">core_ui</field>
+            <field name="when_to_use">Use when asking users to confirm a critical action before proceeding.</field>
+            <field name="when_not_to_use">Do not use for simple, reversible actions. A toast notification may be more appropriate.</field>
+            <field name="accessibility_notes">Ensure focus is trapped within the dialog. Support Escape key to dismiss.</field>
+        </record>
+
+        <record id="comp_dialog_alert" model="core_ui.component">
+            <field name="component_id">core_ui.dialog.alert</field>
+            <field name="name">Alert Dialog</field>
+            <field name="category_id" ref="cat_dialogs"/>
+            <field name="sequence">20</field>
+            <field name="description">Alert dialog for important notifications requiring user acknowledgment.</field>
+            <field name="keywords">alert, notification, warning, info, dialog</field>
+            <field name="tags">dialog, alert, notification</field>
+            <field name="template_ref">core_ui.dialog.alert</field>
+            <field name="status">stable</field>
+            <field name="author">Core UI</field>
+        </record>
+
+        <record id="comp_dialog_reject" model="core_ui.component">
+            <field name="component_id">core_ui.dialog.reject</field>
+            <field name="name">Reject Dialog</field>
+            <field name="category_id" ref="cat_dialogs"/>
+            <field name="sequence">30</field>
+            <field name="description">Dialog for rejecting a request or item with a required reason.</field>
+            <field name="keywords">reject, approval, reason, workflow, danger, dialog</field>
+            <field name="tags">dialog, reject, workflow, danger</field>
+            <field name="template_ref">core_ui.dialog.reject</field>
+            <field name="status">stable</field>
+            <field name="author">Core UI</field>
+        </record>
+
+        <record id="comp_dialog_form" model="core_ui.component">
+            <field name="component_id">core_ui.dialog.form</field>
+            <field name="name">Form Dialog</field>
+            <field name="category_id" ref="cat_dialogs"/>
+            <field name="sequence">40</field>
+            <field name="description">Dialog containing a form for inline data entry without leaving the page.</field>
+            <field name="keywords">form, dialog, modal, inline, edit, create</field>
+            <field name="tags">dialog, form, inline</field>
+            <field name="template_ref">core_ui.dialog.form</field>
+            <field name="status">stable</field>
+            <field name="author">Core UI</field>
+        </record>
+
+        <!-- ==================== ALERTS ==================== -->
+        <record id="comp_alert_success" model="core_ui.component">
+            <field name="component_id">core_ui.alert.success</field>
+            <field name="name">Success Alert</field>
+            <field name="category_id" ref="cat_alerts"/>
+            <field name="sequence">10</field>
+            <field name="description">Green success alert banner for positive outcomes and confirmations.</field>
+            <field name="template_ref">core_ui.alert.success</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_alert_warning" model="core_ui.component">
+            <field name="component_id">core_ui.alert.warning</field>
+            <field name="name">Warning Alert</field>
+            <field name="category_id" ref="cat_alerts"/>
+            <field name="sequence">20</field>
+            <field name="description">Orange warning alert banner for cautionary messages.</field>
+            <field name="template_ref">core_ui.alert.warning</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_alert_danger" model="core_ui.component">
+            <field name="component_id">core_ui.alert.danger</field>
+            <field name="name">Danger Alert</field>
+            <field name="category_id" ref="cat_alerts"/>
+            <field name="sequence">30</field>
+            <field name="description">Red danger alert banner for errors and critical issues.</field>
+            <field name="template_ref">core_ui.alert.danger</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_alert_info" model="core_ui.component">
+            <field name="component_id">core_ui.alert.info</field>
+            <field name="name">Info Alert</field>
+            <field name="category_id" ref="cat_alerts"/>
+            <field name="sequence">40</field>
+            <field name="description">Blue info alert banner for informational messages.</field>
+            <field name="template_ref">core_ui.alert.info</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== BUTTONS ==================== -->
+        <record id="comp_btn_primary" model="core_ui.component">
+            <field name="component_id">core_ui.button.primary</field>
+            <field name="name">Primary Button</field>
+            <field name="category_id" ref="cat_buttons"/>
+            <field name="sequence">10</field>
+            <field name="description">Primary action button with filled background style.</field>
+            <field name="template_ref">core_ui.button.primary</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_btn_secondary" model="core_ui.component">
+            <field name="component_id">core_ui.button.secondary</field>
+            <field name="name">Secondary Button</field>
+            <field name="category_id" ref="cat_buttons"/>
+            <field name="sequence">20</field>
+            <field name="description">Secondary outlined button for less prominent actions.</field>
+            <field name="template_ref">core_ui.button.secondary</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_btn_ghost" model="core_ui.component">
+            <field name="component_id">core_ui.button.ghost</field>
+            <field name="name">Ghost Button</field>
+            <field name="category_id" ref="cat_buttons"/>
+            <field name="sequence">30</field>
+            <field name="description">Minimal ghost button with no border or background until hover.</field>
+            <field name="template_ref">core_ui.button.ghost</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_btn_danger" model="core_ui.component">
+            <field name="component_id">core_ui.button.danger</field>
+            <field name="name">Danger Button</field>
+            <field name="category_id" ref="cat_buttons"/>
+            <field name="sequence">40</field>
+            <field name="description">Red danger button for destructive actions.</field>
+            <field name="template_ref">core_ui.button.danger</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_btn_icon" model="core_ui.component">
+            <field name="component_id">core_ui.button.icon</field>
+            <field name="name">Icon Button</field>
+            <field name="category_id" ref="cat_buttons"/>
+            <field name="sequence">50</field>
+            <field name="description">Circular icon-only button for compact toolbars.</field>
+            <field name="template_ref">core_ui.button.icon</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== CARDS ==================== -->
+        <record id="comp_card_default" model="core_ui.component">
+            <field name="component_id">core_ui.card</field>
+            <field name="name">Default Card</field>
+            <field name="category_id" ref="cat_cards"/>
+            <field name="sequence">10</field>
+            <field name="description">Standard card container with rounded corners, shadow, and padding.</field>
+            <field name="template_ref">core_ui.card</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_card_statistics" model="core_ui.component">
+            <field name="component_id">core_ui.card.statistics</field>
+            <field name="name">Statistics Card</field>
+            <field name="category_id" ref="cat_cards"/>
+            <field name="sequence">20</field>
+            <field name="description">KPI statistics card with icon, value, label, and trend indicator.</field>
+            <field name="template_ref">core_ui.card.statistics</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_card_hero" model="core_ui.component">
+            <field name="component_id">core_ui.card.hero</field>
+            <field name="name">Hero Card</field>
+            <field name="category_id" ref="cat_cards"/>
+            <field name="sequence">30</field>
+            <field name="description">Large hero card with gradient accent, suitable for detail page headers.</field>
+            <field name="template_ref">core_ui.card.hero</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== BADGES ==================== -->
+        <record id="comp_badge_default" model="core_ui.component">
+            <field name="component_id">core_ui.badge</field>
+            <field name="name">Default Badge</field>
+            <field name="category_id" ref="cat_badges"/>
+            <field name="sequence">10</field>
+            <field name="description">Standard badge/pill component for statuses and labels.</field>
+            <field name="template_ref">core_ui.badge</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_badge_state" model="core_ui.component">
+            <field name="component_id">core_ui.badge.state</field>
+            <field name="name">State Badge</field>
+            <field name="category_id" ref="cat_badges"/>
+            <field name="sequence">20</field>
+            <field name="description">Colored state badge with gradient and glow effect for workflow states.</field>
+            <field name="template_ref">core_ui.badge.state</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== STATISTICS ==================== -->
+        <record id="comp_stat_grid" model="core_ui.component">
+            <field name="component_id">core_ui.statistics.grid</field>
+            <field name="name">Statistics Grid</field>
+            <field name="category_id" ref="cat_statistics"/>
+            <field name="sequence">10</field>
+            <field name="description">Grid of KPI statistic cards in a responsive layout.</field>
+            <field name="template_ref">core_ui.statistics.grid</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== TOAST ==================== -->
+        <record id="comp_toast_success" model="core_ui.component">
+            <field name="component_id">core_ui.toast.success</field>
+            <field name="name">Success Toast</field>
+            <field name="category_id" ref="cat_toast"/>
+            <field name="sequence">10</field>
+            <field name="description">Green success toast notification that auto-dismisses.</field>
+            <field name="template_ref">core_ui.toast.success</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_toast_error" model="core_ui.component">
+            <field name="component_id">core_ui.toast.error</field>
+            <field name="name">Error Toast</field>
+            <field name="category_id" ref="cat_toast"/>
+            <field name="sequence">20</field>
+            <field name="description">Red error toast notification for failure messages.</field>
+            <field name="template_ref">core_ui.toast.error</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_toast_warning" model="core_ui.component">
+            <field name="component_id">core_ui.toast.warning</field>
+            <field name="name">Warning Toast</field>
+            <field name="category_id" ref="cat_toast"/>
+            <field name="sequence">30</field>
+            <field name="description">Orange warning toast notification.</field>
+            <field name="template_ref">core_ui.toast.warning</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== TABLES ==================== -->
+        <record id="comp_table_modern" model="core_ui.component">
+            <field name="component_id">core_ui.table.modern</field>
+            <field name="name">Modern Table</field>
+            <field name="category_id" ref="cat_tables"/>
+            <field name="sequence">10</field>
+            <field name="description">Clean modern table with subtle row hover and rounded corners.</field>
+            <field name="template_ref">core_ui.table.modern</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_table_compact" model="core_ui.component">
+            <field name="component_id">core_ui.table.compact</field>
+            <field name="name">Compact Table</field>
+            <field name="category_id" ref="cat_tables"/>
+            <field name="sequence">20</field>
+            <field name="description">Dense table variant with reduced padding for data-heavy views.</field>
+            <field name="template_ref">core_ui.table.compact</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_table_card" model="core_ui.component">
+            <field name="component_id">core_ui.table.card</field>
+            <field name="name">Card Table</field>
+            <field name="category_id" ref="cat_tables"/>
+            <field name="sequence">30</field>
+            <field name="description">Table where each row appears as a card with borders and shadows.</field>
+            <field name="template_ref">core_ui.table.card</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== EMPTY STATES ==================== -->
+        <record id="comp_empty_no_data" model="core_ui.component">
+            <field name="component_id">core_ui.empty.no_data</field>
+            <field name="name">No Data Empty State</field>
+            <field name="category_id" ref="cat_empty_states"/>
+            <field name="sequence">10</field>
+            <field name="description">Empty state for when no data exists yet, with illustration and CTA.</field>
+            <field name="template_ref">core_ui.empty.no_data</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_empty_no_results" model="core_ui.component">
+            <field name="component_id">core_ui.empty.no_results</field>
+            <field name="name">No Search Results</field>
+            <field name="category_id" ref="cat_empty_states"/>
+            <field name="sequence">20</field>
+            <field name="description">Empty state displayed when search yields no results.</field>
+            <field name="template_ref">core_ui.empty.no_results</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_empty_permission" model="core_ui.component">
+            <field name="component_id">core_ui.empty.permission</field>
+            <field name="name">Permission Denied</field>
+            <field name="category_id" ref="cat_empty_states"/>
+            <field name="sequence">30</field>
+            <field name="description">Empty state shown when user lacks access permissions.</field>
+            <field name="template_ref">core_ui.empty.permission</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== LOADING ==================== -->
+        <record id="comp_loading_spinner" model="core_ui.component">
+            <field name="component_id">core_ui.loading.spinner</field>
+            <field name="name">Loading Spinner</field>
+            <field name="category_id" ref="cat_loading"/>
+            <field name="sequence">10</field>
+            <field name="description">Animated loading spinner for async operations.</field>
+            <field name="template_ref">core_ui.loading.spinner</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_loading_skeleton" model="core_ui.component">
+            <field name="component_id">core_ui.loading.skeleton</field>
+            <field name="name">Skeleton Screen</field>
+            <field name="category_id" ref="cat_loading"/>
+            <field name="sequence">20</field>
+            <field name="description">Skeleton placeholder with shimmer animation while content loads.</field>
+            <field name="template_ref">core_ui.loading.skeleton</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== HEADERS ==================== -->
+        <record id="comp_header_page" model="core_ui.component">
+            <field name="component_id">core_ui.header.page</field>
+            <field name="name">Page Header</field>
+            <field name="category_id" ref="cat_headers"/>
+            <field name="sequence">10</field>
+            <field name="description">Standard page header with title, subtitle, and optional actions.</field>
+            <field name="template_ref">core_ui.header.page</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== PROGRESS ==================== -->
+        <record id="comp_progress_bar" model="core_ui.component">
+            <field name="component_id">core_ui.progress.bar</field>
+            <field name="name">Progress Bar</field>
+            <field name="category_id" ref="cat_progress"/>
+            <field name="sequence">10</field>
+            <field name="description">Horizontal progress bar with percentage label.</field>
+            <field name="template_ref">core_ui.progress.bar</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_progress_circle" model="core_ui.component">
+            <field name="component_id">core_ui.progress.circle</field>
+            <field name="name">Progress Circle</field>
+            <field name="category_id" ref="cat_progress"/>
+            <field name="sequence">20</field>
+            <field name="description">Circular SVG progress indicator.</field>
+            <field name="template_ref">core_ui.progress.circle</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== NAVIGATION ==================== -->
+        <record id="comp_nav_breadcrumb" model="core_ui.component">
+            <field name="component_id">core_ui.nav.breadcrumb</field>
+            <field name="name">Breadcrumb</field>
+            <field name="category_id" ref="cat_navigation"/>
+            <field name="sequence">10</field>
+            <field name="description">Breadcrumb navigation path with chevron separators.</field>
+            <field name="template_ref">core_ui.nav.breadcrumb</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_nav_tabs" model="core_ui.component">
+            <field name="component_id">core_ui.nav.tabs</field>
+            <field name="name">Navigation Tabs</field>
+            <field name="category_id" ref="cat_navigation"/>
+            <field name="sequence">20</field>
+            <field name="description">Horizontal tab navigation with active indicator.</field>
+            <field name="template_ref">core_ui.nav.tabs</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== INPUTS ==================== -->
+        <record id="comp_input_text" model="core_ui.component">
+            <field name="component_id">core_ui.input.text</field>
+            <field name="name">Text Input</field>
+            <field name="category_id" ref="cat_inputs"/>
+            <field name="sequence">10</field>
+            <field name="description">Styled text input field with label, helper text, and error state.</field>
+            <field name="template_ref">core_ui.input.text</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_input_select" model="core_ui.component">
+            <field name="component_id">core_ui.input.select</field>
+            <field name="name">Select Input</field>
+            <field name="category_id" ref="cat_inputs"/>
+            <field name="sequence">20</field>
+            <field name="description">Styled select dropdown with placeholder and options.</field>
+            <field name="template_ref">core_ui.input.select</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_input_toggle" model="core_ui.component">
+            <field name="component_id">core_ui.input.toggle</field>
+            <field name="name">Toggle Switch</field>
+            <field name="category_id" ref="cat_inputs"/>
+            <field name="sequence">30</field>
+            <field name="description">Modern toggle switch for boolean settings.</field>
+            <field name="template_ref">core_ui.input.toggle</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== AVATAR ==================== -->
+        <record id="comp_avatar" model="core_ui.component">
+            <field name="component_id">core_ui.avatar</field>
+            <field name="name">User Avatar</field>
+            <field name="category_id" ref="cat_avatar"/>
+            <field name="sequence">10</field>
+            <field name="description">Circular user avatar with initials fallback and status dot.</field>
+            <field name="template_ref">core_ui.avatar</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== STATUS ==================== -->
+        <record id="comp_status_dot" model="core_ui.component">
+            <field name="component_id">core_ui.status.dot</field>
+            <field name="name">Status Dot</field>
+            <field name="category_id" ref="cat_status"/>
+            <field name="sequence">10</field>
+            <field name="description">Small colored dot indicator for status fields.</field>
+            <field name="template_ref">core_ui.status.dot</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== FORMS ==================== -->
+        <record id="comp_form_modern" model="core_ui.component">
+            <field name="component_id">core_ui.form.modern</field>
+            <field name="name">Modern Form</field>
+            <field name="category_id" ref="cat_forms"/>
+            <field name="sequence">10</field>
+            <field name="description">Clean form layout with floating labels and modern spacing.</field>
+            <field name="template_ref">core_ui.form.modern</field>
+            <field name="status">stable</field>
+        </record>
+
+        <record id="comp_form_tabbed" model="core_ui.component">
+            <field name="component_id">core_ui.form.tabbed</field>
+            <field name="name">Tabbed Form</field>
+            <field name="category_id" ref="cat_forms"/>
+            <field name="sequence">20</field>
+            <field name="description">Form organized into tabbed sections.</field>
+            <field name="template_ref">core_ui.form.tabbed</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== WIZARD ==================== -->
+        <record id="comp_wizard_stepper" model="core_ui.component">
+            <field name="component_id">core_ui.wizard.stepper</field>
+            <field name="name">Wizard Stepper</field>
+            <field name="category_id" ref="cat_wizard"/>
+            <field name="sequence">10</field>
+            <field name="description">Multi-step wizard stepper with step indicators and navigation.</field>
+            <field name="template_ref">core_ui.wizard.stepper</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== TIMELINE ==================== -->
+        <record id="comp_timeline" model="core_ui.component">
+            <field name="component_id">core_ui.timeline</field>
+            <field name="name">Timeline</field>
+            <field name="category_id" ref="cat_timeline"/>
+            <field name="sequence">10</field>
+            <field name="description">Vertical timeline with dates, titles, descriptions, and status indicators.</field>
+            <field name="template_ref">core_ui.timeline</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== SEARCH ==================== -->
+        <record id="comp_search" model="core_ui.component">
+            <field name="component_id">core_ui.search</field>
+            <field name="name">Search Bar</field>
+            <field name="category_id" ref="cat_search"/>
+            <field name="sequence">10</field>
+            <field name="description">Search input with icon, clear button, and keyboard shortcut hint.</field>
+            <field name="template_ref">core_ui.search</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== KANBAN ==================== -->
+        <record id="comp_kanban" model="core_ui.component">
+            <field name="component_id">core_ui.kanban.card</field>
+            <field name="name">Kanban Card</field>
+            <field name="category_id" ref="cat_kanban"/>
+            <field name="sequence">10</field>
+            <field name="description">Kanban card template with title, subtitle, badges, and footer.</field>
+            <field name="template_ref">core_ui.kanban.card</field>
+            <field name="status">stable</field>
+        </record>
+
+        <!-- ==================== UPLOAD ==================== -->
+        <record id="comp_upload" model="core_ui.component">
+            <field name="component_id">core_ui.upload.zone</field>
+            <field name="name">Upload Zone</field>
+            <field name="category_id" ref="cat_upload"/>
+            <field name="sequence">10</field>
+            <field name="description">Drag-and-drop file upload zone with preview and progress.</field>
+            <field name="template_ref">core_ui.upload.zone</field>
+            <field name="status">beta</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="pattern_delete_confirm" model="core_ui.pattern">
+            <field name="pattern_id">core_ui.pattern.delete</field>
+            <field name="name">Delete Confirmation Flow</field>
+            <field name="category_id" ref="cat_dialogs"/>
+            <field name="sequence">10</field>
+            <field name="description">Safe delete pattern with confirmation dialog and undo option.</field>
+            <field name="steps">1. User clicks Delete. 2. Confirm dialog appears with item name. 3. User confirms. 4. Record is archived (not deleted). 5. Success toast with undo option appears.</field>
+        </record>
+
+        <record id="pattern_reject_flow" model="core_ui.pattern">
+            <field name="pattern_id">core_ui.pattern.reject</field>
+            <field name="name">Reject Flow</field>
+            <field name="category_id" ref="cat_dialogs"/>
+            <field name="sequence">20</field>
+            <field name="description">Standard rejection flow with required reason input.</field>
+            <field name="steps">1. User clicks Reject. 2. Reject dialog opens with reason textarea. 3. User enters reason. 4. Record status changes to rejected. 5. Notification sent to requester.</field>
+        </record>
+
+        <record id="pattern_approval_flow" model="core_ui.pattern">
+            <field name="pattern_id">core_ui.pattern.approve</field>
+            <field name="name">Approval Flow</field>
+            <field name="category_id" ref="cat_dialogs"/>
+            <field name="sequence">30</field>
+            <field name="description">Approval workflow with confirm dialog and optional comment.</field>
+            <field name="steps">1. User clicks Approve. 2. Confirm dialog with optional comment. 3. Record status changes to approved. 4. Success toast shown.</field>
+        </record>
+
+        <record id="pattern_upload" model="core_ui.pattern">
+            <field name="pattern_id">core_ui.pattern.upload</field>
+            <field name="name">Upload Flow</field>
+            <field name="category_id" ref="cat_upload"/>
+            <field name="sequence">40</field>
+            <field name="description">File upload with drag-drop zone, progress indicator, and preview.</field>
+        </record>
+
+        <record id="pattern_wizard" model="core_ui.pattern">
+            <field name="pattern_id">core_ui.pattern.wizard</field>
+            <field name="name">Wizard Flow</field>
+            <field name="category_id" ref="cat_wizard"/>
+            <field name="sequence">50</field>
+            <field name="description">Multi-step wizard with stepper navigation and progress tracking.</field>
+        </record>
+
+        <record id="pattern_empty_state" model="core_ui.pattern">
+            <field name="pattern_id">core_ui.pattern.empty_state</field>
+            <field name="name">Empty State Pattern</field>
+            <field name="category_id" ref="cat_empty_states"/>
+            <field name="sequence">60</field>
+            <field name="description">Empty state with illustration, message, and call-to-action button.</field>
+        </record>
+
+        <record id="pattern_permission_denied" model="core_ui.pattern">
+            <field name="pattern_id">core_ui.pattern.permission</field>
+            <field name="name">Permission Denied Flow</field>
+            <field name="category_id" ref="cat_errors"/>
+            <field name="sequence">70</field>
+            <field name="description">Permission denied state with explanation and contact admin option.</field>
+        </record>
+
+    </data>
+</odoo>

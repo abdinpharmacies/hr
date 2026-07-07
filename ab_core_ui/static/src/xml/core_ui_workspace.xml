@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ==================== SEARCH ==================== -->
+    <t t-name="core_ui.search">
+        <div class="core_ui_topbar_search">
+            <i class="fa fa-search core_ui_search_icon"/>
+            <input type="text"
+                t-att-placeholder="props.placeholder"
+                t-model="state.query"
+                t-on-input="onInput"
+                t-on-keydown="onKeydown"
+                t-on-focus="onFocus"
+                t-on-blur="onBlur"/>
+            <t t-if="state.query">
+                <span class="core_ui_search_shortcut" t-on-click="clear">
+                    <i class="fa fa-times"/>
+                </span>
+            </t>
+            <t t-else="">
+                <span class="core_ui_search_shortcut">/</span>
+            </t>
+        </div>
+    </t>
+
+    <!-- ==================== SIDEBAR ==================== -->
+    <t t-name="core_ui.sidebar">
+        <div class="core_ui_sidebar">
+            <div class="core_ui_sidebar_scroll">
+
+                <!-- Favorites -->
+                <t t-if="props.favorites.length">
+                    <div class="core_ui_sidebar_section">
+                        <div class="core_ui_sidebar_header"
+                            t-on-click="() => this.toggleSection('favorites')">
+                            <span><i class="fa fa-star me-1"/> Favorites</span>
+                            <i t-att-class="isCollapsed('favorites') ? 'fa fa-chevron-down collapsed' : 'fa fa-chevron-down'"/>
+                        </div>
+                        <div class="core_ui_sidebar_favorites_list"
+                            t-if="!isCollapsed('favorites')">
+                            <t t-foreach="props.favorites" t-as="fav" t-key="fav.id">
+                                <div class="core_ui_sidebar_item"
+                                    t-on-click="() => this.selectComponent(fav)">
+                                    <i class="fa fa-star"/>
+                                    <t t-esc="fav.name"/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="core_ui_sidebar_divider"/>
+                </t>
+
+                <!-- Categories -->
+                <div class="core_ui_sidebar_section">
+                    <div class="core_ui_sidebar_header"
+                        t-on-click="() => this.toggleSection('categories')">
+                        <span><i class="fa fa-folder me-1"/> Categories</span>
+                        <i t-att-class="isCollapsed('categories') ? 'fa fa-chevron-down collapsed' : 'fa fa-chevron-down'"/>
+                    </div>
+                    <div t-if="!isCollapsed('categories')">
+                        <div class="core_ui_sidebar_item"
+                            t-att-class="props.selectedCategory === null ? 'active' : ''"
+                            t-on-click="() => this.selectCategory(null)">
+                            <i class="fa fa-th-large"/>
+                            <span>All</span>
+                        </div>
+                        <t t-foreach="props.categories" t-as="cat" t-key="cat.id">
+                            <div class="core_ui_sidebar_item"
+                                t-att-class="props.selectedCategory === cat.id ? 'active' : ''"
+                                t-on-click="() => this.selectCategory(cat.id)">
+                                <i t-att-class="'fa ' + (cat.icon || 'fa-folder')"/>
+                                <span><t t-esc="cat.name"/></span>
+                                <span class="core_ui_sidebar_item_count"
+                                    t-if="cat.component_count !== undefined"
+                                    t-esc="cat.component_count"/>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+
+                <div class="core_ui_sidebar_divider"/>
+
+                <!-- Recently Viewed -->
+                <t t-if="props.recentComponents.length">
+                    <div class="core_ui_sidebar_section">
+                        <div class="core_ui_sidebar_header"
+                            t-on-click="() => this.toggleSection('recent')">
+                            <span><i class="fa fa-clock me-1"/> Recently Viewed</span>
+                            <i t-att-class="isCollapsed('recent') ? 'fa fa-chevron-down collapsed' : 'fa fa-chevron-down'"/>
+                        </div>
+                        <div t-if="!isCollapsed('recent')">
+                            <t t-foreach="props.recentComponents" t-as="rc" t-key="rc.id">
+                                <div class="core_ui_sidebar_item"
+                                    t-on-click="() => this.selectComponent(rc)">
+                                    <i class="fa fa-eye"/>
+                                    <span><t t-esc="rc.name"/></span>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="core_ui_sidebar_divider"/>
+                </t>
+
+                <!-- Recently Used (AI Prompt copied) -->
+                <t t-if="props.usedComponents.length">
+                    <div class="core_ui_sidebar_section">
+                        <div class="core_ui_sidebar_header"
+                            t-on-click="() => this.toggleSection('used')">
+                            <span><i class="fa fa-copy me-1"/> Recently Used</span>
+                            <i t-att-class="isCollapsed('used') ? 'fa fa-chevron-down collapsed' : 'fa fa-chevron-down'"/>
+                        </div>
+                        <div t-if="!isCollapsed('used')">
+                            <t t-foreach="props.usedComponents" t-as="uc" t-key="uc.id">
+                                <div class="core_ui_sidebar_item"
+                                    t-on-click="() => this.selectComponent(uc)">
+                                    <i class="fa fa-history"/>
+                                    <span><t t-esc="uc.name"/></span>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                    <div class="core_ui_sidebar_divider"/>
+                </t>
+
+                <!-- Design Lab -->
+                <t t-if="props.designLab">
+                <CoreUIDesignLab
+                    designLab="props.designLab"
+                    onUpdate="(s) => props.onUpdateDesignLab(s)"
+                    onLoadProfile="(k) => props.onLoadProfile(k)"
+                    onSaveProfile="(n) => props.onSaveProfile(n)"/>
+                </t>
+
+            </div>
+        </div>
+    </t>
+
+    <!-- ==================== GALLERY ==================== -->
+    <t t-name="core_ui.gallery">
+        <div class="core_ui_gallery">
+            <t t-if="props.previewMode === 'application'">
+                <t t-if="props.selectedComponent">
+                    <div class="core_ui_gallery_app_view">
+                        <div class="core_ui_gallery_app_chrome">
+                            <div class="core_ui_gallery_app_chrome_dots">
+                                <span style="width:10px;height:10px;border-radius:50%;background:#ef4444"/>
+                                <span style="width:10px;height:10px;border-radius:50%;background:#eab308"/>
+                                <span style="width:10px;height:10px;border-radius:50%;background:#22c55e"/>
+                            </div>
+                            <span class="core_ui_gallery_app_chrome_title" t-esc="props.selectedComponent.name"/>
+                        </div>
+                        <div class="core_ui_gallery_app_canvas">
+                            <CoreUIPreviewCard componentMeta="props.selectedComponent._meta" t-if="props.selectedComponent._meta"/>
+                        </div>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="core_ui_empty_state">
+                        <i class="fa fa-cube"/>
+                        <h3>Application Preview</h3>
+                        <p>Select a component to preview it in application context.</p>
+                    </div>
+                </t>
+            </t>
+            <t t-elif="filteredComponents.length === 0">
+                <div class="core_ui_empty_state">
+                    <i class="fa fa-search"/>
+                    <h3>No Components Found</h3>
+                    <p t-if="props.filterQuery">
+                        No components match "<t t-esc="props.filterQuery"/>". Try different keywords.
+                    </p>
+                    <p t-else="">
+                        Select a category from the sidebar to browse components.
+                    </p>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="core_ui_gallery_header">
+                    <h2>
+                        <t t-esc="filteredComponents.length"/>
+                        Component<t t-esc="filteredComponents.length !== 1 ? 's' : ''"/>
+                    </h2>
+                    <p t-if="props.filterQuery">
+                        Filtered by "<t t-esc="props.filterQuery"/>"
+                    </p>
+                </div>
+                <div class="core_ui_gallery_grid">
+                    <t t-foreach="filteredComponents" t-as="comp" t-key="comp.id">
+                        <div class="core_ui_gallery_item"
+                            t-att-class="props.selectedComponent?.id === comp.id ? 'selected' : ''"
+                            t-on-click="() => this.selectComponent(comp)">
+                            <!-- Preview: 75-80% of card -->
+                            <div class="core_ui_gallery_preview">
+                                <t t-if="comp._meta">
+                                    <CoreUIPreviewCard componentMeta="comp._meta"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="core_ui_gallery_preview_slot" style="display:flex; align-items:center; justify-content:center; color:#94a3b8; font-size:13px; flex-direction:column; gap:8px;">
+                                        <i class="fa fa-exclamation-triangle" style="font-size:1.5rem; opacity:0.4; color:#f59e0b;"/>
+                                        <span style="font-size:11px; color:#94a3b8;">Not registered</span>
+                                        <span style="font-family:monospace; font-size:9px; color:#64748b;"><t t-esc="comp.component_id"/></span>
+                                    </div>
+                                </t>
+                                <!-- Quick actions overlay -->
+                                <div class="core_ui_gallery_overlay">
+                                    <button class="core_ui_gallery_overlay_btn"
+                                        t-on-click.stop="() => this.addToNotebook(comp)"
+                                        title="Add to Notebook">
+                                        <i class="fa fa-book"/>
+                                    </button>
+                                    <button class="core_ui_gallery_overlay_btn"
+                                        t-on-click.stop="() => this.copyXml(comp, $event)"
+                                        title="Copy XML">
+                                        <i class="fa fa-code"/>
+                                    </button>
+                                    <button class="core_ui_gallery_overlay_btn"
+                                        t-on-click.stop="() => this.copyComponentId(comp, $event)"
+                                        title="Copy Component ID">
+                                        <i class="fa fa-copy"/>
+                                    </button>
+                                </div>
+                                <div class="core_ui_gallery_overlay_bg"/>
+                            </div>
+                            <!-- Body: Name + metadata -->
+                            <div class="core_ui_gallery_body">
+                                <div class="core_ui_gallery_body_left">
+                                    <div class="core_ui_gallery_title"><t t-esc="comp.name"/></div>
+                                    <div class="core_ui_gallery_component_id"><t t-esc="comp.component_id"/></div>
+                                </div>
+                                <div class="core_ui_gallery_meta">
+                                    <span class="core_ui_badge_pill neutral" style="font-size:9px; padding:1px 6px;">
+                                        v<t t-esc="comp.version || '1.0.0'"/>
+                                    </span>
+                                    <t t-if="comp.status === 'beta'">
+                                        <span class="core_ui_badge_pill warning" style="font-size:9px; padding:1px 6px;">Beta</span>
+                                    </t>
+                                    <t t-if="comp.status === 'deprecated'">
+                                        <span class="core_ui_badge_pill danger" style="font-size:9px; padding:1px 6px;">Deprecated</span>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- ==================== INSPECTOR ==================== -->
+    <t t-name="core_ui.inspector">
+        <div class="core_ui_inspector">
+            <t t-if="!props.component">
+                <div class="core_ui_inspector_empty">
+                    <i class="fa fa-info-circle"/>
+                    <p>Select a component to inspect its details, code examples, and usage guidelines.</p>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="core_ui_inspector_scroll">
+                    <!-- Live Preview -->
+                    <div class="core_ui_inspector_preview" t-if="props.componentMeta">
+                        <div class="core_ui_inspector_preview_inner">
+                            <CoreUIPreviewCard componentMeta="props.componentMeta"/>
+                        </div>
+                    </div>
+                    <div class="core_ui_inspector_preview" t-else="" style="min-height:120px; display:flex; align-items:center; justify-content:center; color:#94a3b8; gap:8px; flex-direction:column;">
+                        <i class="fa fa-info-circle" style="font-size:1.25rem; opacity:0.4;"/>
+                        <span style="font-size:11px;">Select a component to preview</span>
+                    </div>
+
+                    <div class="core_ui_inspector_header">
+                        <div class="core_ui_inspector_header_top">
+                            <h3 t-esc="safeComponent.name"/>
+                            <button class="core_ui_inspector_close"
+                                t-on-click="() => this.props.onClose &amp;&amp; this.props.onClose()"
+                                title="Close Inspector">
+                                <i class="fa fa-times"/>
+                            </button>
+                        </div>
+                        <div class="core_ui_inspector_id">
+                            <t t-esc="safeComponent.component_id"/>
+                            <button class="core_ui_gallery_action_btn ms-2"
+                                t-on-click="() => this.addToNotebook()">
+                                <i class="fa fa-book"/> Add
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Version & Status -->
+                    <div class="core_ui_inspector_section">
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <span class="core_ui_badge_pill neutral">
+                                v<t t-esc="safeComponent.version || '1.0.0'"/>
+                            </span>
+                            <span t-att-class="'core_ui_badge_pill ' + (safeComponent.status === 'stable' ? 'success' : safeComponent.status === 'beta' ? 'warning' : 'danger')">
+                                <t t-esc="safeComponent.status || 'stable'"/>
+                            </span>
+                            <t t-if="safeComponent.tags">
+                                <t t-foreach="safeComponent.tags.split(',')" t-as="tag" t-key="tag_index">
+                                    <span class="core_ui_badge_pill primary" t-if="tag.trim()">
+                                        <t t-esc="tag.trim()"/>
+                                    </span>
+                                </t>
+                            </t>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <t t-if="safeComponent.description">
+                        <div class="core_ui_inspector_section">
+                            <div class="core_ui_inspector_label">Description</div>
+                            <div class="core_ui_inspector_text" t-esc="safeComponent.description"/>
+                        </div>
+                    </t>
+
+                    <!-- Usage Guidelines -->
+                    <div class="core_ui_inspector_section" t-if="safeComponent.when_to_use">
+                        <div class="core_ui_inspector_label">When to use</div>
+                        <div class="core_ui_inspector_text" t-esc="safeComponent.when_to_use"/>
+                    </div>
+
+                    <div class="core_ui_inspector_section" t-if="safeComponent.when_not_to_use">
+                        <div class="core_ui_inspector_label">When NOT to use</div>
+                        <div class="core_ui_inspector_text" t-esc="safeComponent.when_not_to_use"/>
+                    </div>
+
+                    <!-- Copy XML -->
+                    <div class="core_ui_inspector_section">
+                        <div class="core_ui_inspector_label">Copy XML</div>
+                        <div class="core_ui_inspector_code">
+                            <button class="core_ui_code_copy" t-on-click="copyXmlTemplate">
+                                Copy
+                            </button>
+                            <pre>&lt;t t-call="<t t-esc="safeComponent.template_ref || safeComponent.component_id"/>"&gt;&lt;/t&gt;</pre>
+                        </div>
+                    </div>
+
+                    <!-- Copy Component ID -->
+                    <div class="core_ui_inspector_section">
+                        <div class="core_ui_inspector_label">Copy Component ID</div>
+                        <div class="core_ui_inspector_code">
+                            <button class="core_ui_code_copy" t-on-click="copyComponentId">
+                                Copy
+                            </button>
+                            <pre><t t-esc="safeComponent.component_id"/></pre>
+                        </div>
+                    </div>
+
+                    <!-- AI Prompt -->
+                    <div class="core_ui_inspector_section">
+                        <div class="core_ui_inspector_label">AI Prompt</div>
+                        <div class="core_ui_inspector_code">
+                            <button class="core_ui_code_copy" t-on-click="copyAiPrompt">
+                                Copy
+                            </button>
+                            <pre><t t-foreach="aiPromptLines" t-as="line" t-key="line_index"><t t-esc="line"/>
+</t></pre>
+                        </div>
+                    </div>
+
+                    <!-- Dependencies -->
+                    <t t-if="safeComponent.dependencies">
+                        <div class="core_ui_inspector_section">
+                            <div class="core_ui_inspector_label">Dependencies</div>
+                            <div class="core_ui_inspector_text" t-esc="safeComponent.dependencies"/>
+                        </div>
+                    </t>
+
+                    <!-- Keywords -->
+                    <t t-if="safeComponent.keywords">
+                        <div class="core_ui_inspector_section">
+                            <div class="core_ui_inspector_label">Keywords</div>
+                            <div class="core_ui_inspector_tags">
+                                <t t-foreach="safeComponent.keywords.split(',')" t-as="kw" t-key="kw_index">
+                                    <span class="core_ui_badge_pill neutral" t-if="kw.trim()">
+                                        <t t-esc="kw.trim()"/>
+                                    </span>
+                                </t>
+                            </div>
+                        </div>
+                    </t>
+
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- ==================== NOTEBOOK (DEVELOPER CLIPBOARD) ==================== -->
+    <t t-name="core_ui.notebook">
+        <div class="core_ui_notebook"
+            t-att-class="state.mode === 'collapsed' ? 'core_ui_notebook_collapsed' : ''">
+            <!-- Collapsed pill -->
+            <t t-if="state.mode === 'collapsed'">
+                <div class="core_ui_notebook_pill" t-on-click="toggleMode"
+                    role="button" tabindex="0"
+                    title="Open Notebook">
+                    <i class="fa fa-book"/>
+                    <span t-if="itemCount" class="core_ui_notebook_pill_count" t-esc="itemCount"/>
+                </div>
+            </t>
+            <!-- Expanded panel -->
+            <t t-else="">
+                <div class="core_ui_notebook_panel">
+                    <!-- Header -->
+                    <div class="core_ui_notebook_header">
+                        <div class="core_ui_notebook_title">
+                            <i class="fa fa-book"/>
+                            <span>Notebook</span>
+                            <span t-if="itemCount" class="core_ui_notebook_badge" t-esc="itemCount"/>
+                            <span class="core_ui_notebook_subtitle">Temporary Session</span>
+                        </div>
+                        <div class="core_ui_notebook_actions">
+                            <button class="core_ui_notebook_action_btn"
+                                t-on-click.stop="clearAll"
+                                t-if="!isEmpty"
+                                title="Clear All">
+                                <i class="fa fa-trash-o"/>
+                            </button>
+                            <button class="core_ui_notebook_action_btn"
+                                t-on-click.stop="toggleMode"
+                                title="Collapse">
+                                <i class="fa fa-chevron-down"/>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Export toolbar -->
+                    <div class="core_ui_notebook_export_bar" t-if="!isEmpty">
+                        <button class="core_ui_notebook_export_btn"
+                            t-on-click.stop="copyEverything"
+                            title="Copy Everything">
+                            <i class="fa fa-copy"/> All
+                        </button>
+                        <button class="core_ui_notebook_export_btn"
+                            t-on-click.stop="exportAiPrompts"
+                            title="Export AI Prompts">
+                            <i class="fa fa-robot"/> Prompts
+                        </button>
+                        <button class="core_ui_notebook_export_btn"
+                            t-on-click.stop="exportXml"
+                            title="Export XML">
+                            <i class="fa fa-code"/> XML
+                        </button>
+                        <button class="core_ui_notebook_export_btn"
+                            t-on-click.stop="exportMarkdown"
+                            title="Export Markdown">
+                            <i class="fa fa-file-text"/> MD
+                        </button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="core_ui_notebook_body" t-ref="body">
+                        <t t-if="isEmpty">
+                            <div class="core_ui_notebook_empty">
+                                <div class="core_ui_notebook_empty_illustration">
+                                    <i class="fa fa-cube"/>
+                                    <i class="fa fa-copy"/>
+                                    <i class="fa fa-code"/>
+                                </div>
+                                <h4>No copied components yet.</h4>
+                                <p>Copy XML, AI Prompts, or Component IDs while browsing.<br/>Everything will be collected here.</p>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <div class="core_ui_notebook_cards">
+                                <t t-foreach="props.items" t-as="item" t-key="item.componentId">
+                                    <div class="core_ui_notebook_card"
+                                        t-att-class="item.pinned ? 'core_ui_notebook_card_pinned' : ''">
+                                        <!-- Card header: component info -->
+                                        <div class="core_ui_notebook_card_header"
+                                            t-on-click="() => this.jumpTo(item.componentId)"
+                                            role="button" tabindex="0">
+                                            <div class="core_ui_notebook_card_meta">
+                                                <span class="core_ui_notebook_card_name" t-esc="item.name"/>
+                                                <span class="core_ui_notebook_card_id" t-esc="item.componentId"/>
+                                            </div>
+                                            <button class="core_ui_notebook_card_pin_btn"
+                                                t-on-click.stop="() => this.togglePin(item.componentId)"
+                                                title="Pin">
+                                                <i t-att-class="item.pinned ? 'fa fa-star' : 'fa fa-star-o'"/>
+                                            </button>
+                                        </div>
+                                        <!-- Content type badges -->
+                                        <div class="core_ui_notebook_card_types">
+                                            <t t-foreach="getCardTypes(item)" t-as="ct" t-key="ct.key">
+                                                <span class="core_ui_notebook_type_badge"
+                                                    t-att-class="'core_ui_notebook_type_' + ct.key">
+                                                    <i t-att-class="'fa ' + ct.icon"/>
+                                                    <t t-esc="ct.label"/>
+                                                </span>
+                                            </t>
+                                        </div>
+                                        <!-- Footer: timestamp + quick actions -->
+                                        <div class="core_ui_notebook_card_footer">
+                                            <span class="core_ui_notebook_card_time"
+                                                t-esc="formatTime(item.lastCopiedAt)"/>
+                                            <div class="core_ui_notebook_card_actions">
+                                                <button class="core_ui_notebook_card_action"
+                                                    t-on-click.stop="() => this.copyCardAgain(item)"
+                                                    title="Copy Again">
+                                                    <i class="fa fa-copy"/>
+                                                </button>
+                                                <button class="core_ui_notebook_card_action"
+                                                    t-on-click.stop="() => this.jumpTo(item.componentId)"
+                                                    title="Jump to Component">
+                                                    <i class="fa fa-external-link"/>
+                                                </button>
+                                                <button class="core_ui_notebook_card_action danger"
+                                                    t-on-click.stop="() => this.removeItem(item.componentId)"
+                                                    title="Remove">
+                                                    <i class="fa fa-times"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+
+    <!-- ==================== FULL WORKSPACE ==================== -->
+    <t t-name="core_ui.workspace">
+        <div>
+            <!-- Dark overlay -->
+            <div class="core_ui_transition_overlay"
+                t-att-class="state.overlayVisible ? 'core_ui_overlay_visible' : ''"/>
+
+            <!-- Workspace container -->
+            <div class="core_ui_workspace_wrapper"
+                t-att-class="state.workspaceVisible ? (state.exiting ? 'core_ui_workspace_exiting' : 'core_ui_workspace_visible') : ''">
+                <div class="core_ui_workspace"
+                    t-att-class="state.elementsVisible ? 'core_ui_elements_visible' : ''"
+                    t-ref="workspace">
+                    <!-- Top Bar -->
+                    <div class="core_ui_topbar">
+                        <div class="core_ui_topbar_left">
+                            <div class="core_ui_logo">
+                                <i class="fa fa-cube"/>
+                                <span>Core UI Workspace</span>
+                            </div>
+                        </div>
+                        <div class="core_ui_topbar_center">
+                            <CoreUISearch
+                                onSearch="(q) => this.onSearch(q)"/>
+                        </div>
+                        <div class="core_ui_topbar_right">
+                            <button class="core_ui_topbar_btn core_ui_topbar_btn_theme"
+                                t-on-click="() => this.toggleTheme()"
+                                title="Toggle Theme">
+                                <i t-att-class="state.themeMode === 'dark' ? 'fa fa-sun-o' : 'fa fa-moon-o'"/>
+                                <t t-esc="state.themeMode === 'dark' ? 'Light' : 'Dark'"/>
+                            </button>
+                            <button class="core_ui_topbar_btn"
+                                t-on-click="exitWorkspace">
+                                <i class="fa fa-times"/> Exit
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Main Layout -->
+                    <div class="core_ui_main">
+                        <!-- Sidebar -->
+                        <CoreUISidebar
+                            categories="state.categories"
+                            selectedCategory="state.selectedCategory"
+                            onSelectCategory="(id) => this.onSelectCategory(id)"
+                            favorites="state.favorites"
+                            recentComponents="state.recentComponents"
+                            usedComponents="state.recentlyUsedComponents"
+                            onSelectComponent="(c) => this.onSelectComponent(c)"
+                            designLab="state.designLab"
+                            onUpdateDesignLab="(s) => this.onUpdateDesignLab(s)"
+                            onLoadProfile="(k) => this.onLoadProfile(k)"
+                            onSaveProfile="(n) => this.onSaveProfile(n)"/>
+
+                        <!-- Gallery -->
+                        <CoreUIGallery
+                            components="state.components"
+                            selectedComponent="state.selectedComponent"
+                            onSelect="(c) => this.onSelectComponent(c)"
+                            filterQuery="state.searchQuery"
+                            categoryId="galleryCategoryFilter"
+                            onAddToNotebook="(id) => this.addToNotebook(id)"
+                            onNotebookCopy="(id, type) => this.onNotebookCopy(id, type)"
+                            previewMode="state.designLab.previewMode"/>
+
+                        <!-- Inspector -->
+                        <CoreUIInspector
+                            t-if="state.inspectorVisible"
+                            component="state.selectedComponent"
+                            componentMeta="selectedComponentMeta"
+                            onAddToNotebook="(id) => this.addToNotebook(id)"
+                            onClose="() => this.closeInspector()"
+                            onCopyAiPrompt="(id) => this.onCopiedAiPrompt(id)"
+                            onNotebookCopy="(id, type) => this.onNotebookCopy(id, type)"
+                            designLab="state.designLab"/>
+                    </div>
+
+                    <!-- Floating Notebook -->
+                    <CoreUINotebook
+                        items="state.notebookItems"
+                        onRemove="(id) => this.removeFromNotebook(id)"
+                        onClear="() => this.clearNotebook()"
+                        onPin="(id) => this.togglePinNotebook(id)"
+                        onJumpTo="(id) => this.jumpToComponent(id)"/>
+
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

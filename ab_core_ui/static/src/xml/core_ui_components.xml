@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="core_ui.dialog_confirm">
+        <div class="core_ui_dialog_overlay" t-on-click="close">
+            <div class="core_ui_dialog core_ui_dialog_sm" t-on-click.stop="">
+                <div class="core_ui_dialog_header">
+                    <h5 t-esc="props.title || 'Confirm'"/>
+                    <button class="core_ui_dialog_close" t-on-click="close">&#215;</button>
+                </div>
+                <div class="core_ui_dialog_body">
+                    <p t-esc="props.message || 'Are you sure?'"/>
+                </div>
+                <div class="core_ui_dialog_footer">
+                    <button class="core_ui_btn core_ui_btn_ghost" t-on-click="close">Cancel</button>
+                    <button class="core_ui_btn core_ui_btn_primary" t-on-click="confirm">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="core_ui.dialog_alert">
+        <div class="core_ui_dialog_overlay" t-on-click="close">
+            <div class="core_ui_dialog core_ui_dialog_sm" t-on-click.stop="">
+                <div class="core_ui_dialog_header">
+                    <h5 t-esc="props.title || 'Alert'"/>
+                    <button class="core_ui_dialog_close" t-on-click="close">&#215;</button>
+                </div>
+                <div class="core_ui_dialog_body">
+                    <p t-esc="props.message"/>
+                </div>
+                <div class="core_ui_dialog_footer">
+                    <button class="core_ui_btn core_ui_btn_primary" t-on-click="close">OK</button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+
+    <t t-name="core_ui.empty_state">
+        <div class="core_ui_empty_state">
+            <div class="core_ui_empty_state_icon">
+                <i t-attf-class="fa {{ props.icon || 'fa-inbox' }} fa-3x"/>
+            </div>
+            <h4 t-esc="props.title || 'No data'"/>
+            <p t-if="props.message" t-esc="props.message"/>
+        </div>
+    </t>
+
+    <t t-name="core_ui.loading_spinner">
+        <div class="core_ui_loading">
+            <div class="core_ui_spinner"/>
+            <p t-if="props.message" t-esc="props.message"/>
+        </div>
+    </t>
+
+    <!-- ===== Backward Compatibility Wrappers ===== -->
+    <!-- Old PascalCase template names delegate to canonical lowercase IDs -->
+    <t t-name="core_ui.ProgressBar"><t t-call="core_ui.progress_bar"/></t>
+    <t t-name="core_ui.Button"><t t-call="core_ui.button"/></t>
+    <t t-name="core_ui.Badge"><t t-call="core_ui.badge"/></t>
+    <t t-name="core_ui.BadgeState"><t t-call="core_ui.badge_state"/></t>
+    <t t-name="core_ui.Alert"><t t-call="core_ui.alert"/></t>
+    <t t-name="core_ui.Timeline"><t t-call="core_ui.timeline"/></t>
+    <t t-name="core_ui.PreviewCard"><t t-call="core_ui.preview_card"/></t>
+    <t t-name="core_ui.Search"><t t-call="core_ui.search"/></t>
+    <t t-name="core_ui.Sidebar"><t t-call="core_ui.sidebar"/></t>
+    <t t-name="core_ui.Gallery"><t t-call="core_ui.gallery"/></t>
+    <t t-name="core_ui.Inspector"><t t-call="core_ui.inspector"/></t>
+    <t t-name="core_ui.Notebook"><t t-call="core_ui.notebook"/></t>
+    <t t-name="core_ui.Workspace"><t t-call="core_ui.workspace"/></t>
+    <t t-name="core_ui.DialogConfirm"><t t-call="core_ui.dialog_confirm"/></t>
+    <t t-name="core_ui.DialogAlert"><t t-call="core_ui.dialog_alert"/></t>
+    <t t-name="core_ui.EmptyState"><t t-call="core_ui.empty_state"/></t>
+    <t t-name="core_ui.LoadingSpinner"><t t-call="core_ui.loading_spinner"/></t>
+
+</templates>
