@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.button">
+        <t t-if="props.variant === 'icon'">
+            <button t-att-class="'core_ui_btn core_ui_btn_icon' + (props.size ? ' core_ui_btn_icon_' + props.size : '')"
+                t-att-title="props.tooltip || props.label || ''">
+                <i t-att-class="'fa ' + (props.icon || 'fa-circle')"/>
+            </button>
+        </t>
+        <t t-else="">
+            <button t-att-class="'core_ui_btn core_ui_btn_' + props.variant"
+                t-att-disabled="props.disabled ? true : undefined"
+                t-att-title="props.tooltip || undefined">
+                <t t-if="props.icon"><i t-att-class="'fa ' + props.icon"/> </t>
+                <t t-esc="props.label || 'Button'"/>
+            </button>
+        </t>
+    </t>
+</templates>

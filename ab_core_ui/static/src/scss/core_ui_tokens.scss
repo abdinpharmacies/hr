@@ -1,0 +1,65 @@
+// ========== Design Token Display Styles ==========
+// These styles render the design tokens in the workspace inspector.
+
+.core_ui_token_section {
+  margin-bottom: var(--core-ui-space-xl);
+
+  .core_ui_token_section_title {
+    font-size: var(--core-ui-font-size-xs);
+    font-weight: var(--core-ui-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--core-ui-text-secondary);
+    margin-bottom: var(--core-ui-space-md);
+    padding-bottom: var(--core-ui-space-sm);
+    border-bottom: 1px solid var(--core-ui-border);
+  }
+
+  .core_ui_token_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--core-ui-space-sm);
+  }
+
+  .core_ui_token_item {
+    display: flex;
+    align-items: center;
+    gap: var(--core-ui-space-sm);
+    padding: var(--core-ui-space-sm);
+    border-radius: var(--core-ui-radius-md);
+    background: var(--core-ui-surface-alt);
+    cursor: pointer;
+    transition: all var(--core-ui-transition-fast);
+
+    &:hover {
+      background: var(--core-ui-surface-hover);
+    }
+  }
+
+  .core_ui_token_swatch {
+    width: 32px;
+    height: 32px;
+    border-radius: var(--core-ui-radius-sm);
+    border: 1px solid var(--core-ui-border);
+    flex-shrink: 0;
+  }
+
+  .core_ui_token_info {
+    min-width: 0;
+
+    .core_ui_token_name {
+      font-size: var(--core-ui-font-size-xs);
+      font-family: var(--core-ui-font-mono);
+      color: var(--core-ui-text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .core_ui_token_value {
+      font-size: 11px;
+      color: var(--core-ui-text-muted);
+      font-family: var(--core-ui-font-mono);
+    }
+  }
+}

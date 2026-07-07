@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.profile_preview_card">
+        <div class="core_ui_profile_card"
+            t-att-class="props.isSelected ? 'core_ui_profile_card_active' : ''"
+            t-att-style="profileStyle"
+            t-on-click="select"
+            role="button"
+            tabindex="0">
+            <div class="core_ui_profile_card_preview">
+                <div class="core_ui_profile_card_preview_inner">
+                    <!-- Page Header -->
+                    <div class="cu-preview-header">
+                        <div class="cu-preview-header-bar">
+                            <span class="cu-preview-dot" style="background:var(--core-ui-primary)"/>
+                            <span class="cu-preview-title">Dashboard</span>
+                        </div>
+                    </div>
+                    <!-- Content Card -->
+                    <div class="cu-preview-card">
+                        <div class="cu-preview-card-header">
+                            <span class="cu-preview-card-title">Sales Overview</span>
+                            <div class="cu-preview-badge">v2.0</div>
+                        </div>
+                        <div class="cu-preview-card-row">
+                            <span class="cu-preview-stat-value">$12.4k</span>
+                            <span class="cu-preview-stat-label">Revenue</span>
+                        </div>
+                        <div class="cu-preview-progress">
+                            <div class="cu-preview-progress-fill" style="width:72%"/>
+                        </div>
+                    </div>
+                    <!-- Buttons Row -->
+                    <div class="cu-preview-buttons">
+                        <button class="cu-preview-btn cu-preview-btn-primary">Save</button>
+                        <button class="cu-preview-btn cu-preview-btn-secondary">Cancel</button>
+                    </div>
+                    <!-- Alert -->
+                    <div class="cu-preview-alert">
+                        <i class="fa fa-info-circle"/>
+                        <span>2 pending orders</span>
+                    </div>
+                    <!-- Input -->
+                    <div class="cu-preview-input-row">
+                        <input class="cu-preview-input" placeholder="Search..." readonly=""/>
+                    </div>
+                    <!-- Table Row -->
+                    <div class="cu-preview-table-row">
+                        <div class="cu-preview-avatar"/>
+                        <div class="cu-preview-table-content">
+                            <span class="cu-preview-table-name">John Doe</span>
+                            <span class="cu-preview-table-role">Admin</span>
+                        </div>
+                        <div class="cu-preview-badge cu-preview-badge-green">Active</div>
+                    </div>
+                    <!-- Timeline Dot -->
+                    <div class="cu-preview-timeline">
+                        <div class="cu-preview-timeline-dot"/>
+                        <span class="cu-preview-timeline-text">Order #1234</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Active check mark -->
+            <div class="core_ui_profile_card_check" t-if="props.isSelected">
+                <i class="fa fa-check"/>
+            </div>
+            <!-- Footer -->
+            <div class="core_ui_profile_card_footer">
+                <div class="core_ui_profile_card_name" t-esc="props.profile.label"/>
+                <div class="core_ui_profile_card_chips">
+                    <span class="core_ui_profile_card_chip" t-esc="themeLabel"/>
+                    <span class="core_ui_profile_card_chip" t-esc="typographyLabel"/>
+                    <span class="core_ui_profile_card_chip" t-esc="radiusLabel"/>
+                    <span class="core_ui_profile_card_chip" t-esc="shadowLabel"/>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

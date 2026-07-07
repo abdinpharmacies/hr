@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.preview_card">
+        <div t-ref="root" class="core_ui_gallery_preview_slot"/>
+    </t>
+</templates>

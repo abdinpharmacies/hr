@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.progress_bar">
+        <div>
+            <t t-if="props.label || props.show_value">
+                <div class="core_ui_progress_label">
+                    <span t-esc="props.label || ''"/>
+                    <span t-if="props.show_value" t-esc="props.value + '%'"/>
+                </div>
+            </t>
+            <div class="core_ui_progress">
+                <div t-att-class="'core_ui_progress_bar ' + (props.color || '')"
+                     t-att-style="'width: ' + props.value + '%'"/>
+            </div>
+        </div>
+    </t>
+</templates>
