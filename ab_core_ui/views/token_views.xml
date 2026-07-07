@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="core_ui_token_category_tree_view" model="ir.ui.view">
+        <field name="name">core_ui.token_category.tree</field>
+        <field name="model">core_ui.token_category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="icon"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="core_ui_token_category_form_view" model="ir.ui.view">
+        <field name="name">core_ui.token_category.form</field>
+        <field name="model">core_ui.token_category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="icon"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="core_ui_design_token_tree_view" model="ir.ui.view">
+        <field name="name">core_ui.design_token.tree</field>
+        <field name="model">core_ui.design_token</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="token_name"/>
+                <field name="value"/>
+                <field name="type"/>
+                <field name="category_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="core_ui_design_token_form_view" model="ir.ui.view">
+        <field name="name">core_ui.design_token.form</field>
+        <field name="model">core_ui.design_token</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="token_name"/>
+                            <field name="value"/>
+                            <field name="type"/>
+                        </group>
+                        <group>
+                            <field name="category_id"/>
+                            <field name="sequence"/>
+                            <field name="preview_html"/>
+                        </group>
+                    </group>
+                    <field name="description" nolabel="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="core_ui_design_token_action" model="ir.actions.act_window">
+        <field name="name">Design Tokens</field>
+        <field name="res_model">core_ui.design_token</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

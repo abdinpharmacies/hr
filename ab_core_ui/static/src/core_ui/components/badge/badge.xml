@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.badge">
+        <span t-att-class="'core_ui_badge_pill ' + (props.color || 'neutral')">
+            <t t-if="props.icon"><i t-att-class="'fa ' + props.icon"/> </t>
+            <t t-esc="props.label || ''"/>
+        </span>
+    </t>
+    <t t-name="core_ui.badge_state">
+        <span t-att-class="'core_ui_state_badge ' + (props.state || 'draft')">
+            <t t-esc="props.label || props.state || ''"/>
+        </span>
+    </t>
+</templates>

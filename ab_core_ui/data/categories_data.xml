@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="cat_dialogs" model="core_ui.category">
+            <field name="name">Dialogs</field>
+            <field name="sequence">10</field>
+            <field name="icon">fa-window-maximize</field>
+            <field name="description">Modal dialogs and popup windows for confirmations, alerts, and workflows.</field>
+        </record>
+
+        <record id="cat_alerts" model="core_ui.category">
+            <field name="name">Alerts</field>
+            <field name="sequence">20</field>
+            <field name="icon">fa-exclamation-triangle</field>
+            <field name="description">Alert banners and notification bars for system messages.</field>
+        </record>
+
+        <record id="cat_buttons" model="core_ui.category">
+            <field name="name">Buttons</field>
+            <field name="sequence">30</field>
+            <field name="icon">fa-square</field>
+            <field name="description">Button components with various styles, sizes, and states.</field>
+        </record>
+
+        <record id="cat_cards" model="core_ui.category">
+            <field name="name">Cards</field>
+            <field name="sequence">40</field>
+            <field name="icon">fa-id-card</field>
+            <field name="description">Card containers for grouping related content.</field>
+        </record>
+
+        <record id="cat_forms" model="core_ui.category">
+            <field name="name">Forms</field>
+            <field name="sequence">50</field>
+            <field name="icon">fa-wpforms</field>
+            <field name="description">Form layouts, inputs, and validation patterns.</field>
+        </record>
+
+        <record id="cat_tables" model="core_ui.category">
+            <field name="name">Tables</field>
+            <field name="sequence">60</field>
+            <field name="icon">fa-table</field>
+            <field name="description">Data tables with sorting, filtering, and responsive variants.</field>
+        </record>
+
+        <record id="cat_badges" model="core_ui.category">
+            <field name="name">Badges</field>
+            <field name="sequence">70</field>
+            <field name="icon">fa-tag</field>
+            <field name="description">Status badges, tags, and labels.</field>
+        </record>
+
+        <record id="cat_headers" model="core_ui.category">
+            <field name="name">Headers</field>
+            <field name="sequence">80</field>
+            <field name="icon">fa-header</field>
+            <field name="description">Page headers, section headers, and hero sections.</field>
+        </record>
+
+        <record id="cat_statistics" model="core_ui.category">
+            <field name="name">Statistics</field>
+            <field name="sequence">90</field>
+            <field name="icon">fa-chart-bar</field>
+            <field name="description">Statistic cards, KPIs, and data display components.</field>
+        </record>
+
+        <record id="cat_timeline" model="core_ui.category">
+            <field name="name">Timeline</field>
+            <field name="sequence">100</field>
+            <field name="icon">fa-clock</field>
+            <field name="description">Timeline views for processes, history, and workflows.</field>
+        </record>
+
+        <record id="cat_kanban" model="core_ui.category">
+            <field name="name">Kanban</field>
+            <field name="sequence">110</field>
+            <field name="icon">fa-columns</field>
+            <field name="description">Kanban board components and card templates.</field>
+        </record>
+
+        <record id="cat_progress" model="core_ui.category">
+            <field name="name">Progress</field>
+            <field name="sequence">120</field>
+            <field name="icon">fa-spinner</field>
+            <field name="description">Progress bars, spinners, and loading indicators.</field>
+        </record>
+
+        <record id="cat_navigation" model="core_ui.category">
+            <field name="name">Navigation</field>
+            <field name="sequence">130</field>
+            <field name="icon">fa-bars</field>
+            <field name="description">Navigation components including sidebar, topbar, and breadcrumbs.</field>
+        </record>
+
+        <record id="cat_status" model="core_ui.category">
+            <field name="name">Status</field>
+            <field name="sequence">140</field>
+            <field name="icon">fa-circle</field>
+            <field name="description">Status indicators, state dots, and availability badges.</field>
+        </record>
+
+        <record id="cat_toast" model="core_ui.category">
+            <field name="name">Toast &amp; Notifications</field>
+            <field name="sequence">150</field>
+            <field name="icon">fa-bell</field>
+            <field name="description">Toast notifications and snackbar messages.</field>
+        </record>
+
+        <record id="cat_avatar" model="core_ui.category">
+            <field name="name">Avatar</field>
+            <field name="sequence">160</field>
+            <field name="icon">fa-user-circle</field>
+            <field name="description">User avatars, initials, and profile pictures.</field>
+        </record>
+
+        <record id="cat_empty_states" model="core_ui.category">
+            <field name="name">Empty States</field>
+            <field name="sequence">170</field>
+            <field name="icon">fa-folder-open</field>
+            <field name="description">Empty state illustrations and messages for no-data scenarios.</field>
+        </record>
+
+        <record id="cat_loading" model="core_ui.category">
+            <field name="name">Loading &amp; Skeleton</field>
+            <field name="sequence">180</field>
+            <field name="icon">fa-hourglass</field>
+            <field name="description">Loading states, skeleton screens, and shimmer effects.</field>
+        </record>
+
+        <record id="cat_errors" model="core_ui.category">
+            <field name="name">Errors &amp; Permissions</field>
+            <field name="sequence">190</field>
+            <field name="icon">fa-shield-alt</field>
+            <field name="description">Error pages, permission denied, 404, 500, and warning states.</field>
+        </record>
+
+        <record id="cat_search" model="core_ui.category">
+            <field name="name">Search &amp; Filters</field>
+            <field name="sequence">200</field>
+            <field name="icon">fa-search</field>
+            <field name="description">Search inputs, filter bars, and advanced filtering components.</field>
+        </record>
+
+        <record id="cat_upload" model="core_ui.category">
+            <field name="name">Upload</field>
+            <field name="sequence">210</field>
+            <field name="icon">fa-upload</field>
+            <field name="description">File upload areas, drag-and-drop zones, and attachment previews.</field>
+        </record>
+
+        <record id="cat_wizard" model="core_ui.category">
+            <field name="name">Wizard &amp; Stepper</field>
+            <field name="sequence">220</field>
+            <field name="icon">fa-magic</field>
+            <field name="description">Multi-step wizards, steppers, and guided workflows.</field>
+        </record>
+
+        <record id="cat_charts" model="core_ui.category">
+            <field name="name">Charts</field>
+            <field name="sequence">230</field>
+            <field name="icon">fa-chart-pie</field>
+            <field name="description">Chart components: bar, line, pie, donut, and metric displays.</field>
+        </record>
+
+        <record id="cat_inputs" model="core_ui.category">
+            <field name="name">Inputs</field>
+            <field name="sequence">240</field>
+            <field name="icon">fa-edit</field>
+            <field name="description">Input fields, selects, checkboxes, radio buttons, and switches.</field>
+        </record>
+
+    </data>
+</odoo>

@@ -1,0 +1,343 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.design_lab">
+        <div class="core_ui_design_lab">
+
+            <!-- Profiles -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('profiles') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('profiles')">
+                    <span><i class="fa fa-save me-1"/> Profiles</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('profiles') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_profile_grid">
+                                <t t-foreach="profileCards" t-as="pc" t-key="pc.key">
+                                    <ProfilePreviewCard
+                                        profile="pc"
+                                        isSelected="isProfileSelected(pc.key)"
+                                        onSelect="(k) => this.selectProfile(k)"/>
+                                </t>
+                            </div>
+                            <button class="core_ui_design_lab_save_floating"
+                                t-on-click="() => this.saveCurrentProfile()"
+                                title="Save current configuration as profile">
+                                <i class="fa fa-floppy-o"/>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Theme -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('theme') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('theme')">
+                    <span><i class="fa fa-paint-brush me-1"/> Theme</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('theme') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(themePacks)" t-as="tp" t-key="tp[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.theme === tp[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('theme', tp[0])">
+                                        <t t-esc="tp[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Palette -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('palette') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('palette')">
+                    <span><i class="fa fa-palette me-1"/> Palette</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('palette') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(palettes)" t-as="pl" t-key="pl[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.palette === pl[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('palette', pl[0])">
+                                        <t t-esc="pl[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Typography -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('typography') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('typography')">
+                    <span><i class="fa fa-font me-1"/> Typography</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('typography') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(typography)" t-as="ty" t-key="ty[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.typography === ty[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('typography', ty[0])"
+                                        t-att-style="ty[0] !== 'default' ? 'font-family: ' + ty[1].family : ''">
+                                        <t t-esc="ty[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Spacing -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('spacing') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('spacing')">
+                    <span><i class="fa fa-arrows-alt-h me-1"/> Spacing</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('spacing') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(spacing)" t-as="sp" t-key="sp[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.spacing === sp[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('spacing', sp[0])">
+                                        <t t-esc="sp[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Border Radius -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('radius') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('radius')">
+                    <span><i class="fa fa-square-o me-1"/> Radius</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('radius') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(radius)" t-as="rd" t-key="rd[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.radius === rd[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('radius', rd[0])">
+                                        <t t-esc="rd[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shadows -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('shadow') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('shadow')">
+                    <span><i class="fa fa-layer-group me-1"/> Shadows</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('shadow') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(shadows)" t-as="sh" t-key="sh[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.shadow === sh[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('shadow', sh[0])">
+                                        <t t-esc="sh[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Borders -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('border') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('border')">
+                    <span><i class="fa fa-stop me-1"/> Borders</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('border') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(borders)" t-as="br" t-key="br[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.border === br[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('border', br[0])">
+                                        <t t-esc="br[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gradients -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('gradient') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('gradient')">
+                    <span><i class="fa fa-rainbow me-1"/> Gradients</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('gradient') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(gradients)" t-as="gr" t-key="gr[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.gradient === gr[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('gradient', gr[0])">
+                                        <t t-esc="gr[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Motion -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('motion') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('motion')">
+                    <span><i class="fa fa-bolt me-1"/> Motion</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('motion') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <t t-foreach="Object.entries(motion)" t-as="mo" t-key="mo[0]">
+                                    <div class="core_ui_design_lab_chip"
+                                        t-att-class="props.designLab.motion === mo[0] ? 'active' : ''"
+                                        t-on-click="() => this.update('motion', mo[0])">
+                                        <t t-esc="mo[1].label"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Accessibility -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('accessibility') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('accessibility')">
+                    <span><i class="fa fa-universal-access me-1"/> Accessibility</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('accessibility') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <label class="core_ui_design_lab_toggle">
+                                <input type="checkbox"
+                                    t-att-checked="props.designLab.accessibility.highContrast"
+                                    t-on-click="() => this.updateAccessibility('highContrast', !props.designLab.accessibility.highContrast)"/>
+                                <span>High Contrast</span>
+                            </label>
+                            <label class="core_ui_design_lab_toggle">
+                                <input type="checkbox"
+                                    t-att-checked="props.designLab.accessibility.largeFont"
+                                    t-on-click="() => this.updateAccessibility('largeFont', !props.designLab.accessibility.largeFont)"/>
+                                <span>Large Font</span>
+                            </label>
+                            <label class="core_ui_design_lab_toggle">
+                                <input type="checkbox"
+                                    t-att-checked="props.designLab.accessibility.touchMode"
+                                    t-on-click="() => this.updateAccessibility('touchMode', !props.designLab.accessibility.touchMode)"/>
+                                <span>Touch Mode</span>
+                            </label>
+                            <label class="core_ui_design_lab_toggle">
+                                <input type="checkbox"
+                                    t-att-checked="props.designLab.accessibility.reducedMotion"
+                                    t-on-click="() => this.updateAccessibility('reducedMotion', !props.designLab.accessibility.reducedMotion)"/>
+                                <span>Reduced Motion</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview Mode -->
+            <div class="core_ui_design_lab_section"
+                t-att-class="isExpanded('preview') ? 'expanded' : ''">
+                <div class="core_ui_design_lab_header"
+                    t-on-click="() => this.toggleSection('preview')">
+                    <span><i class="fa fa-eye me-1"/> Preview</span>
+                    <i class="fa fa-chevron-right"/>
+                </div>
+                <div class="core_ui_design_lab_body_wrapper"
+                    t-att-class="isExpanded('preview') ? 'expanded' : ''">
+                    <div class="core_ui_design_lab_body_inner">
+                        <div class="core_ui_design_lab_body">
+                            <div class="core_ui_design_lab_grid">
+                                <div class="core_ui_design_lab_chip"
+                                    t-att-class="props.designLab.previewMode === 'component' ? 'active' : ''"
+                                    t-on-click="() => this.update('previewMode', 'component')">
+                                    Component
+                                </div>
+                                <div class="core_ui_design_lab_chip"
+                                    t-att-class="props.designLab.previewMode === 'application' ? 'active' : ''"
+                                    t-on-click="() => this.update('previewMode', 'application')">
+                                    Application
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </t>
+</templates>
