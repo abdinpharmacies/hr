@@ -32,18 +32,19 @@
                 <form string="Supplier Claim" class="scc-form-container">
                     <header class="scc-header-buttons">
                         <button name="action_accept" type="object" string="Accept" class="btn-primary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc') or not can_current_user_act"/>
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
                         <button name="action_reject" type="object" string="Reject" class="btn-secondary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc') or not can_current_user_act"/>
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
                         <button name="action_finish" type="object" string="Finish" class="btn-success"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc') or not can_finish"/>
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_finish"/>
                         <button name="action_done" type="object" string="Start the Cycle"
                                 class="btn-warning"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                 invisible="status != 'secretarial' or not can_current_user_act"/>
+
                         <button name="action_done" type="object" string="Complete Sign Check"
                                 class="btn-success"
                                 invisible="status != 'sign_check' or not can_current_user_act"/>
@@ -68,6 +69,7 @@
                         <field name="can_finish" invisible="1"/>
                         <field name="can_secretarial_override" invisible="1"/>
                         <field name="supplier_notified" invisible="1"/>
+                        <field name="has_blocking_issue" invisible="1"/>
 
                         <div class="scc-detail-alert" style="margin-bottom:16px;"
                              groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -83,10 +85,14 @@
                                 <div style="flex:1;">
                                     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
                                         <span class="scc-supplier-name">
-                                            <field name="supplier_id" readonly="not can_current_user_edit"/>
+                                            <field name="supplier_id" readonly="not can_current_user_edit" options="{'open_form': True}"/>
+                                            <span class="scc-supplier-link-icon">↗</span>
                                         </span>
                                         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
-                                            🔖 <field name="name"/>
+                                            🏷 <field name="supplier_type"/>
+                                        </span>
+                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
+                                            📅 <field name="claim_month" readonly="status != 'secretarial'"/>
                                         </span>
                                     </div>
                                     <div class="scc-supplier-sub">
@@ -132,6 +138,21 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="scc-supplier-info">
+                                    <div class="scc-supplier-info-icon">🏷</div>
+                                    <div>
+                                        <div class="scc-supplier-info-label o_translate_inline">Supplier Type</div>
+                                        <div class="scc-supplier-info-value" style="display:flex;align-items:center;gap:6px;">
+                                            <field name="supplier_type" readonly="1"/>
+                                            <span class="scc-type-warning-badge" invisible="supplier_type">
+                                                ⚠ <span class="o_translate_inline">Not Configured</span>
+                                                <button name="action_open_supplier_type_wizard" type="object"
+                                                        string="Set" class="scc-type-set-btn"
+                                                        groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -171,7 +192,7 @@
                             </div>
 
                             <!-- Department Decision Status -->
-                            <div class="scc-stage-field" invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                            <div class="scc-stage-field" invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Department Decision</span>
                                 <span class="scc-stage-field-value">
                                     <field name="department_decision_display" nolabel="1"/>
@@ -179,28 +200,35 @@
                             </div>
 
                             <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="inv_reason" readonly="inv_decision == 'accepted'"/>
                                 </span>
                             </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_purchase"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="pur_reason" readonly="pur_decision == 'accepted'"/>
                                 </span>
                             </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_suppliers"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="sup_reason" readonly="sup_decision == 'accepted'"/>
                                 </span>
                             </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_tax_accounts"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or supplier_type != 'withholding_tax'">
+                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="tax_reason" readonly="tax_decision == 'accepted'"/>
+                                </span>
+                            </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_acc"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'bank_acc')">
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="bank_reason" readonly="bank_decision == 'accepted'"/>
@@ -256,7 +284,7 @@
 
                         <!-- Cheque Delivery Documents -->
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status != 'check_delivered'">
+                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">📎</span>
                                 <span class="o_translate_inline">Cheque Delivery Documents</span>
@@ -306,9 +334,33 @@
                             </div>
                         </div>
 
+                        <!-- Blocking Issues -->
+                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
+                             invisible="not has_blocking_issue">
+                            <div class="scc-form-section-title">
+                                <span class="scc-form-section-title-icon">🔒</span>
+                                <span class="o_translate_inline">Blocking Issues</span>
+                            </div>
+                            <div style="display:flex;flex-direction:column;gap:12px;">
+                                <field name="issue_ids" nolabel="1" readonly="not can_current_user_edit">
+                                    <list>
+                                        <field name="title"/>
+                                        <field name="description"/>
+                                        <field name="user_id"/>
+                                        <field name="date"/>
+                                        <field name="resolved"/>
+                                        <button name="action_resolve" type="object" string="Resolve"
+                                                class="btn-success"
+                                                invisible="resolved == True"
+                                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                                    </list>
+                                </field>
+                            </div>
+                        </div>
+
                         <!-- sub_delivery_status on form -->
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status != 'check_delivered'">
+                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">🚚</span>
                                 <span class="o_translate_inline">Delivery Status</span>
@@ -317,7 +369,7 @@
                                 <span class="scc-stage-field-label o_translate_inline">Sub Status</span>
                                 <span class="scc-stage-field-value">
                                     <field name="sub_delivery_status" nolabel="1"
-                                           required="check_delivery_status == 'check_delivered'"/>
+                                           required="check_delivery_status in ('check_delivered', 'mixed')"/>
                                 </span>
                             </div>
                         </div>
@@ -390,6 +442,35 @@
             </field>
         </record>
 
+        <record id="supplier_type_setup_wizard_form" model="ir.ui.view">
+            <field name="name">supplier_type_setup_wizard_form</field>
+            <field name="model">ab.supplier.type.setup.wizard</field>
+            <field name="arch" type="xml">
+                <form class="scc-clean-dialog">
+                    <div class="scc-dialog-body">
+                        <div class="scc-dialog-header">
+                            <div class="scc-dialog-icon is-warning">⚠</div>
+                            <div>
+                                <div class="scc-dialog-title o_translate_inline">Supplier Type Required</div>
+                                <div class="scc-dialog-sub o_translate_inline">
+                                    This supplier has not been classified yet.
+                                    Please select the Supplier Type before continuing.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="scc-dialog-field">
+                            <field name="supplier_id" invisible="1"/>
+                            <field name="supplier_type" required="1" placeholder="Select supplier type..."/>
+                        </div>
+                        <div class="scc-dialog-footer">
+                            <button string="Cancel" class="btn-secondary" special="cancel"/>
+                            <button name="action_confirm" type="object" string="Save" class="btn-primary"/>
+                        </div>
+                    </div>
+                </form>
+            </field>
+        </record>
+
         <record id="invoice_action" model="ir.actions.act_window">
             <field name="name">Claim Cycle</field>
             <field name="type">ir.actions.act_window</field>
@@ -401,7 +482,7 @@
                   name="Claim Cycle"
                   parent="supplier_claim_cycle_sub_menu"
                   action="invoice_action"
-                  groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                  groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
                   sequence="100"/>
 
     </data>

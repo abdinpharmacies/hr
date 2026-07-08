@@ -59,7 +59,7 @@
             <field name="name">Supplier Claim Inventory writes department stages</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_inventory'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'bank_acc'))]</field>
+            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -70,7 +70,7 @@
             <field name="name">Supplier Claim Purchase writes department stages</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_purchase'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'bank_acc'))]</field>
+            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -81,7 +81,18 @@
             <field name="name">Supplier Claim Suppliers writes department stages</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_suppliers'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'bank_acc'))]</field>
+            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_supplier_claim_tax_accounts_write_current_stage" model="ir.rule">
+            <field name="name">Supplier Claim Tax Accounts writes department stages</field>
+            <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_tax_accounts'))]"/>
+            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -92,7 +103,7 @@
             <field name="name">Supplier Claim Bank Acc writes department stages</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_bank_acc'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'bank_acc'))]</field>
+            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
@@ -135,7 +146,7 @@
         <record id="rule_stage_history_department_read" model="ir.rule">
             <field name="name">Stage History department read</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_stage_history"/>
-            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_inventory')),(4, ref('ab_supplier_claim_cycle.supplier_claim_group_purchase')),(4, ref('ab_supplier_claim_cycle.supplier_claim_group_suppliers')),(4, ref('ab_supplier_claim_cycle.supplier_claim_group_bank_acc'))]"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_inventory')),(4, ref('ab_supplier_claim_cycle.supplier_claim_group_purchase')),(4, ref('ab_supplier_claim_cycle.supplier_claim_group_suppliers')),(4, ref('ab_supplier_claim_cycle.supplier_claim_group_tax_accounts')),(4, ref('ab_supplier_claim_cycle.supplier_claim_group_bank_acc'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>

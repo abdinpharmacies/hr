@@ -102,6 +102,70 @@
   color: var(--scc-text);
 }
 
+/* ---- Supplier Type Warning Badge ---- */
+.scc-type-warning-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #d97706;
+  background: rgba(217, 119, 6, 0.08);
+  padding: 2px 8px;
+  border-radius: 12px;
+  white-space: nowrap;
+}
+.scc-type-set-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  margin-left: 2px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  line-height: 1.6;
+}
+.scc-type-set-btn:hover {
+  background: linear-gradient(135deg, #4f46e5, #4338ca);
+}
+
+/* ---- Workflow Quality Card ---- */
+.scc-quality-card {
+  min-width: 220px;
+}
+.scc-quality-card .scc-kpi-label {
+  margin-bottom: 8px;
+}
+.scc-quality-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.scc-quality-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.scc-quality-accept {
+  color: var(--scc-success, #10b981);
+  font-weight: 600;
+}
+.scc-quality-reject {
+  color: var(--scc-danger, #ef4444);
+  font-weight: 600;
+}
+.scc-quality-pct {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--scc-text);
+}
+
 /* ---- Status Badges ---- */
 .scc-badge {
   display: inline-flex;
@@ -441,6 +505,32 @@
   font-weight: 700;
   color: var(--scc-text);
   line-height: 1.3;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: var(--scc-transition);
+}
+.scc-supplier-name:hover {
+  color: var(--scc-primary);
+}
+.scc-supplier-name .o_field_many2one {
+  color: inherit !important;
+  text-decoration: none !important;
+  transition: var(--scc-transition);
+}
+.scc-supplier-name:hover .o_field_many2one {
+  color: var(--scc-primary) !important;
+  text-decoration: underline !important;
+}
+.scc-supplier-link-icon {
+  font-size: 14px;
+  opacity: 0;
+  transition: var(--scc-transition);
+  color: var(--scc-primary);
+}
+.scc-supplier-name:hover .scc-supplier-link-icon {
+  opacity: 1;
 }
 .scc-supplier-sub {
   font-size: 12px;
@@ -482,6 +572,27 @@
   line-height: 1.3;
 }
 
+/* ---- Blocking Issue Events ---- */
+.scc-timeline-dot.is-event-blocking {
+  background: #7c3aed;
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(124,58,237,0.2);
+  animation: scc-dot-glow-blocking 2s ease-in-out infinite;
+}
+@keyframes scc-dot-glow-blocking {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(124,58,237,0.25); }
+  50% { box-shadow: 0 0 0 7px rgba(124,58,237,0.12); }
+}
+.scc-timeline-dot.is-event-resolved {
+  background: var(--scc-success);
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(16,185,129,0.2);
+}
+.scc-detail-alert.is-blocking {
+  background: linear-gradient(135deg, #f3e8ff, #ede9fe);
+  border-color: #c4b5fd;
+  color: #5b21b6;
+}
 /* ---- Overdue Badge ---- */
 .scc-overdue-badge {
   display: inline-flex;

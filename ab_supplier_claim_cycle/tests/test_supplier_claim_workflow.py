@@ -10,6 +10,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
         self.group_inventory = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_inventory')
         self.group_purchase = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_purchase')
         self.group_suppliers = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_suppliers')
+        self.group_tax_accounts = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_tax_accounts')
         self.group_bank_acc = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_bank_acc')
         self.group_admin = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_admin')
         self.group_reviewer = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_reviewer')
@@ -18,6 +19,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
             | self.group_inventory
             | self.group_purchase
             | self.group_suppliers
+            | self.group_tax_accounts
             | self.group_bank_acc
             | self.group_admin
             | self.group_reviewer
@@ -25,10 +27,15 @@ class TestSupplierClaimWorkflow(TransactionCase):
         self.workflow_user = self.env.ref('base.user_admin').sudo()
 
         seed = (self.env['ab_costcenter'].sudo().search([], order='id desc', limit=1).id or 0) + 1000000
-        self.supplier = self.env['ab_costcenter'].sudo().create({
-            'name': 'Supplier Claim Test Supplier',
-            'code': '1-SCT%s' % seed,
-        })
+        try:
+            self.supplier = self.env['ab_costcenter'].sudo().create({
+                'name': 'Supplier Claim Test Supplier',
+                'code': '1-SCT%s' % seed,
+            })
+        except ValidationError:
+            self.supplier = self.env['ab_costcenter'].sudo().search([('code', '=like', '1-%')], limit=1)
+            self.assertTrue(self.supplier, 'At least one supplier cost center is required for workflow tests.')
+            self.supplier.with_context(replication=True).sudo().write({'supplier_type': False})
 
     def _set_workflow_group(self, group):
         self.workflow_user.write({
@@ -47,6 +54,8 @@ class TestSupplierClaimWorkflow(TransactionCase):
             'area': 'south',
             'amount_of_check': '1000',
             'type_of_invoice': 'original',
+            'claim_document': b'dGVzdF9jbGFpbV9kb2N1bWVudA==',
+            'claim_document_filename': 'claim.pdf',
         })
 
     def _start_cycle(self, claim):
@@ -66,7 +75,11 @@ class TestSupplierClaimWorkflow(TransactionCase):
         self._department_finish(claim, group)
 
     def _all_departments_finish(self, claim):
-        for group in (self.group_inventory, self.group_purchase, self.group_suppliers, self.group_bank_acc):
+        groups = [self.group_inventory, self.group_purchase, self.group_suppliers]
+        if claim.supplier_type == 'withholding_tax':
+            groups.append(self.group_tax_accounts)
+        groups.append(self.group_bank_acc)
+        for group in groups:
             self._department_accept_and_finish(claim, group)
 
     def test_secretarial_starts_cycle(self):
@@ -115,6 +128,32 @@ class TestSupplierClaimWorkflow(TransactionCase):
         self._all_departments_finish(claim)
         self.assertEqual(claim.status, 'sign_check')
 
+    def test_withholding_tax_supplier_requires_tax_accounts_finish(self):
+        self.supplier.with_context(replication=True).sudo().write({'supplier_type': 'withholding_tax'})
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        for group in (self.group_inventory, self.group_purchase, self.group_suppliers, self.group_bank_acc):
+            self._department_accept_and_finish(claim, group)
+
+        self.assertEqual(claim.status, 'inventory')
+        self.assertEqual(claim.tax_decision, 'pending')
+
+        self._department_accept_and_finish(claim, self.group_tax_accounts)
+        self.assertEqual(claim.tax_decision, 'accepted')
+        self.assertTrue(claim.tax_finished)
+        self.assertEqual(claim.status, 'sign_check')
+
+    def test_non_withholding_supplier_skips_tax_accounts(self):
+        self.supplier.with_context(replication=True).sudo().write({'supplier_type': 'non_taxable'})
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        self._all_departments_finish(claim)
+
+        self.assertEqual(claim.status, 'sign_check')
+        self.assertFalse(claim.stage_history_ids.filtered(lambda h: h.stage == 'tax_accounts'))
+
     def test_department_finish_sets_finished_flag(self):
         claim = self._create_claim()
         self._start_cycle(claim)
@@ -129,15 +168,15 @@ class TestSupplierClaimWorkflow(TransactionCase):
         self._start_cycle(claim)
 
         self._set_workflow_group(self.group_inventory)
-        with self.assertRaises(ValidationError):
-            claim.with_user(self.workflow_user).action_reject()
+        action = claim.with_user(self.workflow_user).action_reject()
+        self.assertEqual(action['res_model'], 'ab.claim.error.wizard')
 
     def test_department_rejection_sets_individual_decision(self):
         claim = self._create_claim()
         self._start_cycle(claim)
 
         self._set_workflow_group(self.group_inventory)
-        claim.with_user(self.workflow_user).write({'delay_reason': 'Missing documents.'})
+        claim.with_user(self.workflow_user).write({'inv_reason': 'Missing documents.'})
         claim.with_user(self.workflow_user).action_reject()
         self.assertEqual(claim.inv_decision, 'rejected')
         self.assertEqual(claim.pur_decision, 'pending')
@@ -185,16 +224,26 @@ class TestSupplierClaimWorkflow(TransactionCase):
         })
 
         action = wizard.action_confirm()
+        self.assertEqual(action['type'], 'ir.actions.act_window_close')
+        self.assertEqual(claim.status, 'supplier_notification')
+
+        self._set_workflow_group(self.group_secretarial)
+        claim.with_user(self.workflow_user).write({
+            'contact_result': 'contacted',
+            'contact_name': 'Supplier Rep',
+            'contact_phone': '01000000000',
+            'sub_delivery_status': 'ready',
+        })
+        action = claim.with_user(self.workflow_user).action_supplier_notified()
         self.assertEqual(action['res_model'], 'ab.claim.error.wizard')
         self.assertTrue('cheque image' in action['context'].get('default_error_message', '').lower()
                         or 'supplier id image' in action['context'].get('default_error_message', '').lower())
 
         claim.with_user(self.workflow_user).write({
-            'cheque_image': b'fake_cheque_png',
+            'cheque_image': b'ZmFrZV9jaGVxdWVfcG5n',
             'cheque_image_filename': 'cheque.png',
-            'supplier_id_image': b'fake_id_png',
+            'supplier_id_image': b'ZmFrZV9pZF9wbmc=',
             'supplier_id_image_filename': 'id.png',
         })
-        action = wizard.action_confirm()
-        self.assertEqual(action['type'], 'ir.actions.act_window_close')
-        self.assertEqual(claim.status, 'supplier_notification')
+        claim.with_user(self.workflow_user).action_supplier_notified()
+        self.assertTrue(claim.supplier_notified)
