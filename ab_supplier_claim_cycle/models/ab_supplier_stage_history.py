@@ -12,6 +12,7 @@ class SupplierClaimStageHistory(models.Model):
         ('inventory', 'Inventory'),
         ('purchase', 'Purchase'),
         ('suppliers', 'Suppliers'),
+        ('tax_accounts', 'Tax Accounts'),
         ('bank_acc', 'Bank Account'),
         ('sign_check', 'Sign Check'),
         ('supplier_notification', 'Supplier Notification'),

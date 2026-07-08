@@ -3,12 +3,13 @@ from datetime import timedelta
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 
-STAGE_SEQUENCE = ('secretarial', 'inventory', 'purchase', 'suppliers', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')
+STAGE_SEQUENCE = ('secretarial', 'inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')
 STAGE_LABELS = {
     'secretarial': 'Secretarial',
     'inventory': 'Inventory',
     'purchase': 'Purchase',
     'suppliers': 'Suppliers',
+    'tax_accounts': 'Tax Accounts',
     'bank_acc': 'Bank Account',
     'sign_check': 'Sign Check',
     'supplier_notification': 'Supplier Notification',
@@ -19,21 +20,25 @@ PARALLEL_DECISION_FIELDS = [
     ('inventory', 'inv_decision'),
     ('purchase', 'pur_decision'),
     ('suppliers', 'sup_decision'),
+    ('tax_accounts', 'tax_decision'),
     ('bank_acc', 'bank_decision'),
 ]
-DEPARTMENT_STAGES = ('inventory', 'purchase', 'suppliers', 'bank_acc')
+DEPARTMENT_STAGES = ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')
 FINISHED_FIELD_MAP = {
     'inventory': 'inv_finished',
     'purchase': 'pur_finished',
     'suppliers': 'sup_finished',
+    'tax_accounts': 'tax_finished',
     'bank_acc': 'bank_finished',
 }
 REASON_FIELD_MAP = {
     'inventory': 'inv_reason',
     'purchase': 'pur_reason',
     'suppliers': 'sup_reason',
+    'tax_accounts': 'tax_reason',
     'bank_acc': 'bank_reason',
 }
+WITHHOLDING_TAX_SUPPLIER_TYPE = 'withholding_tax'
 
 
 class SupplierClaimCycle(models.Model):
@@ -46,6 +51,16 @@ class SupplierClaimCycle(models.Model):
     stage_history_ids = fields.One2many('ab_supplier_claim_stage_history', 'claim_id', string='Stage History', copy=False)
 
     supplier_id = fields.Many2one("ab_costcenter", required=True, tracking=True, domain=[("code", "=like", "1-%")])
+    supplier_type = fields.Selection(
+        related='supplier_id.supplier_type', string='Supplier Type', readonly=True,
+        selection=[
+            ('advance_payment', 'دفعات مقدمة'),
+            ('withholding_tax', 'خصم من المنبع'),
+            ('non_taxable', 'غير ضريبي'),
+        ],
+    )
+    supplier_email = fields.Char(related='supplier_id.work_email', string='Supplier Email', readonly=True)
+    representative_phone = fields.Char(related='supplier_id.representative_phone', string='Representative Phone', readonly=True)
     num_of_invoice = fields.Integer(required=True, tracking=True)
     status = fields.Selection(
         selection=[(s, STAGE_LABELS[s]) for s in STAGE_SEQUENCE],
@@ -64,12 +79,16 @@ class SupplierClaimCycle(models.Model):
     sup_decision = fields.Selection(
         selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
         default='pending', string='Suppliers Decision')
+    tax_decision = fields.Selection(
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
+        default='pending', string='Tax Accounts Decision')
     bank_decision = fields.Selection(
         selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
         default='pending', string='Bank Account Decision')
     inv_finished = fields.Boolean(default=False, string='Inventory Finished')
     pur_finished = fields.Boolean(default=False, string='Purchase Finished')
     sup_finished = fields.Boolean(default=False, string='Suppliers Finished')
+    tax_finished = fields.Boolean(default=False, string='Tax Accounts Finished')
     bank_finished = fields.Boolean(default=False, string='Bank Account Finished')
 
     department_decision = fields.Selection(
@@ -92,9 +111,13 @@ class SupplierClaimCycle(models.Model):
     inv_reason = fields.Text(string="Inventory Reason", copy=False)
     pur_reason = fields.Text(string="Purchase Reason", copy=False)
     sup_reason = fields.Text(string="Suppliers Reason", copy=False)
+    tax_reason = fields.Text(string="Tax Accounts Reason", copy=False)
     bank_reason = fields.Text(string="Bank Account Reason", copy=False)
     check_delivery_status = fields.Selection(
-        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'), ('check_delivered', 'Issue Check'), ('shipped', 'Shipped')],
+        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
+                   ('check_delivered', 'Issue Check'),
+                   ('mixed', 'Mixed (Bank Transfer + Cheque)'),
+                   ('shipped', 'Shipped')],
         string="Cheque Delivery Status",
         tracking=True,
     )
@@ -140,19 +163,69 @@ class SupplierClaimCycle(models.Model):
         sanitize=False,
         readonly=True,
     )
-
+    claim_month = fields.Date(string='Claim Month', default=lambda self: fields.Date.context_today(self).replace(day=1))
+    payment_method = fields.Selection(
+        selection=[('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
+                   ('cheque', 'Cheque'), ('mixed', 'Mixed (Bank Transfer + Cheque)')],
+        string='Payment Method',
+        tracking=True,
+    )
+    issue_ids = fields.One2many('ab.supplier.claim.issue', 'claim_id', string='Issues')
+    has_blocking_issue = fields.Boolean(compute='_compute_has_blocking_issue')
     def _get_stage_group_xmlids(self):
         return {
             'inventory': 'ab_supplier_claim_cycle.supplier_claim_group_inventory',
             'purchase': 'ab_supplier_claim_cycle.supplier_claim_group_purchase',
             'suppliers': 'ab_supplier_claim_cycle.supplier_claim_group_suppliers',
+            'tax_accounts': 'ab_supplier_claim_cycle.supplier_claim_group_tax_accounts',
             'bank_acc': 'ab_supplier_claim_cycle.supplier_claim_group_bank_acc',
             'sign_check': 'ab_supplier_claim_cycle.supplier_claim_group_user',
             'supplier_notification': 'ab_supplier_claim_cycle.supplier_claim_group_user',
         }
 
+    def _requires_tax_accounts_stage(self):
+        self.ensure_one()
+        return self.supplier_type == WITHHOLDING_TAX_SUPPLIER_TYPE
+
+    def _get_workflow_sequence(self):
+        self.ensure_one()
+        if self._requires_tax_accounts_stage():
+            return STAGE_SEQUENCE
+        return tuple(stage for stage in STAGE_SEQUENCE if stage != 'tax_accounts')
+
+    def _get_parallel_decision_fields(self):
+        self.ensure_one()
+        if self.status in ('inventory', 'purchase'):
+            return [('inventory', 'inv_decision'), ('purchase', 'pur_decision')]
+        if self.status == 'suppliers':
+            return [('suppliers', 'sup_decision')]
+        if self.status == 'tax_accounts':
+            return [('tax_accounts', 'tax_decision')]
+        if self.status == 'bank_acc':
+            return [('bank_acc', 'bank_decision')]
+        return []
+
+    @api.depends('issue_ids', 'issue_ids.resolved')
+    def _compute_has_blocking_issue(self):
+        for rec in self:
+            rec.has_blocking_issue = any(not issue.resolved for issue in rec.issue_ids)
+
     @api.depends_context('uid')
-    @api.depends('status', 'inv_decision', 'pur_decision', 'sup_decision', 'bank_decision', 'inv_finished', 'pur_finished', 'sup_finished', 'bank_finished')
+    @api.depends(
+        'status',
+        'supplier_type',
+        'inv_decision',
+        'pur_decision',
+        'sup_decision',
+        'tax_decision',
+        'bank_decision',
+        'inv_finished',
+        'pur_finished',
+        'sup_finished',
+        'tax_finished',
+        'bank_finished',
+        'has_blocking_issue',
+    )
     def _compute_workflow_access(self):
         is_admin = self._is_supplier_claim_admin()
         is_secretarial = self._is_supplier_claim_secretarial()
@@ -162,18 +235,21 @@ class SupplierClaimCycle(models.Model):
             can_finish = False
             if rec.status != 'closed':
                 if rec.status in DEPARTMENT_STAGES:
-                    for stage_key, decision_field in PARALLEL_DECISION_FIELDS:
+                    for stage_key, decision_field in rec._get_parallel_decision_fields():
                         group_xmlid = stage_groups.get(stage_key)
                         if group_xmlid and self.env.user.has_group(group_xmlid):
                             if rec[decision_field] != 'accepted':
                                 can_handle = True
                                 break
-                    for stage_key, decision_field in PARALLEL_DECISION_FIELDS:
+                    for stage_key, decision_field in rec._get_parallel_decision_fields():
                         group_xmlid = stage_groups.get(stage_key)
                         if group_xmlid and self.env.user.has_group(group_xmlid):
                             if rec[decision_field] == 'accepted' and not rec[FINISHED_FIELD_MAP[stage_key]]:
                                 can_finish = True
                                 break
+                    if rec.has_blocking_issue and not is_admin and not is_secretarial:
+                        can_handle = False
+                        can_finish = False
                 else:
                     can_handle = rec._user_can_handle_stage(rec.status, stage_groups)
             rec.can_current_user_act = can_handle
@@ -182,10 +258,10 @@ class SupplierClaimCycle(models.Model):
             rec.can_current_user_edit = is_admin or (rec.status != 'closed' and (is_secretarial or can_handle))
             rec.can_edit_documents = is_admin or (is_secretarial and rec.status != 'closed')
 
-    @api.depends('inv_decision', 'pur_decision', 'sup_decision', 'bank_decision')
+    @api.depends('supplier_type', 'status', 'inv_decision', 'pur_decision', 'sup_decision', 'tax_decision', 'bank_decision')
     def _compute_department_decision_display(self):
         for rec in self:
-            decisions = [rec[df] for _, df in PARALLEL_DECISION_FIELDS]
+            decisions = [rec[df] for _, df in rec._get_parallel_decision_fields()]
             if all(d == 'pending' for d in decisions):
                 rec.department_decision_display = 'pending'
             elif all(d == 'accepted' for d in decisions):
@@ -195,7 +271,20 @@ class SupplierClaimCycle(models.Model):
             else:
                 rec.department_decision_display = 'in_progress'
 
-    @api.depends('inv_decision', 'pur_decision', 'sup_decision', 'bank_decision', 'inv_finished', 'pur_finished', 'sup_finished', 'bank_finished', 'status')
+    @api.depends(
+        'supplier_type',
+        'inv_decision',
+        'pur_decision',
+        'sup_decision',
+        'tax_decision',
+        'bank_decision',
+        'inv_finished',
+        'pur_finished',
+        'sup_finished',
+        'tax_finished',
+        'bank_finished',
+        'status',
+    )
     def _compute_parallel_status_summary(self):
         for rec in self:
             if rec.status not in DEPARTMENT_STAGES:
@@ -203,14 +292,14 @@ class SupplierClaimCycle(models.Model):
                 continue
             any_decided = any(
                 rec[decision_field] != 'pending'
-                for stage_key, decision_field in PARALLEL_DECISION_FIELDS
+                for stage_key, decision_field in rec._get_parallel_decision_fields()
             )
             if not any_decided:
                 rec.parallel_status_summary = '<div class="scc-parallel-pending"><span class="scc-parallel-icon">⏳</span><span class="o_translate_inline">Pending</span></div>'
                 continue
             L = ['<div class="scc-parallel-grid">']
             has_pending = False
-            for stage_key, decision_field in PARALLEL_DECISION_FIELDS:
+            for stage_key, decision_field in rec._get_parallel_decision_fields():
                 decision = rec[decision_field]
                 finished = rec[FINISHED_FIELD_MAP[stage_key]]
                 label = STAGE_LABELS.get(stage_key, stage_key)
@@ -293,7 +382,7 @@ class SupplierClaimCycle(models.Model):
                 if rec.status in DEPARTMENT_STAGES:
                     can_write = any(
                         self.env.user.has_group(self._get_stage_group_xmlids()[sk])
-                        for sk, _ in PARALLEL_DECISION_FIELDS
+                        for sk, _ in rec._get_parallel_decision_fields()
                     )
                     if not can_write:
                         raise AccessError(_("Only the current department can edit this supplier claim."))
@@ -322,7 +411,7 @@ class SupplierClaimCycle(models.Model):
                 stage_groups = rec._get_stage_group_xmlids()
                 user_stage = None
                 user_reason = None
-                for stage_key, decision_field in PARALLEL_DECISION_FIELDS:
+                for stage_key, decision_field in rec._get_parallel_decision_fields():
                     group_xmlid = stage_groups.get(stage_key)
                     if group_xmlid and self.env.user.has_group(group_xmlid):
                         user_stage = stage_key
@@ -374,7 +463,7 @@ class SupplierClaimCycle(models.Model):
                 raise UserError(_("Finish is only available during department review stages."))
             stage_groups = rec._get_stage_group_xmlids()
             finished = False
-            for stage_key, decision_field in PARALLEL_DECISION_FIELDS:
+            for stage_key, decision_field in rec._get_parallel_decision_fields():
                 group_xmlid = stage_groups.get(stage_key)
                 if group_xmlid and self.env.user.has_group(group_xmlid):
                     if rec[decision_field] == 'pending':
@@ -391,7 +480,7 @@ class SupplierClaimCycle(models.Model):
     def _set_parallel_department_decision(self, decision):
         self.ensure_one()
         stage_groups = self._get_stage_group_xmlids()
-        for stage_key, decision_field in PARALLEL_DECISION_FIELDS:
+        for stage_key, decision_field in self._get_parallel_decision_fields():
             group_xmlid = stage_groups.get(stage_key)
             if group_xmlid and self.env.user.has_group(group_xmlid):
                 vals = {decision_field: decision}
@@ -418,20 +507,56 @@ class SupplierClaimCycle(models.Model):
             return
         all_finished = all(
             self[decision_field] == 'accepted' and self[FINISHED_FIELD_MAP[sk]]
-            for sk, decision_field in PARALLEL_DECISION_FIELDS
+            for sk, decision_field in self._get_parallel_decision_fields()
         )
-        if all_finished:
-            self.with_context(supplier_claim_internal_write=True).write({
-                'status': 'sign_check',
-                'department_decision': 'pending',
-                'delay_reason': False,
-            })
-            self._create_stage_history('sign_check', 'pending')
+        if not all_finished:
+            return
+        if self.status in ('inventory', 'purchase'):
+            next_stage = 'suppliers'
+        elif self.status == 'suppliers':
+            next_stage = 'tax_accounts' if self._requires_tax_accounts_stage() else 'bank_acc'
+        elif self.status == 'tax_accounts':
+            next_stage = 'bank_acc'
+        elif self.status == 'bank_acc':
+            next_stage = 'sign_check'
+        else:
+            next_stage = 'sign_check'
+        self.with_context(supplier_claim_internal_write=True).write({
+            'status': next_stage,
+            'department_decision': 'pending',
+            'delay_reason': False,
+        })
+        self._create_stage_history(next_stage, 'pending')
+
+    def action_open_supplier_type_wizard(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Supplier Type Setup'),
+            'res_model': 'ab.supplier.type.setup.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_supplier_id': self.supplier_id.id,
+            },
+        }
 
     def action_done(self):
         for rec in self:
             rec._check_can_act_current_stage()
             if rec.status == 'secretarial':
+                if not rec.supplier_id.supplier_type:
+                    return {
+                        'type': 'ir.actions.act_window',
+                        'name': _('Supplier Type Required'),
+                        'res_model': 'ab.supplier.type.setup.wizard',
+                        'view_mode': 'form',
+                        'target': 'new',
+                        'context': {
+                            'default_supplier_id': rec.supplier_id.id,
+                            'default_supplier_type': False,
+                        },
+                    }
                 if not rec.num_of_invoice:
                     return {
                         'type': 'ir.actions.act_window',
@@ -474,8 +599,13 @@ class SupplierClaimCycle(models.Model):
                             ),
                         },
                     }
-                rec._move_to_next_stage()
+                rec.with_context(supplier_claim_internal_write=True).write({
+                    'status': 'inventory',
+                    'department_decision': 'pending',
+                    'delay_reason': False,
+                })
                 rec._create_stage_history('inventory', 'pending')
+                rec._create_stage_history('purchase', 'pending')
                 return
             if rec.status == 'sign_check':
                 return {
@@ -509,14 +639,17 @@ class SupplierClaimCycle(models.Model):
             'inv_decision': 'pending',
             'pur_decision': 'pending',
             'sup_decision': 'pending',
+            'tax_decision': 'pending',
             'bank_decision': 'pending',
             'inv_finished': False,
             'pur_finished': False,
             'sup_finished': False,
+            'tax_finished': False,
             'bank_finished': False,
             'inv_reason': False,
             'pur_reason': False,
             'sup_reason': False,
+            'tax_reason': False,
             'bank_reason': False,
         })
 
@@ -590,7 +723,7 @@ class SupplierClaimCycle(models.Model):
                     },
                 }
             if rec.check_delivery_status not in ('cash', 'bank_transfer'):
-                if rec.check_delivery_status == 'check_delivered' and not rec.sub_delivery_status:
+                if rec.check_delivery_status in ('check_delivered', 'mixed') and not rec.sub_delivery_status:
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Missing Required Information'),
@@ -659,12 +792,13 @@ class SupplierClaimCycle(models.Model):
 
     def _get_next_stage(self):
         self.ensure_one()
-        if self.status not in STAGE_ORDER:
+        workflow_sequence = self._get_workflow_sequence()
+        if self.status not in workflow_sequence:
             raise UserError(_("Unknown stage: %s") % self.status)
-        index = STAGE_ORDER[self.status]
-        if index >= len(STAGE_SEQUENCE) - 1:
+        index = workflow_sequence.index(self.status)
+        if index >= len(workflow_sequence) - 1:
             return False
-        return STAGE_SEQUENCE[index + 1]
+        return workflow_sequence[index + 1]
 
     def _check_can_act_current_stage(self):
         self.ensure_one()
@@ -673,7 +807,6 @@ class SupplierClaimCycle(models.Model):
         if not self._user_can_handle_stage(self.status):
             raise AccessError(_("Only the current department, Secretarial, or Admin can perform this action."))
 
-    @api.model
     def _user_can_handle_stage(self, stage, stage_groups=None):
         if self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial():
             return True
@@ -683,7 +816,7 @@ class SupplierClaimCycle(models.Model):
         if stage in DEPARTMENT_STAGES:
             return any(
                 self.env.user.has_group(stage_groups[sk])
-                for sk, _ in PARALLEL_DECISION_FIELDS
+                for sk, _ in self._get_parallel_decision_fields()
                 if sk in stage_groups
             )
 
@@ -724,6 +857,7 @@ class SupplierClaimCycle(models.Model):
             'inventory': _('Inventory'),
             'purchase': _('Purchase'),
             'suppliers': _('Suppliers'),
+            'tax_accounts': _('Tax Accounts'),
             'bank_acc': _('Bank Account'),
             'sign_check': _('Sign Check'),
             'supplier_notification': _('Supplier Notification'),
@@ -733,11 +867,11 @@ class SupplierClaimCycle(models.Model):
 
     def _get_visible_event_stages(self):
         if self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial():
-            return list(STAGE_ORDER.keys())
+            return list(self._get_workflow_sequence())
         visible = []
         stage_groups = self._get_stage_group_xmlids()
         for stage, xmlid in stage_groups.items():
-            if self.env.user.has_group(xmlid):
+            if stage in self._get_workflow_sequence() and self.env.user.has_group(xmlid):
                 visible.append(stage)
         return visible
 
@@ -762,7 +896,12 @@ class SupplierClaimCycle(models.Model):
                 })
 
         timeline = []
-        for stage in STAGE_SEQUENCE:
+        workflow_sequence = self._get_workflow_sequence()
+        workflow_order = {stage: index for index, stage in enumerate(workflow_sequence)}
+
+        current_dept_decisions = dict(self._get_parallel_decision_fields()) if self.status in DEPARTMENT_STAGES else {}
+
+        for stage in workflow_sequence:
             for event in events_by_stage.get(stage, []):
                 timeline.append(event)
 
@@ -771,16 +910,23 @@ class SupplierClaimCycle(models.Model):
             last = stage_histories_all[-1] if stage_histories_all else self.env['ab_supplier_claim_stage_history']
 
             if stage in DEPARTMENT_STAGES:
-                dept_df = dict(PARALLEL_DECISION_FIELDS).get(stage, 'inv_decision')
-                dept_decision = self[dept_df]
-                is_current = dept_decision == 'pending' and self.status in DEPARTMENT_STAGES
-                is_completed = dept_decision == 'accepted'
+                dept_df = current_dept_decisions.get(stage)
+                if dept_df:
+                    dept_decision = self[dept_df]
+                    is_current = dept_decision == 'pending' and self.status in DEPARTMENT_STAGES and not self.has_blocking_issue
+                    is_completed = dept_decision == 'accepted'
+                else:
+                    is_current = False
+                    is_completed = (
+                        some_history_exists
+                        and workflow_order.get(stage, 0) < workflow_order.get(self.status, 0)
+                    )
             else:
                 is_current = stage == self.status
                 is_completed = (
                     some_history_exists
                     and (
-                        STAGE_ORDER.get(stage, 0) < STAGE_ORDER.get(self.status, 0)
+                        workflow_order.get(stage, 0) < workflow_order.get(self.status, 0)
                         or (self.status == 'closed' and stage == 'closed')
                     )
                 )
@@ -797,7 +943,7 @@ class SupplierClaimCycle(models.Model):
                     'decision': self[df],
                     'finished': self[FINISHED_FIELD_MAP[sk]],
                 }
-                for sk, df in PARALLEL_DECISION_FIELDS
+                for sk, df in self._get_parallel_decision_fields()
             } if stage in DEPARTMENT_STAGES else None
 
             timeline.append({
@@ -813,14 +959,54 @@ class SupplierClaimCycle(models.Model):
                 'parallel_decisions': parallel_decisions,
             })
 
+        for issue in self.issue_ids:
+            stage_index = workflow_order.get(issue.stage, 0)
+            issue_entry = {
+                'type': 'event',
+                'event_type': 'blocking_issue' if not issue.resolved else 'resolved_issue',
+                'issue_title': issue.title,
+                'issue_description': issue.description or '',
+                'user_name': issue.user_id.display_name or '',
+                'action_date': issue.date.isoformat() if issue.date else '',
+                'stage': issue.stage,
+                'issue_id': issue.id,
+                'resolved': issue.resolved,
+                'resolved_by': issue.resolved_by.display_name if issue.resolved_by else '',
+                'resolved_date': issue.resolved_date.isoformat() if issue.resolved_date else '',
+            }
+            insert_at = 0
+            for j, entry in enumerate(timeline):
+                if entry.get('type') == 'stage' and workflow_order.get(entry.get('stage', ''), 0) > stage_index:
+                    insert_at = j
+                    break
+                insert_at = j + 1
+            timeline.insert(insert_at, issue_entry)
+
         return {
             'timeline': timeline,
             'can_act': self.can_current_user_act,
             'can_secretarial_override': self.can_secretarial_override,
             'is_admin': self._is_supplier_claim_admin(),
+            'has_blocking_issue': self.has_blocking_issue,
         }
 
-    @api.depends('status', 'stage_history_ids', 'stage_history_ids.decision', 'stage_history_ids.user_id', 'stage_history_ids.action_date', 'stage_history_ids.notes', 'inv_decision', 'pur_decision', 'sup_decision', 'bank_decision')
+    @api.depends(
+        'status',
+        'supplier_type',
+        'stage_history_ids',
+        'stage_history_ids.decision',
+        'stage_history_ids.user_id',
+        'stage_history_ids.action_date',
+        'stage_history_ids.notes',
+        'inv_decision',
+        'pur_decision',
+        'sup_decision',
+        'tax_decision',
+        'bank_decision',
+        'has_blocking_issue',
+        'issue_ids',
+        'issue_ids.resolved',
+    )
     def _compute_timeline_display(self):
         for rec in self:
             rec.timeline_display = rec._render_timeline_html()
@@ -900,6 +1086,12 @@ class SupplierClaimCycle(models.Model):
                 elif entry['event_type'] == 'delay':
                     dot_class += ' is-event-delay'
                     ev_icon = '⚠'
+                elif entry['event_type'] == 'blocking_issue':
+                    dot_class += ' is-event-blocking'
+                    ev_icon = '🔒'
+                elif entry['event_type'] == 'resolved_issue':
+                    dot_class += ' is-event-resolved'
+                    ev_icon = '🔓'
                 else:
                     dot_class += ' is-event-other'
                     ev_icon = '💬'
@@ -914,12 +1106,18 @@ class SupplierClaimCycle(models.Model):
                 event_title = {
                     'rejection': _('Rejection'),
                     'delay': _('Delay'),
+                    'blocking_issue': _('Blocking Issue'),
+                    'resolved_issue': _('Issue Resolved'),
                 }.get(entry.get('event_type'), _('Event'))
                 L.append('<div class="scc-timeline-event-label">%s</div>' % event_title)
                 if entry.get('user_name'):
                     L.append('<div class="scc-timeline-meta">%s %s</div>' % (_('User:'), entry['user_name']))
-                if entry.get('notes'):
-                    L.append('<div class="scc-timeline-notes">%s %s</div>' % (_('Reason:'), entry['notes']))
+                if entry.get('issue_title'):
+                    L.append('<div class="scc-timeline-notes"><strong>%s:</strong> %s</div>' % (_('Issue'), entry['issue_title']))
+                if entry.get('issue_description'):
+                    L.append('<div class="scc-timeline-notes">%s</div>' % entry['issue_description'])
+                if entry.get('resolved') and entry.get('resolved_by'):
+                    L.append('<div class="scc-timeline-meta">%s %s</div>' % (_('Resolved by:'), entry['resolved_by']))
                 L.append('</div>')
                 L.append('</div>')
 
@@ -957,6 +1155,12 @@ class SupplierClaimCycle(models.Model):
             if current_stage.get('notes'):
                 L.append('<div class="scc-detail-field"><span class="scc-detail-field-label">%s</span><span class="scc-detail-field-value">%s</span></div>' % (_('Notes'), current_stage['notes']))
 
+            if self.has_blocking_issue:
+                L.append('<div class="scc-detail-alert is-blocking"><span class="scc-detail-alert-icon">🔒</span><span><strong>%s</strong><br/>%s</span></div>' % (
+                    _('Workflow Blocked'),
+                    _('There is an unresolved blocking issue. Resolve it before proceeding.')
+                ))
+
             if current_stage['stage'] == 'sign_check' and (self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()):
                 L.append('<div class="scc-detail-alert"><span class="scc-detail-alert-icon">⚠</span><span>%s</span></div>' % _(
                     'Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.'
@@ -978,7 +1182,7 @@ class SupplierClaimCycle(models.Model):
 
     def _validate_cheque_delivery_documents(self):
         self.ensure_one()
-        if self.check_delivery_status != 'check_delivered':
+        if self.check_delivery_status not in ('check_delivered', 'mixed'):
             return
         if not self.sub_delivery_status:
             return {

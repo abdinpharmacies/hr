@@ -15,6 +15,7 @@
         'data/sequence.xml',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
+        'views/ab_supplier_claim_issue.xml',
     ],
 
     'installable': True,

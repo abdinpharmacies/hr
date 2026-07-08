@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="supplier_claim_issue_form" model="ir.ui.view">
+            <field name="name">supplier.claim.issue.form</field>
+            <field name="model">ab.supplier.claim.issue</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="claim_id" invisible="1"/>
+                            <field name="stage" invisible="1"/>
+                            <field name="title" required="1"/>
+                            <field name="description"/>
+                            <field name="user_id" readonly="1"/>
+                            <field name="date" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+    </data>
+</odoo>
