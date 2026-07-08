@@ -13,5 +13,10 @@
         'security/ir.model.access.csv',
         'views/costcenter.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_costcenter/static/src/scss/supplier_profile.scss',
+        ],
+    },
     'installable': True,
 }

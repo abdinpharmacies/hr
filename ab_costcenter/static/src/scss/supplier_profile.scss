@@ -1,0 +1,599 @@
+/* ===========================================================
+   Supplier Dossier SCSS
+   Enterprise Supplier Profile — Unified Dossier Layout
+   =========================================================== */
+
+/* ---- Dossier Form Container ---- */
+.ab-dossier-form .o_form_sheet {
+  background: #fff !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  max-width: 1100px !important;
+  margin: 0 auto !important;
+}
+
+/* ---- Supplier Header ---- */
+.ab-dossier-header {
+  display: flex;
+  align-items: flex-start;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #f8faff 0%, #f0f2ff 100%);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.ab-dossier-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ab-dossier-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+}
+
+.ab-dossier-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.ab-dossier-name .o_field_widget {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  color: #111827 !important;
+  line-height: 1.3 !important;
+}
+.ab-dossier-name input.o_input {
+  font-size: 22px !important;
+  font-weight: 700 !important;
+  height: auto !important;
+  padding: 4px 8px !important;
+}
+
+.ab-dossier-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ab-dossier-code {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: #eef2ff;
+  color: #4338ca;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.ab-dossier-code .o_field_widget {
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  color: #4338ca !important;
+}
+
+/* ---- Supplier Type Badges (Header) ---- */
+.ab-dossier-type-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.4;
+}
+.ab-dossier-type-badge .fa { font-size: 10px; }
+.ab-dossier-type-badge.is-advance {
+  background: #d1fae5;
+  color: #065f46;
+}
+.ab-dossier-type-badge.is-withholding {
+  background: #fef3c7;
+  color: #92400e;
+}
+.ab-dossier-type-badge.is-non-taxable {
+  background: #f3f4f6;
+  color: #4b5563;
+}
+.ab-dossier-type-badge.is-none {
+  background: #f3f4f6;
+  color: #9ca3af;
+  min-width: 20px;
+  justify-content: center;
+}
+
+/* ---- Supplier Activity Status Pills ---- */
+.ab-dossier-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.ab-dossier-status-pill .fa { font-size: 7px; }
+.ab-dossier-status-pill.is-active {
+  background: #d1fae5;
+  color: #065f46;
+}
+.ab-dossier-status-pill.is-active .fa { color: #10b981; }
+.ab-dossier-status-pill.is-non-active {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+.ab-dossier-status-pill.is-non-active .fa { color: #9ca3af; }
+
+/* ---- Two-Column Flex Layout ---- */
+.ab-dossier-flex {
+  display: flex;
+  border-bottom: 1px solid #e5e7eb;
+}
+.ab-dossier-relationship {
+  flex: 1.7;
+  min-width: 0;
+  border-right: 1px solid #e5e7eb;
+}
+.ab-dossier-contact-card {
+  flex: 1;
+  min-width: 260px;
+  max-width: 340px;
+  background: #fafbfc;
+}
+
+/* ---- Contact Card ---- */
+.ab-dossier-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 24px 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+}
+.ab-dossier-card-header .fa { color: #6366f1; font-size: 14px; }
+.ab-dossier-card-body { padding: 12px 24px 20px; }
+.ab-dossier-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.ab-dossier-card-row:last-child { border-bottom: none; }
+.ab-dossier-card-row-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: #eef2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: #6366f1;
+  flex-shrink: 0;
+}
+.ab-dossier-card-row-body {
+  flex: 1;
+  min-width: 0;
+}
+.ab-dossier-card-row-label {
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ca3af;
+  line-height: 1.2;
+}
+.ab-dossier-card-row-value {
+  font-size: 13px;
+  font-weight: 500;
+  color: #111827;
+  line-height: 1.3;
+}
+.ab-dossier-card-row-value .o_field_widget {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #111827 !important;
+}
+.ab-dossier-card-row-value input.o_input {
+  font-size: 13px !important;
+  padding: 2px 6px !important;
+  height: auto !important;
+}
+
+/* ---- Dossier Section ---- */
+.ab-dossier-section {
+  border-bottom: 1px solid #e5e7eb;
+}
+.ab-dossier-section:last-child { border-bottom: none; }
+.ab-dossier-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px 0;
+}
+.ab-dossier-section-icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.ab-dossier-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111827;
+  letter-spacing: 0.01em;
+}
+.ab-dossier-section-sub {
+  font-size: 10px;
+  color: #9ca3af;
+  margin-left: auto;
+  font-weight: 400;
+}
+
+/* ---- Dossier Body ---- */
+.ab-dossier-body {
+  padding: 12px 32px 16px;
+}
+
+/* ---- Dossier Row ---- */
+.ab-dossier-row {
+  display: flex;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f0f0f0;
+  min-height: 32px;
+}
+.ab-dossier-row:last-child { border-bottom: none; }
+
+.ab-dossier-row-label {
+  flex: 0 0 150px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding-right: 16px;
+  flex-shrink: 0;
+}
+
+.ab-dossier-row-value {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  color: #111827;
+  min-width: 0;
+}
+.ab-dossier-row-value .o_field_widget {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #111827 !important;
+}
+.ab-dossier-row-value .o_field_char,
+.ab-dossier-row-value .o_field_many2one,
+.ab-dossier-row-value .o_field_text {
+  width: 100% !important;
+}
+.ab-dossier-row-value input.o_input,
+.ab-dossier-row-value select {
+  padding: 4px 8px !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  background: #fff !important;
+  transition: border-color 0.15s ease !important;
+  width: 100% !important;
+  max-width: 400px !important;
+}
+.ab-dossier-row-value input.o_input:focus,
+.ab-dossier-row-value select:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99,102,241,0.08) !important;
+  outline: none !important;
+}
+.ab-dossier-row-value .o_field_boolean {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-height: 24px !important;
+}
+
+/* ---- System Section Subtle ---- */
+.ab-dossier-section-system {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+.ab-dossier-section-system:hover { opacity: 1; }
+
+/* ===========================================================
+   SUPPLIER RELATIONSHIP — Summary Rows + Claims Table
+   =========================================================== */
+.ab-activity-root { width: 100%; }
+
+/* ---- Summary Stat Bars ---- */
+.ab-summary-row {
+  display: flex;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.ab-summary-row.ab-summary-row-kpi {
+  background: #fafbfc;
+}
+
+.ab-summary-stat {
+  flex: 1;
+  text-align: center;
+  padding: 10px 6px;
+  border-right: 1px solid #e5e7eb;
+  min-width: 0;
+}
+.ab-summary-stat:last-child { border-right: none; }
+
+.ab-summary-stat-value {
+  display: block;
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+.ab-summary-stat-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ca3af;
+  margin-top: 2px;
+}
+
+/* Status badge inside stat */
+.ab-summary-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.ab-summary-badge.is-accepted {
+  background: #d1fae5;
+  color: #065f46;
+}
+.ab-summary-badge.is-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.ab-summary-badge.is-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* KPI stat colors */
+.ab-summary-stat.is-kpi .ab-summary-stat-value { font-size: 17px; }
+.ab-summary-stat.is-kpi.is-approved .ab-summary-stat-value { color: #059669; }
+.ab-summary-stat.is-kpi.is-rejected .ab-summary-stat-value { color: #dc2626; }
+.ab-summary-stat.is-kpi.is-pending .ab-summary-stat-value { color: #d97706; }
+.ab-summary-stat.is-kpi.is-amount .ab-summary-stat-value { color: #4f46e5; }
+
+/* ---- Recent Claims Header ---- */
+.ab-recent-header {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7280;
+  margin-bottom: 8px;
+  padding: 0;
+}
+
+/* ---- Claims Table ---- */
+.ab-activity-table-wrap { overflow-x: auto; }
+.ab-activity-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.ab-activity-table thead th {
+  padding: 6px 10px;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ca3af;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: left;
+  white-space: nowrap;
+}
+.ab-activity-table tbody td {
+  padding: 6px 10px;
+  border-bottom: 1px solid #f0f0f0;
+  color: #374151;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.ab-activity-table tbody tr:hover td { background: #fafbff; }
+.ab-activity-table tbody tr:last-child td { border-bottom: none; }
+
+.ab-activity-cell-id {
+  font-weight: 600;
+  color: #4f46e5;
+}
+.ab-activity-cell-amount {
+  text-align: right;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.ab-activity-cell-date {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* Decision badges inside table */
+.ab-activity-decision {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.ab-activity-decision.is-approved {
+  background: #d1fae5;
+  color: #065f46;
+}
+.ab-activity-decision.is-rejected {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.ab-activity-decision.is-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Empty state */
+.ab-activity-empty {
+  padding: 24px 16px;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ===========================================================
+   SUPPLIER PERFORMANCE — KPI Cards (Supplier Claim visual lang)
+   =========================================================== */
+:root {
+  --scc-primary: #6366f1;
+  --scc-primary-light: #818cf8;
+  --scc-primary-dark: #4f46e5;
+  --scc-success: #10b981;
+  --scc-warning: #f59e0b;
+  --scc-danger: #ef4444;
+  --scc-gray: #6b7280;
+  --scc-gray-light: #f3f4f6;
+  --scc-gray-lighter: #f9fafb;
+  --scc-border: #e5e7eb;
+  --scc-text: #111827;
+  --scc-text-secondary: #6b7280;
+  --scc-bg: #f0f2f5;
+  --scc-card-bg: rgba(255,255,255,0.85);
+  --scc-card-border: rgba(255,255,255,0.3);
+  --scc-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --scc-shadow-hover: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04);
+  --scc-shadow-lg: 0 20px 40px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
+  --scc-radius: 12px;
+  --scc-radius-sm: 8px;
+  --scc-radius-xs: 6px;
+  --scc-blur: blur(12px);
+  --scc-transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+}
+.scc-kpi-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 0;
+  flex-wrap: wrap;
+}
+.scc-kpi-card {
+  flex: 1;
+  min-width: 150px;
+  padding: 18px 20px;
+  border-radius: var(--scc-radius);
+  background: var(--scc-card-bg);
+  backdrop-filter: var(--scc-blur);
+  -webkit-backdrop-filter: var(--scc-blur);
+  border: 1px solid var(--scc-card-border);
+  box-shadow: var(--scc-shadow);
+  transition: var(--scc-transition);
+  position: relative;
+  overflow: hidden;
+}
+.scc-kpi-card:hover {
+  box-shadow: var(--scc-shadow-hover);
+  transform: translateY(-2px);
+}
+.scc-kpi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: 0 2px 2px 0;
+}
+.scc-kpi-card.is-total::before { background: var(--scc-primary); }
+.scc-kpi-card.is-pending::before { background: var(--scc-warning); }
+.scc-kpi-card.is-overdue::before { background: var(--scc-danger); }
+.scc-kpi-card.is-completed::before { background: var(--scc-success); }
+.scc-kpi-card.is-today::before { background: #8b5cf6; }
+.scc-kpi-label {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--scc-text-secondary);
+  margin-bottom: 6px;
+}
+.scc-kpi-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--scc-text);
+  line-height: 1.2;
+}
+.scc-kpi-icon {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  font-size: 20px;
+  color: var(--scc-gray-light);
+  opacity: 0.7;
+}
+
+/* ---- List View Styling ---- */
+.o_list_view .o_list_table thead tr th {
+  background: #fafafa !important;
+  border-bottom: 1px solid #e5e7eb !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9ca3af !important;
+  padding: 10px !important;
+}
+.o_list_view .o_list_table tbody tr { transition: background 0.15s ease; }
+.o_list_view .o_list_table tbody tr:hover { background: #fafbff !important; }
+.o_list_view .o_list_table tbody td {
+  padding: 8px 10px !important;
+  font-size: 13px !important;
+  border-bottom: 1px solid #f5f5f5 !important;
+  vertical-align: middle !important;
+}
