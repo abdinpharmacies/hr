@@ -7,7 +7,7 @@ from .ab_request_ticket import REQUEST_SEQUENCE_CODE
 
 class AbRequestWebsite(models.Model):
     _name = "ab_request_website"
-    _description = "Website Request"
+    _description = "Website Request or Complaint"
     _order = "create_date desc, id desc"
     _rec_name = "name"
 
@@ -22,7 +22,7 @@ class AbRequestWebsite(models.Model):
     customer_phone = fields.Char(required=True)
     customer_email = fields.Char()
     request_category_id = fields.Many2one("ab_request_category", string="Category", ondelete="set null")
-    request_type_id = fields.Many2one("ab_request_type", string="Request Type", required=True, ondelete="restrict")
+    request_type_id = fields.Many2one("ab_request_type", string="Request/Complaint Type", required=True, ondelete="restrict")
     subject = fields.Char(required=True)
     description = fields.Text(required=True)
     source = fields.Selection(
@@ -61,7 +61,7 @@ class AbRequestWebsite(models.Model):
         if not prepared_vals.get("customer_phone"):
             raise ValidationError(_("Customer phone is required."))
         if not prepared_vals.get("request_type_id"):
-            raise ValidationError(_("Request type is required."))
+            raise ValidationError(_("Request/complaint type is required."))
         if not prepared_vals.get("subject"):
             raise ValidationError(_("Subject is required."))
         if not prepared_vals.get("description"):

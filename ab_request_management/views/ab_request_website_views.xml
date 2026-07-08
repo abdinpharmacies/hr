@@ -4,7 +4,7 @@
         <field name="name">ab_request_website.search</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <search string="Website Requests">
+            <search string="Website">
                 <field name="name"/>
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
@@ -15,7 +15,7 @@
                 <filter name="filter_reviewed" string="Reviewed" domain="[('state', '=', 'reviewed')]"/>
                 <filter name="filter_converted" string="Converted" domain="[('state', '=', 'converted')]"/>
                 <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
-                <filter name="group_type" string="Request Type" context="{'group_by': 'request_type_id'}"/>
+                <filter name="group_type" string="Type" context="{'group_by': 'request_type_id'}"/>
             </search>
         </field>
     </record>
@@ -24,7 +24,7 @@
         <field name="name">ab_request_website.list</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <list string="Website Requests" default_order="create_date desc">
+            <list string="Website" default_order="create_date desc">
                 <field name="name"/>
                 <field name="state"/>
                 <field name="customer_name"/>
@@ -41,7 +41,7 @@
         <field name="name">ab_request_website.form</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <form string="Website Request">
+            <form string="Website Entry">
                 <header>
                     <field name="state" widget="statusbar" statusbar_visible="new,reviewed,converted,closed"/>
                 </header>
@@ -75,7 +75,7 @@
     </record>
 
     <record id="ab_request_website_action" model="ir.actions.act_window">
-        <field name="name">Website Requests</field>
+        <field name="name">Website</field>
         <field name="res_model">ab_request_website</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="ab_request_website_view_search"/>

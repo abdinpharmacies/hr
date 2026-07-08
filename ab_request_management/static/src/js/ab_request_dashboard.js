@@ -97,7 +97,7 @@ export class AbRequestDashboard extends Component {
         this.state.cards = [
             {
                 key: "my_requests",
-                label: _t("My Requests"),
+                label: _t("My Tickets"),
                 value: myRequests,
                 icon: "fa fa-inbox",
                 accent: "#2f6fdd",
@@ -133,7 +133,7 @@ export class AbRequestDashboard extends Component {
             },
             {
                 key: "website_requests",
-                label: _t("Website Requests"),
+                label: _t("Website"),
                 value: websiteRequests,
                 icon: "fa fa-globe",
                 accent: "#1f8f8a",
@@ -242,7 +242,7 @@ export class AbRequestDashboard extends Component {
     async openList(domain, model = "ab_request") {
         await this.env.services.action.doAction({
             type: "ir.actions.act_window",
-            name: _t("Requests"),
+            name: _t("Requests & Complaints"),
             res_model: model,
             views: [[false, "list"], [false, "form"]],
             domain: domain,
