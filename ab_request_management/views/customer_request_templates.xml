@@ -28,7 +28,7 @@
                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                     <div class="ab-request-full">
-                        <h2 class="ab-request-title">Requests and Complaints</h2>
+                        <h2 class="ab-request-title">Requests &amp; Complaints</h2>
                         <p class="ab-request-muted">Send your request or complaint to our team.</p>
                     </div>
 
@@ -64,7 +64,7 @@
                     </div>
 
                     <div>
-                        <label class="ab-request-label" for="request_type_id">Request Type *</label>
+                        <label class="ab-request-label" for="request_type_id">Type *</label>
                         <select id="request_type_id" name="request_type_id" class="ab-request-input" required="required">
                             <option value="">Choose...</option>
                             <option t-foreach="request_types" t-as="request_type" t-att-value="request_type.id" t-att-selected="'selected' if post and post.get('request_type_id') == str(request_type.id) else None">
@@ -104,7 +104,7 @@
             </head>
             <body>
                 <div class="ab-request-embed ab-request-success">
-                    Your request has been received. Reference:
+                    Your request or complaint has been received. Reference:
                     <strong t-out="website_request.name"/>
                 </div>
             </body>

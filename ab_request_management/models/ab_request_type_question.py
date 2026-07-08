@@ -3,7 +3,7 @@ from odoo import fields, models
 
 class AbRequestTypeQuestion(models.Model):
     _name = "ab_request_type_question"
-    _description = "Request Type Question"
+    _description = "Request/Complaint Type Question"
     _order = "sequence, id"
 
     sequence = fields.Integer(default=10)
@@ -13,5 +13,5 @@ class AbRequestTypeQuestion(models.Model):
         ondelete="cascade",
         index=True,
     )
-    question = fields.Text(required=True)
+    question = fields.Text(required=True, translate=True)
     is_required = fields.Boolean(string="Required Answer")

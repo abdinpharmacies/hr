@@ -16,20 +16,20 @@ AUTO_CLOSE_REASON = (
     "within 30 days from the complaint creation date."
 )
 HR_RESOLUTION_GROUP = "ab_hr.group_ab_hr_personnel_spec"
-REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the Request system."
+REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the requests and complaints system."
 REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
 
 class AbRequest(models.Model):
     _name = "ab_request"
     _table = "ab_request_ticket"
-    _description = "Request"
+    _description = "Request or Complaint"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "create_date desc, id desc"
     _rec_name = "name"
 
     name = fields.Char(
-        string="Request Number",
+        string="Request/Complaint Number",
         required=True,
         readonly=True,
         copy=False,
@@ -55,6 +55,7 @@ class AbRequest(models.Model):
     )
     request_type_id = fields.Many2one(
         "ab_request_type",
+        string="Request/Complaint Type",
         required=True,
         ondelete="restrict",
         tracking=True,
@@ -170,7 +171,7 @@ class AbRequest(models.Model):
     is_request_viewer = fields.Boolean(compute="_compute_access_flags")
     can_viewer_close = fields.Boolean(compute="_compute_access_flags")
 
-    _ab_request_name_uniq = models.Constraint("UNIQUE(name)", "Request number must be unique.")
+    _ab_request_name_uniq = models.Constraint("UNIQUE(name)", "Request/complaint number must be unique.")
 
     @api.model
     def _default_employee_id(self):

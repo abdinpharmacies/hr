@@ -5,7 +5,7 @@ from odoo.tools.translate import _
 
 class AbRequestQuestionAnswer(models.Model):
     _name = "ab_request_question_answer"
-    _description = "Request Question Answer"
+    _description = "Request/Complaint Question Answer"
     _order = "sequence, id"
 
     sequence = fields.Integer(related="question_id.sequence", store=True, readonly=True)

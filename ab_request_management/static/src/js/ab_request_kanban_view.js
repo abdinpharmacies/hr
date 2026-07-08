@@ -92,7 +92,7 @@ export class AbRequestKanbanRenderer extends KanbanRenderer {
         const workflowAction = WORKFLOW_ACTIONS[`${sourceGroup.value}->${targetGroup.value}`];
         if (!workflowAction) {
             await this.props.list.model.load();
-            this.notification.add(_t("This workflow move is not allowed for requests."), {
+            this.notification.add(_t("This workflow move is not allowed for requests or complaints."), {
                 type: "warning",
             });
             return;

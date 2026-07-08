@@ -89,8 +89,8 @@
             <field name="name">ab_request.search</field>
             <field name="model">ab_request</field>
             <field name="arch" type="xml">
-                <search string="Requests">
-                    <field name="name" string="Request Number"/>
+                <search string="Requests &amp; Complaints">
+                    <field name="name" string="Number"/>
                     <field name="subject"/>
                     <field name="request_type_id"/>
                     <field name="employee_id"/>
@@ -100,15 +100,15 @@
                     <field name="deadline"/>
 
                     <separator/>
-                    <filter name="filter_my_requests" string="My Requests" domain="[('user_id', '=', uid)]"/>
+                    <filter name="filter_my_requests" string="My Tickets" domain="[('user_id', '=', uid)]"/>
                     <filter name="filter_assigned_requests" string="Assigned to Me"
                             domain="['|', ('assigned_employee_ids.user_id', '=', uid), ('assigned_user_id', '=', uid)]"/>
-                    <filter name="filter_waiting_review" string="Waiting for My Review"
+                    <filter name="filter_waiting_review" string="To Review"
                             domain="[('state', '=', 'under_review'), ('manager_user_id', '=', uid)]"/>
                     <separator/>
-                    <filter name="filter_open_requests" string="Open Requests"
+                    <filter name="filter_open_requests" string="Open"
                             domain="[('state', 'in', ['draft', 'under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied', 'resolved'])]"/>
-                    <filter name="filter_closed_requests" string="Closed Requests"
+                    <filter name="filter_closed_requests" string="Closed"
                             domain="[('state', 'in', ['closed', 'rejected'])]"/>
                     <filter name="filter_overdue" string="Overdue"
                             domain="[('deadline', '!=', False), ('deadline', '&lt;', context_today()), ('state', 'not in', ['closed', 'rejected', 'satisfied'])]"/>
@@ -124,7 +124,7 @@
 
                     <separator/>
                     <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
-                    <filter name="group_type" string="Request Type" context="{'group_by': 'request_type_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'request_type_id'}"/>
                     <filter name="group_assignee" string="Assigned Employee"
                             context="{'group_by': 'assigned_employee_ids'}"/>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
@@ -136,13 +136,13 @@
             <field name="name">ab_request.list</field>
             <field name="model">ab_request</field>
             <field name="arch" type="xml">
-                <list string="Requests"
+                <list string="Requests &amp; Complaints"
                       class="ab_request_list"
                       default_order="deadline asc, create_date desc">
                     <field name="is_overdue" column_invisible="True"/>
                     <field width="200px" name="state" widget="ab_request_state_label" class="ab_request_status_column"
                            optional="show"/>
-                    <field name="name" string="Request" optional="show"/>
+                    <field name="name" string="Number" optional="show"/>
                     <field name="subject" optional="show"/>
                     <field name="request_type_id" optional="show"/>
                     <field name="employee_id" optional="show"/>
@@ -275,7 +275,7 @@
             <field name="arch" type="xml">
                 <form string="Request" class="ab_request_form">
                     <header>
-                        <button name="action_submit_request" type="object" string="Submit Request" class="btn-success"
+                        <button name="action_submit_request" type="object" string="Submit" class="btn-success"
                                 invisible="state != 'draft'"/>
                         <button name="action_approve" type="object" string="Approve" class="btn-primary"
                                 invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
@@ -374,7 +374,7 @@
                                                 <field name="request_category_id" readonly="state != 'draft'"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
-                                                <label for="request_type_id" string="Request Type"/>
+                                                <label for="request_type_id" string="Type"/>
                                                 <field name="request_type_id"
                                                        readonly="state != 'draft'"
                                                        domain="[('id', 'in', available_request_type_ids)]"/>
@@ -395,7 +395,7 @@
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
-                                                <label for="question_answer_ids" string="Request Questions"/>
+                                                <label for="question_answer_ids" string="Questions"/>
                                                 <field name="question_answer_ids" readonly="state != 'draft'">
                                                     <list editable="bottom" create="0" delete="0">
                                                         <field name="question" readonly="1"/>
@@ -433,7 +433,7 @@
                                  invisible="not is_request_admin and not is_department_manager and not is_assigned_employee and not is_request_viewer">
                                 <div class="ab_request_card">
                                     <div class="ab_request_card_header">
-                                        <span class="ab_request_card_title">Request Info</span>
+                                        <span class="ab_request_card_title">Info</span>
                                     </div>
                                     <div class="ab_request_card_body">
                                         <div class="ab_request_grid_row ab_request_grid_3col">
@@ -467,7 +467,7 @@
 
                                 <div class="ab_request_card">
                                     <div class="ab_request_card_header">
-                                        <span class="ab_request_card_title">Request Details</span>
+                                        <span class="ab_request_card_title">Details</span>
                                     </div>
                                     <div class="ab_request_card_body">
                                         <div class="ab_request_grid_row">
@@ -484,7 +484,7 @@
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
-                                                <label for="question_answer_ids" string="Request Questions"/>
+                                                <label for="question_answer_ids" string="Questions"/>
                                                 <field name="question_answer_ids" readonly="state != 'draft'">
                                                     <list editable="bottom" create="0" delete="0">
                                                         <field name="question" readonly="1"/>
@@ -653,7 +653,7 @@
         </record>
 
         <record id="ab_request_my_action" model="ir.actions.act_window">
-            <field name="name">My Requests</field>
+            <field name="name">My Tickets</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
@@ -662,17 +662,17 @@
                                    'search_default_filter_open_requests': 1}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Create your first request.
+                    Create your first request or complaint.
                 </p>
                 <p>
-                    Requests move through review, execution, requester confirmation, and closure while preserving a
+                    Requests and complaints move through review, execution, requester confirmation, and closure while preserving a
                     complete timeline.
                 </p>
             </field>
         </record>
 
         <record id="ab_request_assigned_action" model="ir.actions.act_window">
-            <field name="name">Assigned Requests</field>
+            <field name="name">Assigned to Me</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
@@ -683,7 +683,7 @@
         </record>
 
         <record id="ab_request_review_action" model="ir.actions.act_window">
-            <field name="name">Review Queue</field>
+            <field name="name">Review</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
@@ -692,7 +692,7 @@
         </record>
 
         <record id="ab_request_all_action" model="ir.actions.act_window">
-            <field name="name">All Requests</field>
+            <field name="name">All</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
