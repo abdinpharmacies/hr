@@ -101,6 +101,57 @@ TRUNCATE BConnect_Table ...
 
 without explicit approval.
 
+### B-Connect / E-Plus Schema Reference
+
+Reference source for future B-Connect to Odoo transformation work:
+
+- GitHub repo: `https://github.com/Hossam-elsheikh/e-plus-structure`
+- Primary file: `e-plus-db.md`
+- Generated: `2026-07-08 15:46:57 Africa/Cairo`
+- Scope: configured B-Connect/E-Plus SQL Server database `genius`
+
+Facts from the reference guide:
+
+- The discovered SQL Server database contains `238` user tables and `3460` columns.
+- Current custom addons reference `29` E-Plus tables in SQL contexts.
+- The discovery was read-only through SQL Server catalog metadata and local Odoo SQL references; broad production `COUNT(*)` scans were intentionally avoided.
+- The key product and stock path is:
+
+```text
+Item_Catalog
+  -> Item_Class_Store
+  -> Store
+```
+
+Important table meanings:
+
+- `dbo.Item_Catalog`: central product/item master. Key identifiers include `itm_id` and `itm_code`. Useful fields include encrypted names, units, prices, medicine flags, product groups, scientific data, usage data, origin, manufacturer/company references, and item notes.
+- `dbo.Item_Class_Store`: main branch stock quantity source used by Odoo modules. It is store-scoped by `sto_id`, item-scoped by `itm_id`, class/batch-scoped by `c_id`, and quantity is represented by `itm_qty`.
+- `dbo.Store`: branch/store master with `sto_id`, `sto_code`, Arabic/English names, manager/location/contact fields, store server IP fields, and replication timestamps.
+- `dbo.branches`: lightweight branch/code source used by some Odoo modules, including self-inventory and order management.
+- `dbo.Replication_Trans`: replication queue/transaction table for stock and transactional propagation.
+
+Write-sensitive E-Plus tables:
+
+- Sales: `sales_trans_h`, `sales_trans_d`, `sales_deliv_info`, `sales_return`, `sales_return_payment`, `sales_trans_payment`.
+- Inventory: `Inventory_h`, `Inventory_d`, `Item_Class_Store`.
+- Transfers: `Store_Trans`, `Store_Trans_h`, pending transfer tables.
+- Finance/cash: `F_Cash_Store`, `F_Transaction_Header`, `F_Auto_Doc_h`, `F_Auto_Doc_d`.
+- Replication: `Replication_Trans` and `r_*` replication/staging tables.
+
+B-Connect development rules:
+
+- Treat E-Plus/B-Connect as an external source of truth for legacy product and branch stock data during the transition, but do not bypass Odoo business logic when creating Odoo records.
+- Never directly update `Item_Class_Store` outside explicitly approved sales, returns, inventory, transfer, or replication flows.
+- For reads, use `WITH (NOLOCK)` only when stale reads are acceptable. Stock-critical workflows must explicitly decide and document their consistency requirement.
+- For existing write flows, every operation must be transactional, branch-scoped, and must log the pushed E-Plus transaction identifier.
+- For future broad synchronization from E-Plus into Odoo, use queue-based imports, validation, idempotency keys, and audit logs.
+- Before adding a new B-Connect connection implementation, search existing modules for current E-Plus/B-Connect helpers and reuse the established connector pattern where possible.
+- Do not vendor or copy the `e-plus-structure` repo into Odoo addons. Treat it as reference documentation only.
+- Any migration from B-Connect to Odoo must preserve stable identifiers such as `itm_id`, `itm_code`, `sto_id`, `sto_code`, and transaction IDs for traceability.
+- All stock, sales, transfer, and self-inventory reads must be branch-filtered. Multi-branch code must test that one branch cannot receive another branch's rows.
+- Product names may exist in encrypted fields such as `itm_name_ar_encrypt` and `itm_name_en_encrypt`; do not assume plain name columns are populated without confirming the decryption path.
+
 ### Replication Safety Rules
 
 Use an integration queue pattern:
