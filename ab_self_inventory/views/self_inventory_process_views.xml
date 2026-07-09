@@ -80,11 +80,8 @@
                                 </div>
                                 <notebook>
                                     <page string="Self Inventory Lines">
-                                        <field name="available_product_ids" invisible="1"/>
                                         <div class="ab_modern_table_panel ab_modern_table_panel--process">
-                                            <div class="ab_modern_table_body">
-                                                <field name="line_ids" context="{'list_view_ref': 'ab_self_inventory.view_ab_self_inventory_process_line_list'}" readonly="state not in ('draft', 'in_progress')" create="0"/>
-                                            </div>
+                                            <field name="line_count" widget="ab_inventory_data_grid" nolabel="1" options="{'process_columns': true, 'hide_branch_summary': true}"/>
                                         </div>
                                     </page>
                                 </notebook>

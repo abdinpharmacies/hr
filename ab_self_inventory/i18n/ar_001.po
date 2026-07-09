@@ -1694,21 +1694,25 @@ msgid "Receiver is set automatically and cannot be changed manually."
 msgstr "يتم تحديد المستلم تلقائياً ولا يمكن تغييره يدوياً."
 
 #. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
 msgid "Duplicate product code in Excel: %s"
 msgstr "كود المنتج مكرر في ملف Excel: %s"
 
 #. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
 msgid "System quantity cannot be changed for product code %s."
-msgstr "لا يمكن تغيير كمية النظام لكود المنتج %s."
+msgstr "ممنوع تغيير كمية النظام لكود المنتج %s."
 
 #. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
 msgid "System quantity must be numeric for product code %s."
 msgstr "يجب أن تكون كمية النظام رقمية لكود المنتج %s."
 
 #. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
 msgid "Actual quantity must be numeric for product code %s."
 msgstr "يجب أن تكون الكمية الفعلية رقمية لكود المنتج %s."
