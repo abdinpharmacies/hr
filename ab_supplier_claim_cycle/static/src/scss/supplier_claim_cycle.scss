@@ -540,12 +540,14 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
+  overflow: visible;
 }
 .scc-supplier-info {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 6px 0;
+  min-width: 0;
 }
 .scc-supplier-info-icon {
   width: 28px;
@@ -718,6 +720,72 @@
 .scc-form-container {
   padding: 0;
 }
+
+/* ---- Escalation Warning Banner ---- */
+.scc-escalation-banner {
+  display: flex;
+  gap: 14px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  border: 1px solid #fecaca;
+  border-left: 4px solid #ef4444;
+  border-radius: 10px;
+}
+.scc-escalation-banner-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  line-height: 1.2;
+}
+.scc-escalation-banner-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.scc-escalation-banner-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #991b1b;
+}
+.scc-escalation-banner-sub {
+  font-size: 13px;
+  color: #7f1d1d;
+}
+.scc-escalation-banner-dept {
+  font-weight: 600;
+}
+.scc-escalation-banner-action {
+  font-size: 12px;
+  color: #991b1b;
+  margin-bottom: 8px;
+}
+.scc-escalation-banner-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.scc-escalation-field {
+  min-width: 240px;
+}
+.scc-escalation-btn {
+  flex-shrink: 0;
+}
+
+/* ---- Pending Escalation Acknowledgment Banner ---- */
+.scc-escalation-pending-banner {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%) !important;
+  border-color: #fde68a !important;
+  border-left-color: #f59e0b !important;
+}
+.scc-escalation-pending-banner .scc-escalation-banner-title {
+  color: #92400e;
+}
+.scc-escalation-pending-banner .scc-escalation-banner-sub {
+  color: #78350f;
+}
+
+/* ---- Form Section ---- */
 .scc-form-section {
   background: var(--scc-card-bg);
   backdrop-filter: var(--scc-blur);
@@ -1021,4 +1089,163 @@
 }
 .scc-parallel-pending .scc-parallel-icon {
   font-size: 18px;
+}
+
+/* ============================================================
+   TAX ACCOUNTS — Compact Inline Flow
+   ============================================================ */
+.scc-tax-inline-wrapper {
+  display: flex !important;
+  align-items: center;
+  gap: 0;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+.scc-tax-inline-amount-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.scc-amount-field {
+  width: 100px !important;
+  min-width: 80px;
+  font-weight: 700;
+  font-size: 14px;
+}
+.scc-currency-field {
+  width: 80px !important;
+  min-width: 60px;
+}
+
+/* ============================================================
+   PREMIUM PRICING DISPLAY — Withholding Tax Discount Pattern
+   ============================================================ */
+.scc-tax-pricing-display {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: sccPricingFadeIn 0.25s ease both;
+}
+.scc-tax-pricing-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1;
+}
+.scc-tax-old-amount {
+  font-size: 13px;
+  color: #9ca3af;
+  text-decoration: line-through !important;
+  opacity: 0.6;
+  font-weight: 500;
+}
+.scc-tax-old-amount .o_field_monetary,
+.scc-tax-old-amount .o_field_widget,
+.scc-tax-old-amount span {
+  color: #9ca3af !important;
+  text-decoration: line-through !important;
+  font-weight: 500;
+  font-size: 13px;
+}
+.scc-tax-discount-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 7px;
+  background: #fff3cd;
+  color: #d97706;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.4;
+  animation: sccBadgeScaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 0.1s;
+}
+.scc-tax-pricing-net {
+  font-size: 15px;
+  font-weight: 700;
+  color: #16a34a;
+  line-height: 1.2;
+  animation: sccNetFadeUp 0.25s ease both;
+  animation-delay: 0.2s;
+}
+.scc-tax-pricing-net .o_field_monetary {
+  color: #16a34a !important;
+  font-weight: 700;
+  font-size: 15px;
+}
+.scc-tax-pricing-caption {
+  font-size: 10px;
+  color: #16a34a;
+  font-weight: 500;
+  line-height: 1;
+  margin-top: 1px;
+  animation: sccNetFadeUp 0.25s ease both;
+  animation-delay: 0.3s;
+}
+
+/* Animations */
+@keyframes sccPricingFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sccBadgeScaleIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+@keyframes sccNetFadeUp {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* RTL support */
+html[dir="rtl"] .scc-tax-pricing-row {
+  flex-direction: row-reverse;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .scc-tax-pricing-display,
+  .scc-tax-discount-badge,
+  .scc-tax-pricing-net,
+  .scc-tax-pricing-caption {
+    animation: none;
+  }
+}
+
+/* Timeline tax summary */
+.scc-timeline-tax-summary {
+  margin-top: 6px;
+  padding: 6px 10px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+.scc-timeline-tax-line {
+  color: #92400e;
+  font-weight: 500;
+}
+.scc-timeline-tax-line strong {
+  font-weight: 700;
+}
+.scc-timeline-tax-amount {
+  color: #d97706;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .scc-tax-pricing-display {
+    animation: none;
+  }
+  .scc-tax-discount-badge {
+    animation: none;
+  }
 }

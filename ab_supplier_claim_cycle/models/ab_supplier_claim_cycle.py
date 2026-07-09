@@ -1,7 +1,11 @@
+import logging
+
 from datetime import timedelta
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
+
+_logger = logging.getLogger(__name__)
 
 STAGE_SEQUENCE = ('secretarial', 'inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')
 STAGE_LABELS = {
@@ -45,7 +49,7 @@ class SupplierClaimCycle(models.Model):
     _name = 'ab_supplier_claim_cycle'
     _description = 'Supplier Claim Cycle'
     _rec_name = 'name'
-    _inherit = ['mail.thread']
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
     name = fields.Char(string='Claim Number', default=lambda self: self.env['ir.sequence'].next_by_code('ab.supplier.claim.cycle') or _('New'), required=True, readonly=True, copy=False, unique=True)
     stage_history_ids = fields.One2many('ab_supplier_claim_stage_history', 'claim_id', string='Stage History', copy=False)
@@ -172,6 +176,116 @@ class SupplierClaimCycle(models.Model):
     )
     issue_ids = fields.One2many('ab.supplier.claim.issue', 'claim_id', string='Issues')
     has_blocking_issue = fields.Boolean(compute='_compute_has_blocking_issue')
+    stage_escalated = fields.Boolean(default=False, string='Stage Escalated')
+    escalation_missing_manager = fields.Boolean(default=False, string='Escalation Manager Not Found')
+    assigned_escalation_user = fields.Many2one('res.users', string='Assigned Escalation User')
+    escalation_ids = fields.One2many('ab.supplier.claim.escalation', 'claim_id', string='Escalations', copy=False)
+    escalation_count = fields.Integer(compute='_compute_escalation_count', string='Escalation Count')
+    has_pending_escalation = fields.Boolean(compute='_compute_has_pending_escalation', string='Has Pending Escalation',
+                                            search='_search_has_pending_escalation')
+
+    tax_percentage = fields.Float(string='Tax Percentage (%)', default=1.0, readonly=True)
+    tax_amount = fields.Monetary(string='Withholding Tax', currency_field='currency_id',
+                                  compute='_compute_tax', store=True, readonly=True)
+    net_payable = fields.Monetary(string='Net Payable', currency_field='currency_id',
+                                   compute='_compute_tax', store=True, readonly=True)
+    tax_frozen = fields.Boolean(string='Tax Frozen', default=False, copy=False)
+    tax_calculated_at = fields.Datetime(string='Tax Calculated At', readonly=True, copy=False)
+    has_tax_accounts = fields.Boolean(compute='_compute_has_tax_accounts', string='Has Tax Accounts Stage')
+
+    @api.depends('escalation_ids')
+    def _compute_escalation_count(self):
+        for rec in self:
+            rec.escalation_count = len(rec.escalation_ids)
+
+    @api.depends('escalation_ids.status', 'escalation_ids.current_stage')
+    def _compute_has_pending_escalation(self):
+        for rec in self:
+            try:
+                rec.has_pending_escalation = any(
+                    e.status == 'pending' and e.current_stage == rec.status
+                    for e in rec.escalation_ids
+                )
+            except Exception:
+                rec.has_pending_escalation = False
+
+    def _search_has_pending_escalation(self, operator, value):
+        if operator not in ('=', '!='):
+            raise NotImplementedError
+        target = bool(value)
+        esc = self.env['ab.supplier.claim.escalation']
+        try:
+            pending_claims = esc.search([('status', '=', 'pending')]).mapped('claim_id')
+        except Exception:
+            return [('id', '=', False)] if target else []
+        if target:
+            return [('id', 'in', pending_claims.ids)]
+        return [('id', 'not in', pending_claims.ids)]
+
+    @api.depends('amount_of_check', 'tax_percentage', 'tax_frozen')
+    def _compute_tax(self):
+        for rec in self:
+            if rec.tax_frozen:
+                continue
+            rec.tax_amount = rec.amount_of_check * (rec.tax_percentage / 100)
+            rec.net_payable = rec.amount_of_check - rec.tax_amount
+
+    @api.depends('supplier_type')
+    def _compute_has_tax_accounts(self):
+        for rec in self:
+            rec.has_tax_accounts = rec.supplier_type == WITHHOLDING_TAX_SUPPLIER_TYPE
+
+    def _calculate_and_freeze_tax(self):
+        self.ensure_one()
+        if self.tax_frozen:
+            return
+        self.tax_amount = self.amount_of_check * (self.tax_percentage / 100)
+        self.net_payable = self.amount_of_check - self.tax_amount
+        self.with_context(supplier_claim_internal_write=True).write({
+            'tax_frozen': True,
+            'tax_calculated_at': fields.Datetime.now(),
+        })
+
+    def _mail_activity_available(self):
+        return bool(self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False))
+
+    def _send_escalation_notification(self, manager):
+        self.ensure_one()
+        if not self._mail_activity_available():
+            self._create_internal_escalation(manager)
+            return 'internal_fallback'
+        try:
+            self.activity_schedule(
+                'mail.mail_activity_data_todo',
+                summary=_('Stage Overdue: %s') % self._get_stage_label(self.status),
+                note=_(
+                    'The %(stage)s stage for claim %(name)s has been overdue for more than 24 hours. '
+                    'Please review and take action.'
+                ) % {
+                    'stage': self._get_stage_label(self.status),
+                    'name': self.display_name,
+                },
+                user_id=manager.id,
+                date_deadline=fields.Date.today(),
+            )
+            return 'odoo_activity'
+        except Exception:
+            self._create_internal_escalation(manager)
+            return 'internal_fallback'
+
+    def _create_internal_escalation(self, manager):
+        self.ensure_one()
+        self.env['ab.supplier.claim.escalation'].create({
+            'claim_id': self.id,
+            'manager_id': manager.id,
+            'department_name': self._get_stage_label(self.status),
+            'current_stage': self.status,
+            'method': 'internal_fallback',
+            'notes': _('Automatic escalation triggered via internal fallback.'),
+        })
+        self.write({
+            'assigned_escalation_user': manager.id,
+        })
     def _get_stage_group_xmlids(self):
         return {
             'inventory': 'ab_supplier_claim_cycle.supplier_claim_group_inventory',
@@ -395,6 +509,8 @@ class SupplierClaimCycle(models.Model):
             rec._check_can_act_current_stage()
             if rec.status in DEPARTMENT_STAGES:
                 rec._set_parallel_department_decision('accepted')
+                if rec.status == 'tax_accounts' and rec._requires_tax_accounts_stage():
+                    rec._calculate_and_freeze_tax()
                 rec._try_advance_from_parallel()
             else:
                 rec.with_context(supplier_claim_internal_write=True).write({
@@ -525,6 +641,9 @@ class SupplierClaimCycle(models.Model):
             'status': next_stage,
             'department_decision': 'pending',
             'delay_reason': False,
+            'stage_escalated': False,
+            'escalation_missing_manager': False,
+            'assigned_escalation_user': False,
         })
         self._create_stage_history(next_stage, 'pending')
 
@@ -603,6 +722,9 @@ class SupplierClaimCycle(models.Model):
                     'status': 'inventory',
                     'department_decision': 'pending',
                     'delay_reason': False,
+                    'stage_escalated': False,
+                    'escalation_missing_manager': False,
+                    'assigned_escalation_user': False,
                 })
                 rec._create_stage_history('inventory', 'pending')
                 rec._create_stage_history('purchase', 'pending')
@@ -628,6 +750,9 @@ class SupplierClaimCycle(models.Model):
                     'status': 'sign_check',
                     'department_decision': 'pending',
                     'delay_reason': False,
+                    'stage_escalated': False,
+                    'escalation_missing_manager': False,
+                    'assigned_escalation_user': False,
                 })
                 rec._create_stage_history('sign_check', 'pending')
             else:
@@ -664,6 +789,9 @@ class SupplierClaimCycle(models.Model):
                     'status': 'sign_check',
                     'department_decision': 'pending',
                     'delay_reason': False,
+                    'stage_escalated': False,
+                    'escalation_missing_manager': False,
+                    'assigned_escalation_user': False,
                 })
                 rec._create_stage_history('sign_check', 'pending')
                 return
@@ -776,6 +904,152 @@ class SupplierClaimCycle(models.Model):
                 return error
             rec._move_to_next_stage()
 
+    @api.model
+    def _cron_escalate_overdue_stages(self):
+        claims = self.search([('status', 'in', DEPARTMENT_STAGES)])
+        for claim in claims:
+            if claim.stage_escalated:
+                continue
+            last_history = self.env['ab_supplier_claim_stage_history'].search([
+                ('claim_id', '=', claim.id),
+                ('stage', '=', claim.status),
+            ], order='action_date desc', limit=1)
+            if not last_history or not last_history.action_date:
+                continue
+            if fields.Datetime.now() - last_history.action_date <= timedelta(minutes=1):
+                continue
+            details = claim._resolve_escalation_details()
+            _logger.info(
+                'Escalation audit for claim %s (stage: %s):\n'
+                '  Current Stage: %s\n'
+                '  Security Group XMLID: %s\n'
+                '  Users in group: %s\n'
+                '  Employees resolved: %s\n'
+                '  Departments resolved: %s\n'
+                '  Managers resolved: %s\n'
+                '  Manager Users resolved: %s',
+                claim.display_name, claim.status,
+                claim._get_stage_label(claim.status),
+                details.get('group_xmlid', 'N/A'),
+                ', '.join(u.display_name for u in details['users']) if details['users'] else 'NONE',
+                ', '.join(e.display_name for e in details['employees']) if details['employees'] else 'NONE',
+                ', '.join(d.display_name for d in details['departments'] if d) if details['departments'] else 'NONE',
+                ', '.join(m.display_name for m in details['managers']) if details['managers'] else 'NONE',
+                ', '.join(u.display_name for u in details['manager_users']) if details['manager_users'] else 'NONE',
+            )
+            manager_users = details['manager_users']
+            now_str = fields.Datetime.now().strftime('%Y-%m-%d %H:%M')
+            if manager_users:
+                methods = []
+                for manager in manager_users:
+                    method = claim._send_escalation_notification(manager)
+                    methods.append(method)
+                method_used = 'odoo_activity' if any(m == 'odoo_activity' for m in methods) else 'internal_fallback'
+                manager_lines = '\n'.join(
+                    '\u2022 %s (%s)' % (u.display_name, u.login or u.email or '')
+                    for u in manager_users
+                )
+                notes = _(
+                    'Automatic escalation triggered.\n'
+                    'Department: %(dept)s\n'
+                    'Managers notified:\n%(managers)s\n'
+                    'Notification type: %(method)s\n'
+                    'Escalated at: %(time)s'
+                ) % {
+                    'dept': claim._get_stage_label(claim.status),
+                    'managers': manager_lines,
+                    'method': 'Odoo Activity' if method_used == 'odoo_activity' else 'Internal Fallback',
+                    'time': now_str,
+                }
+                claim._create_stage_history(claim.status, 'escalated', notes)
+                claim.stage_escalated = True
+            else:
+                notes = _(
+                    'Automatic escalation failed.\n'
+                    'Reason:\n'
+                    'No department manager could be resolved from the HR hierarchy.\n\n'
+                    'Department: %(dept)s\n'
+                    'Manual escalation is required.\n'
+                    'Escalation attempted at: %(time)s'
+                ) % {
+                    'dept': claim._get_stage_label(claim.status),
+                    'time': now_str,
+                }
+                claim._create_stage_history(claim.status, 'escalated', notes)
+                claim.write({
+                    'stage_escalated': True,
+                    'escalation_missing_manager': True,
+                })
+
+    def _resolve_escalation_details(self):
+        self.ensure_one()
+        result = {
+            'group_xmlid': None,
+            'users': [],
+            'employees': [],
+            'departments': [],
+            'managers': [],
+            'manager_users': [],
+        }
+        stage_groups = self._get_stage_group_xmlids()
+        group_xmlid = stage_groups.get(self.status)
+        if not group_xmlid:
+            return result
+        result['group_xmlid'] = group_xmlid
+        group = self.env.ref(group_xmlid, raise_if_not_found=False)
+        if not group or not group.sudo().user_ids:
+            return result
+        Employee = self.env['ab_hr_employee'].sudo()
+        seen_manager_user_ids = set()
+        for user in group.sudo().user_ids:
+            result['users'].append(user)
+            employee = Employee.search([('user_id', '=', user.id)], limit=1)
+            if not employee:
+                continue
+            result['employees'].append(employee)
+            result['departments'].append(employee.department_id)
+            manager = None
+            if employee.department_id and employee.department_id.manager_id:
+                manager = employee.department_id.manager_id
+            elif employee.parent_id:
+                manager = employee.parent_id
+            if manager:
+                result['managers'].append(manager)
+                if manager.user_id and manager.user_id.id not in seen_manager_user_ids:
+                    seen_manager_user_ids.add(manager.user_id.id)
+                    result['manager_users'].append(manager.user_id)
+        return result
+
+    def _resolve_escalation_managers(self):
+        return self._resolve_escalation_details()['manager_users']
+
+    def action_assign_escalation_user(self):
+        self.ensure_one()
+        if not self.assigned_escalation_user:
+            return
+        method = self._send_escalation_notification(self.assigned_escalation_user)
+        now_str = fields.Datetime.now().strftime('%Y-%m-%d %H:%M')
+        self._create_stage_history(
+            self.status, 'escalated',
+            _(
+                'Manual escalation.\n'
+                'Assigned to: %(name)s (%(login)s)\n'
+                'Department: %(dept)s\n'
+                'Notification type: %(method)s\n'
+                'Escalated at: %(time)s'
+            ) % {
+                'name': self.assigned_escalation_user.display_name,
+                'login': self.assigned_escalation_user.login or self.assigned_escalation_user.email or '',
+                'dept': self._get_stage_label(self.status),
+                'method': 'Odoo Activity' if method == 'odoo_activity' else 'Internal Fallback',
+                'time': now_str,
+            },
+        )
+        self.write({
+            'escalation_missing_manager': False,
+            'assigned_escalation_user': False,
+        })
+
     def _move_to_next_stage(self):
         self.ensure_one()
         next_stage = self._get_next_stage()
@@ -787,6 +1061,9 @@ class SupplierClaimCycle(models.Model):
             'status': next_stage,
             'department_decision': 'accepted' if next_stage == 'closed' else 'pending',
             'delay_reason': False,
+            'stage_escalated': False,
+            'escalation_missing_manager': False,
+            'assigned_escalation_user': False,
         })
         self._create_stage_history(next_stage, 'pending')
 
@@ -1006,6 +1283,10 @@ class SupplierClaimCycle(models.Model):
         'has_blocking_issue',
         'issue_ids',
         'issue_ids.resolved',
+        'tax_frozen',
+        'tax_amount',
+        'tax_percentage',
+        'net_payable',
     )
     def _compute_timeline_display(self):
         for rec in self:
@@ -1056,7 +1337,9 @@ class SupplierClaimCycle(models.Model):
                 else:
                     label_class += ' pending'
 
-                icon = '✈' if (is_comp and entry['stage'] == 'closed') else ('✓' if is_comp else ('●' if is_curr else '○'))
+                icon = '🏛' if entry['stage'] == 'tax_accounts' and self._requires_tax_accounts_stage() else (
+                    '✈' if (is_comp and entry['stage'] == 'closed') else (
+                    '✓' if is_comp else ('●' if is_curr else '○')))
 
                 stage_class = 'scc-timeline-stage'
                 if entry['notes']:
@@ -1072,6 +1355,16 @@ class SupplierClaimCycle(models.Model):
                 L.append('<div class="%s">%s</div>' % (label_class, entry['label']))
                 if entry['notes']:
                     L.append('<div class="scc-timeline-notes">%s</div>' % entry['notes'])
+
+                if entry['stage'] == 'tax_accounts' and is_comp and self._requires_tax_accounts_stage():
+                    L.append('<div class="scc-timeline-tax-summary">')
+                    L.append('<div class="scc-timeline-tax-line">%s <strong>%s%%</strong></div>' % (_('Tax Applied:'), int(self.tax_percentage)))
+                    tax_amount_display = _('%(amount)s %(currency)s') % {
+                        'amount': '{:,.2f}'.format(self.tax_amount or 0.0),
+                        'currency': self.currency_id.symbol or '',
+                    } if self.tax_amount else _('0.00')
+                    L.append('<div class="scc-timeline-tax-amount">- %s</div>' % tax_amount_display)
+                    L.append('</div>')
 
                 if entry['stage'] == 'supplier_notification' and self.supplier_notified:
                     L.append('<div class="scc-timeline-divider">%s<br/>%s</div>' % (self.contact_name or '', self.contact_phone or ''))
@@ -1171,6 +1464,32 @@ class SupplierClaimCycle(models.Model):
                 L.append('<div class="scc-notification-card-title">📞 %s</div>' % _('Supplier Contacted'))
                 L.append('<div class="scc-notification-card-row"><strong>%s:</strong> %s</div>' % (_('Contact'), self.contact_name or ''))
                 L.append('<div class="scc-notification-card-row"><strong>%s:</strong> %s</div>' % (_('Phone'), self.contact_phone or ''))
+                L.append('</div>')
+
+            if current_stage['stage'] == 'tax_accounts' and self._requires_tax_accounts_stage():
+                tax_amt = self.tax_amount or 0.0
+                net_amt = self.net_payable or 0.0
+                claim_amt = self.amount_of_check or 0.0
+                currency = self.currency_id.symbol or ''
+                fmt = lambda v: '{:,.2f}'.format(v)
+                L.append('<div class="scc-tax-financial-card">')
+                L.append('<div class="scc-tax-financial-header">🏛 %s</div>' % _('Withholding Tax Summary'))
+                L.append('<div class="scc-tax-financial-body">')
+                L.append('<div class="scc-tax-financial-row">')
+                L.append('<span class="scc-tax-financial-label">%s</span>' % _('Claim Amount'))
+                L.append('<span class="scc-tax-financial-value">%s %s</span>' % (fmt(claim_amt), currency))
+                L.append('</div>')
+                L.append('<div class="scc-tax-financial-row">')
+                L.append('<span class="scc-tax-financial-label">🏛 %s</span>' % _('Withholding Tax'))
+                L.append('<span class="scc-tax-financial-value scc-tax-amount">%s%% (-%s %s)</span>' % (
+                    int(self.tax_percentage or 1.0), fmt(tax_amt), currency))
+                L.append('</div>')
+                L.append('<div class="scc-tax-financial-divider"></div>')
+                L.append('<div class="scc-tax-financial-row scc-tax-net-row">')
+                L.append('<span class="scc-tax-financial-label scc-tax-net-label">%s</span>' % _('Net Payable'))
+                L.append('<span class="scc-tax-financial-value scc-tax-net-value">%s %s</span>' % (fmt(net_amt), currency))
+                L.append('</div>')
+                L.append('</div>')
                 L.append('</div>')
 
             L.append('</div>')
