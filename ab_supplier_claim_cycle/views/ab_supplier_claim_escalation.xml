@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_ab_supplier_claim_escalation_tree" model="ir.ui.view">
+            <field name="name">ab.supplier.claim.escalation.tree</field>
+            <field name="model">ab.supplier.claim.escalation</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="claim_id"/>
+                    <field name="manager_id"/>
+                    <field name="department_name"/>
+                    <field name="current_stage"/>
+                    <field name="escalation_time"/>
+                    <field name="status" widget="badge"
+                           decoration-warning="status == 'pending'"
+                           decoration-success="status == 'acknowledged'"/>
+                    <field name="acknowledged_at" optional="show"/>
+                    <field name="method"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_supplier_claim_escalation_form" model="ir.ui.view">
+            <field name="name">ab.supplier.claim.escalation.form</field>
+            <field name="model">ab.supplier.claim.escalation</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group string="Escalation Info">
+                                <field name="claim_id"/>
+                                <field name="manager_id"/>
+                                <field name="department_name"/>
+                                <field name="current_stage"/>
+                                <field name="escalation_time"/>
+                                <field name="method"/>
+                            </group>
+                            <group string="Status">
+                                <field name="status" widget="badge"
+                                       decoration-warning="status == 'pending'"
+                                       decoration-success="status == 'acknowledged'"/>
+                                <field name="acknowledged_at"/>
+                                <field name="acknowledged_by"/>
+                                <button name="action_acknowledge" type="object"
+                                        string="Acknowledge" class="btn-success"
+                                        invisible="status != 'pending'"
+                                        groups="base.group_user"/>
+                            </group>
+                        </group>
+                        <group string="Notes">
+                            <field name="notes" nolabel="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_supplier_claim_escalation_search" model="ir.ui.view">
+            <field name="name">ab.supplier.claim.escalation.search</field>
+            <field name="model">ab.supplier.claim.escalation</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="claim_id"/>
+                    <field name="manager_id"/>
+                    <field name="status"/>
+                    <separator/>
+                    <filter name="pending" string="Pending" domain="[('status','=','pending')]"/>
+                    <filter name="acknowledged" string="Acknowledged" domain="[('status','=','acknowledged')]"/>
+                    <separator/>
+                    <filter name="group_status" string="Status" context="{'group_by': 'status'}"/>
+                    <filter name="group_manager" string="Manager" context="{'group_by': 'manager_id'}"/>
+                    <filter name="group_stage" string="Stage" context="{'group_by': 'current_stage'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_supplier_claim_escalation" model="ir.actions.act_window">
+            <field name="name">Escalations</field>
+            <field name="res_model">ab.supplier.claim.escalation</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_supplier_claim_escalation_search"/>
+        </record>
+
+    </data>
+</odoo>

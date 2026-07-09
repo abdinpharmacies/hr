@@ -14,6 +14,8 @@
                     <field name="create_date" string="Received" optional="show"/>
                     <field name="status" widget="badge" decoration-success="status not in ('closed', 'supplier_notification', 'secretarial')" decoration-info="status == 'secretarial'" decoration-warning="status == 'supplier_notification'" decoration-danger="status == 'closed'"/>
                     <field name="department_decision" widget="badge" decoration-success="department_decision == 'accepted'" decoration-warning="department_decision == 'pending'" decoration-danger="department_decision == 'rejected'"/>
+                    <field name="has_pending_escalation" invisible="1"/>
+                    <field name="escalation_count" invisible="1"/>
                     <field name="amount_of_check" string="Amount" optional="show" widget="monetary"/>
                     <field name="contact_result" optional="hide"/>
                     <field name="contact_name" optional="hide"/>
@@ -64,12 +66,34 @@
                     </header>
 
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="%(action_ab_supplier_claim_escalation)d" type="action"
+                                    class="oe_stat_button" icon="fa-flag"
+                                    groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                    context="{'default_claim_id': id}">
+                                <div class="o_stat_info">
+                                    <field name="escalation_count" widget="statinfo"/>
+                                    <span class="o_stat_text">Escalations</span>
+                                </div>
+                            </button>
+                        </div>
+
                         <field name="can_current_user_edit" invisible="1"/>
                         <field name="can_current_user_act" invisible="1"/>
                         <field name="can_finish" invisible="1"/>
                         <field name="can_secretarial_override" invisible="1"/>
                         <field name="supplier_notified" invisible="1"/>
                         <field name="has_blocking_issue" invisible="1"/>
+                        <field name="stage_escalated" invisible="1"/>
+                        <field name="escalation_ids" invisible="1"/>
+                        <field name="escalation_count" invisible="1"/>
+                        <field name="has_pending_escalation" invisible="1"/>
+                        <field name="escalation_missing_manager" invisible="1"/>
+                        <field name="has_tax_accounts" invisible="1"/>
+                        <field name="tax_percentage" invisible="1"/>
+                        <field name="tax_amount" invisible="1"/>
+                        <field name="net_payable" invisible="1"/>
+                        <field name="tax_frozen" invisible="1"/>
 
                         <div class="scc-detail-alert" style="margin-bottom:16px;"
                              groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -88,8 +112,16 @@
                                             <field name="supplier_id" readonly="not can_current_user_edit" options="{'open_form': True}"/>
                                             <span class="scc-supplier-link-icon">↗</span>
                                         </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
-                                            🏷 <field name="supplier_type"/>
+                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                                            🏷 <field name="name" readonly="1" class="o_inline_modifier"/>
+                                        </span>
+                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;"
+                                              invisible="supplier_type != 'withholding_tax'">
+                                            🏛 <field name="supplier_type" class="o_inline_modifier"/> • <field name="tax_percentage" class="o_inline_modifier"/>%
+                                        </span>
+                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
+                                              invisible="supplier_type == 'withholding_tax'">
+                                            <field name="supplier_type" class="o_inline_modifier"/>
                                         </span>
                                         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
                                             📅 <field name="claim_month" readonly="status != 'secretarial'"/>
@@ -121,11 +153,29 @@
                                 </div>
                                 <div class="scc-supplier-info">
                                     <div class="scc-supplier-info-icon">💰</div>
-                                    <div>
+                                    <div style="flex:1;min-width:0;">
                                         <div class="scc-supplier-info-label o_translate_inline">Check Amount</div>
-                                        <div class="scc-supplier-info-value" style="display:flex;align-items:center;gap:6px;">
-                                            <field name="amount_of_check" readonly="not can_current_user_edit" style="flex:1;min-width:80px;"/>
-                                            <field name="currency_id" readonly="not can_current_user_edit" options="{'no_create': True}" style="width:90px;"/>
+                                        <!-- Default: editable fields (before tax_accounts) -->
+                                        <div class="scc-supplier-info-value scc-tax-inline-wrapper"
+                                             invisible="status == 'tax_accounts' and has_tax_accounts">
+                                            <span class="scc-tax-inline-amount-field">
+                                                <field name="amount_of_check" readonly="not can_current_user_edit" class="scc-amount-field"/>
+                                                <field name="currency_id" readonly="not can_current_user_edit" options="{'no_create': True}" class="scc-currency-field"/>
+                                            </span>
+                                        </div>
+                                        <!-- Tax accounts: premium pricing display -->
+                                        <div class="scc-tax-pricing-display"
+                                             invisible="not (status == 'tax_accounts' and has_tax_accounts)">
+                                            <div class="scc-tax-pricing-row">
+                                                <span class="scc-tax-old-amount">
+                                                    <field name="amount_of_check" widget="monetary" readonly="1"/>
+                                                </span>
+                                                <span class="scc-tax-discount-badge">-<field name="tax_percentage"/>%</span>
+                                            </div>
+                                            <div class="scc-tax-pricing-net">
+                                                <field name="net_payable" widget="monetary"/>
+                                            </div>
+                                            <div class="scc-tax-pricing-caption">✓ Withholding Tax Applied</div>
                                         </div>
                                     </div>
                                 </div>
@@ -138,20 +188,51 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="scc-supplier-info">
-                                    <div class="scc-supplier-info-icon">🏷</div>
-                                    <div>
-                                        <div class="scc-supplier-info-label o_translate_inline">Supplier Type</div>
-                                        <div class="scc-supplier-info-value" style="display:flex;align-items:center;gap:6px;">
-                                            <field name="supplier_type" readonly="1"/>
-                                            <span class="scc-type-warning-badge" invisible="supplier_type">
-                                                ⚠ <span class="o_translate_inline">Not Configured</span>
-                                                <button name="action_open_supplier_type_wizard" type="object"
-                                                        string="Set" class="scc-type-set-btn"
-                                                        groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                                            </span>
-                                        </div>
-                                    </div>
+                            </div>
+                        </div>
+
+                        <!-- Escalation Warning Banner -->
+                        <div class="scc-escalation-banner scc-animate-in"
+                             invisible="not escalation_missing_manager"
+                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
+                            <div class="scc-escalation-banner-icon">⚠</div>
+                            <div class="scc-escalation-banner-body">
+                                <div class="scc-escalation-banner-title o_translate_inline">
+                                    No department manager could be resolved automatically.
+                                </div>
+                                <div class="scc-escalation-banner-sub">
+                                    <span class="o_translate_inline">Department:</span>
+                                    <span class="scc-escalation-banner-dept"><field name="status"/></span>
+                                </div>
+                                <div class="scc-escalation-banner-action o_translate_inline">
+                                    Please assign the escalation manually.
+                                </div>
+                                <div class="scc-escalation-banner-form">
+                                    <field name="assigned_escalation_user"
+                                           placeholder="Select user..."
+                                           class="scc-escalation-field"/>
+                                    <button name="action_assign_escalation_user" type="object"
+                                            string="Assign" class="btn-primary scc-escalation-btn"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pending Escalation Acknowledgment Banner -->
+                        <div class="scc-escalation-banner scc-escalation-pending-banner scc-animate-in"
+                             invisible="not has_pending_escalation or escalation_missing_manager"
+                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
+                            <div class="scc-escalation-banner-icon">🔔</div>
+                            <div class="scc-escalation-banner-body">
+                                <div class="scc-escalation-banner-title o_translate_inline">
+                                    Escalation is pending acknowledgment.
+                                </div>
+                                <div class="scc-escalation-banner-sub">
+                                    <span class="o_translate_inline">Manager:</span>
+                                    <span class="scc-escalation-banner-dept"><field name="assigned_escalation_user"/></span>
+                                </div>
+                                <div class="scc-escalation-banner-form">
+                                    <button name="%(action_ab_supplier_claim_escalation)d" type="action"
+                                            string="View Escalations" class="btn-primary scc-escalation-btn"/>
                                 </div>
                             </div>
                         </div>
