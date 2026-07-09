@@ -23,6 +23,7 @@ class SupplierClaimStageHistory(models.Model):
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
+        ('escalated', 'Escalated'),
     ], default='pending', required=True)
     user_id = fields.Many2one('res.users', string='User', default=lambda self: self.env.user)
     action_date = fields.Datetime(string='Action Date', default=fields.Datetime.now)
