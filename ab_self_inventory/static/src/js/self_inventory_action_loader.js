@@ -2,6 +2,7 @@
 
 import { _t } from "@web/core/l10n/translation";
 import { patch } from "@web/core/utils/patch";
+import { registry } from "@web/core/registry";
 import { FormController } from "@web/views/form/form_controller";
 
 const LOADER_ACTIONS = {
@@ -93,3 +94,18 @@ patch(FormController.prototype, {
         this._abSelfInventoryLoaderEl = null;
     },
 });
+
+async function closeDialogAndReload(env, action) {
+    const params = action.params || {};
+    if (params.message) {
+        env.services.notification.add(params.message, {
+            title: params.title || _t("Done"),
+            type: params.type || "success",
+            sticky: Boolean(params.sticky),
+        });
+    }
+    await env.services.action.doAction({ type: "ir.actions.act_window_close" });
+    await env.services.action.doAction({ type: "ir.actions.client", tag: "soft_reload" });
+}
+
+registry.category("actions").add("ab_self_inventory_close_dialog_reload", closeDialogAndReload);
