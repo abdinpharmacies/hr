@@ -43,12 +43,9 @@ class SelfInventoryImportWizard(models.TransientModel):
 
         lines_by_code = {}
         for line in self.process_id.line_ids:
-            for code in (line.product_code, line.eplus_item_code):
+            for code in (line.product_code, line.eplus_item_code, str(line.eplus_item_id or '')):
                 if code:
                     lines_by_code[str(code).strip()] = line
-        for line in self.process_id.line_ids:
-            if line.eplus_item_id:
-                lines_by_code.setdefault(str(line.eplus_item_id).strip(), line)
 
         updated = 0
         missing_codes = []
@@ -78,7 +75,7 @@ class SelfInventoryImportWizard(models.TransientModel):
             message += _(" Missing product codes: %s") % ', '.join(missing_codes[:10])
         return {
             'type': 'ir.actions.client',
-            'tag': 'ab_self_inventory_close_dialog_reload',
+            'tag': 'display_notification',
             'params': {'title': _('Import Complete'), 'message': message, 'type': 'success', 'sticky': False},
         }
 
