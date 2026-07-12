@@ -556,7 +556,7 @@ class DataGridWidget extends Component {
                             <input type="text" t-ref="searchInput" t-att-placeholder="_t('Search products...')" t-on-input="onSearchInput" class="o_input"/>
                         </div>
                     </div>
-                    <div class="ab_saas_toolbar_right" t-if="!isProcessColumns">
+                    <div class="ab_saas_toolbar_right">
                         <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly"><t t-esc="_t('Add Line')"/></button>
                         <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
                         <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Unselect All')"/></button>
@@ -568,7 +568,7 @@ class DataGridWidget extends Component {
                 </div>
 
                 <!-- Selection bar -->
-                <div class="ab_saas_selection_bar" t-if="!isProcessColumns &amp;&amp; !state.groupByBranch &amp;&amp; selectedTotal > 0">
+                <div class="ab_saas_selection_bar" t-if="!state.groupByBranch &amp;&amp; selectedTotal > 0">
                     <span class="ab_saas_selection_bar_count">
                         <span class="ab_selection_badge"><t t-esc="selectedTotal"/></span>
                         <t t-esc="_t('products selected')"/>
@@ -579,113 +579,53 @@ class DataGridWidget extends Component {
 
                 <!-- Grid -->
                 <div class="ab_saas_grid_container" t-ref="gridContainer">
-                    <div t-att-class="'ab_saas_grid_header' + (isRequestColumns ? ' ab_saas_grid_header--request' : '') + (isProcessColumns ? ' ab_saas_grid_header--process' : '')">
-                        <div t-att-class="'ab_saas_grid_header_row' + (isRequestColumns ? ' ab_saas_grid_header_row--request' : '') + (isProcessColumns ? ' ab_saas_grid_header_row--process' : '')">
-                            <t t-if="isProcessColumns">
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_source"><t t-esc="_t('Source')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
-                                    <t t-esc="_t('Product')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus"><t t-esc="_t('Code')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
-                                    <t t-esc="_t('E-stock Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_actual" t-on-click="() => this.sortBy('actual_qty')">
-                                    <t t-esc="_t('Actual Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('actual_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_difference" t-on-click="() => this.sortBy('difference_qty')">
-                                    <t t-esc="_t('Difference')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('difference_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage" t-on-click="() => this.sortBy('shortage_qty')">
-                                    <t t-esc="_t('Shortage')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('shortage_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_extra" t-on-click="() => this.sortBy('extra_qty')">
-                                    <t t-esc="_t('Extra')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('extra_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation"><t t-esc="_t('Explanation')"/></div>
-                            </t>
-                            <t t-else="">
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click="toggleAllCheck">☑</div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns" t-on-click="() => this.sortBy('branch_name')">
-                                    <t t-esc="_t('Branch')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('branch_name')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
-                                    <t t-esc="_t('Product')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus"><t t-esc="_t('Code')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
-                                    <t t-esc="_t('E-stock Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_price"><t t-esc="_t('Sell Price')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_sold"><t t-esc="_t('Sold Qty')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_note"><t t-esc="_t('Note')"/></div>
-                            </t>
+                    <div t-att-class="'ab_saas_grid_header' + (isRequestColumns ? ' ab_saas_grid_header--request' : '')">
+                        <div t-att-class="'ab_saas_grid_header_row' + (isRequestColumns ? ' ab_saas_grid_header_row--request' : '')">
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click="toggleAllCheck">☑</div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns" t-on-click="() => this.sortBy('branch_name')">
+                                <t t-esc="_t('Branch')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('branch_name')"/>
+                            </div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                <t t-esc="_t('Product')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
+                            </div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus"><t t-esc="_t('Code')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
+                                <t t-esc="_t('E-stock Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
+                            </div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price"><t t-esc="_t('Sell Price')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold"><t t-esc="_t('Sold Qty')"/></div>
+                            <div class="ab_saas_grid_cell ab_saas_grid_cell_note"><t t-esc="_t('Note')"/></div>
                         </div>
                     </div>
-                    <div t-att-class="'ab_saas_grid_body' + (isRequestColumns ? ' ab_saas_grid_body--request' : '') + (isProcessColumns ? ' ab_saas_grid_body--process' : '')" t-ref="gridBody" t-on-scroll="onGridScroll">
+                    <div t-att-class="'ab_saas_grid_body' + (isRequestColumns ? ' ab_saas_grid_body--request' : '')" t-ref="gridBody" t-on-scroll="onGridScroll">
                         <t t-if="!state.groupByBranch">
                             <t t-foreach="state.rows" t-as="row" t-key="row.id">
-                                <t t-if="isProcessColumns">
-                                    <div t-att-class="'ab_saas_grid_row ab_saas_grid_row--process' + (row._highlight ? ' ab_saas_grid_row_highlight' : '')">
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_source">
-                                            <span t-att-class="'ab_saas_source_badge ' + (row.requested ? 'ab_saas_source_badge--requested' : 'ab_saas_source_badge--manual')">
-                                                <t t-esc="row.requested ? _t('Requested') : _t('Manual')"/>
-                                            </span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
-                                            <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
-                                            <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
-                                            <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_actual">
-                                            <input type="number" step="0.001" class="o_input ab_saas_grid_input ab_saas_grid_input_qty" t-att-value="row.actual_qty" t-att-disabled="isReadonly" t-on-click.stop="() => {}" t-on-change="(ev) => this.updateProcessRow(row, 'actual_qty', ev.target.value)"/>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_difference">
-                                            <span t-att-class="'ab_saas_qty ' + (row.difference_qty > 0 ? 'ab_saas_qty_extra' : row.difference_qty &lt; 0 ? 'ab_saas_qty_shortage' : '')"><t t-esc="row.difference_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage">
-                                            <span t-if="row.shortage_qty" class="ab_saas_qty ab_saas_qty_shortage"><t t-esc="row.shortage_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_extra">
-                                            <span t-if="row.extra_qty" class="ab_saas_qty ab_saas_qty_extra"><t t-esc="row.extra_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation">
-                                            <input type="text" class="o_input ab_saas_grid_input" t-att-value="row.explanation" t-att-disabled="isReadonly" t-on-click.stop="() => {}" t-on-change="(ev) => this.updateProcessRow(row, 'explanation', ev.target.value)"/>
-                                        </div>
+                                <div t-att-class="'ab_saas_grid_row' + (isRequestColumns ? ' ab_saas_grid_row--request' : '') + (row.selected ? ' ab_saas_grid_row_selected' : '') + (row._highlight ? ' ab_saas_grid_row_highlight' : '')" t-on-click="() => this.toggleRow(row)">
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
+                                        <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
                                     </div>
-                                </t>
-                                <t t-else="">
-                                    <div t-att-class="'ab_saas_grid_row' + (isRequestColumns ? ' ab_saas_grid_row--request' : '') + (row.selected ? ' ab_saas_grid_row_selected' : '') + (row._highlight ? ' ab_saas_grid_row_highlight' : '')" t-on-click="() => this.toggleRow(row)">
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
-                                            <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns">
-                                            <span class="ab_saas_branch_pill"><t t-esc="row.branch_name"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
-                                            <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
-                                            <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
-                                            <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_price">
-                                            <span class="ab_saas_price" t-if="row.sell_price"><t t-esc="row.sell_price"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
-                                            <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
-                                            <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
-                                        </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns">
+                                        <span class="ab_saas_branch_pill"><t t-esc="row.branch_name"/></span>
                                     </div>
-                                </t>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                        <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
+                                        <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
+                                        <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_price">
+                                        <span class="ab_saas_price" t-if="row.sell_price"><t t-esc="row.sell_price"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
+                                        <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
+                                    </div>
+                                    <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
+                                        <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
+                                    </div>
+                                </div>
                             </t>
                         </t>
                         <t t-else="">
@@ -743,7 +683,7 @@ class DataGridWidget extends Component {
                                 </svg>
                                 <div class="ab_saas_grid_empty_title"><t t-esc="_t('No products found')"/></div>
                                 <div class="ab_saas_grid_empty_text"><t t-esc="_t('Try changing the branch filter or search terms to find products.')"/></div>
-                                <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly" t-if="!isProcessColumns &amp;&amp; !state.searchText &amp;&amp; !state.selected_branch_ids.length" style="margin-top: 16px;">
+                                <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly" t-if="!state.searchText &amp;&amp; !state.selected_branch_ids.length" style="margin-top: 16px;">
                                     <t t-esc="_t('Add Products')"/>
                                 </button>
                             </div>
@@ -752,7 +692,7 @@ class DataGridWidget extends Component {
                     <div class="ab_saas_grid_footer" t-if="!state.groupByBranch &amp;&amp; state.total">
                         <span class="ab_saas_grid_footer_text">
                             <t t-esc="rangeLabel"/>
-                            <t t-if="!isProcessColumns &amp;&amp; selectedTotal"> · <t t-esc="selectedLabel"/></t>
+                            <t t-if="selectedTotal"> · <t t-esc="selectedLabel"/></t>
                         </span>
                         <div class="ab_saas_pagination">
                             <button class="ab_saas_pagination_btn" t-on-click="previousPage" t-att-disabled="!hasPreviousPage || loading.state.isLoading">
@@ -853,24 +793,15 @@ class DataGridWidget extends Component {
 
     get isReadonly() {
         const st = getRecordValue(this.props.record, "state", null);
-        if (this.isProcessColumns) {
-            return !Boolean(getRecordValue(this.props.record, "can_sync_requested_stock", false));
-        }
         return st && st !== "draft";
     }
 
-    get isProcessColumns() {
-        return this.resModel === "ab_self_inventory_process" || Boolean(this.props.options && this.props.options.process_columns);
-    }
-
     get isRequestColumns() {
-        return !this.isProcessColumns && (
-            this.resModel === "ab_self_inventory_request" || Boolean(this.props.options && this.props.options.request_columns)
-        );
+        return this.resModel === "ab_self_inventory_request" || Boolean(this.props.options && this.props.options.request_columns);
     }
 
     get hideBranchSummary() {
-        return this.isProcessColumns || this.resModel === "ab_self_inventory_request" || Boolean(this.props.options && this.props.options.hide_branch_summary);
+        return this.resModel === "ab_self_inventory_request" || Boolean(this.props.options && this.props.options.hide_branch_summary);
     }
 
     _getServerBranchIds() {
@@ -925,9 +856,7 @@ class DataGridWidget extends Component {
             this.state.analytics = analytics;
             this.state.branches = branches;
             const rows = result.rows || [];
-            if (!this.isProcessColumns) {
-                rows.sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1));
-            }
+            rows.sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1));
             this.state.rows = rows;
             this.state.total = result.total || 0;
             this.state.selectedTotal = result.selected_total || 0;
@@ -965,9 +894,7 @@ class DataGridWidget extends Component {
             if (this._currentKey() !== this._loadKey) return;
             this.state.groupedData = groups || [];
             for (const g of this.state.groupedData) {
-                if (!this.isProcessColumns) {
-                    g.rows.sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1));
-                }
+                g.rows.sort((a, b) => (a.selected === b.selected ? 0 : a.selected ? -1 : 1));
                 this.state.expandedBranches[g.branch_id] = true;
             }
         } catch (e) {
@@ -1051,7 +978,6 @@ class DataGridWidget extends Component {
     }
 
     get selectedTotal() {
-        if (this.isProcessColumns) return 0;
         return Number(this.state.selectedTotal || 0);
     }
 
@@ -1060,12 +986,10 @@ class DataGridWidget extends Component {
     }
 
     get allFilteredSelected() {
-        if (this.isProcessColumns) return false;
         return Boolean(this.state.total && this.selectedTotal >= this.state.total);
     }
 
     get selectedCount() {
-        if (this.isProcessColumns) return 0;
         if (this.state.groupByBranch) {
             let count = 0;
             for (const g of this.state.groupedData) {
@@ -1127,7 +1051,6 @@ class DataGridWidget extends Component {
     }
 
     async toggleRow(row) {
-        if (this.isProcessColumns) return;
         if (!row || !row.id) return;
         const current = row.selected;
         row.selected = !current;
@@ -1145,7 +1068,6 @@ class DataGridWidget extends Component {
     }
 
     async toggleAllCheck() {
-        if (this.isProcessColumns) return;
         if (this.isReadonly || this.state.groupByBranch || !this.state.total) return;
         if (this.allFilteredSelected) {
             await this.unselectAll();
@@ -1155,7 +1077,6 @@ class DataGridWidget extends Component {
     }
 
     async selectAll() {
-        if (this.isProcessColumns) return;
         try {
             await this.orm.call(this.resModel, "action_select_all_filtered", [[this.resId]], {
                 branch_ids: this.state.selected_branch_ids.length ? this.state.selected_branch_ids : false,
@@ -1168,7 +1089,6 @@ class DataGridWidget extends Component {
     }
 
     async unselectAll() {
-        if (this.isProcessColumns) return;
         const id = this.resId;
         if (!id) return;
         try {
@@ -1183,7 +1103,6 @@ class DataGridWidget extends Component {
     }
 
     async deleteSelected() {
-        if (this.isProcessColumns) return;
         const id = this.resId;
         if (!id) return;
         if (!this.selectedTotal) return;
@@ -1199,7 +1118,6 @@ class DataGridWidget extends Component {
     }
 
     async openAddLine() {
-        if (this.isProcessColumns) return;
         if (!this.resId || this.isReadonly) return;
         try {
             const action = await this.orm.call(this.resModel, "action_open_manual_add_line_wizard", [[this.resId]], {});
@@ -1221,7 +1139,6 @@ class DataGridWidget extends Component {
     }
 
     toggleGrouping() {
-        if (this.isProcessColumns) return;
         this.state.groupByBranch = !this.state.groupByBranch;
         if (this.state.groupByBranch) {
             this.state.groupedData = [];
@@ -1239,36 +1156,8 @@ class DataGridWidget extends Component {
     }
 
     async selectAllMatching() {
-        if (this.isProcessColumns) return;
         await this.selectAll();
         this.focusProductSearch();
-    }
-
-    async updateProcessRow(row, field, value) {
-        if (!this.isProcessColumns || !row || !row.id || this.isReadonly) return;
-        const oldValue = row[field];
-        let nextValue = value;
-        if (field === "actual_qty") {
-            nextValue = value === "" || value === null || value === undefined ? 0 : Number(value);
-            if (Number.isNaN(nextValue)) {
-                this.notification.add(_t("Actual quantity must be numeric."), { type: "danger" });
-                return;
-            }
-        }
-        if (oldValue === nextValue) return;
-        row[field] = nextValue;
-        this.state.rows = [...this.state.rows];
-        try {
-            const result = await this.orm.call(this.resModel, "action_update_process_line", [[this.resId], row.id, { [field]: nextValue }], {});
-            if (result && result.row) {
-                Object.assign(row, result.row);
-            }
-            this.state.rows = [...this.state.rows];
-        } catch (e) {
-            row[field] = oldValue;
-            this.state.rows = [...this.state.rows];
-            this.notification.add(_t("Could not update inventory line."), { type: "danger" });
-        }
     }
 
     focusProductSearch() {
