@@ -69,6 +69,7 @@ class SelfInventoryProcess(models.Model):
         index=True,
     )
     line_ids = fields.One2many('ab_self_inventory_process_line', 'process_id', string='Inventory Lines')
+    line_count = fields.Integer(compute='_compute_line_count')
     submitted_date = fields.Datetime(readonly=True, copy=False)
     can_sync_requested_stock = fields.Boolean(compute='_compute_can_sync_requested_stock')
     shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_totals', digits=(12, 2))
@@ -103,6 +104,11 @@ class SelfInventoryProcess(models.Model):
         for rec in self:
             rec.shortage_qty = sum(rec.line_ids.mapped('shortage_qty'))
             rec.extra_qty = sum(rec.line_ids.mapped('extra_qty'))
+
+    @api.depends('line_ids')
+    def _compute_line_count(self):
+        for rec in self:
+            rec.line_count = len(rec.line_ids)
 
     @api.depends('state', 'branch_id')
     @api.depends_context('uid')
@@ -398,6 +404,138 @@ class SelfInventoryProcess(models.Model):
             'target': 'new',
             'context': {'default_process_id': self.id},
         }
+
+    def action_get_analytics(self):
+        self.ensure_one()
+        total = len(self.line_ids)
+        counted = len(self.line_ids.filtered(lambda line: line.actual_qty or line.explanation))
+        return {
+            'branch_count': 1 if self.branch_id and total else 0,
+            'total_products': total,
+            'selected_products': counted,
+            'matched_pct': round(counted / total * 100) if total else 0,
+        }
+
+    def action_get_branch_counts(self):
+        self.ensure_one()
+        if not self.branch_id:
+            return []
+        line_count = len(self.line_ids)
+        return [{
+            'id': self.branch_id.id,
+            'name': self.branch_id.display_name or self.branch_id.name or '',
+            'count': line_count,
+        }] if line_count else []
+
+    def _get_process_line_domain(self, search=None):
+        self.ensure_one()
+        domain = [('process_id', '=', self.id)]
+        if search:
+            domain += [
+                '|', '|', '|',
+                ('product_id.name', 'ilike', search),
+                ('product_code', 'ilike', search),
+                ('eplus_item_code', 'ilike', search),
+                ('explanation', 'ilike', search),
+            ]
+        return domain
+
+    def _get_process_line_grid_values(self, line):
+        self.ensure_one()
+        return {
+            'id': line.id,
+            'branch_id': self.branch_id.id,
+            'branch_name': self.branch_id.display_name or self.branch_id.name or '',
+            'selected': False,
+            'requested': line.requested,
+            'product_name': line.product_id.display_name or line.product_id.name or '' if line.product_id else '',
+            'product_code': line.product_code or '',
+            'eplus_item_code': line.eplus_item_code or '',
+            'system_qty': line.system_qty,
+            'actual_qty': line.actual_qty,
+            'difference_qty': line.difference_qty,
+            'shortage_qty': line.shortage_qty,
+            'extra_qty': line.extra_qty,
+            'explanation': line.explanation or '',
+        }
+
+    def action_get_grouped_rows(self, search=None, limit=50, branch_id=None, branch_ids=None):
+        self.ensure_one()
+        domain = self._get_process_line_domain(search=search)
+        Line = self.env['ab_self_inventory_process_line']
+        lines = Line.search(domain, limit=limit, order='requested DESC, product_id asc')
+        total = Line.search_count(domain)
+        if not total:
+            return []
+        return [{
+            'branch_id': self.branch_id.id,
+            'branch_name': self.branch_id.display_name or self.branch_id.name or '',
+            'rows': [self._get_process_line_grid_values(line) for line in lines],
+            'count': len(lines),
+            'total': total,
+        }]
+
+    def action_get_grid_rows(self, branch_id=None, branch_ids=None, search=None, offset=0, limit=50, sort_by='product_name', sort_order='asc'):
+        self.ensure_one()
+        domain = self._get_process_line_domain(search=search)
+        sort_map = {
+            'product_id': 'product_id',
+            'product_name': 'product_id',
+            'product_code': 'product_code',
+            'eplus_item_code': 'eplus_item_code',
+            'system_qty': 'system_qty',
+            'actual_qty': 'actual_qty',
+            'difference_qty': 'difference_qty',
+            'shortage_qty': 'shortage_qty',
+            'extra_qty': 'extra_qty',
+            'requested': 'requested',
+        }
+        sort_field = sort_map.get(sort_by, 'product_id')
+        sort_order = sort_order if sort_order in ('asc', 'desc') else 'asc'
+        offset = max(0, int(offset or 0))
+        limit = max(1, min(int(limit or 50), 500))
+        order = '%s %s, id asc' % (sort_field, sort_order)
+        Line = self.env['ab_self_inventory_process_line']
+        lines = Line.search(domain, offset=offset, limit=limit, order=order)
+        total = Line.search_count(domain)
+        return {
+            'rows': [self._get_process_line_grid_values(line) for line in lines],
+            'total': total,
+            'selected_total': 0,
+        }
+
+    def action_update_process_line(self, line_id, values):
+        self.ensure_one()
+        self._check_can_update_process_line_grid()
+        values = values or {}
+        line = self.env['ab_self_inventory_process_line'].browse(line_id).exists()
+        if not line or line.process_id != self:
+            raise ValidationError(_("Self inventory line was not found."))
+        allowed_fields = {'actual_qty', 'explanation'}
+        clean_values = {field: values[field] for field in allowed_fields if field in values}
+        if 'actual_qty' in clean_values:
+            try:
+                clean_values['actual_qty'] = float(clean_values['actual_qty'] or 0.0)
+            except (TypeError, ValueError) as error:
+                raise ValidationError(_("Actual quantity must be numeric.")) from error
+        if 'explanation' in clean_values:
+            clean_values['explanation'] = clean_values['explanation'] or False
+        if not clean_values:
+            return {'row': self._get_process_line_grid_values(line)}
+        line.write(clean_values)
+        return {'row': self._get_process_line_grid_values(line)}
+
+    def _check_can_update_process_line_grid(self):
+        self.ensure_one()
+        if self.state not in ('draft', 'in_progress'):
+            raise ValidationError(_("Only active self inventory process lines can be changed."))
+        user = self.env.user
+        if user.has_group('ab_self_inventory.group_ab_self_inventory_manager'):
+            raise ValidationError(_("Managers cannot edit active branch self inventory quantities."))
+        if not user.has_group('ab_self_inventory.group_ab_self_inventory_receiver'):
+            raise ValidationError(_("Only the branch receiver can edit active self inventory quantities."))
+        if self.branch_id not in user.ab_self_inventory_branch_ids:
+            raise ValidationError(_("You can only edit self inventory quantities for your assigned branch."))
 
 
 class SelfInventoryProcessLine(models.Model):
