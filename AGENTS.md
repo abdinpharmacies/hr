@@ -19,7 +19,9 @@ Module creation rules:
 - If frontend work is required, create new module-scoped classes, components, or templates and connect them only to the working module.
 - Keep the module self-contained and limit changes to the module being developed.
 - Use module technical names with underscores `_`, not dots `.`.
-- All new modules use `author = "Alhassan Hossny"`.
+- Keep `author` for company/team ownership.
+- All new modules include `developer = "Alhassan Hossny"` in `__manifest__.py`.
+- Before finishing any newly created module, verify its `__manifest__.py` includes `developer = "Alhassan Hossny"` without replacing the team/company `author`.
 
 ## Pharmacy ERP Data Protection Rules
 
@@ -441,7 +443,8 @@ Manifest example:
     'version': '19.0.1.0.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
-    'author': 'Alhassan Hossny',
+    'author': 'Abdin Pharmacies',
+    'developer': 'Alhassan Hossny',
     'application': True,
     'depends': ['base'],
     'data': [
@@ -673,7 +676,7 @@ Most modules use `19.0.1.0.0` instead of `19.0`. This is cosmetic, not a functio
 ### Session Notes
 
 - Target: Odoo 19.0.
-- Author: Alhassan Hossny.
+- Developer: Alhassan Hossny.
 - Template: `ab_template` structure.
 - Data order: `security/security_groups.xml` -> `security/record_rules.xml` -> `security/ir.model.access.csv` -> `views/menus.xml` -> views.
 - Focus: start with critical issues first.
