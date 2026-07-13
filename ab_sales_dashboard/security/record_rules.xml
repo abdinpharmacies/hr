@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_sales_dashboard_snapshot_user" model="ir.rule">
+            <field name="name">Sales dashboard snapshots are visible to dashboard users</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_snapshot"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_user'))]"/>
+        </record>
+
+        <record id="rule_ab_sales_dashboard_collection_user" model="ir.rule">
+            <field name="name">Sales dashboard collection lines are visible to dashboard users</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_collection_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_user'))]"/>
+        </record>
+
+        <record id="rule_ab_sales_dashboard_user_line_user" model="ir.rule">
+            <field name="name">Sales dashboard user lines are visible to dashboard users</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_user_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_user'))]"/>
+        </record>
+
+        <record id="rule_ab_sales_dashboard_item_user" model="ir.rule">
+            <field name="name">Sales dashboard item lines are visible to dashboard users</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_item_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_user'))]"/>
+        </record>
+
+        <record id="rule_ab_sales_dashboard_invoice_user" model="ir.rule">
+            <field name="name">Sales dashboard invoice lines are visible to dashboard users</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_invoice_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_user'))]"/>
+        </record>
+    </data>
+</odoo>

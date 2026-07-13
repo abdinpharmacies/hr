@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_sales_dashboard_snapshot_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.snapshot.list</field>
+            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="arch" type="xml">
+                <list string="Sales Dashboard Snapshots">
+                    <field name="refresh_date"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="store_filter_label"/>
+                    <field name="total_sales"/>
+                    <field name="invoice_count"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_snapshot_form" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.snapshot.form</field>
+            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="arch" type="xml">
+                <form string="Sales Dashboard Snapshot" create="0" edit="0">
+                    <header>
+                        <button name="action_refresh" type="object" string="Refresh Snapshot" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="refresh_date"/>
+                                <field name="store_filter_label"/>
+                            </group>
+                            <group>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="store_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <group string="KPIs">
+                            <field name="total_sales"/>
+                            <field name="avg_daily_sales"/>
+                            <field name="prev_avg_daily_sales"/>
+                            <field name="avg_daily_growth_pct"/>
+                            <field name="invoice_count"/>
+                            <field name="bearing_pct"/>
+                        </group>
+                        <notebook>
+                            <page string="Collection">
+                                <field name="collection_line_ids">
+                                    <list>
+                                        <field name="category"/>
+                                        <field name="invoice_count"/>
+                                        <field name="total_sales"/>
+                                        <field name="pct_of_total"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Users">
+                                <field name="user_line_ids">
+                                    <list>
+                                        <field name="employee_name"/>
+                                        <field name="invoice_count"/>
+                                        <field name="total_sales"/>
+                                        <field name="pct_of_total"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Items">
+                                <field name="item_line_ids">
+                                    <list>
+                                        <field name="eplus_item_code"/>
+                                        <field name="item_name"/>
+                                        <field name="sale_times"/>
+                                        <field name="sold_qty"/>
+                                        <field name="current_balance"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Invoices">
+                                <field name="invoice_line_ids">
+                                    <list>
+                                        <field name="invoice_no"/>
+                                        <field name="invoice_date"/>
+                                        <field name="customer_name"/>
+                                        <field name="invoice_total"/>
+                                        <field name="item_count"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
