@@ -97,7 +97,7 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
     }
 
     .o_form_sheet {
-        max-width: 1220px;
+        max-width: 1320px;
         margin: 18px auto 28px;
         padding: 28px 30px 34px;
         border: 1px solid rgba(255, 255, 255, 0.8);
@@ -310,6 +310,9 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
     }
 
     .o_ais_overview_grid {
+        position: relative;
+        z-index: 30;
+        overflow: visible;
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 
@@ -332,6 +335,7 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         border-radius: $ais-radius;
         background: $ais-surface;
         box-shadow: $ais-shadow-soft;
+        overflow: visible;
         transition:
             transform 180ms $ais-ease,
             box-shadow 180ms $ais-ease,
@@ -360,6 +364,8 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
     }
 
     .o_ais_card_overview {
+        position: relative;
+        z-index: 31;
         border-top: 3px solid rgba($ais-primary, 0.68);
     }
 
@@ -747,6 +753,8 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
 
     .o_ais_route_section {
         position: relative;
+        z-index: 20;
+        overflow: visible;
         margin: 0 0 18px;
         padding: 16px;
         border: 1px solid $ais-border;
@@ -797,21 +805,24 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
     .o_ais_party_grid {
         position: relative;
         display: grid;
-        grid-template-columns: minmax(0, 1fr) 44px minmax(0, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 12px;
-        align-items: center;
+        align-items: start;
         margin-bottom: 0;
+        overflow: visible;
 
         > .o_inner_group,
-        > .o_group_col_6 {
+        > .o_group_col_6,
+        > .o_ais_card {
             width: 100% !important;
             max-width: 100%;
             min-width: 0;
+            align-self: start;
         }
     }
 
     .o_ais_route_arrow {
-        display: inline-flex;
+        display: none;
         align-items: center;
         justify-content: center;
         width: 44px;
@@ -829,7 +840,7 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
             0 10px 22px rgba(32, 36, 42, 0.08);
 
         &::before {
-            content: "\2190";
+            content: "\2192";
             font-size: 1.35rem;
         }
     }
@@ -839,9 +850,13 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
     }
 
     .o_ais_card_sender,
+    .o_ais_card_warehouse,
     .o_ais_card_recipient {
         position: relative;
+        align-self: start;
         padding-top: 42px;
+        align-content: start;
+        overflow: visible;
 
         &:hover {
             transform: translateY(-1px);
@@ -863,6 +878,16 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
             min-height: 30px;
         }
 
+        .o_group,
+        .o_inner_group {
+            align-content: start;
+            align-items: start;
+        }
+
+        .o_wrap_field {
+            align-items: start;
+        }
+
         & > .o_cell_custom {
             position: absolute;
             inset-inline-end: 14px;
@@ -880,9 +905,9 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         }
 
         .o_td_label {
-            width: 38%;
-            min-width: 128px;
-            padding-inline-end: 18px;
+            width: 34%;
+            min-width: 118px;
+            padding-inline-end: 14px;
         }
 
         .o_td_label .o_form_label,
@@ -900,8 +925,58 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
             font-size: 0.88rem;
             font-weight: 680;
             line-height: 1.35;
-            overflow-wrap: anywhere;
+            overflow-wrap: break-word;
+            white-space: nowrap;
+        }
+
+        .o_field_many2many_tags,
+        .o_field_many2many_tags *,
+        .o_tags_input,
+        .o_tag,
+        .o_tag * {
+            max-width: 100%;
+            overflow: visible;
+            text-overflow: clip;
             white-space: normal;
+        }
+
+        .o_field_many2many_tags {
+            display: flex;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .dropdown-menu,
+        .o-dropdown--menu,
+        .o-autocomplete--dropdown-menu {
+            z-index: 1200;
+        }
+    }
+
+    .o_ais_overview_grid,
+    .o_ais_card_overview {
+        .dropdown-menu,
+        .o-dropdown--menu,
+        .o-autocomplete--dropdown-menu {
+            z-index: 1300;
+        }
+    }
+
+    .o_ais_notebook {
+        position: relative;
+        z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+        .o_ais_card_sender,
+        .o_ais_card_warehouse,
+        .o_ais_card_recipient {
+            .o_field_widget,
+            .o_field_widget *,
+            .o_form_uri {
+                white-space: normal;
+            }
         }
     }
 
@@ -911,6 +986,10 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
 
     .o_ais_card_recipient {
         border-top: 3px solid rgba($ais-success, 0.65);
+    }
+
+    .o_ais_card_warehouse {
+        border-top: 3px solid rgba($ais-warning, 0.65);
     }
 
     .o_ais_party_label {
@@ -941,6 +1020,12 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         box-shadow: inset 0 0 0 1px rgba($ais-success, 0.16);
     }
 
+    .o_ais_party_label_warehouse {
+        background: rgba($ais-warning, 0.1);
+        color: #92400e;
+        box-shadow: inset 0 0 0 1px rgba($ais-warning, 0.16);
+    }
+
     .o_rtl &,
     [dir="rtl"] & {
         .o_ais_route_line {
@@ -959,7 +1044,7 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
             transform: none;
 
             &::before {
-                content: "\2192";
+                content: "\2190";
             }
         }
 
@@ -1562,6 +1647,73 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
     }
 }
 
+.o_ais_request_list {
+    .o_list_renderer {
+        overflow-x: clip;
+    }
+
+    .o_list_table {
+        --table-striped-bg: transparent;
+        table-layout: fixed;
+    }
+
+    .o_data_row {
+        transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
+    }
+
+    .o_data_row:hover {
+        background: #f8fbfe;
+        box-shadow: inset 0 0 0 999px rgba(47, 111, 221, 0.025);
+        transform: translateY(-1px);
+    }
+
+    .o_data_cell {
+        overflow: visible;
+    }
+
+    .o_list_number_th,
+    .o_data_cell:first-child {
+        width: 2.5rem;
+        text-align: center;
+    }
+
+    .o_list_renderer th[data-name="state"],
+    .o_data_cell[name="state"] {
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    .o_data_cell[name="state"] {
+        padding-inline: 0.75rem;
+    }
+
+    .o_list_renderer th[data-name="subject"],
+    .o_data_cell[name="subject"] {
+        width: 24vw;
+        min-width: 15rem;
+        max-width: 24rem;
+    }
+
+    .o_list_renderer th[data-name="current_holder_display"],
+    .o_data_cell[name="current_holder_display"],
+    .o_list_renderer th[data-name="sender_display"],
+    .o_data_cell[name="sender_display"],
+    .o_list_renderer th[data-name="recipient_display"],
+    .o_data_cell[name="recipient_display"],
+    .o_list_renderer th[data-name="warehouse_store_id"],
+    .o_data_cell[name="warehouse_store_id"] {
+        width: 14vw;
+        min-width: 11rem;
+        max-width: 15rem;
+    }
+
+    .o_badge {
+        font-weight: 600;
+        border-radius: 999px;
+        padding-inline: 0.7rem;
+    }
+}
+
 .o_list_view.o_ais_list,
 .o_ais_list {
     --ais-list-border: #e5e7eb;
@@ -1800,6 +1952,7 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         font-weight: 760;
         letter-spacing: 0;
         line-height: 1;
+        white-space: nowrap;
 
         &::before {
             content: "";
@@ -1854,6 +2007,21 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         outline-offset: -2px;
     }
 
+    th[data-name="state"],
+    td[name="state"] {
+        width: 1%;
+        max-width: none;
+        white-space: nowrap;
+    }
+
+    td[name="state"] .o_field_widget,
+    td[name="state"] .o_field_widget * {
+        max-width: none;
+        overflow: visible;
+        text-overflow: clip;
+        white-space: nowrap;
+    }
+
     .o_optional_columns_dropdown_toggle {
         border: 0;
         background: transparent;
@@ -1904,11 +2072,12 @@ body.o_rtl .o_ais_form,
         transform: none;
 
         &::before {
-            content: "\2192";
+            content: "\2190";
         }
     }
 
     .o_ais_card_sender,
+    .o_ais_card_warehouse,
     .o_ais_card_recipient {
         direction: rtl;
         text-align: right;
@@ -1971,9 +2140,313 @@ html[dir="ltr"] .o_ais_form {
         transform: none;
 
         &::before {
-            content: "\2190";
+            content: "\2192";
         }
     }
+}
+
+.o_form_view:has(.o_ais_form),
+.o_form_view_container:has(.o_ais_form) {
+    .o_form_sheet_bg {
+        min-width: 0;
+    }
+
+    .o_form_renderer,
+    .o_form_view_container {
+        min-width: 0;
+    }
+
+    .o_FormRenderer_chatterContainer,
+    .o-mail-Form-chatter,
+    .o_ChatterContainer {
+        flex: 0 1 360px;
+        width: clamp(300px, 26vw, 390px);
+        max-width: 390px;
+        min-width: 300px;
+    }
+
+    @media (max-width: 1200px) {
+        .o_FormRenderer_chatterContainer,
+        .o-mail-Form-chatter,
+        .o_ChatterContainer {
+            width: 100%;
+            max-width: none;
+            min-width: 0;
+        }
+    }
+}
+
+.o_ais_dashboard_view {
+    min-height: 100%;
+    max-height: calc(100vh - 48px);
+    overflow-y: auto;
+    padding: 1.25rem;
+    background:
+        radial-gradient(circle at top left, rgba($ais-primary, 0.08), transparent 28rem),
+        linear-gradient(180deg, #f6f9fc 0%, #eef4f8 100%);
+}
+
+.o_ais_dashboard_shell {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 1380px;
+    margin: 0 auto;
+}
+
+.o_ais_dashboard_hero,
+.o_ais_dashboard_panel,
+.o_ais_dashboard_card {
+    border: 1px solid rgba(217, 226, 236, 0.92);
+    box-shadow: 0 10px 24px rgba(18, 43, 67, 0.06);
+}
+
+.o_ais_dashboard_hero {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 1.3rem 1.4rem;
+    border-radius: $ais-radius;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(246, 249, 252, 0.98));
+
+    h1 {
+        margin: 0.2rem 0 0.45rem;
+        color: $ais-ink;
+        font-size: 2rem;
+        line-height: 1.1;
+    }
+
+    p {
+        max-width: 48rem;
+        margin: 0;
+        color: $ais-muted;
+    }
+}
+
+.o_ais_dashboard_kicker {
+    color: $ais-primary-strong;
+    font-size: 0.78rem;
+    font-weight: 760;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.o_ais_dashboard_cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+    gap: 0.9rem;
+}
+
+.o_ais_dashboard_card {
+    display: grid;
+    gap: 0.55rem;
+    padding: 1rem 1.05rem;
+    border-radius: $ais-radius;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(244, 248, 251, 0.95));
+    text-align: left;
+    transition:
+        transform 160ms $ais-ease,
+        box-shadow 160ms $ais-ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 16px 38px rgba(18, 43, 67, 0.12);
+    }
+}
+
+.o_ais_dashboard_card_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: $ais-radius;
+    background: color-mix(in srgb, var(--card-accent) 12%, white);
+    color: var(--card-accent);
+    font-size: 1.1rem;
+}
+
+.o_ais_dashboard_card_label {
+    color: $ais-muted;
+    font-size: 0.82rem;
+    font-weight: 720;
+    letter-spacing: 0;
+    text-transform: uppercase;
+}
+
+.o_ais_dashboard_card_value {
+    color: $ais-ink;
+    font-size: 1.8rem;
+}
+
+.o_ais_dashboard_grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.o_ais_dashboard_panel {
+    grid-column: span 6;
+    padding: 1rem 1.1rem;
+    border-radius: $ais-radius;
+    background: rgba(255, 255, 255, 0.94);
+}
+
+.o_ais_dashboard_recent {
+    grid-column: 1 / -1;
+}
+
+.o_ais_dashboard_panel_head,
+.o_ais_bar_meta,
+.o_ais_recent_top,
+.o_ais_recent_meta,
+.o_ais_legend_row {
+    display: flex;
+    gap: 0.85rem;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.o_ais_dashboard_panel_head {
+    margin-bottom: 0.95rem;
+
+    h2 {
+        margin: 0;
+        color: $ais-ink;
+        font-size: 1.05rem;
+    }
+}
+
+.o_ais_dashboard_bar_chart,
+.o_ais_recent_list,
+.o_ais_dashboard_legend {
+    display: grid;
+    gap: 0.8rem;
+}
+
+.o_ais_bar_row {
+    display: grid;
+    gap: 0.42rem;
+}
+
+.o_ais_bar_track {
+    height: 0.7rem;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #edf2f7;
+}
+
+.o_ais_bar_fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    transition: width 260ms $ais-ease;
+}
+
+.o_ais_dashboard_donut_wrap {
+    display: grid;
+    grid-template-columns: minmax(0, 13rem) minmax(0, 1fr);
+    gap: 1rem;
+    align-items: center;
+}
+
+.o_ais_dashboard_donut {
+    width: 100%;
+    max-width: 13rem;
+    margin: 0 auto;
+    transform: rotate(-90deg);
+}
+
+.o_ais_dashboard_donut_base,
+.o_ais_dashboard_donut_segment {
+    fill: none;
+    stroke-width: 3.2;
+}
+
+.o_ais_dashboard_donut_base {
+    stroke: #e8eff7;
+}
+
+.o_ais_legend_row {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(232, 239, 247, 0.92);
+}
+
+.o_ais_legend_dot {
+    flex: 0 0 auto;
+    width: 0.72rem;
+    height: 0.72rem;
+    margin-right: 0.45rem;
+    border-radius: 999px;
+}
+
+.o_ais_dashboard_empty {
+    padding: 1rem;
+    border: 1px dashed rgba($ais-primary, 0.24);
+    border-radius: $ais-radius;
+    background: linear-gradient(180deg, #fff, #f7fafc);
+    color: $ais-muted;
+}
+
+.o_ais_recent_item {
+    padding: 0.95rem 1rem;
+    border: 1px solid rgba(217, 226, 236, 0.92);
+    border-radius: $ais-radius;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 250, 252, 0.95));
+    text-align: left;
+    transition:
+        transform 160ms $ais-ease,
+        box-shadow 160ms $ais-ease;
+
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 24px rgba(18, 43, 67, 0.08);
+    }
+}
+
+.o_ais_recent_subject {
+    margin: 0.35rem 0;
+    color: $ais-ink;
+    font-weight: 680;
+}
+
+.o_ais_recent_meta {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    color: $ais-muted;
+    font-size: 0.82rem;
+}
+
+.o_ais_dashboard_state_badge {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.55rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: rgba(148, 163, 184, 0.12);
+    color: #64748b;
+    font-size: 0.78rem;
+    font-weight: 760;
+    white-space: nowrap;
+}
+
+.o_ais_dashboard_state_sent,
+.o_ais_dashboard_state_in_transit {
+    background: rgba($ais-primary, 0.1);
+    color: $ais-primary-strong;
+}
+
+.o_ais_dashboard_state_awaiting_warehouse_receipt,
+.o_ais_dashboard_state_awaiting_receipt {
+    background: rgba($ais-warning, 0.12);
+    color: #92400e;
+}
+
+.o_ais_dashboard_state_received {
+    background: rgba($ais-success, 0.1);
+    color: #15803d;
 }
 
 @media (max-width: 992px) {
@@ -2062,6 +2535,19 @@ html[dir="ltr"] .o_ais_form {
             overflow-x: auto;
             flex-wrap: nowrap;
         }
+    }
+
+    .o_ais_dashboard_panel,
+    .o_ais_dashboard_recent {
+        grid-column: 1 / -1;
+    }
+
+    .o_ais_dashboard_donut_wrap {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .o_ais_dashboard_view {
+        padding: 0.75rem;
     }
 }
 

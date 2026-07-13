@@ -227,6 +227,8 @@ msgstr "عدد المرفقات"
 
 
 #. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
 #: model:ir.actions.act_window,name:ab_internal_shipment_tracking.ab_internal_shipment_awaiting_receipt_action
 #: model:ir.model.fields.selection,name:ab_internal_shipment_tracking.selection__ab_internal_shipment__state__awaiting_receipt
 #: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_awaiting_receipt
@@ -386,6 +388,8 @@ msgstr "مستخدم الحائز الحالي"
 
 
 #. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_search
 msgid "Delayed"
@@ -569,6 +573,8 @@ msgstr "إذا كان محددًا، فبعض الرسائل بها خطأ في 
 
 
 #. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
 #: model:ir.model.fields.selection,name:ab_internal_shipment_tracking.selection__ab_internal_shipment__state__in_transit
 #: model:ir.model.fields.selection,name:ab_internal_shipment_tracking.selection__ab_internal_shipment_history__action__in_transit
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_search
@@ -611,6 +617,8 @@ msgstr "تتبع الشحنات الداخلية"
 #. module: ab_internal_shipment_tracking
 #. odoo-python
 #: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
 #: model:ir.actions.act_window,name:ab_internal_shipment_tracking.ab_internal_shipment_action
 #: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_root
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_list
@@ -696,6 +704,8 @@ msgstr "الموعد النهائي لنشاطي"
 
 
 #. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_search
 msgid "My Shipments"
 msgstr "شحناتي"
@@ -1241,3 +1251,332 @@ msgstr "رسائل الموقع"
 #: model:ir.model.fields,help:ab_internal_shipment_tracking.field_ab_internal_shipment__website_message_ids
 msgid "Website communication history"
 msgstr "سجل تواصل الموقع"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_reporting
+msgid "Dashboard"
+msgstr "لوحة التحكم"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.actions.client,name:ab_internal_shipment_tracking.ab_internal_shipment_dashboard_action
+msgid "Shipment Dashboard"
+msgstr "لوحة تحكم الشحنات"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "Operations Dashboard"
+msgstr "لوحة متابعة العمليات"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid ""
+"Track shipment workload, route stages, pending receipts, and recent movement "
+"from one responsive workspace."
+msgstr ""
+"تابع حجم عمل الشحنات ومراحل المسار والاستلامات المعلقة وآخر الحركات من "
+"مساحة عمل واحدة متجاوبة."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+msgid "Open Shipments"
+msgstr "الشحنات المفتوحة"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Warehouse Receipt"
+msgstr "استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model:ir.model.fields.selection,name:ab_internal_shipment_tracking.selection__ab_internal_shipment__state__awaiting_warehouse_receipt
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_search
+msgid "Waiting Warehouse Receipt"
+msgstr "بانتظار استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "By State"
+msgstr "حسب الحالة"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "Workflow distribution"
+msgstr "توزيع سير العمل"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "No shipment workflow activity yet."
+msgstr "لا توجد حركة في سير عمل الشحنات حتى الآن."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "By Delivery Method"
+msgstr "حسب طريقة التسليم"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "Movement channels"
+msgstr "قنوات الحركة"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "No delivery method statistics yet."
+msgstr "لا توجد إحصائيات لطريقة التسليم حتى الآن."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "By Shipment Type"
+msgstr "حسب نوع الشحنة"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "Shipment mix"
+msgstr "توزيع أنواع الشحنات"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "No shipment type statistics yet."
+msgstr "لا توجد إحصائيات لأنواع الشحنات حتى الآن."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "Recent Shipments"
+msgstr "أحدث الشحنات"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "Last 6"
+msgstr "آخر 6"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.AbInternalShipmentDashboard
+msgid "No recent shipments yet."
+msgstr "لا توجد شحنات حديثة حتى الآن."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+msgid "No sender"
+msgstr "لا يوجد مرسل"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+msgid "No recipient"
+msgstr "لا يوجد مستلم"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+msgid "No expected date"
+msgstr "لا يوجد تاريخ متوقع"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-javascript
+#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
+msgid "Unknown"
+msgstr "غير معروف"
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Confirm Warehouse Receipt"
+msgstr "تأكيد استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Are you sure you want to confirm warehouse receipt for this shipment?"
+msgstr "هل أنت متأكد أنك تريد تأكيد استلام المخزن لهذه الشحنة؟"
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Recipient Receipt"
+msgstr "استلام المستلم"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields.selection,name:ab_internal_shipment_tracking.selection__ab_internal_shipment_history__action__warehouse_received
+msgid "Warehouse Received"
+msgstr "تم استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,field_description:ab_internal_shipment_tracking.field_ab_internal_shipment__warehouse_route_user_ids
+msgid "Warehouse Route Users"
+msgstr "مستخدمو مسار المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,field_description:ab_internal_shipment_tracking.field_ab_internal_shipment__receipt_route_user_ids
+msgid "Receipt Route Users"
+msgstr "مستخدمو مسار الاستلام"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,field_description:ab_internal_shipment_tracking.field_ab_internal_shipment__warehouse_required
+msgid "Warehouse Required"
+msgstr "المخزن مطلوب"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,field_description:ab_internal_shipment_tracking.field_ab_internal_shipment__warehouse_store_id
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Warehouse"
+msgstr "المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-python
+#: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
+msgid "Only the warehouse recipient can confirm receipt for this shipment."
+msgstr "يمكن لمستلم المخزن فقط تأكيد استلام هذه الشحنة."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-python
+#: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
+msgid "Select the warehouse for this shipment."
+msgstr "اختر المخزن الخاص بهذه الشحنة."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-python
+#: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
+msgid "Shipment %(name)s cannot move from %(current)s to recipient receipt."
+msgstr "لا يمكن نقل الشحنة %(name)s من %(current)s إلى استلام المستلم."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-python
+#: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
+msgid "Warehouse receipt confirmed."
+msgstr "تم تأكيد استلام المخزن."
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Managed Departments"
+msgstr "الأقسام المُدارة"
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Select employees..."
+msgstr "اختر الموظفين..."
+
+
+#. module: ab_internal_shipment_tracking
+#: model:res.groups,name:ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt
+msgid "Warehouse Receipt Confirmation"
+msgstr "تأكيد استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.actions.act_window,name:ab_internal_shipment_tracking.ab_internal_shipment_awaiting_warehouse_receipt_action
+#: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_awaiting_warehouse_receipt
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_list_awaiting_warehouse_receipt
+msgid "Awaiting Warehouse Receipt"
+msgstr "بانتظار استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-python
+#: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_delivery_wizard_view_form
+msgid "Capture Delivery Evidence"
+msgstr "التقاط إثبات التسليم"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,field_description:ab_internal_shipment_tracking.field_ab_internal_shipment_delivery_wizard__delivery_proof_attachment_ids
+msgid "Delivery Evidence"
+msgstr "إثبات التسليم"
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-python
+#: code:addons/ab_internal_shipment_tracking/models/internal_shipment_delivery_wizard.py:0
+msgid "Capture or upload at least one delivery evidence image before delivery."
+msgstr "التقط أو ارفع صورة واحدة على الأقل لإثبات التسليم قبل إكمال التسليم."
+
+
+#. module: ab_internal_shipment_tracking
+#. odoo-python
+#: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
+msgid "Only warehouse receipt confirmation users can confirm warehouse receipt."
+msgstr "يمكن لمستخدمي تأكيد استلام المخزن فقط تأكيد استلام المخزن."
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_awaiting_warehouse_receipt_action
+msgid "No shipments are awaiting warehouse receipt"
+msgstr "لا توجد شحنات بانتظار استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_awaiting_warehouse_receipt_action
+msgid "Shipments delivered to the warehouse and pending warehouse confirmation appear here."
+msgstr "تظهر هنا الشحنات التي تم تسليمها إلى المخزن وما زالت بانتظار تأكيد الاستلام."
+
+
+#. module: ab_internal_shipment_tracking
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_delivery_wizard_view_form
+msgid "Deliver"
+msgstr "تسليم"
