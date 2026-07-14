@@ -40,15 +40,8 @@
             <field name="arch" type="xml">
                 <form string="Internal Shipment" class="o_ais_form">
                     <header class="o_ais_workflow_header">
-                        <button name="action_send" type="object" string="Send" class="btn-primary"
-                                confirm="Are you sure you want to send this shipment?"
-                                invisible="state != 'draft' or not can_current_user_manage_workflow"/>
-                        <button name="action_mark_in_transit" type="object" string="Mark In Transit"
-                                confirm="Are you sure you want to mark this shipment as in transit?"
-                                invisible="state != 'sent' or not can_current_user_manage_workflow"/>
-                        <button name="action_deliver" type="object" string="Mark Delivered" class="btn-primary"
-                                confirm="Are you sure you want to mark this shipment as delivered?"
-                                invisible="state not in ('sent', 'in_transit') or not can_current_user_manage_workflow"/>
+                        <button name="action_send" type="object" string="Dispatch Shipment" class="btn-primary"
+                                invisible="state not in ('draft', 'sent', 'in_transit') or not can_current_user_manage_workflow"/>
                         <button name="action_confirm_warehouse_receipt" type="object" string="Confirm Warehouse Receipt" class="btn-primary"
                                 confirm="Are you sure you want to confirm warehouse receipt for this shipment?"
                                 groups="ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt"
@@ -83,16 +76,9 @@
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Sent</strong>
-                                    <field name="sent_by_id" nolabel="1"/>
-                                    <field name="sent_date" nolabel="1"/>
-                                </div>
-                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
-                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
-                                    <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Delivered</strong>
-                                    <field name="delivered_by_id" nolabel="1"/>
-                                    <field name="delivered_date" nolabel="1"/>
+                                    <strong>Dispatched</strong>
+                                    <field name="sent_by_id" nolabel="1" readonly="1"/>
+                                    <field name="sent_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
@@ -119,16 +105,9 @@
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_current">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Sent</strong>
-                                    <field name="sent_by_id" nolabel="1"/>
-                                    <field name="sent_date" nolabel="1"/>
-                                </div>
-                                <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
-                                <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
-                                    <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Delivered</strong>
-                                    <field name="delivered_by_id" nolabel="1"/>
-                                    <field name="delivered_date" nolabel="1"/>
+                                    <strong>Dispatched</strong>
+                                    <field name="sent_by_id" nolabel="1" readonly="1"/>
+                                    <field name="sent_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
@@ -155,16 +134,9 @@
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_completed">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Sent</strong>
-                                    <field name="sent_by_id" nolabel="1"/>
-                                    <field name="sent_date" nolabel="1"/>
-                                </div>
-                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
-                                <div class="o_ais_top_timeline_step o_ais_timeline_current">
-                                    <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Delivered</strong>
-                                    <field name="delivered_by_id" nolabel="1"/>
-                                    <field name="delivered_date" nolabel="1"/>
+                                    <strong>Dispatched</strong>
+                                    <field name="sent_by_id" nolabel="1" readonly="1"/>
+                                    <field name="sent_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
@@ -191,18 +163,20 @@
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_completed">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Sent</strong>
-                                    <field name="sent_by_id" nolabel="1"/>
-                                    <field name="sent_date" nolabel="1"/>
+                                    <strong>Dispatched</strong>
+                                    <field name="sent_by_id" nolabel="1" readonly="1"/>
+                                    <field name="sent_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
-                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed"
+                                     invisible="not warehouse_required">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Delivered</strong>
-                                    <field name="delivered_by_id" nolabel="1"/>
-                                    <field name="delivered_date" nolabel="1"/>
+                                    <strong>Warehouse Confirmation</strong>
+                                    <field name="warehouse_received_by_id" nolabel="1" readonly="1"/>
+                                    <field name="warehouse_received_date" nolabel="1" readonly="1"/>
                                 </div>
-                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"
+                                     invisible="not warehouse_required"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_current">
                                     <span class="o_ais_top_timeline_dot"/>
                                     <strong>Received</strong>
@@ -227,16 +201,17 @@
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_completed">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Sent</strong>
-                                    <field name="sent_by_id" nolabel="1"/>
-                                    <field name="sent_date" nolabel="1"/>
+                                    <strong>Dispatched</strong>
+                                    <field name="sent_by_id" nolabel="1" readonly="1"/>
+                                    <field name="sent_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_current">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Warehouse Receipt</strong>
-                                    <field name="warehouse_department_id" nolabel="1"/>
-                                    <field name="delivered_date" nolabel="1"/>
+                                    <strong>Warehouse Confirmation</strong>
+                                    <field name="warehouse_department_id" nolabel="1" readonly="1"/>
+                                    <field name="warehouse_received_by_id" nolabel="1" readonly="1"/>
+                                    <field name="warehouse_received_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_upcoming">
@@ -263,18 +238,20 @@
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_completed">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Sent</strong>
-                                    <field name="sent_by_id" nolabel="1"/>
-                                    <field name="sent_date" nolabel="1"/>
+                                    <strong>Dispatched</strong>
+                                    <field name="sent_by_id" nolabel="1" readonly="1"/>
+                                    <field name="sent_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
-                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed"
+                                     invisible="not warehouse_required">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Delivered</strong>
-                                    <field name="delivered_by_id" nolabel="1"/>
-                                    <field name="delivered_date" nolabel="1"/>
+                                    <strong>Warehouse Confirmation</strong>
+                                    <field name="warehouse_received_by_id" nolabel="1" readonly="1"/>
+                                    <field name="warehouse_received_date" nolabel="1" readonly="1"/>
                                 </div>
-                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"
+                                     invisible="not warehouse_required"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_current">
                                     <span class="o_ais_top_timeline_dot"/>
                                     <strong>Received</strong>
@@ -299,18 +276,20 @@
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_completed">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Sent</strong>
-                                    <field name="sent_by_id" nolabel="1"/>
-                                    <field name="sent_date" nolabel="1"/>
+                                    <strong>Dispatched</strong>
+                                    <field name="sent_by_id" nolabel="1" readonly="1"/>
+                                    <field name="sent_date" nolabel="1" readonly="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
-                                <div class="o_ais_top_timeline_step o_ais_timeline_completed">
+                                <div class="o_ais_top_timeline_step o_ais_timeline_completed"
+                                     invisible="not warehouse_required">
                                     <span class="o_ais_top_timeline_dot"/>
-                                    <strong>Delivered</strong>
-                                    <field name="delivered_by_id" nolabel="1"/>
-                                    <field name="delivered_date" nolabel="1"/>
+                                    <strong>Warehouse Confirmation</strong>
+                                    <field name="warehouse_received_by_id" nolabel="1" readonly="1"/>
+                                    <field name="warehouse_received_date" nolabel="1" readonly="1"/>
                                 </div>
-                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"/>
+                                <div class="o_ais_top_timeline_line o_ais_timeline_line_completed"
+                                     invisible="not warehouse_required"/>
                                 <div class="o_ais_top_timeline_step o_ais_timeline_completed">
                                     <span class="o_ais_top_timeline_dot"/>
                                     <strong>Received</strong>
@@ -392,7 +371,7 @@
                                        class="o_ais_card o_ais_card_warehouse"
                                        invisible="not warehouse_required">
                                     <div class="o_ais_party_label o_ais_party_label_warehouse">Warehouse</div>
-                                    <field name="warehouse_department_id" string="Warehouse" readonly="1"/>
+                                    <field name="warehouse_department_id" string="Selected Warehouse" readonly="1"/>
                                     <field name="warehouse_received_by_id" readonly="1"/>
                                     <field name="warehouse_received_date" readonly="1"/>
                                 </group>
@@ -471,21 +450,21 @@
                                     </form>
                                 </field>
                             </page>
-                            <page string="Delivery Proof" class="o_ais_page o_ais_page_attachments">
+                            <page string="Evidence" class="o_ais_page o_ais_page_attachments">
                                 <div class="o_ais_proof_panel">
                                     <div class="o_ais_panel_header">
                                         <div>
-                                            <span class="o_ais_route_eyebrow">Proof of Delivery</span>
-                                            <strong>Delivery evidence</strong>
-                                            <p>No delivery proof uploaded yet. Upload signed receipts, documents, or proof of delivery.</p>
+                                            <span class="o_ais_route_eyebrow">Shipment Evidence</span>
+                                            <strong>Evidence documents</strong>
+                                            <p>Uploaded waybills, dispatch documents, receipt proofs, and delivery evidence.</p>
                                         </div>
                                     </div>
-                                    <field name="delivery_proof_attachment_ids" widget="many2many_binary" nolabel="1"/>
+                                    <field name="evidence_attachment_ids" widget="many2many_binary" nolabel="1" readonly="1"/>
                                 </div>
                             </page>
                         </notebook>
                     </sheet>
-                    <chatter groups="base.group_system"/>
+                    <chatter groups="base.group_system" invisible="uid != 2"/>
                 </form>
             </field>
         </record>
@@ -507,8 +486,7 @@
                             domain="[('is_delayed', '=', True)]"/>
                     <separator/>
                     <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
-                    <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
-                    <filter name="in_transit" string="In Transit" domain="[('state', '=', 'in_transit')]"/>
+                    <filter name="dispatched" string="Dispatched" domain="[('state', 'in', ('sent', 'in_transit'))]"/>
                     <filter name="awaiting_warehouse_receipt_state" string="Waiting Warehouse Receipt" domain="[('state', '=', 'awaiting_warehouse_receipt')]"/>
                     <filter name="awaiting_receipt_state" string="Awaiting Receipt" domain="[('state', '=', 'awaiting_receipt')]"/>
                     <filter name="received" string="Confirmed" domain="[('state', '=', 'received')]"/>
