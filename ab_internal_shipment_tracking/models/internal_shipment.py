@@ -214,7 +214,8 @@ class InternalShipment(models.Model):
         "user_id",
         compute="_compute_route_users",
         store=True,
-        string="Warehouse Route Users",
+        string="Legacy Warehouse Route Users",
+        help="Compatibility field for pre-upgrade views and rules. New warehouse receipt security uses record rules on Warehouse Department.",
     )
     receipt_route_user_ids = fields.Many2many(
         "res.users",
@@ -276,21 +277,36 @@ class InternalShipment(models.Model):
     available_warehouse_store_ids = fields.Many2many(
         "ab_store",
         compute="_compute_available_warehouse_store_ids",
+        help="Compatibility field for pre-upgrade views. New warehouse selection uses Warehouse Department.",
     )
     warehouse_store_id = fields.Many2one(
         "ab_store",
-        string="Warehouse",
+        string="Legacy Warehouse Store",
+        ondelete="restrict",
         domain=[
             ("active", "=", True),
             ("name", "=ilike", "مخزن%"),
         ],
-        default=lambda self: self._default_warehouse_store_id(),
+        help="Legacy store reference kept to preserve existing shipment history. Archive used stores instead of deleting them.",
+        tracking=True,
+    )
+    warehouse_department_id = fields.Many2one(
+        "ab_hr_department",
+        string="Warehouse",
+        ondelete="restrict",
+        domain=[
+            ("active", "=", True),
+            ("name", "=ilike", "مخزن%"),
+        ],
+        default=lambda self: self._default_warehouse_department_id(),
+        help="Archive unused warehouse departments instead of deleting them to preserve shipment history.",
         tracking=True,
     )
     warehouse_received_by_id = fields.Many2one("res.users", readonly=True, index=True)
     warehouse_received_date = fields.Datetime(readonly=True)
     can_current_user_receive_warehouse = fields.Boolean(
         compute="_compute_can_current_user_receive_warehouse",
+        help="Compatibility field for pre-upgrade views. Warehouse receipt authorization is enforced by record rules.",
     )
 
     line_ids = fields.One2many(
@@ -303,6 +319,12 @@ class InternalShipment(models.Model):
         "shipment_id",
         string="Movement History",
         readonly=True,
+    )
+    note_history_ids = fields.One2many(
+        "ab_internal_shipment.history",
+        "shipment_id",
+        string="Follow-up",
+        domain=[("action", "=", "note")],
     )
     delivery_proof_attachment_ids = fields.Many2many(
         "ir.attachment",
@@ -323,8 +345,6 @@ class InternalShipment(models.Model):
             vals.update(self._get_current_user_sender_values())
         records = super().create(vals_list)
         records._set_current_holder_from_sender()
-        for record in records:
-            record._create_history("created", False, record.state, _("Shipment created."))
         return records
 
     @api.model
@@ -362,15 +382,22 @@ class InternalShipment(models.Model):
         return False
 
     @api.model
-    def _default_warehouse_store_id(self):
+    def _default_warehouse_department_id(self):
         warehouse_id = self.env["ir.config_parameter"].sudo().get_param(
-            "ab_internal_shipment_tracking.default_warehouse_store_id"
+            "ab_internal_shipment_tracking.default_warehouse_department_id"
         )
         if not warehouse_id or not warehouse_id.isdigit():
             return False
-        warehouse = self.env["ab_store"].browse(int(warehouse_id))
-        valid_warehouse_ids = set(self._get_valid_warehouse_stores().ids)
+        warehouse = self.env["ab_hr_department"].browse(int(warehouse_id))
+        valid_warehouse_ids = set(self._get_valid_warehouse_departments().ids)
         return warehouse.id if warehouse.exists() and warehouse.id in valid_warehouse_ids else False
+
+    @api.model
+    def _get_valid_warehouse_departments(self):
+        return self.env["ab_hr_department"].search([
+            ("active", "=", True),
+            ("name", "=ilike", "مخزن%"),
+        ])
 
     @api.model
     def _get_valid_warehouse_stores(self):
@@ -385,6 +412,10 @@ class InternalShipment(models.Model):
             record.available_warehouse_store_ids = stores
 
     def write(self, vals):
+        if set(vals) == {"note_history_ids"}:
+            for record in self:
+                record._create_followup_notes_from_commands(vals["note_history_ids"])
+            return True
         res = super().write(vals)
         party_fields = {
             "sender_type",
@@ -392,7 +423,7 @@ class InternalShipment(models.Model):
             "sender_department_id",
             "sender_employee_id",
             "warehouse_required",
-            "warehouse_store_id",
+            "warehouse_department_id",
         }
         draft_records = self.filtered(lambda record: record.state == "draft")
         if draft_records and party_fields.intersection(vals):
@@ -508,14 +539,14 @@ class InternalShipment(models.Model):
         "recipient_department_id",
         "recipient_employee_id",
         "warehouse_required",
-        "warehouse_store_id",
+        "warehouse_department_id",
         "line_ids",
     )
     def _check_required_entities(self):
         for record in self:
             record._validate_party("sender")
             record._validate_party("recipient")
-            if record.warehouse_required and not record.warehouse_store_id:
+            if record.warehouse_required and not record.warehouse_department_id:
                 raise ValidationError(_("Select the warehouse for this shipment."))
             if not record.line_ids:
                 raise ValidationError(_("Add at least one shipment content line."))
@@ -604,21 +635,18 @@ class InternalShipment(models.Model):
         "recipient_employee_id",
         "recipient_employee_selection_type",
         "recipient_selected_employee_ids",
+        "warehouse_department_id",
         "state",
-        "warehouse_required",
-        "warehouse_store_id",
     )
     def _compute_route_users(self):
         for record in self:
             sender_users = record._get_party_users("sender", include_branch_accounts=True)
             recipient_users = record._get_party_users("recipient", include_branch_accounts=True)
-            warehouse_users = record._get_warehouse_users()
+            warehouse_users = record._get_warehouse_department_users()
             record.sender_route_user_ids = sender_users
             record.recipient_route_user_ids = recipient_users
             record.warehouse_route_user_ids = warehouse_users
-            if record.state == "awaiting_warehouse_receipt":
-                record.receipt_route_user_ids = warehouse_users
-            elif record.state == "awaiting_receipt":
+            if record.state == "awaiting_receipt":
                 record.receipt_route_user_ids = recipient_users
             else:
                 record.receipt_route_user_ids = self.env["res.users"]
@@ -650,9 +678,11 @@ class InternalShipment(models.Model):
         has_group = user.has_group(
             "ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt"
         )
+        is_system_admin = user.has_group("base.group_system")
         for record in self:
             record.can_current_user_receive_warehouse = (
                 has_group
+                and not is_system_admin
                 and record.state == "awaiting_warehouse_receipt"
                 and user in record.warehouse_route_user_ids
             )
@@ -724,6 +754,7 @@ class InternalShipment(models.Model):
                 },
             }
         redirect_after_delivery = self._should_redirect_after_branch_delivery()
+        delivered_to_warehouse = False
         for record in self:
             if record.state not in ("sent", "in_transit"):
                 raise UserError(
@@ -733,10 +764,10 @@ class InternalShipment(models.Model):
                         "current": record.state,
                         "target": "awaiting_receipt",
                     }
-                )
+            )
             if record.warehouse_required and not record.warehouse_received_date:
-                record._schedule_warehouse_receipt_activity()
                 target_state = "awaiting_warehouse_receipt"
+                delivered_to_warehouse = True
             else:
                 record._schedule_receipt_activity()
                 target_state = "awaiting_receipt"
@@ -747,7 +778,7 @@ class InternalShipment(models.Model):
                 "delivered_date",
                 "delivered",
             )
-        if redirect_after_delivery:
+        if redirect_after_delivery or delivered_to_warehouse:
             list_view = self.env.ref("ab_internal_shipment_tracking.ab_internal_shipment_view_list")
             form_view = self.env.ref("ab_internal_shipment_tracking.ab_internal_shipment_view_form")
             return {
@@ -767,11 +798,11 @@ class InternalShipment(models.Model):
         return False
 
     def action_confirm_warehouse_receipt(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_receive_warehouse)
-        if unauthorized:
-            raise UserError(_("Only the warehouse recipient can confirm receipt for this shipment."))
         now = fields.Datetime.now()
+        activity_type = self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
         for record in self:
+            if not record.can_current_user_receive_warehouse:
+                raise UserError(_("You are not allowed to confirm warehouse receipt for this shipment."))
             if record.state != "awaiting_warehouse_receipt":
                 raise UserError(
                     _("Shipment %(name)s cannot move from %(current)s to recipient receipt.")
@@ -780,8 +811,11 @@ class InternalShipment(models.Model):
                         "current": record.state,
                     }
                 )
-            old_state = record.state
-            old_holder = record.current_holder_display
+            recipient_users = (
+                record._get_party_users("recipient")
+                if activity_type
+                else self.env["res.users"]
+            )
             record.write(
                 {
                     "state": "awaiting_receipt",
@@ -790,14 +824,19 @@ class InternalShipment(models.Model):
                     **record._holder_values_for_state("awaiting_receipt"),
                 }
             )
-            record._create_history(
-                "warehouse_received",
-                old_state,
-                "awaiting_receipt",
-                _("Warehouse receipt confirmed."),
-                old_holder=old_holder,
-            )
-            record._schedule_receipt_activity()
+            if activity_type and recipient_users:
+                record._schedule_receipt_activity_for_users(recipient_users, activity_type)
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Awaiting Warehouse Receipt"),
+            "res_model": "ab_internal_shipment",
+            "view_mode": "list,form",
+            "domain": [("state", "=", "awaiting_warehouse_receipt")],
+            "context": {
+                "list_view_ref": "ab_internal_shipment_tracking.ab_internal_shipment_view_list_awaiting_warehouse_receipt",
+                "form_view_ref": "ab_internal_shipment_tracking.ab_internal_shipment_view_form",
+            },
+        }
 
     def action_receive(self):
         unauthorized = self.filtered(lambda record: not record.can_current_user_receive)
@@ -813,8 +852,6 @@ class InternalShipment(models.Model):
                         "current": record.state,
                     }
                 )
-            old_state = record.state
-            old_holder = record.current_holder_display
             vals = {
                 "state": "received",
                 "received_by_id": self.env.uid,
@@ -822,13 +859,6 @@ class InternalShipment(models.Model):
             }
             vals.update(record._holder_values_for_state("received"))
             record.write(vals)
-            record._create_history(
-                "received",
-                old_state,
-                "received",
-                _("State changed."),
-                old_holder=old_holder,
-            )
 
     def action_close(self):
         unauthorized = self.filtered(lambda record: not record.can_current_user_close)
@@ -845,8 +875,6 @@ class InternalShipment(models.Model):
                         "current": record.state,
                     }
                 )
-            old_state = record.state
-            old_holder = record.current_holder_display
             vals = {
                 "state": "closed",
                 "closed_by_id": action_uid,
@@ -854,17 +882,40 @@ class InternalShipment(models.Model):
             }
             vals.update(record._holder_values_for_state("closed"))
             record.write(vals)
-            record.with_context(ab_internal_shipment_action_uid=action_uid)._create_history(
-                "closed",
-                old_state,
-                "closed",
-                _("State changed."),
-                old_holder=old_holder,
-            )
 
     def action_add_tracking_note(self):
         for record in self:
-            record._create_history("note", record.state, record.state, record.notes or _("Tracking note added."))
+            note = (record.notes or "").strip()
+            if not note:
+                raise UserError(_("Add a note before saving it to the activity history."))
+            record._create_followup_note(note)
+            record.notes = False
+
+    def _create_followup_notes_from_commands(self, commands):
+        self.ensure_one()
+        self.check_access("read")
+        if self.state == "closed":
+            raise UserError(_("Follow-up notes cannot be added after the shipment is closed."))
+        for command in commands:
+            if not isinstance(command, (list, tuple)) or not command:
+                raise UserError(_("Only new follow-up notes can be added from the Notes tab."))
+            if command[0] != 0:
+                raise UserError(_("Follow-up notes cannot be edited or deleted."))
+            values = dict(command[2] or {})
+            note = (values.get("notes") or "").strip()
+            if not note:
+                raise UserError(_("Add a note before saving it to the follow-up history."))
+            self._create_followup_note(note)
+
+    def _create_followup_note(self, note):
+        self.ensure_one()
+        if self.state == "closed":
+            raise UserError(_("Follow-up notes cannot be added after the shipment is closed."))
+        self.env["ab_internal_shipment.history"].create({
+            "shipment_id": self.id,
+            "action": "note",
+            "notes": note,
+        })
 
     def _move_state(self, allowed_from, target_state, user_field, date_field, action):
         allowed = {allowed_from} if isinstance(allowed_from, str) else set(allowed_from)
@@ -879,8 +930,6 @@ class InternalShipment(models.Model):
                         "target": target_state,
                     }
                 )
-            old_state = record.state
-            old_holder = record.current_holder_display
             vals = {"state": target_state}
             if user_field:
                 vals[user_field] = self.env.uid
@@ -888,7 +937,6 @@ class InternalShipment(models.Model):
                 vals[date_field] = now
             vals.update(record._holder_values_for_state(target_state))
             record.write(vals)
-            record._create_history(action, old_state, target_state, _("State changed."), old_holder=old_holder)
 
     def _check_current_user_can_manage_workflow(self):
         unauthorized = self.filtered(lambda record: not record.can_current_user_manage_workflow)
@@ -915,9 +963,9 @@ class InternalShipment(models.Model):
     def _holder_values_from_warehouse(self):
         self.ensure_one()
         return {
-            "current_holder_type": "branch",
-            "current_holder_store_id": self.warehouse_store_id.id,
-            "current_holder_department_id": False,
+            "current_holder_type": "department",
+            "current_holder_store_id": False,
+            "current_holder_department_id": self.warehouse_department_id.id,
             "current_holder_employee_id": False,
             "current_holder_user_id": False,
         }
@@ -981,16 +1029,10 @@ class InternalShipment(models.Model):
                 return self.env["ab_hr_employee"]
             if self[f"{party}_employee_selection_type"] == "specific":
                 return self[f"{party}_selected_employee_ids"]
-            employees = self.env["ab_hr_employee"]
-            dept_occupied = dept.occupied_job_ids.mapped("employee_id")
-            if dept_occupied:
-                employees |= dept_occupied
-            direct = self.env["ab_hr_employee"].search([
+            return self.env["ab_hr_employee"].search([
                 ("department_id", "=", dept.id),
+                ("is_working", "=", True),
             ])
-            if direct:
-                employees |= direct
-            return employees
         if party_type == "branch":
             store = self[f"{party}_store_id"]
             if not store:
@@ -1000,17 +1042,10 @@ class InternalShipment(models.Model):
             branch_depts = self.env["ab_hr_department"].search([
                 ("store_id", "=", store.id),
             ])
-            employees = self.env["ab_hr_employee"]
-            if branch_depts:
-                dept_occupied = branch_depts.mapped("occupied_job_ids").mapped("employee_id")
-                if dept_occupied:
-                    employees |= dept_occupied
-                direct = self.env["ab_hr_employee"].search([
-                    ("department_id", "in", branch_depts.ids),
-                ])
-                if direct:
-                    employees |= direct
-            return employees
+            return self.env["ab_hr_employee"].search([
+                ("department_id", "in", branch_depts.ids),
+                ("is_working", "=", True),
+            ])
         return self.env["ab_hr_employee"]
 
     def _get_party_users(self, party, include_branch_accounts=False):
@@ -1033,30 +1068,20 @@ class InternalShipment(models.Model):
                         users |= account_users
         return users
 
-    def _get_warehouse_users(self):
+    def _get_warehouse_department_users(self):
         self.ensure_one()
-        if not self.warehouse_required or not self.warehouse_store_id:
+        if not self.warehouse_department_id:
             return self.env["res.users"]
-        if (
-            not self.warehouse_store_id.active
-            or not (self.warehouse_store_id.name or "").startswith("مخزن")
-        ):
-            return self.env["res.users"]
-        departments = self.env["ab_hr_department"].sudo().search([
-            "|",
-            ("store_id", "=", self.warehouse_store_id.id),
-            ("id", "=", self.warehouse_store_id.id),
+        employees = self.env["ab_hr_employee"].search([
+            ("active", "=", True),
+            ("department_id", "=", self.warehouse_department_id.id),
         ])
-        occupied_jobs = self.env["ab_hr_job_occupied"].sudo().search([
-            ("workplace", "in", departments.ids),
-            ("job_status", "!=", "inactive"),
-        ])
-        users = occupied_jobs.mapped("employee_id.user_id").filtered(lambda user: user)
-        users |= departments.mapped("manager_id.user_id").filtered(lambda user: user)
+        users = employees.mapped("user_id").filtered(lambda user: user)
         return users.filtered(
             lambda user: user.has_group(
                 "ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt"
             )
+            and not user.has_group("base.group_system")
         )
 
     def _validate_party(self, party):
@@ -1077,24 +1102,6 @@ class InternalShipment(models.Model):
                     _("Only the selected %(party)s entity type can be filled.") % {"party": party}
                 )
 
-    def _create_history(self, action, state_from, state_to, notes=False, old_holder=False):
-        History = self.env["ab_internal_shipment.history"]
-        action_uid = self.env.context.get("ab_internal_shipment_action_uid", self.env.uid)
-        for record in self:
-            History.create(
-                {
-                    "shipment_id": record.id,
-                    "action": action,
-                    "action_by_id": action_uid,
-                    "action_date": fields.Datetime.now(),
-                    "state_to": state_to or "",
-                    "state_from": state_from or "",
-                    "from_holder_display": old_holder or "",
-                    "to_holder_display": record.current_holder_display or "",
-                    "notes": notes,
-                }
-            )
-
     def _schedule_receipt_activity(self):
         self.ensure_one()
         activity_type = self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
@@ -1102,14 +1109,6 @@ class InternalShipment(models.Model):
             return
         recipient_users = self._get_party_users("recipient")
         self._schedule_receipt_activity_for_users(recipient_users, activity_type)
-
-    def _schedule_warehouse_receipt_activity(self):
-        self.ensure_one()
-        activity_type = self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
-        if not activity_type:
-            return
-        warehouse_users = self._get_warehouse_users()
-        self._schedule_receipt_activity_for_users(warehouse_users, activity_type)
 
     def _schedule_receipt_activity_for_users(self, users, activity_type):
         self.ensure_one()

@@ -9,7 +9,8 @@
                       class="o_ais_request_list o_ais_shipments_list"
                       decoration-muted="state == 'draft'"
                       decoration-danger="is_delayed"
-                      decoration-warning="state in ('awaiting_warehouse_receipt', 'awaiting_receipt')"
+                      decoration-warning="state == 'awaiting_warehouse_receipt'"
+                      decoration-primary="state == 'awaiting_receipt'"
                       decoration-success="state in ('received', 'closed')"
                       decoration-info="state in ('sent', 'in_transit')">
                     <field name="name"/>
@@ -22,7 +23,8 @@
                     <field name="state" widget="badge"
                            decoration-muted="state == 'draft'"
                            decoration-danger="is_delayed"
-                           decoration-warning="state in ('awaiting_warehouse_receipt', 'awaiting_receipt')"
+                           decoration-warning="state == 'awaiting_warehouse_receipt'"
+                           decoration-primary="state == 'awaiting_receipt'"
                            decoration-success="state in ('received', 'closed')"
                            decoration-info="state in ('sent', 'in_transit')"/>
                     <field name="shipment_type" optional="hide"/>
@@ -233,7 +235,7 @@
                                 <div class="o_ais_top_timeline_step o_ais_timeline_current">
                                     <span class="o_ais_top_timeline_dot"/>
                                     <strong>Warehouse Receipt</strong>
-                                    <field name="warehouse_store_id" nolabel="1"/>
+                                    <field name="warehouse_department_id" nolabel="1"/>
                                     <field name="delivered_date" nolabel="1"/>
                                 </div>
                                 <div class="o_ais_top_timeline_line o_ais_timeline_line_upcoming"/>
@@ -329,7 +331,6 @@
                                 <field name="can_current_user_manage_workflow" invisible="1"/>
                                 <field name="can_current_user_close" invisible="1"/>
                                 <field name="can_current_user_receive_warehouse" invisible="1"/>
-                                <field name="available_warehouse_store_ids" invisible="1"/>
                                 <field name="receipt_route_user_ids" invisible="1"/>
                                 <field name="subject" readonly="state != 'draft'" placeholder="Subject"/>
                                 <field name="shipment_date" readonly="state != 'draft'"/>
@@ -337,8 +338,8 @@
                                 <field name="shipment_type" readonly="state != 'draft'"/>
                                 <field name="delivery_method" readonly="state != 'draft'"/>
                                 <field name="warehouse_required" readonly="state != 'draft'"/>
-                                <field name="warehouse_store_id"
-                                       domain="[('id', 'in', available_warehouse_store_ids)]"
+                                <field name="warehouse_department_id"
+                                       domain="[('active', '=', True), ('name', '=ilike', 'مخزن%')]"
                                        invisible="not warehouse_required"
                                        required="warehouse_required"
                                        readonly="state != 'draft'"/>
@@ -391,7 +392,7 @@
                                        class="o_ais_card o_ais_card_warehouse"
                                        invisible="not warehouse_required">
                                     <div class="o_ais_party_label o_ais_party_label_warehouse">Warehouse</div>
-                                    <field name="warehouse_store_id" string="Warehouse" readonly="1"/>
+                                    <field name="warehouse_department_id" string="Warehouse" readonly="1"/>
                                     <field name="warehouse_received_by_id" readonly="1"/>
                                     <field name="warehouse_received_date" readonly="1"/>
                                 </group>
@@ -454,18 +455,21 @@
                                 </div>
                             </page>
                             <page string="Notes" class="o_ais_page o_ais_page_notes">
-                                <div class="o_ais_notes_panel">
-                                    <div class="o_ais_panel_header">
-                                        <div>
-                                            <span class="o_ais_route_eyebrow">Activity Notes</span>
-                                            <strong>Shipment context</strong>
-                                        </div>
-                                    </div>
-                                    <group class="o_ais_notes_grid">
-                                        <field name="description" nolabel="1" placeholder="Description"/>
-                                        <field name="notes" nolabel="1" placeholder="Notes"/>
-                                    </group>
-                                </div>
+                                <field name="note_history_ids" nolabel="1" readonly="state == 'closed'" context="{'default_action': 'note'}">
+                                    <list editable="bottom" create="true" edit="false" delete="false" class="o_ais_embedded_list o_ais_history_list o_ais_note_history_list">
+                                        <field name="action" column_invisible="1"/>
+                                        <field name="action_by_id" string="User" readonly="1"/>
+                                        <field name="action_date" string="Date and Time" readonly="1"/>
+                                        <field name="notes" string="Note"/>
+                                    </list>
+                                    <form string="Create Follow-up">
+                                        <sheet>
+                                            <field name="action" invisible="1"/>
+                                            <field name="shipment_id" invisible="1"/>
+                                            <field name="notes" nolabel="1" required="1" placeholder="Write a follow-up note..."/>
+                                        </sheet>
+                                    </form>
+                                </field>
                             </page>
                             <page string="Delivery Proof" class="o_ais_page o_ais_page_attachments">
                                 <div class="o_ais_proof_panel">
@@ -548,9 +552,9 @@
             <field name="name">Internal Shipments</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('created_by_id', '=', uid)]</field>
+            <field name="domain">[]</field>
             <field name="context">{'list_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_list', 'form_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_form'}</field>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
             <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list')}), (0, 0, {'view_mode': 'form', 'view_id': ref('ab_internal_shipment_view_form')})]"/>
             <field name="help" type="html">
@@ -571,7 +575,8 @@
                       class="o_ais_request_list o_ais_receipt_list"
                       decoration-muted="state == 'draft'"
                       decoration-danger="is_delayed"
-                      decoration-warning="state in ('awaiting_warehouse_receipt', 'awaiting_receipt')"
+                      decoration-warning="state == 'awaiting_warehouse_receipt'"
+                      decoration-primary="state == 'awaiting_receipt'"
                       decoration-success="state in ('received', 'closed')"
                       decoration-info="state in ('sent', 'in_transit')">
                     <field name="name"/>
@@ -584,7 +589,8 @@
                     <field name="state" widget="badge"
                            decoration-muted="state == 'draft'"
                            decoration-danger="is_delayed"
-                           decoration-warning="state in ('awaiting_warehouse_receipt', 'awaiting_receipt')"
+                           decoration-warning="state == 'awaiting_warehouse_receipt'"
+                           decoration-primary="state == 'awaiting_receipt'"
                            decoration-success="state in ('received', 'closed')"
                            decoration-info="state in ('sent', 'in_transit')"/>
                     <field name="shipment_type" optional="hide"/>
@@ -600,7 +606,7 @@
             <field name="view_mode">list,form</field>
             <field name="domain">[('state', '=', 'awaiting_receipt')]</field>
             <field name="context">{'list_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_list_awaiting_receipt', 'form_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_form'}</field>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
             <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list_awaiting_receipt')}), (0, 0, {'view_mode': 'form', 'view_id': ref('ab_internal_shipment_view_form')})]"/>
             <field name="help" type="html">
@@ -620,17 +626,19 @@
                 <list create="false" string="Awaiting Warehouse Receipt"
                       class="o_ais_request_list o_ais_receipt_list"
                       decoration-danger="is_delayed"
-                      decoration-warning="state == 'awaiting_warehouse_receipt'">
+                      decoration-warning="state == 'awaiting_warehouse_receipt'"
+                      decoration-primary="state == 'awaiting_receipt'">
                     <field name="name"/>
                     <field name="shipment_date"/>
                     <field name="subject"/>
                     <field name="sender_display"/>
-                    <field name="warehouse_store_id"/>
+                    <field name="warehouse_department_id"/>
                     <field name="current_holder_display"/>
                     <field name="expected_delivery_date" optional="show"/>
                     <field name="state" widget="badge"
                            decoration-danger="is_delayed"
-                           decoration-warning="state == 'awaiting_warehouse_receipt'"/>
+                           decoration-warning="state == 'awaiting_warehouse_receipt'"
+                           decoration-primary="state == 'awaiting_receipt'"/>
                     <field name="shipment_type" optional="hide"/>
                     <field name="delivery_method" optional="hide"/>
                     <field name="created_by_id" optional="hide"/>
@@ -642,7 +650,7 @@
             <field name="name">Awaiting Warehouse Receipt</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('state', '=', 'awaiting_warehouse_receipt')]</field>
+            <field name="domain">[('state', '=', 'awaiting_warehouse_receipt'), ('warehouse_route_user_ids', 'in', [uid])]</field>
             <field name="context">{'list_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_list_awaiting_warehouse_receipt', 'form_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_form'}</field>
             <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
@@ -662,7 +670,7 @@
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
             <field name="context">{'list_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_list', 'form_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_form'}</field>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>
             <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list')}), (0, 0, {'view_mode': 'form', 'view_id': ref('ab_internal_shipment_view_form')})]"/>
             <field name="help" type="html">
@@ -678,7 +686,7 @@
         <record id="ab_internal_shipment_reporting_server_action" model="ir.actions.server">
             <field name="name">Shipment Statistics</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
+            <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="state">code</field>
             <field name="code"><![CDATA[
 action = {
