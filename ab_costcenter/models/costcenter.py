@@ -25,15 +25,6 @@ class ClsCostCenters(models.Model):
     password = fields.Char(groups='base.group_system')
     work_email = fields.Char('Work Email')
     work_phone = fields.Char()
-    supplier_type = fields.Selection(
-        selection=[
-            ('advance_payment', 'Advance Payment'),
-            ('withholding_tax', 'Withholding Tax'),
-            ('non_taxable', 'Non-Taxable'),
-        ],
-        string='Supplier Type',
-    )
-    representative_phone = fields.Char(string='Representative Phone')
     english_name = fields.Char()
     religion = fields.Selection(selection=[('muslim', 'Muslim'), ('christian', 'Christian'), ('other', 'Other'), ])
     gender = fields.Selection(
@@ -48,22 +39,6 @@ class ClsCostCenters(models.Model):
     identification_id = fields.Char()
     birthday = fields.Date()
     establishment_date = fields.Date()
-    supplier_claim_activity = fields.Html(
-        string='Supplier Activity',
-        compute='_compute_supplier_claim_activity',
-        readonly=True,
-        sanitize=False,
-    )
-    supplier_activity_status = fields.Selection(
-        selection=[('active', 'Active'), ('non_active', 'Non Active')],
-        string='Supplier Activity Status',
-        compute='_compute_supplier_activity_status',
-    )
-    supplier_performance_html = fields.Html(
-        string='Supplier Performance',
-        compute='_compute_supplier_performance_html',
-        sanitize=False,
-    )
 
     def _compute_costcenter_space_sep(self):
         for rec in self:
@@ -83,18 +58,6 @@ class ClsCostCenters(models.Model):
         if code_ids:
             return [('id', 'in', code_ids)]
         return [('name', operator, value)]
-
-    def _compute_supplier_claim_activity(self):
-        for rec in self:
-            rec.supplier_claim_activity = ''
-
-    def _compute_supplier_activity_status(self):
-        for rec in self:
-            rec.supplier_activity_status = 'non_active'
-
-    def _compute_supplier_performance_html(self):
-        for rec in self:
-            rec.supplier_performance_html = ''
 
     def write(self, vals):
         res = super(ClsCostCenters, self).write(vals)

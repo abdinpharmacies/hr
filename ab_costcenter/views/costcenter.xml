@@ -12,8 +12,6 @@
                     <field name="mobile_phone" optional="show"/>
                     <field name="work_email" optional="show"/>
                     <field name="work_phone" optional="show"/>
-                    <field name="supplier_type" optional="show"/>
-                    <field name="representative_phone" optional="show"/>
                     <field name="english_name" optional="show"/>
                     <field name="religion" optional="show"/>
                     <field name="gender" optional="show"/>
@@ -35,188 +33,24 @@
             <field name="name">ab_costcenter_view_form</field>
             <field name="model">ab_costcenter</field>
             <field name="arch" type="xml">
-                <form string="Supplier Profile" class="ab-dossier-form">
+                <form string="ab_costcenter_form">
                     <sheet>
-                        <field name="active" invisible="1"/>
-                        <field name="official_name" invisible="1"/>
-
-                        <!-- ════════════════════════════════════════ -->
-                        <!--  SUPPLIER HEADER                        -->
-                        <!-- ════════════════════════════════════════ -->
-                        <div class="ab-dossier-header">
-                            <div class="ab-dossier-header-left">
-                                <div class="ab-dossier-avatar">
-                                    <i class="fa fa-building-o" aria-hidden="true"/>
-                                </div>
-                                <div class="ab-dossier-identity">
-                                    <div class="ab-dossier-name">
-                                        <field name="name" nolabel="1"/>
-                                    </div>
-                                    <div class="ab-dossier-meta">
-                                        <span class="ab-dossier-code">
-                                            <field name="code" nolabel="1"/>
-                                        </span>
-                                        <span class="ab-dossier-type-badge is-advance" invisible="supplier_type != 'advance_payment'">
-                                            <i class="fa fa-check-circle" aria-hidden="true"/>
-                                            <span class="o_translate_inline">Advance Payment</span>
-                                        </span>
-                                        <span class="ab-dossier-type-badge is-withholding" invisible="supplier_type != 'withholding_tax'">
-                                            <i class="fa fa-exclamation-triangle" aria-hidden="true"/>
-                                            <span class="o_translate_inline">Withholding Tax</span>
-                                        </span>
-                                        <span class="ab-dossier-type-badge is-non-taxable" invisible="supplier_type != 'non_taxable'">
-                                            <i class="fa fa-minus-circle" aria-hidden="true"/>
-                                            <span class="o_translate_inline">Non-Taxable</span>
-                                        </span>
-                                        <span class="ab-dossier-type-badge is-none" invisible="supplier_type">
-                                            <span class="o_translate_inline">—</span>
-                                        </span>
-                                        <span class="ab-dossier-status-pill is-active" invisible="supplier_activity_status != 'active'">
-                                            <i class="fa fa-circle" aria-hidden="true"/>
-                                            <span class="o_translate_inline">Active</span>
-                                        </span>
-                                        <span class="ab-dossier-status-pill is-non-active" invisible="supplier_activity_status != 'non_active'">
-                                            <i class="fa fa-circle" aria-hidden="true"/>
-                                            <span class="o_translate_inline">Non Active</span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ════════════════════════════════════════ -->
-                        <!--  TWO-COLUMN: RELATIONSHIP + CONTACT     -->
-                        <!-- ════════════════════════════════════════ -->
-                        <div class="ab-dossier-flex">
-                            <div class="ab-dossier-relationship">
-                                <div class="ab-dossier-section-header">
-                                    <span class="ab-dossier-section-icon"><i class="fa fa-handshake-o" aria-hidden="true"/></span>
-                                    <span class="ab-dossier-section-title o_translate_inline">Supplier Relationship</span>
-                                    <span class="ab-dossier-section-sub o_translate_inline">Claim activity &amp; summary</span>
-                                </div>
-                                <div class="ab-dossier-body">
-                                    <field name="supplier_claim_activity" nolabel="1"/>
-                                </div>
-                            </div>
-
-                            <div class="ab-dossier-contact-card">
-                                <div class="ab-dossier-card-header">
-                                    <i class="fa fa-address-card-o" aria-hidden="true"/>
-                                    <span class="o_translate_inline">Contact Information</span>
-                                </div>
-                                <div class="ab-dossier-card-body">
-                                    <div class="ab-dossier-card-row">
-                                        <div class="ab-dossier-card-row-icon"><i class="fa fa-tag" aria-hidden="true"/></div>
-                                        <div class="ab-dossier-card-row-body">
-                                            <div class="ab-dossier-card-row-label o_translate_inline">Supplier Type</div>
-                                            <div class="ab-dossier-card-row-value"><field name="supplier_type" nolabel="1" placeholder="—"/></div>
-                                        </div>
-                                    </div>
-                                    <div class="ab-dossier-card-row">
-                                        <div class="ab-dossier-card-row-icon"><i class="fa fa-envelope" aria-hidden="true"/></div>
-                                        <div class="ab-dossier-card-row-body">
-                                            <div class="ab-dossier-card-row-label o_translate_inline">Email</div>
-                                            <div class="ab-dossier-card-row-value"><field name="work_email" nolabel="1" placeholder="—"/></div>
-                                        </div>
-                                    </div>
-                                    <div class="ab-dossier-card-row">
-                                        <div class="ab-dossier-card-row-icon"><i class="fa fa-phone" aria-hidden="true"/></div>
-                                        <div class="ab-dossier-card-row-body">
-                                            <div class="ab-dossier-card-row-label o_translate_inline">Phone</div>
-                                            <div class="ab-dossier-card-row-value"><field name="work_phone" nolabel="1" placeholder="—"/></div>
-                                        </div>
-                                    </div>
-                                    <div class="ab-dossier-card-row">
-                                        <div class="ab-dossier-card-row-icon"><i class="fa fa-mobile" aria-hidden="true"/></div>
-                                        <div class="ab-dossier-card-row-body">
-                                            <div class="ab-dossier-card-row-label o_translate_inline">Mobile</div>
-                                            <div class="ab-dossier-card-row-value"><field name="mobile_phone" nolabel="1" placeholder="—"/></div>
-                                        </div>
-                                    </div>
-                                    <div class="ab-dossier-card-row">
-                                        <div class="ab-dossier-card-row-icon"><i class="fa fa-user" aria-hidden="true"/></div>
-                                        <div class="ab-dossier-card-row-body">
-                                            <div class="ab-dossier-card-row-label o_translate_inline">Representative</div>
-                                            <div class="ab-dossier-card-row-value"><field name="representative_phone" nolabel="1" placeholder="—"/></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ════════════════════════════════════════ -->
-                        <!--  SUPPLIER PERFORMANCE                    -->
-                        <!-- ════════════════════════════════════════ -->
-                        <div class="ab-dossier-section">
-                            <div class="ab-dossier-section-header">
-                                <span class="ab-dossier-section-icon"><i class="fa fa-dashboard" aria-hidden="true"/></span>
-                                <span class="ab-dossier-section-title o_translate_inline">Supplier Performance</span>
-                                <span class="ab-dossier-section-sub o_translate_inline">Aggregated claim metrics</span>
-                            </div>
-                            <div class="ab-dossier-body">
-                                <field name="supplier_performance_html" nolabel="1"/>
-                            </div>
-                        </div>
-
-                        <!-- ════════════════════════════════════════ -->
-                        <!--  BUSINESS INFORMATION                   -->
-                        <!-- ════════════════════════════════════════ -->
-                        <div class="ab-dossier-section">
-                            <div class="ab-dossier-section-header">
-                                <span class="ab-dossier-section-icon"><i class="fa fa-briefcase" aria-hidden="true"/></span>
-                                <span class="ab-dossier-section-title o_translate_inline">Business Information</span>
-                                <span class="ab-dossier-section-sub o_translate_inline">Additional supplier details</span>
-                            </div>
-                            <div class="ab-dossier-body">
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">Religion</span>
-                                    <span class="ab-dossier-row-value"><field name="religion" nolabel="1" placeholder="—"/></span>
-                                </div>
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">Gender</span>
-                                    <span class="ab-dossier-row-value"><field name="gender" nolabel="1" placeholder="—"/></span>
-                                </div>
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">Is Company</span>
-                                    <span class="ab-dossier-row-value"><field name="is_company" nolabel="1"/></span>
-                                </div>
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">Identification ID</span>
-                                    <span class="ab-dossier-row-value"><field name="identification_id" nolabel="1" placeholder="—"/></span>
-                                </div>
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">Birthday</span>
-                                    <span class="ab-dossier-row-value"><field name="birthday" nolabel="1" placeholder="—"/></span>
-                                </div>
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">Establishment Date</span>
-                                    <span class="ab-dossier-row-value"><field name="establishment_date" nolabel="1" placeholder="—"/></span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- ════════════════════════════════════════ -->
-                        <!--  SYSTEM INFORMATION                     -->
-                        <!-- ════════════════════════════════════════ -->
-                        <div class="ab-dossier-section ab-dossier-section-system">
-                            <div class="ab-dossier-section-header">
-                                <span class="ab-dossier-section-icon"><i class="fa fa-cog" aria-hidden="true"/></span>
-                                <span class="ab-dossier-section-title o_translate_inline">System Information</span>
-                                <span class="ab-dossier-section-sub o_translate_inline">Internal system fields</span>
-                            </div>
-                            <div class="ab-dossier-body">
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">E-Plus Serial</span>
-                                    <span class="ab-dossier-row-value"><field name="eplus_serial" nolabel="1" placeholder="—"/></span>
-                                </div>
-                                <div class="ab-dossier-row">
-                                    <span class="ab-dossier-row-label o_translate_inline">Password</span>
-                                    <span class="ab-dossier-row-value"><field name="password" nolabel="1" password="1" placeholder="—"/></span>
-                                </div>
-                            </div>
-                        </div>
-
-
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="mobile_phone"/>
+                            <field name="work_email"/>
+                            <field name="work_phone"/>
+                            <field name="english_name"/>
+                            <field name="religion"/>
+                            <field name="gender"/>
+                            <field name="is_company"/>
+                            <field name="identification_id"/>
+                            <field name="birthday"/>
+                            <field name="establishment_date"/>
+                            <field name="eplus_serial"/>
+                            <field name="password" password="1"/>
+                        </group>
                     </sheet>
                 </form>
             </field>
