@@ -8,7 +8,6 @@ from . import ab_hr_region
 from . import history_type
 from . import history
 from . import manpower
-from . import manpower_hour_need
 from . import history_report
 # from . import export_xlsx
 from . import res_users_inherit
