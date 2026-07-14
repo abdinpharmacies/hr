@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tools.misc import format_datetime
 
 _logger = logging.getLogger(__name__)
 
@@ -56,15 +57,18 @@ class SupplierClaimCycle(models.Model):
 
     supplier_id = fields.Many2one("ab_costcenter", required=True, tracking=True, domain=[("code", "=like", "1-%")])
     supplier_type = fields.Selection(
-        related='supplier_id.supplier_type', string='Supplier Type', readonly=True,
+        string='Supplier Type',
         selection=[
-            ('advance_payment', 'دفعات مقدمة'),
-            ('withholding_tax', 'خصم من المنبع'),
-            ('non_taxable', 'غير ضريبي'),
+            ('advance_payment', 'Advance Payment'),
+            ('withholding_tax', 'Withholding Tax'),
+            ('non_taxable', 'Non-Taxable'),
         ],
+        copy=False,
     )
-    supplier_email = fields.Char(related='supplier_id.work_email', string='Supplier Email', readonly=True)
-    representative_phone = fields.Char(related='supplier_id.representative_phone', string='Representative Phone', readonly=True)
+    supplier_email = fields.Char(string='Supplier Email', copy=False)
+    representative_phone = fields.Char(string='Representative Phone', copy=False)
+    delegate_phone_ids = fields.Many2many('ab.delegate.phone', string='Delegate Phones', 
+        domain="[('partner_id', '=', supplier_id)]", copy=False, relation='claim_delegate_phone_rel')
     num_of_invoice = fields.Integer(required=True, tracking=True)
     status = fields.Selection(
         selection=[(s, STAGE_LABELS[s]) for s in STAGE_SEQUENCE],
@@ -152,6 +156,19 @@ class SupplierClaimCycle(models.Model):
     can_secretarial_override = fields.Boolean(compute='_compute_workflow_access')
     can_edit_documents = fields.Boolean(compute='_compute_workflow_access')
     can_finish = fields.Boolean(compute='_compute_workflow_access')
+    is_dev_override = fields.Boolean(compute='_compute_dev_override')
+    show_dev_override_badge = fields.Boolean(compute='_compute_dev_override')
+    is_escalation_viewer = fields.Boolean(compute='_compute_escalation_viewer')
+    show_telegram_connect_button = fields.Boolean(
+        compute='_compute_show_telegram_connect_button',
+        string='Show Telegram Connect Button',
+    )
+
+    manager_telegram_card_html = fields.Html(
+        compute='_compute_manager_telegram_card_html',
+        sanitize=False,
+        readonly=True,
+    )
     parallel_status_summary = fields.Html(
         compute='_compute_parallel_status_summary',
         sanitize=False,
@@ -176,6 +193,7 @@ class SupplierClaimCycle(models.Model):
     )
     issue_ids = fields.One2many('ab.supplier.claim.issue', 'claim_id', string='Issues')
     has_blocking_issue = fields.Boolean(compute='_compute_has_blocking_issue')
+    show_chatter = fields.Boolean(string='Show Chatter', default=True)
     stage_escalated = fields.Boolean(default=False, string='Stage Escalated')
     escalation_missing_manager = fields.Boolean(default=False, string='Escalation Manager Not Found')
     assigned_escalation_user = fields.Many2one('res.users', string='Assigned Escalation User')
@@ -225,8 +243,6 @@ class SupplierClaimCycle(models.Model):
     @api.depends('amount_of_check', 'tax_percentage', 'tax_frozen')
     def _compute_tax(self):
         for rec in self:
-            if rec.tax_frozen:
-                continue
             rec.tax_amount = rec.amount_of_check * (rec.tax_percentage / 100)
             rec.net_payable = rec.amount_of_check - rec.tax_amount
 
@@ -234,6 +250,17 @@ class SupplierClaimCycle(models.Model):
     def _compute_has_tax_accounts(self):
         for rec in self:
             rec.has_tax_accounts = rec.supplier_type == WITHHOLDING_TAX_SUPPLIER_TYPE
+
+    @api.onchange('supplier_id')
+    def _onchange_supplier_id(self):
+        if self.supplier_id:
+            self.supplier_email = self.supplier_id.work_email or ''
+            default_delegate = self.env['ab.delegate.phone'].search([
+                ('partner_id', '=', self.supplier_id.id),
+                ('is_default', '=', True),
+            ], limit=1)
+            if default_delegate:
+                self.delegate_phone_ids = [(4, default_delegate.id)]
 
     def _calculate_and_freeze_tax(self):
         self.ensure_one()
@@ -249,29 +276,115 @@ class SupplierClaimCycle(models.Model):
     def _mail_activity_available(self):
         return bool(self.env.ref('mail.mail_activity_data_todo', raise_if_not_found=False))
 
+    def _get_manager_chat_id(self, manager):
+        self.ensure_one()
+        employee = self.env['ab_hr_employee'].sudo().search([
+            ('user_id', '=', manager.id)
+        ], limit=1)
+        if employee and employee.telegram_chat_id:
+            return employee.telegram_chat_id
+        return '1782927756'
+
+    def _is_dev_override_enabled(self):
+        return self.env['ir.config_parameter'].sudo().get_param(
+            'supplier_claim.telegram_dev_override_enabled', 'False') == 'True'
+
+    def _get_dev_override_user(self):
+        email = self.env['ir.config_parameter'].sudo().get_param(
+            'supplier_claim.telegram_dev_override_email', '')
+        if not email:
+            return self.env['res.users']
+        return self.env['res.users'].sudo().search([
+            '|', ('login', '=', email), ('email', '=', email)
+        ], limit=1)
+
+    def _get_effective_department_managers(self):
+        self.ensure_one()
+        TelegramRegistration = self.env['ab_supplier_claim_telegram_registration'].sudo()
+        STATUS_TO_DEPT_CODE = {
+            'inventory': 'inventory',
+            'purchase': 'purchase',
+            'suppliers': 'suppliers',
+            'tax_accounts': 'tax_accounts',
+            'bank_acc': 'bank_accounts',
+        }
+        dept_code = STATUS_TO_DEPT_CODE.get(self.status)
+        if not dept_code:
+            return self.env['res.users']
+        registrations = TelegramRegistration.search([
+            ('manager_department', '=', dept_code),
+            ('telegram_connected', '=', True),
+        ])
+        users = registrations.mapped('user_id').filtered('id')
+        return users
+
+    def _build_escalation_telegram_message(self):
+        self.ensure_one()
+        lines = [
+            _('🚨 <b>Claim Escalation Alert</b>'),
+            '',
+            _('<b>Claim Number:</b> %s') % self.display_name,
+            _('<b>Supplier:</b> %s') % (self.supplier_id.display_name if self.supplier_id else 'N/A'),
+            _('<b>Department:</b> %s') % self._get_stage_label(self.status),
+            '',
+            _('Please review immediately.'),
+        ]
+        lines.append('')
+        lines.append(_('Open Odoo and check'))
+        return '\n'.join(lines)
+
+    def _notify_escalation_telegram(self, manager):
+        self.ensure_one()
+        bot_token = self.env['ir.config_parameter'].sudo().get_param(
+            'supplier_claim.telegram_bot_token', '')
+        if not bot_token:
+            _logger.info('Telegram skipped: bot token not configured (set supplier_claim.telegram_bot_token)')
+            return
+        chat_id = '1782927756' if self._is_dev_override_enabled() else None
+        if not chat_id:
+            registration = self.env['ab_supplier_claim_telegram_registration'].sudo().search([
+                ('user_id', '=', manager.id),
+                ('telegram_connected', '=', True),
+            ], limit=1)
+            if not registration or not registration.telegram_chat_id:
+                _logger.info('Telegram skipped: no chat_id for user %s', manager.display_name)
+                return
+            chat_id = registration.telegram_chat_id
+        text = self._build_escalation_telegram_message()
+        from odoo.addons.ab_supplier_claim_cycle.services.telegram_service import send_message
+        send_message(bot_token, chat_id, text)
+
     def _send_escalation_notification(self, manager):
         self.ensure_one()
         if not self._mail_activity_available():
             self._create_internal_escalation(manager)
-            return 'internal_fallback'
+            method = 'internal_fallback'
+        else:
+            try:
+                self.activity_schedule(
+                    'mail.mail_activity_data_todo',
+                    summary=_('Stage Overdue: %s') % self._get_stage_label(self.status),
+                    note=_(
+                        'Dear %(manager)s,\n'
+                        'The %(stage)s stage for claim %(name)s is overdue. '
+                        'Please review and take action.'
+                    ) % {
+                        'manager': manager.display_name,
+                        'stage': self._get_stage_label(self.status),
+                        'name': self.display_name,
+                    },
+                    user_id=manager.id,
+                    date_deadline=fields.Date.today(),
+                )
+                method = 'odoo_activity'
+            except Exception:
+                self._create_internal_escalation(manager)
+                method = 'internal_fallback'
         try:
-            self.activity_schedule(
-                'mail.mail_activity_data_todo',
-                summary=_('Stage Overdue: %s') % self._get_stage_label(self.status),
-                note=_(
-                    'The %(stage)s stage for claim %(name)s has been overdue for more than 24 hours. '
-                    'Please review and take action.'
-                ) % {
-                    'stage': self._get_stage_label(self.status),
-                    'name': self.display_name,
-                },
-                user_id=manager.id,
-                date_deadline=fields.Date.today(),
-            )
-            return 'odoo_activity'
+            self._notify_escalation_telegram(manager)
         except Exception:
-            self._create_internal_escalation(manager)
-            return 'internal_fallback'
+            _logger.exception('Telegram notification failed for claim %s, manager %s', self.display_name, manager.display_name)
+        return method
 
     def _create_internal_escalation(self, manager):
         self.ensure_one()
@@ -371,6 +484,98 @@ class SupplierClaimCycle(models.Model):
             rec.can_secretarial_override = rec.status != 'closed' and (is_admin or is_secretarial)
             rec.can_current_user_edit = is_admin or (rec.status != 'closed' and (is_secretarial or can_handle))
             rec.can_edit_documents = is_admin or (is_secretarial and rec.status != 'closed')
+
+    def _compute_dev_override(self):
+        enabled = self._is_dev_override_enabled()
+        is_match = False
+        if enabled:
+            dev_user = self._get_dev_override_user()
+            is_match = bool(dev_user) and self.env.user == dev_user
+        for rec in self:
+            rec.is_dev_override = is_match
+            rec.show_dev_override_badge = is_match
+
+    def _compute_escalation_viewer(self):
+        is_user = self.env.user.has_group('ab_supplier_claim_cycle.supplier_claim_group_user')
+        is_admin = self._is_supplier_claim_admin()
+        is_dev = False
+        if self._is_dev_override_enabled():
+            dev_user = self._get_dev_override_user()
+            is_dev = bool(dev_user) and self.env.user == dev_user
+        for rec in self:
+            is_manager = self.env.user in rec._resolve_escalation_managers()
+            rec.is_escalation_viewer = is_user or is_admin or is_manager or is_dev
+
+    @api.depends('status')
+    def _compute_show_telegram_connect_button(self):
+        TelegramReg = self.env['ab_supplier_claim_telegram_registration'].sudo()
+        registrations = TelegramReg.search([
+            ('employee_id.user_id', '=', self.env.user.id),
+            ('manager_department', '!=', False),
+        ], limit=1)
+        reg = registrations[:1] if registrations else None
+        if reg and not reg.telegram_connected:
+            show = True
+        else:
+            show = False
+        for rec in self:
+            rec.show_telegram_connect_button = show
+
+    def _compute_manager_telegram_card_html(self):
+        Employee = self.env.get('ab_hr_employee')
+        for rec in self:
+            managers = rec._resolve_escalation_managers()
+            if not managers:
+                rec.manager_telegram_card_html = False
+                continue
+            employees = Employee.sudo().search([('user_id', 'in', managers.ids)]) if Employee else self.env['ab_hr_employee'].browse()
+            emp_by_user = {e.user_id.id: e for e in employees}
+            items = []
+            for manager in managers:
+                chat_id = ''
+                username = ''
+                linked_at = ''
+                emp = emp_by_user.get(manager.id)
+                if emp:
+                    chat_id = emp.telegram_chat_id or ''
+                    username = emp.telegram_username or ''
+                    linked_at = emp.telegram_linked_at.strftime('%Y-%m-%d') if emp.telegram_linked_at else ''
+                connected = bool(chat_id)
+                icon = '\U0001F7E0' if connected else '\u26AA'
+                status = 'connected' if connected else 'disconnected'
+                name = manager.display_name
+                if connected:
+                    meta = ''
+                    if username:
+                        meta = '<div class="scc-tg-meta">@%s</div>' % username
+                    elif linked_at:
+                        meta = '<div class="scc-tg-meta"><span class="scc-tg-label">Linked on:</span> %s</div>' % linked_at
+                    items.append(
+                        '<div class="scc-tg-card scc-tg-%s">'
+                        '  <div class="scc-tg-icon">%s</div>'
+                        '  <div class="scc-tg-body">'
+                        '    <div class="scc-tg-name">%s</div>'
+                        '    <div class="scc-tg-title">Telegram Connected</div>'
+                        '    %s'
+                        '  </div>'
+                        '</div>' % (status, icon, name, meta)
+                    )
+                else:
+                    bot_username = self.env['ir.config_parameter'].sudo().get_param(
+                        'supplier_claim.telegram_bot_username', 'abdin_supplier_claim_bot')
+                    tg_url = 'https://t.me/%s' % bot_username
+                    items.append(
+                        '<div class="scc-tg-card scc-tg-%s">'
+                        '  <div class="scc-tg-icon">%s</div>'
+                        '  <div class="scc-tg-body">'
+                        '    <div class="scc-tg-name">%s</div>'
+                        '    <div class="scc-tg-title">Telegram Not Connected</div>'
+                        '    <div class="scc-tg-sub">Connect Telegram to receive escalation alerts.</div>'
+                        '    <a href="%s" target="_blank" class="btn btn-primary scc-tg-btn">Connect Telegram</a>'
+                        '  </div>'
+                        '</div>' % (status, icon, name, tg_url)
+                    )
+            rec.manager_telegram_card_html = '<div class="scc-tg-list">%s</div>' % ''.join(items)
 
     @api.depends('supplier_type', 'status', 'inv_decision', 'pur_decision', 'sup_decision', 'tax_decision', 'bank_decision')
     def _compute_department_decision_display(self):
@@ -657,14 +862,33 @@ class SupplierClaimCycle(models.Model):
             'target': 'new',
             'context': {
                 'default_supplier_id': self.supplier_id.id,
+                'default_claim_id': self.id,
             },
+        }
+
+    def action_open_telegram_bot(self):
+        self.ensure_one()
+        bot_username = self.env['ir.config_parameter'].sudo().get_param(
+            'supplier_claim.telegram_bot_username', 'abdin_supplier_claim_bot')
+        return {
+            'type': 'ir.actions.act_url',
+            'url': 'https://t.me/%s' % bot_username,
+            'target': 'new',
+        }
+
+    def action_toggle_chatter(self):
+        self.ensure_one()
+        self.show_chatter = not self.show_chatter
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'reload',
         }
 
     def action_done(self):
         for rec in self:
             rec._check_can_act_current_stage()
             if rec.status == 'secretarial':
-                if not rec.supplier_id.supplier_type:
+                if not rec.supplier_type:
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Supplier Type Required'),
@@ -673,6 +897,7 @@ class SupplierClaimCycle(models.Model):
                         'target': 'new',
                         'context': {
                             'default_supplier_id': rec.supplier_id.id,
+                            'default_claim_id': rec.id,
                             'default_supplier_type': False,
                         },
                     }
@@ -882,6 +1107,10 @@ class SupplierClaimCycle(models.Model):
                 'supplier_notified_by': self.env.user.id,
                 'supplier_notification_date': fields.Datetime.now(),
             })
+            rec.supplier_id.sudo().write({
+                'work_email': rec.supplier_email or '',
+                'mobile_phone': ', '.join(rec.delegate_phone_ids.mapped('name')) or '',
+            })
             rec._create_stage_history('supplier_notification', 'accepted', rec.notification_notes or '')
             rec.message_post(
                 body=_("Supplier notified by %(name)s (%(phone)s). Result: %(result)s. Notes: %(notes)s") % {
@@ -902,6 +1131,10 @@ class SupplierClaimCycle(models.Model):
             error = rec._validate_cheque_delivery_documents()
             if error:
                 return error
+            rec.supplier_id.sudo().write({
+                'work_email': rec.supplier_email or '',
+                'mobile_phone': ', '.join(rec.delegate_phone_ids.mapped('name')) or '',
+            })
             rec._move_to_next_stage()
 
     @api.model
@@ -916,9 +1149,10 @@ class SupplierClaimCycle(models.Model):
             ], order='action_date desc', limit=1)
             if not last_history or not last_history.action_date:
                 continue
-            if fields.Datetime.now() - last_history.action_date <= timedelta(minutes=1):
+            if fields.Datetime.now() - last_history.action_date <= timedelta(seconds=30):
                 continue
             details = claim._resolve_escalation_details()
+            manager_users = claim._get_effective_department_managers()
             _logger.info(
                 'Escalation audit for claim %s (stage: %s):\n'
                 '  Current Stage: %s\n'
@@ -927,7 +1161,8 @@ class SupplierClaimCycle(models.Model):
                 '  Employees resolved: %s\n'
                 '  Departments resolved: %s\n'
                 '  Managers resolved: %s\n'
-                '  Manager Users resolved: %s',
+                '  Manager Users resolved: %s\n'
+                '  Effective manager(s): %s',
                 claim.display_name, claim.status,
                 claim._get_stage_label(claim.status),
                 details.get('group_xmlid', 'N/A'),
@@ -936,41 +1171,34 @@ class SupplierClaimCycle(models.Model):
                 ', '.join(d.display_name for d in details['departments'] if d) if details['departments'] else 'NONE',
                 ', '.join(m.display_name for m in details['managers']) if details['managers'] else 'NONE',
                 ', '.join(u.display_name for u in details['manager_users']) if details['manager_users'] else 'NONE',
+                ', '.join(u.display_name for u in manager_users) if manager_users else 'NONE',
             )
-            manager_users = details['manager_users']
-            now_str = fields.Datetime.now().strftime('%Y-%m-%d %H:%M')
+            now = fields.Datetime.now()
+            now_str = format_datetime(self.env, now, dt_format='medium')
             if manager_users:
                 methods = []
                 for manager in manager_users:
                     method = claim._send_escalation_notification(manager)
                     methods.append(method)
-                method_used = 'odoo_activity' if any(m == 'odoo_activity' for m in methods) else 'internal_fallback'
                 manager_lines = '\n'.join(
-                    '\u2022 %s (%s)' % (u.display_name, u.login or u.email or '')
+                    '\u2022 %s' % u.display_name
                     for u in manager_users
                 )
                 notes = _(
-                    'Automatic escalation triggered.\n'
+                    'Escalation notification was sent to:\n%(managers)s\n'
                     'Department: %(dept)s\n'
-                    'Managers notified:\n%(managers)s\n'
-                    'Notification type: %(method)s\n'
-                    'Escalated at: %(time)s'
+                    'Time: %(time)s'
                 ) % {
-                    'dept': claim._get_stage_label(claim.status),
                     'managers': manager_lines,
-                    'method': 'Odoo Activity' if method_used == 'odoo_activity' else 'Internal Fallback',
+                    'dept': claim._get_stage_label(claim.status),
                     'time': now_str,
                 }
                 claim._create_stage_history(claim.status, 'escalated', notes)
                 claim.stage_escalated = True
             else:
                 notes = _(
-                    'Automatic escalation failed.\n'
-                    'Reason:\n'
-                    'No department manager could be resolved from the HR hierarchy.\n\n'
-                    'Department: %(dept)s\n'
-                    'Manual escalation is required.\n'
-                    'Escalation attempted at: %(time)s'
+                    'No managers are connected to Telegram yet for the %(dept)s department.\n'
+                    'Time: %(time)s'
                 ) % {
                     'dept': claim._get_stage_label(claim.status),
                     'time': now_str,
@@ -991,33 +1219,35 @@ class SupplierClaimCycle(models.Model):
             'managers': [],
             'manager_users': [],
         }
+        STATUS_TO_DEPT_CODE = {
+            'inventory': 'inventory',
+            'purchase': 'purchase',
+            'suppliers': 'suppliers',
+            'tax_accounts': 'tax_accounts',
+            'bank_acc': 'bank_accounts',
+        }
+        dept_code = STATUS_TO_DEPT_CODE.get(self.status)
+        if not dept_code:
+            return result
+        try:
+            Employee = self.env['ab_hr_employee'].sudo()
+        except KeyError:
+            return result
+        Groups = self.env['res.groups'].sudo()
+        manager_employee = Groups._get_stored_manager(dept_code)
+        if not manager_employee:
+            return result
+        result['managers'].append(manager_employee)
+        if not manager_employee.user_id:
+            return result
+        result['manager_users'].append(manager_employee.user_id)
         stage_groups = self._get_stage_group_xmlids()
         group_xmlid = stage_groups.get(self.status)
-        if not group_xmlid:
-            return result
-        result['group_xmlid'] = group_xmlid
-        group = self.env.ref(group_xmlid, raise_if_not_found=False)
-        if not group or not group.sudo().user_ids:
-            return result
-        Employee = self.env['ab_hr_employee'].sudo()
-        seen_manager_user_ids = set()
-        for user in group.sudo().user_ids:
-            result['users'].append(user)
-            employee = Employee.search([('user_id', '=', user.id)], limit=1)
-            if not employee:
-                continue
-            result['employees'].append(employee)
-            result['departments'].append(employee.department_id)
-            manager = None
-            if employee.department_id and employee.department_id.manager_id:
-                manager = employee.department_id.manager_id
-            elif employee.parent_id:
-                manager = employee.parent_id
-            if manager:
-                result['managers'].append(manager)
-                if manager.user_id and manager.user_id.id not in seen_manager_user_ids:
-                    seen_manager_user_ids.add(manager.user_id.id)
-                    result['manager_users'].append(manager.user_id)
+        if group_xmlid:
+            result['group_xmlid'] = group_xmlid
+            group = self.env.ref(group_xmlid, raise_if_not_found=False)
+            if group:
+                result['users'] = list(group.sudo().user_ids)
         return result
 
     def _resolve_escalation_managers(self):
@@ -1142,6 +1372,60 @@ class SupplierClaimCycle(models.Model):
         }
         return labels.get(stage, stage)
 
+    def _get_display_stage_label(self, label):
+        normalized_label = (label or '').strip()
+        for stage, source_label in STAGE_LABELS.items():
+            if normalized_label == source_label:
+                return self._get_translated_stage_label(stage)
+        return label
+
+    def _format_escalation_sent_note(self, managers, department, time):
+        return _(
+            'Escalation notification was sent to:\n%(managers)s\n'
+            'Department: %(dept)s\n'
+            'Time: %(time)s'
+        ) % {
+            'managers': managers,
+            'dept': self._get_display_stage_label(department),
+            'time': time,
+        }
+
+    def _get_display_history_notes(self, notes):
+        notes = notes or ''
+        lines = notes.splitlines()
+        if not lines:
+            return notes
+
+        title = lines[0].strip()
+        if title not in (
+            'Escalation notification sent to:',
+            'Escalation notification was sent to:',
+            'تم إرسال إشعار التصعيد إلى:',
+        ):
+            return notes
+
+        department_index = next(
+            (
+                index for index, line in enumerate(lines)
+                if line.startswith('Department: ') or line.startswith('القسم: ')
+            ),
+            None,
+        )
+        time_index = next(
+            (
+                index for index, line in enumerate(lines)
+                if line.startswith('Time: ') or line.startswith('الوقت: ')
+            ),
+            None,
+        )
+        if department_index is None or time_index is None:
+            return notes
+
+        managers = '\n'.join(lines[1:department_index]).strip()
+        department = lines[department_index].split(':', 1)[1].strip()
+        time = lines[time_index].split(':', 1)[1].strip()
+        return self._format_escalation_sent_note(managers, department, time)
+
     def _get_visible_event_stages(self):
         if self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial():
             return list(self._get_workflow_sequence())
@@ -1157,6 +1441,9 @@ class SupplierClaimCycle(models.Model):
         histories = self.stage_history_ids.sorted(lambda h: (h.sequence, h.action_date or h.create_date))
         some_history_exists = bool(histories)
 
+        def display_datetime(value):
+            return format_datetime(self.env, value, dt_format='medium') if value else ''
+
         visible_event_stages = self._get_visible_event_stages()
         events_by_stage = {}
         for h in histories:
@@ -1169,7 +1456,8 @@ class SupplierClaimCycle(models.Model):
                     'event_type': 'rejection',
                     'user_name': h.user_id.display_name or '',
                     'action_date': h.action_date.isoformat() if h.action_date else '',
-                    'notes': h.notes or '',
+                    'display_date': display_datetime(h.action_date),
+                    'notes': self._get_display_history_notes(h.notes),
                 })
 
         timeline = []
@@ -1208,7 +1496,7 @@ class SupplierClaimCycle(models.Model):
                     )
                 )
 
-            stage_notes = last.notes or ''
+            stage_notes = self._get_display_history_notes(last.notes) if last else ''
 
             is_overdue = False
             if is_current and last and last.action_date:
@@ -1232,6 +1520,7 @@ class SupplierClaimCycle(models.Model):
                 'is_overdue': is_overdue,
                 'user_name': last.user_id.display_name if last and last.user_id else '',
                 'action_date': last.action_date.isoformat() if last and last.action_date else '',
+                'display_date': display_datetime(last.action_date if last else False),
                 'notes': stage_notes,
                 'parallel_decisions': parallel_decisions,
             })
@@ -1245,11 +1534,13 @@ class SupplierClaimCycle(models.Model):
                 'issue_description': issue.description or '',
                 'user_name': issue.user_id.display_name or '',
                 'action_date': issue.date.isoformat() if issue.date else '',
+                'display_date': display_datetime(issue.date),
                 'stage': issue.stage,
                 'issue_id': issue.id,
                 'resolved': issue.resolved,
                 'resolved_by': issue.resolved_by.display_name if issue.resolved_by else '',
                 'resolved_date': issue.resolved_date.isoformat() if issue.resolved_date else '',
+                'display_resolved_date': display_datetime(issue.resolved_date),
             }
             insert_at = 0
             for j, entry in enumerate(timeline):
@@ -1405,6 +1696,8 @@ class SupplierClaimCycle(models.Model):
                 L.append('<div class="scc-timeline-event-label">%s</div>' % event_title)
                 if entry.get('user_name'):
                     L.append('<div class="scc-timeline-meta">%s %s</div>' % (_('User:'), entry['user_name']))
+                if entry.get('notes'):
+                    L.append('<div class="scc-timeline-notes">%s</div>' % entry['notes'])
                 if entry.get('issue_title'):
                     L.append('<div class="scc-timeline-notes"><strong>%s:</strong> %s</div>' % (_('Issue'), entry['issue_title']))
                 if entry.get('issue_description'):
@@ -1434,7 +1727,7 @@ class SupplierClaimCycle(models.Model):
             L.append('<h3 class="%s">%s %s</h3>' % (title_class, current_stage['label'], overdue_badge))
 
             user_html = current_stage['user_name']
-            date_str = current_stage['action_date']
+            date_str = current_stage.get('display_date') or current_stage['action_date']
 
             if user_html or date_str:
                 L.append('<div class="scc-stage-grid">')
