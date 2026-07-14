@@ -30,7 +30,7 @@
         </record>
 
         <record id="base.group_system" model="res.groups">
-            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="implied_ids" eval="[(3, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
         </record>
     </data>
 </odoo>
