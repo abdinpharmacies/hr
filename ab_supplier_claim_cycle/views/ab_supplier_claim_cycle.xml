@@ -62,20 +62,16 @@
                                 class="btn-info"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
                                  invisible="status in ('closed', 'secretarial') or not can_secretarial_override"/>
+                        <button name="action_toggle_chatter" type="object"
+                                class="btn-secondary float-end"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
+                            💬
+                        </button>
                         <field name="status" invisible="1"/>
                     </header>
 
                     <sheet>
                         <div class="oe_button_box" name="button_box">
-                            <button name="%(action_ab_supplier_claim_escalation)d" type="action"
-                                    class="oe_stat_button" icon="fa-flag"
-                                    groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                    context="{'default_claim_id': id}">
-                                <div class="o_stat_info">
-                                    <field name="escalation_count" widget="statinfo"/>
-                                    <span class="o_stat_text">Escalations</span>
-                                </div>
-                            </button>
                         </div>
 
                         <field name="can_current_user_edit" invisible="1"/>
@@ -94,9 +90,20 @@
                         <field name="tax_amount" invisible="1"/>
                         <field name="net_payable" invisible="1"/>
                         <field name="tax_frozen" invisible="1"/>
+                        <field name="is_dev_override" invisible="1"/>
+                        <field name="is_escalation_viewer" invisible="1"/>
+                        <field name="show_dev_override_badge" invisible="1"/>
+                        <field name="show_telegram_connect_button" invisible="1"/>
+                        <field name="show_chatter" invisible="1"/>
+
+                        <!-- DEV OVERRIDE BADGE -->
+                        <div class="scc-dev-badge" invisible="not show_dev_override_badge"
+                             style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;margin-bottom:8px;background:linear-gradient(135deg,#9333ea,#7c3aed);color:#fff;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;">
+                            <span style="font-size:13px;">🧪</span>
+                            <span>Developer Override</span>
+                        </div>
 
                         <div class="scc-detail-alert" style="margin-bottom:16px;"
-                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                              invisible="status not in ('sign_check', 'supplier_notification')">
                             <span class="scc-detail-alert-icon" t-translation="off">⚠</span>
                             <span class="o_translate_inline">Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.</span>
@@ -117,11 +124,15 @@
                                         </span>
                                         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;"
                                               invisible="supplier_type != 'withholding_tax'">
-                                            🏛 <field name="supplier_type" class="o_inline_modifier"/> • <field name="tax_percentage" class="o_inline_modifier"/>%
+                                            🏛 <span>Withholding Tax</span> • <field name="tax_percentage" class="o_inline_modifier"/>%
                                         </span>
                                         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
-                                              invisible="supplier_type == 'withholding_tax'">
-                                            <field name="supplier_type" class="o_inline_modifier"/>
+                                              invisible="supplier_type != 'advance_payment'">
+                                            <span>Advance Payment</span>
+                                        </span>
+                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
+                                              invisible="supplier_type != 'non_taxable'">
+                                            <span>Non-Taxable</span>
                                         </span>
                                         <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
                                             📅 <field name="claim_month" readonly="status != 'secretarial'"/>
@@ -155,20 +166,20 @@
                                     <div class="scc-supplier-info-icon">💰</div>
                                     <div style="flex:1;min-width:0;">
                                         <div class="scc-supplier-info-label o_translate_inline">Check Amount</div>
-                                        <!-- Default: editable fields (before tax_accounts) -->
+                                        <!-- Default: editable fields (before tax stage) -->
                                         <div class="scc-supplier-info-value scc-tax-inline-wrapper"
-                                             invisible="status == 'tax_accounts' and has_tax_accounts">
+                                             invisible="has_tax_accounts and status in ('tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')">
                                             <span class="scc-tax-inline-amount-field">
                                                 <field name="amount_of_check" readonly="not can_current_user_edit" class="scc-amount-field"/>
                                                 <field name="currency_id" readonly="not can_current_user_edit" options="{'no_create': True}" class="scc-currency-field"/>
                                             </span>
                                         </div>
-                                        <!-- Tax accounts: premium pricing display -->
+                                        <!-- Tax discount display starts from the Tax Accounts stage -->
                                         <div class="scc-tax-pricing-display"
-                                             invisible="not (status == 'tax_accounts' and has_tax_accounts)">
+                                             invisible="not has_tax_accounts or status not in ('tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')">
                                             <div class="scc-tax-pricing-row">
                                                 <span class="scc-tax-old-amount">
-                                                    <field name="amount_of_check" widget="monetary" readonly="1"/>
+                                                    <field name="amount_of_check" widget="monetary" readonly="not can_current_user_edit"/>
                                                 </span>
                                                 <span class="scc-tax-discount-badge">-<field name="tax_percentage"/>%</span>
                                             </div>
@@ -191,49 +202,17 @@
                             </div>
                         </div>
 
-                        <!-- Escalation Warning Banner -->
-                        <div class="scc-escalation-banner scc-animate-in"
-                             invisible="not escalation_missing_manager"
-                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
-                            <div class="scc-escalation-banner-icon">⚠</div>
-                            <div class="scc-escalation-banner-body">
-                                <div class="scc-escalation-banner-title o_translate_inline">
-                                    No department manager could be resolved automatically.
+                        <div class="scc-tg-connect-wrapper" invisible="not show_telegram_connect_button">
+                            <div class="scc-tg-connect-card">
+                                <span class="scc-tg-connect-badge">Setup Required</span>
+                                <div class="scc-tg-connect-icon-wrap">
+                                    <span class="scc-tg-connect-icon">✈️</span>
                                 </div>
-                                <div class="scc-escalation-banner-sub">
-                                    <span class="o_translate_inline">Department:</span>
-                                    <span class="scc-escalation-banner-dept"><field name="status"/></span>
-                                </div>
-                                <div class="scc-escalation-banner-action o_translate_inline">
-                                    Please assign the escalation manually.
-                                </div>
-                                <div class="scc-escalation-banner-form">
-                                    <field name="assigned_escalation_user"
-                                           placeholder="Select user..."
-                                           class="scc-escalation-field"/>
-                                    <button name="action_assign_escalation_user" type="object"
-                                            string="Assign" class="btn-primary scc-escalation-btn"/>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Pending Escalation Acknowledgment Banner -->
-                        <div class="scc-escalation-banner scc-escalation-pending-banner scc-animate-in"
-                             invisible="not has_pending_escalation or escalation_missing_manager"
-                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
-                            <div class="scc-escalation-banner-icon">🔔</div>
-                            <div class="scc-escalation-banner-body">
-                                <div class="scc-escalation-banner-title o_translate_inline">
-                                    Escalation is pending acknowledgment.
-                                </div>
-                                <div class="scc-escalation-banner-sub">
-                                    <span class="o_translate_inline">Manager:</span>
-                                    <span class="scc-escalation-banner-dept"><field name="assigned_escalation_user"/></span>
-                                </div>
-                                <div class="scc-escalation-banner-form">
-                                    <button name="%(action_ab_supplier_claim_escalation)d" type="action"
-                                            string="View Escalations" class="btn-primary scc-escalation-btn"/>
-                                </div>
+                                <div class="scc-tg-connect-title">Telegram Not Connected</div>
+                                <div class="scc-tg-connect-sub">Connect your Telegram account to receive workflow approvals, escalation alerts, supplier claim notifications and real-time updates.</div>
+                                <button name="action_open_telegram_bot" type="object" class="scc-tg-connect-btn">
+                                    <span>✈️</span> Connect Telegram
+                                </button>
                             </div>
                         </div>
 
@@ -333,6 +312,18 @@
                                         <span class="scc-stage-field-label o_translate_inline">Contact Phone</span>
                                         <span class="scc-stage-field-value">
                                             <field name="contact_phone" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                        </span>
+                                    </div>
+                                    <div class="scc-stage-field">
+                                        <span class="scc-stage-field-label o_translate_inline">Email</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="supplier_email" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                        </span>
+                                    </div>
+                                    <div class="scc-stage-field">
+                                        <span class="scc-stage-field-label o_translate_inline">Delegate</span>
+                                        <span class="scc-stage-field-value">
+                                            <field name="delegate_phone_ids" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)" placeholder="—" widget="many2many_tags" options="{'no_create_edit': True}" context="{'default_partner_id': supplier_id}"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
@@ -465,7 +456,8 @@
                         </div>
                     </sheet>
 
-                    <chatter groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                    <chatter invisible="not show_chatter"
+                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
                 </form>
             </field>
         </record>
@@ -565,6 +557,24 @@
                   action="invoice_action"
                   groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
                   sequence="100"/>
+
+        <!-- Inherit ab_costcenter form: rename Mobile to Delegate Phone -->
+        <record id="ab_costcenter_view_form_inherit_claim_cycle" model="ir.ui.view">
+            <field name="name">ab_costcenter.view.form.inherit.claim.cycle</field>
+            <field name="model">ab_costcenter</field>
+            <field name="inherit_id" ref="ab_costcenter.ab_costcenter_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[hasclass('ab-dossier-card-row')][.//field[@name='mobile_phone']]" position="replace">
+                    <div class="ab-dossier-card-row">
+                        <div class="ab-dossier-card-row-icon"><i class="fa fa-truck" aria-hidden="true"/></div>
+                        <div class="ab-dossier-card-row-body">
+                            <div class="ab-dossier-card-row-label o_translate_inline">Delegate Phones</div>
+                            <div class="ab-dossier-card-row-value"><field name="all_delegate_phones" nolabel="1" placeholder="—"/></div>
+                        </div>
+                    </div>
+                </xpath>
+            </field>
+        </record>
 
     </data>
 </odoo>
