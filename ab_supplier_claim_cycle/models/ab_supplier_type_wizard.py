@@ -6,6 +6,7 @@ class SupplierTypeSetupWizard(models.TransientModel):
     _description = 'Supplier Type Setup Wizard'
 
     supplier_id = fields.Many2one('ab_costcenter', string='Supplier', required=True, readonly=True)
+    claim_id = fields.Many2one('ab_supplier_claim_cycle', string='Claim', required=True, readonly=True)
     supplier_type = fields.Selection(
         selection=[
             ('advance_payment', 'Advance Payment'),
@@ -17,5 +18,5 @@ class SupplierTypeSetupWizard(models.TransientModel):
     )
 
     def action_confirm(self):
-        self.sudo().supplier_id.supplier_type = self.supplier_type
+        self.claim_id.sudo().supplier_type = self.supplier_type
         return {'type': 'ir.actions.act_window_close'}
