@@ -4,7 +4,7 @@
     'license': 'LGPL-3',
     'category': 'Abdin',
     'version': '19.0.1.0.0',
-    'depends': ['ab_hr', 'base', 'mail', 'abdin_et', 'ab_costcenter', 'ab_store'],
+    'depends': ['ab_hr', 'ab_manpower_need', 'base', 'mail', 'abdin_et', 'ab_costcenter', 'ab_store'],
 
     'data': [
         'security/ir.model.access.csv',
