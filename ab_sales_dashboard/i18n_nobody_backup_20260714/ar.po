@@ -32,7 +32,7 @@ msgstr "%(from)s إلى %(to)s - %(stores)s"
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_config.py:0
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
 msgid "%s is required."
-msgstr "%s مطلوب."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__range_bucket__1_7_days
@@ -83,7 +83,7 @@ msgstr "آخر 30 يوم"
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_reconciliation.py:0
 msgid "A reconciliation job cannot be analyzed while it is running."
-msgstr "لا يمكن تحليل مهمة المطابقة أثناء تشغيلها."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -91,7 +91,7 @@ msgstr "لا يمكن تحليل مهمة المطابقة أثناء تشغيل
 msgid ""
 "A sales dashboard refresh is already running. Please wait for it to finish "
 "and try again."
-msgstr "يوجد تحديث للوحة بيانات المبيعات قيد التشغيل حاليا. يرجى الانتظار حتى ينتهي ثم المحاولة مرة أخرى."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -111,22 +111,22 @@ msgstr "كل الفروع"
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Analyze Coverage"
-msgstr "تحليل التغطية"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_job__state__analyzing
 msgid "Analyzing"
-msgstr "جاري التحليل"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__report_mode__archive
 msgid "Archive"
-msgstr "أرشفة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__archive_number
 msgid "Archive Number"
-msgstr "رقم الأرشيف"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__event_type__archive_read
@@ -142,29 +142,29 @@ msgstr "تحديث التقرير"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__archive_used
 msgid "Archive Used"
-msgstr "تم استخدام الأرشيف"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.constraint,message:ab_sales_dashboard.constraint_ab_sales_dashboard_report_archive_uniq_archive_number
 msgid "Archive number must be unique."
-msgstr "يجب أن يكون رقم الأرشيف فريدا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_archive__state__archived
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_search
 msgid "Archived"
-msgstr "مؤرشف"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__archived_at
 msgid "Archived At"
-msgstr "تاريخ الأرشفة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__archived_by
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_search
 msgid "Archived By"
-msgstr "تمت الأرشفة بواسطة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model,name:ab_sales_dashboard.model_ab_sales_dashboard_report_archive
@@ -175,7 +175,7 @@ msgstr "تقرير لوحة بيانات المبيعات"
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_form
 msgid "Archived Sales Report"
-msgstr "تقرير مبيعات مؤرشف"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.actions.act_window,name:ab_sales_dashboard.action_ab_sales_dashboard_report_archive
@@ -183,7 +183,7 @@ msgstr "تقرير مبيعات مؤرشف"
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_list
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_search
 msgid "Archived Sales Reports"
-msgstr "تقارير المبيعات المؤرشفة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -196,13 +196,13 @@ msgstr "لم يتم العثور على الفرع المحدد."
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
 msgid "Archived sales dashboard reports are immutable."
-msgstr "تقارير لوحة بيانات المبيعات المؤرشفة غير قابلة للتعديل."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
 msgid "Archived sales dashboard reports cannot be deleted."
-msgstr "لا يمكن حذف تقارير لوحة بيانات المبيعات المؤرشفة."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__attempt_count
@@ -229,7 +229,7 @@ msgstr "متوسط حجم النتيجة بالبايت"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_product_sales_report__average_selling_price
 msgid "Average Selling Price"
-msgstr "متوسط سعر البيع"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__avg_daily_growth_pct
@@ -244,24 +244,24 @@ msgstr "متوسط المبيعات اليومي"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__avg_products_per_invoice
 msgid "Avg Products Per Invoice"
-msgstr "متوسط المنتجات لكل فاتورة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__avg_products_sold_per_store
 msgid "Avg Products Sold Per Store"
-msgstr "متوسط المنتجات المباعة لكل فرع"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 msgid "Avg. Products / Invoice"
-msgstr "متوسط المنتجات / الفاتورة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 msgid "Avg. Products / Store"
-msgstr "متوسط المنتجات / الفرع"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__bearing_pct
@@ -304,22 +304,22 @@ msgstr ""
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__branch_day_count
 msgid "Branch Day Count"
-msgstr "عدد أيام الفروع"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_product_sales_report__branches_sold_in
 msgid "Branches Sold In"
-msgstr "الفروع التي تم البيع فيها"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Cancel"
-msgstr "إلغاء"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_form
 msgid "Cancel Archive"
-msgstr "إلغاء الأرشفة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_chunk__state__cancelled
@@ -327,13 +327,13 @@ msgstr "إلغاء الأرشفة"
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_archive__state__cancelled
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_search
 msgid "Cancelled"
-msgstr "ملغى"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_reconciliation.py:0
 msgid "Cancelled reconciliation jobs cannot be started."
-msgstr "لا يمكن بدء مهام المطابقة الملغاة."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -359,17 +359,17 @@ msgstr "الفئة"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__chunk_ids
 msgid "Chunk"
-msgstr "جزء"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__chunk_count
 msgid "Chunk Count"
-msgstr "عدد الأجزاء"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Chunks"
-msgstr "الأجزاء"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_fact_decision_form
@@ -408,12 +408,12 @@ msgstr "مكتملة"
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__completed_at
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__completed_at
 msgid "Completed At"
-msgstr "تاريخ الإكمال"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__completed_chunk_count
 msgid "Completed Chunk Count"
-msgstr "عدد الأجزاء المكتملة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_daily_store_fact__contract_net_amount
@@ -437,7 +437,7 @@ msgstr "حالة التغطية"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__covered_branch_days
 msgid "Covered Branch Days"
-msgstr "أيام الفروع المغطاة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__created_at
@@ -723,12 +723,12 @@ msgstr "الاسم المعروض"
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_chunk__state__done
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_job__state__done
 msgid "Done"
-msgstr "تم"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_job__state__draft
 msgid "Draft"
-msgstr "مسودة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__duration_ms
@@ -793,7 +793,7 @@ msgstr "كود صنف E-Plus"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__error_message
 msgid "Error Message"
-msgstr "رسالة الخطأ"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__event_date
@@ -810,7 +810,7 @@ msgstr "نوع الحدث"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_fact_coverage__fact_type
 msgid "Fact Type"
-msgstr "نوع البيان"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.constraint,message:ab_sales_dashboard.constraint_ab_sales_dashboard_fact_coverage_uniq_fact_coverage
@@ -832,17 +832,17 @@ msgstr "قرار مستوى تفاصيل البيانات"
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_sync_coverage__sync_state__failed
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_search
 msgid "Failed"
-msgstr "فشل"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__failed_branch_days
 msgid "Failed Branch Days"
-msgstr "أيام الفروع الفاشلة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__failed_chunk_count
 msgid "Failed Chunk Count"
-msgstr "عدد الأجزاء الفاشلة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -853,7 +853,7 @@ msgstr "تصفية حسب الفرع"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__report_mode__full
 msgid "Full"
-msgstr "كامل"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -864,7 +864,7 @@ msgstr "تقرير محدث بالكامل."
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_product_sales_report_search
 msgid "Has Quantity"
-msgstr "به كمية"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_product_sales_report_search
@@ -897,13 +897,13 @@ msgstr "المعرف"
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_form
 msgid "Integrity"
-msgstr "سلامة البيانات"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_config.py:0
 msgid "Invalid %s."
-msgstr "%s غير صالح."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -1008,7 +1008,7 @@ msgstr "اسم الصنف"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__item_section_available
 msgid "Item Section Available"
-msgstr "قسم الأصناف متاح"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_daily_item_fact__item_type
@@ -1032,7 +1032,7 @@ msgstr "ملخص الأصناف"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__job_id
 msgid "Job"
-msgstr "مهمة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_snapshot_form
@@ -1061,12 +1061,12 @@ msgstr "آخر 90 يوم"
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__last_error
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Last Error"
-msgstr "آخر خطأ"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__last_processed_date
 msgid "Last Processed Date"
-msgstr "آخر تاريخ معالجة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_collection_line__write_uid
@@ -1173,7 +1173,7 @@ msgstr "دواء مقابل غير دواء"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__missing_branch_days
 msgid "Missing Branch Days"
-msgstr "أيام الفروع الناقصة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__name
@@ -1199,7 +1199,7 @@ msgstr "لا يحقق طلب تقارير الموظفين أو العملاء �
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_reconciliation.py:0
 msgid "No E-Plus stores are available for reconciliation."
-msgstr "لا توجد فروع E-Plus متاحة للمطابقة."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -1265,13 +1265,13 @@ msgstr "يمكن لمديري لوحة المبيعات فقط الوصول إل
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
 msgid "Only sales dashboard managers can archive sales dashboard reports."
-msgstr "يمكن لمديري لوحة بيانات المبيعات فقط أرشفة تقارير المبيعات."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_reconciliation.py:0
 msgid "Only sales dashboard managers can run coverage reconciliation."
-msgstr "يمكن لمديري لوحة بيانات المبيعات فقط تشغيل مطابقة التغطية."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__operation_count
@@ -1299,17 +1299,17 @@ msgstr "ملخص محفوظ جزئي"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__payload_hash
 msgid "Payload Hash"
-msgstr "بصمة البيانات"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__payload_json
 msgid "Payload Json"
-msgstr "بيانات JSON"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__payload_size_bytes
 msgid "Payload Size Bytes"
-msgstr "حجم البيانات بالبايت"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_collection_line__pct_of_total
@@ -1320,7 +1320,7 @@ msgstr "النسبة من الإجمالي"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_chunk__state__pending
 msgid "Pending"
-msgstr "قيد الانتظار"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -1336,7 +1336,7 @@ msgstr "الأداء"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__persistence_duration_ms
 msgid "Persistence Duration Ms"
-msgstr "مدة الحفظ بالمللي ثانية"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__prev_avg_daily_sales
@@ -1352,7 +1352,7 @@ msgstr "السابق:"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__processed_branch_days
 msgid "Processed Branch Days"
-msgstr "أيام الفروع المعالجة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_daily_item_fact__product_id
@@ -1387,7 +1387,7 @@ msgstr "قراءة تقرير المنتجات"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__product_report_used
 msgid "Product Report Used"
-msgstr "تم استخدام تقرير المنتجات"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_fact_decision_form
@@ -1403,7 +1403,7 @@ msgstr "تقارير المنتجات"
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_product_sales_report_pivot
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_product_sales_report_search
 msgid "Product Sales Report"
-msgstr "تقرير مبيعات المنتجات"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_telemetry_search
@@ -1418,7 +1418,7 @@ msgstr "عدد مرات عدم توفر تقارير المنتجات"
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Progress"
-msgstr "التقدم"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -1442,7 +1442,7 @@ msgstr "مرتبة تنازلياً"
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_job__state__ready
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_search
 msgid "Ready"
-msgstr "جاهز"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_fact_decision_form
@@ -1462,12 +1462,12 @@ msgstr "سبب التوصية"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__report_mode__reconciliation
 msgid "Reconciliation"
-msgstr "المطابقة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Reconciliation Job"
-msgstr "مهمة المطابقة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.actions.act_window,name:ab_sales_dashboard.action_ab_sales_dashboard_reconciliation_job
@@ -1475,7 +1475,7 @@ msgstr "مهمة المطابقة"
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_list
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_search
 msgid "Reconciliation Jobs"
-msgstr "مهام المطابقة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__event_type__reconciliation_run
@@ -1485,7 +1485,7 @@ msgstr "تشغيل المطابقة"
 #. module: ab_sales_dashboard
 #: model:ir.model.constraint,message:ab_sales_dashboard.constraint_ab_sales_dashboard_reconciliation_chunk_uniq_job_sequence
 msgid "Reconciliation chunk sequence must be unique per job."
-msgstr "يجب أن يكون تسلسل جزء المطابقة فريدا داخل كل مهمة."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__refresh_date
@@ -1568,14 +1568,14 @@ msgstr "حجم النتيجة بالبايت"
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Retry Failed"
-msgstr "إعادة محاولة الفاشل"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_chunk__state__running
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_reconciliation_job__state__running
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_search
 msgid "Running"
-msgstr "قيد التشغيل"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -1596,7 +1596,7 @@ msgstr "عدد مرات البيع + الرصيد الحالي"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_daily_item_fact__sales_amount
 msgid "Sales Amount"
-msgstr "قيمة المبيعات"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -1739,7 +1739,7 @@ msgstr "تم تحديث لوحة بيانات المبيعات."
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
 msgid ""
 "Sales dashboard report archives must be created through the archive action."
-msgstr "يجب إنشاء أرشيفات تقارير لوحة بيانات المبيعات من خلال إجراء الأرشفة."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -1767,7 +1767,7 @@ msgstr "سنة محددة"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__sequence
 msgid "Sequence"
-msgstr "التسلسل"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__store_scope_bucket__single_store
@@ -1798,23 +1798,23 @@ msgstr "الكمية المباعة"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__source_duration_ms
 msgid "Source Duration Ms"
-msgstr "مدة المصدر بالمللي ثانية"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__source_snapshot_write_date
 msgid "Source Snapshot Write Date"
-msgstr "تاريخ كتابة نسخة المصدر"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_form
 msgid "Start Reconciliation"
-msgstr "بدء المطابقة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__started_at
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__started_at
 msgid "Started At"
-msgstr "تاريخ البدء"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_chunk__state
@@ -1823,7 +1823,7 @@ msgstr "تاريخ البدء"
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_reconciliation_job_search
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_search
 msgid "State"
-msgstr "الحالة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_daily_collection_fact__store_id
@@ -1919,7 +1919,7 @@ msgstr "قراءة الملخص"
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_fact_coverage__sync_state
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_sync_coverage__sync_state
 msgid "Sync State"
-msgstr "حالة المزامنة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.constraint,message:ab_sales_dashboard.constraint_ab_sales_dashboard_sync_coverage_uniq_sync_coverage
@@ -1931,14 +1931,14 @@ msgstr "يجب أن تكون بيانات الفرع اليومية فريدة �
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_fact_coverage__sync_state__synced
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_sync_coverage__sync_state__synced
 msgid "Synced"
-msgstr "تمت المزامنة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_daily_item_fact__synced_at
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_fact_coverage__synced_at
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_sync_coverage__synced_at
 msgid "Synced At"
-msgstr "تاريخ المزامنة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -1946,7 +1946,7 @@ msgstr "تاريخ المزامنة"
 msgid ""
 "The archived dashboard payload exceeds the configured safety limit of %s "
 "bytes."
-msgstr "تتجاوز بيانات اللوحة المؤرشفة حد الأمان المحدد وهو %s بايت."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -1954,7 +1954,7 @@ msgstr "تتجاوز بيانات اللوحة المؤرشفة حد الأما�
 msgid ""
 "The daily fact persistence scope exceeds the configured safety limit of %s "
 "rows."
-msgstr "يتجاوز نطاق حفظ البيانات اليومية حد الأمان المحدد وهو %s صفا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -1962,21 +1962,21 @@ msgstr "يتجاوز نطاق حفظ البيانات اليومية حد الأ
 msgid ""
 "The daily item fact persistence scope exceeds the configured safety limit of "
 "%s rows."
-msgstr "يتجاوز نطاق حفظ بيانات الأصناف اليومية حد الأمان المحدد وهو %s صفا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
 msgid ""
 "The daily sync coverage scope exceeds the configured safety limit of %s rows."
-msgstr "يتجاوز نطاق تغطية المزامنة اليومية حد الأمان المحدد وهو %s صفا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_service.py:0
 msgid ""
 "The generated daily fact rows exceed the configured safety limit of %s rows."
-msgstr "تتجاوز صفوف البيانات اليومية الناتجة حد الأمان المحدد وهو %s صفا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -1984,7 +1984,7 @@ msgstr "تتجاوز صفوف البيانات اليومية الناتجة ح�
 msgid ""
 "The generated daily item fact rows exceed the configured safety limit of %s "
 "rows."
-msgstr "تتجاوز صفوف بيانات الأصناف اليومية الناتجة حد الأمان المحدد وهو %s صفا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -1992,14 +1992,14 @@ msgstr "تتجاوز صفوف بيانات الأصناف اليومية الن�
 msgid ""
 "The reconciliation date span exceeds the configured branch-day safety limit "
 "of %s days."
-msgstr "تتجاوز فترة المطابقة حد أمان أيام الفروع المحدد وهو %s يوما."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
 #: code:addons/ab_sales_dashboard/models/sales_dashboard_reconciliation.py:0
 msgid ""
 "The reconciliation plan exceeds the configured safety limit of %s chunks."
-msgstr "تتجاوز خطة المطابقة حد الأمان المحدد وهو %s جزءا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -2007,7 +2007,7 @@ msgstr "تتجاوز خطة المطابقة حد الأمان المحدد وه
 msgid ""
 "The reconciliation scope exceeds the configured safety limit of %s branch-"
 "days."
-msgstr "يتجاوز نطاق المطابقة حد الأمان المحدد وهو %s يوم فرع."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -2040,7 +2040,7 @@ msgstr "لم يتم العثور على الفرع المحدد."
 msgid ""
 "The snapshot %(child_type)s line count exceeds the configured safety limit "
 "of %(limit)s rows."
-msgstr "يتجاوز عدد سطور نسخة التقرير %(child_type)s حد الأمان المحدد وهو %(limit)s صفا."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-python
@@ -2055,7 +2055,7 @@ msgstr "هذه الفروع ليس لها رقم E-Plus: %s"
 msgid ""
 "This view is calculated from saved daily data. Refresh from E-Plus to load "
 "unavailable detail sections."
-msgstr "يتم حساب هذه الشاشة من البيانات اليومية المحفوظة. استخدم التحديث من E-Plus لتحميل الأقسام التفصيلية غير المتاحة."
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -2066,7 +2066,7 @@ msgstr "الأصناف الأعلى مبيعاً"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_reconciliation_job__total_branch_days
 msgid "Total Branch Days"
-msgstr "إجمالي أيام الفروع"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -2094,7 +2094,7 @@ msgstr "إجمالي المبيعات"
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__total_units_sold
 msgid "Total Units Sold"
-msgstr "إجمالي الوحدات المباعة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__coverage_state__unavailable
@@ -2106,27 +2106,27 @@ msgstr "غير متاحة"
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__unique_products_sold
 msgid "Unique Products Sold"
-msgstr "عدد المنتجات الفريدة المباعة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_product_sales_report__units_sold
 msgid "Units Sold"
-msgstr "الوحدات المباعة"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__unsupported_customer_section
 msgid "Unsupported Customer Section"
-msgstr "قسم العملاء غير مدعوم"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__unsupported_item_section
 msgid "Unsupported Item Section"
-msgstr "قسم الأصناف غير مدعوم"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__unsupported_user_section
 msgid "Unsupported User Section"
-msgstr "قسم المستخدمين غير مدعوم"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -2143,7 +2143,7 @@ msgstr "بند المستخدم"
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__user_section_available
 msgid "User Section Available"
-msgstr "قسم المستخدمين متاح"
+msgstr ""
 
 #. module: ab_sales_dashboard
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_snapshot_form
@@ -2182,10 +2182,3 @@ msgstr "عن متوسط الفترة السابقة"
 
 #~ msgid "Apply"
 #~ msgstr "تطبيق"
-
-
-#. module: ab_sales_dashboard
-#. odoo-javascript
-#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
-msgid "Clear store filter"
-msgstr "مسح فلتر الفرع"

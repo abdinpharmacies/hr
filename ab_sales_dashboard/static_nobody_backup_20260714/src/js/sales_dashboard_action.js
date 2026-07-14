@@ -16,7 +16,6 @@ const UI_TEXT = {
     title: _t("Sales Dashboard"),
     subtitle: _t("Abdin Pharmacies - complete overview of sales performance"),
     allStores: _t("All Stores"),
-    clearStore: _t("Clear store filter"),
     refreshing: _t("Refreshing..."),
     refreshFromEplus: _t("Refresh from E-Plus"),
     filterByStore: _t("Filter by store"),
@@ -93,7 +92,6 @@ class SalesDashboardAction extends Component {
         this.applyDatePreset = this.applyDatePreset.bind(this);
         this.onStoreSearchInput = this.onStoreSearchInput.bind(this);
         this.selectStore = this.selectStore.bind(this);
-        this.clearStore = this.clearStore.bind(this);
         this.toggleStoreMenu = this.toggleStoreMenu.bind(this);
         this.openStoreMenu = this.openStoreMenu.bind(this);
         this.state = useState({
@@ -162,10 +160,6 @@ class SalesDashboardAction extends Component {
         this.state.storeSearch = storeName || this.ui.allStores;
         this.state.storeMenuOpen = false;
         return this.loadDashboard(false);
-    }
-
-    clearStore() {
-        return this.selectStore(0, this.ui.allStores);
     }
 
     applyDatePreset(preset) {
@@ -326,10 +320,6 @@ class SalesDashboardAction extends Component {
         return stores.filter((store) => (store.name || "").toLowerCase().includes(search)).slice(0, 50);
     }
 
-    get hasSelectedStore() {
-        return Boolean(Number(this.state.filters.store_id || 0));
-    }
-
     get dateFilterLabel() {
         const dateFrom = this.state.filters.date_from;
         const dateTo = this.state.filters.date_to;
@@ -485,15 +475,7 @@ SalesDashboardAction.template = xml`
                                     </div>
                                 </div>
                             </div>
-                            <button t-if="hasSelectedStore"
-                                    class="btn btn-outline-secondary ab_sales_dashboard__store_clear"
-                                    type="button"
-                                    t-att-title="ui.clearStore"
-                                    t-att-aria-label="ui.clearStore"
-                                    t-on-click="clearStore">
-                                <i class="fa fa-times"/>
-                            </button>
-                            <button class="o_searchview_dropdown_toggler btn btn-outline-secondary o-dropdown-caret o-dropdown dropdown-toggle dropdown"
+                            <button class="o_searchview_dropdown_toggler btn btn-outline-secondary o-dropdown-caret rounded-start-0 o-dropdown dropdown-toggle dropdown"
                                     type="button"
                                     tabindex="-1"
                                     t-att-title="ui.filterByStore"
