@@ -236,7 +236,7 @@
                   parent="ab_hr.manpower_root_menu"
                   id="ab_hr_manpower_hour_need_menu"
                   action="ab_hr_manpower_hour_need_action"
-                  groups="ab_hr.group_ab_hr_manpower_hour_need"
+                  groups="ab_hr.group_ab_hr_manager"
                   sequence="35"/>
 
         <delete model="ir.ui.menu"
