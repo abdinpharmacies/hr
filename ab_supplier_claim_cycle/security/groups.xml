@@ -43,7 +43,7 @@
         </record>
 
         <record id="supplier_claim_group_bank_acc" model="res.groups">
-            <field name="name">Supplier Claim Bank Acc</field>
+            <field name="name">Supplier Claim Bank Accounts</field>
             <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
         </record>
 
