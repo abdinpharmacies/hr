@@ -5,21 +5,21 @@
             <field name="name">ab_internal_shipment.delivery_wizard.form</field>
             <field name="model">ab_internal_shipment.delivery_wizard</field>
             <field name="arch" type="xml">
-                <form string="Capture Delivery Evidence">
+                <form string="Shipment Evidence">
                     <sheet>
                         <group>
                             <field name="shipment_id" invisible="1"/>
+                            <field name="operation" invisible="1"/>
                             <field name="evidence_required" invisible="1"/>
-                            <field name="delivery_proof_attachment_ids"
-                                   widget="ais_delivery_evidence"
-                                   nolabel="1"
-                                   options="{'accepted_file_extensions': 'image/*'}"/>
+                            <field name="evidence_attachment_ids"
+                                   widget="many2many_binary"
+                                   nolabel="1"/>
                         </group>
                     </sheet>
                     <footer>
-                        <button name="action_confirm_delivery"
+                        <button name="action_confirm"
                                 type="object"
-                                string="Deliver"
+                                string="Confirm"
                                 class="btn-primary"/>
                         <button string="Cancel" special="cancel" class="btn-secondary"/>
                     </footer>

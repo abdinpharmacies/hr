@@ -98,7 +98,7 @@ class InternalShipment(models.Model):
     )
 
     sender_type = fields.Selection(
-        [("branch", "Branch"), ("department", "Department"), ("employee", "Employee"), ("user", "User")],
+        [("branch", "Branch"), ("department", "Department"), ("employee", "Employee"), ("user", "Current User")],
         required=True,
         default=lambda self: self._get_current_user_sender_values()["sender_type"],
         tracking=True,
@@ -144,7 +144,7 @@ class InternalShipment(models.Model):
     )
 
     recipient_type = fields.Selection(
-        [("branch", "Branch"), ("department", "Department"), ("employee", "User")],
+        [("branch", "Branch"), ("department", "Department"), ("employee", "Employee")],
         required=True,
         default="department",
         tracking=True,
@@ -292,18 +292,26 @@ class InternalShipment(models.Model):
     )
     warehouse_department_id = fields.Many2one(
         "ab_hr_department",
-        string="Warehouse",
+        string="Selected Warehouse",
         ondelete="restrict",
         domain=[
             ("active", "=", True),
             ("name", "=ilike", "مخزن%"),
         ],
         default=lambda self: self._default_warehouse_department_id(),
-        help="Archive unused warehouse departments instead of deleting them to preserve shipment history.",
+        help="Keep unused warehouse departments archived instead of deleting them to preserve shipment history.",
         tracking=True,
     )
-    warehouse_received_by_id = fields.Many2one("res.users", readonly=True, index=True)
-    warehouse_received_date = fields.Datetime(readonly=True)
+    warehouse_received_by_id = fields.Many2one(
+        "res.users",
+        string="Warehouse Receipt User",
+        readonly=True,
+        index=True,
+    )
+    warehouse_received_date = fields.Datetime(
+        string="Warehouse Receipt Date",
+        readonly=True,
+    )
     can_current_user_receive_warehouse = fields.Boolean(
         compute="_compute_can_current_user_receive_warehouse",
         help="Compatibility field for pre-upgrade views. Warehouse receipt authorization is enforced by record rules.",
@@ -334,6 +342,51 @@ class InternalShipment(models.Model):
         string="Delivery Proof",
         help="Signed receipt, delivery image, or confirmation document.",
     )
+    waybill_attachment_ids = fields.Many2many(
+        "ir.attachment",
+        "ab_internal_shipment_waybill_rel",
+        "shipment_id",
+        "attachment_id",
+        string="Shipment Waybill",
+        help="Waybill or dispatch document uploaded when the shipment is dispatched.",
+    )
+    receipt_proof_attachment_ids = fields.Many2many(
+        "ir.attachment",
+        "ab_internal_shipment_receipt_proof_rel",
+        "shipment_id",
+        "attachment_id",
+        string="Proof of Receipt",
+        help="Proof document uploaded when warehouse or shipment receipt is confirmed.",
+    )
+    manual_evidence_attachment_ids = fields.Many2many(
+        "ir.attachment",
+        "ab_internal_shipment_evidence_rel",
+        "shipment_id",
+        "attachment_id",
+        string="Uploaded Evidence",
+        help="Shipment evidence uploaded by shipment participants.",
+    )
+    evidence_attachment_ids = fields.Many2many(
+        "ir.attachment",
+        compute="_compute_evidence_attachment_ids",
+        string="Evidence",
+        help="All evidence documents uploaded for this shipment.",
+    )
+
+    @api.depends(
+        "manual_evidence_attachment_ids",
+        "waybill_attachment_ids",
+        "delivery_proof_attachment_ids",
+        "receipt_proof_attachment_ids",
+    )
+    def _compute_evidence_attachment_ids(self):
+        for record in self:
+            record.evidence_attachment_ids = (
+                record.manual_evidence_attachment_ids
+                | record.waybill_attachment_ids
+                | record.delivery_proof_attachment_ids
+                | record.receipt_proof_attachment_ids
+            )
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -416,6 +469,7 @@ class InternalShipment(models.Model):
             for record in self:
                 record._create_followup_notes_from_commands(vals["note_history_ids"])
             return True
+        self._check_warehouse_not_changed_after_create(vals)
         res = super().write(vals)
         party_fields = {
             "sender_type",
@@ -429,6 +483,18 @@ class InternalShipment(models.Model):
         if draft_records and party_fields.intersection(vals):
             draft_records._set_current_holder_from_sender()
         return res
+
+    def _check_warehouse_not_changed_after_create(self, vals):
+        warehouse_fields = {"warehouse_department_id", "warehouse_store_id"}
+        changed_fields = warehouse_fields.intersection(vals)
+        if not changed_fields:
+            return
+        for record in self:
+            for field_name in changed_fields:
+                value = vals[field_name]
+                value_id = value[0] if isinstance(value, (list, tuple)) else value
+                if (value_id or False) != (record[field_name].id or False):
+                    raise UserError(_("The warehouse cannot be changed after the shipment is created."))
 
     @api.onchange("sender_type")
     def _onchange_sender_type(self):
@@ -729,30 +795,58 @@ class InternalShipment(models.Model):
 
     def action_send(self):
         self._check_current_user_can_manage_workflow()
+        if not self.env.context.get("skip_dispatch_evidence_wizard"):
+            self.ensure_one()
+            return self._open_shipment_attachment_wizard("dispatch")
+        return self._dispatch_shipment()
+
+    def _dispatch_shipment(self):
+        result = False
         for record in self:
-            recipient_users = record._get_party_users("recipient")
-            if recipient_users:
-                record.message_subscribe(partner_ids=recipient_users.partner_id.ids)
-        self._move_state("draft", "sent", "sent_by_id", "sent_date", "sent")
+            if record.state == "draft":
+                recipient_users = record._get_party_users("recipient")
+                if recipient_users:
+                    record.message_subscribe(partner_ids=recipient_users.partner_id.ids)
+                record._move_state("draft", "sent", "sent_by_id", "sent_date", "sent")
+                record._move_state("sent", "in_transit", False, False, "in_transit")
+            elif record.state == "sent":
+                record._move_state("sent", "in_transit", False, False, "in_transit")
+            elif record.state != "in_transit":
+                raise UserError(
+                    _("Shipment %(name)s cannot move from %(current)s to dispatched.")
+                    % {
+                        "name": record.display_name,
+                        "current": record.state,
+                    }
+                )
+            result = record.with_context(skip_delivery_evidence_wizard=True).action_deliver() or result
+        return result
 
     def action_mark_in_transit(self):
-        self._check_current_user_can_manage_workflow()
-        self._move_state(("sent",), "in_transit", False, False, "in_transit")
+        return self.action_send()
+
+    def _open_shipment_attachment_wizard(self, operation):
+        self.ensure_one()
+        titles = {
+            "dispatch": _("Upload Shipment Evidence"),
+            "delivery": _("Capture Delivery Evidence"),
+            "warehouse_receipt": _("Upload Warehouse Receipt Proof"),
+            "receipt": _("Upload Shipment Receipt Proof"),
+        }
+        return {
+            "type": "ir.actions.act_window",
+            "name": titles.get(operation, _("Shipment Evidence")),
+            "res_model": "ab_internal_shipment.delivery_wizard",
+            "view_mode": "form",
+            "target": "new",
+            "context": {
+                "default_shipment_id": self.id,
+                "default_operation": operation,
+            },
+        }
 
     def action_deliver(self):
         self._check_current_user_can_manage_workflow()
-        if not self.env.context.get("skip_delivery_evidence_wizard"):
-            self.ensure_one()
-            return {
-                "type": "ir.actions.act_window",
-                "name": _("Capture Delivery Evidence"),
-                "res_model": "ab_internal_shipment.delivery_wizard",
-                "view_mode": "form",
-                "target": "new",
-                "context": {
-                    "default_shipment_id": self.id,
-                },
-            }
         redirect_after_delivery = self._should_redirect_after_branch_delivery()
         delivered_to_warehouse = False
         for record in self:
@@ -798,11 +892,15 @@ class InternalShipment(models.Model):
         return False
 
     def action_confirm_warehouse_receipt(self):
+        unauthorized = self.filtered(lambda record: not record.can_current_user_receive_warehouse)
+        if unauthorized:
+            raise UserError(_("You are not allowed to confirm warehouse receipt for this shipment."))
+        if not self.env.context.get("skip_warehouse_receipt_evidence_wizard"):
+            self.ensure_one()
+            return self._open_shipment_attachment_wizard("warehouse_receipt")
         now = fields.Datetime.now()
         activity_type = self.env.ref("mail.mail_activity_data_todo", raise_if_not_found=False)
         for record in self:
-            if not record.can_current_user_receive_warehouse:
-                raise UserError(_("You are not allowed to confirm warehouse receipt for this shipment."))
             if record.state != "awaiting_warehouse_receipt":
                 raise UserError(
                     _("Shipment %(name)s cannot move from %(current)s to recipient receipt.")
@@ -842,6 +940,9 @@ class InternalShipment(models.Model):
         unauthorized = self.filtered(lambda record: not record.can_current_user_receive)
         if unauthorized:
             raise UserError(_("Only the designated recipient can confirm receipt for this shipment."))
+        if not self.env.context.get("skip_receipt_evidence_wizard"):
+            self.ensure_one()
+            return self._open_shipment_attachment_wizard("receipt")
         now = fields.Datetime.now()
         for record in self:
             if record.state != "awaiting_receipt":
