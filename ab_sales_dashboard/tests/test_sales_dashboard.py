@@ -1,6 +1,6 @@
 from contextlib import contextmanager
 from unittest.mock import patch
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from odoo import fields
 from odoo.exceptions import AccessError, UserError
@@ -51,6 +51,8 @@ class TestSalesDashboard(TransactionCase):
                 return "daily_collection"
             if "FROM #DAILY_ITEM_TYPE_FACT" in upper and "GROUP BY ITEM_TYPE" not in upper:
                 return "daily_medicine"
+            if "GROUP BY H.REPORT_DATE, H.STO_ID, H.EMP_ID" in upper:
+                return "daily_user_facts"
             if "CONTRACT_NET_AMOUNT" in upper and "GROUP BY REPORT_DATE, STO_ID" in upper:
                 return "daily_store_totals"
             if "FROM #INVOICE_BASE" in upper and "SUM(NET_AMOUNT)" in upper and "GROUP BY" not in upper:
@@ -165,6 +167,13 @@ class TestSalesDashboard(TransactionCase):
                         (fields.Date.to_date("2026-07-01"), 99001, "delivery", 4, 350.0),
                     ],
                 )
+            elif label == "daily_user_facts":
+                self._set_rows(
+                    ["report_date", "sto_id", "emp_id", "employee_name", "invoice_count", "total_sales"],
+                    [
+                        (fields.Date.to_date("2026-07-01"), 99001, 15, "Ahmed", 7, 600.0),
+                    ],
+                )
             elif label == "daily_item_facts":
                 self._set_rows(
                     [
@@ -206,6 +215,7 @@ class TestSalesDashboard(TransactionCase):
         cls.Archive = cls.env["ab.sales.dashboard.report.archive"]
         cls.ReconciliationJob = cls.env["ab.sales.dashboard.reconciliation.job"]
         cls.Telemetry = cls.env["ab.sales.dashboard.report.telemetry"]
+        cls.SyncState = cls.env["ab_sales_dashboard_sync_state"]
 
     def _patch_dashboard_connection(self, connection):
         @contextmanager
@@ -293,6 +303,14 @@ class TestSalesDashboard(TransactionCase):
                     "total_sales": 350.0,
                 },
             ],
+            "user_facts": [{
+                "report_date": fields.Date.to_date("2026-07-01"),
+                "store_eplus_id": store_eplus_id,
+                "employee_eplus_id": 15,
+                "employee_name": "Ahmed",
+                "invoice_count": 7,
+                "total_sales": 600.0,
+            }],
             "item_facts": [{
                 "report_date": fields.Date.to_date("2026-07-01"),
                 "store_eplus_id": store_eplus_id,
@@ -401,6 +419,33 @@ class TestSalesDashboard(TransactionCase):
                 })
         self.env["ab.sales.dashboard.fact.coverage"].sudo().create(coverage_rows)
         self.env["ab.sales.dashboard.daily.item.fact"].sudo().create(item_rows)
+
+    def _seed_daily_user_facts(self, store, date_from, days, total_sales=10.0, invoice_count=1):
+        start = fields.Date.to_date(date_from)
+        user_rows = []
+        coverage_rows = []
+        for day_offset in range(days):
+            report_date = fields.Date.add(start, days=day_offset)
+            coverage_rows.append({
+                "report_date": report_date,
+                "store_id": store.id,
+                "store_eplus_id": int(store.eplus_serial),
+                "fact_type": "user",
+                "sync_state": "synced",
+                "synced_at": fields.Datetime.now(),
+            })
+            user_rows.append({
+                "report_date": report_date,
+                "store_id": store.id,
+                "store_eplus_id": int(store.eplus_serial),
+                "employee_eplus_id": 15,
+                "employee_name": "Ahmed",
+                "invoice_count": invoice_count,
+                "total_sales": total_sales,
+                "synced_at": fields.Datetime.now(),
+            })
+        self.env["ab.sales.dashboard.fact.coverage"].sudo().create(coverage_rows)
+        self.env["ab_sales_dashboard_daily_user_fact"].sudo().create(user_rows)
 
     def _store(self, code="TEST-DASH-STORE", eplus_serial=99001):
         return self.env["ab_store"].sudo().create({
@@ -895,25 +940,62 @@ class TestSalesDashboard(TransactionCase):
             ("store_eplus_id", "=", store.eplus_serial),
         ])
         self.assertEqual(set(collection_facts.mapped("category")), {"cash", "delivery"})
+        user_facts = self.env["ab_sales_dashboard_daily_user_fact"].search([
+            ("report_date", "=", "2026-07-01"),
+            ("store_eplus_id", "=", store.eplus_serial),
+        ])
+        self.assertEqual(len(user_facts), 1)
+        self.assertEqual(user_facts.employee_eplus_id, 15)
+        user_coverage = self.env["ab.sales.dashboard.fact.coverage"].search([
+            ("report_date", "=", "2026-07-01"),
+            ("store_eplus_id", "=", store.eplus_serial),
+            ("fact_type", "=", "user"),
+        ])
+        self.assertEqual(len(user_coverage), 1)
 
     def test_dashboard_range_allows_31_days(self):
         filters = self.Snapshot._normalize_filters({
-            "date_from": "2026-07-01",
-            "date_to": "2026-07-31",
+            "date_from": "2026-05-01",
+            "date_to": "2026-05-31",
             "store_id": 0,
         })
-        self.assertEqual(filters["date_from"], fields.Date.to_date("2026-07-01"))
-        self.assertEqual(filters["date_to"], fields.Date.to_date("2026-07-31"))
+        self.assertEqual(filters["date_from"], fields.Date.to_date("2026-05-01"))
+        self.assertEqual(filters["date_to"], fields.Date.to_date("2026-05-31"))
 
-    def test_dashboard_range_above_configured_max_is_rejected_before_refresh(self):
-        with patch.object(type(self.Snapshot), "_create_snapshot") as mocked_create:
-            with self.assertRaises(UserError):
-                self.Snapshot.refresh_dashboard_data({
-                    "date_from": "2026-07-01",
-                    "date_to": "2026-08-01",
-                    "store_id": 0,
-                })
-        mocked_create.assert_not_called()
+    def test_dashboard_filters_exclude_today_as_incomplete(self):
+        today = fields.Date.context_today(self.Snapshot)
+        yesterday = today - timedelta(days=1)
+        filters = self.Snapshot._normalize_filters({
+            "date_from": fields.Date.to_string(today),
+            "date_to": fields.Date.to_string(today),
+            "store_id": 0,
+        })
+        self.assertEqual(filters["date_from"], yesterday)
+        self.assertEqual(filters["date_to"], yesterday)
+
+    def test_dashboard_refresh_allows_ranges_above_configured_dashboard_max(self):
+        payload = {"report_meta": {"mode": "summary"}}
+        with patch.object(type(self.SyncState), "sync_dashboard_date_range", return_value={
+            "synced_count": 62,
+            "skipped_count": 0,
+            "failed_count": 0,
+            "failed": [],
+        }) as mocked_sync, \
+             patch.object(type(self.Snapshot), "get_dashboard_data", return_value=payload) as mocked_get:
+            data = self.Snapshot.refresh_dashboard_data({
+                "date_from": "2026-06-01",
+                "date_to": "2026-08-01",
+                "store_id": 0,
+            })
+
+        args, kwargs = mocked_sync.call_args
+        self.assertEqual(args[0], fields.Date.to_date("2026-06-01"))
+        self.assertEqual(args[1], fields.Date.to_date("2026-08-01"))
+        self.assertEqual(kwargs["store_id"], 0)
+        self.assertTrue(kwargs["force_resync"])
+        self.assertTrue(kwargs["descending"])
+        mocked_get.assert_called_once()
+        self.assertEqual(data, payload)
 
     def test_dashboard_reversed_range_is_rejected_before_refresh(self):
         with patch.object(type(self.Snapshot), "_create_snapshot") as mocked_create:
@@ -1653,15 +1735,29 @@ class TestSalesDashboard(TransactionCase):
         self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_summary_days", "999999")
         self.assertEqual(self.Snapshot._summary_max_days(), 365)
 
-    def test_phase8_refresh_over_31_days_remains_rejected_without_bconnect(self):
+    def test_phase8_refresh_over_90_days_uses_dashboard_sync(self):
         service = self.env["ab.sales.dashboard.service"]
-        with patch.object(type(service), "fetch_refresh_data", side_effect=AssertionError("long refresh must not run")):
-            with self.assertRaises(UserError):
-                self.Snapshot.refresh_dashboard_data({
-                    "date_from": "2026-04-03",
-                    "date_to": "2026-07-01",
-                    "store_id": 0,
-                })
+        payload = {"report_meta": {"mode": "summary"}}
+        with patch.object(type(service), "fetch_refresh_data", side_effect=AssertionError("refresh must use dashboard sync")) as mocked_fetch, \
+             patch.object(type(self.SyncState), "sync_dashboard_date_range", return_value={
+                 "synced_count": 92,
+                 "skipped_count": 0,
+                 "failed_count": 0,
+                 "failed": [],
+             }) as mocked_sync, \
+             patch.object(type(self.Snapshot), "get_dashboard_data", return_value=payload):
+            data = self.Snapshot.refresh_dashboard_data({
+                "date_from": "2026-04-01",
+                "date_to": "2026-07-01",
+                "store_id": 0,
+            })
+
+        args, kwargs = mocked_sync.call_args
+        self.assertEqual(args[0], fields.Date.to_date("2026-04-01"))
+        self.assertEqual(args[1], fields.Date.to_date("2026-07-01"))
+        self.assertEqual(kwargs["store_id"], 0)
+        self.assertEqual(data, payload)
+        mocked_fetch.assert_not_called()
 
     def test_phase8_ninety_day_get_uses_daily_facts_without_bconnect(self):
         store = self._store(code="TEST-DASH-90D", eplus_serial=99030)
@@ -2056,6 +2152,24 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(data["total_product_sales"], 5400.0)
         self.assertTrue(data["item_lines"])
 
+    def test_phase10_summary_user_lines_use_daily_user_facts(self):
+        store = self._store(code="TEST-DASH-USER-SUMMARY", eplus_serial=99109)
+        self._seed_daily_summary_facts(store, "2026-04-03", 90, total_sales=100.0, invoice_count=2)
+        self._seed_daily_user_facts(store, "2026-04-03", 90, total_sales=80.0, invoice_count=1)
+        service = self.env["ab.sales.dashboard.service"]
+        with patch.object(type(service), "connect_eplus", side_effect=AssertionError("summary must not use B-Connect")):
+            data = self.Snapshot.get_dashboard_data({
+                "date_from": "2026-04-03",
+                "date_to": "2026-07-01",
+                "store_id": store.id,
+            })
+
+        self.assertEqual(data["report_meta"]["mode"], "summary")
+        self.assertEqual(data["report_meta"]["user_coverage_state"], "complete")
+        self.assertNotIn("sales_by_user", data["report_meta"]["unsupported_sections"])
+        self.assertEqual(data["user_lines"][0]["employee_eplus_id"], 15)
+        self.assertEqual(data["user_lines"][0]["total_sales"], 7200.0)
+
     def test_phase10_partial_item_coverage_does_not_fake_top_items(self):
         store = self._store(code="TEST-DASH-ITEM-PARTIAL", eplus_serial=99104)
         self._seed_daily_summary_facts(store, "2026-06-01", 32, total_sales=10.0, invoice_count=1)
@@ -2070,6 +2184,90 @@ class TestSalesDashboard(TransactionCase):
         self.assertIn("top_items", data["report_meta"]["unsupported_sections"])
         self.assertEqual(data["item_lines"], [])
         self.assertEqual(data["unique_products_sold"], 0)
+
+    def test_phase10_daily_user_facts_are_sparse_but_coverage_is_recorded(self):
+        store = self._store(code="TEST-DASH-USER-SPARSE", eplus_serial=99110)
+        filters = {
+            "date_from": fields.Date.to_date("2026-07-01"),
+            "date_to": fields.Date.to_date("2026-07-01"),
+            "store_id": store.id,
+        }
+        payload = self._daily_payload(store.eplus_serial)
+        payload["user_facts"] = []
+        self.Snapshot._upsert_daily_facts(filters, payload)
+
+        self.assertFalse(self.env["ab_sales_dashboard_daily_user_fact"].search([
+            ("report_date", "=", "2026-07-01"),
+            ("store_eplus_id", "=", store.eplus_serial),
+        ]))
+        user_coverage = self.env["ab.sales.dashboard.fact.coverage"].search([
+            ("report_date", "=", "2026-07-01"),
+            ("store_eplus_id", "=", store.eplus_serial),
+            ("fact_type", "=", "user"),
+        ])
+        self.assertEqual(len(user_coverage), 1)
+
+    def test_dashboard_sync_wizard_accepts_ranges_over_dashboard_limit_day_by_day(self):
+        store = self._store(code="TEST-DASH-SYNC-WIZ", eplus_serial=99111)
+        snapshot = self._snapshot_record("2026-05-01", "2026-05-01", store)
+        with patch.object(type(self.Snapshot), "_create_snapshot", return_value=snapshot) as mocked_create:
+            result = self.SyncState.sync_dashboard_date_range(
+                "2026-05-01",
+                "2026-06-05",
+                store_id=store.id,
+                force_resync=True,
+            )
+
+        self.assertEqual(result["synced_count"], 36)
+        self.assertEqual(result["failed_count"], 0)
+        self.assertEqual(mocked_create.call_count, 36)
+        called_dates = [call_args.args[0]["date_from"] for call_args in mocked_create.call_args_list]
+        self.assertEqual(called_dates[0], fields.Date.to_date("2026-06-05"))
+        self.assertEqual(called_dates[-1], fields.Date.to_date("2026-05-01"))
+
+    def test_dashboard_sync_rejects_today_and_future_dates(self):
+        today = fields.Date.context_today(self.SyncState)
+        with self.assertRaises(UserError):
+            self.SyncState.sync_dashboard_date_range(today, today, force_resync=True)
+
+    def test_dashboard_sync_last_90_cron_uses_force_resync_range(self):
+        wizard_model = self.env["ab_sales_dashboard_sync_wizard"]
+        with patch.object(type(self.SyncState), "sync_dashboard_date_range", return_value={
+            "synced_count": 90,
+            "skipped_count": 0,
+            "failed_count": 0,
+            "failed": [],
+        }) as mocked_sync:
+            wizard_model.cron_sync_last_90_dashboard_days()
+
+        args, kwargs = mocked_sync.call_args
+        date_from = fields.Date.to_date(args[0])
+        date_to = fields.Date.to_date(args[1])
+        self.assertEqual((date_to - date_from).days, 89)
+        self.assertTrue(kwargs["force_resync"])
+        self.assertTrue(kwargs["descending"])
+
+    def test_dashboard_sync_claims_done_days_descending_by_cursor(self):
+        store_values = self.SyncState._store_scope_values(0)
+        states = self.SyncState.create([
+            dict(store_values, sync_date=fields.Date.to_date("2026-07-01"), state="done"),
+            dict(store_values, sync_date=fields.Date.to_date("2026-07-02"), state="done"),
+            dict(store_values, sync_date=fields.Date.to_date("2026-07-03"), state="done"),
+        ])
+        self.SyncState._set_sync_cursor("all", fields.Date.to_date("2026-07-03"))
+        claimed = self.SyncState._claim_next_sync_state(
+            fields.Date.to_date("2026-07-01"),
+            fields.Date.to_date("2026-07-03"),
+        )
+        self.assertEqual(claimed.sync_date, fields.Date.to_date("2026-07-02"))
+
+        self.SyncState._set_sync_cursor("all", fields.Date.to_date("2026-07-01"))
+        claimed = self.SyncState._claim_next_sync_state(
+            fields.Date.to_date("2026-07-01"),
+            fields.Date.to_date("2026-07-03"),
+        )
+        self.assertEqual(claimed.sync_date, fields.Date.to_date("2026-07-03"))
+        self.assertEqual(len(states), 3)
 
     def test_phase10_product_sales_report_is_not_top20_limited(self):
         store = self._store(code="TEST-DASH-PRODUCT-REPORT", eplus_serial=99105)

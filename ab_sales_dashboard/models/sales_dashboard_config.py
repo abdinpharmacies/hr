@@ -151,8 +151,9 @@ class SalesDashboardConfigMixin(models.AbstractModel):
             if date_to < date_from:
                 raise UserError(_("Date To must be greater than or equal to Date From."))
             day_count = (date_to - date_from).days + 1
-        max_days = max_days or self._dashboard_max_days()
-        if day_count > max_days:
+        if max_days is None:
+            max_days = self._dashboard_max_days()
+        if max_days and day_count > max_days:
             raise UserError(
                 (limit_message or _("The selected reporting period exceeds the maximum allowed dashboard range of %s days.")) % max_days
             )

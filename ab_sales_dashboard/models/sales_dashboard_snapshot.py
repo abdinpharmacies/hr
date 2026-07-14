@@ -18,7 +18,7 @@ COVERAGE_COMPLETE = "complete"
 COVERAGE_PARTIAL = "partial"
 COVERAGE_UNAVAILABLE = "unavailable"
 SUMMARY_UNSUPPORTED_SECTIONS = ("sales_by_user", "top_items", "customer_sales")
-PRODUCT_SUMMARY_UNSUPPORTED_SECTIONS = ("sales_by_user", "customer_sales")
+CUSTOMER_SUMMARY_UNSUPPORTED_SECTIONS = ("customer_sales",)
 
 
 class SalesDashboardSnapshot(models.Model):
@@ -162,8 +162,7 @@ class SalesDashboardSnapshot(models.Model):
         started = time.monotonic()
         filters = self._normalize_filters(
             filters,
-            max_days=self._summary_max_days(),
-            limit_message=_("The selected reporting period exceeds the maximum allowed summary range of %s days."),
+            max_days=False,
         )
         requested_days = self._requested_days(filters)
         report_mode = REPORT_MODE_SUMMARY if requested_days > self._dashboard_max_days() else REPORT_MODE_FULL
@@ -194,20 +193,12 @@ class SalesDashboardSnapshot(models.Model):
 
     @api.model
     def refresh_dashboard_data(self, filters=None):
-        try:
-            filters = self._normalize_filters(filters, require_dates=True)
-            self._validate_dashboard_range(filters)
-        except UserError:
-            normalized = dict(filters or {})
-            _logger.info(
-                "event=sales_dashboard_long_refresh_rejected date_from=%s date_to=%s store_id=%s max_days=%s",
-                normalized.get("date_from"),
-                normalized.get("date_to"),
-                normalized.get("store_id") or 0,
-                self._dashboard_max_days(),
-            )
-            raise
-        store_count = self._refresh_store_count(filters)
+        filters = self._normalize_filters(
+            filters,
+            require_dates=True,
+            max_days=False,
+        )
+        store_count = self._refresh_store_count({"store_id": 0})
         started = time.monotonic()
         _logger.info(
             "event=sales_dashboard_refresh_started date_from=%s date_to=%s store_id=%s store_count=%s",
@@ -217,20 +208,26 @@ class SalesDashboardSnapshot(models.Model):
             store_count,
         )
         try:
-            with self._sales_dashboard_refresh_lock():
-                # The dashboard button is a fetch/update action: it always reads the
-                # selected period and branch scope from E-Plus, then upserts the report.
-                snapshot = self.sudo()._create_snapshot(filters)
+            sync_result = self.env["ab_sales_dashboard_sync_state"].sudo().sync_dashboard_date_range(
+                filters["date_from"],
+                filters["date_to"],
+                store_id=0,
+                force_resync=True,
+                descending=True,
+            )
             duration_ms = int((time.monotonic() - started) * 1000)
             _logger.info(
-                "event=sales_dashboard_refresh_completed date_from=%s date_to=%s store_id=%s store_count=%s duration_ms=%s status=success",
+                "event=sales_dashboard_refresh_completed date_from=%s date_to=%s store_id=%s store_count=%s duration_ms=%s synced_days=%s skipped_days=%s failed_days=%s status=success",
                 filters["date_from"],
                 filters["date_to"],
                 filters["store_id"],
                 store_count,
                 duration_ms,
+                sync_result["synced_count"],
+                sync_result["skipped_count"],
+                sync_result["failed_count"],
             )
-            result = self._serialize_dashboard(snapshot, filters)
+            result = self.get_dashboard_data(filters)
             self._record_top_level_telemetry(result, filters, started, event_type="dashboard_refresh")
             return result
         except UserError:
@@ -257,6 +254,47 @@ class SalesDashboardSnapshot(models.Model):
             )
             self._record_top_level_telemetry(None, filters, started, event_type="dashboard_refresh")
             raise
+
+    @api.model
+    def start_dashboard_sync(self, filters=None):
+        filters = self._normalize_filters(
+            filters,
+            require_dates=True,
+            max_days=False,
+        )
+        return self.env["ab_sales_dashboard_sync_state"].sudo().start_dashboard_sync_range(
+            filters["date_from"],
+            filters["date_to"],
+            store_id=0,
+            force_resync=True,
+        )
+
+    @api.model
+    def get_dashboard_sync_progress(self, filters=None):
+        filters = self._normalize_filters(
+            filters,
+            require_dates=True,
+            max_days=False,
+        )
+        return self.env["ab_sales_dashboard_sync_state"].sudo().dashboard_sync_progress(
+            filters["date_from"],
+            filters["date_to"],
+            store_id=0,
+        )
+
+    @api.model
+    def process_dashboard_sync_day(self, filters=None):
+        filters = self._normalize_filters(
+            filters,
+            require_dates=True,
+            max_days=False,
+        )
+        return self.env["ab_sales_dashboard_sync_state"].sudo().process_next_dashboard_sync_day(
+            filters["date_from"],
+            filters["date_to"],
+            store_id=0,
+            force_resync=True,
+        )
 
     @api.model
     def _record_top_level_telemetry(self, result, filters, started, event_type=None, report_mode=None):
@@ -514,12 +552,17 @@ class SalesDashboardSnapshot(models.Model):
     def _normalize_filters(self, filters, require_dates=False, max_days=None, limit_message=None):
         filters = dict(filters or {})
         today = fields.Date.context_today(self)
-        first_day = date(today.year, today.month, 1)
+        latest_report_date = today - timedelta(days=1)
+        first_day = date(latest_report_date.year, latest_report_date.month, 1)
         if require_dates and (not filters.get("date_from") or not filters.get("date_to")):
             missing_label = _("Date From") if not filters.get("date_from") else _("Date To")
             raise UserError(_("%s is required.") % missing_label)
         date_from = self._coerce_dashboard_date(filters.get("date_from") or first_day, _("Date From"))
-        date_to = self._coerce_dashboard_date(filters.get("date_to") or today, _("Date To"))
+        date_to = self._coerce_dashboard_date(filters.get("date_to") or latest_report_date, _("Date To"))
+        if date_to >= today:
+            date_to = latest_report_date
+        if date_from >= today:
+            date_from = latest_report_date
         self._validate_dashboard_date_range(date_from, date_to, max_days=max_days, limit_message=limit_message)
         store_id = int(filters.get("store_id") or 0)
         return {"date_from": date_from, "date_to": date_to, "store_id": store_id}
@@ -638,7 +681,7 @@ class SalesDashboardSnapshot(models.Model):
             "has_snapshot": bool(snapshot),
             "data_source": "snapshot" if snapshot else "none",
             "summary_only": bool(summary_only),
-            "report_meta": self._full_report_meta(filters, source="snapshot" if snapshot else "none"),
+            "report_meta": self._full_report_meta(filters, source="snapshot") if snapshot else self._cache_report_meta(filters),
         }
         if not snapshot:
             data.update({
@@ -695,6 +738,26 @@ class SalesDashboardSnapshot(models.Model):
         })
         self._log_dashboard_serialization(started, filters, data)
         return data
+
+    @api.model
+    def _cache_report_meta(self, filters):
+        stores = self._fact_scope_stores(filters)
+        store_eplus_ids = [int(store.eplus_serial) for store in stores if store.eplus_serial]
+        coverage = self._sync_coverage_metrics(filters["date_from"], filters["date_to"], store_eplus_ids)
+        item_coverage = self._fact_coverage_metrics(filters["date_from"], filters["date_to"], store_eplus_ids, "item")
+        user_coverage = self._fact_coverage_metrics(filters["date_from"], filters["date_to"], store_eplus_ids, "user")
+        unsupported_sections = list(CUSTOMER_SUMMARY_UNSUPPORTED_SECTIONS)
+        if item_coverage["coverage_state"] != COVERAGE_COMPLETE:
+            unsupported_sections.append("top_items")
+        if user_coverage["coverage_state"] != COVERAGE_COMPLETE:
+            unsupported_sections.append("sales_by_user")
+        return self._summary_report_meta(
+            filters,
+            coverage=coverage,
+            item_coverage=item_coverage,
+            user_coverage=user_coverage,
+            unsupported_sections=unsupported_sections,
+        )
 
     @api.model
     def _serialize_dashboard_payload(self, payload, filters, source=False):
@@ -755,6 +818,7 @@ class SalesDashboardSnapshot(models.Model):
             "date_to": fields.Date.to_string(filters["date_to"]),
             "requested_days": requested_days,
             "covered_days": requested_days,
+            "fully_covered_days": requested_days,
             "missing_days": 0,
             "store_count": store_count,
             "covered_store_days": expected_store_days,
@@ -766,10 +830,11 @@ class SalesDashboardSnapshot(models.Model):
         }
 
     @api.model
-    def _summary_report_meta(self, filters, coverage=None, previous_coverage=None, item_coverage=None, unsupported_sections=None, unavailable_comparisons=None):
+    def _summary_report_meta(self, filters, coverage=None, previous_coverage=None, item_coverage=None, user_coverage=None, unsupported_sections=None, unavailable_comparisons=None):
         coverage = coverage or {}
         previous_coverage = previous_coverage or {}
         item_coverage = item_coverage or {}
+        user_coverage = user_coverage or {}
         return {
             "mode": REPORT_MODE_SUMMARY,
             "coverage_state": coverage.get("coverage_state", COVERAGE_UNAVAILABLE),
@@ -777,6 +842,7 @@ class SalesDashboardSnapshot(models.Model):
             "date_to": fields.Date.to_string(filters["date_to"]),
             "requested_days": coverage.get("requested_days", self._requested_days(filters)),
             "covered_days": coverage.get("covered_days", 0),
+            "fully_covered_days": coverage.get("fully_covered_days", 0),
             "missing_days": coverage.get("missing_days", self._requested_days(filters)),
             "store_count": coverage.get("store_count", 0),
             "covered_store_days": coverage.get("covered_store_days", 0),
@@ -787,11 +853,18 @@ class SalesDashboardSnapshot(models.Model):
             "previous_covered_store_days": previous_coverage.get("covered_store_days", 0),
             "previous_expected_store_days": previous_coverage.get("expected_store_days", 0),
             "item_coverage_state": item_coverage.get("coverage_state", COVERAGE_UNAVAILABLE),
+            "item_fully_covered_days": item_coverage.get("fully_covered_days", 0),
             "item_covered_store_days": item_coverage.get("covered_store_days", 0),
             "item_expected_store_days": item_coverage.get("expected_store_days", 0),
             "item_missing_store_days": item_coverage.get("missing_store_days", item_coverage.get("expected_store_days", 0)),
             "item_coverage_pct": item_coverage.get("coverage_pct", 0.0),
-            "unsupported_sections": list(unsupported_sections or SUMMARY_UNSUPPORTED_SECTIONS),
+            "user_coverage_state": user_coverage.get("coverage_state", COVERAGE_UNAVAILABLE),
+            "user_fully_covered_days": user_coverage.get("fully_covered_days", 0),
+            "user_covered_store_days": user_coverage.get("covered_store_days", 0),
+            "user_expected_store_days": user_coverage.get("expected_store_days", 0),
+            "user_missing_store_days": user_coverage.get("missing_store_days", user_coverage.get("expected_store_days", 0)),
+            "user_coverage_pct": user_coverage.get("coverage_pct", 0.0),
+            "unsupported_sections": list(SUMMARY_UNSUPPORTED_SECTIONS if unsupported_sections is None else unsupported_sections),
             "unavailable_comparisons": list(unavailable_comparisons or []),
             "source": "daily_facts",
         }
@@ -840,8 +913,9 @@ class SalesDashboardSnapshot(models.Model):
 
         store_fact_vals = self._normalize_store_fact_rows(daily_payload, store_by_eplus, report_dates)
         collection_fact_vals = self._normalize_collection_fact_rows(daily_payload, store_by_eplus, report_dates, categories)
+        user_fact_vals = self._normalize_user_fact_rows(daily_payload, store_by_eplus, report_dates)
         item_fact_vals = self._normalize_item_fact_rows(daily_payload, store_by_eplus, report_dates)
-        actual_fact_count = len(store_fact_vals) + len(collection_fact_vals)
+        actual_fact_count = len(store_fact_vals) + len(collection_fact_vals) + len(user_fact_vals)
         max_fact_rows = self._max_daily_fact_rows()
         if actual_fact_count > max_fact_rows:
             _logger.warning(
@@ -878,6 +952,13 @@ class SalesDashboardSnapshot(models.Model):
             filters,
             store_eplus_ids,
         )
+        if "user_facts" in daily_payload:
+            self._replace_fact_scope(
+                "ab_sales_dashboard_daily_user_fact",
+                list(user_fact_vals.values()),
+                filters,
+                store_eplus_ids,
+            )
         if "item_facts" in daily_payload:
             self._replace_fact_scope(
                 "ab.sales.dashboard.daily.item.fact",
@@ -892,6 +973,13 @@ class SalesDashboardSnapshot(models.Model):
                 filters,
                 len(stores),
                 "item",
+            )
+        if "user_facts" in daily_payload:
+            self._persist_fact_coverage(
+                self._build_fact_coverage_rows(report_dates, stores, "user"),
+                filters,
+                len(stores),
+                "user",
             )
         self._invalidate_daily_reporting_models()
 
@@ -947,6 +1035,33 @@ class SalesDashboardSnapshot(models.Model):
                 "category": category,
                 "invoice_count": 0,
                 "total_sales": 0.0,
+            })
+            data["invoice_count"] += int(row.get("invoice_count") or 0)
+            data["total_sales"] += float(row.get("total_sales") or 0.0)
+        return rows_by_key
+
+    @api.model
+    def _normalize_user_fact_rows(self, daily_payload, store_by_eplus, report_dates):
+        allowed_dates = set(report_dates)
+        rows_by_key = {}
+        synced_at = fields.Datetime.now()
+        for row in daily_payload.get("user_facts", []):
+            report_date = fields.Date.to_date(row.get("report_date"))
+            store_eplus_id = int(row.get("store_eplus_id") or 0)
+            employee_eplus_id = int(row.get("employee_eplus_id") or 0)
+            store = store_by_eplus.get(store_eplus_id)
+            if not store or report_date not in allowed_dates:
+                continue
+            key = (report_date, store_eplus_id, employee_eplus_id)
+            data = rows_by_key.setdefault(key, {
+                "report_date": report_date,
+                "store_id": store.id,
+                "store_eplus_id": store_eplus_id,
+                "employee_eplus_id": employee_eplus_id,
+                "employee_name": row.get("employee_name") or str(employee_eplus_id),
+                "invoice_count": 0,
+                "total_sales": 0.0,
+                "synced_at": synced_at,
             })
             data["invoice_count"] += int(row.get("invoice_count") or 0)
             data["total_sales"] += float(row.get("total_sales") or 0.0)
@@ -1098,6 +1213,27 @@ class SalesDashboardSnapshot(models.Model):
                 ],
                 "conflict": ["report_date", "store_eplus_id", "category"],
                 "update": ["store_id", "invoice_count", "total_sales"],
+            },
+            "ab_sales_dashboard_daily_user_fact": {
+                "table": "ab_sales_dashboard_daily_user_fact",
+                "columns": [
+                    "report_date",
+                    "store_id",
+                    "store_eplus_id",
+                    "employee_eplus_id",
+                    "employee_name",
+                    "invoice_count",
+                    "total_sales",
+                    "synced_at",
+                ],
+                "conflict": ["report_date", "store_eplus_id", "employee_eplus_id"],
+                "update": [
+                    "store_id",
+                    "employee_name",
+                    "invoice_count",
+                    "total_sales",
+                    "synced_at",
+                ],
             },
             "ab.sales.dashboard.daily.item.fact": {
                 "table": "ab_sales_dashboard_daily_item_fact",
@@ -1277,6 +1413,7 @@ class SalesDashboardSnapshot(models.Model):
         for model_name in (
             "ab.sales.dashboard.daily.store.fact",
             "ab.sales.dashboard.daily.collection.fact",
+            "ab_sales_dashboard_daily_user_fact",
             "ab.sales.dashboard.daily.item.fact",
             "ab.sales.dashboard.sync.coverage",
             "ab.sales.dashboard.fact.coverage",
@@ -1342,6 +1479,7 @@ class SalesDashboardSnapshot(models.Model):
         prev_from, prev_to = self._previous_filter_window(filters["date_from"], filters["date_to"])
         previous_coverage = self._sync_coverage_metrics(prev_from, prev_to, store_eplus_ids)
         item_coverage = self._fact_coverage_metrics(filters["date_from"], filters["date_to"], store_eplus_ids, "item")
+        user_coverage = self._fact_coverage_metrics(filters["date_from"], filters["date_to"], store_eplus_ids, "user")
         query_started = time.monotonic()
         current_totals = self._daily_store_fact_totals(filters["date_from"], filters["date_to"], store_eplus_ids)
         if previous_coverage["coverage_state"] == COVERAGE_COMPLETE:
@@ -1374,16 +1512,24 @@ class SalesDashboardSnapshot(models.Model):
         if item_coverage["coverage_state"] == COVERAGE_COMPLETE:
             product_kpis = self._daily_item_product_kpis(filters["date_from"], filters["date_to"], store_eplus_ids, invoice_count)
             item_lines = self._summary_top_items_from_daily_item_facts(filters["date_from"], filters["date_to"], store_eplus_ids)
-            unsupported_sections = PRODUCT_SUMMARY_UNSUPPORTED_SECTIONS
         else:
             product_kpis = self._empty_product_kpis()
             item_lines = []
-            unsupported_sections = SUMMARY_UNSUPPORTED_SECTIONS
+        if user_coverage["coverage_state"] == COVERAGE_COMPLETE:
+            user_lines = self._summary_user_lines_from_daily_user_facts(filters["date_from"], filters["date_to"], store_eplus_ids, total_sales)
+        else:
+            user_lines = []
+        unsupported_sections = list(CUSTOMER_SUMMARY_UNSUPPORTED_SECTIONS)
+        if item_coverage["coverage_state"] != COVERAGE_COMPLETE:
+            unsupported_sections.append("top_items")
+        if user_coverage["coverage_state"] != COVERAGE_COMPLETE:
+            unsupported_sections.append("sales_by_user")
         report_meta = self._summary_report_meta(
             filters,
             coverage=coverage,
             previous_coverage=previous_coverage,
             item_coverage=item_coverage,
+            user_coverage=user_coverage,
             unsupported_sections=unsupported_sections,
             unavailable_comparisons=unavailable_comparisons,
         )
@@ -1406,7 +1552,7 @@ class SalesDashboardSnapshot(models.Model):
             "stores_with_sales": product_kpis["stores_with_sales"],
             "avg_products_sold_per_store": product_kpis["avg_products_sold_per_store"],
             "collection_lines": collection_lines,
-            "user_lines": [],
+            "user_lines": user_lines,
             "item_lines": item_lines,
             "invoice_lines": [],
             "report_meta": report_meta,
@@ -1455,6 +1601,7 @@ class SalesDashboardSnapshot(models.Model):
                 "coverage_state": COVERAGE_UNAVAILABLE,
                 "requested_days": requested_days,
                 "covered_days": 0,
+                "fully_covered_days": 0,
                 "missing_days": requested_days,
                 "store_count": 0,
                 "covered_store_days": 0,
@@ -1464,19 +1611,27 @@ class SalesDashboardSnapshot(models.Model):
             }
         self.env.cr.execute(
             """
-                SELECT COUNT(*) AS covered_store_days,
-                       COUNT(DISTINCT report_date) AS covered_days
-                FROM ab_sales_dashboard_sync_coverage
-                WHERE report_date >= %s
-                  AND report_date <= %s
-                  AND store_eplus_id = ANY(%s)
-                  AND sync_state = 'synced'
+                WITH day_coverage AS (
+                    SELECT report_date,
+                           COUNT(DISTINCT store_eplus_id) AS covered_stores
+                    FROM ab_sales_dashboard_sync_coverage
+                    WHERE report_date >= %s
+                      AND report_date <= %s
+                      AND store_eplus_id = ANY(%s)
+                      AND sync_state = 'synced'
+                    GROUP BY report_date
+                )
+                SELECT COALESCE(SUM(covered_stores), 0) AS covered_store_days,
+                       COUNT(*) AS covered_days,
+                       COUNT(*) FILTER (WHERE covered_stores = %s) AS fully_covered_days
+                FROM day_coverage
             """,
-            [date_from, date_to, store_eplus_ids],
+            [date_from, date_to, store_eplus_ids, store_count],
         )
         row = self.env.cr.fetchone()
         covered_store_days = int(row[0] or 0) if row else 0
         covered_days = int(row[1] or 0) if row else 0
+        fully_covered_days = int(row[2] or 0) if row else 0
         if expected_count and covered_store_days == expected_count:
             coverage_state = COVERAGE_COMPLETE
         elif covered_store_days:
@@ -1488,6 +1643,7 @@ class SalesDashboardSnapshot(models.Model):
             "coverage_state": coverage_state,
             "requested_days": requested_days,
             "covered_days": min(covered_days, requested_days),
+            "fully_covered_days": min(fully_covered_days, requested_days),
             "missing_days": max(requested_days - min(covered_days, requested_days), 0),
             "store_count": store_count,
             "covered_store_days": covered_store_days,
@@ -1507,6 +1663,7 @@ class SalesDashboardSnapshot(models.Model):
                 "coverage_state": COVERAGE_UNAVAILABLE,
                 "requested_days": requested_days,
                 "covered_days": 0,
+                "fully_covered_days": 0,
                 "missing_days": requested_days,
                 "store_count": 0,
                 "covered_store_days": 0,
@@ -1517,20 +1674,28 @@ class SalesDashboardSnapshot(models.Model):
         started = time.monotonic()
         self.env.cr.execute(
             """
-                SELECT COUNT(*) AS covered_store_days,
-                       COUNT(DISTINCT report_date) AS covered_days
-                FROM ab_sales_dashboard_fact_coverage
-                WHERE report_date >= %s
-                  AND report_date <= %s
-                  AND store_eplus_id = ANY(%s)
-                  AND fact_type = %s
-                  AND sync_state = 'synced'
+                WITH day_coverage AS (
+                    SELECT report_date,
+                           COUNT(DISTINCT store_eplus_id) AS covered_stores
+                    FROM ab_sales_dashboard_fact_coverage
+                    WHERE report_date >= %s
+                      AND report_date <= %s
+                      AND store_eplus_id = ANY(%s)
+                      AND fact_type = %s
+                      AND sync_state = 'synced'
+                    GROUP BY report_date
+                )
+                SELECT COALESCE(SUM(covered_stores), 0) AS covered_store_days,
+                       COUNT(*) AS covered_days,
+                       COUNT(*) FILTER (WHERE covered_stores = %s) AS fully_covered_days
+                FROM day_coverage
             """,
-            [date_from, date_to, store_eplus_ids, fact_type],
+            [date_from, date_to, store_eplus_ids, fact_type, store_count],
         )
         row = self.env.cr.fetchone()
         covered_store_days = int(row[0] or 0) if row else 0
         covered_days = int(row[1] or 0) if row else 0
+        fully_covered_days = int(row[2] or 0) if row else 0
         if expected_count and covered_store_days == expected_count:
             coverage_state = COVERAGE_COMPLETE
         elif covered_store_days:
@@ -1542,6 +1707,7 @@ class SalesDashboardSnapshot(models.Model):
             "coverage_state": coverage_state,
             "requested_days": requested_days,
             "covered_days": min(covered_days, requested_days),
+            "fully_covered_days": min(fully_covered_days, requested_days),
             "missing_days": max(requested_days - min(covered_days, requested_days), 0),
             "store_count": store_count,
             "covered_store_days": covered_store_days,
@@ -1622,6 +1788,47 @@ class SalesDashboardSnapshot(models.Model):
             date_to,
             len(store_eplus_ids),
             result["unique_products_sold"],
+        )
+        return result
+
+    @api.model
+    def _summary_user_lines_from_daily_user_facts(self, date_from, date_to, store_eplus_ids, total_sales):
+        started = time.monotonic()
+        self.env.cr.execute(
+            """
+                SELECT
+                    employee_eplus_id,
+                    MAX(employee_name) AS employee_name,
+                    COALESCE(SUM(invoice_count), 0) AS invoice_count,
+                    COALESCE(SUM(total_sales), 0) AS total_sales
+                FROM ab_sales_dashboard_daily_user_fact
+                WHERE report_date >= %s
+                  AND report_date <= %s
+                  AND store_eplus_id = ANY(%s)
+                GROUP BY employee_eplus_id
+                ORDER BY COALESCE(SUM(total_sales), 0) DESC, COALESCE(SUM(invoice_count), 0) DESC
+                LIMIT 20
+            """,
+            [date_from, date_to, store_eplus_ids],
+        )
+        result = []
+        for employee_eplus_id, employee_name, invoice_count, user_total_sales in self.env.cr.fetchall():
+            user_total_sales = float(user_total_sales or 0.0)
+            result.append({
+                "row_key": "summary_user_%s" % employee_eplus_id,
+                "employee_eplus_id": int(employee_eplus_id or 0),
+                "employee_name": employee_name or str(employee_eplus_id or 0),
+                "invoice_count": int(invoice_count or 0),
+                "total_sales": user_total_sales,
+                "pct_of_total": 100.0 * user_total_sales / total_sales if total_sales else 0.0,
+            })
+        _logger.info(
+            "event=sales_dashboard_summary_users_completed duration_ms=%s date_from=%s date_to=%s store_count=%s row_count=%s",
+            int((time.monotonic() - started) * 1000),
+            date_from,
+            date_to,
+            len(store_eplus_ids),
+            len(result),
         )
         return result
 
@@ -2134,6 +2341,26 @@ class SalesDashboardDailyCollectionFact(models.Model):
     )
 
 
+class SalesDashboardDailyUserFact(models.Model):
+    _name = "ab_sales_dashboard_daily_user_fact"
+    _description = "Sales Dashboard Daily User Fact"
+    _order = "report_date desc, store_eplus_id, total_sales desc, employee_eplus_id"
+
+    report_date = fields.Date(required=True, readonly=True, index=True)
+    store_id = fields.Many2one("ab_store", readonly=True, index=True)
+    store_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    employee_eplus_id = fields.Integer(required=True, readonly=True, index=True)
+    employee_name = fields.Char(readonly=True)
+    invoice_count = fields.Integer(readonly=True)
+    total_sales = fields.Float(readonly=True)
+    synced_at = fields.Datetime(readonly=True, index=True)
+
+    _uniq_daily_user = models.Constraint(
+        "UNIQUE(report_date, store_eplus_id, employee_eplus_id)",
+        "Daily user facts must be unique per date, E-Plus store, and employee.",
+    )
+
+
 class SalesDashboardDailyItemFact(models.Model):
     _name = "ab.sales.dashboard.daily.item.fact"
     _description = "Sales Dashboard Daily Item Fact"
@@ -2173,6 +2400,7 @@ class SalesDashboardFactCoverage(models.Model):
     fact_type = fields.Selection([
         ("store", "Store"),
         ("collection", "Collection"),
+        ("user", "User"),
         ("item", "Item"),
     ], required=True, readonly=True, index=True)
     sync_state = fields.Selection([
