@@ -1,0 +1,497 @@
+.ab_sales_dashboard {
+    --ab-sales-ink: #14213d;
+    --ab-sales-muted: #64748b;
+    --ab-sales-line: #d7dee8;
+    --ab-sales-panel: #ffffff;
+    --ab-sales-soft: #f5f7fb;
+    --ab-sales-primary: #126b73;
+    --ab-sales-accent: #d19a2e;
+    --ab-sales-danger: #b5404d;
+    --ab-sales-medicine: #126b73;
+    --ab-sales-non-medicine: #e6edf2;
+
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0;
+    background: var(--ab-sales-soft);
+    color: var(--ab-sales-ink);
+    scrollbar-gutter: stable;
+
+    h1,
+    h2,
+    p {
+        margin: 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        font-size: 13px;
+    }
+
+    th,
+    td {
+        padding: 12px 10px;
+        border-bottom: 1px solid var(--ab-sales-line);
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    th {
+        color: var(--ab-sales-muted);
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    td small {
+        display: block;
+        color: var(--ab-sales-muted);
+        font-size: 11px;
+        margin-top: 3px;
+    }
+
+    &[dir="ltr"] {
+        th,
+        td {
+            text-align: left;
+        }
+
+        .ab_sales_dashboard__filters {
+            justify-content: flex-start;
+        }
+    }
+}
+
+.ab_sales_dashboard__control_panel {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0 0 18px;
+    padding: 8px 24px 12px !important;
+    background: #fff;
+    border-bottom: 1px solid var(--ab-sales-line);
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+
+    .o_control_panel_main {
+        align-items: center !important;
+        width: 100%;
+        min-height: 40px;
+        min-width: 0;
+    }
+
+    .o_control_panel_breadcrumbs,
+    .o_control_panel_actions,
+    .o_control_panel_actions > .d-flex {
+        align-items: center !important;
+        min-width: 0;
+    }
+
+    .o_control_panel_breadcrumbs {
+        flex: 0 1 auto;
+        min-height: 38px;
+        min-width: 220px;
+    }
+
+    .o_last_breadcrumb_item {
+        line-height: 1.2;
+    }
+
+    .o_control_panel_actions {
+        flex: 1 1 auto;
+    }
+}
+
+.ab_sales_dashboard__body {
+    padding: 0 24px 24px;
+}
+
+.ab_sales_dashboard__section_note {
+    margin: 0 0 8px;
+    color: var(--ab-sales-muted);
+    font-size: 12px;
+}
+
+.ab_sales_dashboard__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+    min-width: 0;
+}
+
+.ab_sales_dashboard__store_search {
+    position: relative;
+    flex: 1 1 320px;
+    min-width: 320px;
+    max-width: 420px;
+    height: 38px;
+
+    .o_searchview {
+        width: 100%;
+        min-height: 38px;
+    }
+}
+
+.ab_sales_dashboard__store_input {
+    min-width: 220px;
+    height: 28px;
+    background: transparent;
+    box-shadow: none;
+
+    &:focus {
+        box-shadow: none;
+    }
+}
+
+.ab_sales_dashboard__store_menu {
+    inset-inline-start: 0;
+    top: calc(100% + 4px);
+    width: 100%;
+    max-height: 320px;
+    overflow-y: auto;
+    padding: 6px;
+    z-index: 1050;
+}
+
+.ab_sales_dashboard__date_inputs {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ab_sales_dashboard__date_field {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    color: var(--ab-sales-muted);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.1;
+
+    input {
+        width: 150px;
+        min-height: 38px;
+    }
+}
+
+.ab_sales_dashboard__quick_ranges {
+    flex: 0 0 auto;
+
+    .btn {
+        min-height: 38px;
+        white-space: nowrap;
+    }
+}
+
+.ab_sales_dashboard__filters > .btn {
+    flex: 0 0 auto;
+    min-height: 38px;
+    white-space: nowrap;
+}
+
+.ab_sales_dashboard__empty,
+.ab_sales_dashboard__notice {
+    background: #fff;
+    border: 1px solid var(--ab-sales-line);
+    border-radius: 8px;
+    padding: 18px;
+    color: var(--ab-sales-muted);
+}
+
+.ab_sales_dashboard__notice {
+    margin-bottom: 16px;
+    color: var(--ab-sales-danger);
+    border-color: #efc0c7;
+    border-inline-start: 4px solid var(--ab-sales-danger);
+    font-size: 13px;
+
+    &--success {
+        color: var(--ab-sales-ink);
+        border-color: var(--ab-sales-line);
+        border-inline-start-color: var(--ab-sales-primary);
+    }
+
+    &--summary {
+        color: var(--ab-sales-ink);
+        border-color: var(--ab-sales-line);
+        border-inline-start-color: var(--ab-sales-accent);
+    }
+
+    &--warning {
+        color: var(--ab-sales-ink);
+        border-color: #e3b96c;
+        border-inline-start-color: var(--ab-sales-accent);
+        background: #fff8eb;
+    }
+
+    &--danger {
+        color: var(--ab-sales-danger);
+        border-color: #efc0c7;
+        border-inline-start-color: var(--ab-sales-danger);
+        background: #fff1f3;
+    }
+}
+
+.ab_sales_dashboard__cache_progress {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--ab-sales-line);
+    border-radius: 8px;
+}
+
+.ab_sales_dashboard__cache_progress_header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    color: var(--ab-sales-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ab_sales_dashboard__cache_progress_track {
+    height: 8px;
+    overflow: hidden;
+    background: var(--ab-sales-non-medicine);
+    border-radius: 999px;
+}
+
+.ab_sales_dashboard__cache_progress_bar {
+    height: 100%;
+    min-width: 0;
+    background: var(--ab-sales-primary);
+    border-radius: 999px;
+}
+
+.ab_sales_dashboard__kpis {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.ab_sales_dashboard__kpi,
+.ab_sales_dashboard__panel {
+    background: var(--ab-sales-panel);
+    border: 1px solid var(--ab-sales-line);
+    border-radius: 8px;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+}
+
+.ab_sales_dashboard__kpi {
+    padding: 18px;
+    border-top: 4px solid var(--ab-sales-primary);
+
+    span,
+    em {
+        display: block;
+        color: var(--ab-sales-muted);
+        font-style: normal;
+        font-size: 12px;
+    }
+
+    strong {
+        display: block;
+        margin: 8px 0 6px;
+        font-size: 25px;
+        line-height: 1.15;
+    }
+
+    &--wide {
+        border-top-color: var(--ab-sales-accent);
+    }
+}
+
+.ab_sales_dashboard__split,
+.ab_sales_dashboard__tables {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.ab_sales_dashboard__panel {
+    padding: 16px;
+    overflow-x: auto;
+    overflow-y: visible;
+}
+
+.ab_sales_dashboard__panel_header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    h2 {
+        font-size: 17px;
+        font-weight: 800;
+    }
+
+    span {
+        color: var(--ab-sales-muted);
+        font-size: 12px;
+    }
+}
+
+.ab_sales_dashboard__ratio_bar {
+    height: 10px;
+    background: var(--ab-sales-non-medicine);
+    border-radius: 999px;
+    overflow: hidden;
+    margin-bottom: 16px;
+
+    span {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--ab-sales-medicine), #3e8f77);
+    }
+}
+
+.ab_sales_dashboard__ratio_values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+
+    div {
+        border: 1px solid var(--ab-sales-line);
+        border-radius: 8px;
+        padding: 12px;
+    }
+
+    span,
+    em {
+        display: block;
+        color: var(--ab-sales-muted);
+        font-style: normal;
+        font-size: 12px;
+    }
+
+    strong {
+        display: block;
+        margin: 6px 0;
+        font-size: 20px;
+    }
+}
+
+.ab_sales_dashboard__ratio_label {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 7px;
+    color: var(--ab-sales-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ab_sales_dashboard__ratio_marker {
+    display: inline-block;
+    flex: 0 0 auto;
+    width: 10px;
+    height: 10px;
+    border-radius: 999px;
+
+    &--medicine {
+        background: linear-gradient(90deg, var(--ab-sales-medicine), #3e8f77);
+    }
+
+    &--non_medicine {
+        background: var(--ab-sales-non-medicine);
+        border: 1px solid #b8c6d6;
+    }
+}
+
+.ab_sales_dashboard__collection {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.ab_sales_dashboard__collection_card {
+    border: 1px solid var(--ab-sales-line);
+    border-radius: 8px;
+    padding: 12px;
+
+    span,
+    em {
+        display: block;
+        color: var(--ab-sales-muted);
+        font-style: normal;
+        font-size: 12px;
+    }
+
+    strong {
+        display: block;
+        margin: 7px 0;
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .ab_sales_dashboard__split,
+    .ab_sales_dashboard__tables {
+        grid-template-columns: 1fr;
+        display: grid;
+    }
+
+    .ab_sales_dashboard__kpis {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ab_sales_dashboard__store_search {
+        width: 100%;
+        max-width: 320px;
+        min-width: 0;
+    }
+
+    .ab_sales_dashboard__date_inputs {
+        flex: 1 1 320px;
+    }
+}
+
+@media (max-width: 720px) {
+    .ab_sales_dashboard__control_panel {
+        padding: 8px 14px 12px !important;
+    }
+
+    .ab_sales_dashboard__body {
+        padding: 0 14px 14px;
+    }
+
+    .ab_sales_dashboard__kpis,
+    .ab_sales_dashboard__collection,
+    .ab_sales_dashboard__ratio_values {
+        grid-template-columns: 1fr;
+    }
+
+    .ab_sales_dashboard__filters {
+        justify-content: stretch;
+
+        .ab_sales_dashboard__store_search,
+        .ab_sales_dashboard__date_inputs,
+        .ab_sales_dashboard__quick_ranges,
+        select,
+        button {
+            width: 100%;
+        }
+
+        .ab_sales_dashboard__date_inputs,
+        .ab_sales_dashboard__quick_ranges {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        .ab_sales_dashboard__date_field input {
+            width: 100%;
+        }
+    }
+}

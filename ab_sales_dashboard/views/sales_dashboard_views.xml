@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_sales_dashboard_snapshot_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.snapshot.list</field>
+            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="arch" type="xml">
+                <list string="Sales Dashboard Reports">
+                    <field name="refresh_date"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="store_filter_label"/>
+                    <field name="total_sales"/>
+                    <field name="invoice_count"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_snapshot_form" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.snapshot.form</field>
+            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="arch" type="xml">
+                <form string="Sales Dashboard Report" create="0" edit="0">
+                    <header>
+                        <button name="action_refresh" type="object" string="Refresh Report" class="btn-primary"/>
+                        <button name="action_archive_report" type="object" string="Archive Report" class="btn-secondary" groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="refresh_date"/>
+                                <field name="store_filter_label"/>
+                            </group>
+                            <group>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="store_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <group string="KPIs">
+                            <field name="total_sales"/>
+                            <field name="avg_daily_sales"/>
+                            <field name="prev_avg_daily_sales"/>
+                            <field name="avg_daily_growth_pct"/>
+                            <field name="invoice_count"/>
+                            <field name="bearing_pct"/>
+                            <field name="total_units_sold"/>
+                            <field name="unique_products_sold"/>
+                            <field name="total_product_sales"/>
+                            <field name="avg_products_per_invoice"/>
+                            <field name="stores_with_sales"/>
+                            <field name="avg_products_sold_per_store"/>
+                        </group>
+                        <notebook>
+                            <page string="Collection">
+                                <field name="collection_line_ids">
+                                    <list>
+                                        <field name="category"/>
+                                        <field name="invoice_count"/>
+                                        <field name="total_sales"/>
+                                        <field name="pct_of_total"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Users">
+                                <field name="user_line_ids">
+                                    <list>
+                                        <field name="employee_name"/>
+                                        <field name="invoice_count"/>
+                                        <field name="total_sales"/>
+                                        <field name="pct_of_total"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Items">
+                                <field name="item_line_ids">
+                                    <list>
+                                        <field name="eplus_item_code"/>
+                                        <field name="item_name"/>
+                                        <field name="sale_times"/>
+                                        <field name="sold_qty"/>
+                                        <field name="total_sales"/>
+                                        <field name="current_balance"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Invoices">
+                                <field name="invoice_line_ids">
+                                    <list>
+                                        <field name="invoice_no"/>
+                                        <field name="invoice_date"/>
+                                        <field name="customer_name"/>
+                                        <field name="invoice_total"/>
+                                        <field name="item_count"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_report_archive_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.report.archive.list</field>
+            <field name="model">ab.sales.dashboard.report.archive</field>
+            <field name="arch" type="xml">
+                <list string="Archived Sales Reports" create="0" edit="0" delete="0">
+                    <field name="archive_number"/>
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="store_filter_label"/>
+                    <field name="archived_at"/>
+                    <field name="archived_by"/>
+                    <field name="state"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_report_archive_form" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.report.archive.form</field>
+            <field name="model">ab.sales.dashboard.report.archive</field>
+            <field name="arch" type="xml">
+                <form string="Archived Sales Report" create="0" edit="0" delete="0">
+                    <header>
+                        <button name="action_cancel" type="object" string="Cancel Archive" class="btn-secondary" invisible="state == 'cancelled'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="archived,cancelled"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="archive_number"/>
+                                <field name="name"/>
+                                <field name="snapshot_id"/>
+                                <field name="archived_at"/>
+                                <field name="archived_by"/>
+                            </group>
+                            <group>
+                                <field name="date_from"/>
+                                <field name="date_to"/>
+                                <field name="store_filter_label"/>
+                                <field name="store_ids" widget="many2many_tags"/>
+                            </group>
+                        </group>
+                        <group string="Integrity">
+                            <field name="payload_hash"/>
+                            <field name="payload_size_bytes"/>
+                            <field name="source_snapshot_write_date"/>
+                            <field name="payload_json" invisible="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_report_archive_search" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.report.archive.search</field>
+            <field name="model">ab.sales.dashboard.report.archive</field>
+            <field name="arch" type="xml">
+                <search string="Archived Sales Reports">
+                    <field name="archive_number"/>
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="store_filter_label"/>
+                    <filter name="archived" string="Archived" domain="[('state', '=', 'archived')]"/>
+                    <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                    <filter name="group_archived_by" string="Archived By" domain="[]" context="{'group_by': 'archived_by'}"/>
+                    <filter name="group_state" string="State" domain="[]" context="{'group_by': 'state'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_store_fact_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.daily.store.fact.list</field>
+            <field name="model">ab.sales.dashboard.daily.store.fact</field>
+            <field name="arch" type="xml">
+                <list string="Daily Store Facts" create="0" edit="0" delete="0">
+                    <field name="report_date"/>
+                    <field name="store_id"/>
+                    <field name="store_eplus_id"/>
+                    <field name="total_sales"/>
+                    <field name="invoice_count"/>
+                    <field name="medicine_sales"/>
+                    <field name="non_medicine_sales"/>
+                    <field name="customer_bearing_amount"/>
+                    <field name="company_part_amount"/>
+                    <field name="contract_net_amount"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_collection_fact_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.daily.collection.fact.list</field>
+            <field name="model">ab.sales.dashboard.daily.collection.fact</field>
+            <field name="arch" type="xml">
+                <list string="Daily Collection Facts" create="0" edit="0" delete="0">
+                    <field name="report_date"/>
+                    <field name="store_id"/>
+                    <field name="store_eplus_id"/>
+                    <field name="category"/>
+                    <field name="invoice_count"/>
+                    <field name="total_sales"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_user_fact_list" model="ir.ui.view">
+            <field name="name">ab_sales_dashboard_daily_user_fact.list</field>
+            <field name="model">ab_sales_dashboard_daily_user_fact</field>
+            <field name="arch" type="xml">
+                <list string="Daily User Facts" create="0" edit="0" delete="0">
+                    <field name="report_date"/>
+                    <field name="store_id"/>
+                    <field name="store_eplus_id"/>
+                    <field name="employee_eplus_id"/>
+                    <field name="employee_name"/>
+                    <field name="invoice_count"/>
+                    <field name="total_sales"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_user_fact_pivot" model="ir.ui.view">
+            <field name="name">ab_sales_dashboard_daily_user_fact.pivot</field>
+            <field name="model">ab_sales_dashboard_daily_user_fact</field>
+            <field name="arch" type="xml">
+                <pivot string="Daily User Facts">
+                    <field name="employee_name" type="row"/>
+                    <field name="store_id" type="col"/>
+                    <field name="invoice_count" type="measure"/>
+                    <field name="total_sales" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_item_fact_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.daily.item.fact.list</field>
+            <field name="model">ab.sales.dashboard.daily.item.fact</field>
+            <field name="arch" type="xml">
+                <list string="Daily Item Facts" create="0" edit="0" delete="0">
+                    <field name="report_date"/>
+                    <field name="store_id"/>
+                    <field name="store_eplus_id"/>
+                    <field name="item_eplus_id"/>
+                    <field name="item_code"/>
+                    <field name="product_id"/>
+                    <field name="item_name"/>
+                    <field name="item_type"/>
+                    <field name="sold_qty"/>
+                    <field name="sales_amount"/>
+                    <field name="invoice_count"/>
+                    <field name="sale_times"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_item_fact_pivot" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.daily.item.fact.pivot</field>
+            <field name="model">ab.sales.dashboard.daily.item.fact</field>
+            <field name="arch" type="xml">
+                <pivot string="Daily Item Facts">
+                    <field name="item_name" type="row"/>
+                    <field name="store_id" type="col"/>
+                    <field name="sold_qty" type="measure"/>
+                    <field name="sales_amount" type="measure"/>
+                    <field name="invoice_count" type="measure"/>
+                    <field name="sale_times" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_item_fact_graph" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.daily.item.fact.graph</field>
+            <field name="model">ab.sales.dashboard.daily.item.fact</field>
+            <field name="arch" type="xml">
+                <graph string="Daily Item Facts" type="bar">
+                    <field name="report_date" type="row"/>
+                    <field name="sales_amount" type="measure"/>
+                    <field name="sold_qty" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_product_sales_report_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.product.sales.report.list</field>
+            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="arch" type="xml">
+                <list string="Product Sales Report" create="0" edit="0" delete="0">
+                    <field name="report_date"/>
+                    <field name="store_id"/>
+                    <field name="item_eplus_id"/>
+                    <field name="item_code"/>
+                    <field name="product_id"/>
+                    <field name="product_name"/>
+                    <field name="item_type"/>
+                    <field name="branches_sold_in"/>
+                    <field name="sale_times"/>
+                    <field name="invoice_count"/>
+                    <field name="units_sold"/>
+                    <field name="total_sales"/>
+                    <field name="average_selling_price"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_product_sales_report_pivot" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.product.sales.report.pivot</field>
+            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="arch" type="xml">
+                <pivot string="Product Sales Report">
+                    <field name="product_name" type="row"/>
+                    <field name="store_id" type="col"/>
+                    <field name="units_sold" type="measure"/>
+                    <field name="total_sales" type="measure"/>
+                    <field name="invoice_count" type="measure"/>
+                    <field name="sale_times" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_product_sales_report_graph" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.product.sales.report.graph</field>
+            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="arch" type="xml">
+                <graph string="Product Sales Report" type="bar">
+                    <field name="product_name" type="row"/>
+                    <field name="total_sales" type="measure"/>
+                    <field name="units_sold" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_product_sales_report_search" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.product.sales.report.search</field>
+            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="arch" type="xml">
+                <search string="Product Sales Report">
+                    <field name="report_date"/>
+                    <field name="store_id"/>
+                    <field name="product_id"/>
+                    <field name="item_eplus_id"/>
+                    <field name="item_code"/>
+                    <field name="item_type"/>
+                    <filter name="medicine" string="Medicine" domain="[('item_type', '=', 'medicine')]"/>
+                    <filter name="non_medicine" string="Non-Medicine" domain="[('item_type', '=', 'non_medicine')]"/>
+                    <filter name="positive_sales" string="Has Sales" domain="[('total_sales', '&gt;', 0)]"/>
+                    <filter name="positive_qty" string="Has Quantity" domain="[('units_sold', '&gt;', 0)]"/>
+                    <filter name="group_product" string="Product" domain="[]" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_store" string="Store" domain="[]" context="{'group_by': 'store_id'}"/>
+                    <filter name="group_item_type" string="Medicine Split" domain="[]" context="{'group_by': 'item_type'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_reconciliation_job_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.reconciliation.job.list</field>
+            <field name="model">ab.sales.dashboard.reconciliation.job</field>
+            <field name="arch" type="xml">
+                <list string="Reconciliation Jobs" decoration-danger="state == 'failed'" decoration-warning="state == 'partial'" decoration-success="state == 'done'">
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="state"/>
+                    <field name="total_branch_days"/>
+                    <field name="missing_branch_days"/>
+                    <field name="processed_branch_days"/>
+                    <field name="chunk_count"/>
+                    <field name="completed_chunk_count"/>
+                    <field name="failed_chunk_count"/>
+                    <field name="started_at"/>
+                    <field name="completed_at"/>
+                    <field name="created_by"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_reconciliation_job_form" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.reconciliation.job.form</field>
+            <field name="model">ab.sales.dashboard.reconciliation.job</field>
+            <field name="arch" type="xml">
+                <form string="Reconciliation Job">
+                    <header>
+                        <button name="action_analyze_coverage" type="object" string="Analyze Coverage" class="btn-primary" invisible="state == 'running'"/>
+                        <button name="action_start_reconciliation" type="object" string="Start Reconciliation" class="btn-primary" invisible="state not in ('ready', 'partial', 'failed')"/>
+                        <button name="action_retry_failed_chunks" type="object" string="Retry Failed" class="btn-secondary" invisible="state not in ('partial', 'failed')"/>
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-secondary" invisible="state in ('done', 'cancelled')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,analyzing,ready,running,partial,done,failed,cancelled"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" readonly="state != 'draft'"/>
+                                <field name="date_from" readonly="state != 'draft'"/>
+                                <field name="date_to" readonly="state != 'draft'"/>
+                                <field name="store_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                                <field name="store_filter_key" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="created_by" readonly="1"/>
+                                <field name="started_at" readonly="1"/>
+                                <field name="completed_at" readonly="1"/>
+                                <field name="last_processed_date" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Progress">
+                            <group>
+                                <field name="total_branch_days" readonly="1"/>
+                                <field name="covered_branch_days" readonly="1"/>
+                                <field name="missing_branch_days" readonly="1"/>
+                                <field name="processed_branch_days" readonly="1"/>
+                                <field name="failed_branch_days" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="chunk_count" readonly="1"/>
+                                <field name="completed_chunk_count" readonly="1"/>
+                                <field name="failed_chunk_count" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Last Error" invisible="not last_error">
+                            <field name="last_error" readonly="1" nolabel="1"/>
+                        </group>
+                        <notebook>
+                            <page string="Chunks">
+                                <field name="chunk_ids" readonly="1">
+                                    <list string="Chunks" create="0" edit="0" delete="0" decoration-danger="state == 'failed'" decoration-success="state == 'done'">
+                                        <field name="sequence"/>
+                                        <field name="date_from"/>
+                                        <field name="date_to"/>
+                                        <field name="store_filter_key"/>
+                                        <field name="branch_day_count"/>
+                                        <field name="state"/>
+                                        <field name="attempt_count"/>
+                                        <field name="source_duration_ms"/>
+                                        <field name="persistence_duration_ms"/>
+                                        <field name="error_message"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_reconciliation_job_search" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.reconciliation.job.search</field>
+            <field name="model">ab.sales.dashboard.reconciliation.job</field>
+            <field name="arch" type="xml">
+                <search string="Reconciliation Jobs">
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="store_filter_key"/>
+                    <filter name="ready" string="Ready" domain="[('state', '=', 'ready')]"/>
+                    <filter name="running" string="Running" domain="[('state', '=', 'running')]"/>
+                    <filter name="partial" string="Partial" domain="[('state', '=', 'partial')]"/>
+                    <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                    <filter name="group_state" string="State" domain="[]" context="{'group_by': 'state'}"/>
+                    <filter name="group_created_by" string="Created By" domain="[]" context="{'group_by': 'created_by'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_report_telemetry_list" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.report.telemetry.list</field>
+            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="arch" type="xml">
+                <list string="Reporting Analytics" create="0" edit="0" delete="0">
+                    <field name="event_date"/>
+                    <field name="event_type"/>
+                    <field name="report_mode"/>
+                    <field name="range_bucket"/>
+                    <field name="store_scope_bucket"/>
+                    <field name="coverage_state"/>
+                    <field name="requested_days"/>
+                    <field name="selected_store_count"/>
+                    <field name="duration_ms"/>
+                    <field name="result_size_bytes"/>
+                    <field name="unsupported_user_section" optional="hide"/>
+                    <field name="unsupported_item_section" optional="hide"/>
+                    <field name="unsupported_customer_section" optional="hide"/>
+                    <field name="created_at" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_report_telemetry_pivot" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.report.telemetry.pivot</field>
+            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="arch" type="xml">
+                <pivot string="Reporting Analytics">
+                    <field name="event_date" type="row" interval="month"/>
+                    <field name="event_type" type="col"/>
+                    <field name="operation_count" type="measure"/>
+                    <field name="duration_ms" type="measure"/>
+                    <field name="maximum_duration_ms" type="measure"/>
+                    <field name="result_size_bytes" type="measure"/>
+                    <field name="requested_days" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_report_telemetry_graph" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.report.telemetry.graph</field>
+            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="arch" type="xml">
+                <graph string="Reporting Analytics" type="bar">
+                    <field name="event_date" interval="day"/>
+                    <field name="event_type"/>
+                    <field name="operation_count" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_report_telemetry_search" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.report.telemetry.search</field>
+            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="arch" type="xml">
+                <search string="Reporting Analytics">
+                    <field name="event_date"/>
+                    <field name="event_type"/>
+                    <field name="report_mode"/>
+                    <field name="range_bucket"/>
+                    <field name="store_scope_bucket"/>
+                    <field name="coverage_state"/>
+                    <filter name="unsupported_employee" string="Employee Unsupported" domain="[('unsupported_user_section', '=', True)]"/>
+                    <filter name="unsupported_product" string="Product Unsupported" domain="[('unsupported_item_section', '=', True)]"/>
+                    <filter name="unsupported_customer" string="Customer Unsupported" domain="[('unsupported_customer_section', '=', True)]"/>
+                    <filter name="group_event_date" string="Event Date" domain="[]" context="{'group_by': 'event_date'}"/>
+                    <filter name="group_event_type" string="Event Type" domain="[]" context="{'group_by': 'event_type'}"/>
+                    <filter name="group_report_mode" string="Report Mode" domain="[]" context="{'group_by': 'report_mode'}"/>
+                    <filter name="group_range_bucket" string="Range Bucket" domain="[]" context="{'group_by': 'range_bucket'}"/>
+                    <filter name="group_store_scope" string="Store Scope" domain="[]" context="{'group_by': 'store_scope_bucket'}"/>
+                    <filter name="group_coverage" string="Coverage State" domain="[]" context="{'group_by': 'coverage_state'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_fact_decision_form" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.fact.decision.form</field>
+            <field name="model">ab.sales.dashboard.fact.decision</field>
+            <field name="arch" type="xml">
+                <form string="Fact-Grain Decision" create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <field name="measurement_period"/>
+                            <field name="long_range_report_count"/>
+                        </group>
+                        <group string="Employee Reporting">
+                            <field name="employee_unsupported_count"/>
+                            <field name="employee_gap_percentage"/>
+                        </group>
+                        <group string="Customer Reporting">
+                            <field name="customer_unsupported_count"/>
+                            <field name="customer_gap_percentage"/>
+                        </group>
+                        <group string="Product Reporting">
+                            <field name="product_unsupported_count"/>
+                            <field name="product_gap_percentage"/>
+                            <field name="item_coverage_complete_percentage"/>
+                        </group>
+                        <group string="Performance">
+                            <field name="average_duration_ms"/>
+                            <field name="average_result_size_bytes"/>
+                        </group>
+                        <group string="Recommendation">
+                            <field name="recommendation_code"/>
+                            <field name="recommendation_reason" nolabel="1"/>
+                        </group>
+                    </sheet>
+                    <footer>
+                        <button string="Close" special="cancel" class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
