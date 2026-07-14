@@ -50,6 +50,13 @@
             <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_user'))]"/>
         </record>
 
+        <record id="rule_ab_sales_dashboard_daily_user_fact_user" model="ir.rule">
+            <field name="name">Sales dashboard daily user facts are visible to dashboard users</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_daily_user_fact"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_user'))]"/>
+        </record>
+
         <record id="rule_ab_sales_dashboard_daily_item_fact_user" model="ir.rule">
             <field name="name">Sales dashboard daily item facts are visible to dashboard users</field>
             <field name="model_id" ref="model_ab_sales_dashboard_daily_item_fact"/>
@@ -102,6 +109,13 @@
         <record id="rule_ab_sales_dashboard_report_telemetry_manager" model="ir.rule">
             <field name="name">Reporting telemetry is visible to dashboard managers</field>
             <field name="model_id" ref="model_ab_sales_dashboard_report_telemetry"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_manager'))]"/>
+        </record>
+
+        <record id="rule_ab_sales_dashboard_sync_state_manager" model="ir.rule">
+            <field name="name">Sales dashboard sync states are visible to dashboard managers</field>
+            <field name="model_id" ref="model_ab_sales_dashboard_sync_state"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups" eval="[(4, ref('group_ab_sales_dashboard_manager'))]"/>
         </record>

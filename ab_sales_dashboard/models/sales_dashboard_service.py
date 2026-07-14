@@ -239,16 +239,19 @@ class SalesDashboardService(models.AbstractModel):
         store_rows = self._fetch_all(cursor, self._dashboard_daily_store_totals_sql(), [], "daily_store_totals", start_dt, end_dt, store_count)
         medicine_rows = self._fetch_all(cursor, self._dashboard_daily_medicine_sql(), [], "daily_medicine", start_dt, end_dt, store_count)
         collection_rows = self._fetch_all(cursor, self._dashboard_daily_collection_sql(), [], "daily_collection", start_dt, end_dt, store_count)
+        user_rows = self._fetch_all(cursor, self._dashboard_daily_user_sql(), [], "daily_user_facts", start_dt, end_dt, store_count)
         item_rows = self._fetch_all(cursor, self._dashboard_daily_item_fact_sql(), [], "daily_item_facts", start_dt, end_dt, store_count)
         merge_started = pytime.monotonic()
         payload = self._merge_daily_store_facts(store_rows, medicine_rows, collection_rows)
+        payload["user_facts"] = self._normalize_daily_user_fact_rows(user_rows)
         payload["item_facts"] = self._normalize_daily_item_fact_rows(item_rows)
         _logger.info(
-            "event=sales_dashboard_daily_merge_completed duration_ms=%s store_row_count=%s medicine_row_count=%s collection_row_count=%s item_row_count=%s output_row_count=%s date_from=%s date_to=%s store_count=%s",
+            "event=sales_dashboard_daily_merge_completed duration_ms=%s store_row_count=%s medicine_row_count=%s collection_row_count=%s user_row_count=%s item_row_count=%s output_row_count=%s date_from=%s date_to=%s store_count=%s",
             int((pytime.monotonic() - merge_started) * 1000),
             len(store_rows),
             len(medicine_rows),
             len(collection_rows),
+            len(user_rows),
             len(item_rows),
             self._daily_fact_row_count(payload),
             start_dt.date(),
@@ -295,12 +298,17 @@ class SalesDashboardService(models.AbstractModel):
         return (
             len(daily_payload.get("store_facts", []))
             + len(daily_payload.get("collection_facts", []))
+            + len(daily_payload.get("user_facts", []))
             + len(daily_payload.get("item_facts", []))
         )
 
     @api.model
     def _validate_daily_fact_row_count(self, daily_payload, date_from, date_to, store_count):
-        row_count = len(daily_payload.get("store_facts", [])) + len(daily_payload.get("collection_facts", []))
+        row_count = (
+            len(daily_payload.get("store_facts", []))
+            + len(daily_payload.get("collection_facts", []))
+            + len(daily_payload.get("user_facts", []))
+        )
         max_rows = self._max_daily_fact_rows()
         if row_count > max_rows:
             _logger.warning(
@@ -1043,6 +1051,21 @@ class SalesDashboardService(models.AbstractModel):
         """
 
     @api.model
+    def _dashboard_daily_user_sql(self):
+        return """
+            SELECT
+                h.report_date,
+                h.sto_id,
+                ISNULL(h.emp_id, 0) AS emp_id,
+                COALESCE(e.e_name, CONVERT(VARCHAR(20), ISNULL(h.emp_id, 0))) AS employee_name,
+                COUNT(*) AS invoice_count,
+                ISNULL(SUM(h.net_amount), 0) AS total_sales
+            FROM #invoice_base h
+            LEFT JOIN employee e WITH (NOLOCK) ON e.e_id = h.emp_id
+            GROUP BY h.report_date, h.sto_id, h.emp_id, e.e_name
+        """
+
+    @api.model
     def _dashboard_daily_item_fact_sql(self):
         return """
             SELECT
@@ -1419,6 +1442,23 @@ class SalesDashboardService(models.AbstractModel):
                 "total_sales": float(row.get("total_sales") or 0.0),
             } for row in collection_rows],
         }
+
+    @api.model
+    def _normalize_daily_user_fact_rows(self, user_rows):
+        rows = []
+        for row in user_rows:
+            invoice_count = int(row.get("invoice_count") or 0)
+            if not invoice_count:
+                continue
+            rows.append({
+                "report_date": fields.Date.to_date(row.get("report_date")),
+                "store_eplus_id": int(row.get("sto_id") or 0),
+                "employee_eplus_id": int(row.get("emp_id") or 0),
+                "employee_name": row.get("employee_name") or "",
+                "invoice_count": invoice_count,
+                "total_sales": float(row.get("total_sales") or 0.0),
+            })
+        return rows
 
     @api.model
     def _normalize_daily_item_fact_rows(self, item_rows):

@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, onWillStart, useState, xml } from "@odoo/owl";
+import { Component, onWillStart, onWillUnmount, useState, xml } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
@@ -12,37 +12,33 @@ const COLLECTION_LABELS = {
     offer: _t("Offers"),
 };
 
+const FILTER_STORAGE_KEY = "ab_sales_dashboard.filters";
+const SYNC_POLL_DELAY_MS = 750;
+
 const UI_TEXT = {
     title: _t("Sales Dashboard"),
     subtitle: _t("Abdin Pharmacies - complete overview of sales performance"),
     allStores: _t("All Stores"),
-    clearStore: _t("Clear store filter"),
     refreshing: _t("Refreshing..."),
     refreshFromEplus: _t("Refresh from E-Plus"),
     filterByStore: _t("Filter by store"),
     dateFilter: _t("Date Filter"),
-    daily: _t("Daily"),
     yesterday: _t("Yesterday"),
-    quarterly: _t("Quarterly"),
-    currentMonth: _t("Current Month"),
     last7Days: _t("Last 7 Days"),
     last30Days: _t("Last 30 Days"),
     last90Days: _t("Last 90 Days"),
-    selectedDay: _t("Selected Day"),
-    selectedMonth: _t("Selected Month"),
-    selectedYear: _t("Selected Year"),
-    customRange: _t("Custom Range"),
     dateFrom: _t("Date From"),
     dateTo: _t("Date To"),
     loading: _t("Loading dashboard..."),
-    noSnapshot: _t('No saved report for these filters. Click "Refresh from E-Plus" to fetch data.'),
-    summaryOnly: _t("This view is calculated from saved daily data. Refresh from E-Plus to load unavailable detail sections."),
-    fullyRefreshedReport: _t("Fully refreshed report."),
-    storedSummaryReport: _t("Stored summary from synchronized daily sales facts. Some detailed sections may be unavailable for this range."),
+    syncing: _t("Syncing..."),
+    syncStarted: _t("Dashboard sync started."),
+    syncFinished: _t("Dashboard sync finished."),
+    syncFailed: _t("Dashboard sync finished with failed days."),
+    syncedDays: _t("Synced days"),
     partialStoredSummary: _t("Partial stored summary"),
     reportDataUnavailable: _t("Report data unavailable for this range. Run shorter E-Plus refreshes first to build daily facts."),
+    cacheProgress: _t("Cached days"),
     branchDaysSynchronized: _t("branch-days synchronized"),
-    longRangeRefreshBlocked: _t("Long-range reports use synchronized daily facts. B-Connect refresh is limited to 31 days."),
     notAvailableForSummary: _t("Not available for summary range."),
     totalSales: _t("Total Sales"),
     previousPeriodAverage: _t("vs previous period average"),
@@ -87,61 +83,95 @@ class SalesDashboardAction extends Component {
         this.orm = useService("orm");
         this.notification = useService("notification");
         this.ui = UI_TEXT;
+        this.syncPollTimer = null;
+        this.unmounted = false;
         this.updateFilter = this.updateFilter.bind(this);
         this.onRefresh = this.onRefresh.bind(this);
-        this.toggleDateMenu = this.toggleDateMenu.bind(this);
         this.applyDatePreset = this.applyDatePreset.bind(this);
         this.onStoreSearchInput = this.onStoreSearchInput.bind(this);
         this.selectStore = this.selectStore.bind(this);
-        this.clearStore = this.clearStore.bind(this);
         this.toggleStoreMenu = this.toggleStoreMenu.bind(this);
         this.openStoreMenu = this.openStoreMenu.bind(this);
+        const savedFilters = this.loadSavedFilters();
         this.state = useState({
             loading: true,
             refreshing: false,
-            dateMenuOpen: false,
+            syncing: false,
             storeMenuOpen: false,
             storeSearch: UI_TEXT.allStores,
             filters: {
-                date_from: "",
-                date_to: "",
-                store_id: 0,
+                date_from: savedFilters.date_from,
+                date_to: savedFilters.date_to,
+                store_id: savedFilters.store_id,
             },
             data: null,
+            syncProgress: null,
         });
-        onWillStart(async () => this.loadDashboard(false));
+        onWillStart(async () => {
+            await this.loadDashboard(false);
+            await this.refreshSyncProgress();
+            this.resumeSyncPollingIfNeeded();
+        });
+        onWillUnmount(() => {
+            this.unmounted = true;
+            this.stopSyncPolling();
+        });
+    }
+
+    loadSavedFilters() {
+        const latestReportDate = this.latestReportDate();
+        const defaults = {
+            date_from: this.toIsoDate(this.addDays(latestReportDate, -6)),
+            date_to: this.toIsoDate(latestReportDate),
+            store_id: 0,
+        };
+        try {
+            const rawValue = window.localStorage && window.localStorage.getItem(FILTER_STORAGE_KEY);
+            const saved = rawValue ? JSON.parse(rawValue) : {};
+            return {
+                date_from: this.clampIsoToLatestReportDate(saved.date_from || defaults.date_from),
+                date_to: this.clampIsoToLatestReportDate(saved.date_to || defaults.date_to),
+                store_id: Number(saved.store_id || 0),
+            };
+        } catch {
+            return defaults;
+        }
+    }
+
+    persistFilters() {
+        try {
+            if (window.localStorage) {
+                window.localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(this.state.filters));
+            }
+        } catch {
+            // Browser storage is optional; the dashboard still works without it.
+        }
     }
 
     async loadDashboard(refresh) {
-        this.state.loading = true;
-        this.state.dateMenuOpen = false;
+        this.state.loading = !this.state.data;
         this.state.storeMenuOpen = false;
         if (refresh) {
             this.state.refreshing = true;
         }
         try {
-            const method = refresh ? "refresh_dashboard_data" : "get_dashboard_data";
-            const data = await this.orm.call("ab.sales.dashboard.snapshot", method, [this.state.filters]);
+            const data = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_data", [this.state.filters]);
             this.state.data = data;
             this.state.filters.date_from = data.date_from;
             this.state.filters.date_to = data.date_to;
             this.state.filters.store_id = data.store_id || 0;
             this.state.storeSearch = this.storeDisplayName(data.store_id, data.stores);
-            if (refresh) {
-                this.notification.add(this.ui.refreshed, { type: "success" });
-            }
+            this.persistFilters();
         } finally {
             this.state.loading = false;
-            this.state.refreshing = false;
+            if (refresh) {
+                this.state.refreshing = false;
+            }
         }
     }
 
     updateFilter(name, value) {
         this.state.filters[name] = name === "store_id" ? Number(value || 0) : value;
-    }
-
-    toggleDateMenu() {
-        this.state.dateMenuOpen = !this.state.dateMenuOpen;
     }
 
     toggleStoreMenu() {
@@ -161,93 +191,121 @@ class SalesDashboardAction extends Component {
         this.state.filters.store_id = Number(storeId || 0);
         this.state.storeSearch = storeName || this.ui.allStores;
         this.state.storeMenuOpen = false;
+        this.persistFilters();
         return this.loadDashboard(false);
     }
 
-    clearStore() {
-        return this.selectStore(0, this.ui.allStores);
-    }
-
     applyDatePreset(preset) {
-        const today = new Date();
-        let dateFrom = today;
-        let dateTo = today;
+        const latestReportDate = this.latestReportDate();
+        let dateFrom = latestReportDate;
+        let dateTo = latestReportDate;
 
-        if (preset === "daily") {
-            dateFrom = today;
-        } else if (preset === "yesterday") {
-            dateFrom = this.addDays(today, -1);
-            dateTo = this.addDays(today, -1);
-        } else if (preset === "current_month") {
-            dateFrom = new Date(today.getFullYear(), today.getMonth(), 1);
-        } else if (preset === "quarterly") {
-            const quarterStartMonth = Math.floor(today.getMonth() / 3) * 3;
-            dateFrom = new Date(today.getFullYear(), quarterStartMonth, 1);
+        if (preset === "yesterday") {
+            dateFrom = latestReportDate;
         } else if (preset === "last_7_days") {
-            dateFrom = this.addDays(today, -6);
+            dateFrom = this.addDays(latestReportDate, -6);
         } else if (preset === "last_30_days") {
-            dateFrom = this.addDays(today, -29);
+            dateFrom = this.addDays(latestReportDate, -29);
         } else if (preset === "last_90_days") {
-            dateFrom = this.addDays(today, -89);
+            dateFrom = this.addDays(latestReportDate, -89);
         }
 
         this.state.filters.date_from = this.toIsoDate(dateFrom);
         this.state.filters.date_to = this.toIsoDate(dateTo);
-        this.state.dateMenuOpen = false;
-        return this.loadDashboard(false);
-    }
-
-    applySelectedDay(value) {
-        if (!value) {
-            return;
-        }
-        this.state.filters.date_from = value;
-        this.state.filters.date_to = value;
-        this.state.dateMenuOpen = false;
-        return this.loadDashboard(false);
-    }
-
-    applySelectedMonth(value) {
-        if (!value) {
-            return;
-        }
-        const [year, month] = value.split("-").map((part) => Number(part));
-        if (!year || !month) {
-            return;
-        }
-        const firstDay = new Date(year, month - 1, 1);
-        const lastDay = new Date(year, month, 0);
-        this.state.filters.date_from = this.toIsoDate(firstDay);
-        this.state.filters.date_to = this.toIsoDate(lastDay);
-        this.state.dateMenuOpen = false;
-        return this.loadDashboard(false);
-    }
-
-    applySelectedYear(value) {
-        const year = Number(value);
-        if (!year) {
-            return;
-        }
-        this.state.filters.date_from = `${year}-01-01`;
-        this.state.filters.date_to = `${year}-12-31`;
-        this.state.dateMenuOpen = false;
+        this.persistFilters();
         return this.loadDashboard(false);
     }
 
     updateCustomDate(name, value) {
-        this.updateFilter(name, value);
+        this.updateFilter(name, this.clampIsoToLatestReportDate(value));
+        this.persistFilters();
         if (this.state.filters.date_from && this.state.filters.date_to) {
             return this.loadDashboard(false);
         }
     }
 
     async onRefresh() {
-        if (!this.canRefreshSource) {
-            this.notification.add(this.ui.longRangeRefreshBlocked, { type: "warning" });
-            await this.loadDashboard(false);
+        if (this.state.refreshing) {
             return;
         }
-        await this.loadDashboard(true);
+        this.stopSyncPolling();
+        this.state.refreshing = true;
+        this.state.syncing = true;
+        this.persistFilters();
+        try {
+            const progress = await this.orm.call("ab.sales.dashboard.snapshot", "start_dashboard_sync", [this.state.filters]);
+            this.state.syncProgress = progress;
+            this.notification.add(this.ui.syncStarted, { type: "info" });
+            this.scheduleSyncPoll(0);
+        } catch (error) {
+            this.state.refreshing = false;
+            this.state.syncing = false;
+            throw error;
+        }
+    }
+
+    async refreshSyncProgress() {
+        if (!this.state.filters.date_from || !this.state.filters.date_to) {
+            this.state.syncProgress = null;
+            return null;
+        }
+        const progress = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_sync_progress", [this.state.filters]);
+        this.state.syncProgress = progress && progress.has_sync_state ? progress : null;
+        return this.state.syncProgress;
+    }
+
+    resumeSyncPollingIfNeeded() {
+        const progress = this.state.syncProgress;
+        if (progress && progress.is_active) {
+            this.state.refreshing = true;
+            this.state.syncing = true;
+            this.scheduleSyncPoll(0);
+        }
+    }
+
+    scheduleSyncPoll(delay = SYNC_POLL_DELAY_MS) {
+        this.stopSyncPolling();
+        if (this.unmounted) {
+            return;
+        }
+        this.syncPollTimer = setTimeout(() => this.pollDashboardSync(), delay);
+    }
+
+    stopSyncPolling() {
+        if (this.syncPollTimer) {
+            clearTimeout(this.syncPollTimer);
+            this.syncPollTimer = null;
+        }
+    }
+
+    async pollDashboardSync() {
+        if (this.unmounted) {
+            return;
+        }
+        try {
+            const progress = await this.orm.call("ab.sales.dashboard.snapshot", "process_dashboard_sync_day", [this.state.filters]);
+            this.state.syncProgress = progress;
+            if (progress.is_active) {
+                this.scheduleSyncPoll();
+                return;
+            }
+
+            this.state.refreshing = false;
+            this.state.syncing = false;
+            await this.loadDashboard(false);
+            await this.refreshSyncProgress();
+            if (progress.failed_days) {
+                this.notification.add(this.ui.syncFailed, { type: "warning" });
+            } else if (progress.is_complete) {
+                this.notification.add(this.ui.syncFinished, { type: "success" });
+            }
+        } catch (error) {
+            this.state.refreshing = false;
+            this.state.syncing = false;
+            this.stopSyncPolling();
+            const message = (error && error.message) || String(error || "");
+            this.notification.add(message || this.ui.syncFailed, { type: "danger" });
+        }
     }
 
     get isRtl() {
@@ -269,6 +327,29 @@ class SalesDashboardAction extends Component {
         const result = new Date(date);
         result.setDate(result.getDate() + days);
         return result;
+    }
+
+    latestReportDate() {
+        return this.addDays(new Date(), -1);
+    }
+
+    get latestReportDateIso() {
+        return this.toIsoDate(this.latestReportDate());
+    }
+
+    clampToLatestReportDate(date) {
+        const latestReportDate = this.latestReportDate();
+        if (!date || date > latestReportDate) {
+            return latestReportDate;
+        }
+        return date;
+    }
+
+    clampIsoToLatestReportDate(value) {
+        if (!value) {
+            return value;
+        }
+        return this.toIsoDate(this.clampToLatestReportDate(this.parseIsoDate(value)));
     }
 
     toIsoDate(date) {
@@ -295,19 +376,6 @@ class SalesDashboardAction extends Component {
         return new Date(year, month - 1, day);
     }
 
-    get selectedDayCount() {
-        const dateFrom = this.parseIsoDate(this.state.filters.date_from);
-        const dateTo = this.parseIsoDate(this.state.filters.date_to);
-        if (!dateFrom || !dateTo || dateTo < dateFrom) {
-            return 0;
-        }
-        return Math.floor((dateTo - dateFrom) / 86400000) + 1;
-    }
-
-    get canRefreshSource() {
-        return !this.selectedDayCount || this.selectedDayCount <= 31;
-    }
-
     storeDisplayName(storeId, stores) {
         const cleanId = Number(storeId || 0);
         if (!cleanId) {
@@ -326,39 +394,26 @@ class SalesDashboardAction extends Component {
         return stores.filter((store) => (store.name || "").toLowerCase().includes(search)).slice(0, 50);
     }
 
-    get hasSelectedStore() {
-        return Boolean(Number(this.state.filters.store_id || 0));
-    }
-
     get dateFilterLabel() {
         const dateFrom = this.state.filters.date_from;
         const dateTo = this.state.filters.date_to;
-        const today = new Date();
-        const yesterday = this.addDays(today, -1);
-        const quarterStartMonth = Math.floor(today.getMonth() / 3) * 3;
-        const quarterStart = new Date(today.getFullYear(), quarterStartMonth, 1);
+        const latestReportDate = this.latestReportDate();
 
-        if (this.sameDate(dateTo, today)) {
-            if (this.sameDate(dateFrom, today)) {
-                return this.ui.daily;
+        if (this.sameDate(dateTo, latestReportDate)) {
+            if (this.sameDate(dateFrom, latestReportDate)) {
+                return this.ui.yesterday;
             }
-            if (this.sameDate(dateFrom, new Date(today.getFullYear(), today.getMonth(), 1))) {
-                return this.ui.currentMonth;
-            }
-            if (this.sameDate(dateFrom, quarterStart)) {
-                return this.ui.quarterly;
-            }
-            if (this.sameDate(dateFrom, this.addDays(today, -6))) {
+            if (this.sameDate(dateFrom, this.addDays(latestReportDate, -6))) {
                 return this.ui.last7Days;
             }
-            if (this.sameDate(dateFrom, this.addDays(today, -29))) {
+            if (this.sameDate(dateFrom, this.addDays(latestReportDate, -29))) {
                 return this.ui.last30Days;
             }
-            if (this.sameDate(dateFrom, this.addDays(today, -89))) {
+            if (this.sameDate(dateFrom, this.addDays(latestReportDate, -89))) {
                 return this.ui.last90Days;
             }
         }
-        if (this.sameRange(dateFrom, dateTo, yesterday, yesterday)) {
+        if (this.sameRange(dateFrom, dateTo, latestReportDate, latestReportDate)) {
             return this.ui.yesterday;
         }
 
@@ -408,7 +463,7 @@ class SalesDashboardAction extends Component {
         if (meta.coverage_state === "partial") {
             return "warning";
         }
-        return meta.mode === "summary" ? "summary" : "success";
+        return "";
     }
 
     get reportStatusMessage() {
@@ -422,10 +477,53 @@ class SalesDashboardAction extends Component {
         if (meta.coverage_state === "partial") {
             return `${this.ui.partialStoredSummary}: ${this.number(meta.covered_store_days)} / ${this.number(meta.expected_store_days)} ${this.ui.branchDaysSynchronized}.`;
         }
-        if (meta.mode === "summary") {
-            return this.ui.storedSummaryReport;
+        return "";
+    }
+
+    get cacheProgressVisible() {
+        return Boolean(this.progressTotalDays);
+    }
+
+    get activeSyncProgress() {
+        const progress = this.state.syncProgress;
+        return progress && progress.has_sync_state ? progress : null;
+    }
+
+    get progressDoneDays() {
+        const progress = this.activeSyncProgress;
+        if (progress) {
+            return Number(progress.done_days || 0);
         }
-        return this.ui.fullyRefreshedReport;
+        return Number(this.reportMeta.fully_covered_days || 0);
+    }
+
+    get progressTotalDays() {
+        const progress = this.activeSyncProgress;
+        if (progress) {
+            return Number(progress.requested_days || 0);
+        }
+        return Number(this.reportMeta.requested_days || 0);
+    }
+
+    get cacheProgressPct() {
+        const progress = this.activeSyncProgress;
+        if (progress) {
+            return Math.max(0, Math.min(100, Number(progress.progress_pct || 0)));
+        }
+        const requestedDays = this.progressTotalDays;
+        if (!requestedDays) {
+            return 0;
+        }
+        return Math.max(0, Math.min(100, (100 * this.progressDoneDays) / requestedDays));
+    }
+
+    get cacheProgressStyle() {
+        return `width: ${this.cacheProgressPct.toFixed(2)}%;`;
+    }
+
+    get cacheProgressLabel() {
+        const label = this.activeSyncProgress ? this.ui.syncedDays : this.ui.cacheProgress;
+        return `${label}: ${this.number(this.progressDoneDays)} / ${this.number(this.progressTotalDays)} (${this.pct(this.cacheProgressPct)})`;
     }
 
     sectionUnsupported(section) {
@@ -485,65 +583,40 @@ SalesDashboardAction.template = xml`
                                     </div>
                                 </div>
                             </div>
-                            <button t-if="hasSelectedStore"
-                                    class="btn btn-outline-secondary ab_sales_dashboard__store_clear"
-                                    type="button"
-                                    t-att-title="ui.clearStore"
-                                    t-att-aria-label="ui.clearStore"
-                                    t-on-click="clearStore">
-                                <i class="fa fa-times"/>
-                            </button>
-                            <button class="o_searchview_dropdown_toggler btn btn-outline-secondary o-dropdown-caret o-dropdown dropdown-toggle dropdown"
+                            <button class="o_searchview_dropdown_toggler btn btn-outline-secondary o-dropdown-caret rounded-start-0 o-dropdown dropdown-toggle dropdown"
                                     type="button"
                                     tabindex="-1"
                                     t-att-title="ui.filterByStore"
                                     t-on-click="toggleStoreMenu"/>
                         </div>
-                        <div class="o_sp_date_filter_button d-flex position-relative ab_sales_dashboard__date_filter">
-                            <button class="btn btn-secondary o-btn-date-filter o-dropdown dropdown-toggle dropdown"
-                                    type="button"
-                                    t-att-aria-expanded="state.dateMenuOpen ? 'true' : 'false'"
-                                    t-on-click="toggleDateMenu">
-                                <i class="fa fa-calendar me-2"/>
-                                <span class="o-date-filter-value" t-esc="dateFilterLabel"/>
-                            </button>
-                            <div t-if="state.dateMenuOpen" class="dropdown-menu show ab_sales_dashboard__date_menu">
-                                <button class="dropdown-item" type="button" t-on-click="() => this.applyDatePreset('daily')" t-esc="ui.daily"/>
-                                <button class="dropdown-item" type="button" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="ui.yesterday"/>
-                                <button class="dropdown-item" type="button" t-on-click="() => this.applyDatePreset('current_month')" t-esc="ui.currentMonth"/>
-                                <button class="dropdown-item" type="button" t-on-click="() => this.applyDatePreset('quarterly')" t-esc="ui.quarterly"/>
-                                <button class="dropdown-item" type="button" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="ui.last7Days"/>
-                                <button class="dropdown-item" type="button" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="ui.last30Days"/>
-                                <button class="dropdown-item" type="button" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="ui.last90Days"/>
-                                <div class="dropdown-divider"/>
-                                <div class="dropdown-header" t-esc="ui.selectedDay"/>
-                                <input type="date" class="form-control ab_sales_dashboard__date_input" t-on-change="(ev) => this.applySelectedDay(ev.target.value)"/>
-                                <div class="dropdown-header" t-esc="ui.selectedMonth"/>
-                                <input type="month" class="form-control ab_sales_dashboard__date_input" t-on-change="(ev) => this.applySelectedMonth(ev.target.value)"/>
-                                <div class="dropdown-header" t-esc="ui.selectedYear"/>
-                                <input type="number" class="form-control ab_sales_dashboard__date_input" min="2000" max="2100" step="1" t-att-placeholder="ui.selectedYear" t-on-change="(ev) => this.applySelectedYear(ev.target.value)"/>
-                                <div class="dropdown-divider"/>
-                                <div class="dropdown-header" t-esc="ui.customRange"/>
-                                <div class="ab_sales_dashboard__custom_dates">
-                                    <label>
-                                        <span t-esc="ui.dateFrom"/>
-                                        <input type="date"
-                                               class="form-control"
-                                               t-att-value="state.filters.date_from"
-                                               t-on-change="(ev) => this.updateCustomDate('date_from', ev.target.value)"/>
-                                    </label>
-                                    <label>
-                                        <span t-esc="ui.dateTo"/>
-                                        <input type="date"
-                                               class="form-control"
-                                               t-att-value="state.filters.date_to"
-                                               t-on-change="(ev) => this.updateCustomDate('date_to', ev.target.value)"/>
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="ab_sales_dashboard__date_inputs">
+                            <label class="ab_sales_dashboard__date_field">
+                                <span t-esc="ui.dateFrom"/>
+                                <input type="date"
+                                       class="form-control"
+                                       t-att-value="state.filters.date_from"
+                                       t-att-max="latestReportDateIso"
+                                       t-att-disabled="state.refreshing"
+                                       t-on-change="(ev) => this.updateCustomDate('date_from', ev.target.value)"/>
+                            </label>
+                            <label class="ab_sales_dashboard__date_field">
+                                <span t-esc="ui.dateTo"/>
+                                <input type="date"
+                                       class="form-control"
+                                       t-att-value="state.filters.date_to"
+                                       t-att-max="latestReportDateIso"
+                                       t-att-disabled="state.refreshing"
+                                       t-on-change="(ev) => this.updateCustomDate('date_to', ev.target.value)"/>
+                            </label>
                         </div>
-                        <button type="button" class="btn btn-primary" t-on-click="onRefresh" t-att-disabled="state.refreshing || !canRefreshSource" t-att-title="canRefreshSource ? ui.refreshFromEplus : ui.longRangeRefreshBlocked">
-                            <t t-if="state.refreshing" t-esc="ui.refreshing"/>
+                        <div class="btn-group ab_sales_dashboard__quick_ranges" role="group" t-att-aria-label="ui.dateFilter">
+                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="ui.yesterday"/>
+                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="ui.last7Days"/>
+                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="ui.last30Days"/>
+                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="ui.last90Days"/>
+                        </div>
+                        <button type="button" class="btn btn-primary" t-on-click="onRefresh" t-att-disabled="state.refreshing" t-att-title="ui.refreshFromEplus">
+                            <t t-if="state.refreshing" t-esc="ui.syncing"/>
                             <t t-else="" t-esc="ui.refreshFromEplus"/>
                         </button>
                     </div>
@@ -557,11 +630,13 @@ SalesDashboardAction.template = xml`
             <div class="ab_sales_dashboard__empty" t-esc="ui.loading"/>
         </t>
         <t t-elif="state.data">
-            <div t-if="!state.data.has_snapshot" class="ab_sales_dashboard__notice">
-                <t t-esc="ui.noSnapshot"/>
-            </div>
-            <div t-if="state.data.summary_only" class="ab_sales_dashboard__notice">
-                <t t-esc="ui.summaryOnly"/>
+            <div t-if="cacheProgressVisible" class="ab_sales_dashboard__cache_progress">
+                <div class="ab_sales_dashboard__cache_progress_header">
+                    <span t-esc="cacheProgressLabel"/>
+                </div>
+                <div class="ab_sales_dashboard__cache_progress_track">
+                    <div class="ab_sales_dashboard__cache_progress_bar" t-att-style="cacheProgressStyle"/>
+                </div>
             </div>
             <div t-if="reportStatusMessage" t-att-class="'ab_sales_dashboard__notice ab_sales_dashboard__notice--' + reportStatusTone">
                 <t t-esc="reportStatusMessage"/>

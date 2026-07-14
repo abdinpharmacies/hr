@@ -128,59 +128,19 @@
 
 .ab_sales_dashboard__store_search {
     position: relative;
-    flex-wrap: nowrap !important;
-    align-items: stretch;
     flex: 1 1 320px;
     min-width: 320px;
     max-width: 420px;
     height: 38px;
 
     .o_searchview {
-        flex: 1 1 auto;
-        width: auto;
+        width: 100%;
         min-height: 38px;
-        min-width: 0;
-        border-start-start-radius: 6px !important;
-        border-end-start-radius: 6px !important;
-    }
-
-    .o_searchview_input_container {
-        flex-wrap: nowrap !important;
-        min-width: 0;
-    }
-
-    .o_searchview_dropdown_toggler,
-    .ab_sales_dashboard__store_clear {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex: 0 0 38px;
-        width: 38px;
-        min-width: 38px;
-        height: 38px;
-        min-height: 38px;
-        padding: 0;
-        line-height: 1;
-    }
-
-    .ab_sales_dashboard__store_clear {
-        border-inline-start: 0;
-        border-radius: 0;
-    }
-
-    .o_searchview_dropdown_toggler {
-        border-inline-start: 0;
-        border-start-end-radius: 6px !important;
-        border-end-end-radius: 6px !important;
-
-        &::after {
-            margin: 0;
-        }
     }
 }
 
 .ab_sales_dashboard__store_input {
-    min-width: 0;
+    min-width: 220px;
     height: 28px;
     background: transparent;
     box-shadow: none;
@@ -200,15 +160,34 @@
     z-index: 1050;
 }
 
-.ab_sales_dashboard__date_filter {
-    flex: 0 0 auto;
+.ab_sales_dashboard__date_inputs {
+    display: flex;
+    flex: 0 1 auto;
     align-items: center;
-    min-height: 38px;
+    gap: 8px;
+    min-width: 0;
+}
 
-    .o-btn-date-filter {
-        min-width: 150px;
+.ab_sales_dashboard__date_field {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    color: var(--ab-sales-muted);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.1;
+
+    input {
+        width: 150px;
         min-height: 38px;
-        text-align: start;
+    }
+}
+
+.ab_sales_dashboard__quick_ranges {
+    flex: 0 0 auto;
+
+    .btn {
+        min-height: 38px;
         white-space: nowrap;
     }
 }
@@ -217,37 +196,6 @@
     flex: 0 0 auto;
     min-height: 38px;
     white-space: nowrap;
-}
-
-.ab_sales_dashboard__date_menu {
-    inset-inline-start: 0;
-    top: calc(100% + 4px);
-    min-width: 280px;
-    padding: 8px;
-}
-
-.ab_sales_dashboard__custom_dates {
-    display: grid;
-    gap: 8px;
-    padding: 4px 8px 8px;
-
-    label {
-        display: grid;
-        gap: 4px;
-        margin: 0;
-        color: var(--ab-sales-muted);
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    input {
-        min-width: 220px;
-    }
-}
-
-.ab_sales_dashboard__date_input {
-    margin: 0 8px 8px;
-    width: calc(100% - 16px);
 }
 
 .ab_sales_dashboard__empty,
@@ -291,6 +239,38 @@
         border-inline-start-color: var(--ab-sales-danger);
         background: #fff1f3;
     }
+}
+
+.ab_sales_dashboard__cache_progress {
+    margin-bottom: 16px;
+    padding: 12px 14px;
+    background: #fff;
+    border: 1px solid var(--ab-sales-line);
+    border-radius: 8px;
+}
+
+.ab_sales_dashboard__cache_progress_header {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    color: var(--ab-sales-muted);
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.ab_sales_dashboard__cache_progress_track {
+    height: 8px;
+    overflow: hidden;
+    background: var(--ab-sales-non-medicine);
+    border-radius: 999px;
+}
+
+.ab_sales_dashboard__cache_progress_bar {
+    height: 100%;
+    min-width: 0;
+    background: var(--ab-sales-primary);
+    border-radius: 999px;
 }
 
 .ab_sales_dashboard__kpis {
@@ -472,6 +452,10 @@
         max-width: 320px;
         min-width: 0;
     }
+
+    .ab_sales_dashboard__date_inputs {
+        flex: 1 1 320px;
+    }
 }
 
 @media (max-width: 720px) {
@@ -493,16 +477,20 @@
         justify-content: stretch;
 
         .ab_sales_dashboard__store_search,
-        .ab_sales_dashboard__date_filter,
-        > .btn {
+        .ab_sales_dashboard__date_inputs,
+        .ab_sales_dashboard__quick_ranges,
+        select,
+        button {
             width: 100%;
         }
 
-        .ab_sales_dashboard__store_search {
-            max-width: none;
+        .ab_sales_dashboard__date_inputs,
+        .ab_sales_dashboard__quick_ranges {
+            display: grid;
+            grid-template-columns: 1fr;
         }
 
-        .ab_sales_dashboard__date_menu {
+        .ab_sales_dashboard__date_field input {
             width: 100%;
         }
     }

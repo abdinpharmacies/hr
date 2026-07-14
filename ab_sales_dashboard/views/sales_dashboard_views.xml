@@ -207,6 +207,36 @@
             </field>
         </record>
 
+        <record id="view_ab_sales_dashboard_daily_user_fact_list" model="ir.ui.view">
+            <field name="name">ab_sales_dashboard_daily_user_fact.list</field>
+            <field name="model">ab_sales_dashboard_daily_user_fact</field>
+            <field name="arch" type="xml">
+                <list string="Daily User Facts" create="0" edit="0" delete="0">
+                    <field name="report_date"/>
+                    <field name="store_id"/>
+                    <field name="store_eplus_id"/>
+                    <field name="employee_eplus_id"/>
+                    <field name="employee_name"/>
+                    <field name="invoice_count"/>
+                    <field name="total_sales"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_daily_user_fact_pivot" model="ir.ui.view">
+            <field name="name">ab_sales_dashboard_daily_user_fact.pivot</field>
+            <field name="model">ab_sales_dashboard_daily_user_fact</field>
+            <field name="arch" type="xml">
+                <pivot string="Daily User Facts">
+                    <field name="employee_name" type="row"/>
+                    <field name="store_id" type="col"/>
+                    <field name="invoice_count" type="measure"/>
+                    <field name="total_sales" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
         <record id="view_ab_sales_dashboard_daily_item_fact_list" model="ir.ui.view">
             <field name="name">ab.sales.dashboard.daily.item.fact.list</field>
             <field name="model">ab.sales.dashboard.daily.item.fact</field>
