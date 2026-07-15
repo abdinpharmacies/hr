@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.input">
+        <t t-if="props.bare">
+            <input t-att-id="inputId"
+                   t-att-name="props.name || undefined"
+                   t-att-type="props.type"
+                   t-att-class="controlClasses"
+                   t-att-value="normalizedValue"
+                   t-att-placeholder="props.placeholder || undefined"
+                   t-att-min="minValue"
+                   t-att-max="maxValue"
+                   t-att-step="stepValue"
+                   t-att-autocomplete="props.autocomplete || undefined"
+                   t-att-inputmode="props.inputMode || undefined"
+                   t-att-aria-label="props.ariaLabel || props.label || undefined"
+                   t-att-title="props.title || undefined"
+                   t-att-disabled="props.disabled ? true : undefined"
+                   t-att-readonly="props.readonly ? true : undefined"
+                   t-att-required="props.required ? true : undefined"
+                   t-on-input="onInput"
+                   t-on-change="onChange"
+                   t-on-focus="onFocus"
+                   t-on-blur="onBlur"/>
+        </t>
+        <label t-else="" t-att-class="fieldClasses" t-att-for="inputId">
+            <span t-if="props.label" class="core_ui_field_label" t-esc="props.label"/>
+            <span class="core_ui_field_control">
+                <i t-if="props.icon" t-att-class="'core_ui_field_icon ' + props.icon" aria-hidden="true"/>
+                <input t-att-id="inputId"
+                       t-att-name="props.name || undefined"
+                       t-att-type="props.type"
+                       t-att-class="controlClasses"
+                       t-att-value="normalizedValue"
+                       t-att-placeholder="props.placeholder || undefined"
+                       t-att-min="minValue"
+                       t-att-max="maxValue"
+                       t-att-step="stepValue"
+                       t-att-autocomplete="props.autocomplete || undefined"
+                       t-att-inputmode="props.inputMode || undefined"
+                       t-att-aria-label="props.ariaLabel || props.label || undefined"
+                       t-att-title="props.title || undefined"
+                       t-att-disabled="props.disabled ? true : undefined"
+                       t-att-readonly="props.readonly ? true : undefined"
+                       t-att-required="props.required ? true : undefined"
+                       t-on-input="onInput"
+                       t-on-change="onChange"
+                       t-on-focus="onFocus"
+                       t-on-blur="onBlur"/>
+                <i t-if="props.trailingIcon" t-att-class="'core_ui_field_trailing_icon ' + props.trailingIcon" aria-hidden="true"/>
+            </span>
+            <span t-if="props.error" class="core_ui_field_message core_ui_field_message_error" t-esc="props.error"/>
+            <span t-elif="props.help" class="core_ui_field_message" t-esc="props.help"/>
+        </label>
+    </t>
+
+    <t t-name="core_ui.textarea">
+        <label t-att-class="fieldClasses" t-att-for="inputId">
+            <span t-if="props.label" class="core_ui_field_label" t-esc="props.label"/>
+            <span class="core_ui_field_control">
+                <textarea t-att-id="inputId"
+                          t-att-name="props.name || undefined"
+                          t-att-class="controlClasses"
+                          t-att-rows="props.rows"
+                          t-att-placeholder="props.placeholder || undefined"
+                          t-att-aria-label="props.ariaLabel || props.label || undefined"
+                          t-att-title="props.title || undefined"
+                          t-att-disabled="props.disabled ? true : undefined"
+                          t-att-readonly="props.readonly ? true : undefined"
+                          t-att-required="props.required ? true : undefined"
+                          t-on-input="onInput"
+                          t-on-change="onChange"
+                          t-on-focus="onFocus"
+                          t-on-blur="onBlur"
+                          t-esc="normalizedValue"/>
+            </span>
+            <span t-if="props.error" class="core_ui_field_message core_ui_field_message_error" t-esc="props.error"/>
+            <span t-elif="props.help" class="core_ui_field_message" t-esc="props.help"/>
+        </label>
+    </t>
+
+    <t t-name="core_ui.select">
+        <label t-att-class="fieldClasses" t-att-for="inputId">
+            <span t-if="props.label" class="core_ui_field_label" t-esc="props.label"/>
+            <span class="core_ui_field_control">
+                <select t-att-id="inputId"
+                        t-att-name="props.name || undefined"
+                        t-att-class="controlClasses"
+                        t-att-value="normalizedValue"
+                        t-att-aria-label="props.ariaLabel || props.label || undefined"
+                        t-att-title="props.title || undefined"
+                        t-att-disabled="props.disabled ? true : undefined"
+                        t-att-required="props.required ? true : undefined"
+                        t-on-change="onChange">
+                    <option t-if="props.placeholder"
+                            value=""
+                            t-att-selected="!normalizedValue"
+                            t-esc="props.placeholder"/>
+                    <t t-foreach="props.options" t-as="option" t-key="optionKey(option, option_index)">
+                        <option t-att-value="optionValue(option)"
+                                t-att-disabled="optionDisabled(option) ? true : undefined"
+                                t-att-selected="isOptionSelected(option)"
+                                t-esc="optionLabel(option)"/>
+                    </t>
+                </select>
+            </span>
+            <span t-if="props.error" class="core_ui_field_message core_ui_field_message_error" t-esc="props.error"/>
+            <span t-elif="props.help" class="core_ui_field_message" t-esc="props.help"/>
+        </label>
+    </t>
+
+    <t t-name="core_ui.search_select">
+        <div t-att-class="wrapperClasses">
+            <div class="core_ui_search_select_control">
+                <i t-if="props.icon" t-att-class="'core_ui_search_select_icon ' + props.icon" aria-hidden="true"/>
+                <input t-att-id="inputId"
+                       type="search"
+                       t-att-class="inputClasses"
+                       t-att-value="normalizedSearchValue"
+                       t-att-placeholder="props.placeholder || props.allLabel || undefined"
+                       t-att-aria-label="props.ariaLabel || props.placeholder || props.allLabel || undefined"
+                       t-att-aria-expanded="props.open ? 'true' : 'false'"
+                       t-att-disabled="props.disabled ? true : undefined"
+                       autocomplete="off"
+                       t-on-input="onInput"
+                       t-on-focus="onFocus"/>
+                <button t-if="showClear"
+                        type="button"
+                        class="core_ui_search_select_clear"
+                        tabindex="-1"
+                        t-att-aria-label="props.clearLabel"
+                        t-on-mousedown.prevent="onClear">
+                    <i class="fa fa-times" aria-hidden="true"/>
+                </button>
+                <button type="button"
+                        class="core_ui_search_select_toggle"
+                        tabindex="-1"
+                        t-att-disabled="props.disabled ? true : undefined"
+                        t-att-aria-label="props.ariaLabel || props.placeholder || props.allLabel || undefined"
+                        t-on-click="onToggle">
+                    <i t-att-class="props.open ? 'fa fa-chevron-up' : 'fa fa-chevron-down'" aria-hidden="true"/>
+                </button>
+            </div>
+            <div t-if="props.open" t-att-class="menuClasses">
+                <div class="core_ui_search_select_meta">
+                    <span t-if="props.loading" t-esc="props.loadingText"/>
+                    <span t-else="">
+                        <t t-esc="visibleOptions.length"/>
+                        <t> </t>
+                        <t t-esc="props.resultsLabel"/>
+                    </span>
+                </div>
+                <button t-if="props.allLabel"
+                        type="button"
+                        t-att-class="'core_ui_search_select_option core_ui_search_select_option_all' + (!hasSelection ? ' selected' : '')"
+                        t-on-mousedown.prevent="onSelectAll">
+                    <span class="core_ui_search_select_option_text" t-esc="props.allLabel"/>
+                    <i t-if="!hasSelection" class="fa fa-check" aria-hidden="true"/>
+                </button>
+                <div t-if="props.allLabel" class="core_ui_search_select_divider"/>
+                <t t-if="props.loading">
+                    <div class="core_ui_search_select_empty" t-esc="props.loadingText"/>
+                </t>
+                <t t-elif="visibleOptions.length">
+                    <t t-foreach="visibleOptions" t-as="option" t-key="optionKey(option, option_index)">
+                        <button type="button"
+                                t-att-class="'core_ui_search_select_option' + (isSelected(option) ? ' selected' : '')"
+                                t-on-mousedown.prevent="(ev) => this.onSelect(option, ev)">
+                            <span class="core_ui_search_select_option_text" t-esc="optionLabel(option)"/>
+                            <i t-if="isSelected(option)" class="fa fa-check" aria-hidden="true"/>
+                        </button>
+                    </t>
+                </t>
+                <t t-else="">
+                    <div class="core_ui_search_select_empty" t-esc="props.emptyText"/>
+                </t>
+            </div>
+        </div>
+    </t>
+
+    <t t-name="core_ui.checkbox">
+        <label t-att-class="fieldClasses" t-att-for="inputId">
+            <input t-att-id="inputId"
+                   type="checkbox"
+                   t-att-name="props.name || undefined"
+                   t-att-value="props.value"
+                   t-att-checked="props.checked ? true : undefined"
+                   t-att-disabled="props.disabled ? true : undefined"
+                   t-att-required="props.required ? true : undefined"
+                   t-on-change="onChange"/>
+            <span class="core_ui_choice_box" aria-hidden="true"><i class="fa fa-check"/></span>
+            <span class="core_ui_choice_text">
+                <span t-if="props.label" class="core_ui_choice_label" t-esc="props.label"/>
+                <span t-if="props.help" class="core_ui_choice_help" t-esc="props.help"/>
+            </span>
+        </label>
+    </t>
+
+    <t t-name="core_ui.radio">
+        <label t-att-class="fieldClasses + ' core_ui_choice_radio'" t-att-for="inputId">
+            <input t-att-id="inputId"
+                   type="radio"
+                   t-att-name="props.name || undefined"
+                   t-att-value="props.value"
+                   t-att-checked="props.checked ? true : undefined"
+                   t-att-disabled="props.disabled ? true : undefined"
+                   t-att-required="props.required ? true : undefined"
+                   t-on-change="onChange"/>
+            <span class="core_ui_choice_box" aria-hidden="true"/>
+            <span class="core_ui_choice_text">
+                <span t-if="props.label" class="core_ui_choice_label" t-esc="props.label"/>
+                <span t-if="props.help" class="core_ui_choice_help" t-esc="props.help"/>
+            </span>
+        </label>
+    </t>
+
+    <t t-name="core_ui.toggle">
+        <label t-att-class="fieldClasses + ' core_ui_toggle'" t-att-for="inputId">
+            <input t-att-id="inputId"
+                   type="checkbox"
+                   t-att-name="props.name || undefined"
+                   t-att-value="props.value"
+                   t-att-checked="props.checked ? true : undefined"
+                   t-att-disabled="props.disabled ? true : undefined"
+                   t-on-change="onChange"/>
+            <span class="core_ui_toggle_track" aria-hidden="true">
+                <span class="core_ui_toggle_thumb"/>
+            </span>
+            <span class="core_ui_choice_text">
+                <span t-if="props.label" class="core_ui_choice_label" t-esc="props.label"/>
+                <span t-if="props.help" class="core_ui_choice_help" t-esc="props.help"/>
+            </span>
+        </label>
+    </t>
+</templates>
