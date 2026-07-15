@@ -280,6 +280,53 @@ For translation files such as `ar.po` and `ar_001.po`, agents must:
 - Append translations when needed.
 - Avoid mass regeneration.
 - Never delete `ar.po` or `ar_001.po` during upgrades.
+- Keep English as the source language in Python, XML, JavaScript, and OWL
+  templates. Arabic must be shown only through Odoo translations when the user's
+  language is Arabic.
+- Do not hardcode Arabic in Python labels, XML views, actions, menus, JS
+  strings, or OWL templates.
+- Wrap frontend JavaScript user-facing strings with `_t(...)`.
+- For XML and template text, keep English source strings and translate them
+  through `.po` files.
+- Support both Arabic language codes by maintaining `i18n/ar.po` and
+  `i18n/ar_001.po`.
+- When adding or repairing translations for a module, first export the module POT
+  from Odoo 19 so references match what Odoo imports.
+- If translation files already exist, append or merge missing untranslated
+  entries into the exported translation workflow instead of replacing unrelated
+  translations.
+- Validate translation files with `msgfmt --check-format`.
+- After upgrading the target module, verify at runtime with a user/context
+  language such as `ar_001` that at least one action, menu, or view differs from
+  `en_US`.
+
+Recommended Odoo 19 translation workflow for a single module:
+
+```bash
+odoo-bin -c <config> -d <db> -u <module_name> --stop-after-init
+odoo-bin i18n export \
+  -c <config> \
+  -d <db> \
+  -l pot \
+  -o /tmp/<module_name>.pot \
+  <module_name>
+```
+
+Then build or update:
+
+```text
+<module_name>/i18n/ar.po
+<module_name>/i18n/ar_001.po
+```
+
+Required PO headers:
+
+```text
+Language: ar
+Language: ar_001
+```
+
+Do not use `-u base` for translation work; upgrade only the target module.
 
 ## Odoo 19 Compatibility Notes
 
