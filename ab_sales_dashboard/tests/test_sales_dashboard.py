@@ -6,6 +6,9 @@ from odoo import fields
 from odoo.exceptions import AccessError, UserError
 from odoo.tests.common import TransactionCase, tagged
 
+from ..models.sales_dashboard_config import SalesDashboardRefreshBusyError
+from ..models.sales_dashboard_service import SalesDashboardSourceUnavailableError
+
 
 @tagged("post_install", "-at_install")
 class TestSalesDashboard(TransactionCase):
@@ -983,17 +986,18 @@ class TestSalesDashboard(TransactionCase):
         }) as mocked_sync, \
              patch.object(type(self.Snapshot), "get_dashboard_data", return_value=payload) as mocked_get:
             data = self.Snapshot.refresh_dashboard_data({
-                "date_from": "2026-06-01",
-                "date_to": "2026-08-01",
+                "date_from": "2026-05-01",
+                "date_to": "2026-07-01",
                 "store_id": 0,
             })
 
         args, kwargs = mocked_sync.call_args
-        self.assertEqual(args[0], fields.Date.to_date("2026-06-01"))
-        self.assertEqual(args[1], fields.Date.to_date("2026-08-01"))
+        self.assertEqual(args[0], fields.Date.to_date("2026-05-01"))
+        self.assertEqual(args[1], fields.Date.to_date("2026-07-01"))
         self.assertEqual(kwargs["store_id"], 0)
         self.assertTrue(kwargs["force_resync"])
         self.assertTrue(kwargs["descending"])
+        self.assertTrue(kwargs["raise_on_error"])
         mocked_get.assert_called_once()
         self.assertEqual(data, payload)
 
@@ -1028,8 +1032,8 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(self.Snapshot._dashboard_max_days(), 31)
         with self.assertRaises(UserError):
             self.Snapshot._normalize_filters({
-                "date_from": "2026-07-01",
-                "date_to": "2026-08-01",
+                "date_from": "2026-05-01",
+                "date_to": "2026-06-01",
                 "store_id": 0,
             })
 
@@ -1411,6 +1415,35 @@ class TestSalesDashboard(TransactionCase):
         refreshed = self.Snapshot._create_snapshot_from_payload(filters, self._payload(total_sales=2200.0))
         self.assertEqual(snapshot.id, refreshed.id)
         self.assertEqual(self.Archive.search_count([("snapshot_id", "=", snapshot.id)]), 2)
+
+    def test_archived_reports_are_discoverable_from_reports(self):
+        snapshot = self._snapshot_record()
+        other_snapshot = self._snapshot_record(date_from="2026-07-02", date_to="2026-07-02")
+
+        self.assertEqual(snapshot.archive_count, 0)
+        archives = self._archive_for_snapshot(snapshot) | self._archive_for_snapshot(snapshot)
+        snapshot.invalidate_recordset(["archive_ids", "archive_count"])
+
+        self.assertEqual(snapshot.archive_count, 2)
+        self.assertEqual(set(snapshot.archive_ids.ids), set(archives.ids))
+        self.assertIn(snapshot, self.Snapshot.search([("archive_ids", "!=", False)]))
+        self.assertNotIn(other_snapshot, self.Snapshot.search([("archive_ids", "!=", False)]))
+
+        action = snapshot.action_view_archives()
+        self.assertEqual(action["res_model"], "ab.sales.dashboard.report.archive")
+        self.assertEqual(action["domain"], [("snapshot_id", "=", snapshot.id)])
+        self.assertEqual(action["context"], {"create": False})
+
+    def test_technical_reporting_menus_are_background_or_maintenance_only(self):
+        maintenance = self.env.ref("ab_sales_dashboard.menu_ab_sales_dashboard_maintenance")
+        reconciliation = self.env.ref("ab_sales_dashboard.menu_ab_sales_dashboard_reconciliation_jobs")
+        analytics = self.env.ref("ab_sales_dashboard.menu_ab_sales_dashboard_reporting_analytics")
+
+        self.assertFalse(self.env.ref("ab_sales_dashboard.menu_ab_sales_dashboard_report_archives").active)
+        self.assertFalse(self.env.ref("ab_sales_dashboard.menu_ab_sales_dashboard_fact_decision").active)
+        self.assertFalse(self.env.ref("ab_sales_dashboard.menu_ab_sales_dashboard_report_data").active)
+        self.assertEqual(reconciliation.parent_id, maintenance)
+        self.assertEqual(analytics.parent_id, maintenance)
 
     def test_phase7_archive_payload_matches_serialized_dashboard_and_preserves_ordering(self):
         store = self._store(code="TEST-DASH-ARCHIVE-PAYLOAD", eplus_serial=99022)
@@ -1823,13 +1856,15 @@ class TestSalesDashboard(TransactionCase):
         self.assertFalse(data["item_lines"])
         self.assertFalse(data["invoice_lines"])
 
-    def test_phase8_summary_range_above_configured_limit_is_rejected(self):
-        with self.assertRaises(UserError):
-            self.Snapshot.get_dashboard_data({
+    def test_phase8_summary_range_above_legacy_limit_uses_postgresql(self):
+        service = self.env["ab.sales.dashboard.service"]
+        with patch.object(type(service), "connect_eplus", side_effect=AssertionError("summary read must remain PostgreSQL-only")):
+            data = self.Snapshot.get_dashboard_data({
                 "date_from": "2026-04-01",
                 "date_to": "2026-06-30",
                 "store_id": 0,
             })
+        self.assertEqual(data["report_meta"]["mode"], "summary")
 
     def test_phase8_summary_previous_period_uses_daily_facts_only(self):
         store = self._store(code="TEST-DASH-PREV", eplus_serial=99033)
@@ -2269,6 +2304,303 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(claimed.sync_date, fields.Date.to_date("2026-07-03"))
         self.assertEqual(len(states), 3)
 
+    def test_dashboard_sync_competing_poll_is_deferred_without_failed_day(self):
+        sync_date = fields.Date.to_date("2026-01-15")
+        self.SyncState.create(dict(
+            self.SyncState._store_scope_values(0),
+            sync_date=sync_date,
+            state="pending",
+        ))
+        with patch.object(type(self.SyncState), "_try_sync_claim_lock", return_value=False):
+            progress = self.SyncState.process_next_dashboard_sync_day(
+                sync_date,
+                sync_date,
+                force_resync=True,
+            )
+
+        state = self.SyncState.search([
+            ("sync_date", "=", sync_date),
+            ("store_filter_key", "=", "all"),
+        ], limit=1)
+        self.assertEqual(progress["last_status"], "busy")
+        self.assertTrue(progress["is_active"])
+        self.assertEqual(progress["failed_days"], 0)
+        self.assertEqual(state.state, "pending")
+        self.assertFalse(state.error_message)
+
+    def test_dashboard_sync_refresh_lock_busy_keeps_pending_state(self):
+        store_values = self.SyncState._store_scope_values(0)
+        state = self.SyncState.create(dict(
+            store_values,
+            sync_date=fields.Date.to_date("2026-01-16"),
+            state="pending",
+        ))
+
+        @contextmanager
+        def busy_refresh_lock(_snapshot):
+            raise SalesDashboardRefreshBusyError("busy")
+            yield
+
+        with patch.object(type(self.Snapshot), "_sales_dashboard_refresh_lock", busy_refresh_lock):
+            with self.assertRaises(SalesDashboardRefreshBusyError):
+                state._sync_one_state_with_progress(force_resync=True)
+
+        state.invalidate_recordset()
+        self.assertEqual(state.state, "pending")
+        self.assertFalse(state.started_at)
+        self.assertFalse(state.finished_at)
+        self.assertFalse(state.error_message)
+
+    def test_dashboard_sync_range_can_propagate_original_source_error(self):
+        sync_date = fields.Date.to_date("2026-01-17")
+        with patch.object(
+            type(self.SyncState),
+            "_sync_one_state_with_progress",
+            side_effect=RuntimeError("source failed"),
+        ):
+            with self.assertRaisesRegex(RuntimeError, "source failed"):
+                self.SyncState.sync_dashboard_date_range(
+                    sync_date,
+                    sync_date,
+                    raise_on_error=True,
+                )
+
+    def test_dashboard_sync_orchestration_introduces_no_manual_commit(self):
+        methods = (
+            self.SyncState.cron_sync_next_dashboard_day,
+            self.SyncState.sync_dashboard_date_range,
+            self.SyncState.process_next_dashboard_sync_day,
+            self.SyncState._sync_one_state_with_progress,
+        )
+        for method in methods:
+            self.assertNotIn("commit", method.__func__.__code__.co_names)
+            self.assertNotIn("rollback", method.__func__.__code__.co_names)
+
+    def test_dashboard_source_connection_fails_over_and_caches_healthy_candidate(self):
+        calls = []
+
+        @contextmanager
+        def candidate_connection(_service, server=None, **kwargs):
+            calls.append(server)
+            if server == "primary":
+                raise UserError("primary unavailable")
+            yield "secondary connection"
+
+        service_type = type(self.Service)
+        with patch.object(service_type, "_dashboard_preferred_server", False), \
+             patch.object(service_type, "_dashboard_source_candidates", return_value=["primary", "secondary"]), \
+             patch.object(service_type, "connect_eplus", candidate_connection):
+            with self.Service._dashboard_source_connection() as connection:
+                self.assertEqual(connection, "secondary connection")
+            self.assertEqual(service_type._dashboard_preferred_server, "secondary")
+
+        self.assertEqual(calls, ["primary", "secondary"])
+
+    def test_dashboard_source_connection_reports_all_candidates_unavailable(self):
+        @contextmanager
+        def unavailable_connection(_service, **kwargs):
+            raise UserError("unavailable")
+            yield
+
+        service_type = type(self.Service)
+        with patch.object(service_type, "_dashboard_preferred_server", False), \
+             patch.object(service_type, "_dashboard_source_candidates", return_value=["primary", "secondary"]), \
+             patch.object(service_type, "connect_eplus", unavailable_connection):
+            with self.assertRaises(SalesDashboardSourceUnavailableError):
+                with self.Service._dashboard_source_connection():
+                    pass
+
+    def test_dashboard_sync_source_outage_pauses_without_failing_days(self):
+        sync_date = fields.Date.to_date("2026-01-20")
+        state = self.SyncState.create(dict(
+            self.SyncState._store_scope_values(0),
+            sync_date=sync_date,
+            state="pending",
+        ))
+        with patch.object(
+            type(self.SyncState),
+            "_sync_one_state_with_progress",
+            side_effect=SalesDashboardSourceUnavailableError("source unavailable"),
+        ):
+            progress = self.SyncState.process_next_dashboard_sync_day(
+                sync_date,
+                sync_date,
+                force_resync=True,
+            )
+
+        state.invalidate_recordset()
+        self.assertEqual(progress["last_status"], "source_unavailable")
+        self.assertTrue(progress["source_unavailable"])
+        self.assertFalse(progress["is_active"])
+        self.assertEqual(progress["failed_days"], 0)
+        self.assertEqual(state.state, "pending")
+        self.assertFalse(state.error_message)
+
+    def test_dashboard_sync_rpcs_preserve_selected_store_scope(self):
+        store = self._store(code="TEST-DASH-SYNC-SCOPE", eplus_serial=99130)
+        filters = {"date_from": "2026-07-01", "date_to": "2026-07-07", "store_id": store.id}
+        sync_type = type(self.SyncState)
+        with patch.object(sync_type, "start_dashboard_sync_range", return_value={}) as start, \
+             patch.object(sync_type, "dashboard_sync_progress", return_value={}) as progress, \
+             patch.object(sync_type, "process_next_dashboard_sync_day", return_value={}) as process:
+            self.Snapshot.start_dashboard_sync(filters)
+            self.Snapshot.get_dashboard_sync_progress(filters)
+            self.Snapshot.process_dashboard_sync_day(filters)
+
+        self.assertEqual(start.call_args.kwargs["store_id"], store.id)
+        self.assertEqual(progress.call_args.kwargs["store_id"], store.id)
+        self.assertEqual(process.call_args.kwargs["store_id"], store.id)
+
+    def test_section_pages_are_bounded_and_search_all_item_facts(self):
+        store = self._store(code="TEST-DASH-ITEM-PAGE", eplus_serial=99131)
+        self._seed_daily_summary_facts(store, "2026-07-01", 1, total_sales=1000.0, invoice_count=25)
+        self._seed_daily_item_facts(store, "2026-07-01", 1, item_count=25, sales_amount=10.0)
+        filters = {"date_from": "2026-07-01", "date_to": "2026-07-01", "store_id": store.id}
+
+        first = self.Snapshot.get_dashboard_section_page(filters, "top_items", 1, "")
+        second = self.Snapshot.get_dashboard_section_page(filters, "top_items", 2, "")
+        searched = self.Snapshot.get_dashboard_section_page(filters, "top_items", 1, "ITEM800024")
+
+        self.assertEqual(first["page_size"], 20)
+        self.assertEqual(first["total_count"], 25)
+        self.assertEqual(len(first["rows"]), 20)
+        self.assertEqual(len(second["rows"]), 5)
+        self.assertIs(first["rows"][0]["current_balance"], False)
+        self.assertEqual(searched["total_count"], 1)
+        self.assertEqual(searched["rows"][0]["eplus_item_code"], "ITEM800024")
+
+    def test_section_pages_are_bounded_and_search_all_user_facts(self):
+        store = self._store(code="TEST-DASH-USER-PAGE", eplus_serial=99132)
+        self._seed_daily_summary_facts(store, "2026-07-01", 1, total_sales=3250.0, invoice_count=25)
+        self._create_fact_coverage(store, "2026-07-01", fact_type="user")
+        self.env["ab_sales_dashboard_daily_user_fact"].sudo().create([
+            {
+                "report_date": "2026-07-01",
+                "store_id": store.id,
+                "store_eplus_id": store.eplus_serial,
+                "employee_eplus_id": 7000 + index,
+                "employee_name": "Employee %02d" % index,
+                "invoice_count": index + 1,
+                "total_sales": float((index + 1) * 10),
+                "synced_at": fields.Datetime.now(),
+            }
+            for index in range(25)
+        ])
+        filters = {"date_from": "2026-07-01", "date_to": "2026-07-01", "store_id": store.id}
+
+        first = self.Snapshot.get_dashboard_section_page(filters, "sales_by_user", 1, "")
+        second = self.Snapshot.get_dashboard_section_page(filters, "sales_by_user", 2, "")
+        searched = self.Snapshot.get_dashboard_section_page(filters, "sales_by_user", 1, "Employee 03")
+
+        self.assertEqual(first["total_count"], 25)
+        self.assertEqual(len(first["rows"]), 20)
+        self.assertEqual(len(second["rows"]), 5)
+        self.assertEqual(searched["total_count"], 1)
+        self.assertEqual(searched["rows"][0]["employee_name"], "Employee 03")
+
+    def test_customer_section_page_is_store_scoped_and_bounded(self):
+        store = self._store(code="TEST-DASH-CUSTOMER-PAGE", eplus_serial=99133)
+        source_rows = [{
+            "invoice_no": 9001,
+            "sto_id": store.eplus_serial,
+            "sec_insert_date": "2026-07-01 10:00:00",
+            "customer_name": "Customer One",
+            "invoice_total": 150.0,
+            "item_count": 2,
+            "items": "ITEM1, ITEM2",
+        }]
+        with patch.object(type(self.Service), "fetch_customer_sales_page", return_value={
+            "rows": source_rows,
+            "total_count": 41,
+        }) as fetch:
+            result = self.Snapshot.get_dashboard_section_page(
+                {"date_from": "2026-07-01", "date_to": "2026-07-07", "store_id": store.id},
+                "customer_sales",
+                2,
+                "Customer",
+            )
+
+        self.assertEqual(fetch.call_args.kwargs["store_eplus_ids"], [store.eplus_serial])
+        self.assertEqual(fetch.call_args.kwargs["page_size"], 20)
+        self.assertEqual(result["page"], 2)
+        self.assertEqual(result["total_count"], 41)
+        self.assertEqual(result["rows"][0]["row_key"], "customer_%s_9001" % store.eplus_serial)
+
+    def test_customer_section_page_is_never_sourced_from_eplus_above_31_days(self):
+        with patch.object(
+            type(self.Service),
+            "fetch_customer_sales_page",
+            side_effect=AssertionError("long-range customer page must remain PostgreSQL-only"),
+        ):
+            result = self.Snapshot.get_dashboard_section_page(
+                {"date_from": "2026-04-16", "date_to": "2026-07-14", "store_id": 0},
+                "customer_sales",
+                1,
+                "",
+            )
+        self.assertFalse(result["available"])
+        self.assertEqual(result["source"], "unsupported")
+
+    def test_customer_page_sql_is_parameterized_and_fixed_to_20_rows(self):
+        sql = self.Service._customer_sales_page_sql(
+            "h.sec_insert_date >= ? AND h.sec_insert_date < ? AND h.sto_id IN (?)",
+            has_search=True,
+        )
+        self.assertIn("OFFSET ? ROWS FETCH NEXT ? ROWS ONLY", sql)
+        self.assertIn("h.sto_id IN (?)", sql)
+        self.assertIn("AS item_pairs", sql)
+        self.assertNotIn("SELECT TOP (20)", sql)
+        self.assertNotIn("Customer One", sql)
+        self.assertNotIn("commit", self.Service.fetch_customer_sales_page.__func__.__code__.co_names)
+
+    def test_customer_page_service_clamps_page_size_and_binds_search(self):
+        cursor = self._FakeDashboardCursor()
+        connection = self._FakeDashboardConnection(cursor)
+        rows = [{"invoice_no": 9001, "total_count": 41}]
+        with self._patch_dashboard_connection(connection), patch.object(
+            type(self.Service), "_fetch_all", return_value=rows
+        ) as fetch:
+            result = self.Service.fetch_customer_sales_page(
+                "2026-07-01",
+                "2026-07-08",
+                store_eplus_ids=[99133],
+                page=2,
+                page_size=500,
+                search_term="Customer One",
+            )
+
+        params = fetch.call_args.args[2]
+        self.assertEqual(result["total_count"], 41)
+        self.assertEqual(params[-5:], ["%Customer One%", "%Customer One%", "%Customer One%", 20, 20])
+        self.assertIn(99133, params)
+        self.assertTrue(cursor.closed)
+
+    def test_customer_page_items_are_normalized_to_odoo_product_names(self):
+        cursor = self._FakeDashboardCursor()
+        connection = self._FakeDashboardConnection(cursor)
+        rows = [{
+            "invoice_no": 9001,
+            "customer_name": "Customer One",
+            "items": "ITM501, ITM502",
+            "item_pairs": "501\x1fITM501\x1e502\x1fITM502",
+            "total_count": 1,
+        }]
+        with self._patch_dashboard_connection(connection), patch.object(
+            type(self.Service), "_fetch_all", return_value=rows
+        ), patch.object(
+            type(self.Service),
+            "_invoice_item_names_by_serial",
+            return_value={501: "Product One", 502: "Product Two"},
+        ):
+            result = self.Service.fetch_customer_sales_page(
+                "2026-07-01",
+                "2026-07-08",
+                store_eplus_ids=[99133],
+            )
+
+        self.assertEqual(result["rows"][0]["items"], "Product One, Product Two")
+        self.assertNotIn("item_pairs", result["rows"][0])
+
     def test_phase10_product_sales_report_is_not_top20_limited(self):
         store = self._store(code="TEST-DASH-PRODUCT-REPORT", eplus_serial=99105)
         self._seed_daily_item_facts(store, "2026-07-01", 1, item_count=25, sales_amount=5.0)
@@ -2678,5 +3010,17 @@ class TestSalesDashboard(TransactionCase):
              patch.object(type(self.ReconciliationJob), "search", side_effect=AssertionError("dashboard read must not inspect reconciliation")):
             data = self.Snapshot.get_dashboard_data({"date_from": "2026-04-16", "date_to": "2026-07-14", "store_id": 0})
         self.assertEqual(data["report_meta"]["mode"], "summary")
-        with self.assertRaises(UserError):
-            self.Snapshot.refresh_dashboard_data({"date_from": "2026-04-16", "date_to": "2026-07-14", "store_id": 0})
+        with patch.object(type(self.SyncState), "sync_dashboard_date_range", return_value={
+            "synced_count": 90,
+            "skipped_count": 0,
+            "failed_count": 0,
+            "failed": [],
+            "deferred": False,
+        }) as mocked_sync, patch.object(type(self.Snapshot), "get_dashboard_data", return_value=data):
+            refreshed = self.Snapshot.refresh_dashboard_data({
+                "date_from": "2026-04-16",
+                "date_to": "2026-07-14",
+                "store_id": 0,
+            })
+        mocked_sync.assert_called_once()
+        self.assertEqual(refreshed, data)

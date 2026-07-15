@@ -92,13 +92,20 @@
                   parent="menu_ab_sales_dashboard_root"
                   action="action_ab_sales_dashboard_report_archive"
                   sequence="25"
+                  active="False"
+                  groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
+
+        <menuitem id="menu_ab_sales_dashboard_maintenance"
+                  name="Maintenance"
+                  parent="menu_ab_sales_dashboard_root"
+                  sequence="90"
                   groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
 
         <menuitem id="menu_ab_sales_dashboard_reconciliation_jobs"
                   name="Reconciliation Jobs"
-                  parent="menu_ab_sales_dashboard_root"
+                  parent="menu_ab_sales_dashboard_maintenance"
                   action="action_ab_sales_dashboard_reconciliation_job"
-                  sequence="27"
+                  sequence="10"
                   groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
 
         <menuitem id="menu_ab_sales_dashboard_product_sales_report"
@@ -110,9 +117,9 @@
 
         <menuitem id="menu_ab_sales_dashboard_reporting_analytics"
                   name="Reporting Analytics"
-                  parent="menu_ab_sales_dashboard_root"
+                  parent="menu_ab_sales_dashboard_maintenance"
                   action="action_ab_sales_dashboard_report_telemetry"
-                  sequence="29"
+                  sequence="20"
                   groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
 
         <menuitem id="menu_ab_sales_dashboard_fact_decision"
@@ -120,12 +127,14 @@
                   parent="menu_ab_sales_dashboard_root"
                   action="action_ab_sales_dashboard_fact_decision"
                   sequence="30"
+                  active="False"
                   groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
 
         <menuitem id="menu_ab_sales_dashboard_report_data"
                   name="Report Data"
                   parent="menu_ab_sales_dashboard_root"
                   sequence="40"
+                  active="False"
                   groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
 
         <menuitem id="menu_ab_sales_dashboard_daily_store_fact"

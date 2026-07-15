@@ -8,6 +8,8 @@ from odoo import api, fields, models, tools
 from odoo.exceptions import AccessError, UserError
 from odoo.tools.translate import _
 
+from .sales_dashboard_service import SalesDashboardSourceUnavailableError
+
 
 _logger = logging.getLogger(__name__)
 
@@ -19,6 +21,8 @@ COVERAGE_PARTIAL = "partial"
 COVERAGE_UNAVAILABLE = "unavailable"
 SUMMARY_UNSUPPORTED_SECTIONS = ("sales_by_user", "top_items", "customer_sales")
 CUSTOMER_SUMMARY_UNSUPPORTED_SECTIONS = ("customer_sales",)
+DASHBOARD_SECTION_PAGE_SIZE = 20
+DASHBOARD_SECTION_KEYS = ("sales_by_user", "top_items", "customer_sales")
 
 
 class SalesDashboardSnapshot(models.Model):
@@ -54,6 +58,21 @@ class SalesDashboardSnapshot(models.Model):
     user_line_ids = fields.One2many("ab.sales.dashboard.user.line", "snapshot_id", readonly=True)
     item_line_ids = fields.One2many("ab.sales.dashboard.item.line", "snapshot_id", readonly=True)
     invoice_line_ids = fields.One2many("ab.sales.dashboard.invoice.line", "snapshot_id", readonly=True)
+    archive_ids = fields.One2many("ab.sales.dashboard.report.archive", "snapshot_id", readonly=True)
+    archive_count = fields.Integer(string="Archives", compute="_compute_archive_count")
+
+    @api.depends("archive_ids")
+    def _compute_archive_count(self):
+        counts = {}
+        if self.ids:
+            grouped = self.env["ab.sales.dashboard.report.archive"].sudo()._read_group(
+                [("snapshot_id", "in", self.ids)],
+                ["snapshot_id"],
+                ["__count"],
+            )
+            counts = {snapshot.id: count for snapshot, count in grouped}
+        for snapshot in self:
+            snapshot.archive_count = counts.get(snapshot.id, 0)
 
     def action_refresh(self):
         self.ensure_one()
@@ -76,6 +95,15 @@ class SalesDashboardSnapshot(models.Model):
             "view_mode": "form",
             "target": "current",
         }
+
+    def action_view_archives(self):
+        self.ensure_one()
+        action = self.env["ir.actions.actions"]._for_xml_id(
+            "ab_sales_dashboard.action_ab_sales_dashboard_report_archive"
+        )
+        action["domain"] = [("snapshot_id", "=", self.id)]
+        action["context"] = {"create": False}
+        return action
 
     def create_management_report_archive(self):
         self.ensure_one()
@@ -198,7 +226,7 @@ class SalesDashboardSnapshot(models.Model):
             require_dates=True,
             max_days=False,
         )
-        store_count = self._refresh_store_count({"store_id": 0})
+        store_count = self._refresh_store_count(filters)
         started = time.monotonic()
         _logger.info(
             "event=sales_dashboard_refresh_started date_from=%s date_to=%s store_id=%s store_count=%s",
@@ -211,10 +239,19 @@ class SalesDashboardSnapshot(models.Model):
             sync_result = self.env["ab_sales_dashboard_sync_state"].sudo().sync_dashboard_date_range(
                 filters["date_from"],
                 filters["date_to"],
-                store_id=0,
+                store_id=filters["store_id"],
                 force_resync=True,
                 descending=True,
+                raise_on_error=True,
             )
+            if sync_result.get("source_unavailable"):
+                raise UserError(
+                    _("E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored.")
+                )
+            if sync_result.get("deferred"):
+                raise UserError(_("A sales dashboard refresh is already running. Please wait for it to finish and try again."))
+            if sync_result.get("failed_count"):
+                raise UserError(_("Dashboard refresh failed for one or more days."))
             duration_ms = int((time.monotonic() - started) * 1000)
             _logger.info(
                 "event=sales_dashboard_refresh_completed date_from=%s date_to=%s store_id=%s store_count=%s duration_ms=%s synced_days=%s skipped_days=%s failed_days=%s status=success",
@@ -265,7 +302,7 @@ class SalesDashboardSnapshot(models.Model):
         return self.env["ab_sales_dashboard_sync_state"].sudo().start_dashboard_sync_range(
             filters["date_from"],
             filters["date_to"],
-            store_id=0,
+            store_id=filters["store_id"],
             force_resync=True,
         )
 
@@ -279,7 +316,7 @@ class SalesDashboardSnapshot(models.Model):
         return self.env["ab_sales_dashboard_sync_state"].sudo().dashboard_sync_progress(
             filters["date_from"],
             filters["date_to"],
-            store_id=0,
+            store_id=filters["store_id"],
         )
 
     @api.model
@@ -292,8 +329,255 @@ class SalesDashboardSnapshot(models.Model):
         return self.env["ab_sales_dashboard_sync_state"].sudo().process_next_dashboard_sync_day(
             filters["date_from"],
             filters["date_to"],
-            store_id=0,
+            store_id=filters["store_id"],
             force_resync=True,
+        )
+
+    @api.model
+    def get_dashboard_section_page(self, filters=None, section=None, page=1, search_term=None):
+        started = time.monotonic()
+        filters = self._normalize_filters(filters, require_dates=True, max_days=False)
+        section, page, search_term = self._normalize_section_page_request(section, page, search_term)
+        stores = self._fact_scope_stores(filters)
+        if filters["store_id"] and not stores:
+            raise UserError(_("The selected store was not found."))
+        store_eplus_ids = [int(store.eplus_serial) for store in stores if store.eplus_serial]
+
+        if section == "customer_sales":
+            result = self._customer_sales_section_page(filters, stores, page, search_term)
+        else:
+            fact_type = "user" if section == "sales_by_user" else "item"
+            coverage = self._fact_coverage_metrics(
+                filters["date_from"],
+                filters["date_to"],
+                store_eplus_ids,
+                fact_type,
+            )
+            if coverage["coverage_state"] == COVERAGE_COMPLETE:
+                if section == "sales_by_user":
+                    rows, total_count = self._user_fact_section_page(filters, store_eplus_ids, page, search_term)
+                else:
+                    rows, total_count = self._item_fact_section_page(filters, store_eplus_ids, page, search_term)
+                result = self._section_page_result(section, page, rows, total_count, source="daily_facts")
+            else:
+                result = self._snapshot_section_page(filters, section, page, search_term, limited=True)
+
+        _logger.info(
+            "event=sales_dashboard_section_page_completed section=%s page=%s row_count=%s total_count=%s duration_ms=%s store_count=%s source=%s available=%s",
+            section,
+            result["page"],
+            len(result["rows"]),
+            result["total_count"],
+            int((time.monotonic() - started) * 1000),
+            len(store_eplus_ids),
+            result["source"],
+            result["available"],
+        )
+        return result
+
+    @api.model
+    def _normalize_section_page_request(self, section, page, search_term):
+        section = str(section or "").strip()
+        if section not in DASHBOARD_SECTION_KEYS:
+            raise UserError(_("Unsupported dashboard section."))
+        try:
+            page = int(page)
+        except (TypeError, ValueError):
+            page = 1
+        page = max(1, min(page, 100000))
+        search_term = str(search_term or "").strip()[:100]
+        return section, page, search_term
+
+    @api.model
+    def _section_page_result(self, section, page, rows, total_count, source, available=True, limited=False):
+        total_count = max(int(total_count or 0), 0)
+        return {
+            "section": section,
+            "page": page,
+            "page_size": DASHBOARD_SECTION_PAGE_SIZE,
+            "total_count": total_count,
+            "total_pages": max((total_count + DASHBOARD_SECTION_PAGE_SIZE - 1) // DASHBOARD_SECTION_PAGE_SIZE, 1),
+            "rows": rows[:DASHBOARD_SECTION_PAGE_SIZE],
+            "source": source,
+            "available": bool(available),
+            "limited": bool(limited),
+        }
+
+    @api.model
+    def _section_search_pattern(self, search_term):
+        escaped = search_term.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+        return "%%%s%%" % escaped
+
+    @api.model
+    def _user_fact_section_page(self, filters, store_eplus_ids, page, search_term):
+        grouped_sql = """
+            WITH grouped AS (
+                SELECT
+                    employee_eplus_id,
+                    MAX(employee_name) AS employee_name,
+                    COALESCE(SUM(invoice_count), 0) AS invoice_count,
+                    COALESCE(SUM(total_sales), 0) AS user_total_sales
+                FROM ab_sales_dashboard_daily_user_fact
+                WHERE report_date >= %s
+                  AND report_date <= %s
+                  AND store_eplus_id = ANY(%s)
+                GROUP BY employee_eplus_id
+            )
+        """
+        params = [filters["date_from"], filters["date_to"], store_eplus_ids]
+        search_sql = ""
+        if search_term:
+            search_sql = " WHERE employee_name ILIKE %s ESCAPE '\\' OR employee_eplus_id::text ILIKE %s ESCAPE '\\'"
+            pattern = self._section_search_pattern(search_term)
+            params.extend([pattern, pattern])
+        self.env.cr.execute(grouped_sql + "SELECT COUNT(*) FROM grouped" + search_sql, params)
+        total_count = int((self.env.cr.fetchone() or [0])[0] or 0)
+        self.env.cr.execute(
+            grouped_sql
+            + """
+                SELECT employee_eplus_id, employee_name, invoice_count, user_total_sales
+                FROM grouped
+            """
+            + search_sql
+            + " ORDER BY user_total_sales DESC, invoice_count DESC, employee_eplus_id LIMIT %s OFFSET %s",
+            params + [DASHBOARD_SECTION_PAGE_SIZE, (page - 1) * DASHBOARD_SECTION_PAGE_SIZE],
+        )
+        page_rows = self.env.cr.fetchall()
+        total_sales = self._daily_store_fact_totals(
+            filters["date_from"], filters["date_to"], store_eplus_ids
+        )["total_sales"]
+        rows = []
+        for employee_eplus_id, employee_name, invoice_count, user_total_sales in page_rows:
+            user_total_sales = float(user_total_sales or 0.0)
+            rows.append({
+                "row_key": "summary_user_%s" % employee_eplus_id,
+                "employee_eplus_id": int(employee_eplus_id or 0),
+                "employee_name": employee_name or str(employee_eplus_id or 0),
+                "invoice_count": int(invoice_count or 0),
+                "total_sales": user_total_sales,
+                "pct_of_total": 100.0 * user_total_sales / total_sales if total_sales else 0.0,
+            })
+        return rows, total_count
+
+    @api.model
+    def _item_fact_section_page(self, filters, store_eplus_ids, page, search_term):
+        grouped_sql = """
+            WITH grouped AS (
+                SELECT
+                    item_eplus_id,
+                    MAX(item_code) AS item_code,
+                    MAX(product_id) AS product_id,
+                    MAX(item_name) AS item_name,
+                    COALESCE(SUM(sale_times), 0) AS sale_times,
+                    COALESCE(SUM(sold_qty), 0) AS sold_qty,
+                    COALESCE(SUM(sales_amount), 0) AS total_sales
+                FROM ab_sales_dashboard_daily_item_fact
+                WHERE report_date >= %s
+                  AND report_date <= %s
+                  AND store_eplus_id = ANY(%s)
+                GROUP BY item_eplus_id
+            )
+        """
+        params = [filters["date_from"], filters["date_to"], store_eplus_ids]
+        search_sql = ""
+        if search_term:
+            search_sql = (
+                " WHERE item_code ILIKE %s ESCAPE '\\'"
+                " OR item_name ILIKE %s ESCAPE '\\'"
+                " OR item_eplus_id::text ILIKE %s ESCAPE '\\'"
+            )
+            pattern = self._section_search_pattern(search_term)
+            params.extend([pattern, pattern, pattern])
+        self.env.cr.execute(grouped_sql + "SELECT COUNT(*) FROM grouped" + search_sql, params)
+        total_count = int((self.env.cr.fetchone() or [0])[0] or 0)
+        self.env.cr.execute(
+            grouped_sql
+            + """
+                SELECT item_eplus_id, item_code, product_id, item_name,
+                       sale_times, sold_qty, total_sales
+                FROM grouped
+            """
+            + search_sql
+            + " ORDER BY sale_times DESC, sold_qty DESC, item_eplus_id LIMIT %s OFFSET %s",
+            params + [DASHBOARD_SECTION_PAGE_SIZE, (page - 1) * DASHBOARD_SECTION_PAGE_SIZE],
+        )
+        rows = []
+        for item_eplus_id, item_code, product_id, item_name, sale_times, sold_qty, total_sales in self.env.cr.fetchall():
+            rows.append({
+                "row_key": "summary_item_%s" % item_eplus_id,
+                "eplus_item_id": int(item_eplus_id or 0),
+                "eplus_item_code": item_code or "",
+                "product_name": item_name or item_code or str(item_eplus_id),
+                "product_id": product_id or False,
+                "sale_times": int(sale_times or 0),
+                "sold_qty": float(sold_qty or 0.0),
+                "total_sales": float(total_sales or 0.0),
+                "current_balance": False,
+            })
+        return rows, total_count
+
+    @api.model
+    def _customer_sales_section_page(self, filters, stores, page, search_term):
+        if self._requested_days(filters) > self._dashboard_max_days():
+            return self._section_page_result(
+                "customer_sales", page, [], 0, source="unsupported", available=False
+            )
+        store_eplus_ids = [int(store.eplus_serial) for store in stores if store.eplus_serial]
+        try:
+            source_page = self.env["ab.sales.dashboard.service"].fetch_customer_sales_page(
+                filters["date_from"],
+                fields.Date.add(filters["date_to"], days=1),
+                store_eplus_ids=store_eplus_ids,
+                page=page,
+                page_size=DASHBOARD_SECTION_PAGE_SIZE,
+                search_term=search_term,
+            )
+        except SalesDashboardSourceUnavailableError:
+            return self._snapshot_section_page(filters, "customer_sales", page, search_term, limited=True)
+
+        rows = self._invoice_line_values(source_page["rows"])
+        for row, source_row in zip(rows, source_page["rows"]):
+            row["row_key"] = "customer_%s_%s" % (
+                int(source_row.get("sto_id") or 0),
+                row["invoice_no"],
+            )
+        return self._section_page_result(
+            "customer_sales",
+            page,
+            rows,
+            source_page["total_count"],
+            source="eplus_page",
+        )
+
+    @api.model
+    def _snapshot_section_page(self, filters, section, page, search_term, limited=False):
+        snapshot = self._find_latest_full_snapshot(filters) or self._find_latest_snapshot(filters)
+        if not snapshot:
+            return self._section_page_result(section, page, [], 0, source="snapshot", limited=limited)
+        if section == "sales_by_user":
+            rows = [line._as_dashboard_dict() for line in snapshot.user_line_ids]
+            search_fields = ("employee_name", "employee_eplus_id")
+        elif section == "top_items":
+            rows = [line._as_dashboard_dict() for line in snapshot.item_line_ids]
+            search_fields = ("product_name", "eplus_item_code", "eplus_item_id")
+        else:
+            rows = [line._as_dashboard_dict() for line in snapshot.invoice_line_ids]
+            search_fields = ("invoice_no", "customer_name", "items_summary")
+        if search_term:
+            needle = search_term.casefold()
+            rows = [
+                row for row in rows
+                if any(needle in str(row.get(field) or "").casefold() for field in search_fields)
+            ]
+        total_count = len(rows)
+        offset = (page - 1) * DASHBOARD_SECTION_PAGE_SIZE
+        return self._section_page_result(
+            section,
+            page,
+            rows[offset:offset + DASHBOARD_SECTION_PAGE_SIZE],
+            total_count,
+            source="snapshot",
+            limited=limited,
         )
 
     @api.model
