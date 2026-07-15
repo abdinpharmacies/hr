@@ -17,10 +17,13 @@ class TestAbRequestManagement(TransactionCase):
         self.request_user_group = self.env.ref("ab_request_management.group_ab_request_management_user")
         self.request_manager_group = self.env.ref("ab_request_management.group_ab_request_management_manager")
         self.request_admin_group = self.env.ref("ab_request_management.group_ab_request_management_admin")
+        self.hr_personnel_group = self.env.ref("ab_hr.group_ab_hr_personnel_spec")
 
         self.requester_user = self._create_user("Requester User", "requester_user_test", [self.request_user_group.id])
         self.manager_user = self._create_user("Manager User", "manager_user_test", [self.request_manager_group.id])
-        self.assignee_user = self._create_user("Assignee User", "assignee_user_test", [self.request_user_group.id])
+        self.assignee_user = self._create_user(
+            "Assignee User", "assignee_user_test", [self.request_user_group.id, self.hr_personnel_group.id]
+        )
         self.second_assignee_user = self._create_user(
             "Second Assignee User", "second_assignee_user_test", [self.request_user_group.id]
         )
@@ -183,11 +186,146 @@ class TestAbRequestManagement(TransactionCase):
             request.with_user(self.assignee_user).action_request_confirmation()
             request.with_user(self.requester_user).action_request_changes()
             request.with_user(self.assignee_user).action_request_confirmation()
-            request.with_user(self.requester_user).action_mark_satisfied()
-            request.with_user(self.assignee_user).action_close()
+            request.with_user(self.assignee_user).action_mark_resolved()
+            request.with_user(self.requester_user).action_confirm_resolution()
         self.assertEqual(request.state, "closed")
         self.assertSetEqual(set(request.assigned_employee_ids.ids),
                             {self.assignee_employee.id, self.second_assignee_employee.id})
+
+    def test_worker_marks_resolved_and_only_requester_confirms_closure(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        self.assertEqual(request.state, "resolved")
+
+        with self.assertRaises(UserError):
+            request.with_user(self.assignee_user).action_confirm_resolution()
+        with self.assertRaises(UserError):
+            request.with_user(self.admin_user).action_close()
+
+        request.with_user(self.requester_user).action_confirm_resolution()
+        self.assertEqual(request.state, "closed")
+
+    def test_cron_auto_closes_resolved_complaints_after_30_days(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        cron_now = request.create_date + timedelta(days=31)
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True) as message_post:
+            with patch("odoo.fields.Datetime.now", return_value=cron_now):
+                self.env["ab_request"]._cron_auto_close_resolved_complaints()
+
+        self.assertEqual(request.state, "closed")
+        self.assertIn("automatically closed", message_post.call_args.kwargs["body"])
+
+    def test_cron_keeps_recent_resolved_complaints_open(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        with patch("odoo.fields.Datetime.now", return_value=request.create_date + timedelta(days=29)):
+            self.env["ab_request"]._cron_auto_close_resolved_complaints()
+
+        self.assertEqual(request.state, "resolved")
+
+    def test_mark_resolved_marks_latest_followup_as_official_solution(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            first_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "Initial investigation update.",
+                }
+            )
+            latest_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "Final solution applied.",
+                }
+            )
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        self.assertFalse(first_followup.is_resolved_solution)
+        self.assertEqual(first_followup.resolution_label, "Note")
+        self.assertTrue(latest_followup.is_resolved_solution)
+        self.assertEqual(latest_followup.resolution_label, "Official Solution")
+
+    def test_hr_user_can_move_official_solution_marker_between_followups(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            first_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "First possible solution.",
+                }
+            )
+            second_followup = self.env["ab_request_followup"].with_user(self.assignee_user).create(
+                {
+                    "request_id": request.id,
+                    "description": "Second possible solution.",
+                }
+            )
+
+            first_followup.with_user(self.assignee_user).action_mark_as_solution()
+            second_followup.with_user(self.assignee_user).action_mark_as_solution()
+
+        self.assertFalse(first_followup.is_resolved_solution)
+        self.assertTrue(second_followup.is_resolved_solution)
+
+
+    def test_resolved_notification_targets_requester(self):
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True) as message_post:
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [self.assignee_employee.id])],
+                }
+            )
+            request.with_user(self.manager_user).action_assign()
+            message_post.reset_mock()
+            request.with_user(self.assignee_user).action_mark_resolved()
+
+        notification_kwargs = message_post.call_args.kwargs
+        self.assertIn("marked as resolved", notification_kwargs["body"])
+        self.assertEqual(notification_kwargs["partner_ids"], self.requester_user.partner_id.ids)
 
     def test_manager_can_edit_assignment_details_after_assignment(self):
         request = self._create_request()
@@ -234,8 +372,8 @@ class TestAbRequestManagement(TransactionCase):
             )
             request.with_user(self.manager_user).action_assign()
             request.with_user(self.assignee_user).action_request_confirmation()
-            request.with_user(self.requester_user).action_mark_satisfied()
-            request.with_user(self.assignee_user).action_close()
+            request.with_user(self.assignee_user).action_mark_resolved()
+            request.with_user(self.requester_user).action_confirm_resolution()
         with self.assertRaises(UserError):
             self.env["ab_request_followup"].with_user(self.requester_user).create(
                 {
@@ -273,8 +411,8 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
             request.with_user(self.admin_user).action_request_confirmation()
-            request.with_user(self.requester_user).action_mark_satisfied()
-            request.with_user(self.admin_user).action_close()
+            request.with_user(self.admin_user).action_mark_resolved()
+            request.with_user(self.requester_user).action_confirm_resolution()
         self.assertEqual(request.state, "closed")
         self.assertEqual(followup.user_id, self.admin_user)
         self.assertSetEqual(set(request.assigned_employee_ids.ids),

@@ -1,0 +1,781 @@
+/** @odoo-module **/
+import { _t } from "@web/core/l10n/translation";
+import { user } from "@web/core/user";
+import { registry } from "@web/core/registry";
+import { standardFieldProps } from "@web/views/fields/standard_field_props";
+import { Component, useState, xml, useRef, onWillUnmount } from "@odoo/owl";
+import { useService } from "@web/core/utils/hooks";
+import { Dialog } from "@web/core/dialog/dialog";
+
+// ------------------------------------------------------------------
+// Helpers
+// ------------------------------------------------------------------
+
+function getRecordValue(record, fieldName, fallback = null) {
+    const data = record?.data;
+    if (!data || !(fieldName in data)) return fallback;
+    return data[fieldName] ?? fallback;
+}
+
+function getUiLocale() {
+    const locale = (user.lang || document.documentElement.lang || navigator.language || "en-US").replace("_", "-");
+    return locale.toLowerCase().startsWith("ar") ? "ar-EG" : locale;
+}
+
+function extractBranchList(raw) {
+    if (!raw) return [];
+    if (raw.records && Array.isArray(raw.records)) return raw.records;
+    if (Array.isArray(raw)) return raw;
+    return [];
+}
+
+// ------------------------------------------------------------------
+// Branch Dialog (click-to-open)
+// ------------------------------------------------------------------
+
+class BranchDialog extends Component {
+    static template = xml`
+        <Dialog size="'md'" title.translate="Assigned Branches">
+            <div class="ab_branch_dialog">
+                <div class="ab_branch_dialog_search">
+                    <input type="text" class="o_input" t-att-placeholder="_t('Search Branch...')" t-model="state.searchText"/>
+                </div>
+                <div class="ab_branch_dialog_list" t-if="filteredBranches.length">
+                    <t t-foreach="filteredBranches" t-as="name" t-key="name_index">
+                        <span class="ab_branch_dialog_item"><t t-esc="name"/></span>
+                    </t>
+                </div>
+                <div class="ab_branch_dialog_empty" t-else="">
+                    <t t-esc="_t('No branches match your search.')"/>
+                </div>
+            </div>
+        </Dialog>
+    `;
+    static components = { Dialog };
+    static props = {
+        branchNames: { type: Array },
+        close: { type: Function, optional: true },
+    };
+
+    setup() {
+        this._t = _t;
+        this.state = useState({ searchText: "" });
+    }
+
+    get branchNames() {
+        return this.props.branchNames;
+    }
+
+    get filteredBranches() {
+        const q = this.state.searchText.trim().toLowerCase();
+        if (!q) return this.props.branchNames;
+        return this.props.branchNames.filter((name) =>
+            name.toLowerCase().includes(q)
+        );
+    }
+}
+
+// ------------------------------------------------------------------
+// Branch Pills Widget
+// Shows "N Branches" pill. Hover shows SaaS popover with branch
+// names. Click opens a searchable dialog. Uses searchRead only.
+// ------------------------------------------------------------------
+
+class BranchPillsWidget extends Component {
+    static template = xml`
+        <span class="ab_branch_pills_wrapper"
+              t-on-mouseenter="onEnter"
+              t-on-mouseleave="onLeave"
+              t-on-click="onClick"
+              t-ref="wrapper">
+            <span class="ab_branch_pills_widget">
+                <span class="ab_branch_pills_icon">&#x1F3E2;</span>
+                <t t-esc="branchCount"/>
+                <t t-if="branchCount === 1"> <t t-esc="_t('Branch')"/></t>
+                <t t-else=""> <t t-esc="_t('Branches')"/></t>
+            </span>
+        </span>
+    `;
+    static props = { ...standardFieldProps };
+
+    setup() {
+        this._t = _t;
+        this._loaded = false;
+        this._hideTimer = null;
+        this.wrapperRef = useRef("wrapper");
+        const record = this.props.record;
+        if (record && record.model && record.model.dialog) {
+            this.dialog = record.model.dialog;
+        } else {
+            try {
+                this.dialog = useService("dialog");
+            } catch (_e) {
+                this.dialog = null;
+            }
+        }
+        this.popover = document.createElement("div");
+        this.popover.style.position = "absolute";
+        this.popover.style.zIndex = "9999";
+        this.popover.style.display = "none";
+        this.popover.className = "ab_branch_popover";
+        this.popover.addEventListener("mouseenter", () => this._cancelHide());
+        this.popover.addEventListener("mouseleave", () => {
+            this._hideTimer = setTimeout(() => { this._hide(); }, 200);
+        });
+        document.body.appendChild(this.popover);
+        onWillUnmount(() => {
+            if (this._hideTimer) clearTimeout(this._hideTimer);
+            if (this.popover && this.popover.parentNode) {
+                this.popover.parentNode.removeChild(this.popover);
+            }
+        });
+    }
+
+    get branchFieldData() {
+        return getRecordValue(this.props.record, this.props.name, null);
+    }
+
+    get branchCount() {
+        const raw = this.branchFieldData;
+        if (raw && typeof raw.count === "number") return raw.count;
+        return extractBranchList(raw).length;
+    }
+
+    _populate(names) {
+        this.popover.innerHTML =
+            '<div class="ab_branch_popover_arrow"></div>' +
+            '<div class="ab_branch_popover_header">' + _t('Assigned Branches') + '</div>' +
+            '<div class="ab_branch_popover_list">' +
+            names.map(function (n) {
+                return '<div class="ab_branch_popover_item"><span class="ab_branch_popover_bullet">\u2022</span>' +
+                    _escapeXml(n) + '</div>';
+            }).join("") +
+            '</div>';
+    }
+
+    _show() {
+        this.popover.style.display = "block";
+    }
+
+    _hide() {
+        this.popover.style.display = "none";
+    }
+
+    async _loadNames() {
+        if (this._loaded) return;
+        this._loaded = true;
+        const raw = this.branchFieldData;
+        if (!raw) return;
+        const ids = [...raw.currentIds];
+        if (!ids.length) return;
+        const model = this.props.record?.model;
+        if (!model || !model.orm || !raw.resModel) return;
+        if (typeof raw.load === "function" && raw.count > extractBranchList(raw).length) {
+            try { await raw.load({ limit: raw.count }); } catch (_) {}
+        }
+        try {
+            const recs = await model.orm.searchRead(
+                raw.resModel,
+                [["id", "in", ids]],
+                ["display_name", "name"],
+                { limit: ids.length }
+            );
+            this._names = recs.map((r) => (r.display_name || r.name || String(r.id)).replace(/\*/g, ""));
+        } catch (e) {
+        }
+    }
+
+    async onEnter() {
+        this._cancelHide();
+        const el = this.wrapperRef.el;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const estWidth = 280;
+        await this._loadNames();
+        const names = this._names || [];
+        if (!names.length) return;
+        const estHeight = Math.min(names.length * 32 + 60, 300) + 16;
+        const vw = window.innerWidth;
+        const vh = window.innerHeight;
+        const scrollX = window.scrollX;
+        const scrollY = window.scrollY;
+        let left = rect.left + scrollX + rect.width / 2 - estWidth / 2;
+        let top = rect.bottom + scrollY + 8;
+        left = Math.max(8, Math.min(left, scrollX + vw - estWidth - 8));
+        if (top + estHeight > scrollY + vh - 8) {
+            top = Math.max(8, rect.top + scrollY - estHeight - 8);
+        }
+        this._populate(names);
+        this.popover.style.left = (left | 0) + "px";
+        this.popover.style.top = (top | 0) + "px";
+        this._show();
+    }
+
+    onLeave() {
+        this._hideTimer = setTimeout(() => { this._hide(); }, 200);
+    }
+
+    _cancelHide() {
+        if (this._hideTimer) {
+            clearTimeout(this._hideTimer);
+            this._hideTimer = null;
+        }
+    }
+
+    async onClick(ev) {
+        if (!this.dialog) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        this._cancelHide();
+        this._hide();
+        await this._loadNames();
+        const names = this._names && this._names.length
+            ? this._names
+            : [_t("(no branch names available)")];
+        this.dialog.add(BranchDialog, { branchNames: names });
+    }
+}
+
+function _escapeXml(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+
+registry.category("fields").add("ab_inventory_branch_pills", {
+    component: BranchPillsWidget,
+});
+
+// ------------------------------------------------------------------
+// Relation Pill Widget
+// Shows Many2one values with the same compact pill language used by
+// the Batches branch column, without changing the underlying field.
+// ------------------------------------------------------------------
+
+class RelationPillWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_relation_pill ab_relation_pill--' + pillType" t-att-title="displayName">
+            <span class="ab_relation_pill_text"><t t-esc="displayName || emptyText"/></span>
+        </span>
+    `;
+    static props = {
+        ...standardFieldProps,
+        pillType: { type: String, optional: true },
+        pillIcon: { type: String, optional: true },
+        emptyText: { type: String, optional: true },
+    };
+
+    get rawValue() {
+        return getRecordValue(this.props.record, this.props.name, null);
+    }
+
+    get displayName() {
+        const raw = this.rawValue;
+        if (!raw) return "";
+        let name = "";
+        if (Array.isArray(raw)) name = raw[1] || "";
+        else if (typeof raw === "object") name = raw.display_name || raw.name || "";
+        else name = String(raw);
+        return name.replace(/\*/g, "");
+    }
+
+    get pillType() {
+        return this.props.pillType || "neutral";
+    }
+
+    get iconChar() {
+        return this.props.pillIcon || "\u25CF";
+    }
+
+    get emptyText() {
+        return this.props.emptyText || "-";
+    }
+}
+
+registry.category("fields").add("ab_inventory_relation_pill", {
+    component: RelationPillWidget,
+    extractProps: ({ attrs }) => {
+        const opts = attrs.options || {};
+        return {
+            pillType: opts.type || "neutral",
+            pillIcon: opts.icon || "\u25CF",
+            emptyText: opts.empty || "-",
+        };
+    },
+});
+
+class MatchBadgeWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_saas_match_badge ab_saas_match_badge--' + matchValue">
+            <t t-esc="matchLabel"/>
+        </span>
+    `;
+    static props = { ...standardFieldProps };
+
+    get matchValue() {
+        return getRecordValue(this.props.record, this.props.name, "none") || "none";
+    }
+
+    get matchLabel() {
+        const labels = {
+            eplus_serial: _t("E-plus ID"),
+            code: _t("Item Code"),
+            none: _t("Unmatched"),
+        };
+        return labels[this.matchValue] || this.matchValue;
+    }
+}
+
+registry.category("fields").add("ab_inventory_match_badge", {
+    component: MatchBadgeWidget,
+});
+
+class BooleanLineBadgeWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_line_boolean_badge ' + (isChecked ? 'ab_line_boolean_badge--yes' : 'ab_line_boolean_badge--no')">
+            <span class="ab_line_boolean_dot"></span>
+            <t t-esc="isChecked ? yesLabel : noLabel"/>
+        </span>
+    `;
+    static props = {
+        ...standardFieldProps,
+        yesLabel: { type: String, optional: true },
+        noLabel: { type: String, optional: true },
+    };
+
+    get isChecked() {
+        return Boolean(getRecordValue(this.props.record, this.props.name, false));
+    }
+
+    get yesLabel() {
+        return this.props.yesLabel || _t("Yes");
+    }
+
+    get noLabel() {
+        return this.props.noLabel || _t("No");
+    }
+}
+
+registry.category("fields").add("ab_inventory_boolean_badge", {
+    component: BooleanLineBadgeWidget,
+    extractProps: ({ attrs }) => {
+        const opts = attrs.options || {};
+        return {
+            yesLabel: opts.yes || _t("Yes"),
+            noLabel: opts.no || _t("No"),
+        };
+    },
+});
+
+class SelectedCheckWidget extends Component {
+    static template = xml`
+        <button type="button"
+                t-att-class="'ab_selected_check ' + (isSelected ? 'ab_selected_check--on' : 'ab_selected_check--off')"
+                t-att-title="isSelected ? _t('Selected') : _t('Not selected')"
+                t-att-aria-pressed="isSelected ? 'true' : 'false'"
+                t-att-disabled="isLocked || state.isUpdating"
+                t-on-pointerdown.stop="onPointerDown"
+                t-on-click.stop="toggle">
+            <span class="ab_selected_check_box"></span>
+        </button>
+    `;
+    static props = { ...standardFieldProps };
+
+    setup() {
+        this._t = _t;
+        this.state = useState({
+            optimisticValue: null,
+            isUpdating: false,
+        });
+    }
+
+    get isSelected() {
+        if (this.state.optimisticValue !== null) {
+            return this.state.optimisticValue;
+        }
+        return Boolean(getRecordValue(this.props.record, this.props.name, false));
+    }
+
+    get isLocked() {
+        const parentState = getRecordValue(this.props.record, "request_state", false)
+            || getRecordValue(this.props.record, "batch_state", false);
+        return parentState && parentState !== "draft";
+    }
+
+    onPointerDown(ev) {
+        ev.preventDefault();
+    }
+
+    async toggle() {
+        if (this.isLocked || this.state.isUpdating) return;
+        const previousValue = this.isSelected;
+        const nextValue = !previousValue;
+        this.state.optimisticValue = nextValue;
+        this.state.isUpdating = true;
+        try {
+            if (this.props.update) {
+                await this.props.update(nextValue);
+            } else {
+                await this.props.record.update({
+                    [this.props.name]: nextValue,
+                });
+            }
+        } catch (error) {
+            this.state.optimisticValue = previousValue;
+            throw error;
+        } finally {
+            this.state.isUpdating = false;
+            this.state.optimisticValue = null;
+        }
+    }
+}
+
+registry.category("fields").add("ab_inventory_selected_check", {
+    component: SelectedCheckWidget,
+});
+
+// ------------------------------------------------------------------
+// KPI Widget
+// Displays numeric value with icon + label passed via options.
+// ------------------------------------------------------------------
+
+class KpiWidget extends Component {
+    static template = xml`
+        <span class="ab_kpi_widget">
+            <span class="ab_kpi_value"><t t-esc="formattedValue"/></span>
+        </span>
+    `;
+    static props = {
+        ...standardFieldProps,
+        kpiIcon: { type: String, optional: true },
+        kpiIconChar: { type: String, optional: true },
+        kpiLabel: { type: String, optional: true },
+    };
+
+    get rawValue() {
+        return getRecordValue(this.props.record, this.props.name, 0) || 0;
+    }
+
+    get formattedValue() {
+        const n = Number(this.rawValue);
+        if (isNaN(n)) return "0";
+        return n.toLocaleString();
+    }
+}
+
+registry.category("fields").add("ab_inventory_kpi", {
+    component: KpiWidget,
+    extractProps: ({ attrs }) => {
+        const opts = attrs.options || {};
+        const icon = opts.icon || "items";
+        const chars = {
+            items: "\u25A0",
+            requests: "\u25B6",
+            processes: "\u2713",
+            shortage: "\u2193",
+            extra: "\u2191",
+        };
+        const labels = {
+            items: _t("Items"),
+            requests: _t("Requests"),
+            processes: _t("Processed"),
+            shortage: _t("Shortage"),
+            extra: _t("Extra"),
+        };
+        return {
+            kpiIcon: icon,
+            kpiIconChar: chars[icon] || "#",
+            kpiLabel: opts.label || labels[icon] || "",
+        };
+    },
+});
+
+// ------------------------------------------------------------------
+// State Badge Widget
+// Renders state as a colored pill badge.
+// ------------------------------------------------------------------
+
+class StateBadgeWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_state_badge ab_state_' + stateValue">
+            <t t-esc="stateLabel"/>
+        </span>
+    `;
+    static props = {
+        ...standardFieldProps,
+    };
+
+    get stateValue() {
+        return getRecordValue(this.props.record, this.props.name, "") || "";
+    }
+
+    get stateLabel() {
+        const labels = {
+            draft: _t("Draft"),
+            submitted: _t("Submitted"),
+            cancelled: _t("Cancelled"),
+            in_progress: _t("In Progress"),
+            completed: _t("Completed"),
+        };
+        return labels[this.stateValue] || this.stateValue;
+    }
+}
+
+registry.category("fields").add("ab_inventory_state_badge", {
+    component: StateBadgeWidget,
+});
+
+// ------------------------------------------------------------------
+// Row Title Widget
+// Displays record name with subtitle + quick actions dropdown.
+// ------------------------------------------------------------------
+
+class RowTitleWidget extends Component {
+    static template = xml`
+        <div class="ab_row_title">
+            <div class="ab_row_title_main">
+                <span class="ab_row_title_name">
+                    <t t-esc="recordName"/>
+                </span>
+                <span class="ab_quick_actions_wrapper"
+                      t-on-click.stop="toggleMenu"
+                      t-ref="actionsWrapper">
+                    <button class="ab_quick_actions_btn"
+                            t-att-title="_t('Actions')"
+                            aria-label="Actions">&#x22EE;</button>
+                     <div t-att-class="'ab_quick_actions_menu' + (state.menuOpen ? ' ab_quick_actions_menu--open' : '')"
+                         t-ref="menu">
+                        <t t-foreach="actionItems" t-as="action" t-key="action_index">
+                            <div class="ab_quick_actions_item"
+                                 t-on-click.stop="() => this.handleAction(action)">
+                                <span class="ab_quick_actions_item_icon"><t t-esc="action.icon"/></span>
+                                <t t-esc="action.label"/>
+                            </div>
+                        </t>
+                    </div>
+                </span>
+            </div>
+            <t t-if="subtitle">
+                <span class="ab_row_title_subtitle">
+                    <t t-esc="subtitle"/>
+                </span>
+            </t>
+        </div>
+    `;
+    static props = {
+        ...standardFieldProps,
+        allowDuplicate: { type: Boolean, optional: true },
+    };
+
+    setup() {
+        this._t = _t;
+        this.state = useState({ menuOpen: false });
+        this.actionsWrapperRef = useRef("actionsWrapper");
+        this.menuRef = useRef("menu");
+        this.actionService = useService("action");
+        this.orm = useService("orm");
+        onWillUnmount(() => {
+            this._removeClickListener();
+        });
+    }
+
+    get recordName() {
+        return String(getRecordValue(this.props.record, this.props.name, "") || "").replace(/\*/g, "");
+    }
+
+    get requesterName() {
+        const raw = getRecordValue(this.props.record, "requester_id", null);
+        if (!raw) return "";
+        let name = "";
+        if (Array.isArray(raw)) name = raw[1] || "";
+        else if (typeof raw === "object") name = raw.display_name || raw.name || "";
+        else name = String(raw);
+        return name.replace(/\*/g, "");
+    }
+
+    get submittedDate() {
+        const raw = getRecordValue(this.props.record, "submitted_date", null);
+        if (!raw) return null;
+        const d = new Date(raw);
+        if (isNaN(d.getTime())) return null;
+        const now = new Date();
+        const diff = now - d;
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        if (days === 0) return _t("Today");
+        if (days === 1) return _t("Yesterday");
+        if (days < 7) return _t("%s days ago").replace("%s", days);
+        return d.toLocaleDateString(getUiLocale(), { month: "short", day: "numeric" });
+    }
+
+    get subtitle() {
+        const state = getRecordValue(this.props.record, "state", "");
+        if (state === "draft") {
+            return this.requesterName
+                ? _t("Draft by %(name)s").replace("%(name)s", this.requesterName)
+                : _t("Draft");
+        }
+        if (state === "submitted") {
+            const parts = [];
+            if (this.requesterName) parts.push(this.requesterName);
+            if (this.submittedDate) parts.push(this.submittedDate);
+            return parts.length ? _t("Submitted by %(details)s").replace("%(details)s", parts.join(", ")) : _t("Submitted");
+        }
+        if (state === "in_progress") {
+            return _t("In Progress");
+        }
+        if (state === "cancelled") {
+            return this.requesterName
+                ? _t("Cancelled by %(name)s").replace("%(name)s", this.requesterName)
+                : _t("Cancelled");
+        }
+        return this.requesterName ? _t("by ") + this.requesterName : "";
+    }
+
+    get actionItems() {
+        const state = getRecordValue(this.props.record, "state", "");
+        const isDraft = state === "draft";
+        const model = this.props.record.model;
+        const resId = this.props.record.resId;
+
+        const items = [];
+        items.push({ id: "open", label: _t("Open"), icon: "\u2197", action: "open" });
+        if (isDraft) {
+            items.push({ id: "edit", label: _t("Edit"), icon: "\u270E", action: "edit" });
+        }
+        if (this.props.allowDuplicate !== false) {
+            items.push({ id: "duplicate", label: _t("Duplicate"), icon: "\uD83D\uDCCB", action: "duplicate" });
+        }
+        return items;
+    }
+
+    handleAction(action) {
+        this.state.menuOpen = false;
+        this._removeClickListener();
+        const record = this.props.record;
+        const modelName = record.model.name;
+        const resId = record.resId;
+        if (!modelName || !resId) return;
+
+        if (action.action === "open" || action.action === "edit") {
+            this.actionService.doAction({
+                type: "ir.actions.act_window",
+                res_model: modelName,
+                res_id: resId,
+                views: [[false, "form"]],
+                view_mode: "form",
+                target: "current",
+            });
+        } else if (action.action === "duplicate") {
+            this.orm.call(modelName, "copy", [resId], {}).then((newId) => {
+                this.actionService.doAction({
+                    type: "ir.actions.act_window",
+                    res_model: modelName,
+                    res_id: newId,
+                    views: [[false, "form"]],
+                    view_mode: "form",
+                    target: "current",
+                });
+            });
+        }
+    }
+
+    toggleMenu() {
+        this.state.menuOpen = !this.state.menuOpen;
+        if (this.state.menuOpen) {
+            this._addClickListener();
+        } else {
+            this._removeClickListener();
+        }
+    }
+
+    _addClickListener() {
+        this._removeClickListener();
+        this._clickHandler = (ev) => {
+            if (this.menuRef.el && !this.menuRef.el.contains(ev.target)) {
+                this.state.menuOpen = false;
+                this._removeClickListener();
+            }
+        };
+        document.addEventListener("click", this._clickHandler, true);
+    }
+
+    _removeClickListener() {
+        if (this._clickHandler) {
+            document.removeEventListener("click", this._clickHandler, true);
+            this._clickHandler = null;
+        }
+    }
+}
+
+registry.category("fields").add("ab_inventory_row_title", {
+    component: RowTitleWidget,
+    extractProps: ({ attrs }) => {
+        const opts = attrs.options || {};
+        return {
+            allowDuplicate: opts.duplicate !== false,
+        };
+    },
+});
+
+// ------------------------------------------------------------------
+// Deadline Widget
+// Color-coded deadline display with urgency indicator.
+// ------------------------------------------------------------------
+
+class DeadlineWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_deadline_widget ab_deadline--' + urgencyClass">
+            <span class="ab_deadline_icon"><t t-esc="icon"/></span>
+            <span t-esc="displayText"/>
+        </span>
+    `;
+    static props = {
+        ...standardFieldProps,
+    };
+
+    get rawValue() {
+        return getRecordValue(this.props.record, this.props.name, null);
+    }
+
+    get displayText() {
+        if (!this.rawValue) return _t("No deadline");
+        const d = new Date(this.rawValue);
+        if (isNaN(d.getTime())) return _t("Invalid date");
+        const now = new Date();
+        const diff = d - now;
+        const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        if (days < 0) return _t("%s days overdue").replace("%s", Math.abs(days));
+        if (days === 0) return _t("Due today");
+        if (days === 1) return _t("Due tomorrow");
+        if (days <= 7) return _t("Due in %s days").replace("%s", days);
+        return d.toLocaleDateString(getUiLocale(), { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    get icon() {
+        if (!this.rawValue) return "\u2014";
+        const d = new Date(this.rawValue);
+        if (isNaN(d.getTime())) return "\u2014";
+        const now = new Date();
+        const diff = d - now;
+        const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        if (days < 0) return "\u26A0";
+        if (days <= 1) return "\u23F0";
+        if (days <= 3) return "\u23F3";
+        return "\u2705";
+    }
+
+    get urgencyClass() {
+        if (!this.rawValue) return "none";
+        const d = new Date(this.rawValue);
+        if (isNaN(d.getTime())) return "none";
+        const now = new Date();
+        const diff = d - now;
+        const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+        if (days < 0) return "past";
+        if (days <= 1) return "urgent";
+        if (days <= 3) return "warning";
+        return "normal";
+    }
+}
+
+registry.category("fields").add("ab_inventory_deadline", {
+    component: DeadlineWidget,
+});

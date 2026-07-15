@@ -14,6 +14,7 @@ const STATE_THEME = {
     in_progress: "#df7a22",
     under_requester_confirmation: "#7b4fd7",
     satisfied: "#2f8f57",
+    resolved: "#1f8f8a",
     rejected: "#cf4c4c",
     closed: "#96a1ad",
 };
@@ -65,7 +66,7 @@ export class AbRequestDashboard extends Component {
     async loadDashboard() {
         this.state.loading = true;
         const nowIso = new Date().toISOString().slice(0, 19).replace("T", " ");
-        const [myRequests, pendingApproval, inProgress, overdue, byDepartment, byState, recent] = await Promise.all([
+        const [myRequests, pendingApproval, inProgress, overdue, websiteRequests, byDepartment, byState, recent] = await Promise.all([
             this.orm.searchCount("ab_request", [["user_id", "=", user.userId]]),
             this.orm.searchCount("ab_request", [
                 ["state", "=", "under_review"],
@@ -75,8 +76,9 @@ export class AbRequestDashboard extends Component {
             this.orm.searchCount("ab_request", [
                 ["deadline", "!=", false],
                 ["deadline", "<", nowIso],
-                ["state", "not in", ["closed", "rejected", "satisfied"]],
+                ["state", "not in", ["closed", "rejected", "satisfied", "resolved"]],
             ]),
+            this.orm.searchCount("ab_request_website", [["state", "=", "new"]]),
             this.orm.call(
                 "ab_request",
                 "read_group",
@@ -95,7 +97,7 @@ export class AbRequestDashboard extends Component {
         this.state.cards = [
             {
                 key: "my_requests",
-                label: _t("My Requests"),
+                label: _t("My Tickets"),
                 value: myRequests,
                 icon: "fa fa-inbox",
                 accent: "#2f6fdd",
@@ -126,8 +128,17 @@ export class AbRequestDashboard extends Component {
                 domain: [
                     ["deadline", "!=", false],
                     ["deadline", "<", nowIso],
-                    ["state", "not in", ["closed", "rejected", "satisfied"]],
+                    ["state", "not in", ["closed", "rejected", "satisfied", "resolved"]],
                 ],
+            },
+            {
+                key: "website_requests",
+                label: _t("Website"),
+                value: websiteRequests,
+                icon: "fa fa-globe",
+                accent: "#1f8f8a",
+                model: "ab_request_website",
+                domain: [["state", "=", "new"]],
             },
         ];
 
@@ -210,6 +221,7 @@ export class AbRequestDashboard extends Component {
             in_progress: _t("In Progress"),
             under_requester_confirmation: _t("Under Requester Confirmation"),
             satisfied: _t("Satisfied"),
+            resolved: _t("Resolved"),
             rejected: _t("Rejected"),
             closed: _t("Closed"),
         }[value] || value || _t("Unknown");
@@ -227,11 +239,11 @@ export class AbRequestDashboard extends Component {
         this.savePreferences();
     }
 
-    async openList(domain) {
+    async openList(domain, model = "ab_request") {
         await this.env.services.action.doAction({
             type: "ir.actions.act_window",
-            name: _t("Requests"),
-            res_model: "ab_request",
+            name: _t("Requests & Complaints"),
+            res_model: model,
             views: [[false, "list"], [false, "form"]],
             domain: domain,
             target: "current",

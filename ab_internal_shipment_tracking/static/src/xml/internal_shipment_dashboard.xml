@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_internal_shipment_tracking.AbInternalShipmentDashboard">
+        <div class="o_ais_dashboard_view">
+            <div class="o_ais_dashboard_shell">
+                <section class="o_ais_dashboard_hero">
+                    <div>
+                        <span class="o_ais_dashboard_kicker" t-out="state.labels.moduleName"/>
+                        <h1 t-out="state.labels.title"/>
+                        <p t-out="state.labels.subtitle"/>
+                    </div>
+                </section>
+
+                <section class="o_ais_dashboard_cards">
+                    <button type="button" t-foreach="state.cards" t-as="card" t-key="card.key" class="o_ais_dashboard_card" t-on-click="() => this.openList(card.domain)">
+                        <span class="o_ais_dashboard_card_icon" t-att-style="'--card-accent:' + card.accent">
+                            <i t-att-class="card.icon"/>
+                        </span>
+                        <span class="o_ais_dashboard_card_label" t-out="card.label"/>
+                        <strong class="o_ais_dashboard_card_value" t-out="card.value"/>
+                    </button>
+                </section>
+
+                <section class="o_ais_dashboard_grid">
+                    <article class="o_ais_dashboard_panel">
+                        <div class="o_ais_dashboard_panel_head">
+                            <h2 t-out="state.labels.byState"/>
+                            <span class="text-muted" t-out="state.labels.workflowDistribution"/>
+                        </div>
+                        <div t-if="state.byState.length" class="o_ais_dashboard_donut_wrap">
+                            <svg viewBox="0 0 42 42" class="o_ais_dashboard_donut">
+                                <circle class="o_ais_dashboard_donut_base" cx="21" cy="21" r="15.9155"/>
+                                <circle t-foreach="donutSegments" t-as="segment" t-key="segment.key"
+                                        class="o_ais_dashboard_donut_segment"
+                                        cx="21" cy="21" r="15.9155"
+                                        t-att-stroke="segment.color"
+                                        t-att-stroke-dasharray="segment.dasharray"
+                                        t-att-stroke-dashoffset="segment.dashoffset"/>
+                            </svg>
+                            <div class="o_ais_dashboard_legend">
+                                <div t-foreach="state.byState" t-as="item" t-key="item.key" class="o_ais_legend_row">
+                                    <span class="o_ais_legend_dot" t-att-style="'background:' + item.color"/>
+                                    <span t-out="item.label"/>
+                                    <strong t-out="item.value"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div t-else="" class="o_ais_dashboard_empty" t-out="state.labels.noWorkflowActivity"/>
+                    </article>
+
+                    <article class="o_ais_dashboard_panel">
+                        <div class="o_ais_dashboard_panel_head">
+                            <h2 t-out="state.labels.byDeliveryMethod"/>
+                            <span class="text-muted" t-out="state.labels.movementChannels"/>
+                        </div>
+                        <div t-if="state.byDeliveryMethod.length" class="o_ais_dashboard_bar_chart">
+                            <div t-foreach="state.byDeliveryMethod" t-as="item" t-key="item.label" class="o_ais_bar_row">
+                                <div class="o_ais_bar_meta">
+                                    <span t-out="item.label"/>
+                                    <strong t-out="item.value"/>
+                                </div>
+                                <div class="o_ais_bar_track">
+                                    <span class="o_ais_bar_fill"
+                                          t-att-style="'width:' + (item.value / maxDeliveryMethodValue * 100) + '%; background:' + palette[item_index % palette.length]"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div t-else="" class="o_ais_dashboard_empty" t-out="state.labels.noDeliveryMethodStats"/>
+                    </article>
+
+                    <article class="o_ais_dashboard_panel">
+                        <div class="o_ais_dashboard_panel_head">
+                            <h2 t-out="state.labels.byShipmentType"/>
+                            <span class="text-muted" t-out="state.labels.shipmentMix"/>
+                        </div>
+                        <div t-if="state.byShipmentType.length" class="o_ais_dashboard_bar_chart">
+                            <div t-foreach="state.byShipmentType" t-as="item" t-key="item.label" class="o_ais_bar_row">
+                                <div class="o_ais_bar_meta">
+                                    <span t-out="item.label"/>
+                                    <strong t-out="item.value"/>
+                                </div>
+                                <div class="o_ais_bar_track">
+                                    <span class="o_ais_bar_fill"
+                                          t-att-style="'width:' + (item.value / maxShipmentTypeValue * 100) + '%; background:' + palette[item_index % palette.length]"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div t-else="" class="o_ais_dashboard_empty" t-out="state.labels.noShipmentTypeStats"/>
+                    </article>
+
+                    <article class="o_ais_dashboard_panel o_ais_dashboard_recent">
+                        <div class="o_ais_dashboard_panel_head">
+                            <h2 t-out="state.labels.recentShipments"/>
+                            <span class="text-muted" t-out="state.labels.lastSix"/>
+                        </div>
+                        <div t-if="state.recent.length" class="o_ais_recent_list">
+                            <button type="button" t-foreach="state.recent" t-as="item" t-key="item.id" class="o_ais_recent_item" t-on-click="() => this.openList([['id', '=', item.id]])">
+                                <div class="o_ais_recent_top">
+                                    <strong t-out="item.name"/>
+                                    <span t-attf-class="o_ais_dashboard_state_badge o_ais_dashboard_state_#{item.state}" t-out="item.stateLabel"/>
+                                </div>
+                                <div class="o_ais_recent_subject" t-out="item.subject"/>
+                                <div class="o_ais_recent_meta">
+                                    <span t-out="item.sender"/>
+                                    <span t-out="item.recipient"/>
+                                    <span t-out="item.expected"/>
+                                </div>
+                            </button>
+                        </div>
+                        <div t-else="" class="o_ais_dashboard_empty" t-out="state.labels.noRecentShipments"/>
+                    </article>
+                </section>
+            </div>
+        </div>
+    </t>
+</templates>

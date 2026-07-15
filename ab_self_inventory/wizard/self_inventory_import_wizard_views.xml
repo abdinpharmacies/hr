@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_self_inventory_import_wizard_form" model="ir.ui.view">
+        <field name="name">ab_self_inventory_import_wizard_form</field>
+        <field name="model">ab_self_inventory_import_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Actual Counts">
+                <group>
+                    <field name="process_id" readonly="1"/>
+                    <field name="file" filename="filename"/>
+                    <field name="filename" invisible="1"/>
+                </group>
+                <footer>
+                    <button name="action_import" type="object" string="Import" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_ab_self_inventory_batch_add_line_wizard_form" model="ir.ui.view">
+        <field name="name">ab_self_inventory_batch_add_line_wizard_form</field>
+        <field name="model">ab_self_inventory_batch_add_line_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Add Line">
+                <group>
+                    <field name="request_id" invisible="not request_id" readonly="1"/>
+                    <field name="batch_id" invisible="not batch_id" readonly="1"/>
+                    <field name="branch_ids" widget="many2many_tags" invisible="request_id"/>
+                    <field name="available_product_ids" invisible="1"/>
+                    <field name="product_ids" widget="many2many_tags" domain="[('id', 'in', available_product_ids)]" options="{'no_create': True}"/>
+                    <field name="note"/>
+                </group>
+                <footer>
+                    <button name="action_add_lines" type="object" string="Add" class="btn-primary"/>
+                    <button string="Cancel" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

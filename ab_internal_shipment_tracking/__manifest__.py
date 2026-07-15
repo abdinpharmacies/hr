@@ -1,0 +1,31 @@
+{
+    "name": "Internal Shipment Tracking",
+    "summary": "Track internal movement of documents, files, and devices",
+    "version": "19.0.1.0.4",
+    "category": "AbdinSupplyChain",
+    "license": "LGPL-3",
+    "application": True,
+    "depends": ["base", "mail", "web", "ab_hr", "ab_store"],
+    "data": [
+        "security/groups.xml",
+        "security/ir.model.access.csv",
+        "security/record_rules.xml",
+        "data/sequence.xml",
+        "data/state_migration.xml",
+        "views/internal_shipment_views.xml",
+        "views/internal_shipment_delivery_wizard_views.xml",
+        "views/internal_shipment_dashboard_views.xml",
+        "views/menus.xml",
+    ],
+    "assets": {
+        "web.assets_backend": [
+            "ab_internal_shipment_tracking/static/src/scss/internal_shipment_design.scss",
+            "ab_internal_shipment_tracking/static/src/js/internal_shipment_view_recovery.js",
+            "ab_internal_shipment_tracking/static/src/js/internal_shipment_delivery_evidence.js",
+            "ab_internal_shipment_tracking/static/src/xml/internal_shipment_delivery_evidence.xml",
+            "ab_internal_shipment_tracking/static/src/dashboard_fix/js/internal_shipment_dashboard.js",
+            "ab_internal_shipment_tracking/static/src/dashboard_fix/xml/internal_shipment_dashboard.xml",
+        ],
+    },
+    "installable": True,
+}

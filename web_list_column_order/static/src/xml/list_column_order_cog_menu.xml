@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="web_list_column_order.ResetListColumnOrder">
+        <DropdownItem class="'o_menu_item'" onSelected="resetColumnOrder">
+            <i class="fa fa-undo me-1"/> Reset column order
+        </DropdownItem>
+    </t>
+</templates>

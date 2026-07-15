@@ -19,7 +19,485 @@ Module creation rules:
 - If frontend work is required, create new module-scoped classes, components, or templates and connect them only to the working module.
 - Keep the module self-contained and limit changes to the module being developed.
 - Use module technical names with underscores `_`, not dots `.`.
-- All new modules use `author = "Alhassan Hossny"`.
+- Keep `author` for company/team ownership.
+- All new modules include `developer = "Alhassan Hossny"` in `__manifest__.py`.
+- Before finishing any newly created module, verify its `__manifest__.py` includes `developer = "Alhassan Hossny"` without replacing the team/company `author`.
+
+## Pharmacy ERP Data Protection Rules
+
+### Rule #1
+
+No operation may risk inventory corruption, pricing corruption, or branch data leakage.
+
+When uncertain, preserve data and reject destructive changes. For a pharmacy chain, inventory integrity is usually the single most important technical rule; wrong stock quantities replicated across branches can be more expensive than an obvious table failure.
+
+### Critical Business Data
+
+The following records must never be physically deleted:
+
+- Products
+- Product Categories
+- Suppliers
+- Purchase Orders
+- Sales Orders
+- Inventory Adjustments
+- Inventory Transfers
+- Stock Recycling Records
+- Contracts
+- Price Lists
+- Branches
+- Warehouses
+
+Use:
+
+```python
+active = fields.Boolean(default=True)
+```
+
+instead of deletion whenever possible.
+
+### Inventory Protection Rules
+
+Agents must never directly modify computed or system-managed inventory quantities:
+
+- `qty_available`
+- `virtual_available`
+- `free_qty`
+- `incoming_qty`
+- `outgoing_qty`
+
+Forbidden:
+
+```python
+product.qty_available = 100
+```
+
+Inventory changes must occur through:
+
+- Stock Move
+- Inventory Adjustment
+- Transfer
+- Receipt
+- Internal Transfer
+- Approved Stock Recycling Process
+
+Direct quantity edits are one of the most common causes of corrupted stock in pharmacy systems.
+
+### External Database Integration Rules
+
+External databases, including B-Connect and SQL integration sources, are **read-only** unless explicitly stated otherwise.
+
+Agents must:
+
+- Read from B-Connect or external SQL sources.
+- Process and validate inside Odoo.
+- Store business operations inside Odoo PostgreSQL.
+
+Agents must not run external database writes such as:
+
+```sql
+UPDATE BConnect_Table ...
+DELETE FROM BConnect_Table ...
+TRUNCATE BConnect_Table ...
+```
+
+without explicit approval.
+
+### B-Connect / E-Plus Schema Reference
+
+Reference source for future B-Connect to Odoo transformation work:
+
+- GitHub repo: `https://github.com/Hossam-elsheikh/e-plus-structure`
+- Primary file: `e-plus-db.md`
+- Generated: `2026-07-08 15:46:57 Africa/Cairo`
+- Scope: configured B-Connect/E-Plus SQL Server database `genius`
+
+Facts from the reference guide:
+
+- The discovered SQL Server database contains `238` user tables and `3460` columns.
+- Current custom addons reference `29` E-Plus tables in SQL contexts.
+- The discovery was read-only through SQL Server catalog metadata and local Odoo SQL references; broad production `COUNT(*)` scans were intentionally avoided.
+- The key product and stock path is:
+
+```text
+Item_Catalog
+  -> Item_Class_Store
+  -> Store
+```
+
+Important table meanings:
+
+- `dbo.Item_Catalog`: central product/item master. Key identifiers include `itm_id` and `itm_code`. Useful fields include encrypted names, units, prices, medicine flags, product groups, scientific data, usage data, origin, manufacturer/company references, and item notes.
+- `dbo.Item_Class_Store`: main branch stock quantity source used by Odoo modules. It is store-scoped by `sto_id`, item-scoped by `itm_id`, class/batch-scoped by `c_id`, and quantity is represented by `itm_qty`.
+- `dbo.Store`: branch/store master with `sto_id`, `sto_code`, Arabic/English names, manager/location/contact fields, store server IP fields, and replication timestamps.
+- `dbo.branches`: lightweight branch/code source used by some Odoo modules, including self-inventory and order management.
+- `dbo.Replication_Trans`: replication queue/transaction table for stock and transactional propagation.
+
+Operational E-Plus / B-Connect tables for sales, stock, returns, and future Odoo-only migration:
+
+- `r_sales_trans_h`, `r_sales_trans_d`: replicated/historical sales tables, used by Sales Per Day calculations.
+- `sales_trans_h`, `sales_trans_d`: live invoice header/detail tables, used for bill status, returns, invoice lines, and returnable quantities.
+- `Item_Class_Store` / `item_class_store`: stock batches by store, product, class, expiry, and price.
+- `Item_Catalog` / `item_catalog`: product master, active flag, default price, and unit-of-measure conversion.
+- `Store`: store and branch metadata.
+- `Customer`, `Customer_Delivery`: customer lookup and reporting dimensions.
+- `sales_return`, `sales_return_payment`: posted return and return-payment facts.
+- `F_Transaction_Header`, `F_Cash_Store`: financial/cash impact of returns.
+- `sales_deliv_info`: delivery and customer-contact snapshot.
+- `employee`: employee E-Plus lookup.
+
+Reference read query patterns for B-Connect integration work:
+
+```sql
+-- 1) E-Plus sales per day by store/product
+SELECT sh.sto_id, sd.itm_id,
+       SUM(CASE sd.itm_unit
+             WHEN 1 THEN ISNULL(sd.qnty,0)-ISNULL(sd.itm_back,0)
+             WHEN 2 THEN (ISNULL(sd.qnty,0)-ISNULL(sd.itm_back,0)) / NULLIF(ic.itm_unit1_unit2,0)
+             WHEN 3 THEN (ISNULL(sd.qnty,0)-ISNULL(sd.itm_back,0)) / NULLIF(ic.itm_unit1_unit3,0)
+             ELSE ISNULL(sd.qnty,0)-ISNULL(sd.itm_back,0)
+           END) AS sales_qty
+FROM r_sales_trans_d sd WITH (NOLOCK)
+JOIN r_sales_trans_h sh WITH (NOLOCK) ON sd.sth_id = sh.sth_id AND sd.std_stock_id = sh.sto_id
+JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = sd.itm_id
+WHERE sd.sec_insert_date >= ? AND sd.sec_insert_date < ? AND sh.sto_id IN (?)
+GROUP BY sh.sto_id, sd.itm_id;
+
+-- 2) E-Plus total inventory by product across stores
+SELECT ics.itm_id, SUM(CAST(ics.itm_qty / ic.itm_unit1_unit3 AS decimal(18,2))) AS balance
+FROM Item_Class_Store ics WITH (NOLOCK)
+JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = ics.itm_id
+WHERE ic.itm_active = 1 AND ics.sto_id IN (?)
+GROUP BY ics.itm_id
+HAVING SUM(CAST(ics.itm_qty / ic.itm_unit1_unit3 AS decimal(18,2))) > 0;
+
+-- 3) E-Plus inventory by product/store
+SELECT ics.itm_id, ics.sto_id,
+       SUM(CAST(ics.itm_qty / ic.itm_unit1_unit3 AS decimal(18,2))) AS balance
+FROM Item_Class_Store ics WITH (NOLOCK)
+JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = ics.itm_id
+WHERE ic.itm_active = 1 AND ics.sto_id IN (?)
+GROUP BY ics.itm_id, ics.sto_id
+HAVING SUM(CAST(ics.itm_qty / ic.itm_unit1_unit3 AS decimal(18,2))) > 0;
+
+-- 4) E-Plus batch stock for one product/store
+SELECT ics.c_id, ics.itm_id, ics.sto_id, ics.sell_price,
+       ics.itm_qty AS qty_small,
+       ics.itm_qty / ic.itm_unit1_unit3 AS qty,
+       ics.pharm_price + ics.sell_tax AS cost,
+       ics.itm_expiry_date
+FROM item_class_store ics
+JOIN item_catalog ic ON ic.itm_id = ics.itm_id
+WHERE ics.sto_id = ? AND ics.itm_id = ? AND ics.itm_qty > 0;
+
+-- 5) E-Plus invoice details / returnable qty
+SELECT sd.std_id, sd.sth_id, sd.itm_id, sd.c_id, sd.qnty, sd.itm_unit,
+       sd.itm_sell, sd.itm_cost, sd.itm_aver_cost, sd.itm_back, sd.itm_nexist,
+       ic.itm_unit1_unit2, ic.itm_unit1_unit3
+FROM sales_trans_d sd
+JOIN item_catalog ic ON ic.itm_id = sd.itm_id
+WHERE sd.sth_id = ?
+ORDER BY sd.std_id;
+```
+
+When implementing these patterns in Odoo modules, keep them parameterized. Expand `IN (?)` placeholders using the established B-Connect connector helper rather than string-concatenating branch IDs.
+
+E-Plus-only dashboard query pack:
+
+Use this as the E-Plus-only query pack for future dashboard and migration work. The default assumption is that dashboards read from consolidated replica tables `r_sales_trans_h` and `r_sales_trans_d`. For a single-store database, replace them with `sales_trans_h` and `sales_trans_d` and remove `d.std_stock_id = h.sto_id` from joins.
+
+```sql
+DECLARE @date_from DATETIME = '2026-07-01';
+DECLARE @date_to   DATETIME = '2026-07-10'; -- exclusive
+DECLARE @store_id INT = NULL;               -- NULL = all stores
+
+IF OBJECT_ID('tempdb..#invoice_base') IS NOT NULL DROP TABLE #invoice_base;
+
+SELECT
+    h.sth_id,
+    h.sto_id,
+    h.cust_id,
+    h.emp_id,
+    h.sec_insert_date,
+    CAST(ISNULL(h.total_bill_net, 0) AS DECIMAL(18,2)) AS net_amount,
+    CAST(ISNULL(h.fh_company_part, 0) AS DECIMAL(18,2)) AS company_part,
+    CASE WHEN h.bill_typ = 4 THEN 1 ELSE 0 END AS is_delivery,
+    CASE WHEN ISNULL(h.fh_contract_id, 0) <> 0
+           OR ISNULL(h.fh_company_part, 0) <> 0
+           OR NULLIF(LTRIM(RTRIM(ISNULL(h.fh_medins_rec_name, ''))), '') IS NOT NULL
+         THEN 1 ELSE 0 END AS is_contract,
+    CASE WHEN ISNULL(h.total_des_mon, 0) <> 0
+           OR ISNULL(h.total_dis_per, 0) <> 0
+           OR ISNULL(h.sth_pnt_dis, 0) <> 0
+           OR EXISTS (
+                SELECT 1
+                FROM r_sales_trans_d d WITH (NOLOCK)
+                WHERE d.sth_id = h.sth_id
+                  AND d.std_stock_id = h.sto_id
+                  AND (ISNULL(d.itm_dis_mon, 0) <> 0 OR ISNULL(d.itm_dis_per, 0) <> 0)
+           )
+         THEN 1 ELSE 0 END AS is_offer,
+    CASE
+        WHEN ISNULL(h.total_des_mon, 0) <> 0 OR ISNULL(h.total_dis_per, 0) <> 0 OR ISNULL(h.sth_pnt_dis, 0) <> 0 THEN 'offer'
+        WHEN ISNULL(h.fh_contract_id, 0) <> 0 OR ISNULL(h.fh_company_part, 0) <> 0 THEN 'contract'
+        WHEN h.bill_typ = 4 THEN 'delivery'
+        ELSE 'cash'
+    END AS collection_category
+INTO #invoice_base
+FROM r_sales_trans_h h WITH (NOLOCK)
+WHERE h.sec_insert_date >= @date_from
+  AND h.sec_insert_date < @date_to
+  AND h.sth_flag = 'C'
+  AND (@store_id IS NULL OR h.sto_id = @store_id);
+
+-- Top KPIs
+DECLARE @days DECIMAL(18,4) = NULLIF(DATEDIFF(DAY, @date_from, @date_to), 0);
+DECLARE @prev_from DATETIME = DATEADD(MONTH, -1, @date_from);
+DECLARE @prev_to   DATETIME = DATEADD(MONTH, -1, @date_to);
+
+SELECT
+    SUM(net_amount) AS total_sales,
+    SUM(net_amount) / @days AS avg_daily_sales,
+    (
+        SELECT SUM(ISNULL(h.total_bill_net, 0)) / @days
+        FROM r_sales_trans_h h WITH (NOLOCK)
+        WHERE h.sec_insert_date >= @prev_from
+          AND h.sec_insert_date < @prev_to
+          AND h.sth_flag = 'C'
+          AND (@store_id IS NULL OR h.sto_id = @store_id)
+    ) AS prev_period_avg_daily_sales
+FROM #invoice_base;
+
+-- Collection method cards: cash / delivery / contracts / offers
+SELECT
+    collection_category,
+    COUNT(*) AS invoice_count,
+    SUM(net_amount) AS total_sales,
+    100.0 * SUM(net_amount) / NULLIF((SELECT SUM(net_amount) FROM #invoice_base), 0) AS pct_of_total
+FROM #invoice_base
+GROUP BY collection_category
+ORDER BY total_sales DESC;
+
+-- Contract تحمل percentage
+SELECT
+    SUM(CASE WHEN is_contract = 1 THEN net_amount - company_part ELSE 0 END) AS customer_bearing_amount,
+    SUM(CASE WHEN is_contract = 1 THEN company_part ELSE 0 END) AS company_part_amount,
+    100.0 * SUM(CASE WHEN is_contract = 1 THEN net_amount - company_part ELSE 0 END)
+        / NULLIF(SUM(CASE WHEN is_contract = 1 THEN net_amount ELSE 0 END), 0) AS bearing_pct
+FROM #invoice_base;
+
+-- Sales by user
+SELECT TOP (20)
+    h.emp_id,
+    COALESCE(e.e_name_ar, e.e_name, CONVERT(VARCHAR(20), h.emp_id)) AS employee_name,
+    COUNT(*) AS invoice_count,
+    SUM(h.net_amount) AS total_sales,
+    100.0 * SUM(h.net_amount) / NULLIF((SELECT SUM(net_amount) FROM #invoice_base), 0) AS pct_of_total
+FROM #invoice_base h
+LEFT JOIN employee e WITH (NOLOCK) ON e.e_id = h.emp_id
+GROUP BY h.emp_id, e.e_name_ar, e.e_name
+ORDER BY total_sales DESC;
+```
+
+Replace `ic.itm_is_medicine` with the real E-Plus medicine/classification column if different.
+
+```sql
+-- Medicine vs non-medicine
+SELECT
+    CASE WHEN ISNULL(ic.itm_is_medicine, 1) = 1 THEN 'medicine' ELSE 'non_medicine' END AS item_type,
+    SUM((ISNULL(d.qnty,0) - ISNULL(d.itm_back,0)) * ISNULL(d.itm_sell,0) - ISNULL(d.itm_dis_mon,0)) AS sales_amount
+FROM r_sales_trans_d d WITH (NOLOCK)
+JOIN #invoice_base h ON h.sth_id = d.sth_id AND h.sto_id = d.std_stock_id
+JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = d.itm_id
+GROUP BY CASE WHEN ISNULL(ic.itm_is_medicine, 1) = 1 THEN 'medicine' ELSE 'non_medicine' END;
+
+-- Top sold items + current balance
+SELECT TOP (20)
+    d.itm_id,
+    COALESCE(ic.itm_name_ar, ic.itm_name, ic.itm_code, CONVERT(VARCHAR(20), d.itm_id)) AS item_name,
+    COUNT(DISTINCT d.sth_id) AS sale_times,
+    SUM(CASE d.itm_unit
+            WHEN 1 THEN ISNULL(d.qnty,0) - ISNULL(d.itm_back,0)
+            WHEN 2 THEN (ISNULL(d.qnty,0) - ISNULL(d.itm_back,0)) / NULLIF(ic.itm_unit1_unit2,0)
+            WHEN 3 THEN (ISNULL(d.qnty,0) - ISNULL(d.itm_back,0)) / NULLIF(ic.itm_unit1_unit3,0)
+            ELSE ISNULL(d.qnty,0) - ISNULL(d.itm_back,0)
+        END) AS sold_qty,
+    ISNULL(b.balance, 0) AS current_balance
+FROM r_sales_trans_d d WITH (NOLOCK)
+JOIN #invoice_base h ON h.sth_id = d.sth_id AND h.sto_id = d.std_stock_id
+JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = d.itm_id
+OUTER APPLY (
+    SELECT SUM(CAST(ics.itm_qty / NULLIF(ic.itm_unit1_unit3,0) AS DECIMAL(18,2))) AS balance
+    FROM Item_Class_Store ics WITH (NOLOCK)
+    WHERE ics.itm_id = d.itm_id
+      AND (@store_id IS NULL OR ics.sto_id = @store_id)
+) b
+GROUP BY d.itm_id, ic.itm_name_ar, ic.itm_name, ic.itm_code, b.balance
+ORDER BY sale_times DESC, sold_qty DESC;
+
+-- Recent customer invoices
+SELECT TOP (20)
+    h.sth_id AS invoice_no,
+    h.sec_insert_date,
+    COALESCE(c.cust_name_ar, CONVERT(VARCHAR(20), h.cust_id)) AS customer_name,
+    h.net_amount AS invoice_total,
+    COUNT(d.std_id) AS item_count,
+    STRING_AGG(COALESCE(ic.itm_name_ar, ic.itm_name, ic.itm_code), N'، ') AS items
+FROM #invoice_base h
+LEFT JOIN Customer c WITH (NOLOCK) ON c.cust_id = h.cust_id
+JOIN r_sales_trans_d d WITH (NOLOCK) ON d.sth_id = h.sth_id AND d.std_stock_id = h.sto_id
+JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = d.itm_id
+GROUP BY h.sth_id, h.sec_insert_date, h.cust_id, c.cust_name_ar, h.net_amount
+ORDER BY h.sec_insert_date DESC;
+```
+
+Write-sensitive E-Plus tables:
+
+- Sales: `sales_trans_h`, `sales_trans_d`, `sales_deliv_info`, `sales_return`, `sales_return_payment`, `sales_trans_payment`.
+- Inventory: `Inventory_h`, `Inventory_d`, `Item_Class_Store`.
+- Transfers: `Store_Trans`, `Store_Trans_h`, pending transfer tables.
+- Finance/cash: `F_Cash_Store`, `F_Transaction_Header`, `F_Auto_Doc_h`, `F_Auto_Doc_d`.
+- Replication: `Replication_Trans` and `r_*` replication/staging tables.
+
+B-Connect development rules:
+
+- Treat E-Plus/B-Connect as an external source of truth for legacy product and branch stock data during the transition, but do not bypass Odoo business logic when creating Odoo records.
+- Never directly update `Item_Class_Store` outside explicitly approved sales, returns, inventory, transfer, or replication flows.
+- For reads, use `WITH (NOLOCK)` only when stale reads are acceptable. Stock-critical workflows must explicitly decide and document their consistency requirement.
+- For existing write flows, every operation must be transactional, branch-scoped, and must log the pushed E-Plus transaction identifier.
+- For future broad synchronization from E-Plus into Odoo, use queue-based imports, validation, idempotency keys, and audit logs.
+- Before adding a new B-Connect connection implementation, search existing modules for current E-Plus/B-Connect helpers and reuse the established connector pattern where possible.
+- Do not vendor or copy the `e-plus-structure` repo into Odoo addons. Treat it as reference documentation only.
+- Any migration from B-Connect to Odoo must preserve stable identifiers such as `itm_id`, `itm_code`, `sto_id`, `sto_code`, and transaction IDs for traceability.
+- All stock, sales, transfer, and self-inventory reads must be branch-filtered. Multi-branch code must test that one branch cannot receive another branch's rows.
+- Product names may exist in encrypted fields such as `itm_name_ar_encrypt` and `itm_name_en_encrypt`; do not assume plain name columns are populated without confirming the decryption path.
+
+### Replication Safety Rules
+
+Use an integration queue pattern:
+
+```text
+External DB
+  -> Import Queue
+  -> Validation
+  -> Odoo Business Logic
+  -> Final Records
+```
+
+Avoid direct writes:
+
+```text
+External DB
+  -> Direct Write
+  -> Production Tables
+```
+
+Queue-based imports make troubleshooting and recovery much safer.
+
+### Product Master Protection
+
+After product creation, the following fields should not be editable by normal users:
+
+- Product Code
+- Barcode
+- External Reference
+
+Only Inventory Manager or System Administrator users should be able to modify them. This prevents inventory mismatches across branches and external systems.
+
+### Branch Security Rules
+
+Users assigned to a branch can view their branch data only.
+
+They cannot view other branches unless they belong to an authorized higher-level group, such as:
+
+- Manager
+- Regional Manager
+- Administrator
+
+See the detailed inherited-admin guard rule in Development Rules before implementing branch restrictions.
+
+### Pricing Protection
+
+Every price modification should log:
+
+- `old_price`
+- `new_price`
+- `changed_by`
+- `change_date`
+
+Prefer creating a dedicated history model such as `ab_product_price_history` instead of overwriting prices without traceability.
+
+### PostgreSQL Backup Rules
+
+Recommended pharmacy production backup retention:
+
+- Hourly: 72 backups
+- Daily: 60 backups
+- Weekly: 24 backups
+- Monthly: 24 backups
+
+Inventory and pricing mistakes may only be discovered several weeks later.
+
+Create a dedicated PostgreSQL backup before:
+
+- Mass Price Update
+- Mass Product Import
+- Mass Barcode Update
+- Inventory Adjustment Import
+- Stock Recycling Batch
+- Supplier Synchronization
+
+Example:
+
+```bash
+pg_dump \
+  -U odoo19 \
+  -F c \
+  -d abdin_prod \
+  -f before_mass_import_$(date +%F_%H-%M).backup
+```
+
+### Odoo Upgrade Rules
+
+Never run this during normal module development:
+
+```bash
+-u base
+```
+
+Use targeted upgrades only:
+
+```bash
+-u ab_stock_recycling
+-u module1,module2
+```
+
+Reason: `-u base` validates every view and inherited XML across the database and can expose unrelated issues during a focused module change.
+
+### Git Rules For Hotfix Transfers
+
+Before cherry-picking between branches such as `dev`, `ab_stock_recycling`, `ab_quality_assurance`, and `ab_orders_management`:
+
+```bash
+git log --oneline branch_name
+```
+
+Identify exact commits and prefer:
+
+```bash
+git cherry-pick <commit_hash>
+```
+
+Avoid merging a whole feature branch for hotfix transfers unless explicitly requested. This keeps module histories isolated.
+
+### Translation Rules
+
+For translation files such as `ar.po` and `ar_001.po`, agents must:
+
+- Preserve existing `msgid` values.
+- Append translations when needed.
+- Avoid mass regeneration.
+- Never delete `ar.po` or `ar_001.po` during upgrades.
 
 ## Odoo 19 Compatibility Notes
 
@@ -182,8 +660,9 @@ Manifest example:
     'name': 'ab_template',
     'version': '19.0.1.0.0',
     'license': 'LGPL-3',
-    'category': 'AbdinSupplyChain',
-    'author': 'Alhassan Hossny',
+    'category': '<module category>',
+    'author': 'Abdin Pharmacies',
+    'developer': '<current git user>',
     'application': True,
     'depends': ['base'],
     'data': [
@@ -415,7 +894,444 @@ Most modules use `19.0.1.0.0` instead of `19.0`. This is cosmetic, not a functio
 ### Session Notes
 
 - Target: Odoo 19.0.
-- Author: Alhassan Hossny.
+- Developer: Alhassan Hossny.
 - Template: `ab_template` structure.
 - Data order: `security/security_groups.xml` -> `security/record_rules.xml` -> `security/ir.model.access.csv` -> `views/menus.xml` -> views.
 - Focus: start with critical issues first.
+
+### Critical Odoo 19 Learnings
+- **OWL template operators**: Use JavaScript operators (`&&`, `||`, `!`) with XML entity escaping (`&amp;` for `&`). Do NOT use QWeb-style `and`/`or`/`not` — OWL's expression parser treats those as property access (`ctx['not']`), breaking logic.
+- **SCSS `@import url()`**: Odoo 19's libsass cannot fetch external URLs (e.g. Google Fonts). Any `@import url(...)` silently breaks the entire `web.assets_backend` bundle, causing blank/HTML-rendered screens. Use font-face declarations as CSS hints or inline fonts.
+- **Bulk code results**: Use `ir.actions.client` + OWL Dialog (not `ValidationError` popup or `TransientModel` wizard form) for modern UX.
+
+## Phase 0 Findings — `ab_product_seo`
+
+These facts were measured during the SEO discovery phase for the future `ab_product_seo` module. Use them as the baseline for architecture and implementation decisions.
+
+### Strategic Conclusion
+
+Ready API is no longer the primary value source. E-Plus/B-Connect already contains enough structured pharmaceutical data to build a professional internal SEO platform.
+
+First business value is not AI, Ready API, or RAG. First business value is:
+
+- Populate native Odoo SEO fields correctly.
+- Govern review and approval of pharmacy SEO content.
+- Publish approved Arabic and English SEO content safely.
+
+### Odoo Product and Website Metrics
+
+| Metric | Count |
+|--------|------:|
+| `product.template` total | 110 |
+| Linked to `ab_product` | 25 |
+| Published website products | 106 |
+| Active + saleable templates | 107 |
+| Meta title filled | 0 |
+| Meta description filled | 0 |
+| Ecommerce description filled | 24 |
+| Website description filled | 24 |
+| Product images in Odoo | 1 |
+| SEO optimized products | 0 |
+
+SEO coverage is effectively zero for native meta fields. Image coverage is also a major issue and should be handled before heavy AI investment.
+
+### `ab_product` Metrics
+
+| Metric | Count |
+|--------|------:|
+| `ab_product` total | 102,834 |
+| Active + saleable | 30,420 |
+| With product code | 102,834 |
+| With `eplus_serial` | 102,833 |
+| Barcode rows | 10,000 |
+| Products linked to barcode | 4,025 |
+| With effective material | 7,485 |
+| With description | 38,280 |
+| With scientific group | 1 |
+
+Identifier matching is strong by product code and `eplus_serial`; barcode coverage is useful but not enough as the primary key.
+
+### Installed Languages
+
+Installed languages:
+
+- `ar_001`
+- `en_US`
+
+Arabic and English must be supported from day one.
+
+### E-Plus `Item_Catalog` Findings
+
+`Item_Catalog` contains 103,846 rows and 77 columns.
+
+Useful fields discovered:
+
+- `itm_code`
+- `itm_name_ar_encrypt`
+- `itm_name_en_encrypt`
+- `com_id`
+- `itm_com_code`
+- `itm_ismedicine`
+- `itm_scientific_n1`
+- `itm_scientific_n2`
+- `itm_scientific_group_id`
+- `itm_usage_manner_id`
+- `itm_effictive`
+- `itm_effictive_perc`
+- `itm_g1`
+- `itm_g2`
+- `itm_g3`
+- `itm_origin`
+- `itm_notes`
+- `itm_image`
+
+Coverage highlights:
+
+| E-Plus Field | Count |
+|--------------|------:|
+| Product code | 103,846 |
+| Plain Arabic name | 0 |
+| Plain English name | 0 |
+| Encrypted Arabic name | 103,846 |
+| Encrypted English name | 103,843 |
+| Manufacturer/company id | 103,794 |
+| Group 1 | 73,918 |
+| Group 2 | 73,697 |
+| Group 3 | 68,976 |
+| Scientific name 1 | 89,848 |
+| Scientific group id | 65,370 |
+| Usage manner id | 58,251 |
+| Effective material | 7,509 |
+| Notes | 38,280 |
+| Origin | 103,846 |
+| Image | 0 |
+
+Important: plain Arabic and English name columns are empty. Product names appear to be stored in encrypted columns. Do not assume plain name columns are usable without confirming decryption logic.
+
+### Useful E-Plus Lookup Tables
+
+The following lookup tables exist and should be considered internal SEO data sources before using external APIs:
+
+- `Company`
+- `Groups`
+- `Scientific_Groups`
+- `item_usage_manner`
+- `Usage_Causes`
+- `Item_Usage_Causes`
+- `Item_Origins`
+
+### Existing Ecommerce Boundary
+
+`ab_website_sale_product` already synchronizes `ab_product` into native `product.template`.
+
+It already owns:
+
+- Product template creation and update.
+- Product name and code sync.
+- Price and cost sync.
+- Sale/purchase flags.
+- Active state.
+- `description`
+- `description_sale`
+- `description_ecommerce`
+- `website_description`
+- `is_published`
+- Public categories.
+- Product tags.
+- Images.
+- E-Plus stock snapshots.
+
+`ab_product_seo` must not duplicate this functionality. It should govern approved SEO content and publish into native Odoo fields after review.
+
+### Native Odoo SEO Fields
+
+Odoo 19 already provides:
+
+- `website_meta_title`
+- `website_meta_description`
+- `website_meta_keywords`
+- `website_meta_og_img`
+- `seo_name`
+- `description_ecommerce`
+
+Odoo already handles:
+
+- Canonical URLs.
+- OpenGraph.
+- Twitter cards.
+- `hreflang`.
+- Sitemap.
+- Product JSON-LD.
+- Breadcrumb JSON-LD.
+
+The SEO module must populate and govern these fields, not replace Odoo website SEO rendering.
+
+### `ab_product_seo` Ownership Rules
+
+`ab_product_seo` owns:
+
+- SEO content lifecycle.
+- SEO drafts.
+- Arabic and English SEO content.
+- Review workflow.
+- Approval workflow.
+- Publishing decisions.
+- Versioning.
+- Rollback.
+- SEO publish logs.
+- SEO audit logs.
+- Enrichment tracking.
+- Future AI/RAG readiness.
+
+`ab_product_seo` does not own:
+
+- Product master data.
+- Stock quantities.
+- Pricing.
+- E-Plus synchronization.
+- Website product synchronization.
+- Product image synchronization.
+- Automatic publishing of medical content.
+
+### Required Workflow
+
+Use this lifecycle:
+
+```text
+draft
+-> generated
+-> under_review
+-> approved
+-> published
+-> rejected
+-> archived
+```
+
+Generated pharmacy content must remain reviewable. No medical claims may be auto-published.
+
+### Recommended Roadmap
+
+Phase 1: `ab_product_seo` core framework only.
+
+- Models.
+- SEO records.
+- SEO translations.
+- SEO versions.
+- SEO publish logs.
+- SEO audit logs.
+- Review workflow.
+- Approval workflow.
+- Publishing into native Odoo SEO fields.
+
+Phase 2: internal SEO generator.
+
+- Generate SEO drafts from internal product/E-Plus data:
+  - Product name.
+  - Scientific name.
+  - Manufacturer.
+  - Origin.
+  - Usage.
+  - Product group.
+  - Notes.
+
+Phase 3: Arabic SEO.
+
+- Arabic meta title.
+- Arabic meta description.
+- Arabic short description.
+- Arabic FAQ.
+- Arabic public description.
+
+Phase 4: queue architecture.
+
+Use `queue_job` / `integration_queue_job`.
+
+Pipeline:
+
+```text
+Snapshot
+-> Generate
+-> Review
+-> Publish
+```
+
+Recommended batch size:
+
+```text
+100 products/job
+```
+
+Recommended identity key:
+
+```text
+seo_product_<product_id>_<lang>
+```
+
+Phase 5: Ready API pilot only.
+
+- Test 100 products.
+- Measure match rate.
+- Measure data quality.
+- Measure Arabic quality.
+- Measure scientific data quality.
+- Keep Ready API only if it provides better enrichment than E-Plus.
+
+### Ready API Rules
+
+Ready API is optional enrichment only.
+
+Free plan constraints:
+
+- 300 requests/day.
+- 7-day trial.
+- Localhost-only test key.
+
+Ready API must be:
+
+- Cached.
+- Rate limited.
+- Queue driven.
+- Manually controlled.
+- Never the source of truth.
+- Never called during website page load.
+- Never used for automatic full-catalog publishing.
+
+### Matching Priority
+
+Use this order for enrichment/matching:
+
+1. Barcode.
+2. `eplus_serial`.
+3. Product code.
+4. Scientific grouping.
+5. Normalized product name.
+6. Fuzzy match.
+
+### Future RAG Direction
+
+The product catalog is a strong future knowledge base because it contains 102,834 products and large coverage for scientific names, manufacturers, categories, origins, and notes.
+
+Future architecture:
+
+```text
+ab_product
+  -> ab_product_seo
+  -> approved SEO content
+  -> embedding pipeline
+  -> pgvector
+  -> pharmacy AI assistant
+```
+
+Only approved public content should be embedded for customer-facing RAG. Separate retrieval-safe fields from non-public medical/internal fields.
+
+### Architecture-Only Prompt Guardrail
+
+Before implementing `ab_product_seo`, ask for an architecture document only. The prompt must include:
+
+- Do not write code.
+- Do not modify files.
+- Do not create commits.
+- Return architecture only.
+- Use Phase 0 metrics as facts.
+- Follow AGENTS.md exactly.
+- Design governance-first architecture.
+- Use native Odoo SEO field publishing.
+- Support Arabic + English.
+- Include queue-based generation.
+- Include versioning and rollback.
+- Include audit trail.
+- Keep Ready API optional.
+- Include future pgvector/RAG compatibility.
+- Stay compatible with `ab_website_sale_product`.
+- Do not directly modify source product data.
+
+## Session Summary — ab_self_inventory SaaS UI Redesign
+
+### Completed
+- **List view card rows**: White bg, rounded corners, shadow hover, left accent border (`self_inventory.scss`).
+- **Premium state badges**: Gradient + glow (`.ab_state_badge`).
+- **Deadline color coding**: Green/orange/red/past urgency with icon + relative text (`.ab_deadline_widget`).
+- **Quick actions dropdown**: "..." button on row hover with Open/Edit/Duplicate (`.ab_quick_actions_menu`).
+- **Branch popover tooltip**: Body-level DOM append, sync `getBoundingClientRect()` before await, absolute positioning with scrollX/Y.
+- **Kanban views**: Created for all 3 models (batch/request/process) with KPI row, branch pill, deadline, requester meta, grouped by state (`self_inventory_kanban_views.xml`).
+- **Form redesign**: Hero card, KPI cards row (4-column grid with top accent), two-column layout (1fr 340px sidebar), branch chips, progress SVG circle, state-based timeline, sidebar info cards (`self_inventory_form.scss`, `self_inventory_form_widgets.js`).
+- **5 form OWL widgets**: FormHeroWidget, KpiCardWidget (with shortage/extra types), BranchFormWidget, FormProgressWidget, TimelineWidget.
+- **6 list/kanban OWL widgets**: BranchPillsWidget (body-level popover), KpiWidget, StateBadgeWidget, RowTitleWidget (with quick actions), DeadlineWidget, BranchDialog.
+- **Bulk product codes OWL Dialog**: Replaced old `TransientModel` wizard form with `BulkImportResultsDialog` — summary cards (branches processed / added / missing), branch table, expandable missing-codes section, "Download Missing Codes" button, empty state. Triggered via `ir.actions.client` with tag `ab_inventory_bulk_code_results`.
+- **Dead code removal**: Removed `SelfInventoryBatchCodeResultWizard`, `SelfInventoryBatchCodeResultLine` transient models, their form view in batch views XML, and their 4 access lines from `ir.model.access.csv`.
+- **Test updated**: `test_batch_add_product_codes` now asserts `ir.actions.client` params instead of wizard `res_model/res_id`.
+
+### Key Files
+| File | Purpose |
+|---|---|
+| `ab_self_inventory/static/src/scss/self_inventory.scss` | List/kanban SCSS |
+| `ab_self_inventory/static/src/scss/self_inventory_form.scss` | Form SCSS + bulk dialog SCSS |
+| `ab_self_inventory/static/src/js/self_inventory_widgets.js` | 6 list/kanban widgets |
+| `ab_self_inventory/static/src/js/self_inventory_form_widgets.js` | 5 form widgets |
+| `ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js` | BulkImportResultsDialog + client action handler (NEW) |
+| `ab_self_inventory/models/self_inventory_request.py` | `_get_bulk_code_result_action()` replaces wizard open; removed wizard models |
+| `ab_self_inventory/views/self_inventory_kanban_views.xml` | Kanban views |
+| `ab_self_inventory/views/self_inventory_request_batch_views.xml` | Batch list + form; removed wizard form view |
+| `ab_self_inventory/views/self_inventory_request_views.xml` | Request list + form |
+| `ab_self_inventory/views/self_inventory_process_views.xml` | Process list + form |
+| `ab_self_inventory/security/ir.model.access.csv` | Removed 4 wizard access lines |
+| `ab_self_inventory/__manifest__.py` | Asset registration (added bulk_code_dialog.js) |
+| `ab_self_inventory/tests/test_self_inventory.py` | Updated assertions for client action |
+
+### Key Decisions
+- Popover DOM appended to `document.body` (not nested inside widget) to avoid ancestor CSS `transform`/`will-change` clipping.
+- `getBoundingClientRect()` captured synchronously before `await` in `onEnter()` to avoid zero-rect from virtual-scrolling detach.
+- Form widgets access sibling fields via `this.props.record.data.fieldName` — handle both raw values and Many2one arrays.
+- ProgressWidget computes `percent = Math.round((processed / requested) * 100)` with safe division-by-zero.
+- TimelineWidget generates items from record state/dates via static `timelineMap` — no separate history model required.
+- **OWL template operators**: JavaScript operators (`!`, `&&`, `||`) with XML entity escaping (`&amp;` for `&`) — NOT QWeb-style `not`/`and`/`or`.
+- **SCSS `@import url()` removed** from form SCSS to prevent libsass failure from breaking the entire backend asset bundle.
+- **Bulk code results**: `ir.actions.client` → OWL Dialog (no TransientModel wizard, no ValidationError).
+- **Dialog "Download Missing Codes"** uses client-side Blob + anchor download (no server round trip).
+<<<<<<< Updated upstream
+=======
+
+## Session Summary — ab_core_ui
+
+### Goal
+Build a complete Design System and Component Workspace module `ab_core_ui` as the centralized Odoo 19 UI foundation. Settings page is ONLY an elegant launcher — no configuration, no statistics, no galleries. Workspace is a fullscreen immersive experience with cinematic entry/exit transitions.
+
+### Done
+- Full module scaffolding: manifest, models, views, security, data, static assets.
+- 5 Python models: `core_ui.category` (hierarchical), `core_ui.component`, `core_ui.design_token`, `core_ui.pattern`, `res.config.settings`.
+- Security: 3 groups (User/Developer/Manager) using Odoo 19 privilege-based hierarchy.
+- 30+ reusable QWeb component templates, 24 default categories, 41 components, 30+ design tokens, 7 patterns.
+- 7 OWL JS components + OWL XML templates.
+- **Fixed search view**: Removed invalid `expand="1" string="Group By"` from `<group>` in Odoo 19.
+- **Fixed core_ui_transition.js**: Removed `export {};` causing `export declarations may only appear at top level of a module`.
+- **Deleted corrupted cached bundles** forcing regeneration.
+- **Deactivated ab_product_seo cron #78** (non-existent method).
+- **Fixed Settings section rendering**: Removed `groups="group_core_ui_user"` from `<block>` — XML ID resolution in inherited views stripped the block despite `has_group()` returning True.
+- **Simplified res_config_settings.xml**: Entire Core UI block replaced with a single centered launcher card: icon + title + subtitle + one premium "Launch Workspace" button. Cards, statistics, settings fields, badges, and gallery button removed.
+- **Fixed OWL prop validation** for 4 nullable props: `selectedCategory`, `categoryId`, `selectedComponent`, `component` — changed from `{ type: String }` / `{ type: Object }` to canonical union `[Type, { value: null }]`.
+- **Fixed OWL template inline JS**: Moved `const __handler = ...; if (__handler) ...` from `t-on-click` to a component method — OWL's expression parser cannot handle statement blocks.
+- **Cinematic 4-phase entry transition**: (1) Settings page blurs + scales down, (2) dark overlay fades in with backdrop-filter, (3) workspace grows from center with spring easing + border-radius transition, (4) staggered element reveal (topbar → sidebar → gallery → inspector) with translateY+opacity.
+- **Reverse 4-phase exit transition**: Elements fade out in reverse stagger → workspace shrinks → overlay fades → settings page restores.
+- **Premium Launch Workspace button**: Gradient bg, hover lift + scale, active press, glow shadow, focus-visible ring, ripple container, spring easing.
+- **Settings launcher card**: Hover lift + border glow, centered layout, gradient icon container, premium typography.
+- **Dead code removal**: Removed `.core_ui_settings_card`, `.core_ui_stat_card`, `.core_ui_badge` from SCSS. Removed duplicate `.core_ui_badge_pill` and `.core_ui_empty_state` definitions from variables.scss (already in components.scss).
+- **`prefers-reduced-motion` support**: All transitions disabled when user prefers reduced motion.
+
+### Key Decisions
+- Changed module name to `ab_core_ui` but kept design system namespace `core_ui.*` for component IDs.
+- Odoo 19 security: `res.groups.privilege` → `res.groups` chain.
+- **Settings is only a launcher** — no config panels, statistics, or options exposed. The workspace IS the experience.
+- **Cinematic transitions via CSS classes + JS timers**: No JS animation library. 4-phase entry/exit with staggered delays, spring easing, and backdrop blur.
+- **Staggered element reveal uses CSS-only selectors** — not `core_ui_element_enter` classes on each element. Targets `.core_ui_sidebar`, `.core_ui_gallery`, etc. directly via `.core_ui_workspace:not(.core_ui_elements_visible)` and `.core_ui_workspace.core_ui_elements_visible`.
+- Nullable OWL props use canonical `[Type, { value: null }]` union pattern (matching Odoo 19's error_dialogs.js, datetime_picker.js).
+- **No `groups` attribute on `<block>` in inherited `res.config.settings` views** — causes block stripping even when `has_group()` returns True.
+- **No inline JS statements in OWL `t-on-click`** — only expressions. Use component methods for logic.
+
+### Next Steps
+1. Verify the Settings launcher renders in browser (hard refresh Ctrl+Shift+R).
+2. Test Launch Workspace button — cinematic entry should play.
+3. Test Exit button — reverse cinematic exit should play.
+4. Verify component gallery, sidebar filters, search, inspector all work.
+5. Test `t-call` from another module.
+6. Add keyboard shortcuts, more component templates.
+>>>>>>> Stashed changes

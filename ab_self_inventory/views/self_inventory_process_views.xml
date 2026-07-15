@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_self_inventory_process_line_list" model="ir.ui.view">
+            <field name="name">ab_self_inventory_process_line_list</field>
+            <field name="model">ab_self_inventory_process_line</field>
+            <field name="arch" type="xml">
+                <list class="ab_self_inventory_list ab_self_inventory_line_list" editable="bottom" delete="0" create="0" decoration-danger="shortage_qty &gt; 0" decoration-success="extra_qty &gt; 0">
+                    <field name="requested" string="Requested" widget="ab_inventory_boolean_badge" readonly="1" options="{'yes': 'Requested', 'no': 'Manual'}"/>
+                    <field name="product_id" string="Product" domain="[('id', 'in', parent.available_product_ids)]" readonly="id"/>
+                    <field name="product_code" string="Product Code" optional="show"/>
+                    <field name="eplus_item_id" string="E-plus Item ID" optional="hide"/>
+                    <field name="eplus_item_code" string="E-plus Item Code" optional="hide"/>
+                    <field name="system_qty" readonly="id"/>
+                    <field name="unit_cost" readonly="id"/>
+                    <field name="actual_qty"/>
+                    <field name="difference_qty" readonly="1"/>
+                    <field name="shortage_qty" readonly="1"/>
+                    <field name="extra_qty" readonly="1"/>
+                    <field name="explanation"/>
+                    <button name="action_delete_manual_line" type="object" icon="fa-trash" string="Delete" title="Delete" invisible="requested or parent.state not in ('draft', 'in_progress')"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_self_inventory_process_list" model="ir.ui.view">
+            <field name="name">ab_self_inventory_process_list</field>
+            <field name="model">ab_self_inventory_process</field>
+            <field name="arch" type="xml">
+                <list class="ab_self_inventory_list" decoration-muted="state == 'cancelled'">
+                    <field name="name" widget="ab_inventory_row_title" string="Process" options="{'duplicate': false}"/>
+                    <field name="request_id" widget="ab_inventory_relation_pill" string="Request" optional="show" options="{'type': 'request', 'icon': 'R'}"/>
+                    <field name="branch_id" widget="ab_inventory_relation_pill" string="Branch" options="{'type': 'branch', 'icon': 'B'}"/>
+                    <field name="requester_id" string="Requester" optional="show"/>
+                    <field name="receiver_id" string="Receiver" optional="show"/>
+                    <field name="shortage_qty" widget="ab_inventory_kpi" string="Shortage" optional="show" options="{'icon': 'shortage', 'label': 'Shortage'}"/>
+                    <field name="extra_qty" widget="ab_inventory_kpi" string="Extra" optional="show" options="{'icon': 'extra', 'label': 'Extra'}"/>
+                    <field name="deadline" widget="ab_inventory_deadline" string="Deadline" optional="show"/>
+                    <field name="state" widget="ab_inventory_state_badge" string="Status"/>
+                    <field name="submitted_date" string="Submitted" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_self_inventory_process_form" model="ir.ui.view">
+            <field name="name">ab_self_inventory_process_form</field>
+            <field name="model">ab_self_inventory_process</field>
+            <field name="arch" type="xml">
+                <form class="ab_self_inventory_form">
+                    <header>
+                        <button name="action_submit_process" string="Submit Inventory" type="object" class="btn-success" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_sync_requested_product_quantities" string="ReSync Products" type="object" class="btn-warning" invisible="not can_sync_requested_stock"/>
+                        <button name="action_export_count_sheet" string="Export Count Sheet" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_open_import_wizard" string="Import Actual Counts" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')"/>
+                        <button name="action_cancel" string="Cancel" type="object" class="btn-danger" invisible="state not in ('draft', 'in_progress')" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
+                        <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'"/>
+                        <field name="can_sync_requested_stock" invisible="1"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,submitted"/>
+                    </header>
+                    <sheet>
+                        <div class="ab_form_hero_row">
+                            <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
+                        </div>
+                        <div class="ab_form_kpi_row" invisible="not create_date or state in ('draft', 'in_progress')">
+                            <field name="shortage_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'shortage', 'icon': 'shortage', 'label': 'Shortage'}"/>
+                            <field name="extra_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'extra', 'icon': 'extra', 'label': 'Extra'}"/>
+                        </div>
+                        <div class="ab_form_two_column">
+                            <div class="ab_form_main">
+                                <div class="ab_form_section">
+                                    <div class="ab_form_section_title">Details</div>
+                                    <div class="ab_form_section_body">
+                                        <field name="request_id"/>
+                                        <field name="branch_id"/>
+                                        <field name="receiver_id" readonly="1"/>
+                                        <field name="deadline"/>
+                                        <field name="request_note" nolabel="1" placeholder="Request note..."/>
+                                        <field name="branch_note" nolabel="1" placeholder="Branch note..." readonly="state not in ('draft', 'in_progress')"/>
+                                    </div>
+                                </div>
+                                <notebook>
+                                    <page string="Self Inventory Lines">
+                                        <div class="ab_modern_table_panel ab_modern_table_panel--process">
+                                            <field name="line_count" widget="ab_inventory_data_grid" nolabel="1" options="{'process_columns': true, 'hide_branch_summary': true}"/>
+                                        </div>
+                                    </page>
+                                </notebook>
+                            </div>
+                            <div class="ab_form_sidebar">
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Details</div>
+                                    <div class="ab_form_card_body">
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Status</span>
+                                            <span class="ab_form_info_value"><field name="state" widget="ab_inventory_state_badge" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Request</span>
+                                            <span class="ab_form_info_value"><field name="request_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Branch</span>
+                                            <span class="ab_form_info_value"><field name="branch_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Deadline</span>
+                                            <span class="ab_form_info_value"><field name="deadline" widget="ab_inventory_deadline" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Requester</span>
+                                            <span class="ab_form_info_value"><field name="requester_id" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Receiver</span>
+                                            <span class="ab_form_info_value"><field name="receiver_id" nolabel="1" readonly="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row">
+                                            <span class="ab_form_info_label">Created</span>
+                                            <span class="ab_form_info_value"><field name="create_date" nolabel="1"/></span>
+                                        </div>
+                                        <div class="ab_form_info_row" invisible="not submitted_date">
+                                            <span class="ab_form_info_label">Submitted</span>
+                                            <span class="ab_form_info_value"><field name="submitted_date" nolabel="1"/></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="ab_form_card">
+                                    <div class="ab_form_card_title">Timeline</div>
+                                    <div class="ab_form_card_body">
+                                        <field name="write_date" widget="ab_inventory_timeline" nolabel="1"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_self_inventory_process_search" model="ir.ui.view">
+            <field name="name">ab_self_inventory_process_search</field>
+            <field name="model">ab_self_inventory_process</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <field name="request_id"/>
+                    <field name="branch_id"/>
+                    <field name="requester_id"/>
+                    <field name="receiver_id"/>
+                    <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="in_progress" string="In Progress" domain="[('state', '=', 'in_progress')]"/>
+                    <filter name="submitted" string="Submitted" domain="[('state', '=', 'submitted')]"/>
+                    <filter name="group_branch" string="Branch" context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_self_inventory_process" model="ir.actions.act_window">
+            <field name="name">Self Inventory Processes</field>
+            <field name="res_model">ab_self_inventory_process</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+        <menuitem id="menu_ab_self_inventory_process"
+                  name="Processes"
+                  parent="menu_ab_self_inventory_root"
+                  action="action_ab_self_inventory_process"
+                  groups="group_ab_self_inventory_receiver,group_ab_self_inventory_manager,group_ab_self_inventory_requester"
+                  sequence="20"/>
+    </data>
+</odoo>

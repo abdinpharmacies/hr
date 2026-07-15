@@ -151,6 +151,5 @@
                   action="ab_hr_manpower_need_action"
                   sequence="30"/>
 
-
     </data>
 </odoo>

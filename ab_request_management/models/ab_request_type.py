@@ -5,10 +5,10 @@ from odoo.exceptions import ValidationError
 class AbRequestType(models.Model):
     _name = "ab_request_type"
     _table = "ab_request_type"
-    _description = "Request Type"
+    _description = "Request/Complaint Type"
     _order = "name"
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=True, translate=True)
     department_id = fields.Many2one(
         "ab_hr_department",
         required=True,
@@ -22,6 +22,11 @@ class AbRequestType(models.Model):
     )
 
     category_id = fields.Many2one('ab_request_category')
+    category_type = fields.Selection(
+        related="category_id.type",
+        string="Category Type",
+        readonly=True,
+    )
     question_ids = fields.One2many(
         "ab_request_type_question",
         "request_type_id",
@@ -30,7 +35,7 @@ class AbRequestType(models.Model):
 
     _ab_request_type_name_department_uniq = models.Constraint(
         "UNIQUE(name, department_id)",
-        "Request type must be unique per department.",
+        "Request/complaint type must be unique per department.",
     )
 
     @api.constrains("department_id")

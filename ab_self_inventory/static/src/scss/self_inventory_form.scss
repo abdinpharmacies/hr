@@ -1,0 +1,4131 @@
+/* ============================================================
+   ab_self_inventory - Form View SaaS Redesign
+   Design System: #F8FAFC bg, #2563EB primary, 12px radius
+   ============================================================ */
+
+$si-bg: #F8FAFC;
+$si-card: #FFFFFF;
+$si-primary: #2563EB;
+$si-primary-light: #DBEAFE;
+$si-primary-dark: #1D4ED8;
+$si-success: #22C55E;
+$si-success-light: #DCFCE7;
+$si-warning: #F59E0B;
+$si-warning-light: #FEF3C7;
+$si-danger: #EF4444;
+$si-danger-light: #FEE2E2;
+$si-neutral: #64748B;
+$si-neutral-light: #F1F5F9;
+$si-text: #0F172A;
+$si-text-secondary: #64748B;
+$si-border: #E2E8F0;
+$si-radius: 12px;
+$si-radius-lg: 16px;
+$si-shadow: 0 1px 3px rgba(0,0,0,0.08);
+$si-shadow-hover: 0 4px 16px rgba(0,0,0,0.07);
+$si-transition: 0.2s cubic-bezier(0.4,0,0.2,1);
+$si-radius-input: 8px;
+$si-blue-50: #EFF6FF;
+$si-blue-100: #DBEAFE;
+$si-blue-200: #BFDBFE;
+$si-blue-500: #3B82F6;
+$si-blue-600: #2563EB;
+$si-blue-700: #1D4ED8;
+$si-gray-50: #F8FAFC;
+$si-gray-100: #F1F5F9;
+$si-gray-200: #E2E8F0;
+$si-gray-300: #CBD5E1;
+$si-gray-400: #94A3B8;
+$si-gray-500: #64748B;
+$si-gray-600: #475569;
+$si-gray-700: #334155;
+$si-gray-800: #1E293B;
+$si-gray-900: #0F172A;
+
+// ===================================================================
+// 1. FORM CONTAINER OVERRIDES
+// ===================================================================
+.o_form_view.o_form_nosheet {
+    &.ab_dashboard_form,
+    &.ab_self_inventory_form {
+        background: $si-bg;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+}
+
+.o_form_view {
+    &.ab_dashboard_form,
+    &.ab_self_inventory_form {
+        background: $si-bg;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+        // Remove default Odoo form padding/borders
+        .o_form_sheet_bg {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 16px 24px 24px;
+            overflow: visible;
+        }
+
+        .o_form_sheet {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            width: 100%;
+            min-width: 0;
+        }
+
+        // Keep Odoo form actions compact and let the custom hero show state.
+        .o_form_statusbar {
+            position: static;
+            min-height: auto;
+            padding: 8px 24px;
+            border-bottom: 1px solid $si-border;
+            background: $si-bg;
+            box-shadow: none;
+            z-index: 5;
+
+            .o_statusbar_status {
+                display: none;
+            }
+
+            .o_statusbar_buttons {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                min-width: 0;
+            }
+
+            .btn {
+                margin: 0;
+            }
+        }
+
+        // Hide default button box
+        .oe_button_box {
+            display: none;
+        }
+
+        // Hide default label styles
+        .o_field_label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: $si-text-secondary;
+            margin-bottom: 4px;
+        }
+
+        // Notebook restyling
+        .o_notebook {
+            margin-top: 0;
+
+            .o_notebook_header {
+                border-bottom: 1.5px solid $si-border;
+                padding: 0;
+                margin-bottom: 0;
+                background: transparent;
+                display: flex;
+                gap: 0;
+
+                .nav-item {
+                    margin: 0;
+
+                    .nav-link {
+                        border: none;
+                        border-bottom: 2px solid transparent;
+                        padding: 12px 20px;
+                        font-size: 13px;
+                        font-weight: 500;
+                        color: $si-text-secondary;
+                        background: transparent;
+                        transition: color $si-transition, border-color $si-transition;
+                        border-radius: 0;
+                        margin: 0;
+
+                        &:hover {
+                            color: $si-text;
+                            background: transparent;
+                        }
+
+                        &.active {
+                            color: $si-primary;
+                            border-bottom-color: $si-primary;
+                            background: transparent;
+                        }
+                    }
+                }
+            }
+
+            .tab-content {
+                padding: 20px 0;
+            }
+        }
+    }
+}
+
+// ===================================================================
+// 2. HEADER / ACTION BAR
+// ===================================================================
+.ab_form_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 0;
+}
+
+.ab_form_header_actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+// ===================================================================
+// 3. HERO CARD
+// ===================================================================
+.ab_form_hero {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius-lg;
+    box-shadow: $si-shadow;
+    padding: 18px 22px;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    min-width: 0;
+}
+
+.ab_form_hero_left {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.ab_form_hero_title {
+    font-size: 22px;
+    font-weight: 700;
+    color: $si-text;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.ab_form_hero_subtitle {
+    font-size: 13px;
+    font-weight: 400;
+    color: $si-text-secondary;
+}
+
+.ab_form_hero_center {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.ab_form_hero_right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+// ===================================================================
+// 4. KPI CARDS ROW
+// ===================================================================
+.ab_form_kpi_row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+    min-width: 0;
+}
+
+.ab_kpi_card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 16px;
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    transition: box-shadow $si-transition, transform $si-transition;
+    cursor: default;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+        box-shadow: $si-shadow-hover;
+        transform: translateY(-1px);
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+    }
+
+    &--branches::before { background: $si-primary; }
+    &--items::before { background: $si-primary; }
+    &--requests::before { background: $si-warning; }
+    &--processes::before { background: $si-success; }
+    &--shortage::before { background: $si-danger; }
+    &--extra::before { background: $si-success; }
+}
+
+.ab_kpi_card_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    font-size: 16px;
+    margin-bottom: 4px;
+
+    &--branches { background: $si-primary-light; color: $si-primary; }
+    &--items { background: $si-primary-light; color: $si-primary; }
+    &--requests { background: $si-warning-light; color: #D97706; }
+    &--processes { background: $si-success-light; color: #16A34A; }
+    &--shortage { background: $si-danger-light; color: $si-danger; }
+    &--extra { background: $si-success-light; color: #16A34A; }
+}
+
+.ab_kpi_card_value {
+    font-size: 24px;
+    font-weight: 800;
+    color: $si-text;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.ab_kpi_card_label {
+    font-size: 11px;
+    font-weight: 600;
+    color: $si-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+// ===================================================================
+// 4.5. REQUEST COMPACT SUMMARY
+// ===================================================================
+.ab_request_compact_summary {
+    margin-bottom: 14px;
+    min-width: 0;
+}
+
+.ab_request_summary_unified {
+    display: grid;
+    grid-template-columns: minmax(220px, 1.1fr) minmax(130px, 150px) minmax(320px, 1.5fr) minmax(220px, 0.8fr);
+    gap: 12px;
+    align-items: stretch;
+    padding: 12px;
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    min-width: 0;
+
+    .ab_form_hero {
+        height: 100%;
+        margin-bottom: 0;
+        padding: 14px 16px;
+        background: transparent;
+        border: 0;
+        border-radius: 8px;
+        box-shadow: none;
+    }
+
+    .ab_form_hero_title {
+        font-size: 18px;
+    }
+
+    .ab_form_hero_subtitle {
+        font-size: 12px;
+    }
+
+    .ab_kpi_card {
+        height: 100%;
+        padding: 14px;
+        justify-content: center;
+        background: $si-neutral-light;
+        border: 0;
+        border-radius: 8px;
+        box-shadow: none;
+
+        &:hover {
+            box-shadow: none;
+            transform: none;
+        }
+
+        &::before {
+            display: none;
+        }
+    }
+
+    .ab_kpi_card_icon {
+        display: none;
+    }
+
+    .ab_kpi_card_value {
+        font-size: 22px;
+    }
+
+    .ab_kpi_card_label {
+        font-size: 10px;
+    }
+}
+
+.ab_request_summary_primary,
+.ab_request_summary_metric,
+.ab_request_summary_info,
+.ab_request_summary_note,
+.ab_request_summary_timeline {
+    min-width: 0;
+}
+
+.ab_request_summary_info,
+.ab_request_summary_note,
+.ab_request_summary_timeline {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.ab_request_summary_info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    padding: 8px 12px;
+}
+
+.ab_request_summary_item,
+.ab_request_summary_note {
+    display: flex;
+    min-width: 0;
+    gap: 8px;
+}
+
+.ab_request_summary_item {
+    align-items: center;
+    padding: 7px 8px;
+
+    .ab_form_info_label {
+        width: 72px;
+        color: $si-text-secondary;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex: 0 0 auto;
+    }
+
+    .ab_form_info_value {
+        min-width: 0;
+        max-width: none;
+        color: $si-text;
+        font-size: 12px;
+        font-weight: 600;
+        text-align: start;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1 1 auto;
+
+        .o_field_widget,
+        .o_many2one,
+        .o_field_many2one_selection,
+        .o-autocomplete,
+        .o-autocomplete--input {
+            max-width: 100%;
+            min-width: 0;
+        }
+    }
+}
+
+.ab_request_summary_note {
+    grid-column: 1 / span 3;
+    align-items: flex-start;
+    padding: 10px 8px 0;
+    border-top: 1px solid $si-border;
+
+    .ab_form_info_label {
+        width: 58px;
+        padding-top: 3px;
+        color: $si-text-secondary;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex: 0 0 auto;
+    }
+
+    .o_field_widget {
+        min-width: 0;
+        flex: 1 1 auto;
+    }
+
+    textarea,
+    span {
+        line-height: 1.35;
+    }
+}
+
+.ab_request_summary_timeline {
+    grid-column: 4;
+    grid-row: 1 / span 2;
+    padding: 10px 12px;
+    border-left: 1px solid $si-border;
+    overflow: hidden;
+
+    .ab_timeline {
+        padding: 0;
+    }
+
+    .ab_timeline_item {
+        gap: 8px;
+        padding-bottom: 10px;
+    }
+
+    .ab_timeline_title {
+        font-size: 12px;
+    }
+
+    .ab_timeline_date {
+        font-size: 10px;
+    }
+}
+
+.ab_request_full_width_notebook,
+.ab_batch_full_width_notebook {
+    width: 100%;
+    min-width: 0;
+}
+
+.ab_batch_full_width_notebook {
+    clear: both;
+    margin-top: 4px;
+}
+
+.ab_modern_table_panel--batch-full {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+
+    .ab_saas_grid_container,
+    .ab_saas_grid_header,
+    .ab_saas_grid_body {
+        width: 100%;
+        max-width: 100%;
+    }
+}
+
+// ===================================================================
+// 5. TWO-COLUMN LAYOUT
+// ===================================================================
+.ab_form_two_column {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 320px);
+    gap: 18px;
+    margin-bottom: 18px;
+    min-height: 200px;
+    align-items: start;
+    width: 100%;
+    min-width: 0;
+}
+
+.ab_form_main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
+    min-height: 0;
+}
+
+.ab_form_sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+    width: 100%;
+}
+
+// ===================================================================
+// 6. CONTENT CARDS
+// ===================================================================
+.ab_form_card {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    overflow: hidden;
+    min-width: 0;
+}
+
+.ab_form_card_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid $si-border;
+}
+
+.ab_form_card_title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $si-text;
+    padding: 14px 16px 0;
+}
+
+.ab_form_section {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    padding: 18px;
+    min-width: 0;
+
+    & + & {
+        margin-top: 0;
+    }
+
+    &[style*="display: none"] + & {
+        margin-top: 0;
+    }
+
+    .ab_form_section_title {
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $si-text-secondary;
+        margin-bottom: 14px;
+    }
+
+    .ab_form_section_body {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        min-width: 0;
+    }
+
+    .ab_form_section_actions {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 14px;
+    }
+}
+
+.ab_form_row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    min-width: 0;
+}
+
+.ab_form_info_row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+
+    & + & {
+        border-top: 1px solid $si-border;
+    }
+
+    &:first-child {
+        padding-top: 0;
+    }
+
+    &:last-child {
+        padding-bottom: 0;
+    }
+
+    .ab_form_info_label {
+        font-size: 12px;
+        font-weight: 500;
+        color: $si-text-secondary;
+        flex-shrink: 0;
+    }
+
+    .ab_form_info_value {
+        font-size: 12px;
+        font-weight: 600;
+        color: $si-text;
+        text-align: right;
+        max-width: 60%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.ab_form_card_body {
+    padding: 14px 16px 16px;
+}
+
+// ===================================================================
+// 7. BRANCHES - Chip/Pill Display
+// ===================================================================
+.ab_form_branch_list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ab_form_branch_chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: $si-neutral-light;
+    border: 1px solid $si-border;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $si-text;
+    cursor: pointer;
+    transition: background $si-transition, border-color $si-transition;
+
+    &:hover {
+        background: $si-primary-light;
+        border-color: $si-primary;
+        color: $si-primary;
+    }
+}
+
+.ab_form_branch_chip_active {
+    background: $si-primary !important;
+    border-color: $si-primary !important;
+    color: #FFFFFF !important;
+    box-shadow: 0 6px 16px rgba($si-primary, 0.22);
+}
+
+.ab_form_branch_chip_icon {
+    font-size: 12px;
+    line-height: 1;
+}
+
+.ab_form_branch_more {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-primary;
+    cursor: pointer;
+    border-radius: 100px;
+    transition: background $si-transition;
+
+    &:hover {
+        background: $si-primary-light;
+    }
+}
+
+// ===================================================================
+// 8. ONE2MANY DATA GRID
+// ===================================================================
+.ab_selected_branch_filter {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    background: #FFFFFF;
+    border: 1px solid $si-border;
+    border-radius: 8px;
+    min-width: 0;
+}
+
+.ab_analysis_toolbar {
+    padding: 16px !important;
+    margin-bottom: 14px !important;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%) !important;
+    border: 1px solid $si-border;
+    border-radius: $si-radius !important;
+    box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+
+    .row {
+        align-items: stretch !important;
+        row-gap: 14px;
+    }
+
+    .ab_analysis_filter_grid {
+        display: grid !important;
+        grid-template-columns:
+            minmax(150px, 1fr)
+            minmax(150px, 1fr)
+            minmax(0, 1fr)
+            minmax(0, 0.9fr)
+            minmax(124px, 0.85fr);
+        column-gap: 10px;
+        row-gap: 14px;
+        margin-right: 0;
+        margin-left: 0;
+        max-width: 100%;
+    }
+
+    .row > [class*="col-"] {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        min-width: 0;
+    }
+
+    .ab_analysis_filter_grid > [class*="col-"] {
+        width: auto;
+        max-width: none;
+        padding-right: 0;
+        padding-left: 0;
+    }
+
+    .ab_analysis_optional_filter {
+        min-height: 60px;
+    }
+
+    .form-label {
+        margin-bottom: 7px;
+        font-size: 11px;
+        font-weight: 700;
+        color: $si-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    .o_field_radio {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        align-items: stretch;
+        gap: 8px 10px;
+        min-width: 0;
+    }
+
+    .o_field_radio .form-check,
+    .o_field_radio .o_radio_item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        margin: 0;
+        padding: 7px 12px;
+        border: 1px solid $si-border;
+        border-radius: 999px;
+        background: $si-card;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+        transition: border-color $si-transition, background $si-transition, box-shadow $si-transition;
+        white-space: normal;
+        min-height: 38px;
+
+        &:hover {
+            border-color: rgba($si-primary, 0.35);
+            background: $si-primary-light;
+        }
+
+        &:has(input[type="radio"]:checked) {
+            border-color: rgba($si-primary, 0.45);
+            background: $si-primary-light;
+            box-shadow: 0 0 0 3px rgba($si-primary, 0.08);
+        }
+    }
+
+    .o_field_radio .form-check-input,
+    .o_field_radio input[type="radio"] {
+        flex: 0 0 auto;
+        margin: 0;
+    }
+
+    .o_field_radio .form-check-label,
+    .o_field_radio label {
+        margin: 0;
+        color: $si-text;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.35;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .o_field_widget:not(.o_field_radio),
+    .o_input,
+    select {
+        width: 100%;
+        min-height: 38px;
+    }
+
+    .o_input,
+    select {
+        border: 1px solid $si-border;
+        border-radius: 9px;
+        background-color: $si-card;
+        color: $si-text;
+        font-size: 13px;
+        font-weight: 600;
+        transition: border-color $si-transition, box-shadow $si-transition;
+
+        &:focus {
+            border-color: $si-primary;
+            box-shadow: 0 0 0 3px rgba($si-primary, 0.1);
+        }
+    }
+
+    .btn {
+        min-height: 38px;
+        border-radius: 9px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+}
+
+.ab_analysis_mode_filter {
+    grid-column: 1 / -1;
+    min-width: 0;
+}
+
+.ab_analysis_action_filter {
+    align-self: flex-end;
+    min-width: 0;
+
+    .btn {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 1199.98px) {
+    .ab_analysis_toolbar {
+        .ab_analysis_filter_grid {
+            grid-template-columns: minmax(260px, 2fr) repeat(3, minmax(130px, 1fr));
+        }
+    }
+}
+
+@media (max-width: 767.98px) {
+    .ab_analysis_toolbar {
+        .ab_analysis_filter_grid {
+            grid-template-columns: minmax(0, 1fr) minmax(140px, 0.7fr);
+        }
+
+        .ab_analysis_mode_filter {
+            grid-column: 1 / -1;
+        }
+    }
+}
+
+@media (max-width: 575.98px) {
+    .ab_analysis_toolbar {
+        .ab_analysis_filter_grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+}
+
+.o_form_view.ab_self_inventory_form {
+    .o_notebook,
+    .o_notebook .tab-content,
+    .o_notebook .tab-pane,
+    .o_field_widget,
+    .o_field_x2many,
+    .o_list_renderer {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .o_notebook {
+        background: $si-card;
+        border: 1px solid $si-border;
+        border-radius: $si-radius;
+        box-shadow: $si-shadow;
+        padding: 0 16px 16px;
+        overflow: hidden;
+    }
+
+    .o_notebook .tab-content {
+        overflow-x: auto;
+    }
+
+    .o_notebook .tab-content:has(.ab_modern_table_panel) {
+        overflow-x: hidden;
+    }
+
+    .o_field_x2many .o_list_table {
+        min-width: 860px;
+    }
+}
+
+.ab_selected_branch_filter_text {
+    min-width: 0;
+}
+
+.ab_selected_branch_filter_label {
+    display: block;
+    margin-bottom: 2px;
+    font-size: 10px;
+    font-weight: 700;
+    color: $si-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ab_selected_branch_filter_value {
+    display: block;
+    overflow: hidden;
+    color: $si-text;
+    font-size: 13px;
+    font-weight: 700;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ab_form_section {
+    .o_list_view {
+        thead > tr > th {
+            font-size: 10px !important;
+            font-weight: 700 !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.05em !important;
+            color: $si-text-secondary !important;
+            background: $si-neutral-light !important;
+            border-bottom: 1.5px solid $si-border !important;
+            padding: 10px 12px !important;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        tbody > tr > td {
+            padding: 12px !important;
+            font-size: 13px !important;
+            border-bottom: 1px solid $si-border !important;
+            vertical-align: middle !important;
+        }
+
+        tbody > tr:nth-child(even) > td {
+            background: #FAFBFC !important;
+        }
+
+        tbody > tr:hover > td {
+            background: #EEF2FF !important;
+        }
+    }
+}
+
+// ===================================================================
+// 9. PROGRESS / CIRCULAR
+// ===================================================================
+.ab_progress_card {
+    text-align: center;
+}
+
+.ab_progress_circular {
+    position: relative;
+    width: 84px;
+    height: 84px;
+    margin: 0 auto 10px;
+
+    svg {
+        transform: rotate(-90deg);
+    }
+
+    .ab_progress_circular_bg {
+        fill: none;
+        stroke: $si-neutral-light;
+        stroke-width: 6;
+    }
+
+    .ab_progress_circular_fill {
+        fill: none;
+        stroke: $si-primary;
+        stroke-width: 6;
+        stroke-linecap: round;
+        transition: stroke-dashoffset 0.6s ease;
+    }
+
+    .ab_progress_circular_label {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 18px;
+        font-weight: 700;
+        color: $si-text;
+    }
+}
+
+.ab_progress_stats {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.ab_progress_stat {
+    text-align: center;
+
+    .ab_progress_stat_value {
+        font-size: 16px;
+        font-weight: 700;
+        color: $si-text;
+    }
+
+    .ab_progress_stat_label {
+        font-size: 10px;
+        font-weight: 500;
+        color: $si-text-secondary;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+}
+
+// ===================================================================
+// 10. TIMELINE
+// ===================================================================
+.ab_timeline {
+    padding: 4px 0;
+}
+
+.ab_timeline_item {
+    display: flex;
+    gap: 12px;
+    padding: 0 0 20px;
+    position: relative;
+
+    &:last-child {
+        padding-bottom: 0;
+    }
+}
+
+.ab_timeline_dot {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+    width: 20px;
+    position: relative;
+
+    &::before {
+        content: '';
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: $si-primary;
+        border: 2px solid $si-card;
+        z-index: 1;
+        flex-shrink: 0;
+    }
+
+    &::after {
+        content: '';
+        position: absolute;
+        top: 14px;
+        width: 2px;
+        height: calc(100% - 14px);
+        background: $si-border;
+    }
+
+    .ab_timeline_item:last-child &::after {
+        display: none;
+    }
+
+    &.ab_timeline_dot--completed::before {
+        background: $si-success;
+    }
+
+    &.ab_timeline_dot--cancelled::before {
+        background: $si-danger;
+    }
+
+    &.ab_timeline_dot--draft::before {
+        background: $si-neutral;
+    }
+
+    &.ab_timeline_dot--in_progress::before {
+        background: $si-warning;
+    }
+}
+
+.ab_timeline_content {
+    flex: 1;
+    padding-bottom: 4px;
+}
+
+.ab_timeline_title {
+    font-size: 13px;
+    font-weight: 600;
+    color: $si-text;
+    line-height: 1.3;
+}
+
+.ab_timeline_date {
+    font-size: 11px;
+    font-weight: 400;
+    color: $si-text-secondary;
+    margin-top: 2px;
+}
+
+// ===================================================================
+// 11. STATE BADGE (form variant)
+// ===================================================================
+.ab_form_state_badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+
+    &.ab_form_state_draft {
+        background: $si-neutral-light;
+        color: $si-neutral;
+    }
+
+    &.ab_form_state_submitted {
+        background: linear-gradient(135deg, #DCFCE7, #BBF7D0);
+        color: #15803D;
+    }
+
+    &.ab_form_state_cancelled {
+        background: linear-gradient(135deg, #FEE2E2, #FECACA);
+        color: #B91C1C;
+    }
+
+    &.ab_form_state_in_progress {
+        background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+        color: #B45309;
+    }
+
+    &.ab_form_state_completed {
+        background: linear-gradient(135deg, #DCFCE7, #BBF7D0);
+        color: #15803D;
+    }
+}
+
+// ===================================================================
+// 12. EMPTY STATES
+// ===================================================================
+.ab_form_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 20px;
+    text-align: center;
+    gap: 12px;
+}
+
+.ab_form_empty_icon {
+    font-size: 36px;
+    opacity: 0.3;
+    line-height: 1;
+}
+
+.ab_form_empty_text {
+    font-size: 14px;
+    font-weight: 500;
+    color: $si-text-secondary;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+.ab_form_empty_cta {
+    margin-top: 8px;
+}
+
+// ===================================================================
+// 13. DEADLINE IN HERO
+// ===================================================================
+.ab_form_hero_deadline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 8px 12px;
+    background: $si-neutral-light;
+    border-radius: $si-radius;
+    min-width: 80px;
+}
+
+.ab_form_hero_deadline_label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: $si-text-secondary;
+}
+
+.ab_form_hero_deadline_date {
+    font-size: 13px;
+    font-weight: 600;
+    color: $si-text;
+}
+
+// ===================================================================
+// 14. SIDEBAR INFO CARD
+// ===================================================================
+.ab_sidebar_info {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    padding: 20px;
+}
+
+.ab_sidebar_info_item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+
+    & + & {
+        border-top: 1px solid $si-border;
+    }
+}
+
+.ab_sidebar_info_label {
+    font-size: 12px;
+    font-weight: 500;
+    color: $si-text-secondary;
+}
+
+.ab_sidebar_info_value {
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-text;
+}
+
+// ===================================================================
+// 15. FORM TRANSITION - Smooth state changes
+// ===================================================================
+.ab_form_main,
+.ab_form_section,
+.ab_form_sidebar {
+    transition: opacity 0.15s ease;
+}
+
+// ===================================================================
+// 16. RESPONSIVE
+// ===================================================================
+@media (max-width: 992px) {
+    .o_form_view.ab_self_inventory_form {
+        .o_form_sheet_bg {
+            padding: 16px;
+        }
+
+        .ab_form_two_column {
+            grid-template-columns: 1fr;
+        }
+
+        .ab_request_summary_unified {
+            grid-template-columns: minmax(0, 1fr) minmax(130px, 160px);
+        }
+
+        .ab_request_summary_info,
+        .ab_request_summary_note,
+        .ab_request_summary_timeline {
+            grid-column: 1 / -1;
+        }
+
+        .ab_request_summary_timeline {
+            grid-row: auto;
+            border-left: 0;
+            border-top: 1px solid $si-border;
+        }
+
+        .ab_form_sidebar {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .ab_form_hero {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+
+        .ab_form_kpi_row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+}
+
+@media (max-width: 768px) {
+    .o_form_view.ab_self_inventory_form {
+        .ab_form_kpi_row {
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .ab_request_summary_unified {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .ab_request_summary_info {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .ab_kpi_card {
+            padding: 16px;
+
+            .ab_kpi_card_value {
+                font-size: 22px;
+            }
+        }
+
+        .ab_form_hero {
+            padding: 16px;
+        }
+
+        .ab_form_sidebar {
+            display: flex;
+        }
+
+        .ab_form_hero_center {
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+    }
+}
+
+// ===================================================================
+// 17. DATA GRID - Modern SaaS Redesign
+// ===================================================================
+$saas-border: #E2E8F0;
+$saas-bg: #F8FAFC;
+$saas-card: #FFFFFF;
+$saas-primary: #2563EB;
+$saas-primary-light: #DBEAFE;
+$saas-success: #22C55E;
+$saas-success-light: #DCFCE7;
+$saas-warning: #F59E0B;
+$saas-warning-light: #FEF3C7;
+$saas-danger: #EF4444;
+$saas-danger-light: #FEE2E2;
+$saas-neutral: #64748B;
+$saas-neutral-light: #F1F5F9;
+$saas-text: #0F172A;
+$saas-text-secondary: #64748B;
+$saas-radius: 10px;
+$saas-shadow: 0 1px 3px rgba(0,0,0,0.06);
+$saas-transition: 0.15s ease;
+
+.ab_saas_grid_wrapper {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: $saas-text;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.ab_saas_grid_loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 80px 20px;
+    color: $saas-text-secondary;
+    font-size: 14px;
+    font-weight: 500;
+
+    .ab_saas_grid_spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid $saas-border;
+        border-top-color: $saas-primary;
+        border-radius: 50%;
+        animation: ab_saas_spin 0.6s linear infinite;
+    }
+}
+
+@keyframes ab_saas_spin {
+    to { transform: rotate(360deg); }
+}
+
+// Analytics Header
+.ab_saas_analytics_row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+    min-width: 0;
+}
+
+.ab_saas_analytics_card {
+    background: $saas-card;
+    border: 1px solid $saas-border;
+    border-radius: $saas-radius;
+    box-shadow: $saas-shadow;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: box-shadow $saas-transition;
+
+    &:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+}
+
+.ab_saas_analytics_value {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+}
+
+.ab_saas_analytics_label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $saas-text-secondary;
+}
+
+.ab_saas_analytics_card--branches .ab_saas_analytics_value { color: $saas-primary; }
+.ab_saas_analytics_card--products .ab_saas_analytics_value { color: $saas-primary; }
+.ab_saas_analytics_card--selected .ab_saas_analytics_value { color: $saas-success; }
+.ab_saas_analytics_card--matched .ab_saas_analytics_value { color: #8B5CF6; }
+
+// Branch Nav
+.ab_saas_branch_nav {
+    background: $saas-card;
+    border: 1px solid $saas-border;
+    border-radius: $saas-radius;
+    box-shadow: $saas-shadow;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+}
+
+.ab_saas_branch_search {
+    margin-bottom: 10px;
+
+    input {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1px solid $saas-border;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        transition: border-color $saas-transition;
+
+        &:focus {
+            border-color: $saas-primary;
+            box-shadow: 0 0 0 3px rgba($saas-primary, 0.1);
+        }
+
+        &::placeholder {
+            color: #94A3B8;
+        }
+    }
+}
+
+.ab_saas_branch_chips_wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.ab_saas_branch_chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: $saas-neutral-light;
+    border: 1px solid $saas-border;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $saas-text;
+    cursor: pointer;
+    transition: all $saas-transition;
+
+    &:hover {
+        background: $saas-primary-light;
+        border-color: $saas-primary;
+        color: $saas-primary;
+    }
+}
+
+.ab_saas_branch_chip_active {
+    background: $saas-primary !important;
+    border-color: $saas-primary !important;
+    color: #fff !important;
+    box-shadow: 0 4px 12px rgba($saas-primary, 0.2);
+}
+
+.ab_saas_branch_chip_count {
+    opacity: 0.7;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.ab_saas_branch_chip_active .ab_saas_branch_chip_count {
+    opacity: 0.85;
+}
+
+.ab_saas_branch_chip_more {
+    display: inline-flex;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $saas-primary;
+    cursor: pointer;
+    border-radius: 100px;
+
+    &:hover {
+        background: $saas-primary-light;
+    }
+}
+
+// Selected branch indicator
+.ab_saas_branch_selected {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    margin-bottom: 8px;
+    background: $saas-primary-light;
+    border: 1px solid $saas-primary;
+    border-radius: 8px;
+    font-size: 12px;
+}
+
+.ab_saas_branch_selected_text {
+    color: $saas-primary;
+    font-weight: 600;
+    flex: 1;
+}
+
+.ab_saas_branch_selected_clear {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    background: $saas-primary;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+
+    &:hover {
+        background: darken($saas-primary, 8%);
+    }
+}
+
+// Toolbar
+.ab_saas_toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 8px 0;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.ab_saas_toolbar_left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 220px;
+}
+
+.ab_saas_toolbar_right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    min-width: 0;
+}
+
+.ab_saas_search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 360px;
+    min-width: 0;
+
+    input {
+        flex: 1;
+        padding: 8px 12px;
+        border: 1px solid $saas-border;
+        border-radius: 8px;
+        font-size: 13px;
+        outline: none;
+        transition: border-color $saas-transition;
+
+        &:focus {
+            border-color: $saas-primary;
+            box-shadow: 0 0 0 3px rgba($saas-primary, 0.1);
+        }
+
+        &::placeholder {
+            color: #94A3B8;
+        }
+    }
+}
+
+.ab_saas_search--glow {
+    input {
+        border-color: $saas-primary;
+        box-shadow: 0 0 0 4px rgba($saas-primary, 0.18), 0 0 0 8px rgba($saas-primary, 0.08);
+        animation: ab_saas_search_glow 1s ease-in-out infinite alternate;
+    }
+}
+
+@keyframes ab_saas_search_glow {
+    from {
+        box-shadow: 0 0 0 4px rgba($saas-primary, 0.16), 0 0 0 8px rgba($saas-primary, 0.06);
+    }
+    to {
+        box-shadow: 0 0 0 4px rgba($saas-primary, 0.28), 0 0 0 11px rgba($saas-primary, 0.12);
+    }
+}
+
+.ab_saas_search_icon {
+    font-size: 14px;
+    opacity: 0.4;
+}
+
+.ab_saas_selection_pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 12px;
+    background: $saas-primary-light;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $saas-primary;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+        background: darken($saas-primary-light, 5%);
+    }
+}
+
+.ab_saas_toolbar_btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: $saas-card;
+    border: 1px solid $saas-border;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $saas-text;
+    cursor: pointer;
+    transition: all $saas-transition;
+    white-space: nowrap;
+
+    &:hover:not(:disabled) {
+        background: $saas-neutral-light;
+        border-color: darken($saas-border, 10%);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+    &--danger {
+        color: $saas-danger;
+        border-color: $saas-danger-light;
+
+        &:hover:not(:disabled) {
+            background: $saas-danger-light;
+        }
+    }
+
+    &--primary {
+        background: $saas-primary;
+        border-color: $saas-primary;
+        color: #fff;
+
+        &:hover:not(:disabled) {
+            background: darken($saas-primary, 6%);
+            border-color: darken($saas-primary, 6%);
+        }
+    }
+}
+
+// Selection Bar
+.ab_saas_selection_bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    background: $saas-primary;
+    color: #fff;
+    border-radius: $saas-radius;
+    margin-bottom: 8px;
+    font-size: 13px;
+    font-weight: 600;
+
+    .ab_saas_toolbar_btn {
+        background: rgba(255,255,255,0.15);
+        border-color: rgba(255,255,255,0.3);
+        color: #fff;
+
+        &:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        &--danger {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+            color: #fff;
+
+            &:hover {
+                background: rgba($saas-danger, 0.4);
+            }
+        }
+    }
+}
+
+.ab_saas_selection_bar_count {
+    flex: 1;
+}
+
+// Grid Container
+.ab_saas_grid_container {
+    border: 1px solid $saas-border;
+    border-radius: $saas-radius;
+    background: $saas-card;
+    box-shadow: $saas-shadow;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+// Grid Header
+.ab_saas_grid_header {
+    border-bottom: 1.5px solid $saas-border;
+    background: $saas-neutral-light;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    min-width: 900px;
+}
+
+.ab_saas_grid_header_row {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 100%;
+}
+
+// Grid Body
+.ab_saas_grid_body {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 440px;
+    min-height: 200px;
+    position: relative;
+    min-width: 900px;
+}
+
+// Grid Row
+.ab_saas_grid_row {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    border-bottom: 1px solid $saas-border;
+    cursor: pointer;
+    transition: background 0.1s ease;
+    position: relative;
+    min-width: 100%;
+
+    &:hover {
+        background: #FAFBFC;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
+.ab_saas_grid_row_selected {
+    background: #EEF2FF !important;
+    box-shadow: inset 3px 0 0 $saas-primary;
+}
+
+.ab_saas_grid_row_highlight {
+    animation: ab_saas_highlight_fade 2s ease;
+}
+
+@keyframes ab_saas_highlight_fade {
+    0% { background: #FEF3C7; }
+    100% { background: transparent; }
+}
+
+// Grid Cells
+.ab_saas_grid_cell {
+    padding: 8px 10px;
+    font-size: 13px;
+    color: $saas-text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_cell_check {
+    width: 86px;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 700;
+    user-select: none;
+}
+
+.ab_saas_grid_cell_branch {
+    width: 140px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_cell_product {
+    flex: 1;
+    min-width: 170px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.ab_saas_grid_cell_code {
+    width: 115px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_cell_eplus {
+    width: 120px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_cell_qty {
+    width: 80px;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.ab_saas_grid_cell_price {
+    width: 78px;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
+}
+
+.ab_saas_grid_cell_sold {
+    width: 70px;
+    flex-shrink: 0;
+    justify-content: flex-end;
+    font-variant-numeric: tabular-nums;
+    font-weight: 600;
+}
+
+.ab_saas_grid_cell_match {
+    width: 96px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_cell_note {
+    flex: 0.6;
+    min-width: 100px;
+}
+
+.ab_saas_grid_header--request,
+.ab_saas_grid_body--request {
+    min-width: 980px;
+}
+
+.ab_saas_grid_header--process,
+.ab_saas_grid_body--process {
+    min-width: 1180px;
+}
+
+.ab_saas_grid_header_row--request,
+.ab_saas_grid_row--request {
+    .ab_saas_grid_cell_product {
+        min-width: 220px;
+        flex: 1.2;
+    }
+
+    .ab_saas_grid_cell_qty {
+        width: 105px;
+    }
+
+    .ab_saas_grid_cell_price,
+    .ab_saas_grid_cell_sold {
+        width: 95px;
+    }
+
+}
+
+.ab_saas_grid_header_row--process,
+.ab_saas_grid_row--process {
+    cursor: default;
+
+    .ab_saas_grid_cell_source {
+        width: 104px;
+        justify-content: center;
+    }
+
+    .ab_saas_grid_cell_product {
+        min-width: 240px;
+        flex: 1.2;
+    }
+
+    .ab_saas_grid_cell_actual,
+    .ab_saas_grid_cell_difference,
+    .ab_saas_grid_cell_shortage,
+    .ab_saas_grid_cell_extra {
+        width: 108px;
+        justify-content: flex-end;
+    }
+
+    .ab_saas_grid_cell_explanation {
+        flex: 0.9;
+        min-width: 180px;
+    }
+}
+
+.ab_saas_grid_input {
+    width: 100%;
+    min-height: 30px;
+    padding: 4px 8px;
+    font-size: 13px;
+}
+
+.ab_saas_grid_input_qty {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+}
+
+.ab_saas_source_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 76px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+}
+
+.ab_saas_source_badge--requested {
+    color: #1D4ED8;
+    background: #DBEAFE;
+    border: 1px solid #93C5FD;
+}
+
+.ab_saas_source_badge--manual {
+    color: #6D28D9;
+    background: #EDE9FE;
+    border: 1px solid #C4B5FD;
+}
+
+.ab_saas_qty_shortage {
+    color: #B91C1C;
+    font-weight: 700;
+}
+
+.ab_saas_qty_extra {
+    color: #047857;
+    font-weight: 700;
+}
+
+// Product Info
+.ab_saas_product_name {
+    font-size: 13px;
+    font-weight: 600;
+    color: $saas-text;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ab_saas_product_code {
+    font-size: 11px;
+    font-weight: 500;
+    color: $saas-text-secondary;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+// E-plus Code
+.ab_saas_eplus_code {
+    font-family: 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+    font-size: 12px;
+    background: $saas-neutral-light;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: $saas-text;
+}
+
+// Qty
+.ab_saas_qty {
+    font-size: 13px;
+    font-weight: 600;
+    color: $saas-text-secondary;
+}
+
+.ab_saas_qty_positive {
+    color: #16A34A;
+}
+
+.ab_saas_price {
+    color: #6366F1;
+    font-weight: 500;
+}
+
+.ab_saas_sold {
+    color: #EA580C;
+    font-weight: 600;
+}
+
+// Branch Pill in cells
+.ab_saas_branch_pill {
+    display: inline-flex;
+    padding: 2px 10px;
+    background: $saas-primary-light;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $saas-primary;
+    white-space: nowrap;
+}
+
+// Match Badge
+.ab_saas_match_badge {
+    display: inline-flex;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    &--eplus_serial {
+        background: $saas-success-light;
+        color: #16A34A;
+    }
+
+    &--code {
+        background: $saas-primary-light;
+        color: $saas-primary;
+    }
+
+    &--none {
+        background: $saas-danger-light;
+        color: $saas-danger;
+    }
+}
+
+// Note
+.ab_saas_note {
+    font-size: 12px;
+    color: $saas-text-secondary;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+    max-width: 100%;
+}
+
+// Sort Icon
+.ab_saas_sort_icon {
+    font-size: 10px;
+    color: $saas-text-secondary;
+    cursor: pointer;
+
+    &:hover {
+        color: $saas-primary;
+    }
+}
+
+// Checkbox
+.ab_saas_checkbox {
+    font-size: 16px;
+    user-select: none;
+    opacity: 0.5;
+    transition: opacity $saas-transition;
+
+    .ab_saas_grid_row:hover & {
+        opacity: 1;
+    }
+
+    .ab_saas_grid_row_selected & {
+        opacity: 1;
+    }
+}
+
+// Group Header
+.ab_saas_grid_group_header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: #FAFBFC;
+    border-bottom: 1px solid $saas-border;
+    font-size: 13px;
+    font-weight: 700;
+    color: $saas-text;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+        background: $saas-neutral-light;
+    }
+}
+
+.ab_saas_grid_group_arrow {
+    font-size: 10px;
+    color: $saas-text-secondary;
+    width: 16px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_group_name {
+    flex: 1;
+}
+
+.ab_saas_grid_group_count {
+    font-size: 11px;
+    font-weight: 600;
+    color: $saas-text-secondary;
+    background: $saas-neutral-light;
+    padding: 2px 10px;
+    border-radius: 100px;
+}
+
+// Grid Footer / Load More
+.ab_saas_grid_footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 16px;
+    background: #FAFBFC;
+    border-top: 1px solid $saas-border;
+    min-width: 900px;
+}
+
+.ab_saas_grid_footer_text {
+    font-size: 12px;
+    color: $saas-text-secondary;
+    font-weight: 500;
+}
+
+.ab_saas_load_more,
+.ab_saas_pagination_btn {
+    padding: 6px 18px;
+    background: $saas-primary;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background $saas-transition;
+
+    &:hover {
+        background: #1D4ED8;
+    }
+
+    &:disabled {
+        cursor: not-allowed;
+        background: $saas-neutral-light;
+        color: $saas-text-secondary;
+    }
+}
+
+.ab_saas_pagination {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.ab_saas_pagination_label {
+    font-size: 12px;
+    font-weight: 700;
+    color: $saas-text;
+    white-space: nowrap;
+}
+
+// Empty State
+.ab_saas_grid_empty {
+    padding: 80px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ab_saas_grid_empty_content {
+    text-align: center;
+}
+
+.ab_saas_grid_empty_icon {
+    font-size: 36px;
+    opacity: 0.3;
+    margin-bottom: 12px;
+}
+
+.ab_saas_empty_svg {
+    display: block;
+    margin: 0 auto 16px;
+    opacity: 0.6;
+}
+
+.ab_saas_grid_empty_title {
+    font-size: 16px;
+    font-weight: 700;
+    color: $saas-text;
+    margin-bottom: 6px;
+}
+
+.ab_saas_grid_empty_text {
+    font-size: 13px;
+    color: $saas-text-secondary;
+    max-width: 300px;
+    line-height: 1.5;
+}
+
+// Native one2many tables styled to match the batch SaaS grid.
+.ab_modern_table_panel {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    color: $saas-text;
+}
+
+.ab_modern_table_toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 0 12px;
+    flex-wrap: wrap;
+}
+
+.ab_modern_table_toolbar_title {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+
+.ab_modern_table_toolbar_label {
+    font-size: 11px;
+    font-weight: 700;
+    color: $saas-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ab_modern_table_toolbar_actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-wrap: wrap;
+
+    .btn,
+    button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 32px;
+        padding: 6px 14px;
+        border: 1px solid $saas-border;
+        border-radius: 8px;
+        background: $saas-card;
+        color: $saas-text;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.2;
+        box-shadow: none;
+        white-space: nowrap;
+
+        &:hover {
+            background: $saas-neutral-light;
+            border-color: darken($saas-border, 10%);
+        }
+    }
+}
+
+.ab_modern_table_body {
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: visible;
+    padding-bottom: 2px;
+    scrollbar-color: rgba($saas-primary, 0.45) transparent;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 999px;
+        background: rgba($saas-primary, 0.35);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+        background: rgba($saas-primary, 0.55);
+    }
+}
+
+.ab_modern_table_panel--process .ab_modern_table_body {
+    overflow: visible;
+    scrollbar-color: auto;
+    scrollbar-width: auto;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+.ab_modern_table_panel {
+    .o_field_x2many,
+    .o_list_renderer,
+    .o_list_table,
+    .o_list_view {
+        max-width: 100%;
+        min-width: 0;
+    }
+
+    .o_x2m_control_panel,
+    .o_cp_buttons {
+        padding: 8px 0;
+    }
+
+    .o_list_renderer {
+        border: 1px solid $saas-border;
+        border-radius: $saas-radius;
+        background: $saas-card;
+        box-shadow: $saas-shadow;
+        overflow-x: visible;
+        overflow-y: visible;
+    }
+
+    .o_list_view.ab_self_inventory_line_list {
+        min-width: 900px;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: $saas-card;
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: $saas-neutral-light;
+
+            > tr > th {
+                padding: 12px 10px;
+                border: 0;
+                border-bottom: 1.5px solid $saas-border;
+                background: $saas-neutral-light;
+                color: $saas-text-secondary;
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+                white-space: nowrap;
+                text-align: center;
+                vertical-align: middle;
+            }
+        }
+
+        tbody > tr {
+            min-height: 48px;
+            background: $saas-card;
+            transition: background $saas-transition, box-shadow $saas-transition;
+
+            > td {
+                padding: 10px;
+                border: 0;
+                border-bottom: 1px solid $saas-border;
+                background: transparent;
+                color: $saas-text;
+                font-size: 13px;
+                vertical-align: middle;
+                white-space: nowrap;
+            }
+
+            &:hover > td {
+                background: #FAFBFC;
+            }
+
+            &:last-child > td {
+                border-bottom: 0;
+            }
+        }
+
+        tbody > tr.o_selected_row > td,
+        tbody > tr.table-info > td {
+            background: #EEF2FF;
+            box-shadow: inset 3px 0 0 $saas-primary;
+        }
+
+        .o_field_widget,
+        .o_field_many2one,
+        .o_input,
+        input,
+        textarea,
+        select {
+            max-width: 100%;
+            min-width: 0;
+            font-size: 13px;
+        }
+
+        input,
+        textarea,
+        select {
+            border: 1px solid transparent;
+            border-radius: 8px;
+            background: transparent;
+            transition: border-color $saas-transition, box-shadow $saas-transition, background $saas-transition;
+
+            &:focus {
+                background: $saas-card;
+                border-color: $saas-primary;
+                box-shadow: 0 0 0 3px rgba($saas-primary, 0.1);
+            }
+        }
+
+        code,
+        .o_field_char[name="eplus_item_code"],
+        td[name="eplus_item_code"] {
+            font-family: 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+            font-size: 12px;
+        }
+
+        td[name="system_qty"],
+        td[name="sell_price"],
+        td[name="sold_qty"],
+        td[name="unit_cost"],
+        td[name="actual_qty"],
+        td[name="difference_qty"],
+        td[name="shortage_qty"],
+        td[name="extra_qty"] {
+            text-align: right;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+        }
+
+        td[name="sell_price"],
+        td[name="unit_cost"] {
+            color: #6366F1;
+        }
+
+        td[name="sold_qty"] {
+            color: #EA580C;
+        }
+
+        td[name="extra_qty"] {
+            color: #16A34A;
+        }
+
+        td[name="shortage_qty"] {
+            color: $saas-danger;
+        }
+
+        th[data-name="selected"],
+        td[name="selected"] {
+            width: 112px;
+            min-width: 112px;
+            max-width: 112px;
+            text-align: center;
+        }
+    }
+
+    &--process {
+        width: 100%;
+
+        .ab_modern_table_body {
+            border: 1px solid $saas-border;
+            border-radius: $saas-radius;
+            background: linear-gradient(180deg, #FFFFFF 0%, #FBFCFF 100%);
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .o_x2m_control_panel {
+            display: none;
+        }
+
+        .o_field_x2many {
+            display: block;
+            width: 100%;
+            max-width: 100%;
+        }
+
+        .o_list_renderer {
+            border: 0;
+            border-radius: 0;
+            box-shadow: none;
+            background: transparent;
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            scrollbar-color: rgba($saas-primary, 0.45) transparent;
+            scrollbar-width: thin;
+
+            &::-webkit-scrollbar {
+                height: 8px;
+            }
+
+            &::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                border-radius: 999px;
+                background: rgba($saas-primary, 0.35);
+            }
+
+            &::-webkit-scrollbar-thumb:hover {
+                background: rgba($saas-primary, 0.55);
+            }
+        }
+
+        .o_list_view.ab_self_inventory_line_list {
+            min-width: 1280px;
+            background: transparent;
+
+            thead > tr > th {
+                vertical-align: middle;
+                text-align: center;
+                padding: 14px 12px;
+
+                .d-block.min-w-0 {
+                    text-align: center;
+                }
+
+                .o_list_sortable_icon {
+                    position: static;
+                    margin-left: 6px;
+                    flex-shrink: 0;
+                }
+            }
+
+            th[data-name="requested"],
+            td[name="requested"] {
+                width: 120px;
+                min-width: 120px;
+                max-width: 120px;
+            }
+
+            th[data-name="product_id"],
+            td[name="product_id"] {
+                width: 320px;
+                min-width: 320px;
+                max-width: 420px;
+            }
+
+            th[data-name="product_code"],
+            td[name="product_code"] {
+                width: 130px;
+                min-width: 130px;
+            }
+
+            th[data-name="eplus_item_id"],
+            td[name="eplus_item_id"] {
+                width: 135px;
+                min-width: 135px;
+            }
+
+            th[data-name="eplus_item_code"],
+            td[name="eplus_item_code"] {
+                width: 155px;
+                min-width: 155px;
+            }
+
+            th[data-name="system_qty"],
+            td[name="system_qty"],
+            th[data-name="unit_cost"],
+            td[name="unit_cost"],
+            th[data-name="actual_qty"],
+            td[name="actual_qty"],
+            th[data-name="difference_qty"],
+            td[name="difference_qty"],
+            th[data-name="shortage_qty"],
+            td[name="shortage_qty"],
+            th[data-name="extra_qty"],
+            td[name="extra_qty"] {
+                width: 105px;
+                min-width: 105px;
+            }
+
+            th[data-name="explanation"],
+            td[name="explanation"] {
+                width: 220px;
+                min-width: 220px;
+            }
+
+            th.o_list_button,
+            td.o_list_button {
+                width: 82px;
+                min-width: 82px;
+                max-width: 82px;
+                text-align: center;
+            }
+
+            th.o_list_button::before {
+                content: "Action";
+                display: inline-block;
+                color: $saas-text-secondary;
+                font-size: 10px;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.05em;
+            }
+
+            td[name="product_id"] {
+                overflow: visible;
+
+                .o_field_widget,
+                .o_field_many2one,
+                .o_field_many2one_selection,
+                .o_field_many2one_extra,
+                .o_field_widget span,
+                a {
+                    display: inline-block;
+                    max-width: 100%;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    vertical-align: middle;
+                    white-space: nowrap;
+                }
+
+                &:hover .o_field_widget,
+                &:hover .o_field_many2one,
+                &:hover .o_field_many2one_selection,
+                &:hover .o_field_many2one_extra,
+                &:hover .o_field_widget span,
+                &:hover a {
+                    max-width: none;
+                    overflow: visible;
+                    position: relative;
+                    z-index: 4;
+                    padding: 2px 8px;
+                    margin: -2px -8px;
+                    background: $saas-card;
+                    border-radius: 6px;
+                    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.12);
+                    white-space: normal;
+                }
+            }
+
+            tbody > tr > td {
+                padding: 14px 14px;
+            }
+
+            tbody > tr:hover > td {
+                background: $saas-neutral-light;
+            }
+
+            tbody > tr.o_selected_row > td,
+            tbody > tr.table-info > td {
+                background: #EEF2FF;
+                box-shadow: inset 3px 0 0 $saas-primary;
+            }
+        }
+    }
+}
+
+.ab_line_boolean_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 12px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+
+    &--yes {
+        color: #16A34A;
+        background: $saas-success-light;
+    }
+
+    &--no {
+        color: $saas-text-secondary;
+        background: $saas-neutral-light;
+    }
+}
+
+.ab_line_boolean_dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.ab_selected_check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 1px solid $saas-border;
+    border-radius: 8px;
+    background: $saas-card;
+    color: $saas-text-secondary;
+    transition: background $saas-transition, border-color $saas-transition, color $saas-transition, box-shadow $saas-transition;
+
+    &:hover {
+        background: $saas-primary-light;
+        border-color: rgba($saas-primary, 0.28);
+        color: $saas-primary;
+        box-shadow: 0 1px 4px rgba($saas-primary, 0.15);
+    }
+
+    &--on {
+        background: $saas-success-light;
+        border-color: rgba($saas-success, 0.28);
+        color: #16A34A;
+    }
+}
+
+.ab_selected_check_box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 1.5px solid currentColor;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.ab_selected_check--on .ab_selected_check_box {
+    background: currentColor;
+    border-color: currentColor;
+
+    &::after {
+        content: "";
+        width: 8px;
+        height: 4px;
+        border-left: 2px solid #FFFFFF;
+        border-bottom: 2px solid #FFFFFF;
+        transform: rotate(-45deg) translate(1px, -1px);
+    }
+}
+
+// Responsive
+@media (max-width: 992px) {
+    .ab_saas_analytics_row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .ab_saas_grid_cell_branch { width: 120px; }
+    .ab_saas_grid_cell_code { width: 100px; }
+    .ab_saas_grid_cell_price { width: 70px; }
+    .ab_saas_grid_cell_sold { width: 60px; }
+    .ab_saas_grid_cell_match { width: 90px; }
+    .ab_saas_grid_cell_note { display: none; }
+}
+
+@media (max-width: 768px) {
+    .ab_saas_analytics_row {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    .ab_saas_analytics_card {
+        padding: 12px 14px;
+    }
+
+    .ab_saas_analytics_value {
+        font-size: 20px;
+    }
+
+    .ab_saas_toolbar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .ab_saas_toolbar_left {
+        min-width: 0;
+    }
+
+    .ab_saas_search {
+        max-width: 100%;
+    }
+
+    .ab_saas_grid_cell_branch { width: 100px; }
+    .ab_saas_grid_cell_code { width: 80px; }
+    .ab_saas_grid_cell_qty { width: 60px; }
+    .ab_saas_grid_cell_note { display: none; }
+    .ab_saas_grid_cell_match { width: 80px; }
+
+    .ab_saas_grid_body {
+        max-height: 360px;
+    }
+
+    .ab_modern_table_toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .ab_modern_table_toolbar_actions {
+        justify-content: flex-start;
+    }
+}
+
+// ===================================================================
+// 18. BULK IMPORT RESULTS DIALOG
+// ===================================================================
+.ab_bulk_dialog {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    color: $si-text;
+}
+
+.ab_bulk_header {
+    padding: 4px 0 16px;
+    border-bottom: 1px solid $si-border;
+    margin-bottom: 20px;
+
+    .ab_bulk_title {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: $si-text;
+    }
+}
+
+.ab_bulk_summary_row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.ab_bulk_summary_card {
+    padding: 16px;
+    border-radius: $si-radius;
+    border: 1px solid $si-border;
+    background: $si-card;
+    text-align: center;
+    transition: box-shadow $si-transition;
+
+    &:hover {
+        box-shadow: $si-shadow-hover;
+    }
+
+    .ab_bulk_summary_value {
+        font-size: 28px;
+        font-weight: 800;
+        line-height: 1;
+        margin-bottom: 4px;
+        letter-spacing: -0.03em;
+    }
+
+    .ab_bulk_summary_label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $si-text-secondary;
+    }
+
+    &--branches .ab_bulk_summary_value { color: $si-primary; }
+    &--added .ab_bulk_summary_value { color: $si-success; }
+    &--missing .ab_bulk_summary_value { color: $si-danger; }
+}
+
+.ab_bulk_warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: $si-warning-light;
+    border: 1px solid #FDE68A;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #B45309;
+    margin-bottom: 16px;
+
+    .ab_bulk_warning_icon {
+        font-size: 16px;
+        flex-shrink: 0;
+    }
+}
+
+.ab_bulk_empty {
+    text-align: center;
+    padding: 40px 20px;
+
+    .ab_bulk_empty_icon {
+        font-size: 36px;
+        margin-bottom: 12px;
+        opacity: 0.3;
+    }
+
+    .ab_bulk_empty_title {
+        font-size: 16px;
+        font-weight: 600;
+        color: $si-text;
+        margin-bottom: 6px;
+    }
+
+    .ab_bulk_empty_desc {
+        font-size: 13px;
+        color: $si-text-secondary;
+        max-width: 320px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+}
+
+.ab_bulk_table_wrapper {
+    margin-bottom: 16px;
+    overflow-x: auto;
+}
+
+.ab_bulk_table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $si-text-secondary;
+        padding: 10px 12px;
+        text-align: left;
+        border-bottom: 1.5px solid $si-border;
+        background: $si-neutral-light;
+    }
+
+    td {
+        padding: 10px 12px;
+        font-size: 13px;
+        border-bottom: 1px solid $si-border;
+    }
+
+    tbody tr:hover td {
+        background: #EEF2FF;
+    }
+
+    .ab_bulk_cell_added { text-align: center; }
+    .ab_bulk_cell_missing { text-align: center; }
+}
+
+.ab_bulk_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+
+    &--added {
+        background: $si-success-light;
+        color: #16A34A;
+    }
+
+    &--missing {
+        background: $si-danger-light;
+        color: $si-danger;
+    }
+}
+
+.ab_bulk_missing_section {
+    margin-bottom: 16px;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    overflow: hidden;
+}
+
+.ab_bulk_missing_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: $si-neutral-light;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-text;
+    cursor: pointer;
+    user-select: none;
+    transition: background $si-transition;
+
+    &:hover {
+        background: darken($si-neutral-light, 3%);
+    }
+}
+
+.ab_bulk_chevron {
+    font-size: 10px;
+    transition: transform 0.2s ease;
+
+    &--open {
+        transform: rotate(90deg);
+    }
+}
+
+.ab_bulk_missing_body {
+    padding: 12px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.ab_bulk_missing_code {
+    display: inline-block;
+    padding: 3px 10px;
+    background: $si-danger-light;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $si-danger;
+    font-family: 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+}
+
+.ab_bulk_footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding-top: 16px;
+    border-top: 1px solid $si-border;
+}
+
+// ===================================================================
+// 19. MODERN HEADER BAR (sticky, blur backdrop)
+// ===================================================================
+.ab_batch_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    margin: -16px -24px 0;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid $si-border;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    gap: 16px;
+    min-height: 64px;
+}
+
+.ab_batch_header_left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+    flex: 1;
+}
+
+.ab_batch_header_right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.ab_batch_title {
+    font-size: 20px;
+    font-weight: 700;
+    color: $si-text;
+    margin: 0;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+.ab_batch_ref {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    background: $si-neutral-light;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-text-secondary;
+    font-family: 'SFMono-Regular', 'Menlo', 'Monaco', monospace;
+    letter-spacing: 0.02em;
+    margin-left: 8px;
+}
+
+.ab_batch_header_meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ab_batch_header_divider {
+    width: 1px;
+    height: 20px;
+    background: $si-border;
+}
+
+.ab_batch_branch_pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: $si-blue-50;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-blue-700;
+}
+
+// ===================================================================
+// 20. CARD SYSTEM
+// ===================================================================
+.ab_card {
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius;
+    box-shadow: $si-shadow;
+    transition: box-shadow $si-transition;
+
+    &:hover {
+        box-shadow: $si-shadow-hover;
+    }
+}
+
+.ab_card_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px 0;
+}
+
+.ab_card_body {
+    padding: 16px 20px 20px;
+}
+
+.ab_card_title {
+    font-size: 15px;
+    font-weight: 700;
+    color: $si-text;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.ab_card_subtitle {
+    font-size: 12px;
+    color: $si-text-secondary;
+    margin: 4px 0 0;
+    line-height: 1.4;
+}
+
+.ab_card_footer {
+    padding: 12px 20px;
+    border-top: 1px solid $si-border;
+    background: $si-gray-50;
+    border-radius: 0 0 $si-radius $si-radius;
+}
+
+// ===================================================================
+// 21. THREE-COLUMN LAYOUT
+// ===================================================================
+.ab_batch_3col {
+    display: grid;
+    grid-template-columns: 380px 1fr 280px;
+    gap: 20px;
+    margin-top: 20px;
+    align-items: start;
+}
+
+.ab_batch_col_left {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.ab_batch_col_center {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-width: 0;
+}
+
+.ab_batch_col_right {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+// Responsive
+@media (max-width: 1400px) {
+    .ab_batch_3col {
+        grid-template-columns: 340px 1fr 240px;
+        gap: 16px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .ab_batch_3col {
+        grid-template-columns: 1fr 280px;
+    }
+    .ab_batch_col_left {
+        grid-column: 1;
+    }
+    .ab_batch_col_center {
+        grid-column: 1;
+    }
+    .ab_batch_col_right {
+        grid-column: 2;
+        grid-row: 1 / 3;
+    }
+}
+
+@media (max-width: 768px) {
+    .ab_batch_3col {
+        grid-template-columns: 1fr;
+    }
+    .ab_batch_col_right {
+        grid-column: 1;
+        grid-row: auto;
+    }
+}
+
+// ===================================================================
+// 22. REQUEST INFO CARD (info grid)
+// ===================================================================
+.ab_info_grid_2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.ab_info_item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.ab_info_icon {
+    font-size: 16px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 1px;
+    opacity: 0.7;
+}
+
+.ab_info_label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: $si-text-secondary;
+    margin-bottom: 2px;
+}
+
+.ab_info_value {
+    font-size: 13px;
+    font-weight: 600;
+    color: $si-text;
+    line-height: 1.3;
+}
+
+// ===================================================================
+// 23. ANALYSIS MODE CARDS (selectable cards replacing radio)
+// ===================================================================
+.ab_mode_card_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.ab_mode_card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    padding: 20px 16px;
+    border-radius: $si-radius;
+    border: 2px solid $si-border;
+    background: $si-card;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+
+    input[type="radio"] {
+        position: absolute;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &:hover {
+        border-color: $si-blue-200;
+        background: $si-blue-50;
+    }
+
+    &.ab_mode_card--active {
+        border-color: $si-primary;
+        background: $si-blue-50;
+        box-shadow: 0 0 0 4px rgba($si-primary, 0.1);
+    }
+}
+
+.ab_mode_card_icon {
+    font-size: 28px;
+    line-height: 1;
+}
+
+.ab_mode_card_title {
+    font-size: 13px;
+    font-weight: 700;
+    color: $si-text;
+    line-height: 1.2;
+}
+
+.ab_mode_card_desc {
+    font-size: 11px;
+    font-weight: 500;
+    color: $si-text-secondary;
+    line-height: 1.3;
+}
+
+// ===================================================================
+// 24. ANALYSIS FILTERS GRID
+// ===================================================================
+.ab_analysis_filters_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.ab_filter_group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.ab_filter_label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: $si-text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.ab_filter_input {
+    .o_input,
+    input,
+    select {
+        width: 100%;
+        padding: 8px 12px;
+        border: 1.5px solid $si-border;
+        border-radius: $si-radius-input;
+        font-size: 13px;
+        color: $si-text;
+        background: $si-card;
+        outline: none;
+        transition: border-color 0.2s, box-shadow 0.2s;
+
+        &:focus {
+            border-color: $si-primary;
+            box-shadow: 0 0 0 3px rgba($si-primary, 0.1);
+        }
+
+        &::placeholder {
+            color: $si-gray-400;
+        }
+    }
+}
+
+// ===================================================================
+// 25. CTA BUTTON (large run analysis)
+// ===================================================================
+.ab_btn_primary_large {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 12px 24px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    background: $si-primary;
+    border: none;
+    border-radius: $si-radius-input;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+    box-shadow: 0 1px 3px rgba($si-primary, 0.2);
+
+    &:hover {
+        background: $si-primary-dark;
+        box-shadow: 0 4px 12px rgba($si-primary, 0.3);
+    }
+
+    &:active {
+        transform: scale(0.98);
+    }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        box-shadow: none;
+    }
+
+    .fa {
+        font-size: 14px;
+    }
+}
+
+// ===================================================================
+// 26. PRODUCTS SECTION HEADER
+// ===================================================================
+.ab_products_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 0;
+}
+
+.ab_products_header_left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ab_products_header_right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ab_products_title {
+    font-size: 18px;
+    font-weight: 700;
+    color: $si-text;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.ab_products_badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 10px;
+    background: $si-primary-light;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 700;
+    color: $si-primary;
+    line-height: 1.5;
+}
+
+// Search field in products header
+.ab_products_search {
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .ab_search_icon {
+        position: absolute;
+        left: 10px;
+        font-size: 12px;
+        color: $si-gray-400;
+        pointer-events: none;
+    }
+
+    .ab_search_input {
+        padding: 7px 12px 7px 30px;
+        border: 1.5px solid $si-border;
+        border-radius: 8px;
+        font-size: 13px;
+        color: $si-text;
+        background: $si-card;
+        outline: none;
+        width: 200px;
+        transition: border-color 0.2s, box-shadow 0.2s, width 0.2s;
+
+        &:focus {
+            border-color: $si-primary;
+            box-shadow: 0 0 0 3px rgba($si-primary, 0.1);
+            width: 260px;
+        }
+
+        &::placeholder {
+            color: $si-gray-400;
+        }
+    }
+}
+
+// Toolbar buttons
+.ab_toolbar_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border: 1.5px solid $si-border;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-text;
+    background: $si-card;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+    line-height: 1;
+
+    .fa {
+        font-size: 12px;
+    }
+
+    &:hover {
+        background: $si-gray-50;
+        border-color: $si-gray-300;
+    }
+
+    &--primary {
+        background: $si-primary;
+        border-color: $si-primary;
+        color: #fff;
+        box-shadow: 0 1px 2px rgba($si-primary, 0.15);
+
+        &:hover {
+            background: $si-primary-dark;
+            border-color: $si-primary-dark;
+        }
+    }
+
+    &--danger {
+        &:hover {
+            background: $si-danger-light;
+            border-color: $si-danger;
+            color: $si-danger;
+        }
+    }
+
+    &--icon {
+        width: 32px;
+        padding: 7px;
+    }
+
+    &--dropdown {
+        &::after {
+            content: '';
+            display: inline-block;
+            margin-left: 4px;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid currentColor;
+        }
+    }
+}
+
+// Dropdown container
+.ab_dropdown {
+    position: relative;
+    display: inline-flex;
+}
+
+.ab_dropdown_menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    min-width: 180px;
+    padding: 4px;
+    margin-top: 4px;
+    background: $si-card;
+    border: 1px solid $si-border;
+    border-radius: $si-radius-input;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.10);
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-4px);
+    transition: opacity 0.15s, transform 0.15s;
+
+    &--open {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
+}
+
+.ab_dropdown_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    color: $si-text;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.1s;
+
+    &:hover {
+        background: $si-gray-50;
+    }
+
+    &--danger {
+        color: $si-danger;
+        &:hover {
+            background: $si-danger-light;
+        }
+    }
+}
+
+.ab_dropdown_divider {
+    height: 1px;
+    margin: 4px 8px;
+    background: $si-border;
+}
+
+// ===================================================================
+// 27. ENHANCED GRID EMPTY STATE
+// ===================================================================
+.ab_grid_empty_enhanced {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    text-align: center;
+    min-height: 300px;
+
+    .ab_grid_empty_icon {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.3;
+        line-height: 1;
+    }
+
+    .ab_grid_empty_title {
+        font-size: 18px;
+        font-weight: 700;
+        color: $si-text;
+        margin: 0 0 8px;
+    }
+
+    .ab_grid_empty_desc {
+        font-size: 13px;
+        color: $si-text-secondary;
+        max-width: 360px;
+        margin: 0 0 24px;
+        line-height: 1.5;
+    }
+
+    .ab_grid_empty_cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 24px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #fff;
+        background: $si-primary;
+        border: none;
+        border-radius: $si-radius-input;
+        cursor: pointer;
+        transition: background 0.2s, box-shadow 0.2s;
+
+        &:hover {
+            background: $si-primary-dark;
+            box-shadow: 0 4px 12px rgba($si-primary, 0.3);
+        }
+
+        .fa { font-size: 13px; }
+    }
+}
+
+// ===================================================================
+// 28. SELECTION BAR IMPROVEMENTS
+// ===================================================================
+.ab_selection_bar_sticky {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    margin-bottom: 12px;
+    background: linear-gradient(135deg, $si-blue-50, #EEF2FF);
+    border: 1px solid $si-blue-200;
+    border-radius: $si-radius-input;
+    animation: ab_slide_in 0.3s ease;
+}
+
+.ab_selection_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: $si-primary;
+    color: #fff;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.ab_selection_action {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: $si-text;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+        background: rgba(255,255,255,0.8);
+        border-color: $si-border;
+    }
+
+    &--danger {
+        color: $si-danger;
+        &:hover {
+            background: $si-danger-light;
+            border-color: $si-danger;
+        }
+    }
+}
+
+// ===================================================================
+// 29. GRID VISUAL POLISH
+// ===================================================================
+// Checkbox styling
+.ab_grid_checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid $si-gray-300;
+    border-radius: 4px;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background: $si-card;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    &:checked {
+        background: $si-primary;
+        border-color: $si-primary;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23fff' d='M6.173 11.412L3.293 8.532a.5.5 0 0 1 .708-.708l2.172 2.172 5.822-5.822a.5.5 0 0 1 .708.708l-6.53 6.53z'/%3E%3C/svg%3E");
+        background-size: 14px;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+
+    &:hover {
+        border-color: $si-primary;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $si-primary;
+        outline-offset: 2px;
+    }
+}
+
+// Row improvements
+.ab_saas_grid_row {
+    transition: background 0.15s;
+
+    &:hover {
+        background: $si-gray-50 !important;
+    }
+
+    &.ab_saas_grid_row_selected {
+        background: $si-blue-50 !important;
+        border-left: 3px solid $si-primary !important;
+    }
+}
+
+// Header row improvements
+.ab_saas_grid_header_row {
+    background: $si-gray-50;
+    border-bottom: 2px solid $si-border;
+    border-radius: 8px 8px 0 0;
+}
+
+.ab_saas_grid_cell {
+    font-size: 12px;
+    &.ab_saas_grid_cell_check { width: 40px; text-align: center; }
+}
+
+// Match badge improvements
+.ab_saas_match_badge {
+    display: inline-flex;
+    padding: 2px 10px;
+    border-radius: 100px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+// Qty styling
+.ab_saas_qty {
+    font-weight: 600;
+    &.ab_saas_qty_positive { color: $si-success; }
+}
+
+// ===================================================================
+// 30. ANALYSIS SUMMARY KPI ROW
+// ===================================================================
+.ab_analysis_summary {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $si-border;
+}
+
+.ab_analysis_kpi_grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.ab_analysis_kpi {
+    padding: 14px 12px;
+    border-radius: $si-radius-input;
+    border: 1px solid $si-border;
+    background: $si-gray-50;
+    text-align: center;
+    transition: box-shadow 0.2s;
+
+    &:hover {
+        box-shadow: $si-shadow-hover;
+    }
+
+    .ab_analysis_kpi_value {
+        font-size: 22px;
+        font-weight: 800;
+        color: $si-text;
+        line-height: 1;
+        margin-bottom: 4px;
+        letter-spacing: -0.02em;
+    }
+
+    .ab_analysis_kpi_label {
+        font-size: 10px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: $si-text-secondary;
+    }
+
+    &--primary .ab_analysis_kpi_value { color: $si-primary; }
+    &--success .ab_analysis_kpi_value { color: $si-success; }
+    &--warning .ab_analysis_kpi_value { color: $si-warning; }
+    &--danger .ab_analysis_kpi_value { color: $si-danger; }
+}
+
+// ===================================================================
+// 31. MICRO-INTERACTIONS & ANIMATIONS
+// ===================================================================
+@keyframes ab_slide_in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes ab_fade_in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes ab_pulse_subtle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.ab_animate_fade_in {
+    animation: ab_fade_in 0.3s ease;
+}
+
+.ab_animate_slide_in {
+    animation: ab_slide_in 0.3s ease;
+}
+
+.ab_pulse {
+    animation: ab_pulse_subtle 2s infinite;
+}
+
+// Card hover lift effect
+.ab_card_hoverable {
+    &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    }
+}
+
+// ===================================================================
+// 32. DARK MODE OVERRIDES FOR NEW SECTIONS
+// ===================================================================
+.o_dark_mode {
+    .ab_batch_header {
+        background: rgba(30, 41, 59, 0.92);
+        border-bottom-color: #334155;
+
+        .ab_batch_ref {
+            background: #334155;
+            color: #94A3B8;
+        }
+        .ab_batch_branch_pill {
+            background: rgba(37, 99, 235, 0.15);
+            color: #93C5FD;
+        }
+    }
+
+    .ab_card {
+        background: #1E293B;
+        border-color: #334155;
+    }
+
+    .ab_card_footer {
+        background: #0F172A;
+        border-color: #334155;
+    }
+
+    .ab_mode_card {
+        background: #1E293B;
+        border-color: #334155;
+        &:hover { background: #0F172A; }
+        &.ab_mode_card--active {
+            border-color: $si-primary;
+            background: rgba(37, 99, 235, 0.15);
+        }
+    }
+
+    .ab_analysis_kpi {
+        background: #1E293B;
+        border-color: #334155;
+    }
+
+    .ab_selection_bar_sticky {
+        background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(37, 99, 235, 0.05));
+        border-color: rgba(37, 99, 235, 0.3);
+    }
+
+    .ab_toolbar_btn {
+        background: #1E293B;
+        border-color: #334155;
+        color: #E2E8F0;
+        &:hover { background: #0F172A; }
+        &--primary {
+            background: $si-primary;
+            border-color: $si-primary;
+            color: #fff;
+            &:hover { background: $si-primary-dark; }
+        }
+    }
+
+    .ab_dropdown_menu {
+        background: #1E293B;
+        border-color: #334155;
+    }
+
+    .ab_dropdown_item {
+        color: #E2E8F0;
+        &:hover { background: #0F172A; }
+        &--danger {
+            color: #F87171;
+            &:hover { background: rgba(239, 68, 68, 0.15); }
+        }
+    }
+
+    .ab_dropdown_divider {
+        background: #334155;
+    }
+
+    .ab_products_badge {
+        background: rgba(37, 99, 235, 0.15);
+        color: #93C5FD;
+    }
+
+    .ab_saas_grid_header_row {
+        background: #0F172A;
+        border-bottom-color: #334155;
+    }
+
+    .ab_saas_grid_row {
+        &:hover { background: #1E293B !important; }
+        &.ab_saas_grid_row_selected {
+            background: rgba(37, 99, 235, 0.12) !important;
+        }
+    }
+
+    .ab_selection_badge {
+        background: $si-primary;
+        color: #fff;
+    }
+
+    .ab_saas_empty_svg {
+        opacity: 0.4;
+    }
+}

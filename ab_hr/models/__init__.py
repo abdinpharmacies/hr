@@ -14,3 +14,4 @@ from . import res_users_inherit
 from . import hr_reward
 from . import hr_reward_transaction
 from . import hr_reward_balance
+from . import payroll_sheet

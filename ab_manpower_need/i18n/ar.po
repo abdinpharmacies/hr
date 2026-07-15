@@ -1,0 +1,161 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_manpower_need
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-14 00:00+0000\n"
+"PO-Revision-Date: 2026-07-14 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_manpower_need
+msgid "Manpower Need Per Hour"
+msgstr "احتياج العمالة بالساعة"
+
+#. module: ab_manpower_need
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_manpower_need
+msgid "Job Title"
+msgstr "المسمى الوظيفي"
+
+#. module: ab_manpower_need
+msgid "Required Hours"
+msgstr "الساعات المطلوبة"
+
+#. module: ab_manpower_need
+msgid "Required Employees Count"
+msgstr "عدد الموظفين المطلوب"
+
+#. module: ab_manpower_need
+msgid "Current Employees Count"
+msgstr "عدد الموظفين الحالي"
+
+#. module: ab_manpower_need
+msgid "Employees Shortage / Increase"
+msgstr "عجز / زيادة الموظفين"
+
+#. module: ab_manpower_need
+msgid "Employees Status"
+msgstr "حالة الموظفين"
+
+#. module: ab_manpower_need
+msgid "Actual Hours"
+msgstr "الساعات الفعلية"
+
+#. module: ab_manpower_need
+msgid "Shortage / Increase Hours"
+msgstr "عجز / زيادة الساعات"
+
+#. module: ab_manpower_need
+msgid "Hours Status"
+msgstr "حالة الساعات"
+
+#. module: ab_manpower_need
+msgid "Fallback Actual Daily Hours"
+msgstr "الساعات الفعلية اليومية الافتراضية"
+
+#. module: ab_manpower_need
+msgid "Employees"
+msgstr "الموظفون"
+
+#. module: ab_manpower_need
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_manpower_need
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_manpower_need
+msgid "Department"
+msgstr "الإدارة"
+
+#. module: ab_manpower_need
+msgid "Required Hours Label"
+msgstr "عنوان الساعات المطلوبة"
+
+#. module: ab_manpower_need
+msgid "Actual Hours Label"
+msgstr "عنوان الساعات الفعلية"
+
+#. module: ab_manpower_need
+msgid "Shortage Hours Label"
+msgstr "عنوان ساعات العجز"
+
+#. module: ab_manpower_need
+msgid "Required Employees Label"
+msgstr "عنوان الموظفين المطلوبين"
+
+#. module: ab_manpower_need
+msgid "Current Employees Label"
+msgstr "عنوان الموظفين الحاليين"
+
+#. module: ab_manpower_need
+msgid "Employees Shortage / Increase Label"
+msgstr "عنوان عجز / زيادة الموظفين"
+
+#. module: ab_manpower_need
+msgid "Hours Status Label"
+msgstr "عنوان حالة الساعات"
+
+#. module: ab_manpower_need
+msgid "Employees Status Label"
+msgstr "عنوان حالة الموظفين"
+
+#. module: ab_manpower_need
+msgid "Required Employees"
+msgstr "الموظفون المطلوبون"
+
+#. module: ab_manpower_need
+msgid "Current Employees"
+msgstr "الموظفون الحاليون"
+
+#. module: ab_manpower_need
+msgid "Shortage"
+msgstr "عجز"
+
+#. module: ab_manpower_need
+msgid "Increase"
+msgstr "زيادة"
+
+#. module: ab_manpower_need
+msgid "Balanced"
+msgstr "متوازن"
+
+#. module: ab_manpower_need
+msgid "Planning Scope"
+msgstr "نطاق التخطيط"
+
+#. module: ab_manpower_need
+msgid "Manual Planning"
+msgstr "التخطيط اليدوي"
+
+#. module: ab_manpower_need
+msgid "Hours Summary"
+msgstr "ملخص الساعات"
+
+#. module: ab_manpower_need
+msgid "Only one manpower per-hour plan is allowed for the same branch and job title."
+msgstr "يسمح بخطة احتياج عمالة واحدة بالساعة لنفس الفرع والمسمى الوظيفي."
+
+#. module: ab_manpower_need
+msgid "Manpower Need Per Hour Employee"
+msgstr "موظف احتياج العمالة بالساعة"
+
+#. module: ab_manpower_need
+msgid "Required"
+msgstr "المطلوب"
+
+#. module: ab_manpower_need
+msgid "Actual"
+msgstr "الفعلي"

@@ -1,0 +1,35 @@
+{
+    'name': 'Self Inventory',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'AbdinSupplyChain',
+    'author': 'Alhassan Hossny',
+    'application': True,
+    'depends': ['base', 'ab_eplus_connect', 'ab_store', 'ab_product', 'ab_hr', 'report_xlsx'],
+    'data': [
+        'security/security_groups.xml',
+        'security/record_rules.xml',
+        'security/ir.model.access.csv',
+        'views/menus.xml',
+        'views/self_inventory_request_views.xml',
+        'views/self_inventory_request_batch_views.xml',
+        'views/self_inventory_process_views.xml',
+        'views/self_inventory_kanban_views.xml',
+        'wizard/self_inventory_import_wizard_views.xml',
+        'reports/self_inventory_reports.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_self_inventory/static/src/scss/self_inventory.scss',
+            'ab_self_inventory/static/src/scss/self_inventory_form.scss',
+            'ab_self_inventory/static/src/js/self_inventory_widgets.js',
+            'ab_self_inventory/static/src/js/batches_loading_overlay.js',
+            'ab_self_inventory/static/src/js/self_inventory_action_loader.js',
+            'ab_self_inventory/static/src/js/self_inventory_form_widgets.js',
+            'ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js',
+        ],
+    'icon': '/my_module/static/description/new_icon.png',
+
+    },
+    'installable': True,
+}

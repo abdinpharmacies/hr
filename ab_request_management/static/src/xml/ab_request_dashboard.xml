@@ -5,8 +5,8 @@
             <div class="ab_request_dashboard_shell">
                 <section class="ab_request_dashboard_hero">
                     <div>
-                        <span class="ab_request_dashboard_kicker">Request Management</span>
-                        <h1>Operational request dashboard</h1>
+                        <span class="ab_request_dashboard_kicker">Requests &amp; Complaints</span>
+                        <h1>Operations Dashboard</h1>
                         <p>
                             Track workload, approvals, execution flow, and recent movement from one responsive workspace.
                         </p>
@@ -14,7 +14,7 @@
                 </section>
 
                 <section class="ab_request_dashboard_cards">
-                    <button type="button" t-foreach="state.cards" t-as="card" t-key="card.key" class="ab_request_dashboard_card" t-on-click="() => this.openList(card.domain)">
+                    <button type="button" t-foreach="state.cards" t-as="card" t-key="card.key" class="ab_request_dashboard_card" t-on-click="() => this.openList(card.domain, card.model)">
                         <span class="ab_request_dashboard_card_icon" t-att-style="'--card-accent:' + card.accent">
                             <i t-att-class="card.icon"/>
                         </span>
@@ -26,7 +26,7 @@
                 <section class="ab_request_dashboard_grid">
                     <article class="ab_request_dashboard_panel">
                         <div class="ab_request_dashboard_panel_head">
-                            <h2>Requests per Department</h2>
+                            <h2>By Department</h2>
                             <span class="text-muted">Live grouped workload</span>
                         </div>
                         <div t-if="state.departmentChart.length" class="ab_request_dashboard_bar_chart">
@@ -42,13 +42,13 @@
                             </div>
                         </div>
                         <div t-else="" class="ab_request_dashboard_empty">
-                            No department activity yet. Create a request to start populating this chart.
+                            No department activity yet. Create a request or complaint to start populating this chart.
                         </div>
                     </article>
 
                     <article class="ab_request_dashboard_panel">
                         <div class="ab_request_dashboard_panel_head">
-                            <h2>Requests by State</h2>
+                            <h2>By State</h2>
                             <span class="text-muted">Workflow distribution</span>
                         </div>
                         <div t-if="state.stateChart.length" class="ab_request_dashboard_donut_wrap">
@@ -70,14 +70,14 @@
                             </div>
                         </div>
                         <div t-else="" class="ab_request_dashboard_empty">
-                            No workflow activity yet. State analytics appear once requests are created.
+                            No workflow activity yet. State analytics appear once requests or complaints are created.
                         </div>
                     </article>
 
                     <article class="ab_request_dashboard_panel ab_request_dashboard_recent">
                         <div class="ab_request_dashboard_panel_head">
                             <h2>Recent Activity</h2>
-                            <span class="text-muted">Last 5 requests</span>
+                            <span class="text-muted">Last 5</span>
                         </div>
                         <div t-if="state.recent.length" class="ab_request_recent_list">
                             <button type="button" t-foreach="state.recent" t-as="item" t-key="item.id" class="ab_request_recent_item" t-on-click="() => this.openList([['id', '=', item.id]])">
@@ -94,7 +94,7 @@
                             </button>
                         </div>
                         <div t-else="" class="ab_request_dashboard_empty">
-                            No recent requests yet. Use the New button from a list view to create the first one.
+                            No recent requests or complaints yet. Use the New button from a list view to create the first one.
                         </div>
                     </article>
                 </section>

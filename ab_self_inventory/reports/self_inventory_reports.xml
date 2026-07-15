@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_self_inventory_count_sheet_xlsx" model="ir.actions.report">
+        <field name="name">Self Inventory Count Sheet</field>
+        <field name="model">ab_self_inventory_process</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">ab_self_inventory.count_sheet_xlsx</field>
+        <field name="report_file">self_inventory_count_sheet</field>
+        <field name="binding_model_id" ref="model_ab_self_inventory_process"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

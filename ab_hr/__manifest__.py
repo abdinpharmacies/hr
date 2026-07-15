@@ -26,7 +26,10 @@
         'security/security_groups.xml',
         'security/record_rules.xml',
         'security/ir.model.access.csv',
+        'data/payroll_sheet_cron.xml',
         'views/00_menus.xml',
+        'views/payroll_sheet_views.xml',
+        'wizard/payroll_sheet_upload_wizard_views.xml',
         'views/ab_hr_job_occupied.xml',
         # 'views/history.xml',
         'views/ab_hr_job.xml',
@@ -41,7 +44,6 @@
     "application": True,
     "installable": True,
     "auto_install": True,
-
     'web.assets_backend': [
         # 'ab_hr/static/src/scss/hr.scss',
         # 'ab_hr/static/src/js/chat_mixin.js',

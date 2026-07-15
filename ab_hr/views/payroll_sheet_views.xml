@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_hr_payroll_sheet_list" model="ir.ui.view">
+            <field name="name">ab.hr.payroll.sheet.list</field>
+            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="arch" type="xml">
+                <list string="Payroll Sheets"
+                      decoration-muted="state in ['draft', 'archived']"
+                      decoration-info="state == 'validated'"
+                      decoration-warning="state == 'queued'"
+                      decoration-success="state == 'sent'"
+                      decoration-primary="state == 'delivered'"
+                      decoration-danger="state == 'failed'">
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="department_id"/>
+                    <field name="manager_id"/>
+                    <field name="payroll_period"/>
+                    <field name="payroll_type"/>
+                    <field name="distribution_scope"/>
+                    <field name="state" widget="badge"
+                           decoration-muted="state in ['draft', 'archived']"
+                           decoration-info="state == 'validated'"
+                           decoration-warning="state == 'queued'"
+                           decoration-success="state == 'sent'"
+                           decoration-primary="state == 'delivered'"
+                           decoration-danger="state == 'failed'"/>
+                    <field name="upload_date"/>
+                    <field name="sent_date"/>
+                    <field name="retry_count"/>
+                    <field name="file_name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_payroll_sheet_kanban" model="ir.ui.view">
+            <field name="name">ab.hr.payroll.sheet.kanban</field>
+            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="arch" type="xml">
+                <kanban class="o_kanban_small_column" default_group_by="state">
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="department_id"/>
+                    <field name="manager_id"/>
+                    <field name="payroll_period"/>
+                    <field name="payroll_type"/>
+                    <field name="distribution_scope"/>
+                    <field name="state"/>
+                    <field name="upload_date"/>
+                    <field name="sent_date"/>
+                    <field name="retry_count"/>
+                    <field name="file_name"/>
+                    <field name="last_error"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="d-flex flex-column gap-2">
+                                <div class="d-flex justify-content-between align-items-start gap-2">
+                                    <strong class="text-truncate">
+                                        <field name="employee_id"/>
+                                    </strong>
+                                    <field name="state" widget="badge"
+                                           decoration-muted="state in ['draft', 'archived']"
+                                           decoration-info="state == 'validated'"
+                                           decoration-warning="state == 'queued'"
+                                           decoration-success="state == 'sent'"
+                                           decoration-primary="state == 'delivered'"
+                                           decoration-danger="state == 'failed'"/>
+                                </div>
+                                <div class="small text-muted">
+                                    <span>Code: </span><field name="employee_code"/>
+                                </div>
+                                <div class="small">
+                                    <i class="fa fa-building me-1" title="Department"/>
+                                    <field name="department_id"/>
+                                </div>
+                                <div class="small">
+                                    <i class="fa fa-user me-1" title="Manager"/>
+                                    <field name="manager_id"/>
+                                </div>
+                                <div class="d-flex justify-content-between small text-muted">
+                                    <span><field name="payroll_period"/></span>
+                                    <span><field name="payroll_type"/></span>
+                                </div>
+                                <div class="small text-truncate">
+                                    <i class="fa fa-file-pdf-o me-1" title="File"/>
+                                    <field name="file_name"/>
+                                </div>
+                                <t t-if="record.state.raw_value == 'failed' and record.last_error.raw_value">
+                                    <div class="text-danger small text-truncate">
+                                        <field name="last_error"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_payroll_sheet_form" model="ir.ui.view">
+            <field name="name">ab.hr.payroll.sheet.form</field>
+            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="arch" type="xml">
+                <form string="Payroll Sheet">
+                    <header>
+                        <button name="action_validate" type="object" string="Validate" class="btn-secondary" invisible="state not in ['draft', 'failed']"/>
+                        <button name="action_queue_distribution" type="object" string="Queue Distribution" class="btn-primary" invisible="state not in ['validated', 'failed']"/>
+                        <button name="action_mark_delivered" type="object" string="Mark Delivered" invisible="state != 'sent'"/>
+                        <button name="action_archive" type="object" string="Archive" invisible="state == 'archived'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,validated,queued,sent,delivered,failed,archived"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="employee_code"/>
+                                <field name="department_id"/>
+                                <field name="manager_id"/>
+                                <field name="payroll_period"/>
+                                <field name="payroll_type"/>
+                                <field name="distribution_scope"/>
+                                <field name="active" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="attachment_id" invisible="1"/>
+                                <field name="payroll_file_name" invisible="1"/>
+                                <field name="payroll_file"
+                                       widget="binary"
+                                       filename="payroll_file_name"
+                                       options="{'accepted_file_extensions': '.pdf,.xlsx'}"
+                                       readonly="state in ['queued', 'sent', 'delivered', 'archived']"/>
+                                <field name="file_name" readonly="1"/>
+                                <field name="file_extension" readonly="1"/>
+                                <field name="file_checksum" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Telegram Status">
+                            <group>
+                                <field name="telegram_chat_id" readonly="1"/>
+                                <field name="telegram_message_id" readonly="1"/>
+                                <field name="retry_count" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="upload_date" readonly="1"/>
+                                <field name="uploaded_by" readonly="1"/>
+                                <field name="sent_date" readonly="1"/>
+                                <field name="delivered_date" readonly="1"/>
+                            </group>
+                            <field name="telegram_message_body"
+                                   placeholder="Telegram message sent with the payroll file"
+                                   readonly="state in ['sent', 'delivered', 'archived']"
+                                   colspan="2"/>
+                        </group>
+                        <notebook>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                            <page string="Failure">
+                                <field name="last_error" readonly="1"/>
+                            </page>
+                            <page string="Audit History">
+                                <field name="audit_log" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_hr_payroll_sheet_queue_distribution_multi" model="ir.actions.server">
+            <field name="name">Queue Distribution</field>
+            <field name="model_id" ref="model_ab_hr_payroll_sheet"/>
+            <field name="binding_model_id" ref="model_ab_hr_payroll_sheet"/>
+            <field name="binding_view_types">list</field>
+            <field name="state">code</field>
+            <field name="code">records.action_queue_distribution()</field>
+        </record>
+
+        <record id="view_ab_hr_payroll_sheet_search" model="ir.ui.view">
+            <field name="name">ab.hr.payroll.sheet.search</field>
+            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="arch" type="xml">
+                <search string="Payroll Sheets">
+                    <field name="employee_id"/>
+                    <field name="employee_code"/>
+                    <field name="department_id"/>
+                    <field name="manager_id"/>
+                    <field name="payroll_period"/>
+                    <field name="file_name"/>
+                    <filter name="pending" string="Pending" domain="[('state', 'in', ['draft', 'validated', 'queued'])]"/>
+                    <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
+                    <filter name="delivered" string="Delivered" domain="[('state', '=', 'delivered')]"/>
+                    <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
+                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                    <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_type" string="Payroll Type" context="{'group_by': 'payroll_type'}"/>
+                    <filter name="group_period" string="Payroll Period" context="{'group_by': 'payroll_period'}"/>
+                    <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
+                    <filter name="group_manager" string="Manager" context="{'group_by': 'manager_id'}"/>
+                    <filter name="group_upload_date" string="Upload Date" context="{'group_by': 'upload_date'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_payroll_sheet_graph" model="ir.ui.view">
+            <field name="name">ab.hr.payroll.sheet.graph</field>
+            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="arch" type="xml">
+                <graph string="Payroll Sheet Metrics" type="bar">
+                    <field name="department_id" type="row"/>
+                    <field name="state" type="col"/>
+                    <field name="sheet_count" type="measure"/>
+                    <field name="retry_count" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <record id="view_ab_hr_payroll_sheet_pivot" model="ir.ui.view">
+            <field name="name">ab.hr.payroll.sheet.pivot</field>
+            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="arch" type="xml">
+                <pivot string="Payroll Sheet Metrics">
+                    <field name="department_id" type="row"/>
+                    <field name="state" type="col"/>
+                    <field name="payroll_type" type="col"/>
+                    <field name="sheet_count" type="measure"/>
+                    <field name="retry_count" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="action_ab_hr_payroll_sheet" model="ir.actions.act_window">
+            <field name="name">Payroll Sheets</field>
+            <field name="res_model">ab.hr.payroll.sheet</field>
+            <field name="view_mode">list,kanban,form,graph,pivot</field>
+            <field name="search_view_id" ref="view_ab_hr_payroll_sheet_search"/>
+            <field name="context">{'active_test': False}</field>
+        </record>
+
+        <menuitem id="menu_ab_hr_payroll_sheet"
+                  name="Payroll Sheets"
+                  parent="ab_hr.ab_hr_salaries_root"
+                  action="action_ab_hr_payroll_sheet"
+                  groups="ab_hr.group_ab_hr_payroll_sheet_admin"
+                  sequence="35"/>
+    </data>
+</odoo>

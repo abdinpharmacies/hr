@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="category_ab_internal_shipment" model="ir.module.category">
+            <field name="name">Internal Shipment Tracking</field>
+            <field name="description">Track internal movement of documents, files, and devices.</field>
+            <field name="sequence">55</field>
+        </record>
+
+        <record id="privilege_ab_internal_shipment" model="res.groups.privilege">
+            <field name="name">Internal Shipment Tracking</field>
+            <field name="category_id" ref="category_ab_internal_shipment"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="group_ab_internal_shipment_user" model="res.groups">
+            <field name="name">Shipment User</field>
+            <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
+        </record>
+
+        <record id="group_ab_internal_shipment_warehouse_receipt" model="res.groups">
+            <field name="name">Warehouse Receipt Confirmation</field>
+            <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
+            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+        </record>
+
+        <record id="base.group_user" model="res.groups">
+            <field name="implied_ids" eval="[(3, ref('group_ab_internal_shipment_user'))]"/>
+        </record>
+
+        <record id="base.group_system" model="res.groups">
+            <field name="implied_ids" eval="[(3, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+        </record>
+    </data>
+</odoo>

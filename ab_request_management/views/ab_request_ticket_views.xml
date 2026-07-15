@@ -6,10 +6,18 @@
             <field name="model">ab_request_followup</field>
             <field name="arch" type="xml">
                 <list string="Follow-ups" create="0" delete="0" edit="0" default_order="date desc"
-                      class="ab_request_followup_list">
-                    <field name="date" string="Logged On"/>
-                    <field name="user_id" string="Author"/>
-                    <field name="description"/>
+                      class="ab_request_followup_list"
+                      decoration-success="is_resolved_solution">
+                    <field name="is_resolved_solution" column_invisible="1"/>
+                    <button name="action_mark_as_solution" type="object" icon="fa-circle-o"
+                            class="ab_request_followup_solution_node"
+                            title="Set as Official Solution"
+                            groups="ab_hr.group_ab_hr_personnel_spec"/>
+                    <field name="date" string="Date &amp; Time"/>
+                    <field name="user_id" string="User" widget="many2one_avatar_user"/>
+                    <field name="description" string="Description"/>
+                    <field name="resolution_label" string="Status" widget="badge"
+                           class="ab_request_resolution_badge_field"/>
                 </list>
             </field>
         </record>
@@ -22,15 +30,22 @@
                     <field name="date"/>
                     <field name="user_id"/>
                     <field name="description"/>
+                    <field name="is_resolved_solution"/>
                     <templates>
                         <t t-name="card">
-                            <div class="o_kanban_record ab_request_followup_card">
+                            <div t-attf-class="o_kanban_record ab_request_followup_card #{record.is_resolved_solution.raw_value ? 'ab_request_followup_resolved' : ''}">
                                 <div class="ab_request_followup_card_header">
-                                    <strong>
-                                        <field name="user_id"/>
-                                    </strong>
-                                    <span class="text-muted">
-                                        <field name="date"/>
+                                    <div class="ab_request_followup_meta">
+                                        <strong>
+                                            <field name="user_id"/>
+                                        </strong>
+                                        <span class="text-muted">
+                                            <field name="date"/>
+                                        </span>
+                                    </div>
+                                    <span t-if="record.is_resolved_solution.raw_value" class="ab_request_resolved_badge">
+                                        <i class="fa fa-check-circle" aria-hidden="true"/>
+                                        <span>Official Solution</span>
                                     </span>
                                 </div>
                                 <div class="ab_request_followup_card_body">
@@ -63,6 +78,7 @@
                         </group>
                         <group>
                             <field name="description" readonly="1" nolabel="1"/>
+                            <field name="is_resolved_solution" invisible="1"/>
                         </group>
                     </sheet>
                 </form>
@@ -73,8 +89,8 @@
             <field name="name">ab_request.search</field>
             <field name="model">ab_request</field>
             <field name="arch" type="xml">
-                <search string="Requests">
-                    <field name="name" string="Request Number"/>
+                <search string="Requests &amp; Complaints">
+                    <field name="name" string="Number"/>
                     <field name="subject"/>
                     <field name="request_type_id"/>
                     <field name="employee_id"/>
@@ -84,15 +100,15 @@
                     <field name="deadline"/>
 
                     <separator/>
-                    <filter name="filter_my_requests" string="My Requests" domain="[('user_id', '=', uid)]"/>
+                    <filter name="filter_my_requests" string="My Tickets" domain="[('user_id', '=', uid)]"/>
                     <filter name="filter_assigned_requests" string="Assigned to Me"
                             domain="['|', ('assigned_employee_ids.user_id', '=', uid), ('assigned_user_id', '=', uid)]"/>
-                    <filter name="filter_waiting_review" string="Waiting for My Review"
+                    <filter name="filter_waiting_review" string="To Review"
                             domain="[('state', '=', 'under_review'), ('manager_user_id', '=', uid)]"/>
                     <separator/>
-                    <filter name="filter_open_requests" string="Open Requests"
-                            domain="[('state', 'in', ['draft', 'under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied'])]"/>
-                    <filter name="filter_closed_requests" string="Closed Requests"
+                    <filter name="filter_open_requests" string="Open"
+                            domain="[('state', 'in', ['draft', 'under_review', 'scheduled', 'in_progress', 'under_requester_confirmation', 'satisfied', 'resolved'])]"/>
+                    <filter name="filter_closed_requests" string="Closed"
                             domain="[('state', 'in', ['closed', 'rejected'])]"/>
                     <filter name="filter_overdue" string="Overdue"
                             domain="[('deadline', '!=', False), ('deadline', '&lt;', context_today()), ('state', 'not in', ['closed', 'rejected', 'satisfied'])]"/>
@@ -104,10 +120,11 @@
                     <filter name="filter_confirmation" string="Awaiting Requester Confirmation"
                             domain="[('state', '=', 'under_requester_confirmation')]"/>
                     <filter name="filter_satisfied" string="Satisfied" domain="[('state', '=', 'satisfied')]"/>
+                    <filter name="filter_resolved" string="Resolved" domain="[('state', '=', 'resolved')]"/>
 
                     <separator/>
                     <filter name="group_department" string="Department" context="{'group_by': 'department_id'}"/>
-                    <filter name="group_type" string="Request Type" context="{'group_by': 'request_type_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'request_type_id'}"/>
                     <filter name="group_assignee" string="Assigned Employee"
                             context="{'group_by': 'assigned_employee_ids'}"/>
                     <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
@@ -119,13 +136,13 @@
             <field name="name">ab_request.list</field>
             <field name="model">ab_request</field>
             <field name="arch" type="xml">
-                <list string="Requests"
+                <list string="Requests &amp; Complaints"
                       class="ab_request_list"
                       default_order="deadline asc, create_date desc">
                     <field name="is_overdue" column_invisible="True"/>
                     <field width="200px" name="state" widget="ab_request_state_label" class="ab_request_status_column"
                            optional="show"/>
-                    <field name="name" string="Request" optional="show"/>
+                    <field name="name" string="Number" optional="show"/>
                     <field name="subject" optional="show"/>
                     <field name="request_type_id" optional="show"/>
                     <field name="employee_id" optional="show"/>
@@ -226,8 +243,11 @@
                                         <button t-if="record.can_work_on_request.raw_value and record.state.raw_value === 'scheduled'" type="object" name="action_mark_in_progress" class="btn btn-primary btn-sm">
                                             Start
                                         </button>
-                                        <button t-if="record.can_work_on_request.raw_value and ['satisfied', 'rejected'].includes(record.state.raw_value)" type="object" name="action_close" class="btn btn-dark btn-sm">
-                                            Close
+                                        <button t-if="record.can_mark_resolved.raw_value" type="object" name="action_mark_resolved" class="btn btn-primary btn-sm">
+                                            Resolve
+                                        </button>
+                                        <button t-if="record.can_confirm_resolution.raw_value" type="object" name="action_confirm_resolution" class="btn btn-dark btn-sm">
+                                            Confirm
                                         </button>
                                     </div>
                                     <span class="ab_request_kanban_metrics">
@@ -255,7 +275,7 @@
             <field name="arch" type="xml">
                 <form string="Request" class="ab_request_form">
                     <header>
-                        <button name="action_submit_request" type="object" string="Submit Request" class="btn-success"
+                        <button name="action_submit_request" type="object" string="Submit" class="btn-success"
                                 invisible="state != 'draft'"/>
                         <button name="action_approve" type="object" string="Approve" class="btn-primary"
                                 invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)"/>
@@ -273,15 +293,20 @@
                                 invisible="state != 'under_requester_confirmation' or not is_requester"/>
                         <button name="action_request_changes" type="object" string="Request Changes"
                                 invisible="state != 'under_requester_confirmation' or not is_requester"/>
-                        <button name="action_close" type="object" string="Close Request" class="btn-primary"
-                                invisible="state not in ('satisfied', 'rejected') or not can_work_on_request"/>
+                        <button name="action_confirm_resolution" type="object" string="Confirm Resolution"
+                                class="btn-primary"
+                                invisible="not can_confirm_resolution"/>
+                        <button name="action_viewer_close_lock" type="object" string="Close / Lock"
+                                class="btn-secondary"
+                                groups="ab_request_management.group_ab_request_management_viewer"
+                                invisible="not can_viewer_close"/>
                         <field name="state" widget="statusbar" class="ab_request_statusbar"
-                               statusbar_visible="draft,under_review,scheduled,in_progress,under_requester_confirmation,satisfied,rejected,closed"/>
+                               statusbar_visible="draft,under_review,scheduled,in_progress,under_requester_confirmation,satisfied,resolved,rejected,closed"/>
                     </header>
                     <sheet class="ab_request_sheet">
                         <div class="oe_button_box" name="button_box">
                             <button name="action_view_followups" type="object" class="oe_stat_button" icon="fa-list-alt"
-                                    invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                                    invisible="not is_request_admin and not is_department_manager and not is_assigned_employee and not is_request_viewer">
                                 <field name="followup_count" widget="statinfo" string="Follow-ups"/>
                             </button>
                             <button name="action_approve" type="object" class="oe_stat_button" icon="fa-check"
@@ -292,26 +317,39 @@
                                     invisible="state != 'under_review' or (not is_department_manager and not is_request_admin)">
                                 <span>Reject</span>
                             </button>
-                            <button name="action_close" type="object" class="oe_stat_button" icon="fa-lock"
-                                    invisible="state not in ('satisfied', 'rejected') or not can_work_on_request">
-                                <span>Close</span>
+                            <button name="action_mark_resolved" type="object" class="oe_stat_button" icon="fa-check-circle"
+                                    invisible="not can_mark_resolved">
+                                <span>Resolve</span>
+                            </button>
+                            <button name="action_confirm_resolution" type="object" class="oe_stat_button" icon="fa-lock"
+                                    invisible="not can_confirm_resolution">
+                                <span>Confirm</span>
+                            </button>
+                            <button name="action_viewer_close_lock" type="object" class="oe_stat_button" icon="fa-lock"
+                                    groups="ab_request_management.group_ab_request_management_viewer"
+                                    invisible="not can_viewer_close">
+                                <span>Close / Lock</span>
                             </button>
                         </div>
                         <field name="is_requester" invisible="1"/>
                         <field name="is_department_manager" invisible="1"/>
                         <field name="is_assigned_employee" invisible="1"/>
                         <field name="is_request_admin" invisible="1"/>
+                        <field name="is_request_viewer" invisible="1"/>
                         <field name="can_assign" invisible="1"/>
                         <field name="can_work_on_request" invisible="1"/>
+                        <field name="can_mark_resolved" invisible="1"/>
+                        <field name="can_confirm_resolution" invisible="1"/>
                         <field name="can_add_followup" invisible="1"/>
                         <field name="can_edit_assignment_details" invisible="1"/>
+                        <field name="can_viewer_close" invisible="1"/>
                         <field name="is_overdue" invisible="1"/>
                         <field name="request_role_summary" invisible="1"/>
                         <field name="request_deadline_label" invisible="1"/>
                         <field name="available_request_type_ids" invisible="1"/>
 
                         <div class="oe_title ab_request_title_block"
-                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                             invisible="not is_request_admin and not is_department_manager and not is_assigned_employee and not is_request_viewer">
                             <div class="ab_request_title_meta">
                                 <span class="ab_request_title_role">
                                     <field name="request_role_summary" readonly="1"/>
@@ -327,7 +365,7 @@
                         <div class="ab_request_grid_container">
                             <!-- USER CREATE FORM -->
                             <div class="ab_request_grid_user_form"
-                                 invisible="is_request_admin or is_department_manager or is_assigned_employee">
+                                 invisible="is_request_admin or is_department_manager or is_assigned_employee or is_request_viewer">
                                 <div class="ab_request_card">
                                     <div class="ab_request_card_body">
                                         <div class="ab_request_grid_row">
@@ -336,7 +374,7 @@
                                                 <field name="request_category_id" readonly="state != 'draft'"/>
                                             </div>
                                             <div class="ab_request_grid_cell">
-                                                <label for="request_type_id" string="Request Type"/>
+                                                <label for="request_type_id" string="Type"/>
                                                 <field name="request_type_id"
                                                        readonly="state != 'draft'"
                                                        domain="[('id', 'in', available_request_type_ids)]"/>
@@ -357,7 +395,7 @@
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
-                                                <label for="question_answer_ids" string="Request Questions"/>
+                                                <label for="question_answer_ids" string="Questions"/>
                                                 <field name="question_answer_ids" readonly="state != 'draft'">
                                                     <list editable="bottom" create="0" delete="0">
                                                         <field name="question" readonly="1"/>
@@ -392,10 +430,10 @@
 
                             <!-- ADMIN/MANAGER VIEW -->
                             <div class="ab_request_grid_admin"
-                                 invisible="not is_request_admin and not is_department_manager and not is_assigned_employee">
+                                 invisible="not is_request_admin and not is_department_manager and not is_assigned_employee and not is_request_viewer">
                                 <div class="ab_request_card">
                                     <div class="ab_request_card_header">
-                                        <span class="ab_request_card_title">Request Info</span>
+                                        <span class="ab_request_card_title">Info</span>
                                     </div>
                                     <div class="ab_request_card_body">
                                         <div class="ab_request_grid_row ab_request_grid_3col">
@@ -429,7 +467,7 @@
 
                                 <div class="ab_request_card">
                                     <div class="ab_request_card_header">
-                                        <span class="ab_request_card_title">Request Details</span>
+                                        <span class="ab_request_card_title">Details</span>
                                     </div>
                                     <div class="ab_request_card_body">
                                         <div class="ab_request_grid_row">
@@ -446,7 +484,7 @@
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
-                                                <label for="question_answer_ids" string="Request Questions"/>
+                                                <label for="question_answer_ids" string="Questions"/>
                                                 <field name="question_answer_ids" readonly="state != 'draft'">
                                                     <list editable="bottom" create="0" delete="0">
                                                         <field name="question" readonly="1"/>
@@ -528,6 +566,12 @@
 
                         <notebook>
                             <page string="Follow-ups">
+                                <div class="ab_request_followup_tab_action">
+                                    <button name="action_mark_resolved" type="object" string="Mark as Resolved"
+                                            class="btn btn-success btn-sm"
+                                            groups="ab_hr.group_ab_hr_personnel_spec"
+                                            invisible="not can_mark_resolved"/>
+                                </div>
                                 <div class="ab_request_followup_container">
                                     <field name="followup_ids"
                                            mode="list,form"
@@ -538,12 +582,24 @@
                                             <field name="date"/>
                                             <field name="user_id"/>
                                             <field name="description"/>
+                                            <field name="is_resolved_solution"/>
+                                            <field name="source"/>
                                             <templates>
                                                 <t t-name="card">
-                                                    <div class="o_kanban_record ab_request_followup_card">
+                                                    <div t-attf-class="o_kanban_record ab_request_followup_card #{record.is_resolved_solution.raw_value ? 'ab_request_followup_resolved' : ''}">
                                                         <div class="ab_request_followup_card_header">
-                                                            <strong><field name="user_id"/></strong>
-                                                            <span class="text-muted"><field name="date"/></span>
+                                                            <div class="ab_request_followup_meta">
+                                                                <strong><field name="user_id"/></strong>
+                                                                <span class="text-muted"><field name="date"/></span>
+                                                            </div>
+                                                            <span t-if="record.is_resolved_solution.raw_value" class="ab_request_resolved_badge">
+                                                                <i class="fa fa-check-circle" aria-hidden="true"/>
+                                                                <span>Official Solution</span>
+                                                            </span>
+                                                            <span t-elif="record.source.raw_value == 'accept_changes'" class="ab_request_resolved_badge">
+                                                                <i class="fa fa-reply" aria-hidden="true"/>
+                                                                <span>Requester Changes</span>
+                                                            </span>
                                                         </div>
                                                         <div class="ab_request_followup_card_body">
                                                             <field name="description"/>
@@ -553,11 +609,22 @@
                                             </templates>
                                         </kanban>
                                         <list string="Follow-ups" editable="bottom" default_order="date desc" create="1"
-                                              delete="0" edit="0">
-                                            <field name="date" readonly="1"/>
-                                            <field name="user_id" readonly="1"/>
+                                              delete="0" edit="0"
+                                              class="ab_request_followup_list"
+                                              decoration-success="is_resolved_solution">
+                                            <field name="is_resolved_solution" column_invisible="1"/>
+                                            <field name="source" column_invisible="1"/>
+                                            <button name="action_mark_as_solution" type="object" icon="fa-circle-o"
+                                                    class="ab_request_followup_solution_node"
+                                                    title="Set as Official Solution"
+                                                    groups="ab_hr.group_ab_hr_personnel_spec"/>
+                                            <field name="date" string="Date &amp; Time" readonly="1"/>
+                                            <field name="user_id" string="User" readonly="1" widget="many2one_avatar_user"/>
                                             <field name="description"
+                                                   string="Description"
                                                    placeholder="Add a concise, factual progress update or requester note"/>
+                                            <field name="resolution_label" string="Status" widget="badge"
+                                                   class="ab_request_resolution_badge_field"/>
                                         </list>
                                         <form string="Follow-up">
                                             <sheet class="ab_request_followup_sheet">
@@ -565,11 +632,13 @@
                                                     <group>
                                                         <field name="date" readonly="1"/>
                                                         <field name="user_id" readonly="1"/>
+                                                        <field name="source" readonly="1"/>
                                                     </group>
                                                 </group>
                                                 <group>
                                                     <field name="description"
                                                            placeholder="Add a concise, factual progress update or requester note"/>
+                                                    <field name="is_resolved_solution" invisible="1"/>
                                                 </group>
                                             </sheet>
                                         </form>
@@ -578,13 +647,13 @@
                             </page>
                         </notebook>
                     </sheet>
-                    <chatter/>
+                    <chatter groups="ab_request_management.group_ab_request_management_admin"/>
                 </form>
             </field>
         </record>
 
         <record id="ab_request_my_action" model="ir.actions.act_window">
-            <field name="name">My Requests</field>
+            <field name="name">My Tickets</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
@@ -593,17 +662,17 @@
                                    'search_default_filter_open_requests': 1}</field>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Create your first request.
+                    Create your first request or complaint.
                 </p>
                 <p>
-                    Requests move through review, execution, requester confirmation, and closure while preserving a
+                    Requests and complaints move through review, execution, requester confirmation, and closure while preserving a
                     complete timeline.
                 </p>
             </field>
         </record>
 
         <record id="ab_request_assigned_action" model="ir.actions.act_window">
-            <field name="name">Assigned Requests</field>
+            <field name="name">Assigned to Me</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
@@ -614,7 +683,7 @@
         </record>
 
         <record id="ab_request_review_action" model="ir.actions.act_window">
-            <field name="name">Review Queue</field>
+            <field name="name">Review</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>
@@ -623,7 +692,7 @@
         </record>
 
         <record id="ab_request_all_action" model="ir.actions.act_window">
-            <field name="name">All Requests</field>
+            <field name="name">All</field>
             <field name="res_model">ab_request</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="ab_request_view_search"/>

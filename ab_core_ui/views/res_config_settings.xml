@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.core_ui</field>
+        <field name="model">res.config.settings</field>
+        <field name="priority" eval="99"/>
+        <field name="inherit_id" ref="base_setup.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//widget[@name='res_config_dev_tool']" position="before">
+
+                <div id="core_ui_launcher" class="core_ui_launcher_section">
+                    <div class="core_ui_launcher_inner">
+                        <div class="core_ui_launcher_icon">
+                            <i class="fa fa-cube"/>
+                        </div>
+                        <h2 class="core_ui_launcher_title">Core UI Workspace</h2>
+                        <p class="core_ui_launcher_subtitle">
+                            Build interfaces using the centralized Design System.
+                        </p>
+                        <button type="object"
+                                name="action_launch_workspace"
+                                class="core_ui_launch_btn"
+                                id="core_ui_launch_btn">
+                            <span class="core_ui_btn_content">
+                                <i class="fa fa-rocket core_ui_btn_icon"/>
+                                <span>Launch Workspace</span>
+                            </span>
+                            <span class="core_ui_btn_ripple"/>
+                        </button>
+                    </div>
+                </div>
+
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

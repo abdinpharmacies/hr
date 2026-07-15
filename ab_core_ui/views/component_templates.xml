@@ -1,0 +1,1265 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+
+    
+
+    <template id="card" name="core_ui.card">
+        <div class="core_ui_card">
+            <t t-if="title">
+                <div class="core_ui_card_header">
+                    <h3><t t-esc="title" /></h3>
+                    <t t-if="header_action">
+                        <t t-call="header_action" />
+                    </t>
+                </div>
+            </t>
+            <div class="core_ui_card_body">
+                <t t-call="inner_content" />
+            </div>
+            <t t-if="footer">
+                <div class="core_ui_card_footer">
+                    <t t-call="footer" />
+                </div>
+            </t>
+        </div>
+    </template>
+
+    <template id="card_statistics" name="core_ui.card.statistics">
+        <div class="core_ui_card core_ui_card_stat">
+            <t t-if="icon or color">
+                <div t-att-class="'core_ui_card_stat_icon ' + (color or 'primary')">
+                    <i t-att-class="'fa ' + (icon or 'fa-chart-bar')" />
+                </div>
+            </t>
+            <div class="core_ui_card_stat_value" t-esc="value or '0'" />
+            <div class="core_ui_card_stat_label" t-esc="label or ''" />
+            <t t-if="trend">
+                <div t-att-class="'core_ui_card_stat_trend ' + (trend_direction or 'up')">
+                    <i t-att-class="'fa ' + (trend_direction === 'up' ? 'fa-arrow-up' : 'fa-arrow-down')" />
+                    <t t-esc="trend" />
+                </div>
+            </t>
+        </div>
+    </template>
+
+    <template id="card_hero" name="core_ui.card.hero">
+        <div class="core_ui_card core_ui_card_hero">
+            <h1 t-esc="title or ''" />
+            <p t-esc="subtitle or ''" />
+            <t t-if="inner_content">
+                <div class="mt16">
+                    <t t-call="inner_content" />
+                </div>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="button_primary" name="core_ui.button.primary">
+        <button t-att-class="'core_ui_btn core_ui_btn_primary ' + (extra_class or '')" t-att-type="btn_type or 'button'" t-att-disabled="disabled or None" t-att-title="tooltip or None">
+            <t t-if="icon"><i t-att-class="'fa ' + icon" /> </t>
+            <t t-esc="label or 'Button'" />
+        </button>
+    </template>
+
+    <template id="button_secondary" name="core_ui.button.secondary">
+        <button t-att-class="'core_ui_btn core_ui_btn_secondary ' + (extra_class or '')" t-att-type="btn_type or 'button'">
+            <t t-if="icon"><i t-att-class="'fa ' + icon" /> </t>
+            <t t-esc="label or 'Button'" />
+        </button>
+    </template>
+
+    <template id="button_ghost" name="core_ui.button.ghost">
+        <button t-att-class="'core_ui_btn core_ui_btn_ghost ' + (extra_class or '')" t-att-type="btn_type or 'button'">
+            <t t-if="icon"><i t-att-class="'fa ' + icon" /> </t>
+            <t t-esc="label or 'Button'" />
+        </button>
+    </template>
+
+    <template id="button_danger" name="core_ui.button.danger">
+        <button t-att-class="'core_ui_btn core_ui_btn_danger ' + (extra_class or '')" t-att-type="btn_type or 'button'">
+            <t t-if="icon"><i t-att-class="'fa ' + icon" /> </t>
+            <t t-esc="label or 'Button'" />
+        </button>
+    </template>
+
+    <template id="button_icon" name="core_ui.button.icon">
+        <button t-att-class="'core_ui_btn core_ui_btn_icon ' + (size ? 'core_ui_btn_icon_' + size : '') + ' ' + (extra_class or '')" t-att-title="tooltip or label or ''">
+            <i t-att-class="'fa ' + (icon or 'fa-circle')" />
+        </button>
+    </template>
+
+    
+
+    <template id="badge" name="core_ui.badge">
+        <span t-att-class="'core_ui_badge_pill ' + (color or 'neutral')">
+            <t t-if="icon"><i t-att-class="'fa ' + icon" /> </t>
+            <t t-esc="label or ''" />
+        </span>
+    </template>
+
+    <template id="badge_state" name="core_ui.badge.state">
+        <span t-att-class="'core_ui_state_badge ' + (state or 'draft')">
+            <t t-esc="label or state or ''" />
+        </span>
+    </template>
+
+    
+
+    <template id="dialog_confirm" name="core_ui.dialog.confirm">
+        <div class="core_ui_dialog_overlay" style="display: none;" t-att-style="visible and '' or 'display: none;'">
+            <div t-att-class="'core_ui_dialog ' + (size ? 'core_ui_dialog_' + size : '')">
+                <div class="core_ui_dialog_header">
+                    <h3><i class="fa fa-question-circle text-primary" /> <t t-esc="title or 'Confirm'" /></h3>
+                    <button class="core_ui_btn core_ui_btn_ghost core_ui_btn_icon core_ui_btn_icon_sm" t-on-click="cancel">
+                        <i class="fa fa-times" />
+                    </button>
+                </div>
+                <div class="core_ui_dialog_body">
+                    <t t-esc="message or 'Are you sure?'" />
+                </div>
+                <div class="core_ui_dialog_footer">
+                    <button class="core_ui_btn core_ui_btn_secondary" t-on-click="cancel">
+                        <t t-esc="cancel_label or 'Cancel'" />
+                    </button>
+                    <button t-att-class="'core_ui_btn ' + (confirm_class or 'core_ui_btn_primary')" t-on-click="confirm">
+                        <t t-esc="confirm_label or 'Confirm'" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="dialog_alert" name="core_ui.dialog.alert">
+        <div class="core_ui_dialog_overlay" style="display: none;" t-att-style="visible and '' or 'display: none;'">
+            <div t-att-class="'core_ui_dialog core_ui_dialog_sm ' + (size ? 'core_ui_dialog_' + size : '')">
+                <div class="core_ui_dialog_header">
+                    <h3>
+                        <i t-att-class="'fa ' + (icon or 'fa-info-circle') + ' ' + (icon_color or 'text-primary')" />
+                        <t t-esc="title or 'Alert'" />
+                    </h3>
+                </div>
+                <div class="core_ui_dialog_body">
+                    <t t-esc="message or ''" />
+                </div>
+                <div class="core_ui_dialog_footer">
+                    <button class="core_ui_btn core_ui_btn_primary" t-on-click="dismiss">
+                        <t t-esc="button_label or 'OK'" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="dialog_reject" name="core_ui.dialog.reject">
+        <div class="core_ui_dialog_overlay" style="display: none;" t-att-style="visible and '' or 'display: none;'">
+            <div class="core_ui_dialog">
+                <div class="core_ui_dialog_header">
+                    <h3><i class="fa fa-ban text-danger" /> <t t-esc="title or 'Reject'" /></h3>
+                    <button class="core_ui_btn core_ui_btn_ghost core_ui_btn_icon core_ui_btn_icon_sm" t-on-click="cancel">
+                        <i class="fa fa-times" />
+                    </button>
+                </div>
+                <div class="core_ui_dialog_body">
+                    <p><t t-esc="message or 'Please provide a reason for rejection.'" /></p>
+                    <div class="core_ui_form_group">
+                        <label>Reason <span class="text-danger">*</span></label>
+                        <textarea class="core_ui_input core_ui_textarea" t-att-placeholder="placeholder or 'Enter rejection reason...'" rows="4" />
+                    </div>
+                </div>
+                <div class="core_ui_dialog_footer">
+                    <button class="core_ui_btn core_ui_btn_secondary" t-on-click="cancel">
+                        <t t-esc="cancel_label or 'Cancel'" />
+                    </button>
+                    <button class="core_ui_btn core_ui_btn_danger" t-on-click="confirm">
+                        <i class="fa fa-ban" /> <t t-esc="confirm_label or 'Reject'" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="dialog_form" name="core_ui.dialog.form">
+        <div class="core_ui_dialog_overlay" style="display: none;" t-att-style="visible and '' or 'display: none;'">
+            <div t-att-class="'core_ui_dialog core_ui_dialog_lg ' + (size ? 'core_ui_dialog_' + size : '')">
+                <div class="core_ui_dialog_header">
+                    <h3><i t-att-class="'fa ' + (icon or 'fa-edit')" /> <t t-esc="title or 'Form'" /></h3>
+                    <button class="core_ui_btn core_ui_btn_ghost core_ui_btn_icon core_ui_btn_icon_sm" t-on-click="cancel">
+                        <i class="fa fa-times" />
+                    </button>
+                </div>
+                <div class="core_ui_dialog_body">
+                    <t t-call="form_content" />
+                </div>
+                <div class="core_ui_dialog_footer">
+                    <button class="core_ui_btn core_ui_btn_secondary" t-on-click="cancel">
+                        <t t-esc="cancel_label or 'Cancel'" />
+                    </button>
+                    <button class="core_ui_btn core_ui_btn_primary" t-on-click="save">
+                        <i class="fa fa-save" /> <t t-esc="save_label or 'Save'" />
+                    </button>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    
+
+    <template id="alert_success" name="core_ui.alert.success">
+        <div class="core_ui_alert success">
+            <i class="fa fa-check-circle" />
+            <div class="core_ui_alert_content">
+                <t t-if="title"><div class="core_ui_alert_title" t-esc="title" /></t>
+                <t t-esc="message or ''" />
+            </div>
+        </div>
+    </template>
+
+    <template id="alert_warning" name="core_ui.alert.warning">
+        <div class="core_ui_alert warning">
+            <i class="fa fa-exclamation-triangle" />
+            <div class="core_ui_alert_content">
+                <t t-if="title"><div class="core_ui_alert_title" t-esc="title" /></t>
+                <t t-esc="message or ''" />
+            </div>
+        </div>
+    </template>
+
+    <template id="alert_danger" name="core_ui.alert.danger">
+        <div class="core_ui_alert danger">
+            <i class="fa fa-times-circle" />
+            <div class="core_ui_alert_content">
+                <t t-if="title"><div class="core_ui_alert_title" t-esc="title" /></t>
+                <t t-esc="message or ''" />
+            </div>
+        </div>
+    </template>
+
+    <template id="alert_info" name="core_ui.alert.info">
+        <div class="core_ui_alert info">
+            <i class="fa fa-info-circle" />
+            <div class="core_ui_alert_content">
+                <t t-if="title"><div class="core_ui_alert_title" t-esc="title" /></t>
+                <t t-esc="message or ''" />
+            </div>
+        </div>
+    </template>
+
+    
+
+    <template id="toast_success" name="core_ui.toast.success">
+        <div class="core_ui_alert success" style="position: fixed; top: 16px; right: 16px; z-index: 9999; max-width: 400px; box-shadow: var(--core-ui-shadow-lg);">
+            <i class="fa fa-check-circle" />
+            <div class="core_ui_alert_content">
+                <t t-if="title"><div class="core_ui_alert_title" t-esc="title" /></t>
+                <t t-esc="message or 'Operation completed successfully.'" />
+            </div>
+        </div>
+    </template>
+
+    <template id="toast_error" name="core_ui.toast.error">
+        <div class="core_ui_alert danger" style="position: fixed; top: 16px; right: 16px; z-index: 9999; max-width: 400px; box-shadow: var(--core-ui-shadow-lg);">
+            <i class="fa fa-times-circle" />
+            <div class="core_ui_alert_content">
+                <t t-if="title"><div class="core_ui_alert_title" t-esc="title" /></t>
+                <t t-esc="message or 'An error occurred.'" />
+            </div>
+        </div>
+    </template>
+
+    <template id="toast_warning" name="core_ui.toast.warning">
+        <div class="core_ui_alert warning" style="position: fixed; top: 16px; right: 16px; z-index: 9999; max-width: 400px; box-shadow: var(--core-ui-shadow-lg);">
+            <i class="fa fa-exclamation-triangle" />
+            <div class="core_ui_alert_content">
+                <t t-if="title"><div class="core_ui_alert_title" t-esc="title" /></t>
+                <t t-esc="message or 'Warning.'" />
+            </div>
+        </div>
+    </template>
+
+    
+
+    <template id="table_modern" name="core_ui.table.modern">
+        <table t-att-class="'core_ui_table ' + (extra_class or '')">
+            <thead>
+                <tr>
+                    <t t-foreach="columns" t-as="col" t-key="col_index">
+                        <th t-esc="col.label or col" />
+                    </t>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="rows" t-as="row" t-key="row_index">
+                    <tr>
+                        <t t-foreach="columns" t-as="col" t-key="col_index">
+                            <td>
+                                <t t-esc="row[col.name] if col.name else row[col]" />
+                            </td>
+                        </t>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+    </template>
+
+    <template id="table_compact" name="core_ui.table.compact">
+        <table t-att-class="'core_ui_table compact ' + (extra_class or '')">
+            <thead>
+                <tr>
+                    <t t-foreach="columns" t-as="col" t-key="col_index">
+                        <th t-esc="col.label or col" />
+                    </t>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="rows" t-as="row" t-key="row_index">
+                    <tr>
+                        <t t-foreach="columns" t-as="col" t-key="col_index">
+                            <td>
+                                <t t-esc="row[col.name] if col.name else row[col]" />
+                            </td>
+                        </t>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+    </template>
+
+    <template id="table_card" name="core_ui.table.card">
+        <table t-att-class="'core_ui_table card_style ' + (extra_class or '')">
+            <thead>
+                <tr>
+                    <t t-foreach="columns" t-as="col" t-key="col_index">
+                        <th t-esc="col.label or col" />
+                    </t>
+                </tr>
+            </thead>
+            <tbody>
+                <t t-foreach="rows" t-as="row" t-key="row_index">
+                    <tr>
+                        <t t-foreach="columns" t-as="col" t-key="col_index">
+                            <td>
+                                <t t-esc="row[col.name] if col.name else row[col]" />
+                            </td>
+                        </t>
+                    </tr>
+                </t>
+            </tbody>
+        </table>
+    </template>
+
+    
+
+    <template id="progress_bar" name="core_ui.progress.bar">
+        <div>
+            <t t-if="label or show_value">
+                <div class="core_ui_progress_label">
+                    <span t-esc="label or ''" />
+                    <span t-if="show_value" t-esc="value + '%'" />
+                </div>
+            </t>
+            <div class="core_ui_progress">
+                <div t-att-class="'core_ui_progress_bar ' + (color or '')" t-att-style="'width: ' + value + '%'" />
+            </div>
+        </div>
+    </template>
+
+    <template id="progress_circle" name="core_ui.progress.circle">
+        <div class="core_ui_progress_circle" t-att-style="'width: ' + (size or 80) + 'px; height: ' + (size or 80) + 'px'">
+            <svg t-att-width="size or 80" t-att-height="size or 80">
+                <circle class="core_ui_progress_circle_bg" cx="50%" cy="50%" t-att-r="((size or 80) / 2) - 6" t-att-stroke-width="stroke or 6" />
+                <circle class="core_ui_progress_circle_fill" cx="50%" cy="50%" t-att-r="((size or 80) / 2) - 6" t-att-stroke-width="stroke or 6" t-att-stroke-dasharray="circumference" t-att-stroke-dashoffset="offset" />
+            </svg>
+            <span class="core_ui_progress_circle_text" t-esc="value + '%'" />
+        </div>
+    </template>
+
+    
+
+    <template id="empty_no_data" name="core_ui.empty.no_data">
+        <div class="core_ui_empty_state">
+            <i class="fa fa-inbox" />
+            <h3 t-esc="title or 'No Data'" />
+            <p t-esc="message or 'There is no data to display yet.'" />
+            <t t-if="action_label">
+                <button class="core_ui_btn core_ui_btn_primary" t-on-click="action">
+                    <i t-att-class="'fa ' + (action_icon or 'fa-plus')" />
+                    <t t-esc="action_label" />
+                </button>
+            </t>
+        </div>
+    </template>
+
+    <template id="empty_no_results" name="core_ui.empty.no_results">
+        <div class="core_ui_empty_state">
+            <i class="fa fa-search" />
+            <h3 t-esc="title or 'No Results Found'" />
+            <p t-esc="message or 'Try adjusting your search or filter criteria.'" />
+        </div>
+    </template>
+
+    <template id="empty_permission" name="core_ui.empty.permission">
+        <div class="core_ui_empty_state">
+            <i class="fa fa-shield-alt" />
+            <h3 t-esc="title or 'Access Denied'" />
+            <p t-esc="message or 'You do not have permission to access this resource.'" />
+            <t t-if="contact_admin">
+                <button class="core_ui_btn core_ui_btn_primary">
+                    <i class="fa fa-envelope" /> Contact Administrator
+                </button>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="header_page" name="core_ui.header.page">
+        <div class="core_ui_page_header">
+            <div class="core_ui_page_header_info">
+                <h1 t-esc="title or ''" />
+                <p t-if="subtitle" t-esc="subtitle" />
+            </div>
+            <div class="core_ui_page_header_actions">
+                <t t-call="actions" />
+            </div>
+        </div>
+    </template>
+
+    
+
+    <template id="loading_spinner" name="core_ui.loading.spinner">
+        <div t-att-class="'core_ui_spinner ' + (size ? 'core_ui_spinner_' + size : '')" style="display: flex; align-items: center; justify-content: center; padding: 2rem;">
+            <i class="fa fa-spinner fa-pulse" t-att-style="'font-size: ' + (size === 'lg' ? '2rem' : '1.5rem') + ';'" />
+        </div>
+    </template>
+
+    <template id="loading_skeleton" name="core_ui.loading.skeleton">
+        <div>
+            <div class="core_ui_skeleton core_ui_skeleton_line" style="width: 85%" />
+            <div class="core_ui_skeleton core_ui_skeleton_line" style="width: 75%" />
+            <div class="core_ui_skeleton core_ui_skeleton_line" style="width: 65%" />
+            <div class="core_ui_skeleton core_ui_skeleton_line" style="width: 55%" />
+        </div>
+    </template>
+
+    
+
+    <template id="nav_breadcrumb" name="core_ui.nav.breadcrumb">
+        <nav class="core_ui_breadcrumb">
+            <t t-foreach="items" t-as="item" t-key="item_index">
+                <t t-if="item_index &gt; 0">
+                    <i class="fa fa-chevron-right core_ui_breadcrumb_sep" />
+                </t>
+                <t t-if="item.url">
+                    <a t-att-href="item.url" t-esc="item.label" />
+                </t>
+                <t t-else="">
+                    <span t-esc="item.label" />
+                </t>
+            </t>
+        </nav>
+    </template>
+
+    
+
+    <template id="nav_tabs" name="core_ui.nav.tabs">
+        <div class="core_ui_tabs">
+            <t t-foreach="tabs" t-as="tab" t-key="tab_index">
+                <button t-att-class="'core_ui_tab' + (tab.active ? ' active' : '')" t-att-type="'button'" t-on-click="tab.on_click or ''">
+                    <t t-if="tab.icon"><i t-att-class="'fa ' + tab.icon + ' me-1'" /></t>
+                    <t t-esc="tab.label" />
+                </button>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="status_dot" name="core_ui.status.dot">
+        <span t-att-class="'core_ui_status_dot ' + (color or 'gray')" t-att-title="label or ''" />
+    </template>
+
+    
+
+    <template id="input_text" name="core_ui.input.text">
+        <div class="core_ui_form_group">
+            <label t-if="label" t-esc="label" />
+            <input t-att-class="'core_ui_input' + (error ? ' error' : '')" t-att-type="input_type or 'text'" t-att-placeholder="placeholder or ''" t-att-value="value or ''" />
+            <t t-if="help_text">
+                <div class="core_ui_help_text" t-esc="help_text" />
+            </t>
+            <t t-if="error_text">
+                <div class="core_ui_error_text" t-esc="error_text" />
+            </t>
+        </div>
+    </template>
+
+    <template id="input_select" name="core_ui.input.select">
+        <div class="core_ui_form_group">
+            <label t-if="label" t-esc="label" />
+            <select t-att-class="'core_ui_input core_ui_select' + (error ? ' error' : '')">
+                <t t-if="placeholder">
+                    <option value="" t-esc="placeholder" />
+                </t>
+                <t t-foreach="options" t-as="opt" t-key="opt_index">
+                    <option t-att-value="opt.value || opt" t-att-selected="opt.selected or (opt.value === value) or (opt === value) ? 'selected' : None" t-esc="opt.label || opt" />
+                </t>
+            </select>
+        </div>
+    </template>
+
+    <template id="input_toggle" name="core_ui.input.toggle">
+        <label class="core_ui_toggle">
+            <input type="checkbox" t-att-checked="active or False" />
+            <span class="core_ui_toggle_track" />
+            <span class="core_ui_toggle_label" t-esc="label or ''" />
+        </label>
+    </template>
+
+    
+
+    <template id="avatar" name="core_ui.avatar">
+        <div t-att-class="'core_ui_avatar ' + (size ? 'core_ui_avatar_' + size : '')" t-att-title="name or ''">
+            <t t-if="image_url">
+                <img t-att-src="image_url" t-att-alt="name or ''" />
+            </t>
+            <t t-else="">
+                <t t-esc="initials or (name ? name.split(' ').map(w =&gt; w[0]).join('').toUpperCase().slice(0, 2) : '?')" />
+            </t>
+            <t t-if="show_status">
+                <span t-att-class="'core_ui_avatar_status ' + (status or 'offline')" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="form_modern" name="core_ui.form.modern">
+        <div t-att-class="'core_ui_form_modern ' + (extra_class or '')">
+            <t t-call="form_fields" />
+        </div>
+    </template>
+
+    
+
+    <template id="timeline" name="core_ui.timeline">
+        <div class="cu-timeline">
+            <div class="cu-timeline-column">
+                <t t-foreach="stages" t-as="entry" t-key="entry_index">
+                    <t t-set="is_last" t-value="entry_index == len(stages) - 1" />
+                    <div t-attf-class="cu-timeline-stage{{ ' has-notes' if entry.get('notes') else '' }}">
+                        <div class="cu-timeline-dot-col">
+                            <div t-att-class="'cu-timeline-dot ' + entry.get('dot_class', 'is-pending')">
+                                <span t-esc="entry.get('icon', '○')" />
+                            </div>
+                            <t t-if="not is_last">
+                                <div t-att-class="'cu-timeline-line ' + entry.get('line_class', 'pending')" />
+                            </t>
+                        </div>
+                        <div class="cu-timeline-label-col">
+                            <t t-if="entry.get('is_event')">
+                                <t t-set="event_title" t-value="'Rejection' if entry.get('event_type') == 'rejection' else 'Delay' if entry.get('event_type') == 'delay' else 'Event'" />
+                                <div class="cu-timeline-event-label" t-esc="event_title" />
+                            </t>
+                            <t t-else="">
+                                <div t-att-class="'cu-timeline-stage-label ' + entry.get('label_class', 'pending')" t-esc="entry.get('label', '')" />
+                            </t>
+                            <t t-if="entry.get('user')">
+                                <div class="cu-timeline-meta"><t t-esc="'User: ' + entry.get('user', '')" /></div>
+                            </t>
+                            <t t-if="entry.get('notes')">
+                                <div class="cu-timeline-notes" t-esc="entry.get('notes', '')" />
+                            </t>
+                            <t t-if="entry.get('divider')">
+                                <div class="cu-timeline-divider" t-esc="entry.get('divider', '')" />
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+            <t t-if="current_stage">
+                <div t-attf-class="cu-detail-card{{ ' is-overdue' if current_stage.get('is_overdue') else '' }}">
+                    <h3 t-attf-class="cu-detail-title{{ ' is-overdue' if current_stage.get('is_overdue') else '' }}">
+                        <t t-esc="current_stage.get('label', '')" />
+                        <t t-if="current_stage.get('is_overdue')">
+                            <span class="cu-overdue-badge">⚠ Overdue</span>
+                        </t>
+                    </h3>
+                    <t t-if="current_stage.get('user') or current_stage.get('date')">
+                        <div class="cu-stage-grid">
+                            <t t-if="current_stage.get('user')">
+                                <div class="cu-stage-field">
+                                    <span class="cu-stage-field-label">User</span>
+                                    <span class="cu-stage-field-value" t-esc="current_stage.get('user')" />
+                                </div>
+                            </t>
+                            <t t-if="current_stage.get('date')">
+                                <div class="cu-stage-field">
+                                    <span class="cu-stage-field-label">Date</span>
+                                    <span class="cu-stage-field-value" t-esc="current_stage.get('date')" />
+                                </div>
+                            </t>
+                        </div>
+                    </t>
+                    <t t-if="current_stage.get('notes')">
+                        <div class="cu-detail-field">
+                            <span class="cu-detail-field-label">Notes</span>
+                            <span class="cu-detail-field-value" t-esc="current_stage.get('notes')" />
+                        </div>
+                    </t>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="cu-detail-card is-empty">No active stage</div>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="kanban_card" name="core_ui.kanban.card">
+        <div class="oe_kanban_card" style="background: var(--core-ui-surface); border: 1px solid var(--core-ui-border); border-radius: var(--core-ui-radius-lg); padding: 1rem; margin-bottom: 0.5rem; box-shadow: var(--core-ui-shadow-sm); transition: all 0.2s;">
+            <t t-if="title">
+                <div style="font-weight: 600; font-size: 0.925rem; margin-bottom: 0.25rem;">
+                    <t t-esc="title" />
+                </div>
+            </t>
+            <t t-if="subtitle">
+                <div style="font-size: 0.8rem; color: var(--core-ui-text-secondary); margin-bottom: 0.5rem;">
+                    <t t-esc="subtitle" />
+                </div>
+            </t>
+            <t t-if="badges">
+                <div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 0.5rem;">
+                    <t t-foreach="badges" t-as="badge" t-key="badge_index">
+                        <span class="core_ui_badge_pill" t-att-class="badge.color or 'neutral'" t-esc="badge.label or badge" />
+                    </t>
+                </div>
+            </t>
+            <t t-if="footer">
+                <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid var(--core-ui-border-light); font-size: 0.8rem; color: var(--core-ui-text-muted);">
+                    <t t-call="footer" />
+                </div>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="search" name="core_ui.search">
+        <div class="core_ui_topbar_search" t-att-style="'width: ' + (width or '320px') + ';'">
+            <i class="fa fa-search core_ui_search_icon" />
+            <input type="text" t-att-placeholder="placeholder or 'Search...'" t-att-value="value or ''" />
+        </div>
+    </template>
+
+    
+
+    <template id="upload_zone" name="core_ui.upload.zone">
+        <div class="core_ui_upload_zone">
+            <i class="fa fa-cloud-upload-alt" />
+            <h4 t-esc="title or 'Upload Files'" />
+            <p t-esc="description or 'Drag and drop files here or click to browse.'" />
+        </div>
+    </template>
+
+    
+
+    <template id="wizard_stepper" name="core_ui.wizard.stepper">
+        <div class="core_ui_stepper">
+            <t t-foreach="steps" t-as="step" t-key="step_index">
+                <div t-att-class="'core_ui_step' + (step.state ? ' ' + step.state : '')">
+                    <span t-att-class="'core_ui_step_number' + (step.state ? ' ' + step.state : '')">
+                        <t t-esc="step_index + 1" />
+                    </span>
+                    <span t-att-class="'core_ui_step_label' + (step.state ? ' ' + step.state : '')" t-esc="step.label or ''" />
+                </div>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="statistics_grid" name="core_ui.statistics.grid">
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+            <t t-foreach="stats" t-as="stat" t-key="stat_index">
+                <t t-call="ab_core_ui.card_statistics">
+                    <t t-set="icon" t-value="stat.icon" />
+                    <t t-set="color" t-value="stat.color" />
+                    <t t-set="value" t-value="stat.value" />
+                    <t t-set="label" t-value="stat.label" />
+                    <t t-set="trend" t-value="stat.trend" />
+                    <t t-set="trend_direction" t-value="stat.trend_direction" />
+                </t>
+            </t>
+        </div>
+    </template>
+
+
+    
+    
+
+    
+
+    <template id="preview_dialog_confirm" name="core_ui.preview.dialog.confirm">
+        <div class="core_ui_preview_wrapper" style="position:relative; min-height:320px; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--core-ui-bg, #f8f9fa); border-radius:8px;">
+            <t t-call="ab_core_ui.dialog_confirm">
+                <t t-set="visible" t-value="true" />
+                <t t-set="title" t-value="'Confirm Approval'" />
+                <t t-set="message" t-value="'Are you sure you want to approve Shipment #PO-2024-0042?'" />
+                <t t-set="cancel_label" t-value="'Cancel'" />
+                <t t-set="confirm_label" t-value="'Approve'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_dialog_alert" name="core_ui.preview.dialog.alert">
+        <div class="core_ui_preview_wrapper" style="position:relative; min-height:260px; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--core-ui-bg, #f8f9fa); border-radius:8px;">
+            <t t-call="ab_core_ui.dialog_alert">
+                <t t-set="visible" t-value="true" />
+                <t t-set="title" t-value="'Shipment Delayed'" />
+                <t t-set="message" t-value="'Shipment #PO-2024-0042 has been delayed by 48 hours.'" />
+                <t t-set="icon" t-value="'fa-info-circle'" />
+                <t t-set="icon_color" t-value="'text-warning'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_dialog_reject" name="core_ui.preview.dialog.reject">
+        <div class="core_ui_preview_wrapper" style="position:relative; min-height:320px; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--core-ui-bg, #f8f9fa); border-radius:8px;">
+            <t t-call="ab_core_ui.dialog_reject">
+                <t t-set="visible" t-value="true" />
+                <t t-set="title" t-value="'Reject Transfer Request'" />
+                <t t-set="message" t-value="'This will reject the stock transfer.'" />
+                <t t-set="placeholder" t-value="'Enter rejection reason...'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_dialog_form" name="core_ui.preview.dialog.form">
+        <div class="core_ui_preview_wrapper" style="position:relative; min-height:400px; display:flex; align-items:center; justify-content:center; padding:24px; background:var(--core-ui-bg, #f8f9fa); border-radius:8px;">
+            <t t-call="ab_core_ui.dialog_form">
+                <t t-set="visible" t-value="true" />
+                <t t-set="title" t-value="'Add New Supplier'" />
+                <t t-set="icon" t-value="'fa-edit'" />
+                <t t-set="form_content">
+                    <div class="core_ui_form_modern">
+                        <div class="core_ui_form_group">
+                            <label>Supplier Name</label>
+                            <input class="core_ui_input" type="text" placeholder="Enter supplier name..." />
+                        </div>
+                        <div class="core_ui_form_group">
+                            <label>Contact Email</label>
+                            <input class="core_ui_input" type="email" placeholder="Enter email..." />
+                        </div>
+                        <div class="core_ui_form_group">
+                            <label>Phone</label>
+                            <input class="core_ui_input" type="tel" placeholder="Enter phone number..." />
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_alert_success" name="core_ui.preview.alert.success">
+        <div class="core_ui_preview_wrapper" style="padding:12px; width:100%;">
+            <t t-call="ab_core_ui.alert_success">
+                <t t-set="title" t-value="'Inventory Updated'" />
+                <t t-set="message" t-value="'Stock levels updated successfully.'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_alert_warning" name="core_ui.preview.alert.warning">
+        <div class="core_ui_preview_wrapper" style="padding:12px; width:100%;">
+            <t t-call="ab_core_ui.alert_warning">
+                <t t-set="title" t-value="'Low Stock Alert'" />
+                <t t-set="message" t-value="'Amoxicillin 250mg is below minimum threshold.'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_alert_danger" name="core_ui.preview.alert.danger">
+        <div class="core_ui_preview_wrapper" style="padding:12px; width:100%;">
+            <t t-call="ab_core_ui.alert_danger">
+                <t t-set="title" t-value="'Transfer Failed'" />
+                <t t-set="message" t-value="'Insufficient quantity in source warehouse.'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_alert_info" name="core_ui.preview.alert.info">
+        <div class="core_ui_preview_wrapper" style="padding:12px; width:100%;">
+            <t t-call="ab_core_ui.alert_info">
+                <t t-set="title" t-value="'New Shipment Received'" />
+                <t t-set="message" t-value="'Shipment arrived. 24 items pending inspection.'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_alert_all" name="core_ui.preview.alert.all">
+        <div class="core_ui_preview_wrapper" style="display:flex; flex-direction:column; gap:6px; padding:12px; width:100%;">
+            <t t-call="ab_core_ui.alert_success">
+                <t t-set="title" t-value="'Inventory Updated'" />
+                <t t-set="message" t-value="'Stock levels updated successfully.'" />
+            </t>
+            <t t-call="ab_core_ui.alert_warning">
+                <t t-set="title" t-value="'Low Stock Alert'" />
+                <t t-set="message" t-value="'Amoxicillin 250mg is below minimum threshold.'" />
+            </t>
+            <t t-call="ab_core_ui.alert_danger">
+                <t t-set="title" t-value="'Transfer Failed'" />
+                <t t-set="message" t-value="'Insufficient quantity in source warehouse.'" />
+            </t>
+            <t t-call="ab_core_ui.alert_info">
+                <t t-set="title" t-value="'New Shipment Received'" />
+                <t t-set="message" t-value="'Shipment arrived. 24 items pending inspection.'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_buttons_all" name="core_ui.preview.buttons.all">
+        <div class="core_ui_preview_wrapper" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center; padding:16px;">
+            <t t-call="ab_core_ui.button_primary">
+                <t t-set="label" t-value="'Save'" />
+                <t t-set="icon" t-value="'fa-save'" />
+            </t>
+            <t t-call="ab_core_ui.button_secondary">
+                <t t-set="label" t-value="'Cancel'" />
+            </t>
+            <t t-call="ab_core_ui.button_ghost">
+                <t t-set="label" t-value="'Details'" />
+            </t>
+            <t t-call="ab_core_ui.button_danger">
+                <t t-set="label" t-value="'Delete'" />
+                <t t-set="icon" t-value="'fa-trash'" />
+            </t>
+            <t t-call="ab_core_ui.button_icon">
+                <t t-set="icon" t-value="'fa-cog'" />
+                <t t-set="tooltip" t-value="'Settings'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_card" name="core_ui.preview.card">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:400px;">
+            <t t-call="ab_core_ui.card">
+                <t t-set="title" t-value="'Supplier Overview'" />
+                <t t-set="inner_content">
+                    <div style="padding:8px 0; font-size:0.9rem; color:var(--core-ui-text-secondary);">
+                        <p style="margin:0 0 4px;">PharmaMed Supplies</p>
+                        <p style="margin:0 0 4px;">Active since 2018</p>
+                        <p style="margin:0;">1,284 products supplied</p>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_card_statistics" name="core_ui.preview.card.statistics">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:240px;">
+            <t t-call="ab_core_ui.card_statistics">
+                <t t-set="icon" t-value="'fa-shopping-cart'" />
+                <t t-set="color" t-value="'primary'" />
+                <t t-set="value" t-value="'1,284'" />
+                <t t-set="label" t-value="'Active Orders'" />
+                <t t-set="trend" t-value="'+12.5%'" />
+                <t t-set="trend_direction" t-value="'up'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_card_hero" name="core_ui.preview.card.hero">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:500px;">
+            <t t-call="ab_core_ui.card_hero">
+                <t t-set="title" t-value="'PharmaMed Supplies'" />
+                <t t-set="subtitle" t-value="'Premium Pharmaceutical Distributor'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_badges_all" name="core_ui.preview.badges.all">
+        <div class="core_ui_preview_wrapper" style="display:flex; flex-wrap:wrap; gap:6px; align-items:center; justify-content:center; padding:16px;">
+            <t t-call="ab_core_ui.badge">
+                <t t-set="label" t-value="'In Stock'" />
+                <t t-set="color" t-value="'success'" />
+                <t t-set="icon" t-value="'fa-check-circle'" />
+            </t>
+            <t t-call="ab_core_ui.badge">
+                <t t-set="label" t-value="'Pending'" />
+                <t t-set="color" t-value="'warning'" />
+                <t t-set="icon" t-value="'fa-clock'" />
+            </t>
+            <t t-call="ab_core_ui.badge">
+                <t t-set="label" t-value="'Out of Stock'" />
+                <t t-set="color" t-value="'danger'" />
+                <t t-set="icon" t-value="'fa-times-circle'" />
+            </t>
+            <t t-call="ab_core_ui.badge">
+                <t t-set="label" t-value="'Info'" />
+                <t t-set="color" t-value="'info'" />
+                <t t-set="icon" t-value="'fa-info-circle'" />
+            </t>
+            <t t-call="ab_core_ui.badge">
+                <t t-set="label" t-value="'Neutral'" />
+                <t t-set="color" t-value="'neutral'" />
+            </t>
+            <t t-call="ab_core_ui.badge_state">
+                <t t-set="label" t-value="'Approved'" />
+                <t t-set="state" t-value="'approved'" />
+            </t>
+            <t t-call="ab_core_ui.badge_state">
+                <t t-set="label" t-value="'Pending'" />
+                <t t-set="state" t-value="'pending'" />
+            </t>
+            <t t-call="ab_core_ui.badge_state">
+                <t t-set="label" t-value="'Rejected'" />
+                <t t-set="state" t-value="'rejected'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_table_modern" name="core_ui.preview.table.modern">
+        <div class="core_ui_preview_wrapper" style="padding:16px; overflow-x:auto; width:100%;">
+            <t t-call="ab_core_ui.table_modern">
+                <t t-set="columns" t-value="[{'label':'Product','name':'product'},{'label':'SKU','name':'sku'},{'label':'Qty','name':'qty'},{'label':'Status','name':'status'}]" />
+                <t t-set="rows" t-value="[{'product':'Paracetamol 500mg','sku':'PAR-001','qty':'2,400','status':'In Stock'},{'product':'Amoxicillin 250mg','sku':'AMX-002','qty':'850','status':'Low Stock'},{'product':'Ibuprofen 400mg','sku':'IBU-003','qty':'3,200','status':'In Stock'},{'product':'Omeprazole 20mg','sku':'OME-004','qty':'0','status':'Out of Stock'}]" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_table_compact" name="core_ui.preview.table.compact">
+        <div class="core_ui_preview_wrapper" style="padding:16px; overflow-x:auto; width:100%;">
+            <t t-call="ab_core_ui.table_compact">
+                <t t-set="columns" t-value="[{'label':'Product','name':'product'},{'label':'SKU','name':'sku'},{'label':'Status','name':'status'}]" />
+                <t t-set="rows" t-value="[{'product':'Paracetamol 500mg','sku':'PAR-001','status':'In Stock'},{'product':'Amoxicillin 250mg','sku':'AMX-002','status':'Low Stock'},{'product':'Ibuprofen 400mg','sku':'IBU-003','status':'In Stock'}]" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_table_card" name="core_ui.preview.table.card">
+        <div class="core_ui_preview_wrapper" style="padding:16px; overflow-x:auto; width:100%;">
+            <t t-call="ab_core_ui.table_card">
+                <t t-set="columns" t-value="[{'label':'Product','name':'product'},{'label':'SKU','name':'sku'},{'label':'Qty','name':'qty'},{'label':'Status','name':'status'}]" />
+                <t t-set="rows" t-value="[{'product':'Paracetamol 500mg','sku':'PAR-001','qty':'2,400','status':'In Stock'},{'product':'Amoxicillin 250mg','sku':'AMX-002','qty':'850','status':'Low Stock'},{'product':'Ibuprofen 400mg','sku':'IBU-003','qty':'3,200','status':'In Stock'},{'product':'Omeprazole 20mg','sku':'OME-004','qty':'0','status':'Out of Stock'}]" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_loading_spinner" name="core_ui.preview.loading.spinner">
+        <div class="core_ui_preview_wrapper" style="padding:16px; display:flex; align-items:center; justify-content:center;">
+            <t t-call="ab_core_ui.loading_spinner">
+                <t t-set="size" t-value="'lg'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_loading_skeleton" name="core_ui.preview.loading.skeleton">
+        <div class="core_ui_preview_wrapper" style="padding:24px; max-width:400px;">
+            <t t-call="ab_core_ui.loading_skeleton" />
+        </div>
+    </template>
+
+    
+
+    <template id="preview_progress_bar" name="core_ui.preview.progress.bar">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:400px;">
+            <t t-call="ab_core_ui.progress_bar">
+                <t t-set="label" t-value="'Inventory Audit'" />
+                <t t-set="value" t-value="68" />
+                <t t-set="show_value" t-value="true" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_progress_circle" name="core_ui.preview.progress.circle">
+        <div class="core_ui_preview_wrapper" style="padding:16px; display:flex; align-items:center; justify-content:center;">
+            <t t-call="ab_core_ui.progress_circle">
+                <t t-set="value" t-value="78" />
+                <t t-set="size" t-value="80" />
+                <t t-set="stroke" t-value="6" />
+                <t t-set="circumference" t-value="213.63" />
+                <t t-set="offset" t-value="47.0" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_nav_breadcrumb" name="core_ui.preview.nav.breadcrumb">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.nav_breadcrumb">
+                <t t-set="items" t-value="[{'label':'Dashboard','url':'#'},{'label':'Inventory','url':'#'},{'label':'Products','url':'#'},{'label':'Paracetamol 500mg'}]" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_nav_tabs" name="core_ui.preview.nav.tabs">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.nav_tabs">
+                <t t-set="tabs" t-value="[{'label':'Overview','icon':'fa-info-circle','active':True},{'label':'Stock','icon':'fa-boxes'},{'label':'Orders','icon':'fa-shopping-cart'},{'label':'Analytics','icon':'fa-chart-bar'}]" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_status_dot" name="core_ui.preview.status.dot">
+        <div class="core_ui_preview_wrapper" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; justify-content:center; padding:16px;">
+            <t t-call="ab_core_ui.status_dot">
+                <t t-set="color" t-value="'green'" />
+                <t t-set="label" t-value="'Online'" />
+            </t>
+            <t t-call="ab_core_ui.status_dot">
+                <t t-set="color" t-value="'yellow'" />
+                <t t-set="label" t-value="'Away'" />
+            </t>
+            <t t-call="ab_core_ui.status_dot">
+                <t t-set="color" t-value="'red'" />
+                <t t-set="label" t-value="'Busy'" />
+            </t>
+            <t t-call="ab_core_ui.status_dot">
+                <t t-set="color" t-value="'gray'" />
+                <t t-set="label" t-value="'Offline'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_input_text" name="core_ui.preview.input.text">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:360px;">
+            <t t-call="ab_core_ui.input_text">
+                <t t-set="label" t-value="'Product Name'" />
+                <t t-set="placeholder" t-value="'Enter product name...'" />
+                <t t-set="value" t-value="'Paracetamol 500mg'" />
+                <t t-set="help_text" t-value="'Use the official scientific name.'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_input_select" name="core_ui.preview.input.select">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:360px;">
+            <t t-call="ab_core_ui.input_select">
+                <t t-set="label" t-value="'Supplier'" />
+                <t t-set="placeholder" t-value="'Select a supplier...'" />
+                <t t-set="options" t-value="[{'label':'PharmaMed Supplies','value':'1'},{'label':'MediCorp International','value':'2'},{'label':'HealthPlus Distributors','value':'3'}]" />
+                <t t-set="value" t-value="'1'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_input_toggle" name="core_ui.preview.input.toggle">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.input_toggle">
+                <t t-set="label" t-value="'Enable Auto-Reorder'" />
+                <t t-set="active" t-value="true" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_avatar" name="core_ui.preview.avatar">
+        <div class="core_ui_preview_wrapper" style="padding:16px; display:flex; align-items:center; justify-content:center;">
+            <t t-call="ab_core_ui.avatar">
+                <t t-set="name" t-value="'Alhassan Hossny'" />
+                <t t-set="initials" t-value="'AH'" />
+                <t t-set="size" t-value="'lg'" />
+                <t t-set="show_status" t-value="true" />
+                <t t-set="status" t-value="'online'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_timeline" name="core_ui.preview.timeline">
+        <div class="core_ui_preview_wrapper" style="padding:16px; min-width:600px;">
+            <t t-call="ab_core_ui.timeline">
+                <t t-set="stages" t-value="[{'label':'Secretarial','icon':'✓','dot_class':'is-completed','line_class':'completed','label_class':'completed','notes':'تم إنشاء الطلب'},{'label':'Rejection','icon':'✗','dot_class':'is-event-rejection','line_class':'pending','is_event':True,'event_type':'rejection','user':'AB Request Test User 3','notes':'Reason: werwer'},{'label':'Inventory','icon':'✓','dot_class':'is-completed','line_class':'completed','label_class':'completed'},{'label':'Rejection','icon':'✗','dot_class':'is-event-rejection','line_class':'pending','is_event':True,'event_type':'rejection','user':'53-فرع المعادي 2 القاهرة','notes':'Reason: dsf'},{'label':'Purchase','icon':'✓','dot_class':'is-completed','line_class':'completed','label_class':'completed'},{'label':'Suppliers','icon':'✓','dot_class':'is-completed','line_class':'completed','label_class':'completed'},{'label':'Bank Account','icon':'✓','dot_class':'is-completed','line_class':'completed','label_class':'completed'},{'label':'Sign Check','icon':'✓','dot_class':'is-completed','line_class':'completed','label_class':'completed'},{'label':'Supplier Notification','icon':'✓','dot_class':'is-completed','line_class':'completed','label_class':'completed','notes':'werwer'},{'label':'Check delivery','icon':'✈','dot_class':'is-overdue','line_class':'pending','label_class':'overdue'}]" />
+                <t t-set="current_stage" t-value="{'label':'Check delivery','is_overdue':True,'user':'AB Request Test User 2','date':'2026-07-01T11:40:47'}" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_empty_no_data" name="core_ui.preview.empty.no_data">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.empty_no_data">
+                <t t-set="title" t-value="'No Suppliers Found'" />
+                <t t-set="message" t-value="'Add your first supplier to get started.'" />
+                <t t-set="action_label" t-value="'Add Supplier'" />
+                <t t-set="action_icon" t-value="'fa-plus'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_empty_no_results" name="core_ui.preview.empty.no_results">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.empty_no_results">
+                <t t-set="title" t-value="'No Results Found'" />
+                <t t-set="message" t-value="'Try different keywords or filters.'" />
+            </t>
+        </div>
+    </template>
+
+    <template id="preview_empty_permission" name="core_ui.preview.empty.permission">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.empty_permission">
+                <t t-set="title" t-value="'Access Restricted'" />
+                <t t-set="message" t-value="'Contact your administrator.'" />
+                <t t-set="contact_admin" t-value="true" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_search" name="core_ui.preview.search">
+        <div class="core_ui_preview_wrapper" style="padding:16px; display:flex; align-items:center; justify-content:center;">
+            <t t-call="ab_core_ui.search">
+                <t t-set="placeholder" t-value="'Search products, suppliers...'" />
+                <t t-set="width" t-value="'320px'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_upload_zone" name="core_ui.preview.upload.zone">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:500px;">
+            <t t-call="ab_core_ui.upload_zone">
+                <t t-set="title" t-value="'Upload Inventory File'" />
+                <t t-set="description" t-value="'Drag and drop your CSV or Excel file.'" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_wizard_stepper" name="core_ui.preview.wizard.stepper">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.wizard_stepper">
+                <t t-set="steps" t-value="[{'label':'Select Products','state':'completed'},{'label':'Review Quantities','state':'active'},{'label':'Confirm Transfer','state':''},{'label':'Done','state':''}]" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_kanban_card" name="core_ui.preview.kanban.card">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:320px;">
+            <t t-call="ab_core_ui.kanban_card">
+                <t t-set="title" t-value="'PharmaMed Supplies'" />
+                <t t-set="subtitle" t-value="'Q4 Contract - $124,500'" />
+                <t t-set="badges" t-value="[{'label':'Active','color':'success'},{'label':'Priority','color':'warning'}]" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_statistics_grid" name="core_ui.preview.statistics.grid">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.statistics_grid">
+                <t t-set="stats" t-value="[{'icon':'fa-shopping-cart','color':'primary','value':'1,284','label':'Active Orders','trend':'+12.5%','trend_direction':'up'},{'icon':'fa-boxes','color':'success','value':'24,580','label':'Items in Stock','trend':'+3.2%','trend_direction':'up'},{'icon':'fa-truck','color':'warning','value':'18','label':'Pending Deliveries','trend':'-2','trend_direction':'down'},{'icon':'fa-exclamation-triangle','color':'danger','value':'6','label':'Low Stock Alerts','trend':'+2','trend_direction':'up'}]" />
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_form_modern" name="core_ui.preview.form.modern">
+        <div class="core_ui_preview_wrapper" style="padding:16px; max-width:400px;">
+            <t t-call="ab_core_ui.form_modern">
+                <t t-set="extra_class" t-value="''" />
+                <t t-set="form_fields">
+                    <div>
+                        <div class="core_ui_form_group">
+                            <label>Product Code</label>
+                            <input class="core_ui_input" type="text" value="PAR-001" placeholder="Enter product code..." />
+                        </div>
+                        <div class="core_ui_form_group">
+                            <label>Product Name</label>
+                            <input class="core_ui_input" type="text" value="Paracetamol 500mg" placeholder="Enter product name..." />
+                        </div>
+                        <div class="core_ui_form_group">
+                            <label>Category</label>
+                            <select class="core_ui_input core_ui_select">
+                                <option>Analgesics</option>
+                                <option>Antibiotics</option>
+                                <option>Vitamins</option>
+                            </select>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_toasts_all" name="core_ui.preview.toasts.all">
+        <div class="core_ui_preview_wrapper" style="position:relative; display:flex; flex-direction:column; gap:8px; padding:16px; width:100%; max-width:420px;">
+            <div class="core_ui_alert success" style="box-shadow:var(--core-ui-shadow-lg); position:relative; top:auto; right:auto;">
+                <i class="fa fa-check-circle" />
+                <div class="core_ui_alert_content">
+                    <div class="core_ui_alert_title">Inventory Updated</div>
+                    Stock levels updated successfully.
+                </div>
+            </div>
+            <div class="core_ui_alert warning" style="box-shadow:var(--core-ui-shadow-lg); position:relative; top:auto; right:auto;">
+                <i class="fa fa-exclamation-triangle" />
+                <div class="core_ui_alert_content">
+                    <div class="core_ui_alert_title">Low Stock Alert</div>
+                    Amoxicillin 250mg is below minimum threshold.
+                </div>
+            </div>
+            <div class="core_ui_alert danger" style="box-shadow:var(--core-ui-shadow-lg); position:relative; top:auto; right:auto;">
+                <i class="fa fa-times-circle" />
+                <div class="core_ui_alert_content">
+                    <div class="core_ui_alert_title">Transfer Failed</div>
+                    Insufficient quantity in source warehouse.
+                </div>
+            </div>
+        </div>
+    </template>
+
+    
+
+    <template id="preview_header_page" name="core_ui.preview.header.page">
+        <div class="core_ui_preview_wrapper" style="padding:16px;">
+            <t t-call="ab_core_ui.header_page">
+                <t t-set="title" t-value="'Purchase Orders'" />
+                <t t-set="subtitle" t-value="'Manage supplier orders and track deliveries.'" />
+                <t t-set="actions">
+                    <div style="display:flex; gap:8px;">
+                        <button class="core_ui_btn core_ui_btn_primary">
+                            <i class="fa fa-plus" /> New Order
+                        </button>
+                        <button class="core_ui_btn core_ui_btn_secondary">
+                            <i class="fa fa-filter" /> Filter
+                        </button>
+                    </div>
+                </t>
+            </t>
+        </div>
+    </template>
+
+</odoo>

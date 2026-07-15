@@ -2,9 +2,8 @@ import base64
 import os
 
 from odoo import _, api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, AccessError
 from odoo.tools import html_escape
-
 
 DEFAULT_WEBSITE_IMAGE_DIRECTORY = "/opt/odoo19/product_images"
 WEBSITE_IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp")
@@ -109,11 +108,6 @@ class AbProduct(models.Model):
         compute_sudo=True,
         groups="base.group_user",
     )
-    website_product_image = fields.Binary(
-        string="Image",
-        compute="_compute_website_product_image",
-        groups="base.group_user",
-    )
     website_image_file_found = fields.Boolean(
         string="Image File Found",
         compute="_compute_website_image_file_info",
@@ -188,14 +182,6 @@ class AbProduct(models.Model):
                 template and template.active and template.sale_ok and template.is_published
             )
 
-    def _compute_website_product_image(self):
-        for product in self:
-            template = product.website_product_tmpl_id
-            if template and template.image_128:
-                product.website_product_image = template.image_128
-            else:
-                product.website_product_image = False
-
     def _compute_website_image_file_info(self):
         directory_path = self._get_configured_website_image_directory()
         for product in self:
@@ -206,10 +192,10 @@ class AbProduct(models.Model):
     @api.model
     def _get_default_website_image_directory(self):
         return (
-            self.env["ir.config_parameter"].sudo().get_param(
-                "ab_website_sale_product.image_directory"
-            )
-            or DEFAULT_WEBSITE_IMAGE_DIRECTORY
+                self.env["ir.config_parameter"].sudo().get_param(
+                    "ab_website_sale_product.image_directory"
+                )
+                or DEFAULT_WEBSITE_IMAGE_DIRECTORY
         )
 
     @api.model
@@ -313,7 +299,8 @@ class AbProduct(models.Model):
         domain = [("ab_product_id", "!=", False)]
         if extra_domain:
             domain += extra_domain
-        return self.env["product.template"].sudo().with_context(active_test=False).search(domain).mapped("ab_product_id").ids
+        return self.env["product.template"].sudo().with_context(active_test=False).search(domain).mapped(
+            "ab_product_id").ids
 
     def action_refresh_eplus_stock_items(self):
         return self.env["ab_eplus_stock_snapshot"].sudo().action_refresh_from_eplus()
@@ -393,11 +380,11 @@ class AbProduct(models.Model):
     def _template_needs_initial_website_stock_display(self, template):
         self.ensure_one()
         return (
-            not template.eplus_stock_shown_qty_value
-            or (
-                template.eplus_stock_shown_qty_type == "percentage"
-                and template.eplus_stock_shown_qty_value == 100.0
-            )
+                not template.eplus_stock_shown_qty_value
+                or (
+                        template.eplus_stock_shown_qty_type == "percentage"
+                        and template.eplus_stock_shown_qty_value == 100.0
+                )
         )
 
     def _prepare_website_product_variant_vals(self):
@@ -424,11 +411,17 @@ class AbProduct(models.Model):
 
             variant = template.product_variant_id or template.with_context(active_test=False).product_variant_ids[:1]
             if variant:
-                variant.sudo().write(product._prepare_website_product_variant_vals())
+                product_dict = product._prepare_website_product_variant_vals()
+                try:
+                    variant.sudo().write(product_dict)
+                except:
+                    product_dict.pop("barcode", None)
+                    variant.sudo().write(product_dict)
             synced_templates |= template
         return synced_templates
 
     def action_sync_website_product(self):
+        self = self.sudo()
         templates = self._sync_website_products()
         if len(self) == 1 and templates:
             return {
@@ -472,7 +465,8 @@ class AbProduct(models.Model):
         if not template:
             template = self._sync_website_products()
         if not template.is_published:
-            raise UserError(_("The linked eCommerce product is not published. Enable Website availability and sync again."))
+            raise UserError(
+                _("The linked eCommerce product is not published. Enable Website availability and sync again."))
         return template.open_website_url()
 
     def action_check_website_product_image(self):
