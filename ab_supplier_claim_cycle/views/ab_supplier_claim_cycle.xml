@@ -558,23 +558,6 @@
                   groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
                   sequence="100"/>
 
-        <!-- Inherit ab_costcenter form: rename Mobile to Delegate Phone -->
-        <record id="ab_costcenter_view_form_inherit_claim_cycle" model="ir.ui.view">
-            <field name="name">ab_costcenter.view.form.inherit.claim.cycle</field>
-            <field name="model">ab_costcenter</field>
-            <field name="inherit_id" ref="ab_costcenter.ab_costcenter_view_form"/>
-            <field name="arch" type="xml">
-                <xpath expr="//div[hasclass('ab-dossier-card-row')][.//field[@name='mobile_phone']]" position="replace">
-                    <div class="ab-dossier-card-row">
-                        <div class="ab-dossier-card-row-icon"><i class="fa fa-truck" aria-hidden="true"/></div>
-                        <div class="ab-dossier-card-row-body">
-                            <div class="ab-dossier-card-row-label o_translate_inline">Delegate Phones</div>
-                            <div class="ab-dossier-card-row-value"><field name="all_delegate_phones" nolabel="1" placeholder="—"/></div>
-                        </div>
-                    </div>
-                </xpath>
-            </field>
-        </record>
 
     </data>
 </odoo>
