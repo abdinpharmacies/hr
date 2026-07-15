@@ -4,6 +4,7 @@ import { Component, onWillStart, onWillUnmount, useState, xml } from "@odoo/owl"
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { CoreInput, CoreSearchSelect, CoreSelect } from "@ab_core_ui/core_ui/components/input/input";
 
 const COLLECTION_LABELS = {
     cash: _t("Cash"),
@@ -104,6 +105,8 @@ const UI_TEXT = {
 };
 
 class SalesDashboardAction extends Component {
+    static components = { CoreInput, CoreSearchSelect, CoreSelect };
+
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
@@ -244,8 +247,8 @@ class SalesDashboardAction extends Component {
         this.state.storeMenuOpen = true;
     }
 
-    onStoreSearchInput(ev) {
-        this.state.storeSearch = ev.target.value;
+    onStoreSearchInput(valueOrEvent) {
+        this.state.storeSearch = this.inputValue(valueOrEvent) || "";
         this.state.storeMenuOpen = true;
     }
 
@@ -279,8 +282,14 @@ class SalesDashboardAction extends Component {
         return this.loadDashboard(false);
     }
 
-    applyMonthSelection(ev) {
-        const value = ev.target.value;
+    inputValue(valueOrEvent) {
+        return typeof valueOrEvent === "object" && valueOrEvent && valueOrEvent.target
+            ? valueOrEvent.target.value
+            : valueOrEvent;
+    }
+
+    applyMonthSelection(valueOrEvent) {
+        const value = this.inputValue(valueOrEvent);
         if (!value) {
             return;
         }
@@ -291,8 +300,8 @@ class SalesDashboardAction extends Component {
         return this.applyExplicitDateRange(dateFrom, dateTo);
     }
 
-    applyDaySelection(ev) {
-        const value = this.clampIsoToLatestReportDate(ev.target.value);
+    applyDaySelection(valueOrEvent) {
+        const value = this.clampIsoToLatestReportDate(this.inputValue(valueOrEvent));
         if (!value) {
             return;
         }
@@ -303,8 +312,8 @@ class SalesDashboardAction extends Component {
         return this.loadDashboard(false);
     }
 
-    applyYearSelection(ev) {
-        const year = Number(ev.target.value || 0);
+    applyYearSelection(valueOrEvent) {
+        const year = Number(this.inputValue(valueOrEvent) || 0);
         if (!year) {
             return;
         }
@@ -435,9 +444,9 @@ class SalesDashboardAction extends Component {
         }
     }
 
-    onSectionSearchInput(section, ev) {
+    onSectionSearchInput(section, valueOrEvent) {
         const sectionState = this.state.sectionPages[section];
-        sectionState.search = ev.target.value.slice(0, 100);
+        sectionState.search = (this.inputValue(valueOrEvent) || "").slice(0, 100);
         clearTimeout(this.sectionSearchTimers[section]);
         this.sectionSearchTimers[section] = setTimeout(() => {
             this.loadSectionPage(section, 1);
@@ -664,7 +673,8 @@ class SalesDashboardAction extends Component {
     get filteredStores() {
         const stores = (this.state.data && this.state.data.stores) || [];
         const search = (this.state.storeSearch || "").trim().toLowerCase();
-        if (!search || search === this.ui.allStores.toLowerCase()) {
+        const selectedStoreLabel = this.storeDisplayName(this.state.filters.store_id, stores).toLowerCase();
+        if (!search || search === this.ui.allStores.toLowerCase() || search === selectedStoreLabel) {
             return stores.slice(0, 50);
         }
         return stores.filter((store) => (store.name || "").toLowerCase().includes(search)).slice(0, 50);
@@ -845,91 +855,71 @@ SalesDashboardAction.template = xml`
                 </button>
             </div>
             <div id="ab_sales_dashboard_filters" class="o_control_panel_actions o_sp_dashboard_search ab_sales_dashboard__filters">
-                <div class="d-flex input-group ab_sales_dashboard__store_search">
-                    <div class="o_searchview form-control d-flex align-items-center py-1 border-end-0 gap-1" aria-expanded="false">
-                        <button class="btn border-0 p-0" type="button" tabindex="-1">
-                            <i class="oi oi-search me-2"/>
-                        </button>
-                        <div class="o_searchview_input_container d-flex flex-grow-1 flex-wrap gap-1 mw-100">
-                            <input type="text"
-                                   class="o_searchview_input o_input d-print-none flex-grow-1 w-auto border-0 ab_sales_dashboard__store_input"
-                                   t-att-title="ui.filterByStore"
-                                   t-att-aria-label="ui.filterByStore"
-                                   t-att-value="state.storeSearch"
-                                   t-on-focus="openStoreMenu"
-                                   t-on-input="onStoreSearchInput"/>
-                            <div t-if="state.storeMenuOpen" class="dropdown-menu show ab_sales_dashboard__store_menu">
-                                <button class="dropdown-item" type="button" t-on-mousedown.prevent="() => this.selectStore(0, ui.allStores)" t-esc="ui.allStores"/>
-                                <div class="dropdown-divider"/>
-                                <t t-foreach="filteredStores" t-as="store" t-key="store.id">
-                                    <button class="dropdown-item text-truncate" type="button" t-on-mousedown.prevent="() => this.selectStore(store.id, store.name)" t-esc="store.name"/>
-                                </t>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="o_searchview_dropdown_toggler btn btn-outline-secondary o-dropdown-caret rounded-start-0 o-dropdown dropdown-toggle dropdown"
-                            type="button"
-                            tabindex="-1"
-                            t-att-title="ui.filterByStore"
-                            t-on-click="toggleStoreMenu"/>
-                </div>
+                <CoreSearchSelect className="'ab_sales_dashboard__store_search'"
+                                  value="state.filters.store_id"
+                                  searchValue="state.storeSearch"
+                                  placeholder="ui.filterByStore"
+                                  allLabel="ui.allStores"
+                                  emptyText="ui.noRecords"
+                                  resultsLabel="ui.records"
+                                  clearLabel="ui.allStores"
+                                  ariaLabel="ui.filterByStore"
+                                  options="filteredStores"
+                                  open="state.storeMenuOpen"
+                                  disabled="state.refreshing"
+                                  onInput="(value) => this.onStoreSearchInput(value)"
+                                  onFocus="() => this.openStoreMenu()"
+                                  onToggle="() => this.toggleStoreMenu()"
+                                  onSelect="(storeId, storeName) => this.selectStore(storeId, storeName)"/>
                 <div class="ab_sales_dashboard__date_inputs"
                      t-att-class="{'ab_sales_dashboard__date_inputs--active': isDateFilterActive('custom')}">
-                    <label class="ab_sales_dashboard__date_field">
-                        <span t-esc="ui.dateFrom"/>
-                        <input type="date"
-                               class="form-control"
-                               t-att-value="state.filters.date_from"
-                               t-att-max="latestReportDateIso"
-                               t-att-disabled="state.refreshing"
-                               t-on-change="(ev) => this.updateCustomDate('date_from', ev.target.value)"/>
-                    </label>
-                    <label class="ab_sales_dashboard__date_field">
-                        <span t-esc="ui.dateTo"/>
-                        <input type="date"
-                               class="form-control"
-                               t-att-value="state.filters.date_to"
-                               t-att-max="latestReportDateIso"
-                               t-att-disabled="state.refreshing"
-                               t-on-change="(ev) => this.updateCustomDate('date_to', ev.target.value)"/>
-                    </label>
+                    <CoreInput type="'date'"
+                               label="ui.dateFrom"
+                               className="'ab_sales_dashboard__date_field'"
+                               value="state.filters.date_from"
+                               max="latestReportDateIso"
+                               disabled="state.refreshing"
+                               onChange="(value) => this.updateCustomDate('date_from', value)"/>
+                    <CoreInput type="'date'"
+                               label="ui.dateTo"
+                               className="'ab_sales_dashboard__date_field'"
+                               value="state.filters.date_to"
+                               max="latestReportDateIso"
+                               disabled="state.refreshing"
+                               onChange="(value) => this.updateCustomDate('date_to', value)"/>
                 </div>
                 <div class="ab_sales_dashboard__quick_ranges" role="group" t-att-aria-label="ui.dateFilter">
-                    <input type="date"
-                           class="form-control ab_sales_dashboard__period_select ab_sales_dashboard__day_select"
-                           t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('day')}"
-                           t-att-aria-label="ui.daily"
-                           t-att-title="ui.daily"
-                           t-att-max="latestReportDateIso"
-                           t-att-disabled="state.refreshing"
-                           t-att-value="selectedDayValue"
-                           t-on-change="applyDaySelection"/>
+                    <CoreInput type="'date'"
+                               bare="true"
+                               inputClass="'ab_sales_dashboard__period_select ab_sales_dashboard__day_select' + (isDateFilterActive('day') ? ' ab_sales_dashboard__range_active' : '')"
+                               ariaLabel="ui.daily"
+                               title="ui.daily"
+                               max="latestReportDateIso"
+                               disabled="state.refreshing"
+                               value="selectedDayValue"
+                               onChange="(value) => this.applyDaySelection(value)"/>
                     <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="ui.yesterday"/>
                     <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="ui.last7Days"/>
                     <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="ui.last30Days"/>
                     <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="ui.last90Days"/>
-                    <select class="form-select ab_sales_dashboard__period_select"
-                            t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('month')}"
-                            t-att-aria-label="ui.month"
-                            t-att-disabled="state.refreshing"
-                            t-att-value="selectedMonthValue"
-                            t-on-change="(ev) => this.applyMonthSelection(ev)">
-                        <option value="" t-att-selected="!selectedMonthValue" t-esc="ui.month"/>
-                        <t t-foreach="monthOptions" t-as="option" t-key="option.value">
-                            <option t-att-value="option.value" t-att-selected="option.value === selectedMonthValue" t-esc="option.label"/>
-                        </t>
-                    </select>
-                    <select class="form-select ab_sales_dashboard__period_select"
-                            t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('year')}"
-                            t-att-aria-label="ui.year"
-                            t-att-disabled="state.refreshing"
-                            t-att-value="selectedYearValue"
-                            t-on-change="(ev) => this.applyYearSelection(ev)">
-                        <option value="" t-att-selected="!selectedYearValue" t-esc="ui.year"/>
-                        <t t-foreach="yearOptions" t-as="option" t-key="option">
-                            <option t-att-value="option" t-att-selected="option === selectedYearValue" t-esc="option"/>
-                        </t>
-                    </select>
+                    <CoreSelect className="'ab_sales_dashboard__period_select_field'"
+                                selectClass="'ab_sales_dashboard__period_select'"
+                                variant="isDateFilterActive('month') ? 'active' : ''"
+                                ariaLabel="ui.month"
+                                placeholder="ui.month"
+                                disabled="state.refreshing"
+                                value="selectedMonthValue"
+                                options="monthOptions"
+                                onChange="(value) => this.applyMonthSelection(value)"/>
+                    <CoreSelect className="'ab_sales_dashboard__period_select_field'"
+                                selectClass="'ab_sales_dashboard__period_select'"
+                                variant="isDateFilterActive('year') ? 'active' : ''"
+                                ariaLabel="ui.year"
+                                placeholder="ui.year"
+                                disabled="state.refreshing"
+                                value="selectedYearValue"
+                                options="yearOptions"
+                                onChange="(value) => this.applyYearSelection(value)"/>
                 </div>
                 <button type="button"
                         class="btn btn-primary ab_sales_dashboard__refresh_button"
@@ -1039,16 +1029,14 @@ SalesDashboardAction.template = xml`
             <article class="ab_sales_dashboard__panel">
                 <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
                     <h2 t-esc="ui.salesByUsers"/>
-                    <label class="ab_sales_dashboard__table_search">
-                        <i class="oi oi-search"/>
-                        <input type="search"
-                               class="form-control"
-                               t-att-placeholder="ui.search"
-                               t-att-aria-label="ui.search"
-                               t-att-value="state.sectionPages.sales_by_user.search"
-                               t-att-disabled="!state.sectionPages.sales_by_user.available"
-                               t-on-input="(ev) => this.onSectionSearchInput('sales_by_user', ev)"/>
-                    </label>
+                    <CoreInput type="'search'"
+                               className="'ab_sales_dashboard__table_search'"
+                               icon="'oi oi-search'"
+                               placeholder="ui.search"
+                               ariaLabel="ui.search"
+                               value="state.sectionPages.sales_by_user.search"
+                               disabled="!state.sectionPages.sales_by_user.available"
+                               onInput="(value) => this.onSectionSearchInput('sales_by_user', value)"/>
                     <span t-esc="ui.rankedDescending"/>
                 </div>
                 <div t-if="sectionUnsupported('sales_by_user')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
@@ -1086,16 +1074,14 @@ SalesDashboardAction.template = xml`
             <article class="ab_sales_dashboard__panel">
                 <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
                     <h2 t-esc="ui.topSoldItems"/>
-                    <label class="ab_sales_dashboard__table_search">
-                        <i class="oi oi-search"/>
-                        <input type="search"
-                               class="form-control"
-                               t-att-placeholder="ui.search"
-                               t-att-aria-label="ui.search"
-                               t-att-value="state.sectionPages.top_items.search"
-                               t-att-disabled="!state.sectionPages.top_items.available"
-                               t-on-input="(ev) => this.onSectionSearchInput('top_items', ev)"/>
-                    </label>
+                    <CoreInput type="'search'"
+                               className="'ab_sales_dashboard__table_search'"
+                               icon="'oi oi-search'"
+                               placeholder="ui.search"
+                               ariaLabel="ui.search"
+                               value="state.sectionPages.top_items.search"
+                               disabled="!state.sectionPages.top_items.available"
+                               onInput="(value) => this.onSectionSearchInput('top_items', value)"/>
                     <span t-esc="ui.saleTimesCurrentBalance"/>
                 </div>
                 <div t-if="sectionUnsupported('top_items')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
@@ -1141,16 +1127,14 @@ SalesDashboardAction.template = xml`
         <section class="ab_sales_dashboard__panel">
             <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
                 <h2 t-esc="ui.customerSales"/>
-                <label class="ab_sales_dashboard__table_search">
-                    <i class="oi oi-search"/>
-                    <input type="search"
-                           class="form-control"
-                           t-att-placeholder="ui.search"
-                           t-att-aria-label="ui.search"
-                           t-att-value="state.sectionPages.customer_sales.search"
-                           t-att-disabled="!state.sectionPages.customer_sales.available"
-                           t-on-input="(ev) => this.onSectionSearchInput('customer_sales', ev)"/>
-                </label>
+                <CoreInput type="'search'"
+                           className="'ab_sales_dashboard__table_search'"
+                           icon="'oi oi-search'"
+                           placeholder="ui.search"
+                           ariaLabel="ui.search"
+                           value="state.sectionPages.customer_sales.search"
+                           disabled="!state.sectionPages.customer_sales.available"
+                           onInput="(value) => this.onSectionSearchInput('customer_sales', value)"/>
                 <span t-esc="ui.invoiceCustomerItems"/>
             </div>
             <div t-if="sectionUnsupported('customer_sales')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
