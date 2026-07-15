@@ -17,7 +17,3 @@ access_ab_hr_manpower_user,access_ab_hr_manpower_user,model_ab_hr_manpower,base.
 access_ab_hr_manpower_need_user,access_ab_hr_manpower_need_user,model_ab_hr_manpower_need,base.group_user,1,0,0,0
 access_ab_hr_history_report_user,access_ab_hr_history_report_user,model_ab_hr_history_report,base.group_user,1,0,0,0
 access_ir_model_field_user,access_ir_model_field_user,base.model_ir_model_fields,base.group_user,1,0,0,0
-access_ab_hr_payroll_sheet_admin,access.ab.hr.payroll.sheet.admin,model_ab_hr_payroll_sheet,ab_hr.group_ab_hr_payroll_sheet_admin,1,1,1,1
-access_ab_hr_payroll_sheet_system,access.ab.hr.payroll.sheet.system,model_ab_hr_payroll_sheet,base.group_system,1,1,1,1
-access_ab_hr_payroll_sheet_upload_wizard_admin,access.ab.hr.payroll.sheet.upload.wizard.admin,model_ab_hr_payroll_sheet_upload_wizard,ab_hr.group_ab_hr_payroll_sheet_admin,1,1,1,1
-access_ab_hr_payroll_sheet_upload_wizard_system,access.ab.hr.payroll.sheet.upload.wizard.system,model_ab_hr_payroll_sheet_upload_wizard,base.group_system,1,1,1,1

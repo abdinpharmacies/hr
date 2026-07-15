@@ -16,7 +16,7 @@
     # Check https://github.com/odoo/odoo/blob/13.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Abdin',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     # any module necessary for this one to work correctly
     'depends': ['base', 'mail', 'abdin_et', 'mail', 'ab_costcenter',
                 'ab_store'],
@@ -26,10 +26,7 @@
         'security/security_groups.xml',
         'security/record_rules.xml',
         'security/ir.model.access.csv',
-        'data/payroll_sheet_cron.xml',
         'views/00_menus.xml',
-        'views/payroll_sheet_views.xml',
-        'wizard/payroll_sheet_upload_wizard_views.xml',
         'views/ab_hr_job_occupied.xml',
         # 'views/history.xml',
         'views/ab_hr_job.xml',
@@ -44,6 +41,7 @@
     "application": True,
     "installable": True,
     "auto_install": True,
+
     'web.assets_backend': [
         # 'ab_hr/static/src/scss/hr.scss',
         # 'ab_hr/static/src/js/chat_mixin.js',

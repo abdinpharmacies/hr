@@ -197,10 +197,6 @@
                                         <field name="gender"/>
                                         <field name="address_text"/>
                                         <field name="graduate"/>
-                                        <field name="telegram_chat_id"/>
-                                        <field name="telegram_user_id"/>
-                                        <field name="telegram_username"/>
-                                        <field name="telegram_linked_at"/>
                                     </group>
                                     <group string="Accounting Info">
                                         <field name="khazna_subscription"/>
