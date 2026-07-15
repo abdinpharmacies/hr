@@ -1507,6 +1507,16 @@ msgstr ""
 #. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"No managers connected to Telegram yet in this department.\n"
+"Time: %(time)s"
+msgstr ""
+"لا يوجد مديرون متصلون بتيليجرام حتى الآن في هذا القسم.\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "No notes"
 msgstr "لا توجد ملاحظات"
 
@@ -2320,6 +2330,16 @@ msgid ""
 "The Delay / Rejection Reason field is required when rejecting a department "
 "request."
 msgstr "حقل سبب التأخير / الرفض مطلوب عند رفض طلب الإدارة."
+
+#. module: ab_supplier_claim_cycle
+#. odoo-python
+#: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"The manager assigned to this department is still not connected to Telegram.\n"
+"Time: %(time)s"
+msgstr ""
+"المدير المعيّن لهذا القسم لا يزال غير متصل بتيليجرام.\n"
+"الوقت: %(time)s"
 
 #. module: ab_supplier_claim_cycle
 #. odoo-python
