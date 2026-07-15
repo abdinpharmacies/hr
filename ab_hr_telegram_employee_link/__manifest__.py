@@ -7,7 +7,7 @@
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
     "category": "Human Resources",
-    "depends": ["ab_hr", "ab_user_extra", "ab_request_telegram"],
+    "depends": ["ab_payroll", "ab_user_extra", "ab_request_telegram"],
     "data": [],
     "installable": True,
     "application": False,
