@@ -18,6 +18,14 @@ const STATE_THEME = {
 
 const CHART_PALETTE = ["#2f6fdd", "#5da9e9", "#8fd3b6", "#f2c572", "#ef6f6c", "#7b4fd7"];
 
+function isArabic() {
+    return (user.lang || "").startsWith("ar");
+}
+
+function label(en, ar) {
+    return isArabic() ? ar : _t(en);
+}
+
 export class AbInternalShipmentDashboard extends Component {
     static template = "ab_internal_shipment_tracking.AbInternalShipmentDashboard";
 
@@ -47,7 +55,7 @@ export class AbInternalShipmentDashboard extends Component {
         const [
             totalOpen,
             myShipments,
-            inTransit,
+            dispatched,
             waitingWarehouse,
             waitingReceipt,
             delayed,
@@ -58,7 +66,7 @@ export class AbInternalShipmentDashboard extends Component {
         ] = await Promise.all([
             this.orm.searchCount("ab_internal_shipment", [["state", "in", openStates]]),
             this.orm.searchCount("ab_internal_shipment", [["created_by_id", "=", user.userId]]),
-            this.orm.searchCount("ab_internal_shipment", [["state", "=", "in_transit"]]),
+            this.orm.searchCount("ab_internal_shipment", [["state", "in", ["sent", "in_transit"]]]),
             this.orm.searchCount("ab_internal_shipment", [["state", "=", "awaiting_warehouse_receipt"]]),
             this.orm.searchCount("ab_internal_shipment", [["state", "=", "awaiting_receipt"]]),
             this.orm.searchCount("ab_internal_shipment", [
@@ -80,7 +88,7 @@ export class AbInternalShipmentDashboard extends Component {
         this.state.cards = [
             {
                 key: "open",
-                label: _t("Open Shipments"),
+                label: label("Open Shipments", "الشحنات المفتوحة"),
                 value: totalOpen,
                 icon: "fa fa-cubes",
                 accent: "#2f6fdd",
@@ -88,23 +96,23 @@ export class AbInternalShipmentDashboard extends Component {
             },
             {
                 key: "my_shipments",
-                label: _t("My Shipments"),
+                label: label("My Shipments", "شحناتي"),
                 value: myShipments,
                 icon: "fa fa-inbox",
                 accent: "#1f8f8a",
                 domain: [["created_by_id", "=", user.userId]],
             },
             {
-                key: "in_transit",
-                label: _t("In Transit"),
-                value: inTransit,
+                key: "dispatched",
+                label: label("Dispatched", "تم الإرسال والتسليم"),
+                value: dispatched,
                 icon: "fa fa-truck",
                 accent: "#df7a22",
-                domain: [["state", "=", "in_transit"]],
+                domain: [["state", "in", ["sent", "in_transit"]]],
             },
             {
                 key: "warehouse",
-                label: _t("Warehouse Receipt"),
+                label: label("Warehouse Receipt", "استلام المخزن"),
                 value: waitingWarehouse,
                 icon: "fa fa-archive",
                 accent: "#a16207",
@@ -112,7 +120,7 @@ export class AbInternalShipmentDashboard extends Component {
             },
             {
                 key: "receipt",
-                label: _t("Awaiting Receipt"),
+                label: label("Awaiting Receipt", "بانتظار الاستلام"),
                 value: waitingReceipt,
                 icon: "fa fa-check-square-o",
                 accent: "#7b4fd7",
@@ -120,7 +128,7 @@ export class AbInternalShipmentDashboard extends Component {
             },
             {
                 key: "delayed",
-                label: _t("Delayed"),
+                label: label("Delayed", "متأخرة"),
                 value: delayed,
                 icon: "fa fa-bell-o",
                 accent: "#cf4c4c",
@@ -141,43 +149,48 @@ export class AbInternalShipmentDashboard extends Component {
             }))
             .filter((item) => item.value);
 
-        this.state.byDeliveryMethod = byDeliveryMethod
-            .map((item) => ({
+        const deliveryMethodRows = byDeliveryMethod
+            .map((item, index) => ({
                 label: this.getDeliveryMethodLabel(item.delivery_method),
                 value: item.shipment_count || item.delivery_method_count || 0,
+                color: CHART_PALETTE[index % CHART_PALETTE.length],
             }))
             .filter((item) => item.value);
+        const maxDeliveryMethodValue = this.maxValue(deliveryMethodRows);
+        this.state.byDeliveryMethod = deliveryMethodRows.map((item) => ({
+            ...item,
+            style: `width:${(item.value / maxDeliveryMethodValue) * 100}%; background:${item.color}`,
+        }));
 
-        this.state.byShipmentType = byShipmentType
-            .map((item) => ({
+        const shipmentTypeRows = byShipmentType
+            .map((item, index) => ({
                 label: this.getShipmentTypeLabel(item.shipment_type),
                 value: item.shipment_count || item.shipment_type_count || 0,
+                color: CHART_PALETTE[index % CHART_PALETTE.length],
             }))
             .filter((item) => item.value);
+        const maxShipmentTypeValue = this.maxValue(shipmentTypeRows);
+        this.state.byShipmentType = shipmentTypeRows.map((item) => ({
+            ...item,
+            style: `width:${(item.value / maxShipmentTypeValue) * 100}%; background:${item.color}`,
+        }));
 
         this.state.recent = recent.map((record) => ({
             id: record.id,
             name: record.name,
             subject: record.subject,
             state: record.state,
+            stateClass: `o_ais_dashboard_state_badge o_ais_dashboard_state_${record.state || "unknown"}`,
             stateLabel: this.getStateLabel(record.state),
-            sender: record.sender_display || _t("No sender"),
-            recipient: record.recipient_display || _t("No recipient"),
-            expected: record.expected_delivery_date || _t("No expected date"),
+            sender: record.sender_display || label("No sender", "لا يوجد مرسل"),
+            recipient: record.recipient_display || label("No recipient", "لا يوجد مستلم"),
+            expected: record.expected_delivery_date || label("No expected date", "لا يوجد تاريخ متوقع"),
         }));
         this.state.loading = false;
     }
 
-    get palette() {
-        return CHART_PALETTE;
-    }
-
-    get maxDeliveryMethodValue() {
-        return Math.max(...this.state.byDeliveryMethod.map((item) => item.value), 1);
-    }
-
-    get maxShipmentTypeValue() {
-        return Math.max(...this.state.byShipmentType.map((item) => item.value), 1);
+    maxValue(items) {
+        return Math.max(...items.map((item) => item.value), 1);
     }
 
     get donutSegments() {
@@ -203,58 +216,61 @@ export class AbInternalShipmentDashboard extends Component {
 
     getStateLabel(value) {
         return {
-            draft: _t("Draft"),
-            sent: _t("Sent"),
-            in_transit: _t("In Transit"),
-            awaiting_warehouse_receipt: _t("Waiting Warehouse Receipt"),
-            awaiting_receipt: _t("Awaiting Receipt"),
-            received: _t("Confirmed"),
-            closed: _t("Closed"),
-        }[value] || value || _t("Unknown");
+            draft: label("Draft", "مسودة"),
+            sent: label("Dispatched", "تم الإرسال والتسليم"),
+            in_transit: label("Dispatched", "تم الإرسال والتسليم"),
+            awaiting_warehouse_receipt: label("Waiting Warehouse Receipt", "بانتظار استلام المخزن"),
+            awaiting_receipt: label("Awaiting Receipt", "بانتظار الاستلام"),
+            received: label("Confirmed", "تم الاستلام"),
+            closed: label("Closed", "مغلق"),
+        }[value] || value || label("Unknown", "غير معروف");
     }
 
     getDeliveryMethodLabel(value) {
         return {
-            company_vehicle: _t("Internal Company Vehicle"),
-            external_company: _t("External Shipping Company"),
-            hand_delivery: _t("Hand Delivery"),
-            other: _t("Other"),
-        }[value] || value || _t("Unknown");
+            company_vehicle: label("Internal Company Vehicle", "سيارة الشركة الداخلية"),
+            external_company: label("External Shipping Company", "شركة شحن خارجية"),
+            hand_delivery: label("Hand Delivery", "تسليم يدوي"),
+            other: label("Other", "غير ذلك"),
+        }[value] || value || label("Unknown", "غير معروف");
     }
 
     getShipmentTypeLabel(value) {
         return {
-            documents: _t("Documents"),
-            devices: _t("Devices"),
-            mixed: _t("Mixed"),
-            other: _t("Other"),
-        }[value] || value || _t("Unknown");
+            documents: label("Documents", "مستندات"),
+            devices: label("Devices", "أجهزة"),
+            mixed: label("Mixed", "متنوع"),
+            other: label("Other", "غير ذلك"),
+        }[value] || value || label("Unknown", "غير معروف");
     }
 
     getDashboardLabels() {
         return {
-            moduleName: _t("Internal Shipments"),
-            title: _t("Operations Dashboard"),
-            subtitle: _t("Track shipment workload, route stages, pending receipts, and recent movement from one responsive workspace."),
-            byState: _t("By State"),
-            workflowDistribution: _t("Workflow distribution"),
-            noWorkflowActivity: _t("No shipment workflow activity yet."),
-            byDeliveryMethod: _t("By Delivery Method"),
-            movementChannels: _t("Movement channels"),
-            noDeliveryMethodStats: _t("No delivery method statistics yet."),
-            byShipmentType: _t("By Shipment Type"),
-            shipmentMix: _t("Shipment mix"),
-            noShipmentTypeStats: _t("No shipment type statistics yet."),
-            recentShipments: _t("Recent Shipments"),
-            lastSix: _t("Last 6"),
-            noRecentShipments: _t("No recent shipments yet."),
+            moduleName: label("Internal Shipments", "الشحنات الداخلية"),
+            title: label("Operations Dashboard", "لوحة متابعة العمليات"),
+            subtitle: label(
+                "Track shipment workload, route stages, pending receipts, and recent movement from one responsive workspace.",
+                "تابع الشحنات ومراحل المسار والاستلامات المعلقة وآخر الحركات من مساحة واحدة."
+            ),
+            byState: label("By State", "حسب الحالة"),
+            workflowDistribution: label("Workflow distribution", "توزيع سير العمل"),
+            noWorkflowActivity: label("No shipment workflow activity yet.", "لا توجد حركة في سير عمل الشحنات حتى الآن."),
+            byDeliveryMethod: label("By Delivery Method", "حسب طريقة التسليم"),
+            movementChannels: label("Movement channels", "قنوات الحركة"),
+            noDeliveryMethodStats: label("No delivery method statistics yet.", "لا توجد إحصائيات لطريقة التسليم حتى الآن."),
+            byShipmentType: label("By Shipment Type", "حسب نوع الشحنة"),
+            shipmentMix: label("Shipment mix", "توزيع أنواع الشحنات"),
+            noShipmentTypeStats: label("No shipment type statistics yet.", "لا توجد إحصائيات لأنواع الشحنات حتى الآن."),
+            recentShipments: label("Recent Shipments", "أحدث الشحنات"),
+            lastSix: label("Last 6", "آخر 6"),
+            noRecentShipments: label("No recent shipments yet.", "لا توجد شحنات حديثة حتى الآن."),
         };
     }
 
     async openList(domain) {
         await this.action.doAction({
             type: "ir.actions.act_window",
-            name: _t("Internal Shipments"),
+            name: label("Internal Shipments", "الشحنات الداخلية"),
             res_model: "ab_internal_shipment",
             views: [[false, "list"], [false, "form"]],
             domain,
@@ -267,4 +283,4 @@ export class AbInternalShipmentDashboard extends Component {
     }
 }
 
-registry.category("actions").add("ab_internal_shipment_tracking.dashboard", AbInternalShipmentDashboard);
+registry.category("actions").add("ab_internal_shipment_tracking.dashboard", AbInternalShipmentDashboard, {force: true});

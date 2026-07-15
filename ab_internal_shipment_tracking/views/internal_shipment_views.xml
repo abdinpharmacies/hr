@@ -582,7 +582,8 @@
             <field name="name">Awaiting Receipt</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
-            <field name="domain">[('state', '=', 'awaiting_receipt')]</field>
+            <field name="domain">[  ('state', '=', 'awaiting_receipt'),
+                                    ('receipt_route_user_ids', 'in', [uid]) ]</field>
             <field name="context">{'list_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_list_awaiting_receipt', 'form_view_ref': 'ab_internal_shipment_tracking.ab_internal_shipment_view_form'}</field>
             <field name="group_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user')), (4, ref('base.group_system'))]"/>
             <field name="search_view_id" ref="ab_internal_shipment_view_search"/>

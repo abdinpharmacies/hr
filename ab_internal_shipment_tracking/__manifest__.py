@@ -4,6 +4,8 @@
     "version": "19.0.1.0.4",
     "category": "AbdinSupplyChain",
     "license": "LGPL-3",
+    "author": "Abdin Pharmacies",
+    "developer": "Alhassan Hossny",
     "application": True,
     "depends": ["base", "mail", "web", "ab_hr", "ab_store"],
     "data": [
@@ -21,10 +23,8 @@
         "web.assets_backend": [
             "ab_internal_shipment_tracking/static/src/scss/internal_shipment_design.scss",
             "ab_internal_shipment_tracking/static/src/js/internal_shipment_view_recovery.js",
-            "ab_internal_shipment_tracking/static/src/js/internal_shipment_delivery_evidence.js",
-            "ab_internal_shipment_tracking/static/src/xml/internal_shipment_delivery_evidence.xml",
-            "ab_internal_shipment_tracking/static/src/dashboard_fix/js/internal_shipment_dashboard.js",
-            "ab_internal_shipment_tracking/static/src/dashboard_fix/xml/internal_shipment_dashboard.xml",
+            "ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js",
+            "ab_internal_shipment_tracking/static/src/xml/internal_shipment_dashboard.xml",
         ],
     },
     "installable": True,

@@ -514,75 +514,36 @@ class InternalShipment(models.Model):
 
     @api.onchange("sender_department_id")
     def _onchange_sender_department_id(self):
-        self.sender_employee_selection_type = "all"
-        self.sender_selected_employee_ids = [(5, 0, 0)]
-        if self.sender_department_id:
-            return {
-                "domain": {
-                    "sender_selected_employee_ids": [
-                        ("department_id", "=", self.sender_department_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "sender_selected_employee_ids": [],
-            },
-        }
+        return self._reset_party_employee_selection(
+            "sender",
+            [("department_id", "=", self.sender_department_id.id)] if self.sender_department_id else [],
+        )
 
     @api.onchange("recipient_department_id")
     def _onchange_recipient_department_id(self):
-        self.recipient_employee_selection_type = "all"
-        self.recipient_selected_employee_ids = [(5, 0, 0)]
-        if self.recipient_department_id:
-            return {
-                "domain": {
-                    "recipient_selected_employee_ids": [
-                        ("department_id", "=", self.recipient_department_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "recipient_selected_employee_ids": [],
-            },
-        }
+        return self._reset_party_employee_selection(
+            "recipient",
+            [("department_id", "=", self.recipient_department_id.id)] if self.recipient_department_id else [],
+        )
 
     @api.onchange("sender_store_id")
     def _onchange_sender_store_id(self):
-        self.sender_employee_selection_type = "all"
-        self.sender_selected_employee_ids = [(5, 0, 0)]
-        if self.sender_store_id:
-            return {
-                "domain": {
-                    "sender_selected_employee_ids": [
-                        ("department_id.store_id", "=", self.sender_store_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "sender_selected_employee_ids": [],
-            },
-        }
+        return self._reset_party_employee_selection(
+            "sender",
+            [("department_id.store_id", "=", self.sender_store_id.id)] if self.sender_store_id else [],
+        )
 
     @api.onchange("recipient_store_id")
     def _onchange_recipient_store_id(self):
-        self.recipient_employee_selection_type = "all"
-        self.recipient_selected_employee_ids = [(5, 0, 0)]
-        if self.recipient_store_id:
-            return {
-                "domain": {
-                    "recipient_selected_employee_ids": [
-                        ("department_id.store_id", "=", self.recipient_store_id.id),
-                    ],
-                },
-            }
-        return {
-            "domain": {
-                "recipient_selected_employee_ids": [],
-            },
-        }
+        return self._reset_party_employee_selection(
+            "recipient",
+            [("department_id.store_id", "=", self.recipient_store_id.id)] if self.recipient_store_id else [],
+        )
+
+    def _reset_party_employee_selection(self, party, domain):
+        setattr(self, f"{party}_employee_selection_type", "all")
+        setattr(self, f"{party}_selected_employee_ids", [(5, 0, 0)])
+        return {"domain": {f"{party}_selected_employee_ids": domain}}
 
     @api.onchange("shipment_type")
     def _onchange_shipment_type(self):

@@ -60,8 +60,7 @@
                                     <strong t-out="item.value"/>
                                 </div>
                                 <div class="o_ais_bar_track">
-                                    <span class="o_ais_bar_fill"
-                                          t-att-style="'width:' + (item.value / maxDeliveryMethodValue * 100) + '%; background:' + palette[item_index % palette.length]"/>
+                                    <span class="o_ais_bar_fill" t-att-style="item.style"/>
                                 </div>
                             </div>
                         </div>
@@ -80,8 +79,7 @@
                                     <strong t-out="item.value"/>
                                 </div>
                                 <div class="o_ais_bar_track">
-                                    <span class="o_ais_bar_fill"
-                                          t-att-style="'width:' + (item.value / maxShipmentTypeValue * 100) + '%; background:' + palette[item_index % palette.length]"/>
+                                    <span class="o_ais_bar_fill" t-att-style="item.style"/>
                                 </div>
                             </div>
                         </div>
@@ -97,7 +95,7 @@
                             <button type="button" t-foreach="state.recent" t-as="item" t-key="item.id" class="o_ais_recent_item" t-on-click="() => this.openList([['id', '=', item.id]])">
                                 <div class="o_ais_recent_top">
                                     <strong t-out="item.name"/>
-                                    <span t-attf-class="o_ais_dashboard_state_badge o_ais_dashboard_state_#{item.state}" t-out="item.stateLabel"/>
+                                    <span t-att-class="item.stateClass" t-out="item.stateLabel"/>
                                 </div>
                                 <div class="o_ais_recent_subject" t-out="item.subject"/>
                                 <div class="o_ais_recent_meta">
