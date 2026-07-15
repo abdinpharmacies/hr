@@ -596,6 +596,36 @@ Minimum:
 - One business rule test.
 - One access or record rule test if applicable.
 
+### Test Port Isolation
+
+- Do not stop or restart the Odoo process managed by PyCharm merely because its
+  configured HTTP or gevent port is already in use.
+- Run module upgrades, test suites, asset checks, and temporary development
+  servers on different unused ports by passing both `--http-port` and
+  `--gevent-port` explicitly.
+- If a selected test port is occupied, choose another unused port; do not
+  terminate the existing PyCharm process to free it.
+
+Preferred replica upgrade example:
+
+```bash
+/opt/odoo19/venv19/bin/python \
+  /opt/odoo19/server/odoo-bin \
+  -c /opt/odoo19/odoo19.conf \
+  -d abdin_replica19 \
+  -u <module_name> \
+  --stop-after-init \
+  --workers=0 \
+  --max-cron-threads=0 \
+  --http-port=5069 \
+  --gevent-port=5072
+```
+
+Add `--test-enable --test-tags /<module_name>` when running the module test
+suite. No console output is acceptable when the command exits with status `0`;
+use the configured Odoo log for detailed results. Verify that any alternative
+config path exists and is readable before using it.
+
 ## Upgrade Safety
 
 Code must:
