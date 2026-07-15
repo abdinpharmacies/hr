@@ -6,7 +6,7 @@
     'author': 'Abdin Pharmacies',
     'developer': 'Mohamed Fawzy',
     'application': True,
-    'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter', 'ab_hr'],
+    'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter', 'ab_hr', 'ab_payroll'],
 
     'data': [
         'security/groups.xml',
