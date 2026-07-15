@@ -7,7 +7,7 @@
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
     "application": True,
-    "depends": ["base", "web", "ab_eplus_connect", "ab_store", "ab_product"],
+    "depends": ["base", "web", "ab_core_ui", "ab_eplus_connect", "ab_store", "ab_product"],
     "data": [
         "security/security_groups.xml",
         "security/record_rules.xml",
