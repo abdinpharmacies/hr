@@ -9,6 +9,10 @@ from odoo.tools.translate import _
 _logger = logging.getLogger(__name__)
 
 
+class SalesDashboardRefreshBusyError(UserError):
+    """Raised when another bounded dashboard source operation owns the lock."""
+
+
 class SalesDashboardConfigMixin(models.AbstractModel):
     _name = "ab.sales.dashboard.config.mixin"
     _description = "Sales Dashboard Configuration Helpers"
@@ -16,6 +20,7 @@ class SalesDashboardConfigMixin(models.AbstractModel):
     # Stable transaction-scoped PostgreSQL advisory lock for heavy sales
     # dashboard refreshes. Keep this fixed across workers/processes.
     _SALES_DASHBOARD_REFRESH_LOCK_ID = 1907350131
+    _SALES_DASHBOARD_SYNC_CLAIM_LOCK_ID = 1907350132
 
     @api.model
     def _get_int_param(self, key, default, minimum=None, maximum=None):
@@ -166,6 +171,12 @@ class SalesDashboardConfigMixin(models.AbstractModel):
         return bool(row and row[0])
 
     @api.model
+    def _try_sales_dashboard_sync_claim_lock(self):
+        self.env.cr.execute("SELECT pg_try_advisory_xact_lock(%s)", [self._SALES_DASHBOARD_SYNC_CLAIM_LOCK_ID])
+        row = self.env.cr.fetchone()
+        return bool(row and row[0])
+
+    @api.model
     @contextmanager
     def _sales_dashboard_refresh_lock(self):
         if not self._try_sales_dashboard_refresh_lock():
@@ -173,5 +184,7 @@ class SalesDashboardConfigMixin(models.AbstractModel):
                 "event=sales_dashboard_refresh_lock_busy lock_id=%s",
                 self._SALES_DASHBOARD_REFRESH_LOCK_ID,
             )
-            raise UserError(_("A sales dashboard refresh is already running. Please wait for it to finish and try again."))
+            raise SalesDashboardRefreshBusyError(
+                _("A sales dashboard refresh is already running. Please wait for it to finish and try again.")
+            )
         yield

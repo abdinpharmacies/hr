@@ -14,6 +14,16 @@ const COLLECTION_LABELS = {
 
 const FILTER_STORAGE_KEY = "ab_sales_dashboard.filters";
 const SYNC_POLL_DELAY_MS = 750;
+const DATE_FILTER_KEYS = new Set([
+    "day",
+    "yesterday",
+    "last_7_days",
+    "last_30_days",
+    "last_90_days",
+    "month",
+    "year",
+    "custom",
+]);
 
 const UI_TEXT = {
     title: _t("Sales Dashboard"),
@@ -22,18 +32,33 @@ const UI_TEXT = {
     refreshing: _t("Refreshing..."),
     refreshFromEplus: _t("Refresh from E-Plus"),
     filterByStore: _t("Filter by store"),
+    showFilters: _t("Show filters"),
+    hideFilters: _t("Hide filters"),
     dateFilter: _t("Date Filter"),
+    daily: _t("Daily"),
     yesterday: _t("Yesterday"),
     last7Days: _t("Last 7 Days"),
     last30Days: _t("Last 30 Days"),
     last90Days: _t("Last 90 Days"),
     dateFrom: _t("Date From"),
     dateTo: _t("Date To"),
+    month: _t("Month"),
+    year: _t("Year"),
+    search: _t("Search"),
+    previousPage: _t("Previous"),
+    nextPage: _t("Next"),
+    page: _t("Page"),
+    of: _t("of"),
+    records: _t("records"),
+    noRecords: _t("No records found."),
+    sectionLoadFailed: _t("Could not load all records for this section."),
+    limitedRows: _t("Only stored snapshot rows are available for this section."),
     loading: _t("Loading dashboard..."),
     syncing: _t("Syncing..."),
     syncStarted: _t("Dashboard sync started."),
     syncFinished: _t("Dashboard sync finished."),
     syncFailed: _t("Dashboard sync finished with failed days."),
+    sourceUnavailable: _t("E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored."),
     syncedDays: _t("Synced days"),
     partialStoredSummary: _t("Partial stored summary"),
     reportDataUnavailable: _t("Report data unavailable for this range. Run shorter E-Plus refreshes first to build daily facts."),
@@ -84,13 +109,17 @@ class SalesDashboardAction extends Component {
         this.notification = useService("notification");
         this.ui = UI_TEXT;
         this.syncPollTimer = null;
+        this.sectionSearchTimers = {};
+        this.sectionRequestVersions = {};
         this.unmounted = false;
         this.updateFilter = this.updateFilter.bind(this);
         this.onRefresh = this.onRefresh.bind(this);
         this.applyDatePreset = this.applyDatePreset.bind(this);
+        this.applyDaySelection = this.applyDaySelection.bind(this);
         this.onStoreSearchInput = this.onStoreSearchInput.bind(this);
         this.selectStore = this.selectStore.bind(this);
         this.toggleStoreMenu = this.toggleStoreMenu.bind(this);
+        this.toggleMobileFilters = this.toggleMobileFilters.bind(this);
         this.openStoreMenu = this.openStoreMenu.bind(this);
         const savedFilters = this.loadSavedFilters();
         this.state = useState({
@@ -98,7 +127,9 @@ class SalesDashboardAction extends Component {
             refreshing: false,
             syncing: false,
             storeMenuOpen: false,
+            mobileFiltersOpen: false,
             storeSearch: UI_TEXT.allStores,
+            activeDateFilter: savedFilters.active_date_filter,
             filters: {
                 date_from: savedFilters.date_from,
                 date_to: savedFilters.date_to,
@@ -106,6 +137,11 @@ class SalesDashboardAction extends Component {
             },
             data: null,
             syncProgress: null,
+            sectionPages: {
+                sales_by_user: this.emptySectionPage(),
+                top_items: this.emptySectionPage(),
+                customer_sales: this.emptySectionPage(),
+            },
         });
         onWillStart(async () => {
             await this.loadDashboard(false);
@@ -115,7 +151,25 @@ class SalesDashboardAction extends Component {
         onWillUnmount(() => {
             this.unmounted = true;
             this.stopSyncPolling();
+            for (const timer of Object.values(this.sectionSearchTimers)) {
+                clearTimeout(timer);
+            }
         });
+    }
+
+    emptySectionPage() {
+        return {
+            rows: [],
+            page: 1,
+            pageSize: 20,
+            totalCount: 0,
+            totalPages: 1,
+            search: "",
+            loading: false,
+            available: false,
+            limited: false,
+            error: false,
+        };
     }
 
     loadSavedFilters() {
@@ -132,16 +186,22 @@ class SalesDashboardAction extends Component {
                 date_from: this.clampIsoToLatestReportDate(saved.date_from || defaults.date_from),
                 date_to: this.clampIsoToLatestReportDate(saved.date_to || defaults.date_to),
                 store_id: Number(saved.store_id || 0),
+                active_date_filter: DATE_FILTER_KEYS.has(saved.active_date_filter)
+                    ? saved.active_date_filter
+                    : "last_7_days",
             };
         } catch {
-            return defaults;
+            return { ...defaults, active_date_filter: "last_7_days" };
         }
     }
 
     persistFilters() {
         try {
             if (window.localStorage) {
-                window.localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify(this.state.filters));
+                window.localStorage.setItem(FILTER_STORAGE_KEY, JSON.stringify({
+                    ...this.state.filters,
+                    active_date_filter: this.state.activeDateFilter,
+                }));
             }
         } catch {
             // Browser storage is optional; the dashboard still works without it.
@@ -162,6 +222,8 @@ class SalesDashboardAction extends Component {
             this.state.filters.store_id = data.store_id || 0;
             this.state.storeSearch = this.storeDisplayName(data.store_id, data.stores);
             this.persistFilters();
+            this.initializeSectionPages(data);
+            this.loadAvailableSectionPages();
         } finally {
             this.state.loading = false;
             if (refresh) {
@@ -212,12 +274,56 @@ class SalesDashboardAction extends Component {
 
         this.state.filters.date_from = this.toIsoDate(dateFrom);
         this.state.filters.date_to = this.toIsoDate(dateTo);
+        this.state.activeDateFilter = preset;
+        this.persistFilters();
+        return this.loadDashboard(false);
+    }
+
+    applyMonthSelection(ev) {
+        const value = ev.target.value;
+        if (!value) {
+            return;
+        }
+        const [year, month] = value.split("-").map((part) => Number(part));
+        const dateFrom = new Date(year, month - 1, 1);
+        const dateTo = this.clampToLatestReportDate(new Date(year, month, 0));
+        this.state.activeDateFilter = "month";
+        return this.applyExplicitDateRange(dateFrom, dateTo);
+    }
+
+    applyDaySelection(ev) {
+        const value = this.clampIsoToLatestReportDate(ev.target.value);
+        if (!value) {
+            return;
+        }
+        this.state.filters.date_from = value;
+        this.state.filters.date_to = value;
+        this.state.activeDateFilter = "day";
+        this.persistFilters();
+        return this.loadDashboard(false);
+    }
+
+    applyYearSelection(ev) {
+        const year = Number(ev.target.value || 0);
+        if (!year) {
+            return;
+        }
+        const dateFrom = new Date(year, 0, 1);
+        const dateTo = this.clampToLatestReportDate(new Date(year, 11, 31));
+        this.state.activeDateFilter = "year";
+        return this.applyExplicitDateRange(dateFrom, dateTo);
+    }
+
+    applyExplicitDateRange(dateFrom, dateTo) {
+        this.state.filters.date_from = this.toIsoDate(dateFrom);
+        this.state.filters.date_to = this.toIsoDate(dateTo);
         this.persistFilters();
         return this.loadDashboard(false);
     }
 
     updateCustomDate(name, value) {
         this.updateFilter(name, this.clampIsoToLatestReportDate(value));
+        this.state.activeDateFilter = "custom";
         this.persistFilters();
         if (this.state.filters.date_from && this.state.filters.date_to) {
             return this.loadDashboard(false);
@@ -242,6 +348,117 @@ class SalesDashboardAction extends Component {
             this.state.syncing = false;
             throw error;
         }
+    }
+
+    initializeSectionPages(data) {
+        const initialRows = {
+            sales_by_user: data.user_lines || [],
+            top_items: data.item_lines || [],
+            customer_sales: data.invoice_lines || [],
+        };
+        const unsupported = new Set(((data.report_meta || {}).unsupported_sections) || []);
+        for (const section of Object.keys(initialRows)) {
+            const sectionState = this.state.sectionPages[section];
+            Object.assign(sectionState, {
+                rows: initialRows[section],
+                page: 1,
+                pageSize: 20,
+                totalCount: initialRows[section].length,
+                totalPages: 1,
+                search: "",
+                loading: false,
+                available: Boolean(data.has_snapshot) && !unsupported.has(section),
+                limited: false,
+                error: false,
+            });
+            this.sectionRequestVersions[section] = (this.sectionRequestVersions[section] || 0) + 1;
+        }
+    }
+
+    loadAvailableSectionPages() {
+        for (const section of Object.keys(this.state.sectionPages)) {
+            if (this.state.sectionPages[section].available) {
+                this.loadSectionPage(section, 1);
+            }
+        }
+    }
+
+    async loadSectionPage(section, page) {
+        const sectionState = this.state.sectionPages[section];
+        if (!sectionState || !sectionState.available || this.unmounted) {
+            return;
+        }
+        const requestVersion = (this.sectionRequestVersions[section] || 0) + 1;
+        this.sectionRequestVersions[section] = requestVersion;
+        sectionState.loading = true;
+        sectionState.error = false;
+        const filters = { ...this.state.filters };
+        try {
+            const result = await this.orm.call(
+                "ab.sales.dashboard.snapshot",
+                "get_dashboard_section_page",
+                [filters, section, page, sectionState.search]
+            );
+            if (this.unmounted || this.sectionRequestVersions[section] !== requestVersion) {
+                return;
+            }
+            let rows = result.rows || [];
+            if (section === "top_items") {
+                const balances = new Map(
+                    ((this.state.data && this.state.data.item_lines) || []).map((row) => [
+                        Number(row.eplus_item_id || 0),
+                        row.current_balance,
+                    ])
+                );
+                rows = rows.map((row) => balances.has(Number(row.eplus_item_id || 0))
+                    ? { ...row, current_balance: balances.get(Number(row.eplus_item_id || 0)) }
+                    : row);
+            }
+            Object.assign(sectionState, {
+                rows,
+                page: Number(result.page || 1),
+                pageSize: Number(result.page_size || 20),
+                totalCount: Number(result.total_count || 0),
+                totalPages: Math.max(Number(result.total_pages || 1), 1),
+                available: result.available !== false,
+                limited: Boolean(result.limited),
+                error: false,
+            });
+        } catch {
+            if (this.sectionRequestVersions[section] === requestVersion) {
+                sectionState.error = true;
+            }
+        } finally {
+            if (this.sectionRequestVersions[section] === requestVersion) {
+                sectionState.loading = false;
+            }
+        }
+    }
+
+    onSectionSearchInput(section, ev) {
+        const sectionState = this.state.sectionPages[section];
+        sectionState.search = ev.target.value.slice(0, 100);
+        clearTimeout(this.sectionSearchTimers[section]);
+        this.sectionSearchTimers[section] = setTimeout(() => {
+            this.loadSectionPage(section, 1);
+        }, 300);
+    }
+
+    changeSectionPage(section, direction) {
+        const sectionState = this.state.sectionPages[section];
+        const nextPage = Math.min(Math.max(sectionState.page + direction, 1), sectionState.totalPages);
+        if (!sectionState.loading && nextPage !== sectionState.page) {
+            this.loadSectionPage(section, nextPage);
+        }
+    }
+
+    sectionRowNumber(section, index) {
+        const sectionState = this.state.sectionPages[section];
+        return ((sectionState.page - 1) * sectionState.pageSize) + index + 1;
+    }
+
+    isDateFilterActive(filterKey) {
+        return this.state.activeDateFilter === filterKey;
     }
 
     async refreshSyncProgress() {
@@ -294,7 +511,9 @@ class SalesDashboardAction extends Component {
             this.state.syncing = false;
             await this.loadDashboard(false);
             await this.refreshSyncProgress();
-            if (progress.failed_days) {
+            if (progress.last_status === "source_unavailable") {
+                this.notification.add(this.ui.sourceUnavailable, { type: "warning" });
+            } else if (progress.failed_days) {
                 this.notification.add(this.ui.syncFailed, { type: "warning" });
             } else if (progress.is_complete) {
                 this.notification.add(this.ui.syncFinished, { type: "success" });
@@ -318,6 +537,13 @@ class SalesDashboardAction extends Component {
         return this.isRtl ? "rtl" : "ltr";
     }
 
+    toggleMobileFilters() {
+        this.state.mobileFiltersOpen = !this.state.mobileFiltersOpen;
+        if (!this.state.mobileFiltersOpen) {
+            this.state.storeMenuOpen = false;
+        }
+    }
+
     get locale() {
         const lang = (document.documentElement.lang || "").replace("_", "-");
         return this.isRtl ? "ar-EG" : (lang || "en-US");
@@ -335,6 +561,56 @@ class SalesDashboardAction extends Component {
 
     get latestReportDateIso() {
         return this.toIsoDate(this.latestReportDate());
+    }
+
+    get monthOptions() {
+        const latest = this.latestReportDate();
+        const formatter = new Intl.DateTimeFormat(this.locale, { month: "long", year: "numeric" });
+        const options = [];
+        for (let offset = 0; offset < 36; offset++) {
+            const month = new Date(latest.getFullYear(), latest.getMonth() - offset, 1);
+            options.push({
+                value: `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}`,
+                label: formatter.format(month),
+            });
+        }
+        return options;
+    }
+
+    get yearOptions() {
+        const latestYear = this.latestReportDate().getFullYear();
+        return Array.from({ length: 10 }, (_value, index) => `${latestYear - index}`);
+    }
+
+    get selectedMonthValue() {
+        const dateFrom = this.parseIsoDate(this.state.filters.date_from);
+        const dateTo = this.parseIsoDate(this.state.filters.date_to);
+        if (!dateFrom || !dateTo || dateFrom.getDate() !== 1) {
+            return "";
+        }
+        const expectedEnd = this.clampToLatestReportDate(
+            new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1, 0)
+        );
+        if (!this.sameDate(this.state.filters.date_to, expectedEnd)) {
+            return "";
+        }
+        return `${dateFrom.getFullYear()}-${String(dateFrom.getMonth() + 1).padStart(2, "0")}`;
+    }
+
+    get selectedDayValue() {
+        return this.state.filters.date_from === this.state.filters.date_to
+            ? this.state.filters.date_from
+            : "";
+    }
+
+    get selectedYearValue() {
+        const dateFrom = this.parseIsoDate(this.state.filters.date_from);
+        const dateTo = this.parseIsoDate(this.state.filters.date_to);
+        if (!dateFrom || !dateTo || dateFrom.getMonth() !== 0 || dateFrom.getDate() !== 1) {
+            return "";
+        }
+        const expectedEnd = this.clampToLatestReportDate(new Date(dateFrom.getFullYear(), 11, 31));
+        return this.sameDate(this.state.filters.date_to, expectedEnd) ? String(dateFrom.getFullYear()) : "";
     }
 
     clampToLatestReportDate(date) {
@@ -546,9 +822,10 @@ class SalesDashboardAction extends Component {
 
 SalesDashboardAction.template = xml`
 <div class="ab_sales_dashboard" t-att-dir="direction">
-    <div class="o_control_panel d-flex flex-column gap-3 px-3 pt-2 pb-3 ab_sales_dashboard__control_panel">
-        <div class="o_control_panel_main d-flex flex-wrap flex-lg-nowrap justify-content-between align-items-lg-start gap-2 gap-lg-3 flex-grow-1">
-            <div class="o_control_panel_breadcrumbs d-flex align-items-center gap-1 order-0 h-lg-100">
+    <div class="o_control_panel ab_sales_dashboard__control_panel"
+         t-att-class="{'ab_sales_dashboard__control_panel--mobile_open': state.mobileFiltersOpen}">
+        <div class="o_control_panel_main ab_sales_dashboard__toolbar">
+            <div class="o_control_panel_breadcrumbs d-flex align-items-center gap-1">
                 <div class="o_control_panel_main_buttons d-flex gap-1 d-empty-none d-print-none"/>
                 <div class="o_breadcrumb d-flex gap-1 text-truncate">
                     <div class="o_last_breadcrumb_item active d-flex fs-4 min-w-0 align-items-center">
@@ -557,70 +834,111 @@ SalesDashboardAction.template = xml`
                     <div class="o_control_panel_breadcrumbs_actions d-inline-flex d-print-none"/>
                 </div>
                 <div class="me-auto"/>
+                <button type="button"
+                        class="btn btn-outline-secondary ab_sales_dashboard__mobile_filter_toggle d-print-none"
+                        aria-controls="ab_sales_dashboard_filters"
+                        t-att-aria-expanded="state.mobileFiltersOpen"
+                        t-att-aria-label="state.mobileFiltersOpen ? ui.hideFilters : ui.showFilters"
+                        t-att-title="state.mobileFiltersOpen ? ui.hideFilters : ui.showFilters"
+                        t-on-click="toggleMobileFilters">
+                    <i t-att-class="state.mobileFiltersOpen ? 'fa fa-times' : 'fa fa-bars'" aria-hidden="true"/>
+                </button>
             </div>
-            <div class="o_control_panel_actions d-empty-none d-flex align-items-center justify-content-start justify-content-lg-around order-2 order-lg-1 w-100 mw-100 w-lg-auto">
-                <div class="d-flex flex-wrap w-100">
-                    <div class="o_sp_dashboard_search d-flex flex-wrap flex-lg-nowrap gap-1 gap-lg-2 w-100 w-lg-auto ab_sales_dashboard__filters">
-                        <div class="d-flex flex-grow-1 input-group w-auto ab_sales_dashboard__store_search">
-                            <div class="o_searchview form-control d-flex align-items-center py-1 border-end-0 gap-1" aria-expanded="false">
-                                <button class="btn border-0 p-0" type="button" tabindex="-1">
-                                    <i class="oi oi-search me-2"/>
-                                </button>
-                                <div class="o_searchview_input_container d-flex flex-grow-1 flex-wrap gap-1 mw-100">
-                                    <input type="text"
-                                           class="o_searchview_input o_input d-print-none flex-grow-1 w-auto border-0 ab_sales_dashboard__store_input"
-                                           t-att-title="ui.filterByStore"
-                                           t-att-aria-label="ui.filterByStore"
-                                           t-att-value="state.storeSearch"
-                                           t-on-focus="openStoreMenu"
-                                           t-on-input="onStoreSearchInput"/>
-                                    <div t-if="state.storeMenuOpen" class="dropdown-menu show ab_sales_dashboard__store_menu">
-                                        <button class="dropdown-item" type="button" t-on-mousedown.prevent="() => this.selectStore(0, ui.allStores)" t-esc="ui.allStores"/>
-                                        <div class="dropdown-divider"/>
-                                        <t t-foreach="filteredStores" t-as="store" t-key="store.id">
-                                            <button class="dropdown-item text-truncate" type="button" t-on-mousedown.prevent="() => this.selectStore(store.id, store.name)" t-esc="store.name"/>
-                                        </t>
-                                    </div>
-                                </div>
-                            </div>
-                            <button class="o_searchview_dropdown_toggler btn btn-outline-secondary o-dropdown-caret rounded-start-0 o-dropdown dropdown-toggle dropdown"
-                                    type="button"
-                                    tabindex="-1"
-                                    t-att-title="ui.filterByStore"
-                                    t-on-click="toggleStoreMenu"/>
-                        </div>
-                        <div class="ab_sales_dashboard__date_inputs">
-                            <label class="ab_sales_dashboard__date_field">
-                                <span t-esc="ui.dateFrom"/>
-                                <input type="date"
-                                       class="form-control"
-                                       t-att-value="state.filters.date_from"
-                                       t-att-max="latestReportDateIso"
-                                       t-att-disabled="state.refreshing"
-                                       t-on-change="(ev) => this.updateCustomDate('date_from', ev.target.value)"/>
-                            </label>
-                            <label class="ab_sales_dashboard__date_field">
-                                <span t-esc="ui.dateTo"/>
-                                <input type="date"
-                                       class="form-control"
-                                       t-att-value="state.filters.date_to"
-                                       t-att-max="latestReportDateIso"
-                                       t-att-disabled="state.refreshing"
-                                       t-on-change="(ev) => this.updateCustomDate('date_to', ev.target.value)"/>
-                            </label>
-                        </div>
-                        <div class="btn-group ab_sales_dashboard__quick_ranges" role="group" t-att-aria-label="ui.dateFilter">
-                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="ui.yesterday"/>
-                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="ui.last7Days"/>
-                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="ui.last30Days"/>
-                            <button class="btn btn-outline-secondary" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="ui.last90Days"/>
-                        </div>
-                        <button type="button" class="btn btn-primary" t-on-click="onRefresh" t-att-disabled="state.refreshing" t-att-title="ui.refreshFromEplus">
-                            <t t-if="state.refreshing" t-esc="ui.syncing"/>
-                            <t t-else="" t-esc="ui.refreshFromEplus"/>
+            <div id="ab_sales_dashboard_filters" class="o_control_panel_actions o_sp_dashboard_search ab_sales_dashboard__filters">
+                <div class="d-flex input-group ab_sales_dashboard__store_search">
+                    <div class="o_searchview form-control d-flex align-items-center py-1 border-end-0 gap-1" aria-expanded="false">
+                        <button class="btn border-0 p-0" type="button" tabindex="-1">
+                            <i class="oi oi-search me-2"/>
                         </button>
+                        <div class="o_searchview_input_container d-flex flex-grow-1 flex-wrap gap-1 mw-100">
+                            <input type="text"
+                                   class="o_searchview_input o_input d-print-none flex-grow-1 w-auto border-0 ab_sales_dashboard__store_input"
+                                   t-att-title="ui.filterByStore"
+                                   t-att-aria-label="ui.filterByStore"
+                                   t-att-value="state.storeSearch"
+                                   t-on-focus="openStoreMenu"
+                                   t-on-input="onStoreSearchInput"/>
+                            <div t-if="state.storeMenuOpen" class="dropdown-menu show ab_sales_dashboard__store_menu">
+                                <button class="dropdown-item" type="button" t-on-mousedown.prevent="() => this.selectStore(0, ui.allStores)" t-esc="ui.allStores"/>
+                                <div class="dropdown-divider"/>
+                                <t t-foreach="filteredStores" t-as="store" t-key="store.id">
+                                    <button class="dropdown-item text-truncate" type="button" t-on-mousedown.prevent="() => this.selectStore(store.id, store.name)" t-esc="store.name"/>
+                                </t>
+                            </div>
+                        </div>
                     </div>
+                    <button class="o_searchview_dropdown_toggler btn btn-outline-secondary o-dropdown-caret rounded-start-0 o-dropdown dropdown-toggle dropdown"
+                            type="button"
+                            tabindex="-1"
+                            t-att-title="ui.filterByStore"
+                            t-on-click="toggleStoreMenu"/>
                 </div>
+                <div class="ab_sales_dashboard__date_inputs"
+                     t-att-class="{'ab_sales_dashboard__date_inputs--active': isDateFilterActive('custom')}">
+                    <label class="ab_sales_dashboard__date_field">
+                        <span t-esc="ui.dateFrom"/>
+                        <input type="date"
+                               class="form-control"
+                               t-att-value="state.filters.date_from"
+                               t-att-max="latestReportDateIso"
+                               t-att-disabled="state.refreshing"
+                               t-on-change="(ev) => this.updateCustomDate('date_from', ev.target.value)"/>
+                    </label>
+                    <label class="ab_sales_dashboard__date_field">
+                        <span t-esc="ui.dateTo"/>
+                        <input type="date"
+                               class="form-control"
+                               t-att-value="state.filters.date_to"
+                               t-att-max="latestReportDateIso"
+                               t-att-disabled="state.refreshing"
+                               t-on-change="(ev) => this.updateCustomDate('date_to', ev.target.value)"/>
+                    </label>
+                </div>
+                <div class="ab_sales_dashboard__quick_ranges" role="group" t-att-aria-label="ui.dateFilter">
+                    <input type="date"
+                           class="form-control ab_sales_dashboard__period_select ab_sales_dashboard__day_select"
+                           t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('day')}"
+                           t-att-aria-label="ui.daily"
+                           t-att-title="ui.daily"
+                           t-att-max="latestReportDateIso"
+                           t-att-disabled="state.refreshing"
+                           t-att-value="selectedDayValue"
+                           t-on-change="applyDaySelection"/>
+                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="ui.yesterday"/>
+                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="ui.last7Days"/>
+                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="ui.last30Days"/>
+                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="ui.last90Days"/>
+                    <select class="form-select ab_sales_dashboard__period_select"
+                            t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('month')}"
+                            t-att-aria-label="ui.month"
+                            t-att-disabled="state.refreshing"
+                            t-att-value="selectedMonthValue"
+                            t-on-change="(ev) => this.applyMonthSelection(ev)">
+                        <option value="" t-att-selected="!selectedMonthValue" t-esc="ui.month"/>
+                        <t t-foreach="monthOptions" t-as="option" t-key="option.value">
+                            <option t-att-value="option.value" t-att-selected="option.value === selectedMonthValue" t-esc="option.label"/>
+                        </t>
+                    </select>
+                    <select class="form-select ab_sales_dashboard__period_select"
+                            t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('year')}"
+                            t-att-aria-label="ui.year"
+                            t-att-disabled="state.refreshing"
+                            t-att-value="selectedYearValue"
+                            t-on-change="(ev) => this.applyYearSelection(ev)">
+                        <option value="" t-att-selected="!selectedYearValue" t-esc="ui.year"/>
+                        <t t-foreach="yearOptions" t-as="option" t-key="option">
+                            <option t-att-value="option" t-att-selected="option === selectedYearValue" t-esc="option"/>
+                        </t>
+                    </select>
+                </div>
+                <button type="button"
+                        class="btn btn-primary ab_sales_dashboard__refresh_button"
+                        t-on-click="onRefresh"
+                        t-att-disabled="state.refreshing"
+                        t-att-title="ui.refreshFromEplus">
+                    <t t-if="state.refreshing" t-esc="ui.syncing"/>
+                    <t t-else="" t-esc="ui.refreshFromEplus"/>
+                </button>
             </div>
         </div>
     </div>
@@ -719,68 +1037,131 @@ SalesDashboardAction.template = xml`
 
         <section class="ab_sales_dashboard__tables">
             <article class="ab_sales_dashboard__panel">
-                <div class="ab_sales_dashboard__panel_header">
+                <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
                     <h2 t-esc="ui.salesByUsers"/>
+                    <label class="ab_sales_dashboard__table_search">
+                        <i class="oi oi-search"/>
+                        <input type="search"
+                               class="form-control"
+                               t-att-placeholder="ui.search"
+                               t-att-aria-label="ui.search"
+                               t-att-value="state.sectionPages.sales_by_user.search"
+                               t-att-disabled="!state.sectionPages.sales_by_user.available"
+                               t-on-input="(ev) => this.onSectionSearchInput('sales_by_user', ev)"/>
+                    </label>
                     <span t-esc="ui.rankedDescending"/>
                 </div>
                 <div t-if="sectionUnsupported('sales_by_user')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
-                <table>
+                <div t-if="state.sectionPages.sales_by_user.error" class="ab_sales_dashboard__section_note" t-esc="ui.sectionLoadFailed"/>
+                <div t-if="state.sectionPages.sales_by_user.limited" class="ab_sales_dashboard__section_note" t-esc="ui.limitedRows"/>
+                <table t-att-aria-busy="state.sectionPages.sales_by_user.loading">
                     <thead>
                         <tr><th>#</th><th t-esc="ui.user"/><th t-esc="ui.totalSales"/><th t-esc="ui.percentage"/></tr>
                     </thead>
                     <tbody>
-                        <t t-foreach="state.data.user_lines" t-as="line" t-key="line.row_key || line.employee_eplus_id || line.employee_name || line_index">
+                        <t t-foreach="state.sectionPages.sales_by_user.rows" t-as="line" t-key="line.row_key || line.employee_eplus_id || line.employee_name || line_index">
                             <tr>
-                                <td t-esc="line_index + 1"/>
+                                <td t-esc="sectionRowNumber('sales_by_user', line_index)"/>
                                 <td t-esc="line.employee_name"/>
                                 <td t-esc="money(line.total_sales)"/>
                                 <td t-esc="pct(line.pct_of_total)"/>
                             </tr>
                         </t>
+                        <tr t-if="!state.sectionPages.sales_by_user.rows.length">
+                            <td colspan="4" class="text-center" t-esc="ui.noRecords"/>
+                        </tr>
                     </tbody>
                 </table>
+                <div t-if="state.sectionPages.sales_by_user.available" class="ab_sales_dashboard__pagination">
+                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.previousPage" t-att-aria-label="ui.previousPage" t-att-disabled="state.sectionPages.sales_by_user.loading || state.sectionPages.sales_by_user.page &lt;= 1" t-on-click="() => this.changeSectionPage('sales_by_user', -1)">
+                        <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
+                    </button>
+                    <span><t t-esc="ui.page"/> <t t-esc="state.sectionPages.sales_by_user.page"/> <t t-esc="ui.of"/> <t t-esc="state.sectionPages.sales_by_user.totalPages"/> · <t t-esc="state.sectionPages.sales_by_user.totalCount"/> <t t-esc="ui.records"/></span>
+                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.nextPage" t-att-aria-label="ui.nextPage" t-att-disabled="state.sectionPages.sales_by_user.loading || state.sectionPages.sales_by_user.page &gt;= state.sectionPages.sales_by_user.totalPages" t-on-click="() => this.changeSectionPage('sales_by_user', 1)">
+                        <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
+                    </button>
+                </div>
             </article>
 
             <article class="ab_sales_dashboard__panel">
-                <div class="ab_sales_dashboard__panel_header">
+                <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
                     <h2 t-esc="ui.topSoldItems"/>
+                    <label class="ab_sales_dashboard__table_search">
+                        <i class="oi oi-search"/>
+                        <input type="search"
+                               class="form-control"
+                               t-att-placeholder="ui.search"
+                               t-att-aria-label="ui.search"
+                               t-att-value="state.sectionPages.top_items.search"
+                               t-att-disabled="!state.sectionPages.top_items.available"
+                               t-on-input="(ev) => this.onSectionSearchInput('top_items', ev)"/>
+                    </label>
                     <span t-esc="ui.saleTimesCurrentBalance"/>
                 </div>
                 <div t-if="sectionUnsupported('top_items')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
-                <table>
+                <div t-if="state.sectionPages.top_items.error" class="ab_sales_dashboard__section_note" t-esc="ui.sectionLoadFailed"/>
+                <div t-if="state.sectionPages.top_items.limited" class="ab_sales_dashboard__section_note" t-esc="ui.limitedRows"/>
+                <table t-att-aria-busy="state.sectionPages.top_items.loading">
                     <thead>
                         <tr><th>#</th><th t-esc="ui.item"/><th t-esc="ui.totalSales"/><th t-esc="ui.saleTimes"/><th t-esc="ui.currentBalance"/></tr>
                     </thead>
                     <tbody>
-                        <t t-foreach="state.data.item_lines" t-as="line" t-key="line.row_key || line.eplus_item_id || line.eplus_item_code || line_index">
+                        <t t-foreach="state.sectionPages.top_items.rows" t-as="line" t-key="line.row_key || line.eplus_item_id || line.eplus_item_code || line_index">
                             <tr>
-                                <td t-esc="line_index + 1"/>
+                                <td t-esc="sectionRowNumber('top_items', line_index)"/>
                                 <td>
                                     <strong t-esc="line.product_name"/>
                                     <small t-esc="line.eplus_item_code"/>
                                 </td>
                                 <td t-esc="money(line.total_sales)"/>
                                 <td t-esc="number(line.sale_times)"/>
-                                <td><t t-esc="decimal(line.current_balance)"/> <t t-esc="ui.unit"/></td>
+                                <td>
+                                    <t t-if="line.current_balance === false || line.current_balance === null">-</t>
+                                    <t t-else=""><t t-esc="decimal(line.current_balance)"/> <t t-esc="ui.unit"/></t>
+                                </td>
                             </tr>
                         </t>
+                        <tr t-if="!state.sectionPages.top_items.rows.length">
+                            <td colspan="5" class="text-center" t-esc="ui.noRecords"/>
+                        </tr>
                     </tbody>
                 </table>
+                <div t-if="state.sectionPages.top_items.available" class="ab_sales_dashboard__pagination">
+                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.previousPage" t-att-aria-label="ui.previousPage" t-att-disabled="state.sectionPages.top_items.loading || state.sectionPages.top_items.page &lt;= 1" t-on-click="() => this.changeSectionPage('top_items', -1)">
+                        <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
+                    </button>
+                    <span><t t-esc="ui.page"/> <t t-esc="state.sectionPages.top_items.page"/> <t t-esc="ui.of"/> <t t-esc="state.sectionPages.top_items.totalPages"/> · <t t-esc="state.sectionPages.top_items.totalCount"/> <t t-esc="ui.records"/></span>
+                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.nextPage" t-att-aria-label="ui.nextPage" t-att-disabled="state.sectionPages.top_items.loading || state.sectionPages.top_items.page &gt;= state.sectionPages.top_items.totalPages" t-on-click="() => this.changeSectionPage('top_items', 1)">
+                        <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
+                    </button>
+                </div>
             </article>
         </section>
 
         <section class="ab_sales_dashboard__panel">
-            <div class="ab_sales_dashboard__panel_header">
+            <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
                 <h2 t-esc="ui.customerSales"/>
+                <label class="ab_sales_dashboard__table_search">
+                    <i class="oi oi-search"/>
+                    <input type="search"
+                           class="form-control"
+                           t-att-placeholder="ui.search"
+                           t-att-aria-label="ui.search"
+                           t-att-value="state.sectionPages.customer_sales.search"
+                           t-att-disabled="!state.sectionPages.customer_sales.available"
+                           t-on-input="(ev) => this.onSectionSearchInput('customer_sales', ev)"/>
+                </label>
                 <span t-esc="ui.invoiceCustomerItems"/>
             </div>
             <div t-if="sectionUnsupported('customer_sales')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
-            <table>
+            <div t-if="state.sectionPages.customer_sales.error" class="ab_sales_dashboard__section_note" t-esc="ui.sectionLoadFailed"/>
+            <div t-if="state.sectionPages.customer_sales.limited" class="ab_sales_dashboard__section_note" t-esc="ui.limitedRows"/>
+            <table t-att-aria-busy="state.sectionPages.customer_sales.loading">
                 <thead>
                     <tr><th t-esc="ui.invoice"/><th t-esc="ui.customer"/><th t-esc="ui.items"/><th t-esc="ui.invoiceTotal"/></tr>
                 </thead>
                 <tbody>
-                    <t t-foreach="state.data.invoice_lines" t-as="line" t-key="line.row_key || line.invoice_no || line_index">
+                    <t t-foreach="state.sectionPages.customer_sales.rows" t-as="line" t-key="line.row_key || line.invoice_no || line_index">
                         <tr>
                             <td t-esc="line.invoice_no"/>
                             <td t-esc="line.customer_name"/>
@@ -788,8 +1169,20 @@ SalesDashboardAction.template = xml`
                             <td t-esc="money(line.invoice_total)"/>
                         </tr>
                     </t>
+                    <tr t-if="!state.sectionPages.customer_sales.rows.length">
+                        <td colspan="4" class="text-center" t-esc="ui.noRecords"/>
+                    </tr>
                 </tbody>
             </table>
+            <div t-if="state.sectionPages.customer_sales.available" class="ab_sales_dashboard__pagination">
+                <button type="button" class="btn btn-outline-secondary" t-att-title="ui.previousPage" t-att-aria-label="ui.previousPage" t-att-disabled="state.sectionPages.customer_sales.loading || state.sectionPages.customer_sales.page &lt;= 1" t-on-click="() => this.changeSectionPage('customer_sales', -1)">
+                    <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
+                </button>
+                <span><t t-esc="ui.page"/> <t t-esc="state.sectionPages.customer_sales.page"/> <t t-esc="ui.of"/> <t t-esc="state.sectionPages.customer_sales.totalPages"/> · <t t-esc="state.sectionPages.customer_sales.totalCount"/> <t t-esc="ui.records"/></span>
+                <button type="button" class="btn btn-outline-secondary" t-att-title="ui.nextPage" t-att-aria-label="ui.nextPage" t-att-disabled="state.sectionPages.customer_sales.loading || state.sectionPages.customer_sales.page &gt;= state.sectionPages.customer_sales.totalPages" t-on-click="() => this.changeSectionPage('customer_sales', 1)">
+                    <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
+                </button>
+            </div>
         </section>
         </t>
     </div>

@@ -12,7 +12,22 @@
                     <field name="store_filter_label"/>
                     <field name="total_sales"/>
                     <field name="invoice_count"/>
+                    <field name="archive_count" optional="show"/>
                 </list>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_dashboard_snapshot_search" model="ir.ui.view">
+            <field name="name">ab.sales.dashboard.snapshot.search</field>
+            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="arch" type="xml">
+                <search string="Sales Dashboard Reports">
+                    <field name="name"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                    <field name="store_filter_label"/>
+                    <filter name="archived" string="Archived" domain="[('archive_ids', '!=', False)]"/>
+                </search>
             </field>
         </record>
 
@@ -26,6 +41,16 @@
                         <button name="action_archive_report" type="object" string="Archive Report" class="btn-secondary" groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
                     </header>
                     <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="action_view_archives"
+                                    type="object"
+                                    class="oe_stat_button"
+                                    icon="fa-archive"
+                                    invisible="archive_count == 0"
+                                    groups="ab_sales_dashboard.group_ab_sales_dashboard_manager">
+                                <field name="archive_count" widget="statinfo" string="Archives"/>
+                            </button>
+                        </div>
                         <group>
                             <group>
                                 <field name="name"/>

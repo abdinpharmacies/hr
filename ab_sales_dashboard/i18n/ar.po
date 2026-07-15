@@ -3,7 +3,6 @@
 # This file contains the translation of the following modules:
 # 	* ab_sales_dashboard
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
@@ -152,8 +151,15 @@ msgstr ""
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_archive__state__archived
 #: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_report_archive_search
+#: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_snapshot_search
 msgid "Archived"
-msgstr ""
+msgstr "مؤرشف"
+
+#. module: ab_sales_dashboard
+#: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__archive_count
+#: model_terms:ir.ui.view,arch_db:ab_sales_dashboard.view_ab_sales_dashboard_snapshot_form
+msgid "Archives"
+msgstr "الأرشيفات"
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_archive__archived_at
@@ -255,13 +261,13 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 msgid "Avg. Products / Invoice"
-msgstr ""
+msgstr "متوسط المنتجات / الفاتورة"
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 msgid "Avg. Products / Store"
-msgstr ""
+msgstr "متوسط المنتجات / الفرع"
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__bearing_pct
@@ -1133,6 +1139,11 @@ msgid "Manager"
 msgstr "المدير"
 
 #. module: ab_sales_dashboard
+#: model:ir.ui.menu,name:ab_sales_dashboard.menu_ab_sales_dashboard_maintenance
+msgid "Maintenance"
+msgstr "الصيانة"
+
+#. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_report_telemetry__maximum_duration_ms
 msgid "Maximum Duration Ms"
 msgstr "أقصى مدة بالمللي ثانية"
@@ -1589,9 +1600,8 @@ msgstr "عدد مرات البيع"
 #. module: ab_sales_dashboard
 #. odoo-javascript
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
-#, fuzzy
 msgid "Sales + sale times + current balance"
-msgstr "عدد مرات البيع + الرصيد الحالي"
+msgstr "المبيعات + مرات البيع + الرصيد الحالي"
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_daily_item_fact__sales_amount
@@ -1900,9 +1910,8 @@ msgstr "وصف فلتر الفرع"
 #. module: ab_sales_dashboard
 #. odoo-javascript
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
-#, fuzzy
 msgid "Stores with Sales"
-msgstr "وصف فلتر الفرع"
+msgstr "الفروع التي لديها مبيعات"
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__report_mode__summary
@@ -2072,9 +2081,8 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__total_product_sales
-#, fuzzy
 msgid "Total Product Sales"
-msgstr "إجمالي المبيعات"
+msgstr "إجمالي مبيعات المنتجات"
 
 #. module: ab_sales_dashboard
 #. odoo-javascript
@@ -2094,7 +2102,7 @@ msgstr "إجمالي المبيعات"
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__total_units_sold
 msgid "Total Units Sold"
-msgstr ""
+msgstr "إجمالي الوحدات المباعة"
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields.selection,name:ab_sales_dashboard.selection__ab_sales_dashboard_report_telemetry__coverage_state__unavailable
@@ -2106,7 +2114,7 @@ msgstr "غير متاحة"
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_snapshot__unique_products_sold
 msgid "Unique Products Sold"
-msgstr ""
+msgstr "المنتجات الفريدة المباعة"
 
 #. module: ab_sales_dashboard
 #: model:ir.model.fields,field_description:ab_sales_dashboard.field_ab_sales_dashboard_product_sales_report__units_sold
@@ -2179,6 +2187,114 @@ msgstr "وحدة"
 #: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
 msgid "vs previous period average"
 msgstr "عن متوسط الفترة السابقة"
+
+#. module: ab_sales_dashboard
+#. odoo-python
+#: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
+msgid "Dashboard refresh failed for one or more days."
+msgstr "فشل تحديث لوحة المبيعات ليوم واحد أو أكثر."
+
+#. module: ab_sales_dashboard
+#. odoo-python
+#: code:addons/ab_sales_dashboard/models/sales_dashboard_sync_wizard.py:0
+msgid ""
+"Dashboard sync is waiting for another refresh to finish and will continue on"
+" the next run."
+msgstr ""
+"مزامنة لوحة المبيعات بانتظار انتهاء عملية تحديث أخرى، وستستمر في التشغيل "
+"التالي."
+
+#. module: ab_sales_dashboard
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/models/sales_dashboard_service.py:0
+#: code:addons/ab_sales_dashboard/models/sales_dashboard_snapshot.py:0
+#: code:addons/ab_sales_dashboard/models/sales_dashboard_sync_wizard.py:0
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid ""
+"E-Plus is unavailable. Dashboard sync is paused; try again after the "
+"connection is restored."
+msgstr ""
+"E-Plus غير متاح. تم إيقاف مزامنة لوحة المبيعات مؤقتًا؛ أعد المحاولة بعد "
+"استعادة الاتصال."
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Could not load all records for this section."
+msgstr "تعذر تحميل جميع سجلات هذا القسم."
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Month"
+msgstr "الشهر"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Next"
+msgstr "التالي"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "No records found."
+msgstr "لم يتم العثور على سجلات."
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Only stored snapshot rows are available for this section."
+msgstr "لا تتوفر لهذا القسم سوى صفوف اللقطة المحفوظة."
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Page"
+msgstr "الصفحة"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Previous"
+msgstr "السابق"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Year"
+msgstr "السنة"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "of"
+msgstr "من"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "records"
+msgstr "سجلات"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Hide filters"
+msgstr "إخفاء عوامل التصفية"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Show filters"
+msgstr "إظهار عوامل التصفية"
 
 #~ msgid "Apply"
 #~ msgstr "تطبيق"

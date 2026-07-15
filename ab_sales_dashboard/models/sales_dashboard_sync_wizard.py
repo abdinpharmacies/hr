@@ -4,6 +4,9 @@ from datetime import timedelta
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
+from .sales_dashboard_config import SalesDashboardRefreshBusyError
+from .sales_dashboard_service import SalesDashboardSourceUnavailableError
+
 
 _logger = logging.getLogger(__name__)
 
@@ -53,7 +56,13 @@ class SalesDashboardSyncWizard(models.TransientModel):
             descending=True,
         )
         failed_count = result["failed_count"]
-        if failed_count:
+        if result.get("source_unavailable"):
+            notification_type = "warning"
+            message = _("E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored.")
+        elif result.get("deferred"):
+            notification_type = "warning"
+            message = _("Dashboard sync is waiting for another refresh to finish and will continue on the next run.")
+        elif failed_count:
             notification_type = "warning"
             message = _(
                 "Dashboard sync finished with warnings. Synced days: %(synced)s. "
@@ -157,50 +166,88 @@ class SalesDashboardSyncState(models.Model):
         date_to = today - timedelta(days=1)
         date_from = date_to - timedelta(days=89)
         self = self.sudo()
+        if not self._try_sync_claim_lock():
+            self._log_sync_deferred(reason="claim_busy")
+            return False
         self._ensure_sync_states(date_from, date_to)
-        self.env.cr.commit()
         state = self._claim_next_sync_state(date_from, date_to)
         if not state:
             return False
         state_id = state.id
         try:
-            state._sync_one_state_with_progress(force_resync=True)
+            with self.env.cr.savepoint():
+                state._sync_one_state_with_progress(force_resync=True)
+        except SalesDashboardSourceUnavailableError:
+            state = self.browse(state_id).exists()
+            if state:
+                state._log_sync_deferred(reason="source_unavailable")
+            return False
+        except SalesDashboardRefreshBusyError:
+            state = self.browse(state_id).exists()
+            if state:
+                state._log_sync_deferred(reason="refresh_busy")
+            return False
         except Exception as error:
-            self.env.cr.rollback()
             failed_state = self.browse(state_id).exists()
             if failed_state:
                 failed_state._mark_failed(error)
-                self.env.cr.commit()
             return False
         self._set_sync_cursor(state.store_filter_key, state.sync_date)
-        self.env.cr.commit()
         return True
 
     @api.model
-    def sync_dashboard_date_range(self, date_from, date_to, store_id=0, force_resync=True, descending=True):
+    def sync_dashboard_date_range(
+        self,
+        date_from,
+        date_to,
+        store_id=0,
+        force_resync=True,
+        descending=True,
+        raise_on_error=False,
+    ):
         date_from, date_to = self._validate_sync_range(date_from, date_to)
         store_id = int(store_id or 0)
         dates = list(self._iter_dates(date_from, date_to, descending=descending))
-        self._ensure_sync_states(date_from, date_to, store_id=store_id)
-        self.env.cr.commit()
         result = {
             "synced_count": 0,
             "skipped_count": 0,
             "failed_count": 0,
             "failed": [],
+            "deferred": False,
+            "source_unavailable": False,
         }
+        if not self._try_sync_claim_lock():
+            result["deferred"] = True
+            self._log_sync_deferred(reason="claim_busy")
+            return result
+        self._ensure_sync_states(date_from, date_to, store_id=store_id)
         for sync_date in dates:
             state = self._get_or_create_state(sync_date, store_id=store_id)
-            self.env.cr.commit()
             state_id = state.id
             try:
-                status = state._sync_one_state_with_progress(force_resync=force_resync)
+                with self.env.cr.savepoint():
+                    status = state._sync_one_state_with_progress(force_resync=force_resync)
+            except SalesDashboardSourceUnavailableError:
+                if raise_on_error:
+                    raise
+                result["deferred"] = True
+                result["source_unavailable"] = True
+                state = self.browse(state_id).exists()
+                if state:
+                    state._log_sync_deferred(reason="source_unavailable")
+                break
+            except SalesDashboardRefreshBusyError:
+                result["deferred"] = True
+                state = self.browse(state_id).exists()
+                if state:
+                    state._log_sync_deferred(reason="refresh_busy")
+                break
             except Exception as error:
-                self.env.cr.rollback()
+                if raise_on_error:
+                    raise
                 failed_state = self.browse(state_id).exists()
                 if failed_state:
                     failed_state._mark_failed(error)
-                    self.env.cr.commit()
                 result["failed_count"] += 1
                 result["failed"].append({
                     "date": fields.Date.to_string(sync_date),
@@ -234,7 +281,6 @@ class SalesDashboardSyncState(models.Model):
                     "finished_at": False,
                     "error_message": False,
                 })
-        self.env.cr.commit()
         return self.dashboard_sync_progress(date_from, date_to, store_id=store_id)
 
     @api.model
@@ -283,21 +329,36 @@ class SalesDashboardSyncState(models.Model):
     def process_next_dashboard_sync_day(self, date_from, date_to, store_id=0, force_resync=True):
         date_from, date_to = self._validate_sync_range(date_from, date_to)
         store_id = int(store_id or 0)
+        if not self._try_sync_claim_lock():
+            return self._deferred_sync_progress(date_from, date_to, store_id, reason="claim_busy")
         self._ensure_sync_states(date_from, date_to, store_id=store_id)
-        self.env.cr.commit()
         state = self._claim_next_pending_sync_state(date_from, date_to, store_id=store_id)
         if not state:
             return self.dashboard_sync_progress(date_from, date_to, store_id=store_id)
 
         state_id = state.id
         try:
-            state._sync_one_state_with_progress(force_resync=force_resync)
+            with self.env.cr.savepoint():
+                state._sync_one_state_with_progress(force_resync=force_resync)
+        except SalesDashboardSourceUnavailableError:
+            return self._source_unavailable_progress(
+                date_from,
+                date_to,
+                store_id,
+                sync_date=state.sync_date,
+            )
+        except SalesDashboardRefreshBusyError:
+            return self._deferred_sync_progress(
+                date_from,
+                date_to,
+                store_id,
+                reason="refresh_busy",
+                sync_date=state.sync_date,
+            )
         except Exception as error:
-            self.env.cr.rollback()
             failed_state = self.browse(state_id).exists()
             if failed_state:
                 failed_state._mark_failed(error)
-                self.env.cr.commit()
             progress = self.dashboard_sync_progress(date_from, date_to, store_id=store_id)
             progress.update({
                 "last_status": "failed",
@@ -307,11 +368,43 @@ class SalesDashboardSyncState(models.Model):
             return progress
 
         self._set_sync_cursor(state.store_filter_key, state.sync_date)
-        self.env.cr.commit()
         progress = self.dashboard_sync_progress(date_from, date_to, store_id=store_id)
         progress.update({
             "last_status": "done",
             "last_date": fields.Date.to_string(state.sync_date),
+        })
+        return progress
+
+    @api.model
+    def _try_sync_claim_lock(self):
+        return self.env["ab.sales.dashboard.snapshot"].sudo()._try_sales_dashboard_sync_claim_lock()
+
+    @api.model
+    def _deferred_sync_progress(self, date_from, date_to, store_id, reason, sync_date=False):
+        self._log_sync_deferred(sync_date=sync_date, reason=reason)
+        progress = self.dashboard_sync_progress(date_from, date_to, store_id=store_id)
+        progress.update({
+            "last_status": "busy",
+            "last_date": fields.Date.to_string(sync_date) if sync_date else False,
+        })
+        return progress
+
+    @api.model
+    def _source_unavailable_progress(self, date_from, date_to, store_id, sync_date=False):
+        progress = self._deferred_sync_progress(
+            date_from,
+            date_to,
+            store_id,
+            reason="source_unavailable",
+            sync_date=sync_date,
+        )
+        progress.update({
+            "last_status": "source_unavailable",
+            "source_unavailable": True,
+            "is_active": False,
+            "last_error": _(
+                "E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored."
+            ),
         })
         return progress
 
@@ -512,18 +605,23 @@ class SalesDashboardSyncState(models.Model):
         self.ensure_one()
         if not force_resync and self._is_dashboard_day_complete():
             self._mark_done(self.rows_synced)
-            self.env.cr.commit()
             return "skipped"
 
-        self._mark_running()
-        self.env.cr.commit()
         Snapshot = self.env["ab.sales.dashboard.snapshot"].sudo()
         with Snapshot._sales_dashboard_refresh_lock():
+            self._mark_running()
             rows_synced = self._sync_dashboard_day()
-        self._mark_done(rows_synced)
-        self.env.cr.commit()
+            self._mark_done(rows_synced)
         self._log_sync_completed(rows_synced)
         return "synced"
+
+    def _log_sync_deferred(self, sync_date=False, reason="busy"):
+        _logger.info(
+            "event=sales_dashboard_day_sync_deferred sync_date=%s store_key=%s reason=%s",
+            sync_date or (self.sync_date if len(self) == 1 else False),
+            self.store_filter_key if len(self) == 1 else "all",
+            reason,
+        )
 
     def _mark_running(self):
         self.ensure_one()

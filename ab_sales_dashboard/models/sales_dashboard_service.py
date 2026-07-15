@@ -1,21 +1,27 @@
 import logging
 import time as pytime
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from datetime import datetime, time
 from decimal import Decimal
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import config
 from odoo.tools.translate import _
 
 
 _logger = logging.getLogger(__name__)
 
 
+class SalesDashboardSourceUnavailableError(UserError):
+    """Raised when no configured E-Plus source can accept a connection."""
+
+
 class SalesDashboardService(models.AbstractModel):
     _name = "ab.sales.dashboard.service"
     _inherit = ["ab_eplus_connect", "ab.sales.dashboard.config.mixin"]
     _description = "Sales Dashboard E-Plus Service"
+    _dashboard_preferred_server = False
 
     @api.model
     def fetch_dashboard_data(self, date_from, date_to, store_eplus_ids=None):
@@ -35,6 +41,16 @@ class SalesDashboardService(models.AbstractModel):
         try:
             with self._dashboard_query_session(where_sql, base_params, start_dt, end_dt, len(store_eplus_ids)) as cursor:
                 payload = self._fetch_dashboard_from_cursor(cursor, start_dt, end_dt, store_eplus_ids)
+        except SalesDashboardSourceUnavailableError:
+            duration_ms = int((pytime.monotonic() - started) * 1000)
+            _logger.warning(
+                "event=sales_dashboard_service_source_unavailable operation=fetch_dashboard_data duration_ms=%s date_from=%s date_to=%s store_count=%s",
+                duration_ms,
+                start_dt.date(),
+                end_dt.date(),
+                len(store_eplus_ids),
+            )
+            raise
         except Exception:
             duration_ms = int((pytime.monotonic() - started) * 1000)
             _logger.exception(
@@ -102,6 +118,16 @@ class SalesDashboardService(models.AbstractModel):
                     end_dt.date(),
                     len(store_eplus_ids),
                 )
+        except SalesDashboardSourceUnavailableError:
+            duration_ms = int((pytime.monotonic() - started) * 1000)
+            _logger.warning(
+                "event=sales_dashboard_source_unavailable duration_ms=%s date_from=%s date_to=%s store_count=%s",
+                duration_ms,
+                start_dt.date(),
+                end_dt.date(),
+                len(store_eplus_ids),
+            )
+            raise
         except Exception:
             duration_ms = int((pytime.monotonic() - started) * 1000)
             _logger.exception(
@@ -128,6 +154,100 @@ class SalesDashboardService(models.AbstractModel):
             "dashboard": dashboard,
             "daily_store_facts": daily_store_facts,
         }
+
+    @api.model
+    def fetch_customer_sales_page(
+        self,
+        date_from,
+        date_to,
+        store_eplus_ids=None,
+        page=1,
+        page_size=20,
+        search_term=None,
+    ):
+        start_dt, end_dt, store_eplus_ids, where_sql, base_params = self._prepare_source_context(
+            date_from,
+            date_to,
+            store_eplus_ids,
+        )
+        page = max(int(page or 1), 1)
+        page_size = max(1, min(int(page_size or 20), 20))
+        search_term = str(search_term or "").strip()[:100]
+        search_pattern = "%%%s%%" % search_term if search_term else False
+        params = list(base_params)
+        if search_pattern:
+            params.extend([search_pattern, search_pattern, search_pattern])
+        params.extend([(page - 1) * page_size, page_size])
+        started = pytime.monotonic()
+        _logger.info(
+            "event=sales_dashboard_customer_page_started page=%s page_size=%s date_from=%s date_to=%s store_count=%s has_search=%s",
+            page,
+            page_size,
+            start_dt.date(),
+            end_dt.date(),
+            len(store_eplus_ids),
+            bool(search_term),
+        )
+        cursor = None
+        try:
+            with self._dashboard_source_connection() as connection:
+                cursor = connection.cursor()
+                rows = self._fetch_all(
+                    cursor,
+                    self._customer_sales_page_sql(where_sql, has_search=bool(search_pattern)),
+                    params,
+                    "customer_sales_page",
+                    start_dt,
+                    end_dt,
+                    len(store_eplus_ids),
+                )
+        except SalesDashboardSourceUnavailableError:
+            _logger.warning(
+                "event=sales_dashboard_customer_page_source_unavailable page=%s duration_ms=%s date_from=%s date_to=%s store_count=%s",
+                page,
+                int((pytime.monotonic() - started) * 1000),
+                start_dt.date(),
+                end_dt.date(),
+                len(store_eplus_ids),
+            )
+            raise
+        except Exception:
+            _logger.exception(
+                "event=sales_dashboard_customer_page_failed page=%s duration_ms=%s date_from=%s date_to=%s store_count=%s",
+                page,
+                int((pytime.monotonic() - started) * 1000),
+                start_dt.date(),
+                end_dt.date(),
+                len(store_eplus_ids),
+            )
+            raise
+        finally:
+            if cursor is not None:
+                try:
+                    cursor.close()
+                except Exception:
+                    _logger.warning(
+                        "event=sales_dashboard_customer_page_cursor_close_failed page=%s date_from=%s date_to=%s store_count=%s",
+                        page,
+                        start_dt.date(),
+                        end_dt.date(),
+                        len(store_eplus_ids),
+                        exc_info=True,
+                    )
+        total_count = int(rows[0].get("total_count") or 0) if rows else 0
+        rows = self._normalize_invoice_lines(rows)
+        _logger.info(
+            "event=sales_dashboard_customer_page_completed page=%s page_size=%s row_count=%s total_count=%s duration_ms=%s date_from=%s date_to=%s store_count=%s",
+            page,
+            page_size,
+            len(rows),
+            total_count,
+            int((pytime.monotonic() - started) * 1000),
+            start_dt.date(),
+            end_dt.date(),
+            len(store_eplus_ids),
+        )
+        return {"rows": rows, "total_count": total_count}
 
     @api.model
     def fetch_daily_store_facts(self, date_from, date_to, store_eplus_ids=None):
@@ -344,7 +464,7 @@ class SalesDashboardService(models.AbstractModel):
         # The shared connector returns a pooled ConnectionProxy and intentionally
         # keeps it open. The dashboard session owns only this cursor and temp
         # table; it must not close the pooled connection directly.
-        with self.connect_eplus(param_str="?", charset="CP1256") as conn:
+        with self._dashboard_source_connection() as conn:
             cursor = conn.cursor()
             try:
                 self._apply_query_timeout(cursor, "dashboard_session")
@@ -411,6 +531,58 @@ class SalesDashboardService(models.AbstractModel):
                 )
         if pending_exception:
             raise pending_exception.with_traceback(pending_traceback)
+
+    @api.model
+    def _dashboard_source_candidates(self):
+        configured = []
+        for key in ("bconnect_ip1", "bconnect_ip2"):
+            server = config.get(key)
+            if server and server not in configured:
+                configured.append(server)
+        preferred = type(self)._dashboard_preferred_server
+        if preferred in configured:
+            configured.remove(preferred)
+            configured.insert(0, preferred)
+        return configured or [None]
+
+    @api.model
+    @contextmanager
+    def _dashboard_source_connection(self):
+        last_error = None
+        candidates = self._dashboard_source_candidates()
+        with ExitStack() as stack:
+            for candidate_number, server in enumerate(candidates, start=1):
+                try:
+                    connection = stack.enter_context(
+                        self.connect_eplus(
+                            server=server,
+                            param_str="?",
+                            charset="CP1256",
+                        )
+                    )
+                except UserError as error:
+                    last_error = error
+                    _logger.warning(
+                        "event=sales_dashboard_source_candidate_unavailable candidate_number=%s candidate_count=%s error_type=%s",
+                        candidate_number,
+                        len(candidates),
+                        type(error).__name__,
+                    )
+                    continue
+
+                type(self)._dashboard_preferred_server = server
+                if candidate_number > 1:
+                    _logger.info(
+                        "event=sales_dashboard_source_failover_completed candidate_number=%s candidate_count=%s",
+                        candidate_number,
+                        len(candidates),
+                    )
+                yield connection
+                return
+
+        raise SalesDashboardSourceUnavailableError(
+            _("E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored.")
+        ) from last_error
 
     @api.model
     def _date_window(self, date_from, date_to):
@@ -1317,6 +1489,112 @@ class SalesDashboardService(models.AbstractModel):
             JOIN r_sales_trans_d d WITH (NOLOCK) ON d.sth_id = h.sth_id AND d.std_stock_id = h.sto_id
             JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = d.itm_id
             GROUP BY h.sth_id, h.sto_id, h.sec_insert_date, h.customer_name, h.net_amount
+            ORDER BY h.sec_insert_date DESC, h.sth_id DESC, h.sto_id DESC
+        """
+
+    @api.model
+    def _customer_sales_page_sql(self, where_sql, has_search=False):
+        search_sql = ""
+        if has_search:
+            search_sql = """
+                WHERE CONVERT(NVARCHAR(100), h.sth_id) LIKE ?
+                   OR h.customer_name LIKE ?
+                   OR EXISTS (
+                        SELECT 1
+                        FROM r_sales_trans_d search_d WITH (NOLOCK)
+                        JOIN item_catalog search_ic WITH (NOLOCK) ON search_ic.itm_id = search_d.itm_id
+                        WHERE search_d.sth_id = h.sth_id
+                          AND search_d.std_stock_id = h.sto_id
+                          AND CONVERT(NVARCHAR(100), search_ic.itm_code) LIKE ?
+                   )
+            """
+        return f"""
+            WITH invoice_headers AS (
+                SELECT
+                    h.sth_id,
+                    h.sto_id,
+                    h.cust_id,
+                    h.sec_insert_date,
+                    CAST(ISNULL(h.total_bill_net, 0) AS DECIMAL(18,2)) AS net_amount
+                FROM r_sales_trans_h h WITH (NOLOCK)
+                WHERE {where_sql}
+            ),
+            resolved_customer AS (
+                SELECT
+                    h.sth_id,
+                    h.sto_id,
+                    h.cust_id,
+                    h.sec_insert_date,
+                    h.net_amount,
+                    COALESCE(
+                        NULLIF(LTRIM(RTRIM(delivery.contact)), ''),
+                        NULLIF(LTRIM(RTRIM(cd.cd_contact_person)), ''),
+                        CASE
+                            WHEN NULLIF(LTRIM(RTRIM(c.cust_name_ar)), '') LIKE 'spare%' THEN NULL
+                            ELSE NULLIF(LTRIM(RTRIM(c.cust_name_ar)), '')
+                        END,
+                        NULLIF(LTRIM(RTRIM(cd.cd_tel)), ''),
+                        CASE
+                            WHEN ISNULL(h.cust_id, 0) = 0 THEN '__cash_customer__'
+                            ELSE CONVERT(VARCHAR(20), h.cust_id)
+                        END
+                    ) AS customer_name
+                FROM invoice_headers h
+                LEFT JOIN Customer c WITH (NOLOCK) ON c.cust_id = h.cust_id
+                LEFT JOIN Customer_Delivery cd WITH (NOLOCK)
+                    ON cd.cd_cust_id = h.cust_id
+                   AND cd.cd_id = 1
+                OUTER APPLY (
+                    SELECT TOP (1) sdi.contact
+                    FROM sales_deliv_info sdi WITH (NOLOCK)
+                    WHERE sdi.sth_id = h.sth_id
+                      AND sdi.cust_id = h.cust_id
+                    ORDER BY CASE WHEN sdi.cust_id = h.cust_id THEN 0 ELSE 1 END
+                ) delivery
+            ),
+            filtered_customer AS (
+                SELECT h.*
+                FROM resolved_customer h
+                {search_sql}
+            ),
+            paged_customer AS (
+                SELECT h.*, COUNT(*) OVER() AS total_count
+                FROM filtered_customer h
+                ORDER BY h.sec_insert_date DESC, h.sth_id DESC, h.sto_id DESC
+                OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+            )
+            SELECT
+                h.sth_id AS invoice_no,
+                h.sto_id,
+                h.sec_insert_date,
+                h.customer_name,
+                h.net_amount AS invoice_total,
+                h.total_count,
+                COUNT(d.std_id) AS item_count,
+                STRING_AGG(
+                    CONVERT(NVARCHAR(MAX), COALESCE(ic.itm_code, CONVERT(VARCHAR(20), d.itm_id))),
+                    N', '
+                ) AS items,
+                STRING_AGG(
+                    CONVERT(NVARCHAR(MAX), CONCAT(
+                        CONVERT(VARCHAR(20), d.itm_id),
+                        NCHAR(31),
+                        COALESCE(ic.itm_code, CONVERT(VARCHAR(20), d.itm_id))
+                    )),
+                    NCHAR(30)
+                ) AS item_pairs
+            FROM paged_customer h
+            JOIN r_sales_trans_d d WITH (NOLOCK)
+              ON d.sth_id = h.sth_id
+             AND d.std_stock_id = h.sto_id
+            JOIN item_catalog ic WITH (NOLOCK) ON ic.itm_id = d.itm_id
+            GROUP BY
+                h.sth_id,
+                h.sto_id,
+                h.sec_insert_date,
+                h.customer_name,
+                h.net_amount,
+                h.total_count
             ORDER BY h.sec_insert_date DESC, h.sth_id DESC, h.sto_id DESC
         """
 
