@@ -1,6 +1,6 @@
 {
     'name': 'Manpower Need',
-    'version': '19.0.1.0.0',
+    'version': '19.0.1.0.1',
     'license': 'LGPL-3',
     'category': 'Abdin',
     'author': 'Abdin Pharmacies',
@@ -8,6 +8,7 @@
     'summary': 'Manpower need per hour planning',
     'depends': ['ab_hr'],
     'data': [
+        'security/security_groups.xml',
         'security/ir.model.access.csv',
         'views/manpower_hour_need_views.xml',
     ],
