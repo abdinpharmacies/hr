@@ -159,3 +159,8 @@ msgstr "المطلوب"
 #. module: ab_manpower_need
 msgid "Actual"
 msgstr "الفعلي"
+
+#. module: ab_manpower_need
+#: model:res.groups,name:ab_manpower_need.group_ab_hr_manpower_hour_need
+msgid "HR Manpower Hour Need"
+msgstr "احتياج العمالة بالساعة"
