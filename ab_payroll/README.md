@@ -3,6 +3,11 @@
 This document describes the payroll sheet distribution process implemented in
 `ab_payroll`.
 
+The module is packaged for a clean production installation. It does not include
+development-database migration hooks or legacy payroll data transforms. Its
+menus remain under the existing `ab_hr` salaries menu through stable XML IDs
+owned by `ab_payroll`.
+
 ## Purpose
 
 The payroll sheet feature lets Payroll Administrators upload employee payroll
@@ -118,8 +123,21 @@ Payroll files can be distributed using one of these scopes:
 - Managers Only
 - Managers and Employees
 
-When the employee and manager are the same person, only one Telegram message is
-sent to avoid duplicate delivery.
+When the employee and manager are the same person in the Managers and Employees
+scope, the manager receives the grouped manager notice and the personal payroll
+template for their own sheet. Their payroll file is still sent only once as
+part of the manager batch.
+
+Manager delivery is grouped by manager, department, payroll period, payroll
+type, chat, and message text. Each group receives one manager message followed
+by one payroll document per assigned employee in that group. Employee delivery,
+when enabled, remains individual and uses the same period-and-name template for
+preliminary and final payroll sheets.
+
+Message and file progress are tracked separately for managers and employees.
+If Telegram accepts a group message or an individual file before a later send
+fails, retrying sends only the missing files/messages instead of repeating the
+completed delivery steps.
 
 ## Payroll Types
 
@@ -180,6 +198,8 @@ Common failure reasons:
 - Employee not found
 - Employee has multiple active roles and the filename department does not match
   one active role
+- Duplicate employee names or identifiers where the filename department cannot
+  identify exactly one employee
 - Manager cannot be resolved
 - Manager Telegram chat ID is missing
 - Employee Telegram chat ID is missing when sending to employees is enabled
@@ -197,14 +217,15 @@ files through Telegram.
 
 Regular HR users should not be granted payroll sheet access.
 
-## Separation and Upgrade Safety
+## Production Installation
 
-The payroll sheet model keeps its existing technical name,
-`ab.hr.payroll.sheet`, so existing PostgreSQL rows and attachment links remain
-valid after the module split. During the first installation, `ab_payroll`
-transfers the known payroll and employee Telegram XML IDs from `ab_hr` before
-loading its own data. Install `ab_payroll` before performing any later
-standalone upgrade of `ab_hr` in an existing database.
+Install `ab_payroll` as a clean production module after installing its declared
+dependencies. Automatic employee-code reception additionally requires
+`ab_hr_telegram_employee_link`, which installs `ab_request_telegram` and its
+`ab_telegram_service` polling model.
+
+The polling cron uses Telegram `getUpdates`. Do not configure a competing
+Telegram webhook for the same bot while this polling workflow is active.
 
 ## Important Operational Notes
 

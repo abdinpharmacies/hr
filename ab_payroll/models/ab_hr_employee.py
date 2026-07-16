@@ -7,6 +7,8 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+TELEGRAM_SERVICE_MODEL = "ab_telegram_service"
+
 
 class AbHrEmployee(models.Model):
     _inherit = "ab_hr_employee"
@@ -130,6 +132,12 @@ class AbHrEmployee(models.Model):
         return update.get("message") or update.get("edited_message") or {}
 
     @api.model
+    def _get_employee_telegram_service(self):
+        if TELEGRAM_SERVICE_MODEL not in self.env:
+            return False
+        return self.env[TELEGRAM_SERVICE_MODEL].sudo()
+
+    @api.model
     def import_employee_telegram_updates(self, limit=100, acknowledge=True):
         """One-time Telegram import for HR employee chat IDs.
 
@@ -147,11 +155,12 @@ class AbHrEmployee(models.Model):
             "errors": [],
             "linked_employee_ids": [],
         }
-        if "ab.telegram.service" not in self.env:
+        telegram_service = self._get_employee_telegram_service()
+        if telegram_service is False:
             result["errors"].append(_("Telegram service is not installed."))
             return result
 
-        updates = self.env["ab.telegram.service"].sudo().get_updates(limit=limit, timeout=0)
+        updates = telegram_service.get_updates(limit=limit, timeout=0)
         result["updates_seen"] = len(updates)
         last_update_id = False
         for update in updates:
@@ -187,7 +196,7 @@ class AbHrEmployee(models.Model):
                 result["ignored"] += 1
 
         if acknowledge and last_update_id is not False:
-            self.env["ab.telegram.service"].sudo().get_updates(
+            telegram_service.get_updates(
                 offset=last_update_id + 1,
                 limit=1,
                 timeout=0,
@@ -198,7 +207,7 @@ class AbHrEmployee(models.Model):
 
     @api.model
     def _cron_import_employee_telegram_updates(self):
-        if "ab.telegram.service" not in self.env:
+        if self._get_employee_telegram_service() is False:
             return False
         result = self.sudo().import_employee_telegram_updates(limit=100, acknowledge=True)
         if result.get("updates_seen") or result.get("linked") or result.get("errors"):
