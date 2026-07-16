@@ -516,7 +516,7 @@ class AbHrPayrollSheet(models.Model):
         manager = self.manager_id
         if not manager:
             return False
-        if manager.telegram_chat_id:
+        if "telegram_chat_id" in manager._fields and manager.telegram_chat_id:
             return manager.telegram_chat_id
         if not manager.user_id:
             return False
@@ -537,7 +537,7 @@ class AbHrPayrollSheet(models.Model):
         employee = self.employee_id
         if not employee:
             return False
-        if employee.telegram_chat_id:
+        if "telegram_chat_id" in employee._fields and employee.telegram_chat_id:
             return employee.telegram_chat_id
         if not employee.user_id:
             return False
@@ -555,16 +555,29 @@ class AbHrPayrollSheet(models.Model):
 
     @api.model
     def _get_telegram_service(self):
+        if "ab_telegram_service" not in self.env:
+            return False
         return self.env["ab_telegram_service"].sudo()
 
     @api.model
     def _get_telegram_sender_token(self):
-        return self._get_telegram_service()._get_bot_token()
+        telegram_service = self._get_telegram_service()
+        if telegram_service is False:
+            return False
+        return telegram_service._get_bot_token()
 
     def _ensure_telegram_sender_token(self):
+        telegram_service = self._get_telegram_service()
+        if telegram_service is False or not hasattr(telegram_service, "send_payroll_document"):
+            raise UserError(
+                _(
+                    "Payroll Telegram integration is not installed. "
+                    "Install HR Telegram Employee Link to enable distribution."
+                )
+            )
         if not self._get_telegram_sender_token():
             raise UserError(_("Telegram bot token is missing. Configure system parameter telegram.bot.token."))
-        return True
+        return telegram_service
 
     def _get_telegram_recipients(self):
         self.ensure_one()
@@ -822,7 +835,8 @@ class AbHrPayrollSheet(models.Model):
     def _telegram_send_text_only(self, chat_id, message):
         self.ensure_one()
         try:
-            sent = self._get_telegram_service().send_payroll_message(chat_id, message or "")
+            telegram_service = self._ensure_telegram_sender_token()
+            sent = telegram_service.send_payroll_message(chat_id, message or "")
         except Exception as exc:
             raise UserError(_("Telegram message send failed: %s") % self._telegram_error_text(exc)) from exc
         return str(getattr(sent, "message_id", "sent"))
@@ -830,8 +844,9 @@ class AbHrPayrollSheet(models.Model):
     def _telegram_send_document_only(self, chat_id):
         self.ensure_one()
         try:
+            telegram_service = self._ensure_telegram_sender_token()
             file_data = base64.b64decode(self.attachment_id.datas or b"")
-            sent = self._get_telegram_service().send_payroll_document(
+            sent = telegram_service.send_payroll_document(
                 chat_id,
                 self.file_name,
                 file_data,
