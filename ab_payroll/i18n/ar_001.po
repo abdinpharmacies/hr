@@ -917,6 +917,12 @@ msgstr "خدمة تيليجرام غير مثبتة."
 #. module: ab_payroll
 #. odoo-python
 #: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Payroll Telegram integration is not installed. Install HR Telegram Employee Link to enable distribution."
+msgstr "تكامل تيليجرام للرواتب غير مثبت. ثبّت وحدة ربط موظفي الموارد البشرية بتيليجرام لتفعيل التوزيع."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
 msgid ""
 "This payroll file already exists for employee %(employee)s, period "
 "%(period)s, and type %(type)s."
