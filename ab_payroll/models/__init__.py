@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
-from . import ab_hr_employee
 from . import payroll_sheet
+from . import telegram_service
