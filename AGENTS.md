@@ -12,8 +12,12 @@ Scope:
 Module creation rules:
 
 - Follow the provided `ab_template` scaffold unless the module goal clearly requires extra files.
+- Use English for agent updates, implementation summaries, diagnostics, and technical explanations unless the user explicitly requests another language. Arabic remains valid for UI translations and business message content.
 - Do not create demo data files for any module or test model.
 - Do not add unnecessary database edits, cron jobs, hooks, triggers, or direct SQL.
+- Treat new production modules as clean installations by default. Do not add `migrations/`, pre/post-init hooks, or legacy-data compatibility code for development databases.
+- Add a migration or lifecycle hook only when an explicitly identified deployed production version requires a bounded schema, metadata, or data transformation.
+- Development database records and XML-ID ownership are not reasons to ship migration code when that database will not be promoted to production.
 - Do not use `env.ref()` to create records in other modules.
 - Do not edit shared frontend components in a way that can affect other modules.
 - If frontend work is required, create new module-scoped classes, components, or templates and connect them only to the working module.
@@ -640,7 +644,6 @@ addon_name/
 ├── data/                # optional, non-demo runtime data only
 ├── wizard/              # optional
 ├── report/              # optional
-├── tests/
 └── static/
     └── description/
         └── icon.png
@@ -651,6 +654,7 @@ Template rules:
 - Create only the files and folders the module actually needs.
 - Use `data/` only for required runtime records such as sequences or defaults.
 - Do not create `demo/` files.
+- Keep production addon packages runtime-only. Do not ship `tests/`, test fixtures, migration folders for development databases, or generated `__pycache__` files.
 - Keep the module aligned with the provided template and avoid extra scaffolding.
 
 Manifest example:
@@ -762,10 +766,20 @@ Use this order for new modules:
 
 ## Testing
 
-Minimum:
+During development, before production packaging, verify at minimum:
 
 - One business rule test.
 - One access or record rule test if applicable.
+- A targeted module install or upgrade with no module errors.
+
+Development tests may live in `tests/` while a module is being implemented. Remove
+the `tests/` directory from the final production addon package after the required
+tests pass and retain the test results in the development record or CI output.
+
+Run Odoo validation on alternate ports so the PyCharm-managed Odoo process does
+not need to be stopped. Use `--http-port=5069 --gevent-port=5072` by default,
+with `--workers=0 --max-cron-threads=0`, or choose another unused port pair if
+those ports are occupied.
 
 ## Upgrade Safety
 
