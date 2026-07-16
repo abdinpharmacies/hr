@@ -93,3 +93,9 @@ msgstr "تم ربط حساب تيليجرام بالموظف %s."
 #: code:addons/ab_hr_telegram_employee_link/models/ab_hr_employee.py:0
 msgid "Telegram service is not installed."
 msgstr "خدمة تيليجرام غير مثبتة."
+
+#. module: ab_hr_telegram_employee_link
+#. odoo-python
+#: code:addons/ab_hr_telegram_employee_link/models/payroll_telegram_service.py:0
+msgid "Telegram bot token is missing. Configure system parameter telegram.bot.token."
+msgstr "رمز بوت تيليجرام غير موجود. اضبط معامل النظام telegram.bot.token."
