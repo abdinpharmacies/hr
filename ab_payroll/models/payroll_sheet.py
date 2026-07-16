@@ -12,6 +12,25 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
+MANAGER_ONLY_PAYROLL_MESSAGES = {
+    "preliminary": (
+        'الريسيتات المبدايه لجميع الموظفين سواء يعمل او لا يعمل هنراجع ولو فى اى مشكله هنملى على '
+        '"لينك مشكلات الرواتب قبل اعتمادها من إدارة الحسابات "وليس تليجرام ولو فى مشكله خاصة '
+        "بالحوافز او بنود خصومات الحسابات يرجى التواصل مع القسم المختص"
+    ),
+    "final": (
+        'الريسيتات النهائيه لجميع الموظفين سواء يعمل او لا يعمل هنراجع ولو فى اى مشكله هنملى على '
+        '"لينك مشكلات الرواتب بعد اعتمادها من إدارة الحسابات "وليس تليجرام ولو فى مشكله خاصة '
+        "بالحوافز او بنود خصومات الحسابات يرجى التواصل مع القسم المختص"
+    ),
+}
+
+EMPLOYEE_PAYROLL_MESSAGE = (
+    "تم اعتماد راتب شهر %(month)s - %(year)s\n"
+    "برجاء الرجوع للمدير المباشر فى حالة وجود اى مشاكل خاصة بالحوافز او بنود الخصومات\n"
+    "الاسم : %(employee_name)s"
+)
+
 
 class AbHrPayrollSheet(models.Model):
     _name = "ab.hr.payroll.sheet"
@@ -86,6 +105,10 @@ class AbHrPayrollSheet(models.Model):
         copy=False,
         help="Message sent with the payroll file. It is initialized automatically and can be edited before sending.",
     )
+    manager_message_sent = fields.Boolean(readonly=True, copy=False)
+    manager_file_sent = fields.Boolean(readonly=True, copy=False)
+    employee_message_sent = fields.Boolean(readonly=True, copy=False)
+    employee_file_sent = fields.Boolean(readonly=True, copy=False)
     sent_date = fields.Datetime(readonly=True, copy=False)
     delivered_date = fields.Datetime(readonly=True, copy=False)
     retry_count = fields.Integer(default=0, readonly=True, copy=False)
@@ -371,6 +394,43 @@ class AbHrPayrollSheet(models.Model):
         return self.env["ab_hr_job_occupied"], employee.department_id, False
 
     @api.model
+    def _employee_matches_file_work_entity(self, employee, work_entity):
+        work_entity_key = self._normalize_payroll_text(work_entity)
+        if not work_entity_key:
+            return False
+        departments = employee.sudo().job_occupied_ids.filtered(
+            lambda job: job.job_status == "active" and job.workplace
+        ).mapped("workplace")
+        if employee.department_id:
+            departments |= employee.department_id
+        return any(
+            department_key
+            and (department_key in work_entity_key or work_entity_key in department_key)
+            for department_key in (self._normalize_payroll_text(department.name) for department in departments)
+        )
+
+    @api.model
+    def _select_employee_candidate(self, candidates, parsed, match_method):
+        if len(candidates) == 1:
+            parsed["match_method"] = match_method
+            return candidates, False
+        if not candidates:
+            return candidates, False
+        department_matches = candidates.filtered(
+            lambda employee: self._employee_matches_file_work_entity(employee, parsed.get("work_entity"))
+        )
+        if len(department_matches) == 1:
+            parsed["match_method"] = "%s_and_department" % match_method
+            return department_matches, False
+        candidate_label = _("Employee name") if match_method == "name" else _("Employee identifier")
+        parsed["reason"] = (
+            _("%s matches more than one employee for the filename department.") % candidate_label
+            if department_matches
+            else _("%s matches more than one employee; include the exact department in the filename.") % candidate_label
+        )
+        return self.env["ab_hr_employee"], True
+
+    @api.model
     def _find_employee_for_file(self, file_name):
         parsed = self._parse_filename(file_name)
         if not parsed.get("valid"):
@@ -381,15 +441,21 @@ class AbHrPayrollSheet(models.Model):
         normalized_code = self._normalize_identifier(code)
         code_fields = [field for field in ("barcode", "identification_id", "accid") if field in Employee._fields]
 
-        employee = Employee.search([("costcenter_id.code", "=", code)], limit=2)
-        if len(employee) == 1:
-            parsed["match_method"] = "costcenter_id.code"
-            return employee, parsed
-
-        for field_name in code_fields:
-            employee = Employee.search([(field_name, "=", code)], limit=2)
-            if len(employee) == 1:
+        exact_candidate_sets = []
+        for field_name in ["costcenter_id.code", *code_fields]:
+            candidates = Employee.search([(field_name, "=", code)])
+            if len(candidates) == 1:
                 parsed["match_method"] = field_name
+                return candidates, parsed
+            if candidates:
+                exact_candidate_sets.append((field_name, candidates))
+
+        if exact_candidate_sets:
+            exact_candidates = Employee.browse()
+            for _field_name, candidates in exact_candidate_sets:
+                exact_candidates |= candidates
+            employee, ambiguous = self._select_employee_candidate(exact_candidates, parsed, "identifier")
+            if employee or ambiguous:
                 return employee, parsed
 
         if normalized_code:
@@ -400,15 +466,15 @@ class AbHrPayrollSheet(models.Model):
                     or any(self._normalize_identifier(emp[field_name]) == normalized_code for field_name in code_fields)
                 )
             )
-            if len(exact) == 1:
-                parsed["match_method"] = "normalized_code"
-                return exact, parsed
+            employee, ambiguous = self._select_employee_candidate(exact, parsed, "normalized_code")
+            if employee or ambiguous:
+                return employee, parsed
 
         parsed_employee_name = parsed.get("employee_name")
         if parsed_employee_name:
-            employee = Employee.search([("name", "=", parsed_employee_name)], limit=2)
-            if len(employee) == 1:
-                parsed["match_method"] = "name"
+            candidates = Employee.search([("name", "=", parsed_employee_name)])
+            employee, ambiguous = self._select_employee_candidate(candidates, parsed, "name")
+            if employee or ambiguous:
                 return employee, parsed
 
         name_parts = parsed.get("name_parts") or []
@@ -418,10 +484,12 @@ class AbHrPayrollSheet(models.Model):
         else:
             name_candidates = [" ".join(name_parts[1:split_index]) for split_index in range(len(name_parts), 2, -1)]
         for employee_name in name_candidates:
-            employee = Employee.search([("name", "=", employee_name)], limit=2)
-            if len(employee) == 1:
-                parsed["match_method"] = "name"
+            candidates = Employee.search([("name", "=", employee_name)])
+            employee, ambiguous = self._select_employee_candidate(candidates, parsed, "name")
+            if employee:
                 parsed["employee_name"] = employee_name
+                return employee, parsed
+            if ambiguous:
                 return employee, parsed
 
         parsed["reason"] = _("Employee could not be identified from filename.")
@@ -485,14 +553,16 @@ class AbHrPayrollSheet(models.Model):
         )
         return link.telegram_chat_id if link else False
 
-    def _ensure_telegram_sender_token(self):
+    @api.model
+    def _get_telegram_sender_token(self):
         icp = self.env["ir.config_parameter"].sudo()
-        legacy_token = (icp.get_param("telebot_api_key") or "").strip()
-        bot_token = (icp.get_param("telegram.bot.token") or "").strip()
-        if not legacy_token and bot_token:
-            icp.set_param("telebot_api_key", bot_token)
-            legacy_token = bot_token
-        if not legacy_token:
+        return (
+            (icp.get_param("telegram.bot.token") or "").strip()
+            or (icp.get_param("telebot_api_key") or "").strip()
+        )
+
+    def _ensure_telegram_sender_token(self):
+        if not self._get_telegram_sender_token():
             raise UserError(_("Telegram bot token is missing. Configure system parameter telegram.bot.token."))
         return True
 
@@ -645,6 +715,7 @@ class AbHrPayrollSheet(models.Model):
         return True
 
     def action_queue_distribution(self):
+        queueable = self.browse()
         for record in self:
             if record.state == "sent":
                 raise UserError(_("Payroll sheet has already been sent."))
@@ -657,11 +728,15 @@ class AbHrPayrollSheet(models.Model):
             except Exception as exc:
                 record._set_failed(str(exc))
                 continue
-            identity_key = "ab_hr_payroll_sheet_send_%s_%s" % (record.id, record.file_checksum or "")
             record.write({"state": "queued"})
             record._append_audit(_("Queued for Telegram distribution."))
-            if "queue.job" in self.env:
-                record.with_delay(identity_key=identity_key).send_payroll_sheet_telegram()
+            queueable |= record
+        if queueable and "queue.job" in self.env:
+            identity_source = "|".join(
+                "%s:%s" % (record.id, record.file_checksum or "") for record in queueable.sorted("id")
+            )
+            identity_key = "ab_hr_payroll_batch_%s" % hashlib.sha256(identity_source.encode()).hexdigest()[:24]
+            queueable.with_delay(identity_key=identity_key).send_payroll_sheet_telegram()
         return True
 
     @api.model
@@ -684,6 +759,8 @@ class AbHrPayrollSheet(models.Model):
         return True
 
     def _default_telegram_message_text(self, employee=False, employee_code=False):
+        if self.payroll_type in MANAGER_ONLY_PAYROLL_MESSAGES:
+            return MANAGER_ONLY_PAYROLL_MESSAGES[self.payroll_type]
         employee = employee or self.employee_id
         employee_code = employee_code or self.employee_code or "-"
         payroll_type = dict(self._fields["payroll_type"].selection).get(self.payroll_type, self.payroll_type)
@@ -698,36 +775,206 @@ class AbHrPayrollSheet(models.Model):
             "payroll_type": payroll_type,
         }
 
+    def _employee_telegram_message_text(self):
+        self.ensure_one()
+        period_match = re.match(r"^(\d{4})-(\d{2})$", self.payroll_period or "")
+        if period_match:
+            year, month = period_match.groups()
+        else:
+            today = fields.Date.context_today(self)
+            year, month = str(today.year), f"{today.month:02d}"
+        return EMPLOYEE_PAYROLL_MESSAGE % {
+            "month": month,
+            "year": year,
+            "employee_name": self.employee_id.display_name if self.employee_id else "-",
+        }
+
+    def _default_employee_telegram_message_text(self):
+        self.ensure_one()
+        return self._employee_telegram_message_text()
+
     def _telegram_message_text(self, recipient_role="manager"):
         self.ensure_one()
+        if recipient_role == "employee" and self.distribution_scope == "manager_and_employee":
+            return self._employee_telegram_message_text()
         if self.telegram_message_body:
             return self.telegram_message_body
-        return _(
-            "A copy of your payroll sheet has been sent\n"
-            "Employee Code: %(code)s\n"
-            "Payroll Type: %(payroll_type)s"
-        ) % {
-            "code": self.employee_code or "-",
-            "payroll_type": dict(self._fields["payroll_type"].selection).get(self.payroll_type, self.payroll_type),
-        } if recipient_role == "employee" else self._default_telegram_message_text()
+        return self._default_employee_telegram_message_text() if recipient_role == "employee" else self._default_telegram_message_text()
+
+    def _telegram_sender_message_text(self, recipient_role="manager"):
+        self.ensure_one()
+        message = self._telegram_message_text(recipient_role=recipient_role)
+        return (message or "").replace("\r\n", "\n").replace("\r", "\n").replace("\n", "<br/>")
+
+    @api.model
+    def _telegram_bot_client(self):
+        from telebot import TeleBot
+
+        self._ensure_telegram_sender_token()
+        return TeleBot(self._get_telegram_sender_token())
+
+    @api.model
+    def _telegram_error_text(self, error):
+        error_text = str(error)
+        if error_text == (
+            "A request to the Telegram API was unsuccessful. Error code: 400. "
+            "Description: Bad Request: chat not found"
+        ):
+            return _(
+                "A request to the Telegram API was unsuccessful. Error code: 400. "
+                "Description: Bad Request: chat not found"
+            )
+        return error_text
+
+    def _telegram_send_text_only(self, chat_id, message):
+        self.ensure_one()
+        try:
+            sent = self._telegram_bot_client().send_message(chat_id, message or "")
+        except Exception as exc:
+            raise UserError(_("Telegram message send failed: %s") % self._telegram_error_text(exc)) from exc
+        return str(getattr(sent, "message_id", "sent"))
+
+    def _telegram_send_document_only(self, chat_id):
+        self.ensure_one()
+        try:
+            file_data = base64.b64decode(self.attachment_id.datas or b"")
+            sent = self._telegram_bot_client().send_document(chat_id, (self.file_name, file_data))
+        except Exception as exc:
+            raise UserError(_("Telegram document send failed: %s") % self._telegram_error_text(exc)) from exc
+        return str(getattr(sent, "message_id", "sent"))
+
+    def _append_telegram_delivery_metadata(self, chat_id=False, delivery_token=False):
+        for record in self:
+            vals = {}
+            if chat_id:
+                chat_ids = [value for value in (record.telegram_chat_id or "").split(",") if value]
+                if str(chat_id) not in chat_ids:
+                    chat_ids.append(str(chat_id))
+                vals["telegram_chat_id"] = ",".join(chat_ids)
+            if delivery_token:
+                tokens = [value for value in (record.telegram_message_id or "").split(",") if value]
+                if delivery_token not in tokens:
+                    tokens.append(delivery_token)
+                vals["telegram_message_id"] = ",".join(tokens)
+            if vals:
+                record.write(vals)
+
+    def _employee_delivery_required(self):
+        self.ensure_one()
+        return self.distribution_scope == "manager_and_employee"
+
+    def _employee_file_delivery_required(self):
+        self.ensure_one()
+        return self._employee_delivery_required() and self.employee_id != self.manager_id
+
+    def _manager_delivery_groups(self):
+        groups = {}
+        for record in self.sorted("id"):
+            chat_id = record._resolve_manager_chat_id() or ""
+            key = (
+                record.manager_id.id,
+                record.department_id.id,
+                record.payroll_period,
+                record.payroll_type,
+                str(chat_id),
+                record._telegram_message_text(recipient_role="manager"),
+            )
+            if key not in groups:
+                groups[key] = {
+                    "chat_id": str(chat_id),
+                    "sheets": record.browse(),
+                }
+            groups[key]["sheets"] |= record
+        return list(groups.values())
+
+    def _mark_delivery_failed(self, reason):
+        for record in self:
+            record.write({"retry_count": record.retry_count + 1})
+            record._set_failed(str(reason))
+
+    def _send_manager_group(self, chat_id):
+        pending_files = self.filtered(lambda sheet: not sheet.manager_file_sent)
+        if not pending_files:
+            return self
+        message_source = self.sorted("id")[0]
+        if not any(self.mapped("manager_message_sent")):
+            try:
+                message_id = message_source._telegram_send_text_only(
+                    chat_id,
+                    message_source._telegram_message_text(recipient_role="manager"),
+                )
+            except Exception as exc:
+                pending_files._mark_delivery_failed(exc)
+                return self.browse()
+            self.write({"manager_message_sent": True})
+            self._append_telegram_delivery_metadata(
+                chat_id=chat_id,
+                delivery_token="manager_message:%s" % message_id,
+            )
+            self._append_audit(_("Manager payroll batch message sent."))
+        else:
+            self.filtered(lambda sheet: not sheet.manager_message_sent).write({"manager_message_sent": True})
+
+        delivered = self.browse()
+        for record in pending_files:
+            try:
+                document_id = record._telegram_send_document_only(chat_id)
+            except Exception as exc:
+                record._mark_delivery_failed(exc)
+                continue
+            record.write({"manager_file_sent": True})
+            record._append_telegram_delivery_metadata(
+                chat_id=chat_id,
+                delivery_token="manager_file:%s" % document_id,
+            )
+            record._append_audit(_("Payroll file sent to manager."))
+            delivered |= record
+        return delivered
+
+    def _send_employee_delivery(self):
+        self.ensure_one()
+        if not self._employee_delivery_required():
+            return True
+        chat_id = str(self._resolve_employee_chat_id() or "")
+        try:
+            if not self.employee_message_sent:
+                message_id = self._telegram_send_text_only(
+                    chat_id,
+                    self._telegram_message_text(recipient_role="employee"),
+                )
+                self.write({"employee_message_sent": True})
+                self._append_telegram_delivery_metadata(
+                    chat_id=chat_id,
+                    delivery_token="employee_message:%s" % message_id,
+                )
+            if self._employee_file_delivery_required() and not self.employee_file_sent:
+                document_id = self._telegram_send_document_only(chat_id)
+                self.write({"employee_file_sent": True})
+                self._append_telegram_delivery_metadata(
+                    chat_id=chat_id,
+                    delivery_token="employee_file:%s" % document_id,
+                )
+                self._append_audit(_("Payroll message and file sent to employee."))
+            elif not self.employee_file_sent and self.manager_file_sent:
+                self.write({"employee_file_sent": True})
+                self._append_audit(_("Personal payroll message sent; own payroll file was delivered in the manager batch."))
+        except Exception as exc:
+            self._mark_delivery_failed(exc)
+            return False
+        return True
 
     def _send_telegram_document(self, chat_id, recipient_role="manager"):
         self.ensure_one()
-        if "abdin_telegram" not in self.env:
-            raise UserError(_("Telegram sender module is not installed."))
-        result = self.env["abdin_telegram"].sudo().send_by_bot(
+        message_id = self._telegram_send_text_only(
             chat_id,
-            msg=self._telegram_message_text(recipient_role=recipient_role),
-            after="",
-            name_ext=self.file_name,
-            attachment=self.attachment_id.datas,
+            self._telegram_message_text(recipient_role=recipient_role),
         )
-        if result:
-            raise UserError(_("%s Telegram send failed: %s") % (recipient_role, result))
-        return "sent_by_abdin_telegram"
+        document_id = self._telegram_send_document_only(chat_id)
+        return "message:%s,document:%s" % (message_id, document_id)
 
     def send_payroll_sheet_telegram(self):
-        for record in self:
+        ready = self.browse()
+        for record in self.sorted("id"):
             try:
                 if record.state == "sent":
                     record._append_audit(_("Skipped duplicate send attempt; already sent."))
@@ -736,29 +983,26 @@ class AbHrPayrollSheet(models.Model):
                     record.action_validate()
                 if not record.manager_id:
                     raise UserError(_("Direct manager is missing."))
-                recipients = record._validate_telegram_recipients()
-                send_results = []
-                for recipient in recipients:
-                    telegram_message_id = record._send_telegram_document(
-                        recipient["chat_id"],
-                        recipient_role=recipient["role"],
-                    )
-                    send_results.append("%s:%s" % (recipient["role"], telegram_message_id))
-                record.write(
-                    {
-                        "state": "sent",
-                        "telegram_chat_id": ",".join(recipient["chat_id"] for recipient in recipients),
-                        "telegram_message_id": ",".join(send_results),
-                        "sent_date": fields.Datetime.now(),
-                        "last_error": False,
-                    }
-                )
-                record._append_audit(
-                    _("Telegram send result: sent to %s.")
-                    % ", ".join("%s:%s" % (recipient["role"], recipient["chat_id"]) for recipient in recipients)
-                )
+                record._validate_telegram_recipients()
+                ready |= record
             except Exception as exc:
                 _logger.exception("Payroll sheet Telegram distribution failed for record %s", record.id)
-                record.write({"retry_count": record.retry_count + 1})
-                record._set_failed(str(exc))
+                record._mark_delivery_failed(exc)
+
+        for manager_group in ready._manager_delivery_groups():
+            manager_group["sheets"]._send_manager_group(manager_group["chat_id"])
+
+        for record in ready.filtered("manager_file_sent"):
+            if not record._send_employee_delivery():
+                continue
+            if record._employee_delivery_required() and not record.employee_file_sent:
+                continue
+            record.write(
+                {
+                    "state": "sent",
+                    "sent_date": fields.Datetime.now(),
+                    "last_error": False,
+                }
+            )
+            record._append_audit(_("Telegram payroll distribution completed."))
         return True

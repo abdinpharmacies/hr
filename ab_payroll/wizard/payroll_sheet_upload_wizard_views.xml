@@ -31,18 +31,5 @@
             </field>
         </record>
 
-        <record id="action_ab_hr_payroll_sheet_upload_wizard" model="ir.actions.act_window">
-            <field name="name">Upload Payroll Sheets</field>
-            <field name="res_model">ab.hr.payroll.sheet.upload.wizard</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-        </record>
-
-        <menuitem id="menu_ab_hr_payroll_sheet_upload"
-                  name="Upload Payroll Sheets"
-                  parent="ab_hr.ab_hr_salaries_root"
-                  action="action_ab_hr_payroll_sheet_upload_wizard"
-                  groups="ab_payroll.group_ab_hr_payroll_sheet_admin"
-                  sequence="34"/>
     </data>
 </odoo>

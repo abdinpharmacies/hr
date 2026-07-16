@@ -26,13 +26,31 @@ msgstr "فشل إرسال تيليجرام لـ %s: %s"
 #. module: ab_payroll
 #. odoo-python
 #: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "%s matches more than one employee for the filename department."
+msgstr "يتطابق %s مع أكثر من موظف في الإدارة المذكورة في اسم الملف."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "%s matches more than one employee; include the exact department in the filename."
+msgstr "يتطابق %s مع أكثر من موظف؛ أدرج اسم الإدارة بدقة في اسم الملف."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "A request to the Telegram API was unsuccessful. Error code: 400. Description: Bad Request: chat not found"
+msgstr "تعذر تنفيذ الطلب إلى واجهة Telegram API. رمز الخطأ: 400. الوصف: طلب غير صالح: لم يتم العثور على المحادثة"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
 msgid "%s record is missing."
 msgstr "سجل %s غير موجود."
 
 #. module: ab_payroll
 #: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_upload_wizard_form
 msgid "2026-06"
-msgstr ""
+msgstr "2026-06"
 
 #. module: ab_payroll
 #: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_kanban
@@ -237,6 +255,16 @@ msgid "Employee Code"
 msgstr "كود الموظف"
 
 #. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__employee_file_sent
+msgid "Employee File Sent"
+msgstr "تم إرسال ملف الموظف"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__employee_message_sent
+msgid "Employee Message Sent"
+msgstr "تم إرسال رسالة الموظف"
+
+#. module: ab_payroll
 #. odoo-python
 #: code:addons/ab_payroll/models/payroll_sheet.py:0
 msgid "Employee Telegram chat ID is missing for %s."
@@ -271,10 +299,22 @@ msgstr ""
 
 #. module: ab_payroll
 #. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Employee identifier"
+msgstr "معرّف الموظف"
+
+#. module: ab_payroll
+#. odoo-python
 #: code:addons/ab_payroll/models/ab_hr_employee.py:0
 #: code:addons/ab_payroll/models/payroll_sheet.py:0
 msgid "Employee is not active."
 msgstr "الموظف غير نشط."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Employee name"
+msgstr "اسم الموظف"
 
 #. module: ab_payroll
 #. odoo-python
@@ -450,10 +490,26 @@ msgid "Manager"
 msgstr "المدير"
 
 #. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__manager_file_sent
+msgid "Manager File Sent"
+msgstr "تم إرسال الملف إلى المدير"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__manager_message_sent
+msgid "Manager Message Sent"
+msgstr "تم إرسال رسالة المدير"
+
+#. module: ab_payroll
 #. odoo-python
 #: code:addons/ab_payroll/models/payroll_sheet.py:0
 msgid "Manager Telegram chat ID is missing for %s."
 msgstr "معرف محادثة تيليجرام للمدير غير موجود لـ %s."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Manager payroll batch message sent."
+msgstr "تم إرسال رسالة دفعة الرواتب إلى المدير."
 
 #. module: ab_payroll
 #: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__distribution_scope__manager_only
@@ -637,6 +693,18 @@ msgstr "ملف الرواتب مطلوب."
 #. module: ab_payroll
 #. odoo-python
 #: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Payroll file sent to manager."
+msgstr "تم إرسال ملف الراتب إلى المدير."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Payroll message and file sent to employee."
+msgstr "تم إرسال رسالة وملف الراتب إلى الموظف."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
 msgid "Payroll period must use YYYY-MM format, for example 2026-06."
 msgstr "يجب أن تكون فترة الرواتب بصيغة YYYY-MM، مثال 2026-06."
 
@@ -650,6 +718,12 @@ msgstr "تم إرسال شيت الراتب بالفعل."
 #: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
 msgid "Pending"
 msgstr "قيد الانتظار"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Personal payroll message sent; own payroll file was delivered in the manager batch."
+msgstr "تم إرسال رسالة الراتب الشخصية؛ وتم تسليم ملف راتب المدير ضمن دفعة المدير."
 
 #. module: ab_payroll
 #: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__payroll_type__preliminary
@@ -770,6 +844,24 @@ msgstr "رسالة تيليجرام"
 #: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__telegram_message_id
 msgid "Telegram Message ID"
 msgstr "معرف رسالة تيليجرام"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Telegram document send failed: %s"
+msgstr "فشل إرسال ملف تيليجرام: %s"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Telegram message send failed: %s"
+msgstr "فشل إرسال رسالة تيليجرام: %s"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Telegram payroll distribution completed."
+msgstr "اكتمل توزيع شيتات الرواتب عبر تيليجرام."
 
 #. module: ab_payroll
 #: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
@@ -897,10 +989,10 @@ msgstr "سجل مراسلات الموقع"
 #. module: ab_payroll
 #: model:ir.model,name:ab_payroll.model_ab_hr_employee
 msgid "ab_hr_employee"
-msgstr ""
+msgstr "موظف الموارد البشرية"
 
 #. module: ab_payroll
 #. odoo-python
 #: code:addons/ab_payroll/wizard/payroll_sheet_upload_wizard.py:0
 msgid "id"
-msgstr ""
+msgstr "المعرّف"
