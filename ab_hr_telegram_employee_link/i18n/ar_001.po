@@ -37,3 +37,59 @@ msgstr "المعرف"
 #: model:ir.model,name:ab_hr_telegram_employee_link.model_ab_user_telegram_link
 msgid "Telegram User Link"
 msgstr "ربط مستخدم تيليجرام"
+
+#. module: ab_hr_telegram_employee_link
+#. odoo-python
+#: code:addons/ab_hr_telegram_employee_link/models/ab_hr_employee.py:0
+msgid "Employee code %s is not active."
+msgstr "كود الموظف %s غير نشط."
+
+#. module: ab_hr_telegram_employee_link
+#. odoo-python
+#: code:addons/ab_hr_telegram_employee_link/models/ab_hr_employee.py:0
+msgid "Employee is not active."
+msgstr "الموظف غير نشط."
+
+#. module: ab_hr_telegram_employee_link
+#. odoo-python
+#: code:addons/ab_hr_telegram_employee_link/models/ab_hr_employee.py:0
+msgid "Employee was not found."
+msgstr "لم يتم العثور على الموظف."
+
+#. module: ab_hr_telegram_employee_link
+#. odoo-python
+#: code:addons/ab_hr_telegram_employee_link/models/ab_hr_employee.py:0
+msgid "No active employee was found for code: %s"
+msgstr "لم يتم العثور على موظف نشط للكود: %s"
+
+#. module: ab_hr_telegram_employee_link
+#: model:ir.model.fields,field_description:ab_hr_telegram_employee_link.field_ab_hr_employee__telegram_chat_id
+msgid "Telegram Chat ID"
+msgstr "معرف محادثة تيليجرام"
+
+#. module: ab_hr_telegram_employee_link
+#: model:ir.model.fields,field_description:ab_hr_telegram_employee_link.field_ab_hr_employee__telegram_linked_at
+msgid "Telegram Linked At"
+msgstr "وقت ربط تيليجرام"
+
+#. module: ab_hr_telegram_employee_link
+#: model:ir.model.fields,field_description:ab_hr_telegram_employee_link.field_ab_hr_employee__telegram_user_id
+msgid "Telegram User ID"
+msgstr "معرف مستخدم تيليجرام"
+
+#. module: ab_hr_telegram_employee_link
+#: model:ir.model.fields,field_description:ab_hr_telegram_employee_link.field_ab_hr_employee__telegram_username
+msgid "Telegram Username"
+msgstr "اسم مستخدم تيليجرام"
+
+#. module: ab_hr_telegram_employee_link
+#. odoo-python
+#: code:addons/ab_hr_telegram_employee_link/models/ab_hr_employee.py:0
+msgid "Telegram account linked to employee %s."
+msgstr "تم ربط حساب تيليجرام بالموظف %s."
+
+#. module: ab_hr_telegram_employee_link
+#. odoo-python
+#: code:addons/ab_hr_telegram_employee_link/models/ab_hr_employee.py:0
+msgid "Telegram service is not installed."
+msgstr "خدمة تيليجرام غير مثبتة."
