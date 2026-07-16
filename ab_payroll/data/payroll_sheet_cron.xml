@@ -10,15 +10,5 @@
             <field name="interval_type">minutes</field>
             <field name="active">True</field>
         </record>
-
-        <record id="ir_cron_ab_hr_employee_telegram_import" model="ir.cron">
-            <field name="name">HR Employee Telegram Code Import</field>
-            <field name="model_id" ref="ab_hr.model_ab_hr_employee"/>
-            <field name="state">code</field>
-            <field name="code">model._cron_import_employee_telegram_updates()</field>
-            <field name="interval_number">1</field>
-            <field name="interval_type">minutes</field>
-            <field name="active">True</field>
-        </record>
     </data>
 </odoo>

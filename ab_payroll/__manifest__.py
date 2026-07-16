@@ -2,12 +2,13 @@
 {
     "name": "Abdin Payroll",
     "summary": "Secure payroll sheet validation and Telegram distribution",
-    "version": "19.0.1.0.10",
+    "version": "19.0.1.1.0",
     "license": "LGPL-3",
     "category": "Human Resources/Payroll",
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
-    "depends": ["ab_hr", "abdin_telegram"],
+    "depends": ["ab_hr", "ab_telegram_webhook", "ab_hr_telegram_employee_link"],
+    "external_dependencies": {"python": ["telebot"]},
     "data": [
         "security/security_groups.xml",
         "security/ir.model.access.csv",
