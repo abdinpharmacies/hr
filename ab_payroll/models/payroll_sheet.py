@@ -554,12 +554,12 @@ class AbHrPayrollSheet(models.Model):
         return link.telegram_chat_id if link else False
 
     @api.model
+    def _get_telegram_service(self):
+        return self.env["ab_telegram_service"].sudo()
+
+    @api.model
     def _get_telegram_sender_token(self):
-        icp = self.env["ir.config_parameter"].sudo()
-        return (
-            (icp.get_param("telegram.bot.token") or "").strip()
-            or (icp.get_param("telebot_api_key") or "").strip()
-        )
+        return self._get_telegram_service()._get_bot_token()
 
     def _ensure_telegram_sender_token(self):
         if not self._get_telegram_sender_token():
@@ -807,13 +807,6 @@ class AbHrPayrollSheet(models.Model):
         return (message or "").replace("\r\n", "\n").replace("\r", "\n").replace("\n", "<br/>")
 
     @api.model
-    def _telegram_bot_client(self):
-        from telebot import TeleBot
-
-        self._ensure_telegram_sender_token()
-        return TeleBot(self._get_telegram_sender_token())
-
-    @api.model
     def _telegram_error_text(self, error):
         error_text = str(error)
         if error_text == (
@@ -829,7 +822,7 @@ class AbHrPayrollSheet(models.Model):
     def _telegram_send_text_only(self, chat_id, message):
         self.ensure_one()
         try:
-            sent = self._telegram_bot_client().send_message(chat_id, message or "")
+            sent = self._get_telegram_service().send_payroll_message(chat_id, message or "")
         except Exception as exc:
             raise UserError(_("Telegram message send failed: %s") % self._telegram_error_text(exc)) from exc
         return str(getattr(sent, "message_id", "sent"))
@@ -838,7 +831,11 @@ class AbHrPayrollSheet(models.Model):
         self.ensure_one()
         try:
             file_data = base64.b64decode(self.attachment_id.datas or b"")
-            sent = self._telegram_bot_client().send_document(chat_id, (self.file_name, file_data))
+            sent = self._get_telegram_service().send_payroll_document(
+                chat_id,
+                self.file_name,
+                file_data,
+            )
         except Exception as exc:
             raise UserError(_("Telegram document send failed: %s") % self._telegram_error_text(exc)) from exc
         return str(getattr(sent, "message_id", "sent"))

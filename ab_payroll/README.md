@@ -21,16 +21,14 @@ resolved recipient through Telegram.
 Installing `ab_payroll` installs these direct dependencies:
 
 - `ab_hr`
-- `abdin_telegram`
-
-These optional integration modules provide automatic employee Telegram linking:
-
-- `ab_request_telegram`
+- `ab_telegram_webhook`
 - `ab_hr_telegram_employee_link`
 
-Install `ab_hr_telegram_employee_link` when employees should link their Telegram
-chat information to their HR employee record through the bot. Payroll sheets
-can still use Telegram identifiers entered directly on the employee record.
+`ab_telegram_webhook` owns the bot token, Telegram API connection, and incoming
+webhook. `ab_hr_telegram_employee_link` extends its dispatcher directly to
+handle employee-code messages and owns the Telegram identity fields on the
+employee record. Payroll extends the central Telegram service only with payroll
+message/document delivery. `ab_user_extra` is not required for payroll.
 
 ## Required Telegram Setup
 
@@ -40,7 +38,7 @@ can still use Telegram identifiers entered directly on the employee record.
    telegram.bot.token
    ```
 
-2. Install `ab_hr_telegram_employee_link`.
+2. Configure the Telegram webhook through `ab_telegram_webhook`.
 
 3. Ask every employee who should receive payroll files to send their HR code to
    the Telegram bot one time.
@@ -220,12 +218,13 @@ Regular HR users should not be granted payroll sheet access.
 ## Production Installation
 
 Install `ab_payroll` as a clean production module after installing its declared
-dependencies. Automatic employee-code reception additionally requires
-`ab_hr_telegram_employee_link`, which installs `ab_request_telegram` and its
-`ab_telegram_service` polling model.
+dependencies. Odoo installs `ab_telegram_webhook` and
+`ab_hr_telegram_employee_link` automatically. Request-management Telegram
+integration is not required for payroll or employee linking.
 
-The polling cron uses Telegram `getUpdates`. Do not configure a competing
-Telegram webhook for the same bot while this polling workflow is active.
+Incoming employee codes are handled only by the central webhook. The legacy
+employee `getUpdates` cron is not created on fresh installations, preventing a
+polling process from competing with the configured webhook.
 
 ## Important Operational Notes
 
