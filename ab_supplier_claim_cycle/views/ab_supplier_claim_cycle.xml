@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
         <record id="invoice_view_tree" model="ir.ui.view">
             <field name="name">invoice_view_tree</field>
             <field name="model">ab_supplier_claim_cycle</field>
             <field name="arch" type="xml">
-                <list string="invoice_tree" class="scc-list-view" decoration-danger="status == 'closed' and department_decision == 'rejected'" decoration-bf="status == 'secretarial'">
-                    <field name="name" string="Claim #"/>
+                <list string="invoice_tree">
                     <field name="supplier_id"/>
-                    <field name="supplier_claim_number" string="Supplier Ref"/>
-                    <field name="num_of_invoice" string="Invoices"/>
-                    <field name="create_date" string="Received" optional="show"/>
-                    <field name="status" widget="badge" decoration-success="status not in ('closed', 'supplier_notification', 'secretarial')" decoration-info="status == 'secretarial'" decoration-warning="status == 'supplier_notification'" decoration-danger="status == 'closed'"/>
-                    <field name="department_decision" widget="badge" decoration-success="department_decision == 'accepted'" decoration-warning="department_decision == 'pending'" decoration-danger="department_decision == 'rejected'"/>
-                    <field name="has_pending_escalation" invisible="1"/>
-                    <field name="escalation_count" invisible="1"/>
-                    <field name="amount_of_check" string="Amount" optional="show" widget="monetary"/>
-                    <field name="contact_result" optional="hide"/>
-                    <field name="contact_name" optional="hide"/>
-                    <field name="contact_phone" optional="hide" widget="phone"/>
-                    <field name="write_date" string="Updated" optional="show"/>
-                    <field name="user_id" optional="hide"/>
-                    <field name="area" optional="hide"/>
+                    <field name="num_of_invoice"/>
+                    <field name="create_date" string="Received Date"/>
+                    <field name="status"/>
+                    <field name="amount_of_check"/>
+                    <field name="write_date" string="Last Update Date"/>
+                    <field name="user_id"/>
+                    <field name="area"/>
+
+
+                    <!--                    <field name="write_date"/>-->
                 </list>
             </field>
         </record>
@@ -31,533 +25,63 @@
             <field name="name">invoice_view_form</field>
             <field name="model">ab_supplier_claim_cycle</field>
             <field name="arch" type="xml">
-                <form string="Supplier Claim" class="scc-form-container">
-                    <header class="scc-header-buttons">
-                        <button name="action_accept" type="object" string="Accept" class="btn-primary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
-                        <button name="action_reject" type="object" string="Reject" class="btn-secondary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
-                        <button name="action_finish" type="object" string="Finish" class="btn-success"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_finish"/>
-                        <button name="action_done" type="object" string="Start the Cycle"
-                                class="btn-warning"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status != 'secretarial' or not can_current_user_act"/>
+                <form string="invoice_form">
 
-                        <button name="action_done" type="object" string="Complete Sign Check"
-                                class="btn-success"
-                                invisible="status != 'sign_check' or not can_current_user_act"/>
-                        <button name="action_supplier_notified" type="object" string="Supplier Notified"
-                                class="btn-success"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status != 'supplier_notification' or supplier_notified == True or not can_current_user_act"/>
-                        <button name="action_close_claim" type="object" string="Close Claim"
-                                class="btn-primary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status != 'supplier_notification' or supplier_notified == False or not can_current_user_act"/>
-                        <button name="action_secretarial_force_next" type="object" string="Move to Next Stage"
-                                class="btn-info"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                 invisible="status in ('closed', 'secretarial') or not can_secretarial_override"/>
-                        <button name="action_toggle_chatter" type="object"
-                                class="btn-secondary float-end"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
-                            💬
-                        </button>
-                        <field name="status" invisible="1"/>
+                    <header>
+                        <button name="btn_status" type="object" string="Inventory" class="btn-success mr-1 ml-5"
+                                context="{'action':'inventory'}"
+                        />
+                        <button name="btn_status" type="object" string="Purchase" class="btn-success mr-1"
+                                context="{'action':'purchase'}"
+                        />
+
+                        <button name="btn_status" type="object" string="Suppliers" class="btn-success mr-1"
+                                context="{'action':'suppliers'}"
+                        />
+                        <button name="btn_status" type="object" string="Bank acc" class="btn-success mr-2"
+                                context="{'action':'bank_acc'}"
+                        />
+                        <button name="btn_status" type="object" string="Sign check" class="btn-warning mr-1"
+                                context="{'action':'sign_check'}"
+                        />
+                        <button name="btn_status" type="object" string="Closed" class="btn-danger mr-1"
+                                context="{'action':'closed'}"
+                                confirm="After closed you can't edit again"
+                        />
                     </header>
 
                     <sheet>
-                        <div class="oe_button_box" name="button_box">
-                        </div>
+                        <group>
+                            <field name="supplier_id" readonly="status == 'closed'"/>
+                            <field name="num_of_invoice" readonly="status == 'closed'"/>
+                            <field name="status" readonly="1"/>
+                            <field name="amount_of_check"/>
+                            <field name="area"/>
+                            <field name="type_of_invoice"/>
+                            <!--                            <field name="attachment" filename="attachment_name"/>-->
 
-                        <field name="can_current_user_edit" invisible="1"/>
-                        <field name="can_current_user_act" invisible="1"/>
-                        <field name="can_finish" invisible="1"/>
-                        <field name="can_secretarial_override" invisible="1"/>
-                        <field name="supplier_notified" invisible="1"/>
-                        <field name="has_blocking_issue" invisible="1"/>
-                        <field name="stage_escalated" invisible="1"/>
-                        <field name="escalation_ids" invisible="1"/>
-                        <field name="escalation_count" invisible="1"/>
-                        <field name="has_pending_escalation" invisible="1"/>
-                        <field name="escalation_missing_manager" invisible="1"/>
-                        <field name="has_tax_accounts" invisible="1"/>
-                        <field name="tax_percentage" invisible="1"/>
-                        <field name="tax_amount" invisible="1"/>
-                        <field name="net_payable" invisible="1"/>
-                        <field name="tax_frozen" invisible="1"/>
-                        <field name="is_dev_override" invisible="1"/>
-                        <field name="is_escalation_viewer" invisible="1"/>
-                        <field name="show_dev_override_badge" invisible="1"/>
-                        <field name="show_telegram_connect_button" invisible="1"/>
-                        <field name="show_chatter" invisible="1"/>
-
-                        <!-- DEV OVERRIDE BADGE -->
-                        <div class="scc-dev-badge" invisible="not show_dev_override_badge"
-                             style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;margin-bottom:8px;background:linear-gradient(135deg,#9333ea,#7c3aed);color:#fff;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;">
-                            <span style="font-size:13px;">🧪</span>
-                            <span>Developer Override</span>
-                        </div>
-
-                        <div class="scc-detail-alert" style="margin-bottom:16px;"
-                             invisible="status not in ('sign_check', 'supplier_notification')">
-                            <span class="scc-detail-alert-icon" t-translation="off">⚠</span>
-                            <span class="o_translate_inline">Please confirm that the supplier has been notified to visit the office and collect the cheque before closing the claim.</span>
-                        </div>
-
-                        <!-- Supplier Summary Card -->
-                        <div class="scc-supplier-card scc-animate-in">
-                            <div class="scc-supplier-card-header">
-                                <div class="scc-supplier-avatar">S</div>
-                                <div style="flex:1;">
-                                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
-                                        <span class="scc-supplier-name">
-                                            <field name="supplier_id" readonly="not can_current_user_edit" options="{'open_form': True}"/>
-                                            <span class="scc-supplier-link-icon">↗</span>
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
-                                            🏷 <field name="name" readonly="1" class="o_inline_modifier"/>
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;"
-                                              invisible="supplier_type != 'withholding_tax'">
-                                            🏛 <span>Withholding Tax</span> • <field name="tax_percentage" class="o_inline_modifier"/>%
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
-                                              invisible="supplier_type != 'advance_payment'">
-                                            <span>Advance Payment</span>
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
-                                              invisible="supplier_type != 'non_taxable'">
-                                            <span>Non-Taxable</span>
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
-                                            📅 <field name="claim_month" readonly="status != 'secretarial'"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-supplier-sub">
-                                        <field name="area" readonly="not can_current_user_edit"/>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="scc-supplier-grid">
-                                <div class="scc-supplier-info">
-                                    <div class="scc-supplier-info-icon">📄</div>
-                                    <div>
-                                        <div class="scc-supplier-info-label o_translate_inline">Supplier Ref</div>
-                                        <div class="scc-supplier-info-value">
-                                            <field name="supplier_claim_number" readonly="not can_current_user_edit" placeholder="—"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="scc-supplier-info">
-                                    <div class="scc-supplier-info-icon">📋</div>
-                                    <div>
-                                        <div class="scc-supplier-info-label o_translate_inline">Invoices</div>
-                                        <div class="scc-supplier-info-value">
-                                            <field name="num_of_invoice" readonly="not can_current_user_edit"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="scc-supplier-info">
-                                    <div class="scc-supplier-info-icon">💰</div>
-                                    <div style="flex:1;min-width:0;">
-                                        <div class="scc-supplier-info-label o_translate_inline">Check Amount</div>
-                                        <!-- Default: editable fields (before tax stage) -->
-                                        <div class="scc-supplier-info-value scc-tax-inline-wrapper"
-                                             invisible="has_tax_accounts and status in ('tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')">
-                                            <span class="scc-tax-inline-amount-field">
-                                                <field name="amount_of_check" readonly="not can_current_user_edit" class="scc-amount-field"/>
-                                                <field name="currency_id" readonly="not can_current_user_edit" options="{'no_create': True}" class="scc-currency-field"/>
-                                            </span>
-                                        </div>
-                                        <!-- Tax discount display starts from the Tax Accounts stage -->
-                                        <div class="scc-tax-pricing-display"
-                                             invisible="not has_tax_accounts or status not in ('tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')">
-                                            <div class="scc-tax-pricing-row">
-                                                <span class="scc-tax-old-amount">
-                                                    <field name="amount_of_check" widget="monetary" readonly="not can_current_user_edit"/>
-                                                </span>
-                                                <span class="scc-tax-discount-badge">-<field name="tax_percentage"/>%</span>
-                                            </div>
-                                            <div class="scc-tax-pricing-net">
-                                                <field name="net_payable" widget="monetary"/>
-                                            </div>
-                                            <div class="scc-tax-pricing-caption">✓ Withholding Tax Applied</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="scc-supplier-info">
-                                    <div class="scc-supplier-info-icon">🧾</div>
-                                    <div>
-                                        <div class="scc-supplier-info-label o_translate_inline">Invoice Type</div>
-                                        <div class="scc-supplier-info-value">
-                                            <field name="type_of_invoice" readonly="not can_current_user_edit"/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="scc-tg-connect-wrapper" invisible="not show_telegram_connect_button">
-                            <div class="scc-tg-connect-card">
-                                <span class="scc-tg-connect-badge">Setup Required</span>
-                                <div class="scc-tg-connect-icon-wrap">
-                                    <span class="scc-tg-connect-icon">✈️</span>
-                                </div>
-                                <div class="scc-tg-connect-title">Telegram Not Connected</div>
-                                <div class="scc-tg-connect-sub">Connect your Telegram account to receive workflow approvals, escalation alerts, supplier claim notifications and real-time updates.</div>
-                                <button name="action_open_telegram_bot" type="object" class="scc-tg-connect-btn">
-                                    <span>✈️</span> Connect Telegram
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-1">
-                            <div class="scc-form-section-title">
-                                <span class="scc-form-section-title-icon">📎</span>
-                                <span class="o_translate_inline">Claim Documents</span>
-                            </div>
-                            <div style="padding:20px;background:linear-gradient(135deg,#f0f4ff 0%,#e8ecff 100%);border:2px dashed #6366f1;border-radius:10px;">
-                                <div style="display:flex;align-items:center;gap:16px;margin-bottom:12px;">
-                                    <div style="font-size:28px;">📄</div>
-                                    <div style="flex:1;">
-                                        <div style="font-size:14px;font-weight:600;color:#4f46e5;margin-bottom:2px;">
-                                            <span class="o_translate_inline">Supplier Claim Document</span>
-                                        </div>
-                                        <div style="font-size:12px;color:#6b7280;">
-                                            <span class="o_translate_inline">Upload the supplier's claim document (PDF, image, etc.)</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <field name="claim_document" filename="claim_document_filename"
-                                       placeholder="Choose file or drop here"
-                                       readonly="not can_edit_documents"
-                                       style="padding:16px;background:#fff;border:1px solid #c7d2fe;border-radius:8px;width:100%;"/>
-                                <field name="claim_document_filename" invisible="1"/>
-                                <div style="margin-top:8px;font-size:12px;color:#9ca3af;">
-                                    <span class="o_translate_inline">The cycle cannot start without an attached document.</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Workflow Section -->
-                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2">
-                            <div class="scc-form-section-title">
-                                <span class="scc-form-section-title-icon">⚙</span>
-                                <span class="o_translate_inline">Workflow</span>
-                            </div>
-
-                            <!-- Department Decision Status -->
-                            <div class="scc-stage-field" invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Department Decision</span>
-                                <span class="scc-stage-field-value">
-                                    <field name="department_decision_display" nolabel="1"/>
-                                </span>
-                            </div>
-
-                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_inventory"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
-                                <span class="scc-stage-field-value">
-                                    <field name="inv_reason" readonly="inv_decision == 'accepted'"/>
-                                </span>
-                            </div>
-                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_purchase"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
-                                <span class="scc-stage-field-value">
-                                    <field name="pur_reason" readonly="pur_decision == 'accepted'"/>
-                                </span>
-                            </div>
-                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_suppliers"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
-                                <span class="scc-stage-field-value">
-                                    <field name="sup_reason" readonly="sup_decision == 'accepted'"/>
-                                </span>
-                            </div>
-                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_tax_accounts"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or supplier_type != 'withholding_tax'">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
-                                <span class="scc-stage-field-value">
-                                    <field name="tax_reason" readonly="tax_decision == 'accepted'"/>
-                                </span>
-                            </div>
-                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_bank_acc"
-                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
-                                <span class="scc-stage-field-value">
-                                    <field name="bank_reason" readonly="bank_decision == 'accepted'"/>
-                                </span>
-                            </div>
-
-                            <!-- Supplier Notification Fields -->
-                            <div invisible="status not in ('supplier_notification', 'closed')" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
-                                <div class="scc-form-section-title" style="margin-bottom:12px;">
-                                    <span style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📞</span>
-                                    <span class="o_translate_inline">Supplier Notification</span>
-                                </div>
-                                <div class="scc-stage-grid" style="margin-bottom:12px;">
-                                    <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label o_translate_inline">Contact Name</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="contact_name" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label o_translate_inline">Contact Phone</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="contact_phone" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label o_translate_inline">Email</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="supplier_email" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label o_translate_inline">Delegate</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="delegate_phone_ids" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)" placeholder="—" widget="many2many_tags" options="{'no_create_edit': True}" context="{'default_partner_id': supplier_id}"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label o_translate_inline">Contact Result</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="contact_result" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label o_translate_inline">Notified By</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="supplier_notified_by" readonly="1"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-stage-field" style="grid-column:span 2;">
-                                        <span class="scc-stage-field-label o_translate_inline">Notification Notes</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="notification_notes" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
-                                        </span>
-                                    </div>
-                                    <div class="scc-stage-field">
-                                        <span class="scc-stage-field-label o_translate_inline">Notification Date</span>
-                                        <span class="scc-stage-field-value">
-                                            <field name="supplier_notification_date" readonly="1"/>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Cheque Delivery Documents -->
-                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
-                            <div class="scc-form-section-title">
-                                <span class="scc-form-section-title-icon">📎</span>
-                                <span class="o_translate_inline">Cheque Delivery Documents</span>
-                            </div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-                                <div style="padding:20px;background:linear-gradient(135deg,#f0f4ff 0%,#e8ecff 100%);border:2px dashed #6366f1;border-radius:10px;">
-                                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-                                        <div style="font-size:24px;">🏦</div>
-                                        <div style="flex:1;">
-                                            <div style="font-size:14px;font-weight:600;color:#4f46e5;margin-bottom:2px;">
-                                                <span class="o_translate_inline">Cheque Image</span>
-                                                <span style="color:#ef4444;">*</span>
-                                            </div>
-                                            <div style="font-size:12px;color:#6b7280;">
-                                                <span class="o_translate_inline">Upload a clear image of the signed cheque</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <field name="cheque_image" filename="cheque_image_filename"
-                                           placeholder="Choose file or drop here"
-                                           readonly="not can_edit_documents"
-                                           style="padding:16px;background:#fff;border:1px solid #c7d2fe;border-radius:8px;width:100%;"/>
-                                    <field name="cheque_image_filename" invisible="1"/>
-                                </div>
-                                <div style="padding:20px;background:linear-gradient(135deg,#f0f4ff 0%,#e8ecff 100%);border:2px dashed #6366f1;border-radius:10px;">
-                                    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
-                                        <div style="font-size:24px;">🪪</div>
-                                        <div style="flex:1;">
-                                            <div style="font-size:14px;font-weight:600;color:#4f46e5;margin-bottom:2px;">
-                                                <span class="o_translate_inline">Supplier ID Image</span>
-                                                <span style="color:#ef4444;">*</span>
-                                            </div>
-                                            <div style="font-size:12px;color:#6b7280;">
-                                                <span class="o_translate_inline">Upload the supplier's personal ID image</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <field name="supplier_id_image" filename="supplier_id_image_filename"
-                                           placeholder="Choose file or drop here"
-                                           readonly="not can_edit_documents"
-                                           style="padding:16px;background:#fff;border:1px solid #c7d2fe;border-radius:8px;width:100%;"/>
-                                    <field name="supplier_id_image_filename" invisible="1"/>
-                                </div>
-                            </div>
-                            <div style="margin-top:8px;font-size:12px;color:#9ca3af;">
-                                <span class="o_translate_inline">Both images are required when marking the cheque as delivered.</span>
-                            </div>
-                        </div>
-
-                        <!-- Blocking Issues -->
-                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="not has_blocking_issue">
-                            <div class="scc-form-section-title">
-                                <span class="scc-form-section-title-icon">🔒</span>
-                                <span class="o_translate_inline">Blocking Issues</span>
-                            </div>
-                            <div style="display:flex;flex-direction:column;gap:12px;">
-                                <field name="issue_ids" nolabel="1" readonly="not can_current_user_edit">
-                                    <list>
-                                        <field name="title"/>
-                                        <field name="description"/>
-                                        <field name="user_id"/>
-                                        <field name="date"/>
-                                        <field name="resolved"/>
-                                        <button name="action_resolve" type="object" string="Resolve"
-                                                class="btn-success"
-                                                invisible="resolved == True"
-                                                groups="ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
-                                    </list>
-                                </field>
-                            </div>
-                        </div>
-
-                        <!-- sub_delivery_status on form -->
-                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
-                            <div class="scc-form-section-title">
-                                <span class="scc-form-section-title-icon">🚚</span>
-                                <span class="o_translate_inline">Delivery Status</span>
-                            </div>
-                            <div class="scc-stage-field">
-                                <span class="scc-stage-field-label o_translate_inline">Sub Status</span>
-                                <span class="scc-stage-field-value">
-                                    <field name="sub_delivery_status" nolabel="1"
-                                           required="check_delivery_status in ('check_delivered', 'mixed')"/>
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Timeline -->
-                        <div class="scc-form-section scc-animate-in scc-animate-in-delay-2">
-                            <div class="scc-form-section-title">
-                                <span class="scc-form-section-title-icon">📊</span>
-                                <span class="o_translate_inline">Workflow Timeline</span>
-                            </div>
-                            <field name="timeline_display" nolabel="1"/>
-                        </div>
+                        </group>
                     </sheet>
 
-                    <chatter invisible="not show_chatter"
-                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                    <chatter/>
                 </form>
             </field>
         </record>
 
-        <record id="check_delivery_wizard_form" model="ir.ui.view">
-            <field name="name">check_delivery_wizard_form</field>
-            <field name="model">ab.check.delivery.wizard</field>
-            <field name="arch" type="xml">
-                <form class="scc-clean-dialog">
-                    <div class="scc-dialog-body">
-                        <div class="scc-dialog-header">
-                            <div class="scc-dialog-icon">🚀</div>
-                            <div>
-                                <div class="scc-dialog-title o_translate_inline">Payment Method</div>
-                                <div class="scc-dialog-sub o_translate_inline">Select the cheque delivery payment method</div>
-                            </div>
-                        </div>
-                        <div class="scc-dialog-field">
-                            <field name="claim_id" invisible="1"/>
-                            <field name="check_delivery_status" required="1" placeholder="Select delivery status..."/>
-                        </div>
-                        <div class="scc-dialog-footer">
-                            <button string="Cancel" class="btn-secondary" special="cancel"/>
-                            <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
-                        </div>
-                    </div>
-                </form>
-            </field>
-        </record>
-
-
-        <record id="claim_error_wizard_form" model="ir.ui.view">
-            <field name="name">claim_error_wizard_form</field>
-            <field name="model">ab.claim.error.wizard</field>
-            <field name="arch" type="xml">
-                <form class="scc-clean-dialog">
-                    <div class="scc-dialog-body">
-                        <div class="scc-dialog-header">
-                            <div class="scc-dialog-icon is-error">⚠</div>
-                            <div>
-                                <div class="scc-dialog-title o_translate_inline">Missing Required Information</div>
-                                <div class="scc-dialog-sub o_translate_inline">Please review the details below</div>
-                            </div>
-                        </div>
-                        <div class="scc-dialog-field">
-                            <div class="scc-error-card">
-                                <field name="error_message" class="scc-error-text"/>
-                            </div>
-                        </div>
-                        <div class="scc-dialog-footer">
-                            <button name="action_ok" type="object" string="OK" class="btn-primary"/>
-                        </div>
-                    </div>
-                </form>
-            </field>
-        </record>
-
-        <record id="supplier_type_setup_wizard_form" model="ir.ui.view">
-            <field name="name">supplier_type_setup_wizard_form</field>
-            <field name="model">ab.supplier.type.setup.wizard</field>
-            <field name="arch" type="xml">
-                <form class="scc-clean-dialog">
-                    <div class="scc-dialog-body">
-                        <div class="scc-dialog-header">
-                            <div class="scc-dialog-icon is-warning">⚠</div>
-                            <div>
-                                <div class="scc-dialog-title o_translate_inline">Supplier Type Required</div>
-                                <div class="scc-dialog-sub o_translate_inline">
-                                    This supplier has not been classified yet.
-                                    Please select the Supplier Type before continuing.
-                                </div>
-                            </div>
-                        </div>
-                        <div class="scc-dialog-field">
-                            <field name="supplier_id" invisible="1"/>
-                            <field name="supplier_type" required="1" placeholder="Select supplier type..."/>
-                        </div>
-                        <div class="scc-dialog-footer">
-                            <button string="Cancel" class="btn-secondary" special="cancel"/>
-                            <button name="action_confirm" type="object" string="Save" class="btn-primary"/>
-                        </div>
-                    </div>
-                </form>
-            </field>
-        </record>
 
         <record id="invoice_action" model="ir.actions.act_window">
-            <field name="name">Claim Cycle</field>
+            <field name="name">invoice</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">ab_supplier_claim_cycle</field>
             <field name="view_mode">list,form</field>
         </record>
 
+
         <menuitem id="invoice_menu"
                   name="Claim Cycle"
                   parent="supplier_claim_cycle_sub_menu"
                   action="invoice_action"
-                  groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_reviewer,ab_supplier_claim_cycle.supplier_claim_group_admin"
                   sequence="100"/>
-
 
     </data>
 </odoo>
