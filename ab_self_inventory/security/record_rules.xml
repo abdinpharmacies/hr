@@ -6,8 +6,19 @@
             <field name="name">Self inventory batches: own requester records</field>
             <field name="model_id" ref="model_ab_self_inventory_request_batch"/>
             <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
-            <field name="domain_force">[('requester_id', '=', user.id), ('state', 'in', ['draft', 'cancelled'])]</field>
+            <field name="domain_force">[('requester_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_self_inventory_request_batch_requester_write" model="ir.rule">
+            <field name="name">Self inventory batches: requester draft write</field>
+            <field name="model_id" ref="model_ab_self_inventory_request_batch"/>
+            <field name="groups" eval="[(4, ref('group_ab_self_inventory_requester'))]"/>
+            <field name="domain_force">[('requester_id', '=', user.id), ('state', 'in', ['draft', 'cancelled'])]</field>
+            <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>

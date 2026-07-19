@@ -8,6 +8,107 @@ import { useService } from "@web/core/utils/hooks";
 import { Dialog } from "@web/core/dialog/dialog";
 import { BatchesLoadingOverlay, useBatchLoading } from "./batches_loading_overlay";
 
+// Odoo's JavaScript extractor does not inspect _t() calls embedded inside
+// inline OWL xml templates. Keep those terms visible to the extractor so the
+// web translation bundle contains every label used by this module's widgets.
+function collectInlineTemplateTranslationTerms() {
+    return [
+        _t("%s days ago"),
+        _t("%s days overdue"),
+        _t("Actual Qty"),
+        _t("Add Line"),
+        _t("Add Products"),
+        _t("Added"),
+        _t("All Branches"),
+        _t("Awaiting"),
+        _t("Branch"),
+        _t("Branch Response"),
+        _t("Branch Response & Implementation"),
+        _t("Branches"),
+        _t("Branches Processed"),
+        _t("Bulk Product Import Results"),
+        _t("Cancelled by %(name)s"),
+        _t("Clear"),
+        _t("Close"),
+        _t("Code"),
+        _t("Counted"),
+        _t("Deadline"),
+        _t("Delete"),
+        _t("Delete Selected"),
+        _t("Difference"),
+        _t("Download Missing Codes"),
+        _t("Draft by %(name)s"),
+        _t("Due in %s days"),
+        _t("Due today"),
+        _t("Due tomorrow"),
+        _t("Duplicate"),
+        _t("E-stock Qty"),
+        _t("Edit"),
+        _t("Explanation"),
+        _t("Group"),
+        _t("Hide Missing Product Codes"),
+        _t("Implementation"),
+        _t("Invalid date"),
+        _t("Inventory Implementation"),
+        _t("Item Implementation"),
+        _t("Items"),
+        _t("Items Counted"),
+        _t("Items Implemented"),
+        _t("Loading branch progress..."),
+        _t("Manual"),
+        _t("Matched"),
+        _t("Missing"),
+        _t("Next"),
+        _t("No"),
+        _t("No Matching Products Found"),
+        _t("No branch requests have been generated yet."),
+        _t("No branches assigned yet"),
+        _t("No branches match your search."),
+        _t("No deadline"),
+        _t("No products found"),
+        _t("Note"),
+        _t("Open"),
+        _t("Page"),
+        _t("Pending"),
+        _t("Previous"),
+        _t("Product"),
+        _t("Products"),
+        _t("Products Added"),
+        _t("Products Missing"),
+        _t("Refresh"),
+        _t("Refreshing..."),
+        _t("Requested"),
+        _t("Requested Products Cost"),
+        _t("Response"),
+        _t("Search Branch..."),
+        _t("Search branch..."),
+        _t("Search products..."),
+        _t("Select All"),
+        _t("Sell Price"),
+        _t("Show All"),
+        _t("Show Missing Product Codes"),
+        _t("Show less"),
+        _t("Showing"),
+        _t("Showing:"),
+        _t("Sold Qty"),
+        _t("Some product codes could not be found"),
+        _t("Source"),
+        _t("Submitted by %(details)s"),
+        _t("Submitted responses and item-count progress for every branch"),
+        _t("The entered product codes do not exist in the selected branches."),
+        _t("Today"),
+        _t("Try changing the branch filter or search terms to find products."),
+        _t("Unselect All"),
+        _t("Yes"),
+        _t("Yesterday"),
+        _t("counted"),
+        _t("products"),
+        _t("products selected"),
+        _t("submitted"),
+    ];
+}
+void collectInlineTemplateTranslationTerms;
+
 function getRecordValue(record, fieldName, fallback = null) {
     const data = record?.data;
     if (!data || !(fieldName in data)) return fallback;
@@ -163,6 +264,7 @@ class KpiCardWidget extends Component {
         line_count: { type: "items", icon: "items", label: _t("Total Lines") },
         shortage_qty: { type: "shortage", icon: "shortage", label: _t("Shortage") },
         extra_qty: { type: "extra", icon: "extra", label: _t("Extra") },
+        requested_total_cost: { type: "cost", icon: "cost", label: _t("Requested Products Cost") },
     };
 
     get rawValue() {
@@ -172,6 +274,12 @@ class KpiCardWidget extends Component {
     get formattedValue() {
         const n = Number(this.rawValue);
         if (isNaN(n)) return "0";
+        if (this.cardType === "cost") {
+            return n.toLocaleString(getUiLocale(), {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
         return n.toLocaleString();
     }
 
@@ -189,6 +297,7 @@ class KpiCardWidget extends Component {
             processes: "\u2713",
             shortage: "\u2193",
             extra: "\u2191",
+            cost: "EGP",
         };
         const iconKey = this.props.cardIcon || this.props.options?.icon || this.cardType;
         return chars[iconKey] || "\u25A0";
@@ -204,6 +313,347 @@ class KpiCardWidget extends Component {
 
 registry.category("fields").add("ab_inventory_kpi_card", {
     component: KpiCardWidget,
+});
+
+// ------------------------------------------------------------------
+// Inventory implementation widgets
+// ------------------------------------------------------------------
+
+class ImplementationProgressWidget extends Component {
+    static template = xml`
+        <span class="ab_implementation_progress" t-att-title="progressTitle">
+            <span class="ab_implementation_progress_track">
+                <span class="ab_implementation_progress_fill" t-att-style="progressStyle"/>
+            </span>
+            <span class="ab_implementation_progress_value"><t t-esc="formattedPercent"/></span>
+        </span>
+    `;
+    static props = { ...standardFieldProps };
+
+    get percent() {
+        const value = Number(getRecordValue(this.props.record, this.props.name, 0)) || 0;
+        return Math.max(0, Math.min(value, 100));
+    }
+
+    get formattedPercent() {
+        return Math.round(this.percent) + "%";
+    }
+
+    get progressStyle() {
+        return `width: ${this.percent}%`;
+    }
+
+    get progressTitle() {
+        return _t("Implementation: %s").replace("%s", this.formattedPercent);
+    }
+}
+
+registry.category("fields").add("ab_inventory_implementation_progress", {
+    component: ImplementationProgressWidget,
+});
+
+class BranchResponseBadgeWidget extends Component {
+    static template = xml`
+        <span t-att-class="'ab_response_badge ab_response_badge--' + responseState">
+            <span class="ab_response_badge_dot"/>
+            <t t-esc="responseLabel"/>
+        </span>
+    `;
+    static props = { ...standardFieldProps };
+
+    get responseState() {
+        return getRecordValue(this.props.record, this.props.name, "awaiting") || "awaiting";
+    }
+
+    get responseLabel() {
+        const labels = {
+            awaiting: _t("Awaiting Response"),
+            in_progress: _t("In Progress"),
+            responded: _t("Responded"),
+            cancelled: _t("Cancelled"),
+        };
+        return labels[this.responseState] || this.responseState;
+    }
+}
+
+registry.category("fields").add("ab_inventory_response_badge", {
+    component: BranchResponseBadgeWidget,
+});
+
+class ItemImplementationChartWidget extends Component {
+    static template = xml`
+        <div class="ab_item_implementation_chart">
+            <div class="ab_item_implementation_donut">
+                <svg viewBox="0 0 100 100" aria-hidden="true">
+                    <circle class="ab_item_implementation_donut_bg" cx="50" cy="50" r="42"/>
+                    <circle class="ab_item_implementation_donut_fill" cx="50" cy="50" r="42"
+                            t-att-stroke-dasharray="circumference"
+                            t-att-stroke-dashoffset="dashOffset"/>
+                </svg>
+                <div class="ab_item_implementation_donut_value"><t t-esc="formattedPercent"/></div>
+            </div>
+            <div class="ab_item_implementation_content">
+                <div class="ab_item_implementation_title"><t t-esc="_t('Item Implementation')"/></div>
+                <div class="ab_item_implementation_caption">
+                    <t t-esc="implementationCaption"/>
+                </div>
+                <div class="ab_item_implementation_track">
+                    <span class="ab_item_implementation_fill" t-att-style="progressStyle"/>
+                </div>
+                <div class="ab_item_implementation_legend">
+                    <span><strong><t t-esc="countedCount"/></strong> <t t-esc="_t('Counted')"/></span>
+                    <span><strong><t t-esc="pendingCount"/></strong> <t t-esc="_t('Pending')"/></span>
+                </div>
+            </div>
+        </div>
+    `;
+    static props = {
+        ...standardFieldProps,
+        requiredField: { type: String },
+        countedField: { type: String },
+    };
+
+    setup() { this._t = _t; }
+
+    get percent() {
+        const value = Number(getRecordValue(this.props.record, this.props.name, 0)) || 0;
+        return Math.max(0, Math.min(value, 100));
+    }
+
+    get requiredCount() {
+        return Number(getRecordValue(this.props.record, this.props.requiredField, 0)) || 0;
+    }
+
+    get countedCount() {
+        return Number(getRecordValue(this.props.record, this.props.countedField, 0)) || 0;
+    }
+
+    get pendingCount() {
+        return Math.max(this.requiredCount - this.countedCount, 0);
+    }
+
+    get implementationCaption() {
+        return _t("%(counted)s of %(required)s requested items counted")
+            .replace("%(counted)s", this.countedCount)
+            .replace("%(required)s", this.requiredCount);
+    }
+
+    get formattedPercent() {
+        return Math.round(this.percent) + "%";
+    }
+
+    get circumference() {
+        return 2 * Math.PI * 42;
+    }
+
+    get dashOffset() {
+        return this.circumference * (1 - this.percent / 100);
+    }
+
+    get progressStyle() {
+        return `width: ${this.percent}%`;
+    }
+}
+
+registry.category("fields").add("ab_inventory_item_implementation_chart", {
+    component: ItemImplementationChartWidget,
+    extractProps: ({ attrs }) => {
+        const options = attrs.options || {};
+        return {
+            requiredField: options.required_field || "required_item_count",
+            countedField: options.counted_field || "counted_item_count",
+        };
+    },
+});
+
+class BranchResponseDashboardWidget extends Component {
+    static template = xml`
+        <div class="ab_response_dashboard">
+            <div class="ab_response_dashboard_header">
+                <div>
+                    <div class="ab_response_dashboard_title"><t t-esc="_t('Branch Response &amp; Implementation')"/></div>
+                    <div class="ab_response_dashboard_subtitle"><t t-esc="_t('Submitted responses and item-count progress for every branch')"/></div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm" t-on-click="load" t-att-disabled="state.loading">
+                    <t t-esc="state.loading ? _t('Refreshing...') : _t('Refresh')"/>
+                </button>
+            </div>
+
+            <div class="ab_response_dashboard_loading" t-if="state.loading &amp;&amp; !state.data">
+                <span class="ab_response_dashboard_spinner"/>
+                <t t-esc="_t('Loading branch progress...')"/>
+            </div>
+
+            <t t-if="state.data">
+                <div class="ab_response_dashboard_summary">
+                    <div class="ab_response_summary_chart">
+                        <div class="ab_response_summary_donut">
+                            <svg viewBox="0 0 100 100" aria-hidden="true">
+                                <circle class="ab_response_summary_donut_bg" cx="50" cy="50" r="40"/>
+                                <circle class="ab_response_summary_donut_fill ab_response_summary_donut_fill--response"
+                                        cx="50" cy="50" r="40"
+                                        t-att-stroke-dasharray="circumference"
+                                        t-att-stroke-dashoffset="responseDashOffset"/>
+                            </svg>
+                            <div class="ab_response_summary_donut_value"><t t-esc="roundedResponsePercent + '%'"/></div>
+                        </div>
+                        <div>
+                            <div class="ab_response_summary_label"><t t-esc="_t('Branch Response')"/></div>
+                            <div class="ab_response_summary_hint">
+                                <t t-esc="state.data.responded_branches"/> / <t t-esc="state.data.total_branches"/> <t t-esc="_t('submitted')"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ab_response_summary_chart">
+                        <div class="ab_response_summary_donut">
+                            <svg viewBox="0 0 100 100" aria-hidden="true">
+                                <circle class="ab_response_summary_donut_bg" cx="50" cy="50" r="40"/>
+                                <circle class="ab_response_summary_donut_fill ab_response_summary_donut_fill--items"
+                                        cx="50" cy="50" r="40"
+                                        t-att-stroke-dasharray="circumference"
+                                        t-att-stroke-dashoffset="implementationDashOffset"/>
+                            </svg>
+                            <div class="ab_response_summary_donut_value"><t t-esc="roundedImplementationPercent + '%'"/></div>
+                        </div>
+                        <div>
+                            <div class="ab_response_summary_label"><t t-esc="_t('Items Implemented')"/></div>
+                            <div class="ab_response_summary_hint">
+                                <t t-esc="state.data.total_counted_items"/> / <t t-esc="state.data.total_required_items"/> <t t-esc="_t('counted')"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ab_response_summary_statuses">
+                        <div><span class="ab_response_status_dot ab_response_status_dot--responded"/><strong><t t-esc="state.data.responded_branches"/></strong> <t t-esc="_t('Responded')"/></div>
+                        <div><span class="ab_response_status_dot ab_response_status_dot--in_progress"/><strong><t t-esc="state.data.in_progress_branches"/></strong> <t t-esc="_t('In Progress')"/></div>
+                        <div><span class="ab_response_status_dot ab_response_status_dot--awaiting"/><strong><t t-esc="state.data.awaiting_branches"/></strong> <t t-esc="_t('Awaiting')"/></div>
+                    </div>
+                </div>
+
+                <div class="ab_response_branch_table" t-if="state.data.branches.length">
+                    <div class="ab_response_branch_row ab_response_branch_row--header">
+                        <div><t t-esc="_t('Branch')"/></div>
+                        <div><t t-esc="_t('Response')"/></div>
+                        <div><t t-esc="_t('Items Counted')"/></div>
+                        <div><t t-esc="_t('Implementation')"/></div>
+                        <div><t t-esc="_t('Requested Products Cost')"/></div>
+                    </div>
+                    <div class="ab_response_branch_row" t-foreach="state.data.branches" t-as="branch" t-key="branch.request_id">
+                        <button type="button" class="ab_response_branch_name" t-on-click="() => this.openRequest(branch)">
+                            <span class="ab_response_branch_icon">B</span>
+                            <t t-esc="branch.branch_name"/>
+                        </button>
+                        <div>
+                            <span t-att-class="'ab_response_badge ab_response_badge--' + branch.response_state">
+                                <span class="ab_response_badge_dot"/>
+                                <t t-esc="responseLabel(branch.response_state)"/>
+                            </span>
+                        </div>
+                        <div class="ab_response_branch_count">
+                            <strong><t t-esc="branch.counted_items"/></strong> / <t t-esc="branch.required_items"/>
+                        </div>
+                        <div class="ab_response_branch_progress">
+                            <div class="ab_response_branch_track">
+                                <span class="ab_response_branch_fill" t-att-style="progressStyle(branch.implementation_percent)"/>
+                            </div>
+                            <strong><t t-esc="roundedPercent(branch) + '%'"/></strong>
+                        </div>
+                        <div class="ab_response_branch_cost">
+                            <strong><t t-esc="formatCost(branch.requested_total_cost)"/></strong>
+                        </div>
+                    </div>
+                </div>
+                <div class="ab_response_dashboard_empty" t-else="">
+                    <t t-esc="_t('No branch requests have been generated yet.')"/>
+                </div>
+            </t>
+        </div>
+    `;
+    static props = { ...standardFieldProps };
+
+    setup() {
+        this._t = _t;
+        this.orm = useService("orm");
+        this.action = useService("action");
+        this.notification = useService("notification");
+        this.state = useState({ loading: false, data: null });
+        onWillStart(() => this.load());
+    }
+
+    get circumference() {
+        return 2 * Math.PI * 40;
+    }
+
+    get roundedResponsePercent() {
+        return Math.round(Number(this.state.data?.response_percent || 0));
+    }
+
+    get roundedImplementationPercent() {
+        return Math.round(Number(this.state.data?.implementation_percent || 0));
+    }
+
+    get responseDashOffset() {
+        return this.circumference * (1 - this.roundedResponsePercent / 100);
+    }
+
+    get implementationDashOffset() {
+        return this.circumference * (1 - this.roundedImplementationPercent / 100);
+    }
+
+    async load() {
+        const id = this.props.record?.resId;
+        const model = this.props.record?.resModel;
+        if (!id || !model || this.state.loading) return;
+        this.state.loading = true;
+        try {
+            this.state.data = await this.orm.call(model, "action_get_branch_response_dashboard", [[id]], {});
+        } catch (error) {
+            this.notification.add(_t("Could not load branch response progress."), { type: "danger" });
+        } finally {
+            this.state.loading = false;
+        }
+    }
+
+    responseLabel(state) {
+        const labels = {
+            awaiting: _t("Awaiting Response"),
+            in_progress: _t("In Progress"),
+            responded: _t("Responded"),
+            cancelled: _t("Cancelled"),
+        };
+        return labels[state] || state;
+    }
+
+    progressStyle(percent) {
+        const safePercent = Math.max(0, Math.min(Number(percent) || 0, 100));
+        return `width: ${safePercent}%`;
+    }
+
+    roundedPercent(branch) {
+        return Math.round(Number(branch.implementation_percent) || 0);
+    }
+
+    formatCost(value) {
+        return (Number(value) || 0).toLocaleString(getUiLocale(), {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+    }
+
+    openRequest(branch) {
+        if (!branch.request_id) return;
+        this.action.doAction({
+            type: "ir.actions.act_window",
+            res_model: "ab_self_inventory_request",
+            res_id: branch.request_id,
+            views: [[false, "form"]],
+            view_mode: "form",
+            target: "current",
+        });
+    }
+}
+
+registry.category("fields").add("ab_inventory_branch_response_dashboard", {
+    component: BranchResponseDashboardWidget,
 });
 
 // ------------------------------------------------------------------
@@ -517,6 +967,31 @@ class DataGridWidget extends Component {
                     <div class="ab_saas_analytics_card ab_saas_analytics_card--matched">
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.matched_pct + '%'"/>
                         <div class="ab_saas_analytics_label"><t t-esc="_t('Matched')"/></div>
+                    </div>
+                </div>
+
+                <div class="ab_process_progress_panel" t-if="isProcessColumns">
+                    <div class="ab_process_progress_donut">
+                        <svg viewBox="0 0 100 100" aria-hidden="true">
+                            <circle class="ab_process_progress_donut_bg" cx="50" cy="50" r="40"/>
+                            <circle class="ab_process_progress_donut_fill" cx="50" cy="50" r="40"
+                                    t-att-stroke-dasharray="processCircumference"
+                                    t-att-stroke-dashoffset="processDashOffset"/>
+                        </svg>
+                        <div class="ab_process_progress_donut_value"><t t-esc="processPercent + '%'"/></div>
+                    </div>
+                    <div class="ab_process_progress_content">
+                        <div class="ab_process_progress_title"><t t-esc="_t('Inventory Implementation')"/></div>
+                        <div class="ab_process_progress_caption">
+                            <t t-esc="processCaption"/>
+                        </div>
+                        <div class="ab_process_progress_track">
+                            <span class="ab_process_progress_fill" t-att-style="processProgressStyle"/>
+                        </div>
+                    </div>
+                    <div class="ab_process_progress_stats">
+                        <div><strong><t t-esc="state.analytics.counted_products || 0"/></strong><span><t t-esc="_t('Counted')"/></span></div>
+                        <div><strong><t t-esc="state.analytics.pending_products || 0"/></strong><span><t t-esc="_t('Pending')"/></span></div>
                     </div>
                 </div>
 
@@ -871,6 +1346,29 @@ class DataGridWidget extends Component {
 
     get hideBranchSummary() {
         return this.isProcessColumns || this.resModel === "ab_self_inventory_request" || Boolean(this.props.options && this.props.options.hide_branch_summary);
+    }
+
+    get processPercent() {
+        const value = Number(this.state.analytics?.implementation_percent || 0);
+        return Math.round(Math.max(0, Math.min(value, 100)));
+    }
+
+    get processCircumference() {
+        return 2 * Math.PI * 40;
+    }
+
+    get processDashOffset() {
+        return this.processCircumference * (1 - this.processPercent / 100);
+    }
+
+    get processProgressStyle() {
+        return `width: ${this.processPercent}%`;
+    }
+
+    get processCaption() {
+        return _t("%(counted)s of %(total)s requested items counted")
+            .replace("%(counted)s", this.state.analytics?.counted_products || 0)
+            .replace("%(total)s", this.state.analytics?.total_products || 0);
     }
 
     _getServerBranchIds() {
@@ -1263,6 +1761,7 @@ class DataGridWidget extends Component {
             if (result && result.row) {
                 Object.assign(row, result.row);
             }
+            this.state.analytics = await this.orm.call(this.resModel, "action_get_analytics", [[this.resId]], {});
             this.state.rows = [...this.state.rows];
         } catch (e) {
             row[field] = oldValue;
@@ -1425,11 +1924,11 @@ class FormProgressWidget extends Component {
             <div class="ab_progress_stats">
                 <div class="ab_progress_stat">
                     <div class="ab_progress_stat_value"><t t-esc="requestCount"/></div>
-                    <div class="ab_progress_stat_label"><t t-esc="_t('Requested')"/></div>
+                    <div class="ab_progress_stat_label"><t t-esc="_t('Branches')"/></div>
                 </div>
                 <div class="ab_progress_stat">
                     <div class="ab_progress_stat_value"><t t-esc="processCount"/></div>
-                    <div class="ab_progress_stat_label"><t t-esc="_t('Processed')"/></div>
+                    <div class="ab_progress_stat_label"><t t-esc="_t('Responded')"/></div>
                 </div>
             </div>
         </div>
@@ -1439,11 +1938,13 @@ class FormProgressWidget extends Component {
     setup() { this._t = _t; }
 
     get requestCount() {
-        return Number(getRecordValue(this.props.record, "request_count", 0)) || 0;
+        return Number(getRecordValue(this.props.record, "total_branch_count", 0))
+            || Number(getRecordValue(this.props.record, "request_count", 0))
+            || 0;
     }
 
     get processCount() {
-        return Number(getRecordValue(this.props.record, "process_count", 0)) || 0;
+        return Number(getRecordValue(this.props.record, "responded_branch_count", 0)) || 0;
     }
 
     get percentage() {

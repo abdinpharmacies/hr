@@ -82,6 +82,15 @@ def _select_analysis_rows(rows, analysis_mode, top_n, min_price, sort_key):
     return selected_rows[:top_n]
 
 
+def _get_selected_lines_total_cost(lines):
+    return sum(
+        (line.system_qty or 0.0)
+        * (line.product_id.default_cost or line.product_id.default_price or 0.0)
+        for line in lines
+        if line.selected and line.product_id
+    )
+
+
 class SelfInventoryRequest(models.Model):
     _name = 'ab_self_inventory_request'
     _inherit = ['ab_eplus_connect']
@@ -112,10 +121,32 @@ class SelfInventoryRequest(models.Model):
     line_ids = fields.One2many('ab_self_inventory_request_line', 'request_id', string='Fetched Products')
     selected_line_count = fields.Integer(compute='_compute_selected_line_count')
     line_count = fields.Integer(compute='_compute_line_count')
+    requested_total_cost = fields.Float(
+        string='Requested Products Cost',
+        compute='_compute_requested_total_cost',
+        digits=(12, 2),
+    )
     batch_id = fields.Many2one('ab_self_inventory_request_batch', readonly=True, copy=False, index=True)
     process_id = fields.Many2one('ab_self_inventory_process', readonly=True, copy=False)
     can_open_process = fields.Boolean(compute='_compute_can_open_process')
     submitted_date = fields.Datetime(readonly=True, copy=False)
+    required_item_count = fields.Integer(compute='_compute_implementation_progress')
+    counted_item_count = fields.Integer(compute='_compute_implementation_progress')
+    implementation_percent = fields.Float(
+        string='Implementation %',
+        compute='_compute_implementation_progress',
+        digits=(5, 2),
+    )
+    branch_response_state = fields.Selection(
+        selection=[
+            ('awaiting', 'Awaiting Response'),
+            ('in_progress', 'In Progress'),
+            ('responded', 'Responded'),
+            ('cancelled', 'Cancelled'),
+        ],
+        string='Branch Response',
+        compute='_compute_implementation_progress',
+    )
 
     # Smart Inventory Analysis Fields
     analysis_mode = fields.Selection(
@@ -155,6 +186,21 @@ class SelfInventoryRequest(models.Model):
         for rec in self:
             rec.line_count = len(rec.line_ids)
 
+    @api.depends(
+        'line_ids.selected',
+        'line_ids.system_qty',
+        'line_ids.product_id.default_cost',
+        'line_ids.product_id.default_price',
+        'process_id.requested_total_cost',
+    )
+    def _compute_requested_total_cost(self):
+        for rec in self:
+            rec.requested_total_cost = (
+                rec.process_id.requested_total_cost
+                if rec.process_id
+                else _get_selected_lines_total_cost(rec.line_ids)
+            )
+
     @api.depends('process_id', 'state')
     @api.depends_context('uid')
     def _compute_can_open_process(self):
@@ -167,6 +213,33 @@ class SelfInventoryRequest(models.Model):
                 and can_receive
                 and not is_manager
             )
+
+    @api.depends(
+        'state',
+        'process_id.state',
+        'process_id.line_ids.is_counted',
+        'process_id.line_ids.actual_qty',
+        'process_id.line_ids.explanation',
+    )
+    def _compute_implementation_progress(self):
+        for rec in self:
+            process = rec.sudo().process_id
+            if process:
+                metrics = process._get_implementation_metrics()
+            else:
+                total = len(rec.sudo().line_ids)
+                metrics = {'total': total, 'counted': 0, 'percent': 0.0}
+            rec.required_item_count = metrics['total']
+            rec.counted_item_count = metrics['counted']
+            rec.implementation_percent = metrics['percent']
+            if rec.state == 'cancelled' or (process and process.state == 'cancelled'):
+                rec.branch_response_state = 'cancelled'
+            elif process and process.state == 'submitted':
+                rec.branch_response_state = 'responded'
+            elif metrics['counted']:
+                rec.branch_response_state = 'in_progress'
+            else:
+                rec.branch_response_state = 'awaiting'
 
     def write(self, vals):
         protected_fields = {
@@ -830,9 +903,28 @@ class SelfInventoryRequestBatch(models.Model):
     last_code_import_message = fields.Text(readonly=True, copy=False)
     selected_line_count = fields.Integer(compute='_compute_selected_line_count')
     line_count = fields.Integer(compute='_compute_line_count')
+    requested_total_cost = fields.Float(
+        string='Requested Products Cost',
+        compute='_compute_requested_total_cost',
+        digits=(12, 2),
+    )
     request_count = fields.Integer(compute='_compute_request_count')
     process_count = fields.Integer(compute='_compute_process_count')
     submitted_date = fields.Datetime(readonly=True, copy=False)
+    total_branch_count = fields.Integer(compute='_compute_branch_response_progress')
+    responded_branch_count = fields.Integer(compute='_compute_branch_response_progress')
+    in_progress_branch_count = fields.Integer(compute='_compute_branch_response_progress')
+    awaiting_branch_count = fields.Integer(compute='_compute_branch_response_progress')
+    branch_response_percent = fields.Float(
+        string='Branch Response %',
+        compute='_compute_branch_response_progress',
+        digits=(5, 2),
+    )
+    implementation_percent = fields.Float(
+        string='Items Implemented %',
+        compute='_compute_branch_response_progress',
+        digits=(5, 2),
+    )
 
     # Smart Inventory Analysis Fields
     analysis_mode = fields.Selection(
@@ -872,6 +964,21 @@ class SelfInventoryRequestBatch(models.Model):
         for rec in self:
             rec.line_count = len(rec.line_ids)
 
+    @api.depends(
+        'line_ids.selected',
+        'line_ids.system_qty',
+        'line_ids.product_id.default_cost',
+        'line_ids.product_id.default_price',
+        'request_ids.requested_total_cost',
+    )
+    def _compute_requested_total_cost(self):
+        for rec in self:
+            rec.requested_total_cost = (
+                sum(rec.request_ids.mapped('requested_total_cost'))
+                if rec.request_ids
+                else _get_selected_lines_total_cost(rec.line_ids)
+            )
+
     @api.depends('line_ids', 'selected_branch_ids')
     def _compute_filtered_line_ids(self):
         for rec in self:
@@ -906,6 +1013,89 @@ class SelfInventoryRequestBatch(models.Model):
     def _compute_process_count(self):
         for rec in self:
             rec.process_count = len(rec.process_ids)
+
+    @api.depends(
+        'request_ids.state',
+        'request_ids.process_id.state',
+        'request_ids.process_id.line_ids.is_counted',
+        'request_ids.process_id.line_ids.actual_qty',
+        'request_ids.process_id.line_ids.explanation',
+    )
+    def _compute_branch_response_progress(self):
+        for rec in self:
+            dashboard = rec._get_branch_response_dashboard_values()
+            rec.total_branch_count = dashboard['total_branches']
+            rec.responded_branch_count = dashboard['responded_branches']
+            rec.in_progress_branch_count = dashboard['in_progress_branches']
+            rec.awaiting_branch_count = dashboard['awaiting_branches']
+            rec.branch_response_percent = dashboard['response_percent']
+            rec.implementation_percent = dashboard['implementation_percent']
+
+    def _get_branch_response_dashboard_values(self):
+        self.ensure_one()
+        requests = self.sudo().request_ids.sorted(
+            key=lambda request: request.branch_id.display_name or request.branch_id.name or ''
+        )
+        rows = []
+        responded = 0
+        in_progress = 0
+        total_required = 0
+        total_counted = 0
+        for request in requests:
+            process = request.process_id
+            if process:
+                metrics = process._get_implementation_metrics()
+            else:
+                metrics = {
+                    'total': len(request.line_ids),
+                    'counted': 0,
+                    'pending': len(request.line_ids),
+                    'percent': 0.0,
+                }
+            if request.state == 'cancelled' or (process and process.state == 'cancelled'):
+                response_state = 'cancelled'
+            elif process and process.state == 'submitted':
+                response_state = 'responded'
+                responded += 1
+            elif metrics['counted']:
+                response_state = 'in_progress'
+                in_progress += 1
+            else:
+                response_state = 'awaiting'
+            total_required += metrics['total']
+            total_counted += metrics['counted']
+            rows.append({
+                'request_id': request.id,
+                'process_id': process.id if process else False,
+                'branch_id': request.branch_id.id,
+                'branch_name': request.branch_id.display_name or request.branch_id.name or '',
+                'required_items': metrics['total'],
+                'counted_items': metrics['counted'],
+                'pending_items': metrics['pending'],
+                'implementation_percent': metrics['percent'],
+                'response_state': response_state,
+                'requested_total_cost': request.requested_total_cost,
+            })
+
+        total_branches = len(requests)
+        awaiting = max(total_branches - responded - in_progress, 0)
+        return {
+            'total_branches': total_branches,
+            'responded_branches': responded,
+            'in_progress_branches': in_progress,
+            'awaiting_branches': awaiting,
+            'response_percent': round(responded / total_branches * 100, 2) if total_branches else 0.0,
+            'total_required_items': total_required,
+            'total_counted_items': total_counted,
+            'implementation_percent': round(total_counted / total_required * 100, 2) if total_required else 0.0,
+            'branches': rows,
+        }
+
+    def action_get_branch_response_dashboard(self):
+        self.ensure_one()
+        if not self.search_count([('id', '=', self.id)]):
+            raise UserError(_("You do not have access to this self inventory batch."))
+        return self._get_branch_response_dashboard_values()
 
     def write(self, vals):
         protected_fields = {

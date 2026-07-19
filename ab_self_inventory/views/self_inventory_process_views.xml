@@ -35,6 +35,8 @@
                     <field name="receiver_id" string="Receiver" optional="show"/>
                     <field name="shortage_qty" widget="ab_inventory_kpi" string="Shortage" optional="show" options="{'icon': 'shortage', 'label': 'Shortage'}"/>
                     <field name="extra_qty" widget="ab_inventory_kpi" string="Extra" optional="show" options="{'icon': 'extra', 'label': 'Extra'}"/>
+                    <field name="requested_total_cost" widget="ab_inventory_kpi" string="Requested Products Cost" optional="show" options="{'icon': 'cost', 'label': 'Requested Products Cost'}"/>
+                    <field name="implementation_percent" widget="ab_inventory_implementation_progress" string="Implementation" optional="show"/>
                     <field name="deadline" widget="ab_inventory_deadline" string="Deadline" optional="show"/>
                     <field name="state" widget="ab_inventory_state_badge" string="Status"/>
                     <field name="submitted_date" string="Submitted" optional="hide"/>
@@ -61,9 +63,13 @@
                         <div class="ab_form_hero_row">
                             <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>
                         </div>
+                        <field name="counted_line_count" invisible="1"/>
+                        <field name="pending_line_count" invisible="1"/>
+                        <field name="implementation_percent" invisible="1"/>
                         <div class="ab_form_kpi_row" invisible="not create_date or state in ('draft', 'in_progress')">
                             <field name="shortage_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'shortage', 'icon': 'shortage', 'label': 'Shortage'}"/>
                             <field name="extra_qty" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'extra', 'icon': 'extra', 'label': 'Extra'}"/>
+                            <field name="requested_total_cost" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'cost', 'icon': 'cost', 'label': 'Requested Products Cost'}"/>
                         </div>
                         <div class="ab_form_two_column">
                             <div class="ab_form_main">

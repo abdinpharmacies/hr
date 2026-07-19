@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-09 12:43+0000\n"
-"PO-Revision-Date: 2026-06-09 12:43+0000\n"
+"POT-Creation-Date: 2026-07-19 11:40+0000\n"
+"PO-Revision-Date: 2026-07-19 11:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,43 @@ msgstr ""
 #. module: ab_self_inventory
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%(counted)s of %(required)s requested items counted"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%(counted)s of %(total)s requested items counted"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%(start)s-%(end)s of %(total)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 msgid "%s branches selected"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%s days ago"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%s days overdue"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "%s selected"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -64,6 +100,16 @@ msgid ""
 msgstr ""
 
 #. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<i class=\"fa fa-info-circle\"/> Select a branch to run analysis."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+msgid "<span class=\"ab_form_info_label\">Batch</span>"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "<span class=\"ab_form_info_label\">Branch</span>"
@@ -78,9 +124,12 @@ msgstr ""
 
 #. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "<span class=\"ab_form_info_label\">Deadline</span>"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "<span class=\"ab_form_info_label\">Process</span>"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -90,6 +139,7 @@ msgstr ""
 
 #. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "<span class=\"ab_form_info_label\">Request</span>"
 msgstr ""
 
@@ -128,6 +178,8 @@ msgid "Actions"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__actual_qty
 msgid "Actual Qty"
 msgstr ""
@@ -139,13 +191,47 @@ msgid "Actual quantity cannot be negative."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Actual quantity must be numeric for product code %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Actual quantity must be numeric."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_batch_add_line_wizard_form
+msgid "Add"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
 msgid "Add Codes to Selected Branches"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_batch_add_line_wizard_form
+msgid "Add Line"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
 msgid "Add Matching Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Add Products"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -161,9 +247,21 @@ msgid "Add at least one product line before submitting."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Added"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_medicine_type__all
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_medicine_type__all
 msgid "All"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "All Branches"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -199,12 +297,42 @@ msgid "Analysis Mode"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Analysis period must be greater than zero."
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
 msgid "Assigned Branches"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__available_product_ids
+msgid "Available Product"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Awaiting"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__awaiting_branch_count
+msgid "Awaiting Branch Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__branch_response_state__awaiting
+msgid "Awaiting Response"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__batch_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__batch_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__batch_id
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
@@ -237,21 +365,29 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__branch_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__branch_id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__branch_id
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
-#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__branch_id
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:523
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
-#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__branch_id
 msgid "Branch"
 msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Branch %s has invalid e-plus serial: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "Branch %s has no e-plus serial."
 msgstr ""
@@ -259,6 +395,11 @@ msgstr ""
 #. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_filter_mode
 msgid "Branch Filter"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Branch Implementation"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -282,7 +423,28 @@ msgid "Branch Receiver"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__branch_response_state
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Branch Response"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_response_percent
+msgid "Branch Response %"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Branch Response & Implementation"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Branch Selection"
 msgstr ""
 
@@ -304,10 +466,10 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-javascript
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:445
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__branch_ids
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__branch_ids
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
 msgid "Branches"
 msgstr ""
 
@@ -315,6 +477,12 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "Branches Added"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Branches Processed"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -329,6 +497,23 @@ msgid "Bulk Product Codes"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Bulk Product Import Results"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__can_open_process
+msgid "Can Open Process"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__can_sync_requested_stock
+msgid "Can Sync Requested Stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_batch_add_line_wizard_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_import_wizard_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
@@ -340,12 +525,33 @@ msgstr ""
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__cancelled
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__branch_response_state__cancelled
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__cancelled
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__state__cancelled
 msgid "Cancelled"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Cancelled by %(name)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Clear"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Close"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__product_code
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__product_code
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__product_code
@@ -376,6 +582,18 @@ msgid "Could not delete selected items."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not load branch response progress."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not open Add Line."
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
 msgid "Could not read Excel file: %s"
@@ -388,6 +606,30 @@ msgid "Could not select all."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Could not update inventory line."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__is_counted
+msgid "Counted"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__counted_item_count
+msgid "Counted Item Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__counted_line_count
+msgid "Counted Line Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__create_uid
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__create_uid
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__create_uid
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__create_uid
@@ -399,6 +641,7 @@ msgid "Created by"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__create_date
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__create_date
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__create_date
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__create_date
@@ -410,41 +653,45 @@ msgid "Created on"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__deadline
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__deadline
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__deadline
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
 msgid "Deadline"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
 msgid "Delete"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Delete Selected"
 msgstr ""
 
 #. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Delete Unselected"
 msgstr ""
 
 #. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Delete all selected fetched products?"
 msgstr ""
 
 #. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Delete all unselected fetched products?"
 msgstr ""
 
@@ -456,11 +703,18 @@ msgid "Details"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Difference"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__difference_qty
 msgid "Difference Qty"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__display_name
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__display_name
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__display_name
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__display_name
@@ -469,7 +723,20 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__display_name
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__display_name
 #: model:ir.model.fields,field_description:ab_self_inventory.field_report_ab_self_inventory_count_sheet_xlsx__display_name
+#: model:ir.model.fields,field_description:ab_self_inventory.field_res_users__display_name
 msgid "Display Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
+msgid "Done"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Download Missing Codes"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -485,9 +752,45 @@ msgid "Draft"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Draft by %(name)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Due in %s days"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Due today"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Due tomorrow"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Duplicate"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "Duplicate Product"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Duplicate product code in Excel: %s"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -498,6 +801,7 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "E-plus Connection Error: %s"
 msgstr ""
@@ -527,10 +831,18 @@ msgid "E-plus Item ID"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__system_qty
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__system_qty
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__system_qty
 msgid "E-stock Qty"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Edit"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -558,6 +870,8 @@ msgid "Excel must contain Product Code and Actual Qty columns."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__explanation
 msgid "Explanation"
 msgstr ""
@@ -605,6 +919,18 @@ msgid "Fetched Products"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
+msgid "Fetching branch stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
+msgid "Fetching branch stocks"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__file
 msgid "File"
 msgstr ""
@@ -635,12 +961,25 @@ msgid "Governorate Name Filter"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Group"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Hide Missing Product Codes"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__analysis_mode__min_price
 #: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request_batch__analysis_mode__min_price
 msgid "High Price Items Only (> Min Price)"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__id
@@ -649,7 +988,28 @@ msgstr ""
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_report_ab_self_inventory_count_sheet_xlsx__id
+#: model:ir.model.fields,field_description:ab_self_inventory.field_res_users__id
 msgid "ID"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Implementation"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__implementation_percent
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__implementation_percent
+msgid "Implementation %"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Implementation: %s"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -674,7 +1034,45 @@ msgstr ""
 #. module: ab_self_inventory
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__state__in_progress
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__branch_response_state__in_progress
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__state__in_progress
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_search
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_search
 msgid "In Progress"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__in_progress_branch_count
+msgid "In Progress Branch Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"In-progress self inventory batches are handled by the branch receiver and "
+"cannot be edited by managers."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"In-progress self inventory requests are handled by the branch receiver and "
+"cannot be edited by managers."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Invalid date"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Inventory Implementation"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -691,6 +1089,14 @@ msgid "Item Code"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Item Implementation"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_kanban
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_kanban
@@ -699,11 +1105,30 @@ msgid "Items"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Items Counted"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+msgid "Items Implemented"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__implementation_percent
+msgid "Items Implemented %"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__last_code_import_message
 msgid "Last Code Import Message"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__write_uid
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__write_uid
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__write_uid
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__write_uid
@@ -715,6 +1140,7 @@ msgid "Last Updated by"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__write_date
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__write_date
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__write_date
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__write_date
@@ -726,8 +1152,22 @@ msgid "Last Updated on"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__line_count
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__line_count
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__line_count
 msgid "Line Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/batches_loading_overlay.js:0
+msgid "Loading batches..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Loading branch progress..."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -736,8 +1176,32 @@ msgid "Manager"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Managers cannot edit active branch self inventory quantities."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Managers cannot sync active branch self inventory quantities."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Manual"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_search
 msgid "Match"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Matched"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -774,10 +1238,46 @@ msgid "Min Price (EGP)"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Minimum price cannot be negative."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Missing"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__name
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__name
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__name
 msgid "Name"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Next"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "No"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "No Matching Products Found"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "No branch requests have been generated yet."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -795,9 +1295,46 @@ msgid ""
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "No branches assigned yet"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "No branches match your search."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "No deadline"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
 msgid "No matching inventory lines were updated."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "No products found"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No sales or stock rows matched the analysis filters for branch %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"No sales or stock rows matched the analysis filters for the batch branches."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -831,6 +1368,9 @@ msgid "Not selected"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__note
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__note
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__note
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__note
@@ -839,8 +1379,33 @@ msgid "Note"
 msgstr ""
 
 #. module: ab_self_inventory
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
-msgid "Notes"
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only active self inventory process lines can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only active self inventory process lines can be deleted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only active self inventory processes can be changed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Only active self inventory processes can import actual counts."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only active self inventory processes can receive new lines."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -887,36 +1452,6 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
-#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
-msgid "Only draft self inventory process lines can be changed."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
-msgid "Only draft self inventory process lines can be deleted."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
-msgid "Only draft self inventory processes can be changed."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
-msgid "Only draft self inventory processes can import actual counts."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
-msgid "Only draft self inventory processes can receive new lines."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "Only draft self inventory request batches can be changed."
 msgstr ""
@@ -940,6 +1475,38 @@ msgid "Only draft self inventory requests can be changed."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only the branch receiver can edit active self inventory quantities."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid ""
+"Only the branch receiver can open the active self inventory process from the"
+" request."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only the branch receiver can sync requested product quantities."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Open"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Open Add Line from a self inventory request or batch."
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Open Process"
 msgstr ""
@@ -949,6 +1516,23 @@ msgstr ""
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid ""
 "Open these lines from a self inventory batch before using bulk line actions."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Page"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Pending"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__pending_line_count
+msgid "Pending Line Count"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -972,12 +1556,17 @@ msgid "Please select at least one branch first."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Previous"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_import_wizard__process_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__process_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__process_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__process_ids
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
 msgid "Process"
 msgstr ""
@@ -1001,6 +1590,8 @@ msgid "Processes"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__product_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__product_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__product_id
@@ -1025,8 +1616,32 @@ msgid "Product code already exists for this branch in the batch."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__product_ids
+msgid "Products"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Products Added"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Products Missing"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
 msgid "Progress"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "ReSync Products"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1040,6 +1655,25 @@ msgid "Receiver"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Receiver is set automatically and cannot be changed manually."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Refresh"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Refreshing..."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__request_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__request_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__request_ids
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__request_id
@@ -1065,9 +1699,32 @@ msgid "Request note..."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__requested
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
 msgid "Requested"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__requested_total_cost
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__requested_total_cost
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__requested_total_cost
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_kanban
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_list
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Requested Products Cost"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid ""
+"Requested product quantities synced. Updated: %(updated)d. Unchanged: "
+"%(unchanged)d. Missing identifiers: %(missing)d."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1098,10 +1755,33 @@ msgid "Requests"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request__required_item_count
+msgid "Required Item Count"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Reset to Draft"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_request__branch_response_state__responded
+msgid "Responded"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__responded_branch_count
+msgid "Responded Branch Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Response"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1111,14 +1791,32 @@ msgid "Run Analysis"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
+msgid "Running inventory analysis"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "Sales found: %d. Stock items: %d. Added to inventory: %d."
 msgstr ""
 
 #. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
+msgid "Schedule &amp; Notes"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_search
 msgid "Search Batches"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Search Branch..."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1128,9 +1826,20 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Search branch..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Search products..."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:501
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Select All"
 msgstr ""
 
@@ -1148,8 +1857,20 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Select at least one branch."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "Select at least one matched product before submitting."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Select at least one product."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1172,6 +1893,7 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "Selected branch has no e-plus serial."
 msgstr ""
@@ -1180,6 +1902,18 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "Selected product is not available in this branch stock."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Selected products already exist for the selected branches."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Selected products already exist on this request."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1200,6 +1934,11 @@ msgid "Self Inventory Batches"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_res_users__ab_self_inventory_branch_ids
+msgid "Self Inventory Branches"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.actions.report,name:ab_self_inventory.action_self_inventory_count_sheet_xlsx
 msgid "Self Inventory Count Sheet"
 msgstr ""
@@ -1215,6 +1954,11 @@ msgid "Self Inventory Lines"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_batch_add_line_wizard
+msgid "Self Inventory Manual Add Line"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model,name:ab_self_inventory.model_ab_self_inventory_process
 msgid "Self Inventory Process"
 msgstr ""
@@ -1226,6 +1970,7 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 #: model:ir.actions.act_window,name:ab_self_inventory.action_ab_self_inventory_process
 msgid "Self Inventory Processes"
@@ -1261,14 +2006,29 @@ msgstr ""
 #. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Self inventory line was not found."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid ""
 "Self inventory products cannot be changed after the request is received."
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__sell_price
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__sell_price
 msgid "Sell Price"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,help:ab_self_inventory.field_ab_self_inventory_process_line__is_counted
+msgid ""
+"Set when an actual quantity is entered, including a counted quantity of "
+"zero."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1286,8 +2046,44 @@ msgid "Shortage Cost"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Show All"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Show Missing Product Codes"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Show less"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Showing"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__selected_branch_ids
 msgid "Showing Branches"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Showing:"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Skipped branches: %s."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1297,9 +2093,23 @@ msgid "Smart Inventory Analysis"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch_line__sold_qty
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_line__sold_qty
 msgid "Sold Qty"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Some product codes could not be found"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Source"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1332,11 +2142,6 @@ msgid "Submit Inventory"
 msgstr ""
 
 #. module: ab_self_inventory
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
-msgid "ReSync Products"
-msgstr ""
-
-#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Submit Request"
 msgstr ""
@@ -1364,6 +2169,18 @@ msgid "Submitted Date"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Submitted by %(details)s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Submitted responses and item-count progress for every branch"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "Submitted self inventory processes cannot be cancelled."
@@ -1377,8 +2194,38 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Submitted self inventory processes cannot sync E-stock quantities."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Sync Complete"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "System quantity cannot be changed for product code %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "System quantity must be numeric for product code %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
 msgid "The Excel file is empty."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "The entered product codes do not exist in the selected branches."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1389,8 +2236,26 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "There are no requested products to sync."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "These branches have no e-plus serial: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "These products already exist in the result table: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "These products already exist on this request: %s"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1398,6 +2263,12 @@ msgstr ""
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_form
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Timeline"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Today"
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1415,9 +2286,26 @@ msgid "Top N Items Only"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Top N items must be greater than zero."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__total_branch_count
+msgid "Total Branch Count"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 msgid "Total Lines"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Try changing the branch filter or search terms to find products."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1432,8 +2320,9 @@ msgid "Unmatched"
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_batch_line_list
-#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_form
 msgid "Unselect All"
 msgstr ""
 
@@ -1444,9 +2333,52 @@ msgid "Updated %s inventory lines."
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model,name:ab_self_inventory.model_res_users
+msgid "User"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 msgid "Value"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Yes"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Yesterday"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "You can only edit self inventory quantities for your assigned branch."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "You can only sync self inventory quantities for your assigned branch."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "You cannot add lines after the batch is submitted."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "You cannot add lines after the request is submitted."
 msgstr ""
 
 #. module: ab_self_inventory
@@ -1475,6 +2407,12 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "You do not have access to this self inventory batch."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "already exists product"
 msgstr ""
@@ -1492,6 +2430,12 @@ msgid "by "
 msgstr ""
 
 #. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "counted"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "id"
@@ -1505,216 +2449,25 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:469
-msgid "All Branches"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:378
-msgid "Showing"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:499
-msgid "selected"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:506
-msgid "Group"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:530
-msgid "Stock"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:578
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 msgid "products"
 msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:29
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:1020
-msgid "Search Branch..."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:465
-msgid "Search branch..."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:494
-msgid "Search products..."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:532
-msgid "Price"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:533
-msgid "Sold"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:617
-msgid "No products found"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:618
-msgid "Try changing the branch filter or search terms."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:624
-msgid "Load more"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:32
-msgid "Some product codes could not be found"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:77
-msgid "Download Missing Codes"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_bulk_code_dialog.js:80
-msgid "Close"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:457
-msgid "Matched"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:623
-msgid "%(rows)s of %(total)s loaded"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
-msgid "Draft by %(name)s"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
-msgid "Submitted by %(details)s"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
-msgid "Cancelled by %(name)s"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_widgets.js:0
-msgid "No deadline"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
-msgid "%(start)s-%(end)s of %(total)s"
+msgid "products selected"
 msgstr ""
 
 #. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
-msgid "%s selected"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
-msgid "Previous"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
-msgid "Page"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
-msgid "Next"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
-msgid "Fetching branch stock"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
-msgid "Running inventory analysis"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-javascript
-#: code:addons/ab_self_inventory/static/src/js/self_inventory_action_loader.js:0
-msgid "Fetching branch stocks"
-msgstr ""
-
-#. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
-msgid "Receiver is set automatically and cannot be changed manually."
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "state"
 msgstr ""
 
 #. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
-msgid "Duplicate product code in Excel: %s"
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
-msgid "System quantity cannot be changed for product code %s."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
-msgid "System quantity must be numeric for product code %s."
-msgstr ""
-
-#. module: ab_self_inventory
-#. odoo-python
-#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
-msgid "Actual quantity must be numeric for product code %s."
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "submitted"
 msgstr ""

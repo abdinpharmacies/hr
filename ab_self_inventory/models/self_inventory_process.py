@@ -70,10 +70,22 @@ class SelfInventoryProcess(models.Model):
     )
     line_ids = fields.One2many('ab_self_inventory_process_line', 'process_id', string='Inventory Lines')
     line_count = fields.Integer(compute='_compute_line_count')
+    counted_line_count = fields.Integer(compute='_compute_implementation_progress')
+    pending_line_count = fields.Integer(compute='_compute_implementation_progress')
+    implementation_percent = fields.Float(
+        string='Implementation %',
+        compute='_compute_implementation_progress',
+        digits=(5, 2),
+    )
     submitted_date = fields.Datetime(readonly=True, copy=False)
     can_sync_requested_stock = fields.Boolean(compute='_compute_can_sync_requested_stock')
     shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_totals', digits=(12, 2))
     extra_qty = fields.Float(string='Extra Cost', compute='_compute_totals', digits=(12, 2))
+    requested_total_cost = fields.Float(
+        string='Requested Products Cost',
+        compute='_compute_totals',
+        digits=(12, 2),
+    )
     available_product_ids = fields.Many2many(
         'ab_product',
         compute='_compute_available_product_ids',
@@ -99,16 +111,50 @@ class SelfInventoryProcess(models.Model):
         ], limit=1)
         return department.user_id.id if department else False
 
-    @api.depends('line_ids.shortage_qty', 'line_ids.extra_qty')
+    @api.depends(
+        'line_ids.shortage_qty',
+        'line_ids.extra_qty',
+        'line_ids.requested',
+        'line_ids.system_qty',
+        'line_ids.unit_cost',
+    )
     def _compute_totals(self):
         for rec in self:
             rec.shortage_qty = sum(rec.line_ids.mapped('shortage_qty'))
             rec.extra_qty = sum(rec.line_ids.mapped('extra_qty'))
+            rec.requested_total_cost = sum(
+                (line.system_qty or 0.0) * (line.unit_cost or 0.0)
+                for line in rec.line_ids
+                if line.requested
+            )
 
     @api.depends('line_ids')
     def _compute_line_count(self):
         for rec in self:
             rec.line_count = len(rec.line_ids)
+
+    @api.depends(
+        'line_ids.is_counted',
+        'line_ids.actual_qty',
+        'line_ids.explanation',
+    )
+    def _compute_implementation_progress(self):
+        for rec in self:
+            metrics = rec._get_implementation_metrics()
+            rec.counted_line_count = metrics['counted']
+            rec.pending_line_count = metrics['pending']
+            rec.implementation_percent = metrics['percent']
+
+    def _get_implementation_metrics(self):
+        self.ensure_one()
+        total = len(self.line_ids)
+        counted = len(self.line_ids.filtered(lambda line: line._is_inventory_counted()))
+        return {
+            'total': total,
+            'counted': counted,
+            'pending': max(total - counted, 0),
+            'percent': round(counted / total * 100, 2) if total else 0.0,
+        }
 
     @api.depends('state', 'branch_id')
     @api.depends_context('uid')
@@ -407,13 +453,15 @@ class SelfInventoryProcess(models.Model):
 
     def action_get_analytics(self):
         self.ensure_one()
-        total = len(self.line_ids)
-        counted = len(self.line_ids.filtered(lambda line: line.actual_qty or line.explanation))
+        metrics = self._get_implementation_metrics()
         return {
-            'branch_count': 1 if self.branch_id and total else 0,
-            'total_products': total,
-            'selected_products': counted,
-            'matched_pct': round(counted / total * 100) if total else 0,
+            'branch_count': 1 if self.branch_id and metrics['total'] else 0,
+            'total_products': metrics['total'],
+            'selected_products': metrics['counted'],
+            'counted_products': metrics['counted'],
+            'pending_products': metrics['pending'],
+            'matched_pct': round(metrics['percent']),
+            'implementation_percent': metrics['percent'],
         }
 
     def action_get_branch_counts(self):
@@ -442,17 +490,21 @@ class SelfInventoryProcess(models.Model):
 
     def _get_process_line_grid_values(self, line):
         self.ensure_one()
+        is_counted = line._is_inventory_counted()
         return {
             'id': line.id,
             'branch_id': self.branch_id.id,
             'branch_name': self.branch_id.display_name or self.branch_id.name or '',
             'selected': False,
             'requested': line.requested,
+            'is_counted': is_counted,
             'product_name': line.product_id.display_name or line.product_id.name or '' if line.product_id else '',
             'product_code': line.product_code or '',
             'eplus_item_code': line.eplus_item_code or '',
             'system_qty': line.system_qty,
-            'actual_qty': line.actual_qty,
+            # Keep untouched quantities blank so entering a real zero triggers
+            # a change and marks the item as counted.
+            'actual_qty': line.actual_qty if is_counted else False,
             'difference_qty': line.difference_qty,
             'shortage_qty': line.shortage_qty,
             'extra_qty': line.extra_qty,
@@ -556,6 +608,13 @@ class SelfInventoryProcessLine(models.Model):
     shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_difference_qty', digits=(12, 2), store=True)
     extra_qty = fields.Float(string='Extra Cost', compute='_compute_difference_qty', digits=(12, 2), store=True)
     explanation = fields.Char()
+    is_counted = fields.Boolean(
+        string='Counted',
+        default=False,
+        readonly=True,
+        copy=False,
+        help='Set when an actual quantity is entered, including a counted quantity of zero.',
+    )
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -565,13 +624,18 @@ class SelfInventoryProcessLine(models.Model):
             if process and process.state not in ('draft', 'in_progress'):
                 raise ValidationError(_("Only active self inventory processes can receive new lines."))
             self._prepare_product_values(vals)
+            if 'actual_qty' in vals:
+                vals['is_counted'] = True
         return super().create(vals_list)
 
     def write(self, vals):
+        mark_counted = 'actual_qty' in vals
         for rec in self:
             if rec.process_id.state not in ('draft', 'in_progress'):
                 raise ValidationError(_("Only active self inventory process lines can be changed."))
             rec._check_locked_fields(vals)
+        if mark_counted:
+            vals = dict(vals, is_counted=True)
         return super().write(vals)
 
     def unlink(self):
@@ -618,6 +682,7 @@ class SelfInventoryProcessLine(models.Model):
             'requested',
             'system_qty',
             'unit_cost',
+            'is_counted',
         }
         if self.env.context.get('ab_self_inventory_allow_system_qty_sync'):
             locked_fields.discard('system_qty')
@@ -640,13 +705,24 @@ class SelfInventoryProcessLine(models.Model):
                         raise ValidationError(_("Selected product is not available in this branch stock."))
                     vals['system_qty'] = system_qty
 
-    @api.depends('system_qty', 'actual_qty', 'unit_cost')
+    @api.depends('system_qty', 'actual_qty', 'unit_cost', 'is_counted', 'explanation')
     def _compute_difference_qty(self):
         for rec in self:
+            if not rec._is_inventory_counted():
+                rec.difference_qty = 0.0
+                rec.shortage_qty = 0.0
+                rec.extra_qty = 0.0
+                continue
             difference = (rec.actual_qty or 0.0) - (rec.system_qty or 0.0)
             rec.difference_qty = difference
             rec.shortage_qty = abs(difference) * (rec.unit_cost or 0.0) if difference < 0 else 0.0
             rec.extra_qty = difference * (rec.unit_cost or 0.0) if difference > 0 else 0.0
+
+    def _is_inventory_counted(self):
+        self.ensure_one()
+        # The explicit flag preserves a valid counted quantity of zero. The
+        # other values keep existing records compatible without a data hook.
+        return bool(self.is_counted or self.actual_qty or self.explanation)
 
     @api.onchange('product_id')
     def _onchange_product_id(self):

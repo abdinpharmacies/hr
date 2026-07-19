@@ -58,6 +58,9 @@
                     <field name="selected_line_count" widget="ab_inventory_kpi" string="Items" options="{'icon': 'items', 'label': 'Items'}" optional="show"/>
                     <field name="request_count" widget="ab_inventory_kpi" string="Requests" options="{'icon': 'requests', 'label': 'Requests'}" optional="show"/>
                     <field name="process_count" widget="ab_inventory_kpi" string="Processed" options="{'icon': 'processes', 'label': 'Processed'}" optional="show"/>
+                    <field name="branch_response_percent" widget="ab_inventory_implementation_progress" string="Branch Response" optional="show"/>
+                    <field name="implementation_percent" widget="ab_inventory_implementation_progress" string="Items Implemented" optional="hide"/>
+                    <field name="requested_total_cost" widget="ab_inventory_kpi" string="Requested Products Cost" optional="show" options="{'icon': 'cost', 'label': 'Requested Products Cost'}"/>
                     <field name="state" widget="ab_inventory_state_badge" string="Status"/>
                     <field name="submitted_date" string="Submitted" optional="hide"/>
                 </list>
@@ -78,11 +81,18 @@
                     </header>
                     <sheet>
                         <field name="selected_branch_ids" widget="many2many_tags" invisible="1"/>
+                        <field name="total_branch_count" invisible="1"/>
+                        <field name="responded_branch_count" invisible="1"/>
+                        <field name="in_progress_branch_count" invisible="1"/>
+                        <field name="awaiting_branch_count" invisible="1"/>
+                        <field name="branch_response_percent" invisible="1"/>
+                        <field name="implementation_percent" invisible="1"/>
                         <div class="ab_form_kpi_row" invisible="not create_date or state == 'draft'">
                             <field name="selected_line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'items', 'icon': 'items', 'label': 'Items'}"/>
                             <field name="request_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'requests', 'icon': 'requests', 'label': 'Requests'}"/>
                             <field name="process_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'processes', 'icon': 'processes', 'label': 'Processed'}"/>
                             <field name="line_count" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'branches', 'icon': 'branches', 'label': 'Lines'}"/>
+                            <field name="requested_total_cost" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'cost', 'icon': 'cost', 'label': 'Requested Products Cost'}"/>
                         </div>
                         <div class="ab_form_two_column">
                             <div class="ab_form_main">
@@ -190,6 +200,11 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="ab_form_section ab_response_dashboard_section"
+                             invisible="state != 'submitted'"
+                             groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager">
+                            <field name="branch_response_percent" widget="ab_inventory_branch_response_dashboard" nolabel="1"/>
                         </div>
                         <notebook class="ab_batch_full_width_notebook">
                             <page string="Branch Product Groups">
