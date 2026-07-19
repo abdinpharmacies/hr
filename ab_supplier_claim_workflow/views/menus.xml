@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <!-- Extend root menu with icon and group -->
+        <record id="ab_supplier_claim_cycle.claim_menu_root" model="ir.ui.menu">
+            <field name="web_icon">ab_supplier_claim_workflow,static/description/icon.png</field>
+            <field name="group_ids" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user')), (4, ref('ab_supplier_claim_cycle.supplier_claim_group_reviewer')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_inventory')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_purchase')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_suppliers')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_tax_accounts')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_bank_acc')), (4, ref('ab_supplier_claim_cycle.supplier_claim_group_admin'))]"/>
+        </record>
+
+        <!-- Extend sub menu with groups -->
+        <record id="ab_supplier_claim_cycle.supplier_claim_cycle_sub_menu" model="ir.ui.menu">
+            <field name="group_ids" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user')), (4, ref('ab_supplier_claim_cycle.supplier_claim_group_reviewer')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_inventory')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_purchase')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_suppliers')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_tax_accounts')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_bank_acc')), (4, ref('ab_supplier_claim_cycle.supplier_claim_group_admin'))]"/>
+        </record>
+
+        <!-- Extend action menu with groups (base module omits groups, so departments see it) -->
+        <record id="ab_supplier_claim_cycle.invoice_menu" model="ir.ui.menu">
+            <field name="group_ids" eval="[(4, ref('ab_supplier_claim_cycle.supplier_claim_group_user')), (4, ref('ab_supplier_claim_cycle.supplier_claim_group_reviewer')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_inventory')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_purchase')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_suppliers')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_tax_accounts')), (4, ref('ab_supplier_claim_workflow.supplier_claim_group_bank_acc')), (4, ref('ab_supplier_claim_cycle.supplier_claim_group_admin'))]"/>
+        </record>
+
+    </data>
+</odoo>

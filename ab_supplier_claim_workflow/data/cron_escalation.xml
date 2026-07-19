@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_supplier_claim_escalation" model="ir.cron">
+            <field name="name">Supplier Claim Stage Escalation</field>
+            <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
+            <field name="state">code</field>
+            <field name="code">model._cron_escalate_overdue_stages()</field>
+            <field name="interval_number">5</field>
+            <field name="interval_type">minutes</field>
+            <field name="active">True</field>
+        </record>
+    </data>
+</odoo>

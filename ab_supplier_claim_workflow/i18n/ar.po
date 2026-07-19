@@ -1,0 +1,2537 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_supplier_claim_workflow
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-16 10:04+0000\n"
+"PO-Revision-Date: 2026-06-24 11:27+0000\n"
+"Last-Translator: Alhassan Hossny\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "%(amount)s %(currency)s"
+msgstr "%(amount)s %(currency)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"%(stage)s accepted this supplier claim. Secretarial should notify the "
+"supplier for cheque collection."
+msgstr ""
+"تم قبول مطالبة المورد بواسطة %(stage)s. يجب على السكرتارية إخطار المورد "
+"لتحصيل الشيك."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "%(stage)s rejected this supplier claim. Reason: %(reason)s"
+msgstr "تم رفض مطالبة المورد بواسطة %(stage)s. السبب: %(reason)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "%0.1f Days"
+msgstr "%0.1f يوم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "%d Days Ago"
+msgstr "منذ %d يوم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "%d days"
+msgstr "%d يوم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "< 1 Day"
+msgstr "أقل من يوم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "<b>Claim Number:</b> %s"
+msgstr "<b>رقم المطالبة:</b> %s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "<b>Department:</b> %s"
+msgstr "<b>القسم:</b> %s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "<b>Supplier:</b> %s"
+msgstr "<b>المورد:</b> %s"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_check_delivery_wizard_form
+msgid ""
+"<div class=\"scc-dialog-title o_translate_inline\">Payment Method</div>\n"
+"                            <div class=\"scc-dialog-sub o_translate_inline\">Select the cheque delivery payment method</div>"
+msgstr ""
+"<div class=\"scc-dialog-title o_translate_inline\">طريقة السداد</div>\n"
+"                            <div class=\"scc-dialog-sub o_translate_inline\">اختر طريقة سداد تسليم الشيك</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_type_setup_wizard_form
+msgid ""
+"<div class=\"scc-dialog-title o_translate_inline\">Supplier Type Required</div>\n"
+"                            <div class=\"scc-dialog-sub o_translate_inline\">\n"
+"                                This supplier has not been classified yet.\n"
+"                                Please select the Supplier Type before continuing.\n"
+"                            </div>"
+msgstr ""
+"<div class=\"scc-dialog-title o_translate_inline\">نوع المورد مطلوب</div>\n"
+"                            <div class=\"scc-dialog-sub o_translate_inline\">\n"
+"                                لم يتم تصنيف هذا المورد بعد.\n"
+"                                يرجى اختيار نوع المورد قبل المتابعة.\n"
+"                            </div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Active</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">نشط</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Chat ID</div>"
+msgstr ""
+"<div class=\"scc-stage-field-label o_translate_inline\">معرف المحادثة</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Linked At</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">وقت الربط</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Manager at</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">مدير في</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-stage-field-label o_translate_inline\">Telegram "
+"Connected</div>"
+msgstr ""
+"<div class=\"scc-stage-field-label o_translate_inline\">متصل بتيليجرام</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-stage-field-label o_translate_inline\">Telegram "
+"Username</div>"
+msgstr ""
+"<div class=\"scc-stage-field-label o_translate_inline\">اسم مستخدم "
+"تيليجرام</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Check Amount</div>"
+msgstr ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">قيمة الشيك</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">Department</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">القسم</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Employee "
+"Name</div>"
+msgstr ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">اسم الموظف</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Invoice Type</div>"
+msgstr ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">نوع مستند "
+"الفواتير</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">Invoices</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">الفواتير</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">Is Working</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">يعمل</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Superior "
+"Department</div>"
+msgstr ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">القسم الأعلى</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Supplier Ref</div>"
+msgstr ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">رقم المطالبة</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">User</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">المستخدم</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">Work Phone</div>"
+msgstr ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">هاتف العمل</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">Both images are required when marking the"
+" cheque as delivered.</span>"
+msgstr ""
+"<span class=\"o_translate_inline\">الصورتان مطلوبتان عند تحديد الشيك كتم "
+"تسليمه.</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">Cheque Image</span>\n"
+"                                                <span style=\"color:#ef4444;\">*</span>"
+msgstr ""
+"<span class=\"o_translate_inline\">صورة الشيك</span>\n"
+"                                                <span style=\"color:#ef4444;\">*</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">Please confirm that the supplier has been"
+" notified to visit the office and collect the cheque before closing the "
+"claim.</span>"
+msgstr ""
+"<span class=\"o_translate_inline\">يرجى التأكد من إخطار المورد بالحضور إلى "
+"المكتب واستلام الشيك قبل إغلاق المطالبة.</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span class=\"o_translate_inline\">Supplier Claim Document</span>"
+msgstr "<span class=\"o_translate_inline\">مستند مطالبة المورد</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">Supplier ID Image</span>\n"
+"                                                <span style=\"color:#ef4444;\">*</span>"
+msgstr ""
+"<span class=\"o_translate_inline\">صورة بطاقة المورد</span>\n"
+"                                                <span style=\"color:#ef4444;\">*</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">The cycle cannot start without an "
+"attached document.</span>"
+msgstr ""
+"<span class=\"o_translate_inline\">لا يمكن بدء الدورة بدون مستند "
+"مرفق.</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">Upload a clear image of the signed "
+"cheque</span>"
+msgstr "<span class=\"o_translate_inline\">ارفع صورة واضحة للشيك الموقّع</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">Upload the supplier's claim document "
+"(PDF, image, etc.)</span>"
+msgstr ""
+"<span class=\"o_translate_inline\">ارفع مستند مطالبة المورد (PDF، صورة، "
+"إلخ)</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"o_translate_inline\">Upload the supplier's personal ID "
+"image</span>"
+msgstr ""
+"<span class=\"o_translate_inline\">ارفع صورة بطاقة الهوية الشخصية "
+"للمورد</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                                <span class=\"o_translate_inline\">Workflow</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                                <span class=\"o_translate_inline\">سير العمل</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                            <span class=\"o_translate_inline\">Role Assignment</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                            <span class=\"o_translate_inline\">إسناد الدور</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">📊</span>\n"
+"                                <span class=\"o_translate_inline\">Workflow Timeline</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">📊</span>\n"
+"                                <span class=\"o_translate_inline\">المخطط الزمني لسير العمل</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">📎</span>\n"
+"                                <span class=\"o_translate_inline\">Cheque Delivery Documents</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">📎</span>\n"
+"                                <span class=\"o_translate_inline\">مستندات تسليم الشيك</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">📎</span>\n"
+"                                <span class=\"o_translate_inline\">Claim Documents</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">📎</span>\n"
+"                                <span class=\"o_translate_inline\">مستندات المطالبة</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">📡</span>\n"
+"                            <span class=\"o_translate_inline\">Telegram Connection</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">📡</span>\n"
+"                            <span class=\"o_translate_inline\">اتصال تيليجرام</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">🔒</span>\n"
+"                                <span class=\"o_translate_inline\">Blocking Issues</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">🔒</span>\n"
+"                                <span class=\"o_translate_inline\">المشكلات المانعة</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">🚚</span>\n"
+"                                <span class=\"o_translate_inline\">Delivery Status</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">🚚</span>\n"
+"                                <span class=\"o_translate_inline\">حالة التسليم</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Contact Name</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">اسم جهة "
+"الاتصال</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Contact "
+"Phone</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">هاتف التواصل</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Contact "
+"Result</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">نتيجة "
+"التواصل</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Delay / Rejection "
+"Reason</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">سبب التأخير / "
+"الرفض</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span class=\"scc-stage-field-label o_translate_inline\">Delegate</span>"
+msgstr "<span class=\"scc-stage-field-label o_translate_inline\">المندوب</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Department "
+"Decision</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">قرار القسم</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span class=\"scc-stage-field-label o_translate_inline\">Email</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">البريد "
+"الإلكتروني</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Notification "
+"Date</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">تاريخ "
+"الإخطار</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Notification "
+"Notes</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">ملاحظات "
+"الإخطار</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Notified By</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">تم الإخطار "
+"بواسطة</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span class=\"scc-stage-field-label o_translate_inline\">Sub Status</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">الحالة "
+"الفرعية</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span class=\"scc-supplier-link-icon\">↗</span>"
+msgstr "<span class=\"scc-supplier-link-icon\">↗</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span class=\"scc-tg-connect-badge\">Setup Required</span>"
+msgstr "<span class=\"scc-tg-connect-badge\">الإعداد مطلوب</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span class=\"scc-tg-connect-icon\">✈️</span>"
+msgstr "<span class=\"scc-tg-connect-icon\">✈️</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;\" invisible=\"supplier_type != 'advance_payment'\">\n"
+"                                            <span>Advance Payment</span>\n"
+"                                        </span>\n"
+"                                        <span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;\" invisible=\"supplier_type != 'non_taxable'\">\n"
+"                                            <span>Non-Taxable</span>\n"
+"                                        </span>"
+msgstr ""
+"<span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;\" invisible=\"supplier_type != 'advance_payment'\">\n"
+"                                            <span>دفعة مقدمة</span>\n"
+"                                        </span>\n"
+"                                        <span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;\" invisible=\"supplier_type != 'non_taxable'\">\n"
+"                                            <span>غير خاضع للضريبة</span>\n"
+"                                        </span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;background:#e8f5e9;color:#2e7d32;\" invisible=\"not telegram_connected\">\n"
+"                                        <i class=\"fa fa-check-circle\" aria-hidden=\"true\" style=\"font-size:14px;\"/> <span class=\"o_translate_inline\">Telegram Connected</span>\n"
+"                                    </span>"
+msgstr ""
+"<span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;background:#e8f5e9;color:#2e7d32;\" invisible=\"not telegram_connected\">\n"
+"                                        <i class=\"fa fa-check-circle\" aria-hidden=\"true\" style=\"font-size:14px;\"/> <span class=\"o_translate_inline\">متصل بتيليجرام</span>\n"
+"                                    </span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span style=\"font-size:13px;\">🧪</span>\n"
+"                            <span>Developer Override</span>"
+msgstr ""
+"<span style=\"font-size:13px;\">🧪</span>\n"
+"                            <span>تجاوز المطور</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span style=\"width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;\">📞</span>\n"
+"                                    <span class=\"o_translate_inline\">Supplier Notification</span>"
+msgstr ""
+"<span style=\"width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;\">📞</span>\n"
+"                                    <span class=\"o_translate_inline\">إخطار المورد</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<span>✈️</span> Connect Telegram"
+msgstr "<span>✈️</span> ربط تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "<strong>Escalation:</strong>"
+msgstr "<strong>التصعيد:</strong>"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_costcenter
+msgid "Abdin Cost Centers"
+msgstr "مراكز تكلفة عابدين"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Accept"
+msgstr "قبول"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Accept Rate"
+msgstr "معدل القبول"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__bank_decision__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision_display__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__inv_decision__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__pur_decision__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sup_decision__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__tax_decision__accepted
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__decision__accepted
+msgid "Accepted"
+msgstr "مقبول"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_res_groups
+msgid "Access Groups"
+msgstr "مجموعات الوصول"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_form
+msgid "Acknowledge"
+msgstr "تأكيد الاطلاع"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_escalation__status__acknowledged
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_search
+msgid "Acknowledged"
+msgstr "تم تأكيد الاطلاع"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__acknowledged_at
+msgid "Acknowledged At"
+msgstr "وقت تأكيد الاطلاع"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__acknowledged_by
+msgid "Acknowledged By"
+msgstr "تم تأكيد الاطلاع بواسطة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/telegram_managers.js:0
+msgid "Action"
+msgstr "الإجراء"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__action_date
+msgid "Action Date"
+msgstr "تاريخ الإجراء"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تنسيق استثناء النشاط"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Admin Force Next"
+msgstr "تجاوز المدير للمرحلة التالية"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__supplier_type__advance_payment
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_type_setup_wizard__supplier_type__advance_payment
+msgid "Advance Payment"
+msgstr "دفعات مقدمة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__all_delegate_phones
+msgid "All Delegate Phones"
+msgstr "كل هواتف المندوبين"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.actions.act_window,help:ab_supplier_claim_workflow.action_ab_supplier_claim_telegram_registration
+msgid "All senders connected to the Supplier Claim Telegram bot."
+msgstr "كل المرسلين المتصلين ببوت تيليجرام لمطالبات الموردين."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__contact_result__already_delivered
+msgid "Already Delivered"
+msgstr "تم التسليم بالفعل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_tree
+msgid "Amount"
+msgstr "القيمة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__assigned_escalation_user
+msgid "Assigned Escalation User"
+msgstr "مستخدم التصعيد المسند"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Automatic escalation triggered via internal fallback."
+msgstr "تم تشغيل التصعيد التلقائي عبر البديل الداخلي."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Avg Completion"
+msgstr "متوسط الإكمال"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__bank_acc
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__bank_acc
+msgid "Bank Account"
+msgstr "حساب البنك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__bank_decision
+msgid "Bank Account Decision"
+msgstr "قرار حساب البنك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__bank_finished
+msgid "Bank Account Finished"
+msgstr "اكتمل حساب البنك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__bank_reason
+msgid "Bank Account Reason"
+msgstr "سبب حساب البنك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_telegram_registration__manager_department__bank_accounts
+msgid "Bank Accounts"
+msgstr "حسابات البنوك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_check_delivery_wizard__check_delivery_status__bank_transfer
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__check_delivery_status__bank_transfer
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__payment_method__bank_transfer
+msgid "Bank Transfer"
+msgstr "تحويل بنكي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Blocking Issue"
+msgstr "مشكلة مانعة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__can_current_user_act
+msgid "Can Current User Act"
+msgstr "يمكن للمستخدم الحالي تنفيذ الإجراء"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__can_current_user_edit
+msgid "Can Current User Edit"
+msgstr "يمكن للمستخدم الحالي التعديل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__can_edit_documents
+msgid "Can Edit Documents"
+msgstr "يمكنه تعديل المستندات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__can_finish
+msgid "Can Finish"
+msgstr "يمكنه الإنهاء"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__can_secretarial_override
+msgid "Can Secretarial Override"
+msgstr "يمكن للسكرتارية التجاوز"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_check_delivery_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_type_setup_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_check_delivery_wizard__check_delivery_status__cash
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__check_delivery_status__cash
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__payment_method__cash
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Chat ID"
+msgstr "معرف المحادثة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_check_delivery_wizard
+msgid "Check Delivery Status Wizard"
+msgstr "معالج حالة تسليم الشيك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__closed
+msgid "Check delivery"
+msgstr "تسليم الشيك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__payment_method__cheque
+msgid "Cheque"
+msgstr "شيك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__check_delivery_status
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__check_delivery_status
+msgid "Cheque Delivery Status"
+msgstr "حالة تسليم الشيك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_check_delivery_wizard.py:0
+msgid "Cheque Delivery Status is required."
+msgstr "حالة تسليم الشيك مطلوبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Cheque Delivery Status must be set before closing the claim."
+msgstr "يجب تحديد حالة تسليم الشيك قبل إغلاق المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__cheque_image
+msgid "Cheque Image"
+msgstr "صورة الشيك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__cheque_image_filename
+msgid "Cheque Image Filename"
+msgstr "صورة الشيك Filename"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Choose file or drop here"
+msgstr "اختر ملفا أو اسحبه هنا"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__claim_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__claim_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__claim_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__claim_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__claim_id
+msgid "Claim"
+msgstr "مطالبة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_tree
+msgid "Claim #"
+msgstr "رقم المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Claim Amount"
+msgstr "قيمة المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__claim_document
+msgid "Claim Document"
+msgstr "مستند المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__claim_document_filename
+msgid "Claim Document Filename"
+msgstr "اسم ملف مستند المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_claim_error_wizard
+msgid "Claim Error Wizard"
+msgstr "معالج خطأ المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__claim_month
+msgid "Claim Month"
+msgstr "شهر المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__name
+msgid "Claim Number"
+msgstr "رقم المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.constraint,message:ab_supplier_claim_workflow.constraint_ab_supplier_claim_cycle_uniq_name
+msgid "Claim number must be unique."
+msgstr "يجب أن يكون رقم المطالبة فريدا."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Close Claim"
+msgstr "إغلاق المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__closed
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Closed supplier claims cannot be changed."
+msgstr "لا يمكن تعديل مطالبات المورد المغلقة."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Complete Sign Check"
+msgstr "إكمال توقيع الشيك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Completed"
+msgstr "مكتمل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_check_delivery_wizard_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Confirmation"
+msgstr "تأكيد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"Connect your Telegram account to receive workflow approvals, escalation "
+"alerts, supplier claim notifications and real-time updates."
+msgstr ""
+"اربط حساب تيليجرام الخاص بك لاستلام موافقات سير العمل وتنبيهات التصعيد "
+"وإشعارات مطالبات المورد والتحديثات الفورية."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Contact"
+msgstr "التواصل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__contact_name
+msgid "Contact Name"
+msgstr "اسم جهة الاتصال"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__contact_phone
+msgid "Contact Phone"
+msgstr "هاتف التواصل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__contact_result
+msgid "Contact Result"
+msgstr "نتيجة التواصل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__contact_result__contacted
+msgid "Contacted"
+msgstr "تم التواصل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Created Request"
+msgstr "تم إنشاء الطلب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_claim_error_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__create_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_claim_error_wizard__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__create_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__date
+msgid "Date"
+msgstr "التاريخ:"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Dear %(manager)s,\n"
+"The %(stage)s stage for claim %(name)s is overdue. Please review and take action."
+msgstr ""
+"عزيزي %(manager)s،\n"
+"مرحلة %(stage)s للمطالبة %(name)s متأخرة. يرجى المراجعة واتخاذ الإجراء."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__decision
+msgid "Decision"
+msgstr "القرار"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__is_default
+msgid "Default"
+msgstr "افتراضي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Delay"
+msgstr "تأخير"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__delay_reason
+msgid "Delay / Rejection Reason"
+msgstr "سبب التأخير / الرفض"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_delegate_phone
+msgid "Delegate Phone Number"
+msgstr "رقم هاتف المندوب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__delegate_phone_ids
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__delegate_phone_ids
+msgid "Delegate Phones"
+msgstr "هواتف المندوبين"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__sub_delivery_status
+msgid "Delivery Sub Status"
+msgstr "الحالة الفرعية للتسليم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__department_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__department_id
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__department_decision
+msgid "Department Decision"
+msgstr "قرار القسم"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__department_decision_display
+msgid "Department Decision Display"
+msgstr "قرار القسم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Department:"
+msgstr "القسم:"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_claim_error_wizard__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_res_groups__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Duration"
+msgstr "المدة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__eplus_code
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_search
+msgid "E-Plus Code"
+msgstr "كود E-Plus"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__employee_id
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__employee_name
+msgid "Employee Name"
+msgstr "اسم الموظف"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+msgid "Employees who have connected to the Telegram bot."
+msgstr "الموظفون الذين اتصلوا ببوت تيليجرام."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_claim_error_wizard__error_message
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__decision__escalated
+msgid "Escalated"
+msgstr "تم التصعيد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__decision__escalated_no_manager
+msgid "Escalated No Manager"
+msgstr "تم التصعيد بدون مدير"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__escalation_count
+msgid "Escalation Count"
+msgstr "عدد التصعيدات"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_form
+msgid "Escalation Info"
+msgstr "معلومات التصعيد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__escalation_missing_manager
+msgid "Escalation Manager Not Found"
+msgstr "لم يتم العثور على مدير التصعيد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__escalation_time
+msgid "Escalation Time"
+msgstr "وقت التصعيد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Escalation notification was sent to:"
+msgstr "تم إرسال إشعار التصعيد إلى:"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Escalation notification was sent to:\n"
+"%(managers)s\n"
+"Department: %(dept)s\n"
+"Time: %(time)s"
+msgstr ""
+"تم إرسال إشعار التصعيد إلى:\n"
+"%(managers)s\n"
+"القسم: %(dept)s\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.actions.act_window,name:ab_supplier_claim_workflow.action_ab_supplier_claim_escalation
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__escalation_ids
+msgid "Escalations"
+msgstr "التصعيدات"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Event"
+msgstr "حدث"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Finish"
+msgstr "إنهاء"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Finish is only available during department review stages."
+msgstr "الإنهاء متاح فقط أثناء مراحل مراجعة الأقسام."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,help:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__has_blocking_issue
+msgid "Has Blocking Issue"
+msgstr "توجد مشكلة مانعة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__has_pending_escalation
+msgid "Has Pending Escalation"
+msgstr "يوجد تصعيد معلق"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__has_tax_accounts
+msgid "Has Tax Accounts Stage"
+msgstr "توجد مرحلة حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_claim_error_wizard__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_res_groups__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_exception_icon
+msgid "Icon"
+msgstr "أيقونة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,help:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى نشاط استثنائي."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision_display__in_progress
+msgid "In Progress"
+msgstr "قيد التقدم"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_escalation__method__internal_fallback
+msgid "Internal Fallback"
+msgstr "بديل داخلي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__inventory
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__inventory
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_telegram_registration__manager_department__inventory
+msgid "Inventory"
+msgstr "المخزون"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__inv_decision
+msgid "Inventory Decision"
+msgstr "المخزون"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__inv_finished
+msgid "Inventory Finished"
+msgstr "المخزون"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__inv_reason
+msgid "Inventory Reason"
+msgstr "المخزون"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__is_dev_override
+msgid "Is Dev Override"
+msgstr "تجاوز المطور"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__is_escalation_viewer
+msgid "Is Escalation Viewer"
+msgstr "مشاهد التصعيد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__is_working
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Is Working"
+msgstr "يعمل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Issue"
+msgstr "مشكلة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_check_delivery_wizard__check_delivery_status__check_delivered
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__check_delivery_status__check_delivered
+msgid "Issue Check"
+msgstr "اصدار شيك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Issue Resolved"
+msgstr "تم حل المشكلة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__issue_ids
+msgid "Issues"
+msgstr "المشكلات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__job_id
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Last Claim"
+msgstr "آخر مطالبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_claim_error_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__write_uid
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_check_delivery_wizard__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_claim_error_wizard__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__write_date
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__linked_at
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Linked At"
+msgstr "وقت الربط"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+msgid "Loading..."
+msgstr "جار التحميل..."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__manager_id
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_search
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__manager_department
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Manager at"
+msgstr "مدير في"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.actions.act_window,name:ab_supplier_claim_workflow.action_ab_supplier_claim_telegram_managers
+#: model:ir.ui.menu,name:ab_supplier_claim_workflow.menu_ab_supplier_claim_telegram_managers
+msgid "Managers"
+msgstr "المديرون"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.actions.act_window,help:ab_supplier_claim_workflow.action_ab_supplier_claim_telegram_managers
+msgid "Managers assigned to a department role via the Telegram bot."
+msgstr "المديرون المسندون إلى دور قسم عبر بوت تيليجرام."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Manual escalation.\n"
+"Assigned to: %(name)s (%(login)s)\n"
+"Department: %(dept)s\n"
+"Notification type: %(method)s\n"
+"Escalated at: %(time)s"
+msgstr ""
+"تصعيد يدوي.\n"
+"تم الإسناد إلى: %(name)s (%(login)s)\n"
+"القسم: %(dept)s\n"
+"نوع الإشعار: %(method)s\n"
+"وقت التصعيد: %(time)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Missing Required Documents"
+msgstr "مستندات مطلوبة غير مكتملة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Missing Required Information"
+msgstr "بيانات مطلوبة غير مكتملة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_check_delivery_wizard__check_delivery_status__mixed
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__check_delivery_status__mixed
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__payment_method__mixed
+msgid "Mixed (Bank Transfer + Cheque)"
+msgstr "مختلط (تحويل بنكي + شيك)"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Month"
+msgstr "الشهر"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Move to Next Stage"
+msgstr "نقل إلى المرحلة التالية"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "موعد نشاطي النهائي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "N/A"
+msgstr "غير متاح"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__net_payable
+msgid "Net Payable"
+msgstr "صافي المستحق"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "New supplier claims must start at Secretarial."
+msgstr "يجب أن تبدأ مطالبات المورد الجديدة من السكرتارية."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "موعد النشاط التالي"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "No Rejects"
+msgstr "لا توجد حالات رفض"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "No active stage"
+msgstr "لا توجد مرحلة نشطة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+msgid "No employees have connected to the Telegram bot yet."
+msgstr "لم يتصل أي موظف ببوت تيليجرام بعد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"No managers are connected to Telegram yet for the %(dept)s department.\n"
+"Time: %(time)s"
+msgstr ""
+"لا يوجد مديرون متصلون بتيليجرام حتى الآن لقسم %(dept)s.\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"No managers connected to Telegram yet in this department.\n"
+"Time: %(time)s"
+msgstr ""
+"لا يوجد مديرون متصلون بتيليجرام حتى الآن في هذا القسم.\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "No notes"
+msgstr "لا توجد ملاحظات"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "No previous supplier claims."
+msgstr "لا توجد مطالبات سابقة للمورد."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__supplier_type__non_taxable
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_type_setup_wizard__supplier_type__non_taxable
+msgid "Non-Taxable"
+msgstr "غير ضريبي"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "Not Connected to Telegram"
+msgstr "غير متصل بتيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__notes
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__notes
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_notification_date
+msgid "Notification Date"
+msgstr "تاريخ الإخطار"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__method
+msgid "Notification Method"
+msgstr "طريقة الإشعار"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__notification_notes
+msgid "Notification Notes"
+msgstr "ملاحظات الإخطار"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_notified_by
+msgid "Notified By"
+msgstr "تم الإخطار بواسطة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_escalation__method__odoo_activity
+msgid "Odoo Activity"
+msgstr "نشاط أودو"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Only Secretarial or Admin users can create supplier claims."
+msgstr "يمكن لمستخدمي السكرتارية أو المدير فقط إنشاء مطالبات المورد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Only Secretarial or Admin users can override the workflow."
+msgstr "يمكن لمستخدمي السكرتارية أو المدير فقط تجاوز سير العمل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Only the current department can edit this supplier claim."
+msgstr "يمكن للقسم الحالي فقط تعديل مطالبة المورد هذه."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Only the current department, Secretarial, or Admin can perform this action."
+msgstr "يمكن للقسم الحالي أو السكرتارية أو المدير فقط تنفيذ هذا الإجراء."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Open Odoo and check"
+msgstr "افتح أودو وتابع"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Overdue"
+msgstr "متأخر"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__parallel_status_summary
+msgid "Parallel Status Summary"
+msgstr "ملخص الحالات المتوازية"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__payment_method
+msgid "Payment Method"
+msgstr "طريقة السداد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__bank_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision_display__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__inv_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__pur_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sup_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__tax_decision__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_escalation__status__pending
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__decision__pending
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_search
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__name
+msgid "Phone Number"
+msgstr "رقم الهاتف"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Please attach both the cheque image and supplier ID image before confirming "
+"supplier notification."
+msgstr "يرجى إرفاق صورة الشيك وصورة بطاقة المورد قبل تأكيد إخطار المورد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please attach the cheque image before confirming cheque delivery."
+msgstr "يرجى إرفاق صورة الشيك قبل تأكيد تسليم الشيك."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please attach the supplier ID image before confirming cheque delivery."
+msgstr "يرجى إرفاق صورة بطاقة المورد قبل تأكيد تسليم الشيك."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Please confirm that the supplier has been notified to visit the office and "
+"collect the cheque before closing the claim."
+msgstr ""
+"يرجى التأكد من إخطار المورد بالحضور إلى المكتب واستلام الشيك قبل إغلاق "
+"المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter the cheque amount."
+msgstr "يرجى إدخال قيمة الشيك."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter the contact name."
+msgstr "يرجى إدخال اسم مسؤول التواصل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter the contact phone."
+msgstr "يرجى إدخال هاتف مسؤول التواصل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter the number of invoices."
+msgstr "يرجى إدخال عدد الفواتير."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please review immediately."
+msgstr "يرجى المراجعة فوراً."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Please select a Contact Result before confirming supplier notification."
+msgstr "يرجى اختيار نتيجة التواصل قبل تأكيد إخطار المورد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please select a sub status (Ready or Shipped) for cheque delivery."
+msgstr "يرجى تحديد حالة فرعية (جاهز أو تم الشحن) لتسليم الشيك."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Please upload the supplier claim document in the Claim Documents section "
+"before starting the cycle."
+msgstr "يرجى رفع مستند مطالبة المورد في قسم مستندات المطالبة قبل بدء الدورة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__purchase
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__purchase
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_telegram_registration__manager_department__purchase
+msgid "Purchase"
+msgstr "المشتريات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__pur_decision
+msgid "Purchase Decision"
+msgstr "القرار"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__pur_finished
+msgid "Purchase Finished"
+msgstr "المشتريات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__pur_reason
+msgid "Purchase Reason"
+msgstr "المشتريات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__check_delivery_status__ready
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sub_delivery_status__ready
+msgid "Ready"
+msgstr "جاهز"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Reject Rate"
+msgstr "معدل الرفض"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__bank_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision_display__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__inv_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__pur_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sup_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__tax_decision__rejected
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__decision__rejected
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Rejection"
+msgstr "رفض"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Rejects"
+msgstr "حالات الرفض"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__user_id
+msgid "Related User"
+msgstr "المستخدم المرتبط"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__user_id
+msgid "Reported By"
+msgstr "أبلغ بواسطة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__representative_phone
+msgid "Representative Phone"
+msgstr "هاتف التواصل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Resolve"
+msgstr "حل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__resolved
+msgid "Resolved"
+msgstr "تم الحل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__resolved_by
+msgid "Resolved By"
+msgstr "تم الحل بواسطة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__resolved_date
+msgid "Resolved Date"
+msgstr "تاريخ الحل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Resolved by:"
+msgstr "تم الحل بواسطة:"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "S"
+msgstr "ج"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_type_setup_wizard_form
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__secretarial
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__secretarial
+msgid "Secretarial"
+msgstr "السكرتارية"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_check_delivery_wizard_form
+msgid "Select delivery status..."
+msgstr "اختر حالة التسليم..."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "Select role..."
+msgstr "اختر الدور..."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_type_setup_wizard_form
+msgid "Select supplier type..."
+msgstr "اختر نوع المورد..."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Send Escalation"
+msgstr "إرسال التصعيد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Set Supplier Type"
+msgstr "تحديد نوع المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__check_delivery_status__shipped
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sub_delivery_status__shipped
+msgid "Shipped"
+msgstr "تم الشحن"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__show_chatter
+msgid "Show Chatter"
+msgstr "إظهار المحادثات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__show_dev_override_badge
+msgid "Show Dev Override Badge"
+msgstr "إظهار شارة تجاوز المطور"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__show_telegram_connect_button
+msgid "Show Telegram Connect Button"
+msgstr "إظهار زر ربط تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__sign_check
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__sign_check
+msgid "Sign Check"
+msgstr "توقيع الشيك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__stage
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__stage
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_search
+msgid "Stage"
+msgstr "المرحلة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__stage_escalated
+msgid "Stage Escalated"
+msgstr "تم تصعيد المرحلة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__stage_history_ids
+msgid "Stage History"
+msgstr "سجل المراحل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Stage Overdue: %s"
+msgstr "مرحلة متأخرة: %s"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__current_stage
+msgid "Stage at Escalation"
+msgstr "المرحلة عند التصعيد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Start the Cycle"
+msgstr "بدء الدورة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__status
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__status
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,help:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة حسب الأنشطة\n"
+"متأخر: تاريخ الاستحقاق مضى بالفعل\n"
+"اليوم: تاريخ النشاط اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__superior_department_id
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Superior Department"
+msgstr "القسم الأعلى"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__partner_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__supplier_id
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__supplier_activity_status
+msgid "Supplier Activity Status"
+msgstr "حالة نشاط المورد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+msgid "Supplier Claim"
+msgstr "مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__supplier_claim_activity
+msgid "Supplier Claim Activity"
+msgstr "نشاط مطالبات المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:res.groups,name:ab_supplier_claim_workflow.supplier_claim_group_bank_acc
+msgid "Supplier Claim Bank Accounts"
+msgstr "مطالبات المورد - حسابات البنوك"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_claim_issue
+msgid "Supplier Claim Blocking Issue"
+msgstr "مشكلة مانعة لمطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_claim_cycle
+msgid "Supplier Claim Cycle"
+msgstr "دورة مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_claim_escalation
+msgid "Supplier Claim Escalation"
+msgstr "تصعيد مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:res.groups,name:ab_supplier_claim_workflow.supplier_claim_group_inventory
+msgid "Supplier Claim Inventory"
+msgstr "مطالبات المورد - المخزون"
+
+#. module: ab_supplier_claim_workflow
+#: model:res.groups,name:ab_supplier_claim_workflow.supplier_claim_group_purchase
+msgid "Supplier Claim Purchase"
+msgstr "مطالبات المورد - المشتريات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.actions.server,name:ab_supplier_claim_workflow.ir_cron_supplier_claim_escalation_ir_actions_server
+msgid "Supplier Claim Stage Escalation"
+msgstr "تصعيد مرحلة مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_claim_stage_history
+msgid "Supplier Claim Stage History"
+msgstr "سجل مراحل مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:res.groups,name:ab_supplier_claim_workflow.supplier_claim_group_suppliers
+msgid "Supplier Claim Suppliers"
+msgstr "مطالبات المورد - الموردون"
+
+#. module: ab_supplier_claim_workflow
+#: model:res.groups,name:ab_supplier_claim_workflow.supplier_claim_group_tax_accounts
+msgid "Supplier Claim Tax Accounts"
+msgstr "مطالبة المورد - حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_claim_telegram_registration
+msgid "Supplier Claim Telegram Registration"
+msgstr "تسجيل تيليجرام المطالبات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.actions.server,name:ab_supplier_claim_workflow.ir_cron_ab_supplier_claim_telegram_import_ir_actions_server
+msgid "Supplier Claim: Import Telegram Registrations"
+msgstr "مطالبات المورد: استيراد تسجيلات تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__claim_ids
+msgid "Supplier Claims"
+msgstr "مطالبات الموردين"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Supplier Contacted"
+msgstr "تم التواصل مع المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_email
+msgid "Supplier Email"
+msgstr "البريد الإلكتروني للمورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_id_image
+msgid "Supplier ID Image"
+msgstr "صورة بطاقة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_id_image_filename
+msgid "Supplier ID Image Filename"
+msgstr "صورة بطاقة المورد Filename"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__supplier_notification
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__supplier_notification
+msgid "Supplier Notification"
+msgstr "إخطار المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_notified
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Supplier Notified"
+msgstr "تم إخطار المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_costcenter__supplier_performance_html
+msgid "Supplier Performance"
+msgstr "أداء المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_tree
+msgid "Supplier Ref"
+msgstr "مرجع المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_claim_number
+msgid "Supplier Reference Number"
+msgstr "رقم مرجع المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_type
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__supplier_type
+msgid "Supplier Type"
+msgstr "نوع المورد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Supplier Type Required"
+msgstr "نوع المورد مطلوب"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Supplier Type Setup"
+msgstr "إعداد نوع المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_type_setup_wizard
+msgid "Supplier Type Setup Wizard"
+msgstr "معالج إعداد نوع المورد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Supplier must be marked as notified before closing the claim."
+msgstr "يجب وضع علامة بأن المورد تم إخطاره قبل إغلاق المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Supplier notification is only available at the Supplier Notification stage."
+msgstr "إخطار المورد متاح فقط في مرحلة إخطار المورد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Supplier notified by %(name)s (%(phone)s). Result: %(result)s. Notes: "
+"%(notes)s"
+msgstr ""
+"تم إخطار المورد بواسطة %(name)s (%(phone)s). النتيجة: %(result)s. الملاحظات:"
+" %(notes)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__suppliers
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__suppliers
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_telegram_registration__manager_department__suppliers
+msgid "Suppliers"
+msgstr "الموردون"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__sup_decision
+msgid "Suppliers Decision"
+msgstr "قرار الموردين"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__sup_finished
+msgid "Suppliers Finished"
+msgstr "اكتمل الموردون"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__sup_reason
+msgid "Suppliers Reason"
+msgstr "سبب الموردين"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__tax_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__tax_accounts
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_telegram_registration__manager_department__tax_accounts
+msgid "Tax Accounts"
+msgstr "حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tax_decision
+msgid "Tax Accounts Decision"
+msgstr "قرار حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tax_finished
+msgid "Tax Accounts Finished"
+msgstr "اكتملت حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tax_reason
+msgid "Tax Accounts Reason"
+msgstr "سبب حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Tax Applied:"
+msgstr "تم تطبيق الضريبة:"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tax_calculated_at
+msgid "Tax Calculated At"
+msgstr "وقت حساب الضريبة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tax_frozen
+msgid "Tax Frozen"
+msgstr "الضريبة مجمدة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tax_percentage
+msgid "Tax Percentage (%)"
+msgstr "نسبة الضريبة (%)"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_escalation__manager_telegram_badge
+msgid "Telegram"
+msgstr "تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__telegram_chat_id
+msgid "Telegram Chat ID"
+msgstr "معرف محادثة تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__telegram_connected
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Telegram Connected"
+msgstr "متصل بتيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+#: model:ir.actions.client,name:ab_supplier_claim_workflow.action_telegram_managers
+msgid "Telegram Connected Employees"
+msgstr "الموظفون المتصلون بتيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.ui.menu,name:ab_supplier_claim_workflow.menu_ab_supplier_claim_telegram_registration
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Telegram Management"
+msgstr "إدارة التيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Telegram Not Connected"
+msgstr "تيليجرام غير متصل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_form
+msgid "Telegram Registration"
+msgstr "تسجيل تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.actions.act_window,name:ab_supplier_claim_workflow.action_ab_supplier_claim_telegram_registration
+#: model:ir.ui.menu,name:ab_supplier_claim_workflow.menu_ab_supplier_claim_telegram_senders
+msgid "Telegram Senders"
+msgstr "مرسلو التيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__telegram_username
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Telegram Username"
+msgstr "اسم مستخدم تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"The Delay / Rejection Reason field is required when rejecting a department "
+"request."
+msgstr "حقل سبب التأخير / الرفض مطلوب عند رفض طلب الإدارة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "The Delay / Rejection Reason field is required when rejecting."
+msgstr "حقل سبب التأخير / الرفض مطلوب عند رفض طلب الإدارة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"The manager assigned to this department is still not connected to Telegram.\n"
+"Time: %(time)s"
+msgstr ""
+"المدير المعيّن لهذا القسم لا يزال غير متصل بتيليجرام.\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "There is an unresolved blocking issue. Resolve it before proceeding."
+msgstr "توجد مشكلة مانعة غير محلولة. قم بحلها قبل المتابعة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_telegram_registration.py:0
+#: model:ir.model.constraint,message:ab_supplier_claim_workflow.constraint_ab_supplier_claim_telegram_registration_uniq_chat
+msgid "This Telegram account is already linked."
+msgstr "حساب تيليجرام هذا مرتبط بالفعل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_telegram_registration.py:0
+#: model:ir.model.constraint,message:ab_supplier_claim_workflow.constraint_ab_supplier_claim_telegram_registration_uniq_employee
+msgid ""
+"This employee is already registered. Each employee can have only one "
+"Telegram link."
+msgstr "هذا الموظف مسجل بالفعل. يمكن لكل موظف امتلاك رابط تيليجرام واحد فقط."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "This supplier claim is already closed."
+msgstr "مطالبة المورد هذه مغلقة بالفعل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Time:"
+msgstr "الوقت:"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__timeline_display
+msgid "Timeline Display"
+msgstr "عرض الخط الزمني"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_issue__title
+msgid "Title"
+msgstr "العنوان"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Today"
+msgstr "اليوم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Total Amount"
+msgstr "إجمالي المبلغ"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Total Claims"
+msgstr "إجمالي المطالبات"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+msgid "Total:"
+msgstr "الإجمالي:"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,help:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع نشاط الاستثناء على السجل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Unknown stage: %s"
+msgstr "مرحلة غير معروفة: %s"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_tree
+msgid "Updated"
+msgstr "تم التحديث"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Use workflow actions to move supplier claims between stages."
+msgstr "استخدم إجراءات سير العمل لنقل مطالبات المورد بين المراحل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_stage_history__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "User:"
+msgstr "المستخدم:"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+msgid "View"
+msgstr "عرض"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tax_amount
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__supplier_type__withholding_tax
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_type_setup_wizard__supplier_type__withholding_tax
+msgid "Withholding Tax"
+msgstr "خصم من المنبع"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Withholding Tax Summary"
+msgstr "ملخص خصم المنبع"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_telegram_registration__work_phone
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_telegram_registration_list
+msgid "Work Phone"
+msgstr "هاتف العمل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Workflow Blocked"
+msgstr "سير العمل متوقف"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "Workflow Quality"
+msgstr "جودة سير العمل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "You are not authorized to act on this claim."
+msgstr "غير مصرح لك باتخاذ إجراء على هذه المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "You are not authorized to finish this stage."
+msgstr "غير مصرح لك بإنهاء هذه المرحلة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "You must Accept or Reject before finishing."
+msgstr "يجب القبول أو الرفض قبل الإنهاء."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/xml/telegram_managers.xml:0
+msgid "employee(s) connected."
+msgstr "موظف/موظفون متصلون."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "fa-calendar-check-o"
+msgstr "fa-calendar-check-o"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "fa-check-circle-o"
+msgstr "fa-check-circle-o"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "fa-clock-o"
+msgstr "fa-clock-o"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_costcenter_inherit.py:0
+msgid "fa-money"
+msgstr "fa-money"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "✓ Withholding Tax Applied"
+msgstr "✓ تم تطبيق خصم المنبع"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "🏛 <span>Withholding Tax</span> •"
+msgstr "🏛 <span>خصم من المنبع</span> •"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "🚨 <b>Claim Escalation Alert</b>"
+msgstr "🚨 <b>تنبيه تصعيد المطالبة</b>"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_telegram_registration.py:0
+msgid "HR module not available"
+msgstr "وحدة الموارد البشرية غير متاحة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_telegram_registration.py:0
+msgid "Employee not found with this E-Plus code"
+msgstr "لم يتم العثور على الموظف بهذا الكود"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_telegram_registration.py:0
+msgid "Telegram account already linked."
+msgstr "حساب التيليجرام مرتبط بالفعل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_manager.py:0
+msgid "Unknown department code: %s"
+msgstr "كود القسم غير معروف: %s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_manager.py:0
+msgid "Security group not found: %s"
+msgstr "مجموعة الأمان غير موجودة: %s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_manager.py:0
+msgid "Employee not found"
+msgstr "الموظف غير موجود"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_manager.py:0
+msgid "Employee has no Telegram connection"
+msgstr "الموظف ليس لديه اتصال تيليجرام"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_escalation.py:0
+msgid "Telegram Connected (DEV)"
+msgstr "تيليجرام متصل (تطوير)"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Finished"
+msgstr "تم الانتهاء"
+
+#~ msgid ""
+#~ "<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+#~ "                            <span>Role Assignment</span>"
+#~ msgstr ""
+#~ "<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+#~ "                            <span>إسناد الدور</span>"
+
+#~ msgid ""
+#~ "<span class=\"scc-form-section-title-icon\">📡</span>\n"
+#~ "                            <span>Telegram Connection</span>"
+#~ msgstr ""
+#~ "<span class=\"scc-form-section-title-icon\">📡</span>\n"
+#~ "                            <span>اتصال تيليجرام</span>"
