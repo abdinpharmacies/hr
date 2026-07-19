@@ -135,6 +135,7 @@ class AbSupplierClaimTelegramRegistration(models.Model):
             'employee_id': employee.id,
             'telegram_chat_id': str(chat_id),
             'telegram_username': (username or '').strip() or False,
+            'telegram_connected': True,
             'linked_at': fields.Datetime.now(),
         })
         return {
@@ -239,6 +240,7 @@ class AbSupplierClaimTelegramRegistration(models.Model):
                     'employee_id': employee.id,
                     'telegram_chat_id': str(chat_id),
                     'telegram_username': (username or '').strip() or False,
+                    'telegram_connected': True,
                     'linked_at': fields.Datetime.now(),
                 })
             except Exception:
