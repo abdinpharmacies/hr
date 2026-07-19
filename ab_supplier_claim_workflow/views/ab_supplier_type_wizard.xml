@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_supplier_type_setup_wizard_form" model="ir.ui.view">
+        <field name="name">ab.supplier.type.setup.wizard.form</field>
+        <field name="model">ab.supplier.type.setup.wizard</field>
+        <field name="priority">15</field>
+        <field name="arch" type="xml">
+            <form class="scc-clean-dialog">
+                <div class="scc-dialog-body">
+                    <div class="scc-dialog-header">
+                        <div class="scc-dialog-icon is-warning">⚠</div>
+                        <div>
+                            <div class="scc-dialog-title o_translate_inline">Supplier Type Required</div>
+                            <div class="scc-dialog-sub o_translate_inline">
+                                This supplier has not been classified yet.
+                                Please select the Supplier Type before continuing.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="scc-dialog-field">
+                        <field name="supplier_id" invisible="1"/>
+                        <field name="supplier_type" required="1" placeholder="Select supplier type..."/>
+                    </div>
+                    <div class="scc-dialog-footer">
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        <button name="action_confirm" type="object" string="Save" class="btn-primary"/>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+</odoo>
