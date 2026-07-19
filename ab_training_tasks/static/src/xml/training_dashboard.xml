@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_training_tasks.TrainingDashboard">
+        <div class="ab_training_dashboard">
+            <div class="ab_training_dashboard_shell">
+                <header class="ab_training_dashboard_header">
+                    <div>
+                        <span class="ab_training_dashboard_eyebrow" t-if="isManager">Manager Workspace</span>
+                        <span class="ab_training_dashboard_eyebrow" t-else="">Member Workspace</span>
+                        <h1>Training KPI Dashboard</h1>
+                        <p t-out="formatMonth(state.month)"/>
+                    </div>
+                    <div class="ab_training_dashboard_tools">
+                        <label class="core_ui_form_group ab_training_month_filter">
+                            <span>Report Month</span>
+                            <input class="core_ui_input" type="month" t-att-value="state.month" t-on-change="onMonthChange"/>
+                        </label>
+                        <button type="button" class="core_ui_btn core_ui_btn_secondary" t-on-click="createTask">
+                            <i class="fa fa-plus"/> New Task
+                        </button>
+                        <button t-if="isManager" type="button" class="core_ui_btn core_ui_btn_danger" t-on-click="resetAllWallets">
+                            <i class="fa fa-money"/> Reset Approved Wallets
+                        </button>
+                    </div>
+                </header>
+
+                <div t-if="state.loading" class="ab_training_dashboard_loading">
+                    <span class="core_ui_spinner"><i class="fa fa-spinner"/></span>
+                    <span>Loading dashboard...</span>
+                </div>
+
+                <t t-elif="state.data">
+                    <section class="ab_training_dashboard_stats" aria-label="Key performance indicators">
+                        <StatCard t-foreach="summaryCards" t-as="card" t-key="card.key"
+                                  label="card.label" value="card.value" icon="card.icon"
+                                  tone="card.tone" hint="card.hint"
+                                  onClick="() => this.openTasks(card.state, card.scope)"/>
+                    </section>
+
+                    <section t-if="isManager" class="ab_training_dashboard_band">
+                        <div class="ab_training_section_head">
+                            <div>
+                                <span class="ab_training_section_kicker">Monthly ranking</span>
+                                <h2>Most Active Members</h2>
+                            </div>
+                            <span><t t-out="state.data.monthly.active_member_count"/> active</span>
+                        </div>
+                        <div t-if="state.data.top_members.length" class="ab_training_member_ranking">
+                            <button t-foreach="state.data.top_members" t-as="member" t-key="member.id"
+                                    type="button" class="ab_training_member_row"
+                                    t-on-click="() => this.openTasks(null, 'month', member.id)">
+                                <span class="ab_training_rank" t-out="member_index + 1"/>
+                                <img t-att-src="member.avatar_url" t-att-alt="member.name"/>
+                                <span class="ab_training_member_identity">
+                                    <strong t-out="member.name"/>
+                                    <span><t t-out="member.task_count"/> tasks · <t t-out="member.approved_count"/> approved</span>
+                                </span>
+                                <span class="ab_training_member_activity">
+                                    <span class="ab_training_member_activity_track">
+                                        <span t-att-style="'width:' + (member.task_count / maxMemberTasks * 100) + '%'"/>
+                                    </span>
+                                </span>
+                                <span class="ab_training_member_reward">
+                                    <strong t-out="formatAmount(member.approved_amount)"/>
+                                    <small><t t-out="formatAmount(member.pending_amount)"/> pending</small>
+                                </span>
+                            </button>
+                        </div>
+                        <div t-else="" class="core_ui_empty_state">
+                            <i class="fa fa-users"/>
+                            <h3>No member activity</h3>
+                            <p>No training tasks were recorded in this month.</p>
+                        </div>
+                    </section>
+
+                    <div class="ab_training_dashboard_columns">
+                        <section class="ab_training_dashboard_band">
+                            <div class="ab_training_section_head">
+                                <div>
+                                    <span class="ab_training_section_kicker">Six-month view</span>
+                                    <h2>Approved Incentive Trend</h2>
+                                </div>
+                            </div>
+                            <div class="ab_training_trend" t-if="state.data.trend.length">
+                                <div t-foreach="state.data.trend" t-as="item" t-key="item.month" class="ab_training_trend_row">
+                                    <span t-out="formatMonth(item.month)"/>
+                                    <span class="ab_training_trend_track">
+                                        <span t-att-style="'width:' + (item.approved_amount / maxTrendAmount * 100) + '%'"/>
+                                    </span>
+                                    <strong t-out="formatAmount(item.approved_amount)"/>
+                                    <small><t t-out="item.task_count"/> tasks</small>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="ab_training_dashboard_band">
+                            <div class="ab_training_section_head">
+                                <div>
+                                    <span class="ab_training_section_kicker">Material mix</span>
+                                    <h2>Tasks by Category</h2>
+                                </div>
+                            </div>
+                            <div t-if="state.data.categories.length" class="ab_training_category_chart">
+                                <button t-foreach="state.data.categories" t-as="item" t-key="item.id" type="button"
+                                        class="ab_training_category_row" t-on-click="() => this.openTasks(null, 'month')">
+                                    <span class="ab_training_category_meta">
+                                        <strong t-out="item.label"/>
+                                        <small><t t-out="item.count"/> tasks · <t t-out="formatAmount(item.approved_amount)"/></small>
+                                    </span>
+                                    <span class="ab_training_category_track">
+                                        <span t-att-style="'width:' + (item.count / maxCategoryCount * 100) + '%'"/>
+                                    </span>
+                                </button>
+                            </div>
+                            <div t-else="" class="core_ui_empty_state">
+                                <i class="fa fa-folder-open"/>
+                                <h3>No category activity</h3>
+                                <p>Category statistics will appear when tasks are recorded.</p>
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="ab_training_dashboard_band ab_training_recent_band">
+                        <div class="ab_training_section_head">
+                            <div>
+                                <span class="ab_training_section_kicker">Latest records</span>
+                                <h2>Recent Training Tasks</h2>
+                            </div>
+                            <button type="button" class="core_ui_btn core_ui_btn_ghost" t-on-click="() => this.openTasks(null, 'month')">
+                                View Month <i class="fa fa-arrow-right"/>
+                            </button>
+                        </div>
+                        <div t-if="state.data.recent.length" class="ab_training_recent_table_wrap">
+                            <table class="ab_training_recent_table">
+                                <thead>
+                                    <tr>
+                                        <th>Task</th>
+                                        <th t-if="isManager">Member</th>
+                                        <th>Category</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Incentive</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="state.data.recent" t-as="task" t-key="task.id" t-on-click="() => this.openTask(task.id)">
+                                        <td><strong t-out="task.name"/><small t-out="task.task_type"/></td>
+                                        <td t-if="isManager" t-out="task.member"/>
+                                        <td t-out="task.category"/>
+                                        <td t-out="formatDate(task.completion_date)"/>
+                                        <td>
+                                            <span t-att-class="'core_ui_state_badge ' + task.state" t-out="task.state_label"/>
+                                        </td>
+                                        <td><strong t-out="formatAmount(task.incentive_value)"/><small t-if="task.is_paid">Paid</small></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div t-else="" class="core_ui_empty_state">
+                            <i class="fa fa-list-check"/>
+                            <h3>No training tasks yet</h3>
+                            <p>Create the first task to begin the KPI record.</p>
+                        </div>
+                    </section>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

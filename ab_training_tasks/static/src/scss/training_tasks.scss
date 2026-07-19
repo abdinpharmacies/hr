@@ -1,0 +1,717 @@
+.ab_training_dashboard {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  max-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
+  background: #f5f7f8;
+  color: #20262e;
+  letter-spacing: 0;
+}
+
+.ab_training_dashboard_shell {
+  width: 100%;
+  min-height: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 3vw, 40px) 48px;
+}
+
+.ab_training_dashboard_header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 8px 0 20px;
+  border-bottom: 1px solid #cfd6dc;
+
+  h1 {
+    margin: 2px 0 0;
+    font-size: 28px;
+    line-height: 1.2;
+    font-weight: 750;
+    letter-spacing: 0;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #64707c;
+    font-size: 14px;
+  }
+}
+
+.ab_training_dashboard_eyebrow,
+.ab_training_section_kicker {
+  display: block;
+  color: #2563a6;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0;
+}
+
+.ab_training_dashboard_tools {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ab_training_month_filter {
+  min-width: 170px;
+  margin: 0;
+
+  > span {
+    display: block;
+    margin-bottom: 4px;
+    color: #596571;
+    font-size: 12px;
+    font-weight: 650;
+  }
+}
+
+.ab_training_dashboard_loading {
+  min-height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #64707c;
+}
+
+.ab_training_dashboard_stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 20px 0;
+
+  .core_ui_card {
+    min-width: 0;
+    min-height: 158px;
+    border-radius: 8px;
+    text-align: start;
+  }
+
+  .core_ui_card_stat_icon {
+    margin: 0 0 18px;
+  }
+
+  .core_ui_card_stat_value,
+  .core_ui_card_stat_label,
+  .core_ui_card_stat_hint {
+    display: block;
+  }
+
+  .core_ui_card_stat_value {
+    overflow-wrap: anywhere;
+    font-size: 24px;
+  }
+}
+
+.ab_training_dashboard_band {
+  padding: 24px 0;
+  border-top: 1px solid #d9dfe4;
+}
+
+.ab_training_section_head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+
+  h2 {
+    margin: 3px 0 0;
+    font-size: 18px;
+    font-weight: 720;
+    letter-spacing: 0;
+  }
+
+  > span {
+    color: #64707c;
+    font-size: 13px;
+  }
+}
+
+.ab_training_member_ranking {
+  border-top: 1px solid #dfe4e8;
+}
+
+.ab_training_member_row {
+  display: grid;
+  grid-template-columns: 32px 44px minmax(170px, 1.2fr) minmax(120px, 1fr) minmax(150px, auto);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 4px;
+  border: 0;
+  border-bottom: 1px solid #e2e7ea;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+
+  &:hover,
+  &:focus-visible {
+    background: #eef3f5;
+    outline: none;
+  }
+
+  img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #d9dfe4;
+  }
+}
+
+.ab_training_rank {
+  color: #78838d;
+  font-weight: 700;
+  text-align: center;
+}
+
+.ab_training_member_identity,
+.ab_training_member_reward {
+  min-width: 0;
+
+  strong,
+  small,
+  span {
+    display: block;
+  }
+
+  strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  span,
+  small {
+    margin-top: 3px;
+    color: #6d7882;
+    font-size: 12px;
+  }
+}
+
+.ab_training_member_reward {
+  text-align: end;
+}
+
+.ab_training_member_activity_track,
+.ab_training_category_track,
+.ab_training_trend_track {
+  display: block;
+  height: 7px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #dfe5e8;
+
+  > span {
+    display: block;
+    height: 100%;
+    min-width: 3px;
+    border-radius: inherit;
+    background: #287c69;
+  }
+}
+
+.ab_training_dashboard_columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+  gap: 32px;
+
+  .ab_training_dashboard_band {
+    min-width: 0;
+  }
+}
+
+.ab_training_trend,
+.ab_training_category_chart {
+  display: grid;
+  gap: 12px;
+}
+
+.ab_training_trend_row {
+  display: grid;
+  grid-template-columns: 90px minmax(80px, 1fr) minmax(100px, auto) 58px;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+
+  small {
+    color: #74808a;
+    text-align: end;
+  }
+}
+
+.ab_training_trend_track > span {
+  background: #2563a6;
+}
+
+.ab_training_category_row {
+  display: grid;
+  gap: 7px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: start;
+
+  &:hover strong {
+    color: #2563a6;
+  }
+}
+
+.ab_training_category_meta {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+
+  strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  small {
+    flex: 0 0 auto;
+    color: #74808a;
+  }
+}
+
+.ab_training_category_track > span {
+  background: #b7791f;
+}
+
+.ab_training_recent_table_wrap {
+  overflow-x: auto;
+  border-top: 1px solid #dfe4e8;
+}
+
+.ab_training_recent_table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th,
+  td {
+    padding: 11px 10px;
+    border-bottom: 1px solid #e1e6e9;
+    text-align: start;
+    vertical-align: middle;
+  }
+
+  th {
+    color: #68747e;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  tbody tr {
+    cursor: pointer;
+
+    &:hover {
+      background: #eef3f5;
+    }
+  }
+
+  td:first-child {
+    min-width: 210px;
+
+    strong,
+    small {
+      display: block;
+    }
+
+    small {
+      margin-top: 3px;
+      color: #74808a;
+    }
+  }
+
+  td:last-child {
+    white-space: nowrap;
+
+    small {
+      display: block;
+      color: #287c69;
+    }
+  }
+}
+
+.ab_training_core_form {
+  --ab-training-field-border: #cbd4da;
+
+  .o_form_sheet_bg {
+    background: #f5f7f8;
+  }
+
+  .o_form_sheet {
+    border-radius: 8px;
+  }
+
+  .o_field_widget:not(.o_field_boolean):not(.o_field_statusbar),
+  .o_input {
+    border-radius: 6px;
+  }
+
+  .o_input:focus,
+  .o_field_widget:focus-within {
+    border-color: var(--core-ui-primary);
+  }
+
+  .core_ui_alert {
+    margin: 16px 0;
+  }
+}
+
+.ab_training_wide_text_group {
+  width: 100%;
+  max-width: none;
+  grid-template-columns: minmax(0, 1fr);
+
+  .o_wrap_field,
+  .o_field_widget {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.ab_training_textarea_wide {
+  width: 100% !important;
+  max-width: none !important;
+
+  textarea,
+  &.o_field_text textarea,
+  .o_input {
+    width: 100% !important;
+    min-height: 132px;
+    resize: vertical;
+  }
+}
+
+.ab_training_form_summary,
+.ab_training_reset_preview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0 24px;
+}
+
+.ab_training_reset_preview {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.ab_training_form_metric {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid #d6dde2;
+  border-inline-start: 4px solid #6f7b85;
+  border-radius: 8px;
+  background: #fff;
+
+  > span,
+  > small,
+  > strong {
+    display: block;
+  }
+
+  > span {
+    color: #68747e;
+    font-size: 12px;
+    font-weight: 650;
+  }
+
+  > strong {
+    margin-top: 6px;
+    font-size: 19px;
+    overflow-wrap: anywhere;
+  }
+
+  > small {
+    margin-top: 4px;
+    color: #74808a;
+  }
+
+  &.is-success { border-inline-start-color: #287c69; }
+  &.is-warning { border-inline-start-color: #b7791f; }
+  &.is-info { border-inline-start-color: #2563a6; }
+}
+
+.ab_training_wallet_identity {
+  .ab_training_wallet_company {
+    margin-top: 6px;
+    color: #68747e;
+    font-size: 13px;
+  }
+}
+
+.ab_training_wallet_log_section {
+  padding: 24px 0;
+  border-top: 1px solid #d9dfe4;
+}
+
+.ab_training_wallet_log_heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+
+  i {
+    color: #2563a6;
+    font-size: 16px;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 720;
+    letter-spacing: 0;
+  }
+}
+
+.ab_training_wallet_log_empty {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 72px;
+  padding: 16px 2px;
+  color: #74808a;
+  border-top: 1px solid #e1e6e9;
+
+  i {
+    width: 30px;
+    font-size: 18px;
+    text-align: center;
+  }
+}
+
+.ab_training_wallet_log {
+  width: 100%;
+
+  .o_kanban_renderer {
+    display: flex !important;
+    flex-direction: column;
+    gap: 0;
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .o_kanban_record {
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+}
+
+.ab_training_wallet_log_entry {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr) minmax(120px, auto);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 78px;
+  padding: 13px 4px;
+  border-top: 1px solid #e1e6e9;
+
+  &.is-approved .ab_training_wallet_log_icon {
+    color: #287c69;
+    background: #e8f4f0;
+  }
+
+  &.is-pending .ab_training_wallet_log_icon {
+    color: #9a650f;
+    background: #fff5dd;
+  }
+
+  &.is-rejected .ab_training_wallet_log_icon {
+    color: #b42318;
+    background: #fcebea;
+  }
+
+  &.is-expense .ab_training_wallet_log_icon {
+    color: #b42318;
+    background: #fcebea;
+  }
+}
+
+.ab_training_wallet_log_icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #596571;
+  background: #edf1f3;
+}
+
+.ab_training_wallet_log_body {
+  min-width: 0;
+
+  > strong,
+  > span,
+  > small {
+    display: block;
+  }
+
+  > strong {
+    overflow: hidden;
+    color: #20262e;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  > span,
+  > small {
+    margin-top: 4px;
+    color: #6d7882;
+    font-size: 12px;
+  }
+}
+
+.ab_training_wallet_log_separator {
+  margin-inline: 5px;
+  color: #a0a8af;
+}
+
+.ab_training_wallet_log_value {
+  min-width: 0;
+  text-align: end;
+
+  .o_field_badge {
+    margin-top: 5px;
+  }
+}
+
+.ab_training_wallet_log_amount {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: 3px;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 750;
+
+  &.is-credit { color: #287c69; }
+  &.is-debit { color: #b42318; }
+}
+
+.ab_training_kanban_head,
+.ab_training_kanban_footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ab_training_kanban_meta {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0;
+  color: #68747e;
+  font-size: 12px;
+
+  i {
+    width: 16px;
+  }
+}
+
+.ab_training_kanban_footer {
+  padding-top: 10px;
+  border-top: 1px solid #e0e5e8;
+}
+
+@media (max-width: 1000px) {
+  .ab_training_dashboard_stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ab_training_dashboard_columns {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .ab_training_dashboard_shell {
+    padding-inline: 12px;
+  }
+
+  .ab_training_dashboard_header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ab_training_dashboard_tools {
+    justify-content: flex-start;
+
+    .core_ui_btn {
+      flex: 1 1 auto;
+    }
+  }
+
+  .ab_training_month_filter {
+    flex: 1 0 100%;
+  }
+
+  .ab_training_dashboard_stats,
+  .ab_training_form_summary,
+  .ab_training_reset_preview {
+    grid-template-columns: 1fr;
+  }
+
+  .ab_training_member_row {
+    grid-template-columns: 28px 40px minmax(0, 1fr) auto;
+  }
+
+  .ab_training_member_activity {
+    display: none;
+  }
+
+  .ab_training_member_reward strong {
+    max-width: 120px;
+    white-space: normal;
+  }
+
+  .ab_training_trend_row {
+    grid-template-columns: 76px minmax(60px, 1fr) minmax(88px, auto);
+
+    small {
+      display: none;
+    }
+  }
+
+  .ab_training_category_meta {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .ab_training_wallet_log_entry {
+    grid-template-columns: 36px minmax(0, 1fr);
+
+    .ab_training_wallet_log_value,
+    > .ab_training_wallet_log_amount {
+      grid-column: 2;
+      justify-content: flex-start;
+      text-align: start;
+    }
+  }
+}

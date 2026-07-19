@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_training_task_search" model="ir.ui.view">
+            <field name="name">ab.training.task.search</field>
+            <field name="model">ab.training.task</field>
+            <field name="arch" type="xml">
+                <search string="Training Tasks">
+                    <field name="name"/>
+                    <field name="member_id"/>
+                    <field name="category_id"/>
+                    <field name="task_type_id"/>
+                    <filter name="pending" string="Pending Approval" domain="[('state', '=', 'pending')]"/>
+                    <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                    <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                    <filter name="unpaid" string="Approved and Unpaid" domain="[('state', '=', 'approved'), ('wallet_reset_line_id', '=', False)]"/>
+                    <separator/>
+                    <filter name="completion_date" string="Completion Date" date="completion_date"/>
+                    <separator/>
+                    <filter name="group_member" string="Member" context="{'group_by': 'member_id'}"/>
+                    <filter name="group_category" string="Material Category" context="{'group_by': 'category_id'}"/>
+                    <filter name="group_type" string="Task Type" context="{'group_by': 'task_type_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'completion_date:month'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_training_task_list" model="ir.ui.view">
+            <field name="name">ab.training.task.list</field>
+            <field name="model">ab.training.task</field>
+            <field name="arch" type="xml">
+                <list string="Training Tasks"
+                      decoration-success="state == 'approved'"
+                      decoration-warning="state == 'pending'"
+                      decoration-danger="state == 'rejected'">
+                    <field name="completion_date"/>
+                    <field name="name"/>
+                    <field name="member_id"/>
+                    <field name="category_id"/>
+                    <field name="task_type_id" optional="show"/>
+                    <field name="incentive_value" widget="monetary" sum="Total Incentive"/>
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="state" widget="badge"
+                           decoration-success="state == 'approved'"
+                           decoration-warning="state == 'pending'"
+                           decoration-danger="state == 'rejected'"/>
+                    <field name="is_paid" widget="boolean_toggle" optional="show"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_training_task_kanban" model="ir.ui.view">
+            <field name="name">ab.training.task.kanban</field>
+            <field name="model">ab.training.task</field>
+            <field name="arch" type="xml">
+                <kanban default_group_by="state" class="ab_training_task_kanban">
+                    <field name="name"/>
+                    <field name="member_id"/>
+                    <field name="category_id"/>
+                    <field name="task_type_id"/>
+                    <field name="incentive_value"/>
+                    <field name="currency_id"/>
+                    <field name="completion_date"/>
+                    <field name="state"/>
+                    <field name="is_paid"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="ab_training_kanban_head">
+                                <strong><field name="name"/></strong>
+                                <span t-if="record.is_paid.raw_value" class="core_ui_badge_pill success">Paid</span>
+                            </div>
+                            <div class="ab_training_kanban_meta">
+                                <span><i class="fa fa-user" title="Member"/> <field name="member_id"/></span>
+                                <span><i class="fa fa-folder-open" title="Material Category"/> <field name="category_id"/></span>
+                                <span><i class="fa fa-calendar" title="Completion Date"/> <field name="completion_date"/></span>
+                            </div>
+                            <div class="ab_training_kanban_footer">
+                                <span><field name="task_type_id"/></span>
+                                <strong><field name="incentive_value" widget="monetary"/></strong>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record id="view_training_task_form" model="ir.ui.view">
+            <field name="name">ab.training.task.form</field>
+            <field name="model">ab.training.task</field>
+            <field name="arch" type="xml">
+                <form string="Training Task" class="ab_training_core_form core_ui_form_modern">
+                    <header>
+                        <button name="action_approve" type="object" string="Approve" icon="fa-check"
+                                class="core_ui_btn core_ui_btn_primary"
+                                groups="ab_training_tasks.group_training_tasks_manager"
+                                invisible="state != 'pending'"/>
+                        <button name="action_open_reject_wizard" type="object" string="Reject" icon="fa-ban"
+                                class="core_ui_btn core_ui_btn_danger"
+                                groups="ab_training_tasks.group_training_tasks_manager"
+                                invisible="state != 'pending'"/>
+                        <button name="action_resubmit" type="object" string="Resubmit" icon="fa-rotate-right"
+                                class="core_ui_btn core_ui_btn_secondary"
+                                groups="ab_training_tasks.group_training_tasks_member"
+                                invisible="state != 'rejected'"/>
+                        <field name="state" widget="statusbar" statusbar_visible="pending,approved,rejected"/>
+                    </header>
+                    <sheet>
+                        <field name="wallet_reset_line_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="currency_id" invisible="1"/>
+                        <widget name="web_ribbon" text="Paid" bg_color="text-bg-success" invisible="not wallet_reset_line_id"/>
+                        <div class="oe_title ab_training_task_title">
+                            <label for="name"/>
+                            <h1><field name="name" placeholder="What training work was completed?" readonly="state == 'approved'"/></h1>
+                        </div>
+
+                        <div class="ab_training_form_summary">
+                            <div class="ab_training_form_metric">
+                                <span>Incentive</span>
+                                <strong><field name="incentive_value" widget="monetary" nolabel="1"/></strong>
+                            </div>
+                            <div class="ab_training_form_metric">
+                                <span>Completion Date</span>
+                                <strong><field name="completion_date" nolabel="1" readonly="state == 'approved'"/></strong>
+                            </div>
+                            <div class="ab_training_form_metric">
+                                <span>Payout Status</span>
+                                <strong><field name="is_paid" widget="boolean_toggle" nolabel="1" readonly="1"/></strong>
+                            </div>
+                        </div>
+
+                        <group>
+                            <group string="Classification">
+                                <field name="member_id"
+                                       groups="ab_training_tasks.group_training_tasks_member,!ab_training_tasks.group_training_tasks_manager"
+                                       readonly="1"/>
+                                <field name="member_id"
+                                       groups="ab_training_tasks.group_training_tasks_manager"
+                                       readonly="state == 'approved'"/>
+                                <field name="category_id"
+                                       domain="[('company_id', '=', company_id), ('active', '=', True)]"
+                                       options="{'no_create_edit': True}"
+                                       readonly="state == 'approved'"/>
+                                <field name="task_type_id"
+                                       domain="[('category_id', '=', category_id), ('company_id', '=', company_id), ('active', '=', True)]"
+                                       options="{'no_create_edit': True}"
+                                       readonly="not category_id or state == 'approved'"/>
+                            </group>
+                            <group string="Material">
+                                <field name="material_reference" placeholder="Document, link, lesson, or material reference"
+                                       readonly="state == 'approved'"/>
+                                <field name="paid_at" readonly="1" invisible="not wallet_reset_line_id"/>
+                            </group>
+                        </group>
+
+                        <group string="Work Summary" col="1" class="ab_training_wide_text_group">
+                            <field name="description" nolabel="1" class="ab_training_textarea_wide"
+                                   placeholder="Describe the work completed and the material used or updated..."
+                                   readonly="state == 'approved'"/>
+                        </group>
+
+                        <div class="core_ui_alert danger" invisible="state != 'rejected'">
+                            <i class="fa fa-times-circle" title="Rejected"/>
+                            <div class="core_ui_alert_content">
+                                <div class="core_ui_alert_title">Rejection Reason</div>
+                                <field name="rejection_reason" nolabel="1" readonly="1"
+                                       class="ab_training_textarea_wide"/>
+                            </div>
+                        </div>
+
+                        <group string="Decision Audit" invisible="state == 'pending'">
+                            <group invisible="state != 'approved'">
+                                <field name="approved_by" readonly="1"/>
+                                <field name="approved_at" readonly="1"/>
+                            </group>
+                            <group invisible="state != 'rejected'">
+                                <field name="rejected_by" readonly="1"/>
+                                <field name="rejected_at" readonly="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

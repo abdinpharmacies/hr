@@ -1,0 +1,14 @@
+id,name,model_id/id,group_id/id,perm_read,perm_write,perm_create,perm_unlink
+access_training_category_member,ab.training.task.category member,model_ab_training_task_category,group_training_tasks_member,1,0,0,0
+access_training_category_manager,ab.training.task.category manager,model_ab_training_task_category,group_training_tasks_manager,1,1,1,1
+access_training_task_type_member,ab.training.task.type member,model_ab_training_task_type,group_training_tasks_member,1,0,0,0
+access_training_task_type_manager,ab.training.task.type manager,model_ab_training_task_type,group_training_tasks_manager,1,1,1,1
+access_training_task_member,ab.training.task member,model_ab_training_task,group_training_tasks_member,1,1,1,0
+access_training_task_manager,ab.training.task manager,model_ab_training_task,group_training_tasks_manager,1,1,1,1
+access_training_wallet_member,ab.training.wallet member,model_ab_training_wallet,group_training_tasks_member,1,0,0,0
+access_training_wallet_manager,ab.training.wallet manager,model_ab_training_wallet,group_training_tasks_manager,1,1,1,1
+access_training_wallet_reset_manager,ab.training.wallet.reset manager,model_ab_training_wallet_reset,group_training_tasks_manager,1,0,0,0
+access_training_wallet_reset_line_member,ab.training.wallet.reset.line member,model_ab_training_wallet_reset_line,group_training_tasks_member,1,0,0,0
+access_training_wallet_reset_line_manager,ab.training.wallet.reset.line manager,model_ab_training_wallet_reset_line,group_training_tasks_manager,1,0,0,0
+access_training_task_reject_wizard_manager,ab.training.task.reject.wizard manager,model_ab_training_task_reject_wizard,group_training_tasks_manager,1,1,1,1
+access_training_wallet_reset_wizard_manager,ab.training.wallet.reset.wizard manager,model_ab_training_wallet_reset_wizard,group_training_tasks_manager,1,1,1,1

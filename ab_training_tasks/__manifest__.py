@@ -1,0 +1,33 @@
+{
+    'name': 'Training Tasks KPI',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'Human Resources',
+    'author': 'Abdin Pharmacies',
+    'developer': 'Alhassan Hossny',
+    'summary': 'Training task approvals, incentives, wallets, and KPI dashboards',
+    'application': True,
+    'depends': ['base', 'mail', 'web', 'ab_core_ui'],
+    'data': [
+        'security/security_groups.xml',
+        'security/record_rules.xml',
+        'security/ir.model.access.csv',
+        'views/menus.xml',
+        'data/training_task_sequence.xml',
+        'views/training_category_views.xml',
+        'views/training_task_type_views.xml',
+        'views/training_task_views.xml',
+        'views/training_wallet_views.xml',
+        'views/training_wallet_reset_views.xml',
+        'wizard/training_task_reject_wizard_views.xml',
+        'wizard/training_wallet_reset_wizard_views.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_training_tasks/static/src/js/training_dashboard.js',
+            'ab_training_tasks/static/src/xml/training_dashboard.xml',
+            'ab_training_tasks/static/src/scss/training_tasks.scss',
+        ],
+    },
+    'installable': True,
+}
