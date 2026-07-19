@@ -45,6 +45,7 @@
                                     Processes
                                 </span>
                             </div>
+                            <field name="branch_response_percent" widget="ab_inventory_implementation_progress"/>
                         </div>
                         <div class="o_kanban_record_bottom">
                             <span>
@@ -90,6 +91,7 @@
                                     Items
                                 </span>
                             </div>
+                            <field name="implementation_percent" widget="ab_inventory_implementation_progress"/>
                         </div>
                         <div class="o_kanban_record_bottom">
                             <span>
@@ -146,7 +148,16 @@
                                         Extra
                                     </span>
                                 </t>
+                                <t t-if="record.requested_total_cost.raw_value">
+                                    <span class="ab_kanban_kpi_item" style="background:#EDE9FE;color:#6D28D9;">
+                                        <span class="ab_kanban_kpi_value">
+                                            <field name="requested_total_cost"/>
+                                        </span>
+                                        Requested Products Cost
+                                    </span>
+                                </t>
                             </div>
+                            <field name="implementation_percent" widget="ab_inventory_implementation_progress"/>
                         </div>
                         <div class="o_kanban_record_bottom">
                             <span>

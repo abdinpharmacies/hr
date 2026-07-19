@@ -31,6 +31,9 @@
                     <field name="requester_id" string="Requester" optional="show"/>
                     <field name="deadline" widget="ab_inventory_deadline" string="Deadline" optional="show"/>
                     <field name="selected_line_count" widget="ab_inventory_kpi" string="Items" options="{'icon': 'items', 'label': 'Items'}" optional="show"/>
+                    <field name="implementation_percent" widget="ab_inventory_implementation_progress" string="Implementation" optional="show"/>
+                    <field name="branch_response_state" widget="ab_inventory_response_badge" string="Branch Response" optional="show"/>
+                    <field name="requested_total_cost" widget="ab_inventory_kpi" string="Requested Products Cost" optional="show" options="{'icon': 'cost', 'label': 'Requested Products Cost'}"/>
                     <field name="process_id" widget="ab_inventory_relation_pill" string="Process" optional="show" options="{'type': 'process', 'icon': 'P'}"/>
                     <field name="state" widget="ab_inventory_state_badge" string="Status"/>
                     <field name="submitted_date" string="Submitted" optional="hide"/>
@@ -53,6 +56,12 @@
                     </header>
                     <sheet>
                         <field name="can_open_process" invisible="1"/>
+                        <field name="required_item_count" invisible="1"/>
+                        <field name="counted_item_count" invisible="1"/>
+                        <field name="branch_response_state" invisible="1"/>
+                        <div class="ab_form_kpi_row" invisible="not line_count">
+                            <field name="requested_total_cost" widget="ab_inventory_kpi_card" nolabel="1" options="{'type': 'cost', 'icon': 'cost', 'label': 'Requested Products Cost'}"/>
+                        </div>
                         <div class="ab_form_two_column">
                             <div class="ab_form_main">
                                 <div class="ab_form_section" invisible="state != 'draft'">
@@ -147,6 +156,15 @@
                                         <field name="write_date" widget="ab_inventory_timeline" nolabel="1"/>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="ab_form_section" invisible="state == 'draft'">
+                            <div class="ab_form_section_title">Branch Implementation</div>
+                            <div class="ab_form_section_body">
+                                <field name="implementation_percent"
+                                       widget="ab_inventory_item_implementation_chart"
+                                       nolabel="1"
+                                       options="{'required_field': 'required_item_count', 'counted_field': 'counted_item_count'}"/>
                             </div>
                         </div>
                         <notebook class="ab_request_full_width_notebook">

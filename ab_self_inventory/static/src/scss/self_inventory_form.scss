@@ -53,6 +53,580 @@ $si-gray-900: #0F172A;
     }
 }
 
+// ============================================================================
+// Branch response and item implementation reporting
+// ============================================================================
+
+.ab_implementation_progress {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 138px;
+    max-width: 210px;
+    width: 100%;
+
+    .ab_implementation_progress_track {
+        position: relative;
+        flex: 1 1 auto;
+        height: 7px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #e2e8f0;
+    }
+
+    .ab_implementation_progress_fill {
+        display: block;
+        height: 100%;
+        min-width: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #2563eb, #14b8a6);
+        transition: width 240ms ease;
+    }
+
+    .ab_implementation_progress_value {
+        flex: 0 0 38px;
+        color: #0f172a;
+        font-size: 12px;
+        font-weight: 750;
+        text-align: end;
+    }
+}
+
+.ab_response_badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    width: fit-content;
+    padding: 5px 10px;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    white-space: nowrap;
+
+    .ab_response_badge_dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: currentColor;
+    }
+
+    &--responded {
+        color: #047857;
+        border-color: #a7f3d0;
+        background: #ecfdf5;
+    }
+
+    &--in_progress {
+        color: #1d4ed8;
+        border-color: #bfdbfe;
+        background: #eff6ff;
+    }
+
+    &--awaiting {
+        color: #b45309;
+        border-color: #fde68a;
+        background: #fffbeb;
+    }
+
+    &--cancelled {
+        color: #64748b;
+        border-color: #e2e8f0;
+        background: #f8fafc;
+    }
+}
+
+.ab_item_implementation_chart {
+    display: grid;
+    grid-template-columns: 132px minmax(0, 1fr);
+    align-items: center;
+    gap: 28px;
+    padding: 22px 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    background: linear-gradient(145deg, #ffffff, #f8fafc);
+    box-shadow: 0 8px 26px rgba(15, 23, 42, 0.06);
+}
+
+.ab_item_implementation_donut,
+.ab_response_summary_donut,
+.ab_process_progress_donut {
+    position: relative;
+    display: grid;
+    place-items: center;
+
+    svg {
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+        transform: rotate(-90deg);
+    }
+}
+
+.ab_item_implementation_donut {
+    width: 122px;
+    height: 122px;
+
+    circle {
+        fill: none;
+        stroke-width: 10;
+    }
+}
+
+.ab_item_implementation_donut_bg {
+    stroke: #e2e8f0;
+}
+
+.ab_item_implementation_donut_fill {
+    stroke: #2563eb;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 320ms ease;
+}
+
+.ab_item_implementation_donut_value,
+.ab_response_summary_donut_value,
+.ab_process_progress_donut_value {
+    position: absolute;
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.ab_item_implementation_donut_value {
+    font-size: 25px;
+}
+
+.ab_item_implementation_title,
+.ab_response_dashboard_title,
+.ab_process_progress_title {
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.ab_item_implementation_title {
+    font-size: 18px;
+}
+
+.ab_item_implementation_caption,
+.ab_response_dashboard_subtitle,
+.ab_process_progress_caption {
+    color: #64748b;
+    font-size: 13px;
+}
+
+.ab_item_implementation_track,
+.ab_response_branch_track,
+.ab_process_progress_track {
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e2e8f0;
+}
+
+.ab_item_implementation_track {
+    height: 9px;
+    margin: 15px 0 10px;
+}
+
+.ab_item_implementation_fill,
+.ab_response_branch_fill,
+.ab_process_progress_fill {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #2563eb, #14b8a6);
+    transition: width 240ms ease;
+}
+
+.ab_item_implementation_legend {
+    display: flex;
+    gap: 22px;
+    color: #64748b;
+    font-size: 12px;
+
+    strong {
+        margin-inline-end: 3px;
+        color: #0f172a;
+        font-size: 14px;
+    }
+}
+
+.ab_response_dashboard_section {
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.ab_response_dashboard {
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 12px 35px rgba(15, 23, 42, 0.07);
+}
+
+.ab_response_dashboard_header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 22px 24px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.ab_response_dashboard_title {
+    font-size: 19px;
+}
+
+.ab_response_dashboard_subtitle {
+    margin-top: 4px;
+}
+
+.ab_response_dashboard_loading,
+.ab_response_dashboard_empty {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 150px;
+    color: #64748b;
+}
+
+.ab_response_dashboard_spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #bfdbfe;
+    border-top-color: #2563eb;
+    border-radius: 50%;
+    animation: ab-response-spin 700ms linear infinite;
+}
+
+@keyframes ab-response-spin {
+    to { transform: rotate(360deg); }
+}
+
+.ab_response_dashboard_summary {
+    display: grid;
+    grid-template-columns: minmax(240px, 1fr) minmax(240px, 1fr) minmax(190px, 0.75fr);
+    gap: 16px;
+    padding: 22px 24px;
+    background: #f8fafc;
+}
+
+.ab_response_summary_chart {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-height: 118px;
+    padding: 14px 16px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.ab_response_summary_donut {
+    flex: 0 0 92px;
+    width: 92px;
+    height: 92px;
+
+    circle {
+        fill: none;
+        stroke-width: 10;
+    }
+}
+
+.ab_response_summary_donut_bg {
+    stroke: #e2e8f0;
+}
+
+.ab_response_summary_donut_fill {
+    stroke-linecap: round;
+    transition: stroke-dashoffset 320ms ease;
+
+    &--response { stroke: #10b981; }
+    &--items { stroke: #2563eb; }
+}
+
+.ab_response_summary_donut_value {
+    font-size: 19px;
+}
+
+.ab_response_summary_label {
+    color: #0f172a;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.ab_response_summary_hint {
+    margin-top: 5px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.ab_response_summary_statuses {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: #fff;
+    color: #475569;
+    font-size: 13px;
+
+    > div {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    strong {
+        min-width: 22px;
+        color: #0f172a;
+        font-size: 16px;
+    }
+}
+
+.ab_response_status_dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+
+    &--responded { background: #10b981; }
+    &--in_progress { background: #2563eb; }
+    &--awaiting { background: #f59e0b; }
+}
+
+.ab_response_branch_table {
+    padding: 0 24px 24px;
+}
+
+.ab_response_branch_row {
+    display: grid;
+    grid-template-columns: minmax(190px, 1.2fr) minmax(135px, 0.75fr) minmax(105px, 0.55fr) minmax(190px, 1fr) minmax(145px, 0.7fr);
+    align-items: center;
+    gap: 18px;
+    min-height: 62px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #eef2f7;
+
+    &--header {
+        min-height: 44px;
+        color: #64748b;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    &:not(.ab_response_branch_row--header):hover {
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+}
+
+.ab_response_branch_name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #0f172a;
+    font-weight: 700;
+    text-align: start;
+
+    &:hover {
+        color: #2563eb;
+    }
+}
+
+.ab_response_branch_icon {
+    display: grid;
+    flex: 0 0 30px;
+    width: 30px;
+    height: 30px;
+    place-items: center;
+    border-radius: 9px;
+    background: #dbeafe;
+    color: #1d4ed8;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.ab_response_branch_count {
+    color: #64748b;
+    font-size: 13px;
+
+    strong {
+        color: #0f172a;
+        font-size: 15px;
+    }
+}
+
+.ab_response_branch_progress {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    strong {
+        flex: 0 0 42px;
+        color: #0f172a;
+        font-size: 12px;
+        text-align: end;
+    }
+}
+
+.ab_response_branch_cost {
+    color: #6d28d9;
+    font-size: 13px;
+    text-align: end;
+}
+
+.ab_response_branch_track {
+    flex: 1 1 auto;
+    height: 8px;
+}
+
+.ab_process_progress_panel {
+    display: grid;
+    grid-template-columns: 98px minmax(240px, 1fr) auto;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 18px;
+    padding: 18px 22px;
+    border: 1px solid #bfdbfe;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #eff6ff, #f0fdfa);
+}
+
+.ab_process_progress_donut {
+    width: 88px;
+    height: 88px;
+
+    circle {
+        fill: none;
+        stroke-width: 10;
+    }
+}
+
+.ab_process_progress_donut_bg {
+    stroke: #dbeafe;
+}
+
+.ab_process_progress_donut_fill {
+    stroke: #2563eb;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 240ms ease;
+}
+
+.ab_process_progress_donut_value {
+    font-size: 18px;
+}
+
+.ab_process_progress_title {
+    font-size: 17px;
+}
+
+.ab_process_progress_caption {
+    margin-top: 4px;
+}
+
+.ab_process_progress_track {
+    height: 9px;
+    margin-top: 12px;
+    background: #dbeafe;
+}
+
+.ab_process_progress_stats {
+    display: flex;
+    gap: 10px;
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        min-width: 88px;
+        padding: 11px 14px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    strong {
+        color: #0f172a;
+        font-size: 18px;
+    }
+
+    span {
+        color: #64748b;
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .ab_response_dashboard_summary {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .ab_response_summary_statuses {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .ab_response_branch_row {
+        grid-template-columns: minmax(180px, 1.2fr) minmax(140px, 0.8fr) minmax(190px, 1fr) minmax(135px, 0.7fr);
+
+        > :nth-child(3) {
+            display: none;
+        }
+    }
+}
+
+@media (max-width: 760px) {
+    .ab_item_implementation_chart,
+    .ab_process_progress_panel {
+        grid-template-columns: 1fr;
+    }
+
+    .ab_item_implementation_donut,
+    .ab_process_progress_donut {
+        margin: 0 auto;
+    }
+
+    .ab_response_dashboard_summary {
+        grid-template-columns: 1fr;
+    }
+
+    .ab_response_summary_statuses {
+        grid-column: auto;
+        flex-direction: column;
+    }
+
+    .ab_response_branch_row {
+        grid-template-columns: 1fr auto;
+
+        > :nth-child(2),
+        > :nth-child(3),
+        > :nth-child(4) {
+            display: none;
+        }
+    }
+
+    .ab_process_progress_stats {
+        justify-content: center;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ab_implementation_progress_fill,
+    .ab_item_implementation_donut_fill,
+    .ab_response_summary_donut_fill,
+    .ab_response_branch_fill,
+    .ab_process_progress_donut_fill,
+    .ab_process_progress_fill {
+        transition: none;
+    }
+}
+
 .o_form_view {
     &.ab_dashboard_form,
     &.ab_self_inventory_form {
@@ -284,6 +858,7 @@ $si-gray-900: #0F172A;
     &--processes::before { background: $si-success; }
     &--shortage::before { background: $si-danger; }
     &--extra::before { background: $si-success; }
+    &--cost::before { background: #7C3AED; }
 }
 
 .ab_kpi_card_icon {
@@ -302,6 +877,7 @@ $si-gray-900: #0F172A;
     &--processes { background: $si-success-light; color: #16A34A; }
     &--shortage { background: $si-danger-light; color: $si-danger; }
     &--extra { background: $si-success-light; color: #16A34A; }
+    &--cost { background: #EDE9FE; color: #7C3AED; font-size: 10px; font-weight: 800; }
 }
 
 .ab_kpi_card_value {

@@ -457,6 +457,12 @@ class KpiWidget extends Component {
     get formattedValue() {
         const n = Number(this.rawValue);
         if (isNaN(n)) return "0";
+        if (this.props.kpiIcon === "cost") {
+            return n.toLocaleString(undefined, {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        }
         return n.toLocaleString();
     }
 }
@@ -472,6 +478,7 @@ registry.category("fields").add("ab_inventory_kpi", {
             processes: "\u2713",
             shortage: "\u2193",
             extra: "\u2191",
+            cost: "EGP",
         };
         const labels = {
             items: _t("Items"),
@@ -479,6 +486,7 @@ registry.category("fields").add("ab_inventory_kpi", {
             processes: _t("Processed"),
             shortage: _t("Shortage"),
             extra: _t("Extra"),
+            cost: _t("Requested Products Cost"),
         };
         return {
             kpiIcon: icon,
