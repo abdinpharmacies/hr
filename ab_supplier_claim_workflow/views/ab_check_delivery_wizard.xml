@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_check_delivery_wizard_form" model="ir.ui.view">
+        <field name="name">ab.check.delivery.wizard.form</field>
+        <field name="model">ab.check.delivery.wizard</field>
+        <field name="priority">15</field>
+        <field name="arch" type="xml">
+            <form class="scc-clean-dialog">
+                <div class="scc-dialog-body">
+                    <div class="scc-dialog-header">
+                        <div class="scc-dialog-icon">🚀</div>
+                        <div>
+                            <div class="scc-dialog-title o_translate_inline">Payment Method</div>
+                            <div class="scc-dialog-sub o_translate_inline">Select the cheque delivery payment method</div>
+                        </div>
+                    </div>
+                    <div class="scc-dialog-field">
+                        <field name="claim_id" invisible="1"/>
+                        <field name="check_delivery_status" required="1" placeholder="Select delivery status..."/>
+                    </div>
+                    <div class="scc-dialog-footer">
+                        <button string="Cancel" class="btn-secondary" special="cancel"/>
+                        <button name="action_confirm" type="object" string="Confirm" class="btn-primary"/>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+</odoo>
