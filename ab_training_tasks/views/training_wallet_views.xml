@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_training_wallet_list" model="ir.ui.view">
+            <field name="name">ab.training.wallet.list</field>
+            <field name="model">ab.training.wallet</field>
+            <field name="arch" type="xml">
+                <list string="Training Wallets" create="false" delete="false" edit="false">
+                    <field name="user_id"/>
+                    <field name="approved_amount" widget="monetary" sum="Approved"/>
+                    <field name="approved_task_count"/>
+                    <field name="pending_amount" widget="monetary" sum="Pending"/>
+                    <field name="pending_task_count"/>
+                    <field name="total_paid_amount" widget="monetary" sum="Total Paid" optional="show"/>
+                    <field name="last_reset_at" optional="show"/>
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_training_wallet_form" model="ir.ui.view">
+            <field name="name">ab.training.wallet.form</field>
+            <field name="model">ab.training.wallet</field>
+            <field name="arch" type="xml">
+                <form string="Training Wallet" create="false" delete="false" edit="false"
+                      class="ab_training_core_form ab_training_wallet_form">
+                    <header>
+                        <button name="action_open_reset_wizard" type="object" string="Reset Approved Balance"
+                                icon="fa-money-bill-transfer" class="core_ui_btn core_ui_btn_danger"
+                                groups="ab_training_tasks.group_training_tasks_manager"
+                                invisible="approved_task_count == 0"/>
+                    </header>
+                    <sheet>
+                        <div class="oe_title ab_training_wallet_identity">
+                            <label for="user_id" string="Member Wallet"/>
+                            <h1><field name="user_id" widget="many2one_avatar_user" readonly="1"/></h1>
+                            <div class="ab_training_wallet_company" groups="base.group_multi_company">
+                                <field name="company_id" readonly="1" nolabel="1"/>
+                            </div>
+                        </div>
+                        <field name="currency_id" invisible="1"/>
+                        <div class="ab_training_form_summary ab_training_wallet_summary">
+                            <div class="ab_training_form_metric is-success">
+                                <span>Approved Balance</span>
+                                <strong><field name="approved_amount" widget="monetary" nolabel="1"/></strong>
+                                <small><field name="approved_task_count" nolabel="1"/> tasks</small>
+                            </div>
+                            <div class="ab_training_form_metric is-warning">
+                                <span>Pending Balance</span>
+                                <strong><field name="pending_amount" widget="monetary" nolabel="1"/></strong>
+                                <small><field name="pending_task_count" nolabel="1"/> tasks</small>
+                            </div>
+                            <div class="ab_training_form_metric is-info">
+                                <span>Total Paid</span>
+                                <strong><field name="total_paid_amount" widget="monetary" nolabel="1"/></strong>
+                                <small>Last: <field name="last_reset_at" nolabel="1"/></small>
+                            </div>
+                        </div>
+                        <section class="ab_training_wallet_log_section">
+                            <div class="ab_training_wallet_log_heading">
+                                <i class="fa fa-receipt" title="Expense Log"/>
+                                <h2>Expense Log</h2>
+                            </div>
+                            <div class="ab_training_wallet_log_empty" invisible="reset_line_ids">
+                                <i class="fa fa-receipt" title="No payout expenses yet"/>
+                                <span>No payout expenses yet</span>
+                            </div>
+                            <field name="reset_line_ids" readonly="1" nolabel="1"
+                                   class="ab_training_wallet_log" invisible="not reset_line_ids">
+                                <kanban create="false" delete="false" default_order="reset_at desc, id desc"
+                                        class="ab_training_wallet_log_kanban">
+                                    <field name="reset_id"/>
+                                    <field name="reset_at"/>
+                                    <field name="reset_by"/>
+                                    <field name="approved_amount"/>
+                                    <field name="approved_task_count"/>
+                                    <field name="currency_id"/>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div class="ab_training_wallet_log_entry is-expense">
+                                                <span class="ab_training_wallet_log_icon">
+                                                    <i class="fa fa-arrow-up" title="Payout"/>
+                                                </span>
+                                                <div class="ab_training_wallet_log_body">
+                                                    <strong><field name="reset_id"/></strong>
+                                                    <span>
+                                                        <field name="reset_at"/>
+                                                        <span class="ab_training_wallet_log_separator">&#8226;</span>
+                                                        <field name="reset_by"/>
+                                                    </span>
+                                                    <small><field name="approved_task_count"/> tasks</small>
+                                                </div>
+                                                <strong class="ab_training_wallet_log_amount is-debit">
+                                                    <span>-</span>
+                                                    <field name="approved_amount" widget="monetary"/>
+                                                </strong>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </section>
+
+                        <section class="ab_training_wallet_log_section">
+                            <div class="ab_training_wallet_log_heading">
+                                <i class="fa fa-list-check" title="Incentive Activity"/>
+                                <h2>Incentive Activity</h2>
+                            </div>
+                            <div class="ab_training_wallet_log_empty" invisible="activity_task_ids">
+                                <i class="fa fa-list-check" title="No incentive activity yet"/>
+                                <span>No incentive activity yet</span>
+                            </div>
+                            <field name="activity_task_ids" readonly="1" nolabel="1"
+                                   class="ab_training_wallet_log" invisible="not activity_task_ids">
+                                <kanban create="false" delete="false" default_order="completion_date desc, id desc"
+                                        class="ab_training_wallet_log_kanban">
+                                    <field name="name"/>
+                                    <field name="category_id"/>
+                                    <field name="task_type_id"/>
+                                    <field name="completion_date"/>
+                                    <field name="incentive_value"/>
+                                    <field name="currency_id"/>
+                                    <field name="state"/>
+                                    <field name="is_paid"/>
+                                    <field name="paid_at"/>
+                                    <templates>
+                                        <t t-name="card">
+                                            <div t-attf-class="ab_training_wallet_log_entry is-#{record.state.raw_value}">
+                                                <span class="ab_training_wallet_log_icon">
+                                                    <i t-if="record.state.raw_value == 'approved'" class="fa fa-check" title="Approved"/>
+                                                    <i t-elif="record.state.raw_value == 'pending'" class="fa fa-clock" title="Pending Approval"/>
+                                                    <i t-else="" class="fa fa-times" title="Rejected"/>
+                                                </span>
+                                                <div class="ab_training_wallet_log_body">
+                                                    <strong><field name="name"/></strong>
+                                                    <span>
+                                                        <field name="category_id"/>
+                                                        <span class="ab_training_wallet_log_separator">&#8226;</span>
+                                                        <field name="task_type_id"/>
+                                                    </span>
+                                                    <small>
+                                                        <field name="completion_date"/>
+                                                        <t t-if="record.is_paid.raw_value">
+                                                            <span class="ab_training_wallet_log_separator">&#8226;</span>
+                                                            <span class="core_ui_badge_pill success">Paid</span>
+                                                        </t>
+                                                    </small>
+                                                </div>
+                                                <div class="ab_training_wallet_log_value">
+                                                    <strong class="ab_training_wallet_log_amount is-credit">
+                                                        <span>+</span>
+                                                        <field name="incentive_value" widget="monetary"/>
+                                                    </strong>
+                                                    <field name="state" widget="badge"
+                                                           decoration-success="state == 'approved'"
+                                                           decoration-warning="state == 'pending'"
+                                                           decoration-danger="state == 'rejected'"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </templates>
+                                </kanban>
+                            </field>
+                        </section>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

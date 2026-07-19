@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="action_training_dashboard" model="ir.actions.client">
+            <field name="name">Training Dashboard</field>
+            <field name="tag">ab_training_tasks.dashboard</field>
+        </record>
+
+        <record id="action_my_training_tasks" model="ir.actions.act_window">
+            <field name="name">My Training Tasks</field>
+            <field name="res_model">ab.training.task</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="domain">[('member_id', '=', uid)]</field>
+            <field name="context">{'default_member_id': uid}</field>
+        </record>
+
+        <record id="action_training_review_queue" model="ir.actions.act_window">
+            <field name="name">Approval Queue</field>
+            <field name="res_model">ab.training.task</field>
+            <field name="view_mode">list,kanban,form</field>
+            <field name="domain">[('state', '=', 'pending')]</field>
+        </record>
+
+        <record id="action_all_training_tasks" model="ir.actions.act_window">
+            <field name="name">All Training Tasks</field>
+            <field name="res_model">ab.training.task</field>
+            <field name="view_mode">list,kanban,form</field>
+        </record>
+
+        <record id="action_my_training_wallet" model="ir.actions.act_window">
+            <field name="name">My Wallet</field>
+            <field name="res_model">ab.training.wallet</field>
+            <field name="view_mode">list,form</field>
+            <field name="domain">[('user_id', '=', uid)]</field>
+        </record>
+
+        <record id="action_open_my_training_wallet" model="ir.actions.server">
+            <field name="name">My Wallet</field>
+            <field name="model_id" ref="model_ab_training_wallet"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_open_my_wallet()</field>
+        </record>
+
+        <record id="action_training_wallets" model="ir.actions.act_window">
+            <field name="name">Member Wallets</field>
+            <field name="res_model">ab.training.wallet</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_training_wallet_resets" model="ir.actions.act_window">
+            <field name="name">Payout History</field>
+            <field name="res_model">ab.training.wallet.reset</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
+        <record id="action_training_categories" model="ir.actions.act_window">
+            <field name="name">Material Categories</field>
+            <field name="res_model">ab.training.task.category</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_training_task_types" model="ir.actions.act_window">
+            <field name="name">Task Types</field>
+            <field name="res_model">ab.training.task.type</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="action_training_wallet_reset_all" model="ir.actions.act_window">
+            <field name="name">Reset Approved Wallets</field>
+            <field name="res_model">ab.training.wallet.reset.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="context">{'default_scope': 'all'}</field>
+        </record>
+
+        <menuitem id="menu_training_tasks_root"
+                  name="Training Tasks"
+                  sequence="24"
+                  web_icon="ab_training_tasks,static/description/icon.png"
+                  groups="ab_training_tasks.group_training_tasks_member,ab_training_tasks.group_training_tasks_manager"/>
+
+        <menuitem id="menu_training_dashboard"
+                  name="Dashboard"
+                  parent="menu_training_tasks_root"
+                  action="action_training_dashboard"
+                  sequence="5"/>
+
+        <menuitem id="menu_my_training_tasks"
+                  name="My Tasks"
+                  parent="menu_training_tasks_root"
+                  action="action_my_training_tasks"
+                  sequence="10"/>
+
+        <menuitem id="menu_training_review_queue"
+                  name="Approval Queue"
+                  parent="menu_training_tasks_root"
+                  action="action_training_review_queue"
+                  sequence="20"
+                  groups="ab_training_tasks.group_training_tasks_manager"/>
+
+        <menuitem id="menu_all_training_tasks"
+                  name="All Tasks"
+                  parent="menu_training_tasks_root"
+                  action="action_all_training_tasks"
+                  sequence="25"
+                  groups="ab_training_tasks.group_training_tasks_manager"/>
+
+        <menuitem id="menu_my_training_wallet"
+                  name="My Wallet"
+                  parent="menu_training_tasks_root"
+                  action="action_open_my_training_wallet"
+                  sequence="30"/>
+
+        <menuitem id="menu_training_wallets"
+                  name="Member Wallets"
+                  parent="menu_training_tasks_root"
+                  action="action_training_wallets"
+                  sequence="35"
+                  groups="ab_training_tasks.group_training_tasks_manager"/>
+
+        <menuitem id="menu_training_payouts"
+                  name="Payout History"
+                  parent="menu_training_tasks_root"
+                  action="action_training_wallet_resets"
+                  sequence="40"
+                  groups="ab_training_tasks.group_training_tasks_manager"/>
+
+        <menuitem id="menu_training_configuration"
+                  name="Configuration"
+                  parent="menu_training_tasks_root"
+                  sequence="50"
+                  groups="ab_training_tasks.group_training_tasks_manager"/>
+
+        <menuitem id="menu_training_categories"
+                  name="Material Categories"
+                  parent="menu_training_configuration"
+                  action="action_training_categories"
+                  sequence="10"/>
+
+        <menuitem id="menu_training_task_types"
+                  name="Task Types"
+                  parent="menu_training_configuration"
+                  action="action_training_task_types"
+                  sequence="20"/>
+    </data>
+</odoo>

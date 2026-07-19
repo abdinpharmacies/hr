@@ -1,0 +1,1631 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_training_tasks
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-19 11:33+0000\n"
+"PO-Revision-Date: 2026-07-19 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "%s approved tasks"
+msgstr "%s مهمة معتمدة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "%s tasks awaiting review"
+msgstr "%s مهمة بانتظار المراجعة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "%s unpaid tasks"
+msgstr "%s مهمة غير مصروفة"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+msgid "<i class=\"fa fa-ban\" title=\"Reject\"/>"
+msgstr "<i class=\"fa fa-ban\" title=\"رفض\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_kanban
+msgid "<i class=\"fa fa-calendar\" title=\"Completion Date\"/>"
+msgstr "<i class=\"fa fa-calendar\" title=\"تاريخ الإنجاز\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "<i class=\"fa fa-exclamation-triangle\" title=\"Pending Approval\"/>"
+msgstr "<i class=\"fa fa-exclamation-triangle\" title=\"بانتظار الاعتماد\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_kanban
+msgid "<i class=\"fa fa-folder-open\" title=\"Material Category\"/>"
+msgstr "<i class=\"fa fa-folder-open\" title=\"فئة المادة\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "<i class=\"fa fa-list-check\" title=\"Incentive Activity\"/>"
+msgstr "<i class=\"fa fa-list-check\" title=\"نشاط الحوافز\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid ""
+"<i class=\"fa fa-list-check\" title=\"No incentive activity yet\"/>\n"
+"                                <span>No incentive activity yet</span>"
+msgstr ""
+"<i class=\"fa fa-list-check\" title=\"لا يوجد نشاط حوافز بعد\"/>\n"
+"                                <span>لا يوجد نشاط حوافز بعد</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "<i class=\"fa fa-receipt\" title=\"Expense Log\"/>"
+msgstr "<i class=\"fa fa-receipt\" title=\"سجل المصروفات\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid ""
+"<i class=\"fa fa-receipt\" title=\"No payout expenses yet\"/>\n"
+"                                <span>No payout expenses yet</span>"
+msgstr ""
+"<i class=\"fa fa-receipt\" title=\"لا توجد مصروفات صرف بعد\"/>\n"
+"                                <span>لا توجد مصروفات صرف بعد</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "<i class=\"fa fa-times-circle\" title=\"Rejected\"/>"
+msgstr "<i class=\"fa fa-times-circle\" title=\"مرفوض\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_kanban
+msgid "<i class=\"fa fa-user\" title=\"Member\"/>"
+msgstr "<i class=\"fa fa-user\" title=\"العضو\"/>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid ""
+"<span class=\"ab_training_wallet_log_icon\">\n"
+"                                                    <i class=\"fa fa-arrow-"
+"up\" title=\"Payout\"/>\n"
+"                                                </span>"
+msgstr ""
+"<span class=\"ab_training_wallet_log_icon\">\n"
+"                                                    <i class=\"fa fa-arrow-"
+"up\" title=\"صرف\"/>\n"
+"                                                </span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "<span class=\"ab_training_wallet_log_separator\">•</span>"
+msgstr "<span class=\"ab_training_wallet_log_separator\">•</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid ""
+"<span class=\"ab_training_wallet_log_separator\">•</span>\n"
+"                                                            <span "
+"class=\"core_ui_badge_pill success\">Paid</span>"
+msgstr ""
+"<span class=\"ab_training_wallet_log_separator\">•</span>\n"
+"                                                            <span "
+"class=\"core_ui_badge_pill success\">مصروف</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "<span>+</span>"
+msgstr "<span>+</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "<span>-</span>"
+msgstr "<span>-</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "<span>Approved Balance</span>"
+msgstr "<span>الرصيد المعتمد</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_form
+msgid "<span>Approved Tasks</span>"
+msgstr "<span>المهام المعتمدة</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "<span>Approved to Pay</span>"
+msgstr "<span>المعتمد للصرف</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "<span>Completion Date</span>"
+msgstr "<span>تاريخ الإنجاز</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "<span>Incentive</span>"
+msgstr "<span>الحافز</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "<span>Payout Status</span>"
+msgstr "<span>حالة الصرف</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "<span>Pending Balance</span>"
+msgstr "<span>الرصيد المعلق</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "<span>Pending and Excluded</span>"
+msgstr "<span>معلق وغير مشمول</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_form
+msgid "<span>Pending at Payout</span>"
+msgstr "<span>المعلق وقت الصرف</span>"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_form
+msgid "<span>Total Paid</span>"
+msgstr "<span>إجمالي المصروف</span>"
+
+#. module: ab_training_tasks
+#: model:ir.model.constraint,message:ab_training_tasks.constraint_ab_training_wallet_unique_member_company
+msgid "A member can only have one training wallet per company."
+msgstr "لا يمكن أن يكون للعضو أكثر من محفظة تدريب واحدة لكل شركة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "A rejection reason is required."
+msgstr "سبب الرفض مطلوب."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "A valid member, material category, and task type are required."
+msgstr "يجب تحديد عضو وفئة مادة ونوع مهمة صالحين."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "Across active members"
+msgstr "لجميع الأعضاء النشطين"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_needaction
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__active
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__active
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "Active Members"
+msgstr "الأعضاء النشطون"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تنسيق استثناء النشاط"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_wallet_reset__scope__all
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_wallet_reset_wizard__scope__all
+msgid "All Members"
+msgstr "كل الأعضاء"
+
+#. module: ab_training_tasks
+#: model:ir.ui.menu,name:ab_training_tasks.menu_all_training_tasks
+msgid "All Tasks"
+msgstr "كل المهام"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_all_training_tasks
+msgid "All Training Tasks"
+msgstr "كل مهام التدريب"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_training_review_queue
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_review_queue
+msgid "Approval Queue"
+msgstr "قائمة انتظار الاعتماد"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Approve"
+msgstr "اعتماد"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_task__state__approved
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_list
+msgid "Approved"
+msgstr "معتمد"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__approved_amount
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__approved_amount
+msgid "Approved Amount"
+msgstr "المبلغ المعتمد"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__approved_at
+msgid "Approved At"
+msgstr "تاريخ الاعتماد"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__approved_amount
+msgid "Approved Balance"
+msgstr "الرصيد المعتمد"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__approved_by
+msgid "Approved By"
+msgstr "اعتمد بواسطة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Approved Incentive Trend"
+msgstr "اتجاه الحوافز المعتمدة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__approved_task_count
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__approved_task_count
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__approved_task_count
+msgid "Approved Task Count"
+msgstr "عدد المهام المعتمدة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "Approved This Month"
+msgstr "المعتمد هذا الشهر"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+msgid "Approved and Unpaid"
+msgstr "معتمد وغير مصروف"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/wizard/training_wallet_reset_wizard.py:0
+msgid "Approved incentives were paid without changing pending tasks."
+msgstr "تم صرف الحوافز المعتمدة دون تغيير المهام المعلقة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Approved tasks can no longer be edited by members."
+msgstr "لا يمكن للأعضاء تعديل المهام بعد اعتمادها."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "Approved to Pay"
+msgstr "المعتمد للصرف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_attachment_count
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Category"
+msgstr "الفئة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Category statistics will appear when tasks are recorded."
+msgstr "ستظهر إحصاءات الفئات عند تسجيل المهام."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Classification"
+msgstr "التصنيف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__company_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__company_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__company_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__company_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__company_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__company_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__completion_date
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+msgid "Completion Date"
+msgstr "تاريخ الإنجاز"
+
+#. module: ab_training_tasks
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_configuration
+msgid "Configuration"
+msgstr "الإعدادات"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Create the first task to begin the KPI record."
+msgstr "أنشئ المهمة الأولى لبدء سجل مؤشرات الأداء."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__create_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__create_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__create_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__create_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__create_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__create_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__create_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__create_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__create_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__create_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__create_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__create_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__create_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__currency_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__currency_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__currency_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__currency_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__currency_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_training_tasks
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_dashboard
+msgid "Dashboard"
+msgstr "لوحة المعلومات"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Decision Audit"
+msgstr "سجل القرار"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_category_form
+msgid "Describe the material category..."
+msgstr "اكتب وصف فئة المادة..."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Describe the work completed and the material used or updated..."
+msgstr "صف العمل المنجز والمادة المستخدمة أو المحدثة..."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__description
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__description
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_category_form
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__display_name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__display_name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__display_name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__display_name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__display_name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__display_name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__display_name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Document, link, lesson, or material reference"
+msgstr "مستند أو رابط أو درس أو مرجع للمادة"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Expense Log"
+msgstr "سجل المصروفات"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+msgid "Explain what must be corrected..."
+msgstr "وضح ما يجب تصحيحه..."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_form
+msgid "Explain when members should use this task type..."
+msgstr "وضح متى يستخدم الأعضاء نوع المهمة هذا..."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_follower_ids
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_partner_ids
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_form
+msgid "Guidance"
+msgstr "الإرشادات"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__has_message
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__has_message
+msgid "Has Message"
+msgstr "لديه رسالة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__acknowledge_pending
+msgid ""
+"I acknowledge that pending tasks will remain in the wallet and are not "
+"included in this payout."
+msgstr ""
+"أقر بأن المهام المعلقة ستبقى في المحفظة ولن تكون مشمولة في عملية الصرف هذه."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_exception_icon
+msgid "Icon"
+msgstr "الأيقونة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة تشير إلى نشاط مستثنى."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__message_needaction
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_wallet_reset__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا كان محددًا، تتطلب الرسائل الجديدة انتباهك."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__message_has_error
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_wallet_reset__message_has_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا كان محددًا، توجد أخطاء في تسليم بعض الرسائل."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Incentive"
+msgstr "الحافز"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__activity_task_ids
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Incentive Activity"
+msgstr "نشاط الحوافز"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__incentive_value
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__incentive_value
+msgid "Incentive Value"
+msgstr "قيمة الحافز"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_is_follower
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__is_paid
+msgid "Is Paid"
+msgstr "تم الصرف"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Key performance indicators"
+msgstr "مؤشرات الأداء الرئيسية"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__last_reset_at
+msgid "Last Payout At"
+msgstr "تاريخ آخر صرف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__write_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__write_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__write_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__write_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__write_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__write_uid
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__write_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__write_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__write_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__write_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__write_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__write_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__write_date
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Last:"
+msgstr "الأخير:"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Latest records"
+msgstr "أحدث السجلات"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Loading dashboard..."
+msgstr "جار تحميل لوحة المعلومات..."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Manager Workspace"
+msgstr "مساحة عمل المدير"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Material"
+msgstr "المادة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__material_reference
+msgid "Material / Reference"
+msgstr "المادة / المرجع"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_training_categories
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_categories
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_category_list
+msgid "Material Categories"
+msgstr "فئات المواد"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__category_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__category_id
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_category_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_list
+msgid "Material Category"
+msgstr "فئة المادة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Material mix"
+msgstr "توزيع المواد"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__member_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__user_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__member_id
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+msgid "Member"
+msgstr "العضو"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__wallet_id
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Member Wallet"
+msgstr "محفظة العضو"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_training_wallets
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_wallets
+msgid "Member Wallets"
+msgstr "محافظ الأعضاء"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Member Workspace"
+msgstr "مساحة عمل العضو"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__line_ids
+msgid "Members"
+msgstr "الأعضاء"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Members can only create their own training tasks."
+msgstr "يمكن للأعضاء إنشاء مهام التدريب الخاصة بهم فقط."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Members can only edit their own training tasks."
+msgstr "يمكن للأعضاء تعديل مهام التدريب الخاصة بهم فقط."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Members can only resubmit their own rejected tasks."
+msgstr "يمكن للأعضاء إعادة إرسال مهامهم المرفوضة فقط."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Members can only resubmit their own tasks."
+msgstr "يمكن للأعضاء إعادة إرسال مهامهم فقط."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Members cannot reassign training tasks."
+msgstr "لا يمكن للأعضاء إعادة إسناد مهام التدريب."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_has_error
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_ids
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+msgid "Month"
+msgstr "الشهر"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Monthly ranking"
+msgstr "الترتيب الشهري"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Most Active Members"
+msgstr "الأعضاء الأكثر نشاطا"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد النهائي لنشاطي"
+
+#. module: ab_training_tasks
+#: model:ir.ui.menu,name:ab_training_tasks.menu_my_training_tasks
+msgid "My Tasks"
+msgstr "مهامي"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_my_training_tasks
+msgid "My Training Tasks"
+msgstr "مهام التدريب الخاصة بي"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet.py:0
+#: model:ir.actions.act_window,name:ab_training_tasks.action_my_training_wallet
+#: model:ir.actions.server,name:ab_training_tasks.action_open_my_training_wallet
+#: model:ir.ui.menu,name:ab_training_tasks.menu_my_training_wallet
+msgid "My Wallet"
+msgstr "محفظتي"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__name
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "Needs Correction"
+msgstr "يحتاج إلى تصحيح"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet_reset.py:0
+msgid "New"
+msgstr "جديد"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "New Task"
+msgstr "مهمة جديدة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "New Training Task"
+msgstr "مهمة تدريب جديدة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الموعد النهائي للنشاط التالي"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "No category activity"
+msgstr "لا يوجد نشاط للفئات"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "No member activity"
+msgstr "لا يوجد نشاط للأعضاء"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "No training tasks were recorded in this month."
+msgstr "لم تسجل مهام تدريب خلال هذا الشهر."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "No training tasks yet"
+msgstr "لا توجد مهام تدريب بعد"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__message_needaction_counter
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_wallet_reset__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__message_has_error_counter
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_wallet_reset__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Only pending tasks can be approved."
+msgstr "لا يمكن اعتماد سوى المهام المعلقة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Only pending tasks can be rejected."
+msgstr "لا يمكن رفض سوى المهام المعلقة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Only rejected tasks can be resubmitted."
+msgstr "لا يمكن إعادة إرسال سوى المهام المرفوضة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Only training managers can approve or reject tasks."
+msgstr "مديرو التدريب فقط يمكنهم اعتماد المهام أو رفضها."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet.py:0
+#: code:addons/ab_training_tasks/wizard/training_wallet_reset_wizard.py:0
+msgid "Only training managers can reset wallets."
+msgstr "مديرو التدريب فقط يمكنهم تصفير الرصيد المعتمد للمحافظ."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__material_reference
+msgid "Optional link, document reference, lesson, or material identifier."
+msgstr "رابط أو مرجع مستند أو درس أو معرف مادة اختياري."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "Optional payout reference or note..."
+msgstr "مرجع أو ملاحظة صرف اختيارية..."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_kanban
+msgid "Paid"
+msgstr "مصروف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__task_ids
+msgid "Paid Tasks"
+msgstr "المهام المصروفة"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Paid tasks cannot be deleted because they belong to a payout log."
+msgstr "لا يمكن حذف المهام المصروفة لأنها مرتبطة بسجل صرف."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Paid tasks cannot be reassigned or recategorized."
+msgstr "لا يمكن إعادة إسناد المهام المصروفة أو تغيير تصنيفها."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "Pay and Reset Approved"
+msgstr "صرف وتصفير المعتمد"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_training_wallet_resets
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__reset_line_ids
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_payouts
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_list
+msgid "Payout History"
+msgstr "سجل الصرف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__wallet_reset_line_id
+msgid "Payout Line"
+msgstr "بند الصرف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__note
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "Payout Note"
+msgstr "ملاحظة الصرف"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_form
+msgid "Payout Reference"
+msgstr "مرجع الصرف"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_list
+msgid "Pending"
+msgstr "معلق"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__pending_amount
+msgid "Pending Amount"
+msgstr "المبلغ المعلق"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__pending_amount_at_reset
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__pending_amount_at_reset
+msgid "Pending Amount At Reset"
+msgstr "المبلغ المعلق وقت الصرف"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_task__state__pending
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Pending Approval"
+msgstr "بانتظار الاعتماد"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__pending_amount
+msgid "Pending Balance"
+msgstr "الرصيد المعلق"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__pending_task_count
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__pending_task_count
+msgid "Pending Task Count"
+msgstr "عدد المهام المعلقة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__pending_task_count_at_reset
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__pending_task_count_at_reset
+msgid "Pending Task Count At Reset"
+msgstr "عدد المهام المعلقة وقت الصرف"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "Pending incentives will not be reset"
+msgstr "لن يتم تصفير الحوافز المعلقة"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/wizard/training_wallet_reset_wizard.py:0
+msgid ""
+"Pending tasks are not included in the payout. Acknowledge the warning before "
+"continuing."
+msgstr "المهام المعلقة غير مشمولة في الصرف. يجب الإقرار بالتحذير قبل المتابعة."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Recent Training Tasks"
+msgstr "أحدث مهام التدريب"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Reject"
+msgstr "رفض"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+msgid "Reject Task"
+msgstr "رفض المهمة"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+#: model:ir.model,name:ab_training_tasks.model_ab_training_task_reject_wizard
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+msgid "Reject Training Task"
+msgstr "رفض مهمة التدريب"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_task__state__rejected
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Rejected"
+msgstr "مرفوض"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__rejected_at
+msgid "Rejected At"
+msgstr "تاريخ الرفض"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__rejected_by
+msgid "Rejected By"
+msgstr "رفض بواسطة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__rejection_reason
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+msgid "Rejection Reason"
+msgstr "سبب الرفض"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+msgid "Rejection requires a reason"
+msgstr "الرفض يتطلب سببا"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Report Month"
+msgstr "شهر التقرير"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__reset_id
+msgid "Reset"
+msgstr "تصفير"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Reset Approved Balance"
+msgstr "صرف وتصفير الرصيد المعتمد"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "Reset Approved Wallet Balance"
+msgstr "صرف وتصفير رصيد المحفظة المعتمد"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+#: model:ir.actions.act_window,name:ab_training_tasks.action_training_wallet_reset_all
+msgid "Reset Approved Wallets"
+msgstr "صرف وتصفير المحافظ المعتمدة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__paid_at
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__reset_at
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__reset_at
+msgid "Reset At"
+msgstr "تاريخ التصفير"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__reset_by
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__reset_by
+msgid "Reset By"
+msgstr "تم التصفير بواسطة"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet.py:0
+msgid "Reset Member Wallet"
+msgstr "صرف وتصفير محفظة العضو"
+
+#. module: ab_training_tasks
+#: model:ir.model,name:ab_training_tasks.model_ab_training_wallet_reset_wizard
+msgid "Reset Training Wallets"
+msgstr "صرف وتصفير محافظ التدريب"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Resubmit"
+msgstr "إعادة إرسال"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__scope
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_wizard__scope
+msgid "Scope"
+msgstr "النطاق"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/wizard/training_wallet_reset_wizard.py:0
+msgid "Select a member wallet to reset."
+msgstr "اختر محفظة العضو المراد تصفير رصيدها المعتمد."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__sequence
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__sequence
+msgid "Sequence"
+msgstr "الترتيب"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_wallet_reset__scope__single
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_wallet_reset_wizard__scope__single
+msgid "Single Member"
+msgstr "عضو واحد"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Six-month view"
+msgstr "عرض ستة أشهر"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__incentive_value
+msgid "Snapshot of the task type incentive when the task is submitted."
+msgstr "نسخة ثابتة من حافز نوع المهمة عند إرسال المهمة."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بناءً على الأنشطة\n"
+"متأخر: تجاوز الموعد المحدد\n"
+"اليوم: موعد النشاط اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_reject_wizard__task_id
+msgid "Task"
+msgstr "المهمة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__task_count
+msgid "Task Count"
+msgstr "عدد المهام"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__name
+msgid "Task Title"
+msgstr "عنوان المهمة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__task_type_id
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_form
+msgid "Task Type"
+msgstr "نوع المهمة"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_training_task_types
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__task_type_ids
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_task_types
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_category_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_list
+msgid "Task Types"
+msgstr "أنواع المهام"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Task decisions must use the approval workflow actions."
+msgstr "يجب تنفيذ قرارات المهام من خلال إجراءات دورة الاعتماد."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Task incentive and wallet values are managed automatically."
+msgstr "تدار قيم حافز المهمة والمحفظة تلقائيا."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid ""
+"Task payout links can only be changed through the wallet reset workflow."
+msgstr "لا يمكن تغيير روابط صرف المهام إلا من خلال دورة صرف وتصفير المحفظة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "Task resubmitted. Previous rejection reason: %s"
+msgstr "تمت إعادة إرسال المهمة. سبب الرفض السابق: %s"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__task_ids
+msgid "Tasks"
+msgstr "المهام"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "Tasks This Month"
+msgstr "مهام هذا الشهر"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Tasks by Category"
+msgstr "المهام حسب الفئة"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "The dashboard month must use the YYYY-MM format."
+msgstr "يجب أن يكون شهر لوحة المعلومات بالتنسيق YYYY-MM."
+
+#. module: ab_training_tasks
+#: model:ir.model.constraint,message:ab_training_tasks.constraint_ab_training_task_type_non_negative_incentive
+msgid "The incentive value cannot be negative."
+msgstr "لا يمكن أن تكون قيمة الحافز سالبة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "The member must have access to the task company."
+msgstr "يجب أن يملك العضو صلاحية الوصول إلى شركة المهمة."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_reject_wizard_form
+msgid "The member will see this reason and can correct and resubmit the task."
+msgstr "سيرى العضو هذا السبب ويمكنه تصحيح المهمة وإعادة إرسالها."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid ""
+"The selected task type does not belong to the selected material category."
+msgstr "نوع المهمة المحدد لا ينتمي إلى فئة المادة المحددة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "The selected wallet does not match the task member and company."
+msgstr "المحفظة المحددة لا تطابق عضو المهمة وشركتها."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "The task classification cannot be changed after approval."
+msgstr "لا يمكن تغيير تصنيف المهمة بعد الاعتماد."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "The task company must match the task type company."
+msgstr "يجب أن تطابق شركة المهمة شركة نوع المهمة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "The task type must belong to the task company."
+msgstr "يجب أن ينتمي نوع المهمة إلى شركة المهمة."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+msgid "The training dashboard could not be loaded."
+msgstr "تعذر تحميل لوحة معلومات التدريب."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/wizard/training_wallet_reset_wizard.py:0
+msgid "There are no approved wallet incentives available to reset."
+msgstr "لا توجد حوافز معتمدة متاحة للصرف والتصفير."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid ""
+"This payout includes approved tasks only. Pending tasks remain in member "
+"wallets and become payable after approval."
+msgstr ""
+"يشمل هذا الصرف المهام المعتمدة فقط. تبقى المهام المعلقة في محافظ الأعضاء "
+"وتصبح قابلة للصرف بعد اعتمادها."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_type__title
+msgid "Title"
+msgstr "العنوان"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset__total_amount
+msgid "Total Amount"
+msgstr "إجمالي المبلغ"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_list
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_list
+msgid "Total Incentive"
+msgstr "إجمالي الحافز"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet__total_paid_amount
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_list
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_list
+msgid "Total Paid"
+msgstr "إجمالي المصروف"
+
+#. module: ab_training_tasks
+#: model:ir.actions.client,name:ab_training_tasks.action_training_dashboard
+msgid "Training Dashboard"
+msgstr "لوحة معلومات التدريب"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "Training KPI Dashboard"
+msgstr "لوحة مؤشرات أداء التدريب"
+
+#. module: ab_training_tasks
+#: model:res.groups,name:ab_training_tasks.group_training_tasks_manager
+msgid "Training Manager"
+msgstr "مدير التدريب"
+
+#. module: ab_training_tasks
+#: model:res.groups,name:ab_training_tasks.group_training_tasks_member
+msgid "Training Member"
+msgstr "عضو التدريب"
+
+#. module: ab_training_tasks
+#: model:ir.model,name:ab_training_tasks.model_ab_training_wallet
+msgid "Training Member Wallet"
+msgstr "محفظة عضو التدريب"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+#: model:ir.model,name:ab_training_tasks.model_ab_training_task
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Training Task"
+msgstr "مهمة تدريب"
+
+#. module: ab_training_tasks
+#: model:ir.model,name:ab_training_tasks.model_ab_training_task_category
+msgid "Training Task Category"
+msgstr "فئة مهمة التدريب"
+
+#. module: ab_training_tasks
+#: model:ir.model,name:ab_training_tasks.model_ab_training_task_type
+msgid "Training Task Type"
+msgstr "نوع مهمة التدريب"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_dashboard.js:0
+#: model:ir.module.category,name:ab_training_tasks.category_training_tasks
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_tasks_root
+#: model:res.groups.privilege,name:ab_training_tasks.privilege_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_list
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_search
+msgid "Training Tasks"
+msgstr "مهام التدريب"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+msgid "Training Wallet"
+msgstr "محفظة التدريب"
+
+#. module: ab_training_tasks
+#: model:ir.model,name:ab_training_tasks.model_ab_training_wallet_reset
+msgid "Training Wallet Payout"
+msgstr "صرف محفظة التدريب"
+
+#. module: ab_training_tasks
+#: model:ir.model,name:ab_training_tasks.model_ab_training_wallet_reset_line
+msgid "Training Wallet Payout Line"
+msgstr "بند صرف محفظة التدريب"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_list
+msgid "Training Wallets"
+msgstr "محافظ التدريب"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,help:ab_training_tasks.field_ab_training_task__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع نشاط الاستثناء في السجل."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "View Month"
+msgstr "عرض الشهر"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__wallet_id
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_wallet_reset_line__wallet_id
+msgid "Wallet"
+msgstr "المحفظة"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/wizard/training_wallet_reset_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_form
+msgid "Wallet Payout"
+msgstr "صرف المحفظة"
+
+#. module: ab_training_tasks
+#: model:ir.model.constraint,message:ab_training_tasks.constraint_ab_training_wallet_reset_line_non_negative_amounts
+msgid "Wallet payout amounts cannot be negative."
+msgstr "لا يمكن أن تكون مبالغ صرف المحفظة سالبة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet_reset.py:0
+msgid "Wallet payout lines are immutable."
+msgstr "بنود صرف المحفظة غير قابلة للتعديل."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet_reset.py:0
+msgid "Wallet payout lines can only be created through the reset workflow."
+msgstr "لا يمكن إنشاء بنود صرف المحفظة إلا من خلال دورة الصرف والتصفير."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet_reset.py:0
+msgid "Wallet payout lines cannot be deleted."
+msgstr "لا يمكن حذف بنود صرف المحفظة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet_reset.py:0
+msgid "Wallet payout logs are immutable."
+msgstr "سجلات صرف المحفظة غير قابلة للتعديل."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet_reset.py:0
+msgid "Wallet payout logs can only be created through the reset workflow."
+msgstr "لا يمكن إنشاء سجلات صرف المحفظة إلا من خلال دورة الصرف والتصفير."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet_reset.py:0
+msgid "Wallet payout logs cannot be deleted."
+msgstr "لا يمكن حذف سجلات صرف المحفظة."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "What training work was completed?"
+msgstr "ما عمل التدريب الذي تم إنجازه؟"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__description
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Work Summary"
+msgstr "ملخص العمل"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "You do not have access to the training dashboard."
+msgstr "ليس لديك صلاحية الوصول إلى لوحة معلومات التدريب."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_wallet.py:0
+msgid "You do not have access to training wallets."
+msgstr "ليس لديك صلاحية الوصول إلى محافظ التدريب."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "active"
+msgstr "نشط"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "approved"
+msgstr "معتمد"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_category_form
+msgid "e.g. Training Manual"
+msgstr "مثال: دليل التدريب"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_form
+msgid "e.g. Update product training slides"
+msgstr "مثال: تحديث شرائح تدريب المنتجات"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "pending"
+msgstr "معلق"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_wallet_reset_wizard_form
+msgid "tasks"
+msgstr "مهام"
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/xml/training_dashboard.xml:0
+msgid "tasks ·"
+msgstr "مهام ·"
+
+#~ msgid "Current Tasks"
+#~ msgstr "المهام الحالية"
+
+#~ msgid "A valid member and task type are required."
+#~ msgstr "يجب تحديد عضو ونوع مهمة صالحين."
+
+#~ msgid "The task type cannot be changed after approval."
+#~ msgstr "لا يمكن تغيير نوع المهمة بعد الاعتماد."

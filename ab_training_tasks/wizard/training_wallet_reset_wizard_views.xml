@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_training_wallet_reset_wizard_form" model="ir.ui.view">
+            <field name="name">ab.training.wallet.reset.wizard.form</field>
+            <field name="model">ab.training.wallet.reset.wizard</field>
+            <field name="arch" type="xml">
+                <form string="Reset Approved Wallet Balance" class="ab_training_core_form core_ui_form_modern">
+                    <field name="currency_id" invisible="1"/>
+                    <field name="company_id" invisible="1"/>
+                    <field name="scope" invisible="1"/>
+                    <group>
+                        <field name="wallet_id"
+                               options="{'no_create': True, 'no_open': True}"
+                               invisible="scope != 'single'"
+                               required="scope == 'single'"/>
+                    </group>
+
+                    <div class="ab_training_reset_preview">
+                        <div class="ab_training_form_metric is-success">
+                            <span>Approved to Pay</span>
+                            <strong><field name="approved_amount" widget="monetary" nolabel="1"/></strong>
+                            <small><field name="approved_task_count" nolabel="1"/> tasks</small>
+                        </div>
+                        <div class="ab_training_form_metric is-warning">
+                            <span>Pending and Excluded</span>
+                            <strong><field name="pending_amount" widget="monetary" nolabel="1"/></strong>
+                            <small><field name="pending_task_count" nolabel="1"/> tasks</small>
+                        </div>
+                    </div>
+
+                    <div class="core_ui_alert warning" invisible="pending_task_count == 0">
+                        <i class="fa fa-exclamation-triangle" title="Pending Approval"/>
+                        <div class="core_ui_alert_content">
+                            <div class="core_ui_alert_title">Pending incentives will not be reset</div>
+                            This payout includes approved tasks only. Pending tasks remain in member wallets and become payable after approval.
+                        </div>
+                    </div>
+
+                    <group>
+                        <field name="acknowledge_pending" invisible="pending_task_count == 0" required="pending_task_count &gt; 0"/>
+                    </group>
+                    <group string="Payout Note" col="1" class="ab_training_wide_text_group">
+                        <field name="note" nolabel="1" class="ab_training_textarea_wide"
+                               placeholder="Optional payout reference or note..."/>
+                    </group>
+                    <footer>
+                        <button name="action_reset" type="object" string="Pay and Reset Approved" icon="fa-money-bill-transfer"
+                                class="core_ui_btn core_ui_btn_danger"/>
+                        <button string="Cancel" special="cancel" icon="fa-times"
+                                class="core_ui_btn core_ui_btn_secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

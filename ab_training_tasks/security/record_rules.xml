@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="rule_training_category_member_company" model="ir.rule">
+            <field name="name">Training categories: member companies</field>
+            <field name="model_id" ref="model_ab_training_task_category"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_member'))]"/>
+        </record>
+
+        <record id="rule_training_task_type_member_company" model="ir.rule">
+            <field name="name">Training task types: member companies</field>
+            <field name="model_id" ref="model_ab_training_task_type"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_member'))]"/>
+        </record>
+
+        <record id="rule_training_task_member_own" model="ir.rule">
+            <field name="name">Training tasks: member owns records</field>
+            <field name="model_id" ref="model_ab_training_task"/>
+            <field name="domain_force">[('member_id', '=', user.id), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_member'))]"/>
+        </record>
+
+        <record id="rule_training_task_manager_company" model="ir.rule">
+            <field name="name">Training tasks: manager companies</field>
+            <field name="model_id" ref="model_ab_training_task"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_manager'))]"/>
+        </record>
+
+        <record id="rule_training_wallet_member_own" model="ir.rule">
+            <field name="name">Training wallets: member owns wallet</field>
+            <field name="model_id" ref="model_ab_training_wallet"/>
+            <field name="domain_force">[('user_id', '=', user.id), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_member'))]"/>
+        </record>
+
+        <record id="rule_training_wallet_manager_company" model="ir.rule">
+            <field name="name">Training wallets: manager companies</field>
+            <field name="model_id" ref="model_ab_training_wallet"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_manager'))]"/>
+        </record>
+
+        <record id="rule_training_wallet_reset_manager_company" model="ir.rule">
+            <field name="name">Training payouts: manager companies</field>
+            <field name="model_id" ref="model_ab_training_wallet_reset"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_manager'))]"/>
+        </record>
+
+        <record id="rule_training_wallet_reset_line_member_own" model="ir.rule">
+            <field name="name">Training payout lines: member owns wallet</field>
+            <field name="model_id" ref="model_ab_training_wallet_reset_line"/>
+            <field name="domain_force">[('member_id', '=', user.id), ('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_member'))]"/>
+        </record>
+
+        <record id="rule_training_wallet_reset_line_manager_company" model="ir.rule">
+            <field name="name">Training payout lines: manager companies</field>
+            <field name="model_id" ref="model_ab_training_wallet_reset_line"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_manager'))]"/>
+        </record>
+    </data>
+</odoo>

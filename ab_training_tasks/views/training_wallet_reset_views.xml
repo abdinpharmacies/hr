@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_training_wallet_reset_list" model="ir.ui.view">
+            <field name="name">ab.training.wallet.reset.list</field>
+            <field name="model">ab.training.wallet.reset</field>
+            <field name="arch" type="xml">
+                <list string="Payout History" create="false" delete="false" edit="false">
+                    <field name="name"/>
+                    <field name="reset_at"/>
+                    <field name="scope" widget="badge"/>
+                    <field name="reset_by"/>
+                    <field name="task_count"/>
+                    <field name="total_amount" widget="monetary" sum="Total Paid"/>
+                    <field name="pending_task_count_at_reset" optional="show"/>
+                    <field name="pending_amount_at_reset" widget="monetary" optional="show"/>
+                    <field name="currency_id" column_invisible="True"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_training_wallet_reset_form" model="ir.ui.view">
+            <field name="name">ab.training.wallet.reset.form</field>
+            <field name="model">ab.training.wallet.reset</field>
+            <field name="arch" type="xml">
+                <form string="Wallet Payout" create="false" delete="false" edit="false" class="ab_training_core_form">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="Payout Reference"/>
+                            <h1><field name="name" readonly="1"/></h1>
+                        </div>
+                        <field name="currency_id" invisible="1"/>
+                        <div class="ab_training_form_summary">
+                            <div class="ab_training_form_metric is-success">
+                                <span>Total Paid</span>
+                                <strong><field name="total_amount" widget="monetary" nolabel="1"/></strong>
+                            </div>
+                            <div class="ab_training_form_metric">
+                                <span>Approved Tasks</span>
+                                <strong><field name="task_count" nolabel="1"/></strong>
+                            </div>
+                            <div class="ab_training_form_metric is-warning">
+                                <span>Pending at Payout</span>
+                                <strong><field name="pending_amount_at_reset" widget="monetary" nolabel="1"/></strong>
+                                <small><field name="pending_task_count_at_reset" nolabel="1"/> tasks</small>
+                            </div>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="scope" readonly="1"/>
+                                <field name="reset_by" readonly="1"/>
+                                <field name="reset_at" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="company_id" readonly="1" groups="base.group_multi_company"/>
+                            </group>
+                        </group>
+                        <group string="Payout Note" col="1" class="ab_training_wide_text_group" invisible="not note">
+                            <field name="note" readonly="1" nolabel="1" class="ab_training_textarea_wide"/>
+                        </group>
+                        <field name="line_ids" readonly="1">
+                            <list create="false" delete="false">
+                                <field name="member_id"/>
+                                <field name="approved_amount" widget="monetary"/>
+                                <field name="approved_task_count"/>
+                                <field name="pending_amount_at_reset" widget="monetary"/>
+                                <field name="pending_task_count_at_reset"/>
+                                <field name="currency_id" column_invisible="True"/>
+                            </list>
+                        </field>
+                    </sheet>
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>
