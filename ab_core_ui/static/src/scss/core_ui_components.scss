@@ -49,6 +49,18 @@
     text-align: center;
     padding: var(--core-ui-space-lg);
 
+    &.core_ui_card_actionable {
+      width: 100%;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+
+      &:focus-visible {
+        outline: 3px solid var(--core-ui-primary-subtle);
+        outline-offset: 2px;
+      }
+    }
+
     .core_ui_card_stat_icon {
       width: 48px;
       height: 48px;
@@ -115,6 +127,12 @@
       color: var(--core-ui-text-secondary);
       margin: 0;
       font-size: var(--core-ui-font-size-base);
+    }
+
+    .core_ui_card_stat_hint {
+      margin-top: var(--core-ui-space-xs);
+      color: var(--core-ui-text-muted);
+      font-size: var(--core-ui-font-size-xs);
     }
   }
 }

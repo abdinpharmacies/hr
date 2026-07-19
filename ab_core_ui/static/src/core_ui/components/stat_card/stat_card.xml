@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="core_ui.stat_card">
+        <t t-set="tag" t-value="props.onClick ? 'button' : 'article'"/>
+        <t t-tag="tag"
+           t-att-type="props.onClick ? 'button' : undefined"
+           t-att-class="'core_ui_card core_ui_card_stat' + (props.onClick ? ' core_ui_card_actionable' : '')"
+           t-on-click="onActivate">
+            <span t-att-class="'core_ui_card_stat_icon ' + props.tone">
+                <i t-att-class="'fa ' + props.icon"/>
+            </span>
+            <strong class="core_ui_card_stat_value" t-out="props.value"/>
+            <span class="core_ui_card_stat_label" t-out="props.label"/>
+            <span t-if="props.trend"
+                  t-att-class="'core_ui_card_stat_trend ' + props.trendDirection"
+                  t-out="props.trend"/>
+            <span t-if="props.hint" class="core_ui_card_stat_hint" t-out="props.hint"/>
+        </t>
+    </t>
+</templates>
