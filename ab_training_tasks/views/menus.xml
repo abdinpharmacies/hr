@@ -21,6 +21,13 @@
             <field name="domain">[('state', '=', 'pending')]</field>
         </record>
 
+        <record id="action_training_materials" model="ir.actions.act_window">
+            <field name="name">Training Materials</field>
+            <field name="res_model">ab.training.material</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'create': False}</field>
+        </record>
+
         <record id="action_all_training_tasks" model="ir.actions.act_window">
             <field name="name">All Training Tasks</field>
             <field name="res_model">ab.training.task</field>
@@ -91,6 +98,12 @@
                   parent="menu_training_tasks_root"
                   action="action_my_training_tasks"
                   sequence="10"/>
+
+        <menuitem id="menu_training_materials"
+                  name="Training Materials"
+                  parent="menu_training_tasks_root"
+                  action="action_training_materials"
+                  sequence="15"/>
 
         <menuitem id="menu_training_review_queue"
                   name="Approval Queue"

@@ -161,6 +161,63 @@
                                    readonly="state == 'approved'"/>
                         </group>
 
+                        <notebook>
+                            <page string="Training Materials" name="training_materials">
+                                <group>
+                                    <field name="file_upload_allowed" invisible="1"/>
+                                    <field name="allowed_file_extensions" invisible="1"/>
+                                    <field name="allowed_file_types_display" readonly="1"/>
+                                </group>
+                                <div class="core_ui_alert warning" invisible="file_upload_allowed">
+                                    <i class="fa fa-circle-info" title="Uploads Disabled"/>
+                                    <div class="core_ui_alert_content">
+                                        <div class="core_ui_alert_title">Uploads Disabled</div>
+                                        <div>This task type does not allow file uploads.</div>
+                                    </div>
+                                </div>
+                                <field name="material_ids"
+                                       widget="training_material_one2many"
+                                       groups="ab_training_tasks.group_training_tasks_member,!ab_training_tasks.group_training_tasks_manager"
+                                       context="{'form_view_ref': 'ab_training_tasks.view_training_material_upload_form', 'default_task_id': id, 'default_accepted_file_extensions': allowed_file_extensions}"
+                                       readonly="not id or state == 'approved' or not file_upload_allowed"
+                                       nolabel="1">
+                                    <list create="true" edit="false" delete="false">
+                                        <control>
+                                            <create string="Upload File"/>
+                                        </control>
+                                        <field name="id" column_invisible="True"/>
+                                        <field name="file_name" column_invisible="True"/>
+                                        <field name="accepted_file_extensions" column_invisible="True"/>
+                                        <field name="file_data" filename="file_name" widget="training_material_binary" options="{'accepted_field': 'accepted_file_extensions'}" readonly="id"/>
+                                        <field name="file_type" widget="badge" readonly="1"/>
+                                        <field name="file_size_display" readonly="1"/>
+                                        <field name="uploaded_by" readonly="1"/>
+                                        <field name="uploaded_at" readonly="1"/>
+                                    </list>
+                                </field>
+                                <field name="material_ids"
+                                       widget="training_material_one2many"
+                                       groups="ab_training_tasks.group_training_tasks_manager"
+                                       context="{'form_view_ref': 'ab_training_tasks.view_training_material_upload_form', 'default_task_id': id, 'default_accepted_file_extensions': allowed_file_extensions}"
+                                       readonly="not id or state == 'approved' or not file_upload_allowed"
+                                       nolabel="1">
+                                    <list create="true" edit="false" delete="true">
+                                        <control>
+                                            <create string="Upload File"/>
+                                        </control>
+                                        <field name="id" column_invisible="True"/>
+                                        <field name="file_name" column_invisible="True"/>
+                                        <field name="accepted_file_extensions" column_invisible="True"/>
+                                        <field name="file_data" filename="file_name" widget="training_material_binary" options="{'accepted_field': 'accepted_file_extensions'}" readonly="id"/>
+                                        <field name="file_type" widget="badge" readonly="1"/>
+                                        <field name="file_size_display" readonly="1"/>
+                                        <field name="uploaded_by" readonly="1"/>
+                                        <field name="uploaded_at" readonly="1"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+
                         <div class="core_ui_alert danger" invisible="state != 'rejected'">
                             <i class="fa fa-times-circle" title="Rejected"/>
                             <div class="core_ui_alert_content">

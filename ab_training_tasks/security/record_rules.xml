@@ -29,6 +29,20 @@
             <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_manager'))]"/>
         </record>
 
+        <record id="rule_training_material_member_company" model="ir.rule">
+            <field name="name">Training materials: member companies</field>
+            <field name="model_id" ref="model_ab_training_material"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_member'))]"/>
+        </record>
+
+        <record id="rule_training_material_manager_company" model="ir.rule">
+            <field name="name">Training materials: manager companies</field>
+            <field name="model_id" ref="model_ab_training_material"/>
+            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+            <field name="groups" eval="[(4, ref('ab_training_tasks.group_training_tasks_manager'))]"/>
+        </record>
+
         <record id="rule_training_wallet_member_own" model="ir.rule">
             <field name="name">Training wallets: member owns wallet</field>
             <field name="model_id" ref="model_ab_training_wallet"/>

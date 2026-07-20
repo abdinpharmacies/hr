@@ -1621,6 +1621,287 @@ msgstr "مهام"
 msgid "tasks ·"
 msgstr "مهام ·"
 
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "<i class=\"fa fa-circle-info\" title=\"Uploads Disabled\"/>"
+msgstr "<i class=\"fa fa-circle-info\" title=\"رفع الملفات معطل\"/>"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "A valid file name is required."
+msgstr "مطلوب اسم ملف صحيح."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "A valid training task is required."
+msgstr "مطلوب تحديد مهمة تدريبية صحيحة."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__allowed_file_types_display
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_type_form
+msgid "Allowed File Types"
+msgstr "أنواع الملفات المسموح بها"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_category.py:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__allow_audio_files
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_material__file_type__audio
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "Audio"
+msgstr "ملفات صوتية"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "Empty files cannot be uploaded."
+msgstr "لا يمكن رفع ملفات فارغة."
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__file_data
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_form
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_list
+msgid "File"
+msgstr "الملف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__file_name
+msgid "File Name"
+msgstr "اسم الملف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__file_size_display
+msgid "File Size"
+msgstr "حجم الملف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__file_size
+msgid "File Size (Bytes)"
+msgstr "حجم الملف (بالبايت)"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__file_type
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "File Type"
+msgstr "نوع الملف"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__file_upload_allowed
+msgid "File Upload Allowed"
+msgstr "السماح برفع الملفات"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "Files can only be uploaded before a task is approved."
+msgstr "يمكن رفع الملفات فقط قبل اعتماد المهمة."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "GB"
+msgstr "جيجابايت"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_category.py:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__allow_image_files
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_material__file_type__image
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "Images"
+msgstr "صور"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "KB"
+msgstr "كيلوبايت"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "MB"
+msgstr "ميجابايت"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__mimetype
+msgid "MIME Type"
+msgstr "نوع MIME"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "Members can only upload files to their own training tasks."
+msgstr "يمكن للأعضاء رفع الملفات إلى مهامهم التدريبية فقط."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "No file uploads allowed"
+msgstr "رفع الملفات غير مسموح"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "Only training managers can delete training materials."
+msgstr "يمكن لمديري التدريب فقط حذف المواد التدريبية."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_category.py:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__allow_pdf_files
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_material__file_type__pdf
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "PDF"
+msgstr "PDF"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_category.py:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__allow_ppt_files
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_material__file_type__ppt
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "PowerPoint"
+msgstr "باوربوينت"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "Select a file to upload."
+msgstr "اختر ملفًا لرفعه."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+#, python-format
+msgid "The selected task type does not allow %s files."
+msgstr "نوع المهمة المحدد لا يسمح بملفات %s."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_task.py:0
+msgid "The task type cannot be changed because existing training materials use disallowed file types."
+msgstr "لا يمكن تغيير نوع المهمة لأن المواد التدريبية الحالية تستخدم أنواع ملفات غير مسموح بها."
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "The uploaded file could not be read."
+msgstr "تعذرت قراءة الملف المرفوع."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "This task type does not allow file uploads."
+msgstr "نوع المهمة هذا لا يسمح برفع الملفات."
+
+#. module: ab_training_tasks
+#: model:ir.model,name:ab_training_tasks.model_ab_training_material
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_form
+msgid "Training Material"
+msgstr "مادة تدريبية"
+
+#. module: ab_training_tasks
+#: model:ir.actions.act_window,name:ab_training_tasks.action_training_materials
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__material_ids
+#: model:ir.ui.menu,name:ab_training_tasks.menu_training_materials
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_list
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Training Materials"
+msgstr "المواد التدريبية"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "Unsupported file type. Upload an image, PDF, PowerPoint, video, or audio file."
+msgstr "نوع الملف غير مدعوم. ارفع صورة أو ملف PDF أو PowerPoint أو فيديو أو ملفًا صوتيًا."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "Upload Date"
+msgstr "تاريخ الرفع"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_form
+msgid "Upload Details"
+msgstr "تفاصيل الرفع"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "Upload Month"
+msgstr "شهر الرفع"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__uploaded_at
+msgid "Uploaded At"
+msgstr "وقت الرفع"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__uploaded_by
+msgid "Uploaded By"
+msgstr "رفع بواسطة"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Uploads Disabled"
+msgstr "رفع الملفات معطل"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_category.py:0
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task_category__allow_video_files
+#: model:ir.model.fields.selection,name:ab_training_tasks.selection__ab_training_material__file_type__video
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_search
+msgid "Videos"
+msgstr "مقاطع فيديو"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+msgid "bytes"
+msgstr "بايت"
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_material_upload_form
+msgid "Upload Training Material"
+msgstr "رفع مادة تدريبية"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_material__accepted_file_extensions
+msgid "Accepted File Extensions"
+msgstr "امتدادات الملفات المقبولة"
+
+#. module: ab_training_tasks
+#: model:ir.model.fields,field_description:ab_training_tasks.field_ab_training_task__allowed_file_extensions
+msgid "Allowed File Extensions"
+msgstr "امتدادات الملفات المسموح بها"
+
+#. module: ab_training_tasks
+#. odoo-python
+#: code:addons/ab_training_tasks/models/training_material.py:0
+#, python-format
+msgid "The selected material category does not allow %s files."
+msgstr "فئة المادة المحددة لا تسمح بملفات %s."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_material_upload.js:0
+msgid "The selected file type is not allowed for this material category."
+msgstr "نوع الملف المحدد غير مسموح به لفئة المادة هذه."
+
+#. module: ab_training_tasks
+#. odoo-javascript
+#: code:addons/ab_training_tasks/static/src/js/training_material_upload.js:0
+msgid "Save the training task before uploading files."
+msgstr "احفظ المهمة التدريبية قبل رفع الملفات."
+
+#. module: ab_training_tasks
+#: model_terms:ir.ui.view,arch_db:ab_training_tasks.view_training_task_form
+msgid "Upload File"
+msgstr "رفع ملف"
+
 #~ msgid "Current Tasks"
 #~ msgstr "المهام الحالية"
 
