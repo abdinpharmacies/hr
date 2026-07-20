@@ -110,8 +110,12 @@ class AbRequest(models.Model):
         "request_id",
         "employee_id",
         string="Assigned Employees",
-        domain="[('department_id', '=', department_id)]",
+        domain="[('id', 'in', available_assigned_employee_ids)]",
         tracking=True,
+    )
+    available_assigned_employee_ids = fields.Many2many(
+        "ab_hr_employee",
+        compute="_compute_available_assigned_employee_ids",
     )
     assigned_user_id = fields.Many2one(
         "res.users",
@@ -249,6 +253,11 @@ class AbRequest(models.Model):
         for record in self:
             record.assigned_employee_count = len(record._get_effective_assigned_employees())
 
+    @api.depends("department_id")
+    def _compute_available_assigned_employee_ids(self):
+        for record in self:
+            record.available_assigned_employee_ids = record._get_assignable_employees()
+
     @api.depends("activity_ids")
     def _compute_activity_count(self):
         for record in self:
@@ -362,6 +371,46 @@ class AbRequest(models.Model):
         self.ensure_one()
         return self._get_effective_assigned_employees().mapped("user_id") or self.assigned_user_id
 
+    def _get_department_hierarchy(self, department):
+        """Return a department and all descendants without relying on parent_path."""
+        departments = self.env["ab_hr_department"]
+        pending = department
+        while pending:
+            departments |= pending
+            pending = pending.mapped("child_ids") - departments
+        return departments
+
+    def _get_assignable_department_ids(self):
+        """Return the request department and all nested child departments."""
+        self.ensure_one()
+        if not self.department_id:
+            return []
+        return self._get_department_hierarchy(self.department_id).ids
+
+    def _get_assignable_employees(self):
+        """Return employees assignable from the request department hierarchy."""
+        self.ensure_one()
+        department_ids = self._get_assignable_department_ids()
+        if not department_ids:
+            return self.env["ab_hr_employee"]
+        Employee = self.env["ab_hr_employee"]
+        employees = Employee.search([("department_id", "in", department_ids)])
+        active_jobs = self.env["ab_hr_job_occupied"].search(
+            [
+                ("workplace", "in", department_ids),
+                ("termination_date", "=", False),
+            ]
+        )
+        return employees | active_jobs.mapped("employee_id")
+
+    def _get_assignable_employee_domain(self):
+        """Return the employee domain allowed for assignment on this request."""
+        self.ensure_one()
+        employee_ids = self._get_assignable_employees().ids
+        if not employee_ids:
+            return [("id", "=", 0)]
+        return [("id", "in", employee_ids)]
+
     @api.constrains("request_type_id")
     def _check_request_type_manager(self):
         """Ensure every request references a department with a manager."""
@@ -390,13 +439,12 @@ class AbRequest(models.Model):
 
     @api.constrains("assigned_employee_ids", "department_id")
     def _check_assigned_employee_department(self):
-        """Keep assignment scoped to the request department when possible."""
+        """Keep assignment scoped to the request department hierarchy."""
         for record in self:
-            invalid_employees = record._get_effective_assigned_employees().filtered(
-                lambda employee: employee.department_id and employee.department_id != record.department_id
-            )
+            assignable_employees = record._get_assignable_employees()
+            invalid_employees = record._get_effective_assigned_employees() - assignable_employees
             if invalid_employees:
-                raise ValidationError(_("All assigned employees must belong to the request department."))
+                raise ValidationError(_("All assigned employees must belong to the request department hierarchy."))
 
     @api.constrains("deadline")
     def _check_deadline_not_overdue(self):
