@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_hr_payroll_sheet_admin,access.ab.hr.payroll.sheet.admin,model_ab_hr_payroll_sheet,ab_payroll.group_ab_hr_payroll_sheet_admin,1,1,1,1
+access_ab_hr_payroll_sheet_system,access.ab.hr.payroll.sheet.system,model_ab_hr_payroll_sheet,base.group_system,1,1,1,1
+access_ab_hr_payroll_sheet_upload_wizard_admin,access.ab.hr.payroll.sheet.upload.wizard.admin,model_ab_hr_payroll_sheet_upload_wizard,ab_payroll.group_ab_hr_payroll_sheet_admin,1,1,1,1
+access_ab_hr_payroll_sheet_upload_wizard_system,access.ab.hr.payroll.sheet.upload.wizard.system,model_ab_hr_payroll_sheet_upload_wizard,base.group_system,1,1,1,1

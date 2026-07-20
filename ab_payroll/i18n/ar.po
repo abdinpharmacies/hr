@@ -1,0 +1,906 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_payroll
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-15 11:29+0000\n"
+"PO-Revision-Date: 2025-04-14 13:11+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "%s Telegram send failed: %s"
+msgstr "فشل إرسال تيليجرام لـ %s: %s"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "%s record is missing."
+msgstr "سجل %s غير موجود."
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_upload_wizard_form
+msgid "2026-06"
+msgstr ""
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_kanban
+msgid "<i class=\"fa fa-building me-1\" title=\"Department\"/>"
+msgstr "<i class=\"fa fa-building me-1\" title=\"الإدارة\"/>"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_kanban
+msgid "<i class=\"fa fa-file-pdf-o me-1\" title=\"File\"/>"
+msgstr "<i class=\"fa fa-file-pdf-o me-1\" title=\"الملف\"/>"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_kanban
+msgid "<i class=\"fa fa-user me-1\" title=\"Manager\"/>"
+msgstr "<i class=\"fa fa-user me-1\" title=\"المدير\"/>"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_kanban
+msgid "<span>Code: </span>"
+msgstr "<span>الكود: </span>"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_upload_wizard_form
+msgid ""
+"<strong>File format:</strong>\n"
+"                            Upload PDF or XLSX files named like\n"
+"                            <code>Employee_Full_Name_1234_Department.pdf</"
+"code>.\n"
+"                            ZIP files are accepted for bulk upload and "
+"should contain PDF/XLSX files with the same naming format.\n"
+"                            The employee HR code can appear after the "
+"employee full name.\n"
+"                            Duplicate validation is applied per payroll "
+"period and payroll type."
+msgstr ""
+"<strong>صيغة الملف:</strong>\n"
+"                            ارفع ملفات PDF أو XLSX بأسماء مثل\n"
+"                            <code>اسم_الموظف_الكامل_1234_الإدارة.pdf</"
+"code>.\n"
+"                            يتم قبول ملفات ZIP للرفع المجمع ويجب أن تحتوي "
+"على ملفات PDF/XLSX بنفس صيغة التسمية.\n"
+"                            يمكن أن يظهر كود الموظف لدى الموارد البشرية بعد "
+"اسم الموظف الكامل.\n"
+"                            يتم تطبيق التحقق من التكرار حسب فترة الرواتب "
+"ونوع شيت الراتب."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid ""
+"A copy of your payroll sheet has been sent\n"
+"Employee Code: %(code)s\n"
+"Payroll Type: %(payroll_type)s"
+msgstr ""
+"تم إرسال نسخة من شيت الراتب الخاص بك\n"
+"كود الموظف: %(code)s\n"
+"نوع الشيت: %(payroll_type)s"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid ""
+"A new payroll sheet has been uploaded\n"
+"Employee: %(employee)s\n"
+"Employee Code: %(code)s\n"
+"Payroll Type: %(payroll_type)s"
+msgstr ""
+"تم رفع شيت راتب جديد\n"
+"الموظف: %(employee)s\n"
+"كود الموظف: %(code)s\n"
+"نوع الشيت: %(payroll_type)s"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_needaction
+msgid "Action Needed"
+msgstr "الإجراء المطلوب"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "زخرفة استثناء النشاط"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط "
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__state__archived
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Archived."
+msgstr "تمت الأرشفة."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد الملحقات"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Audit History"
+msgstr "سجل التدقيق"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__audit_log
+msgid "Audit Log"
+msgstr "سجل التدقيق"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_upload_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__create_uid
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__create_uid
+msgid "Created by"
+msgstr "إنشاء بواسطة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__create_date
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__state__delivered
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Delivered"
+msgstr "تم التسليم"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__delivered_date
+msgid "Delivered Date"
+msgstr "تاريخ التسليم"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__department_id
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Department"
+msgstr "الإدارة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__manager_id
+msgid "Direct Manager"
+msgstr "المدير المباشر"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Direct manager is missing."
+msgstr "المدير المباشر غير محدد."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_employee__display_name
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__display_name
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__display_name
+msgid "Display Name"
+msgstr "الاسم الظاهر في العرض"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__employee_code
+msgid "Employee Code"
+msgstr "كود الموظف"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Employee Telegram chat ID is missing for %s."
+msgstr "معرف محادثة تيليجرام للموظف غير موجود لـ %s."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/ab_hr_employee.py:0
+msgid "Employee code %s is not active."
+msgstr "كود الموظف %s غير نشط."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Employee could not be identified from filename."
+msgstr "تعذر تحديد الموظف من اسم الملف."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Employee could not be identified."
+msgstr "تعذر تحديد الموظف."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid ""
+"Employee has multiple active roles. The filename department must match one "
+"active role."
+msgstr ""
+"للموظف أكثر من دور نشط. يجب أن تطابق الإدارة في اسم الملف أحد الأدوار النشطة."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/ab_hr_employee.py:0
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Employee is not active."
+msgstr "الموظف غير نشط."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Employee role is not active."
+msgstr "دور الموظف غير نشط."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/ab_hr_employee.py:0
+msgid "Employee was not found."
+msgstr "لم يتم العثور على الموظف."
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__state__failed
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Failed: %s"
+msgstr "فشل: %s"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Failed: Direct manager is missing."
+msgstr "فشل: المدير المباشر غير موجود."
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Failure"
+msgstr "الفشل"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__file_checksum
+msgid "File Checksum"
+msgstr "بصمة الملف"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__file_extension
+msgid "File Extension"
+msgstr "امتداد الملف"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__file_name
+msgid "File Name"
+msgstr "اسم الملف"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Filename department matches more than one active employee role."
+msgstr "الإدارة في اسم الملف تطابق أكثر من دور نشط للموظف."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Filename must follow Employee_Full_Name_1234_Department.pdf format."
+msgstr "يجب أن يتبع اسم الملف صيغة اسم_الموظف_الكامل_1234_الإدارة.pdf."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Filename must include the employee HR code."
+msgstr "يجب أن يحتوي اسم الملف على كود الموظف لدى الموارد البشرية."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__attachment_ids
+msgid "Files"
+msgstr "الملفات"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__payroll_type__final
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet_upload_wizard__payroll_type__final
+msgid "Final"
+msgstr "نهائي"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: ab_payroll
+#: model:ir.actions.server,name:ab_payroll.ir_cron_ab_hr_employee_telegram_import_ir_actions_server
+msgid "HR Employee Telegram Code Import"
+msgstr "استيراد كود تيليجرام لموظفي الموارد البشرية"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__has_message
+msgid "Has Message"
+msgstr "يحتوي على رسالة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_employee__id
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__id
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__id
+msgid "ID"
+msgstr "م"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_exception_icon
+msgid "Icon"
+msgstr "أيقونة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة للإشارة إلى عمل/ نشاط استثنائي"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "تستدعي الرسائل الجديدة انتباهك عند الفحص"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__message_has_error
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "تحدث مشكلة في الوصول لبعض الرسائل عند الفحص"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/wizard/payroll_sheet_upload_wizard.py:0
+msgid "Invalid ZIP file: %s"
+msgstr "ملف ZIP غير صالح: %s"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Invalid file type: %s"
+msgstr "نوع ملف غير صالح: %s"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__write_uid
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__write_date
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__write_date
+msgid "Last Updated on"
+msgstr "حدث آخر مرة بتاريخ"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Manager Telegram chat ID is missing for %s."
+msgstr "معرف محادثة تيليجرام للمدير غير موجود لـ %s."
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__distribution_scope__manager_only
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet_upload_wizard__distribution_scope__manager_only
+msgid "Managers Only"
+msgstr "المديرون فقط"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__distribution_scope__manager_and_employee
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet_upload_wizard__distribution_scope__manager_and_employee
+msgid "Managers and Employees"
+msgstr "المديرون والموظفون"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Mark Delivered"
+msgstr "تحديد كمُسلَّم"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Marked delivered."
+msgstr "تم تحديده كمُسلَّم."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في وصول الرسالة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__telegram_message_body
+msgid ""
+"Message sent with the payroll file. It is initialized automatically and can "
+"be edited before sending."
+msgstr ""
+"الرسالة المرسلة مع ملف الرواتب. يتم إعدادها تلقائياً ويمكن تعديلها قبل "
+"الإرسال."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__payroll_period
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__payroll_period
+msgid "Monthly payroll period in YYYY-MM format."
+msgstr "فترة الرواتب الشهرية بصيغة YYYY-MM."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "الموعد النهائي لنشاطي"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "الميعاد النهائي للنشاط التالي"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/ab_hr_employee.py:0
+msgid "No active employee was found for code: %s"
+msgstr "لم يتم العثور على موظف نشط للكود: %s"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__notes
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراء"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "هدد الرسائل التي بها مشاكل في الوصول"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Only PDF and XLSX payroll files are allowed."
+msgstr "يسمح فقط بملفات الرواتب بصيغة PDF و XLSX."
+
+#. module: ab_payroll
+#: model:res.groups,name:ab_payroll.group_ab_hr_payroll_sheet_admin
+msgid "Payroll Administrator"
+msgstr "مسؤول الرواتب"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__attachment_id
+msgid "Payroll Attachment"
+msgstr "مرفق الرواتب"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__payroll_file
+msgid "Payroll File"
+msgstr "ملف الرواتب"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__payroll_file_name
+msgid "Payroll Filename"
+msgstr "اسم ملف الرواتب"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__payroll_period
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__payroll_period
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Payroll Period"
+msgstr "فترة الرواتب"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Payroll Sheet"
+msgstr "شيت الراتب"
+
+#. module: ab_payroll
+#: model:ir.model,name:ab_payroll.model_ab_hr_payroll_sheet
+msgid "Payroll Sheet Distribution"
+msgstr "توزيع شيتات الرواتب"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_graph
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_pivot
+msgid "Payroll Sheet Metrics"
+msgstr "مؤشرات شيتات الرواتب"
+
+#. module: ab_payroll
+#: model:ir.actions.server,name:ab_payroll.ir_cron_ab_hr_payroll_sheet_distribution_ir_actions_server
+msgid "Payroll Sheet Telegram Distribution"
+msgstr "توزيع شيتات الرواتب عبر تيليجرام"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/wizard/payroll_sheet_upload_wizard.py:0
+#: model:ir.actions.act_window,name:ab_payroll.action_ab_hr_payroll_sheet
+#: model:ir.ui.menu,name:ab_payroll.menu_ab_hr_payroll_sheet
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_list
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Payroll Sheets"
+msgstr "شيتات الرواتب"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__payroll_type
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__payroll_type
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Payroll Type"
+msgstr "نوع شيت الراتب"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Payroll file is required."
+msgstr "ملف الرواتب مطلوب."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Payroll period must use YYYY-MM format, for example 2026-06."
+msgstr "يجب أن تكون فترة الرواتب بصيغة YYYY-MM، مثال 2026-06."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Payroll sheet has already been sent."
+msgstr "تم إرسال شيت الراتب بالفعل."
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__payroll_type__preliminary
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet_upload_wizard__payroll_type__preliminary
+msgid "Preliminary"
+msgstr "مبدئي"
+
+#. module: ab_payroll
+#: model:ir.actions.server,name:ab_payroll.action_ab_hr_payroll_sheet_queue_distribution_multi
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Queue Distribution"
+msgstr "إضافة إلى قائمة الإرسال"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__queue_after_upload
+msgid "Queue Distribution After Upload"
+msgstr "إضافة إلى قائمة الإرسال بعد الرفع"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__state__queued
+msgid "Queued"
+msgstr "في قائمة الإرسال"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Queued for Telegram distribution."
+msgstr "تمت الإضافة إلى قائمة الإرسال عبر تيليجرام."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__rating_ids
+msgid "Ratings"
+msgstr "التقييمات"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسئول"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__retry_count
+msgid "Retry Count"
+msgstr "عدد المحاولات"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم الرسالة النصية"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__distribution_scope
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet_upload_wizard__distribution_scope
+msgid "Send To"
+msgstr "الإرسال إلى"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__state__sent
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__sent_date
+msgid "Sent Date"
+msgstr "تاريخ الإرسال"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__sheet_count
+msgid "Sheet Count"
+msgstr "عدد الشيتات"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Skipped duplicate send attempt; already sent."
+msgstr "تم تخطي محاولة إرسال مكررة؛ تم الإرسال مسبقاً."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__state
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"الحالة بناءً على الأنشطة\n"
+"متأخر: مر تاريخ الاستحقاق بالفعل\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مخطط: أنشطة مستقبلية."
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__telegram_chat_id
+msgid "Telegram Chat"
+msgstr "محادثة تيليجرام"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_employee__telegram_chat_id
+msgid "Telegram Chat ID"
+msgstr "معرف محادثة تيليجرام"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_employee__telegram_linked_at
+msgid "Telegram Linked At"
+msgstr "وقت ربط تيليجرام"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__telegram_message_body
+msgid "Telegram Message"
+msgstr "رسالة تيليجرام"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__telegram_message_id
+msgid "Telegram Message ID"
+msgstr "معرف رسالة تيليجرام"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Telegram Status"
+msgstr "حالة تيليجرام"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_employee__telegram_user_id
+msgid "Telegram User ID"
+msgstr "معرف مستخدم تيليجرام"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_employee__telegram_username
+msgid "Telegram Username"
+msgstr "اسم مستخدم تيليجرام"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/ab_hr_employee.py:0
+msgid "Telegram account linked to employee %s."
+msgstr "تم ربط حساب تيليجرام بالموظف %s."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid ""
+"Telegram bot token is missing. Configure system parameter telegram.bot.token."
+msgstr "رمز بوت تيليجرام غير موجود. قم بإعداد معامل النظام telegram.bot.token."
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Telegram message sent with the payroll file"
+msgstr "رسالة تيليجرام المرسلة مع ملف الرواتب"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Telegram send result: sent to %s."
+msgstr "نتيجة إرسال تيليجرام: تم الإرسال إلى %s."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Telegram sender module is not installed."
+msgstr "موديول إرسال تيليجرام غير مثبت."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/ab_hr_employee.py:0
+msgid "Telegram service is not installed."
+msgstr "خدمة تيليجرام غير مثبتة."
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid ""
+"This payroll file already exists for employee %(employee)s, period "
+"%(period)s, and type %(type)s."
+msgstr ""
+"ملف الرواتب هذا موجود بالفعل للموظف %(employee)s، الفترة %(period)s، والنوع "
+"%(type)s."
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع النشاط الاستثنائي المسجل/ المرصود"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_upload_wizard_form
+msgid "Upload"
+msgstr "رفع"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__upload_date
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_search
+msgid "Upload Date"
+msgstr "تاريخ الرفع"
+
+#. module: ab_payroll
+#: model:ir.actions.act_window,name:ab_payroll.action_ab_hr_payroll_sheet_upload_wizard
+#: model:ir.model,name:ab_payroll.model_ab_hr_payroll_sheet_upload_wizard
+#: model:ir.ui.menu,name:ab_payroll.menu_ab_hr_payroll_sheet_upload
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_upload_wizard_form
+msgid "Upload Payroll Sheets"
+msgstr "رفع شيتات الرواتب"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__uploaded_by
+msgid "Uploaded By"
+msgstr "تم الرفع بواسطة"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid "Uploaded by %s"
+msgstr "تم الرفع بواسطة %s"
+
+#. module: ab_payroll
+#: model_terms:ir.ui.view,arch_db:ab_payroll.view_ab_hr_payroll_sheet_form
+msgid "Validate"
+msgstr "تحقق"
+
+#. module: ab_payroll
+#: model:ir.model.fields.selection,name:ab_payroll.selection__ab_hr_payroll_sheet__state__validated
+msgid "Validated"
+msgstr "تم التحقق"
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/models/payroll_sheet.py:0
+msgid ""
+"Validation result: employee=%s manager=%s match=%s role=%s department=%s"
+msgstr "نتيجة التحقق: الموظف=%s المدير=%s المطابقة=%s الدور=%s الإدارة=%s"
+
+#. module: ab_payroll
+#: model:ir.model.fields,field_description:ab_payroll.field_ab_hr_payroll_sheet__website_message_ids
+msgid "Website Messages"
+msgstr "رسائل الموقع"
+
+#. module: ab_payroll
+#: model:ir.model.fields,help:ab_payroll.field_ab_hr_payroll_sheet__website_message_ids
+msgid "Website communication history"
+msgstr "سجل مراسلات الموقع"
+
+#. module: ab_payroll
+#: model:ir.model,name:ab_payroll.model_ab_hr_employee
+msgid "ab_hr_employee"
+msgstr ""
+
+#. module: ab_payroll
+#. odoo-python
+#: code:addons/ab_payroll/wizard/payroll_sheet_upload_wizard.py:0
+msgid "id"
+msgstr ""

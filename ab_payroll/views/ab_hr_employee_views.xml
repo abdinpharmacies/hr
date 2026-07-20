@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_hr_employee_form_payroll_telegram" model="ir.ui.view">
+        <field name="name">ab.hr.employee.form.payroll.telegram</field>
+        <field name="model">ab_hr_employee</field>
+        <field name="inherit_id" ref="ab_hr.ab_hr_employee_view_form"/>
+        <field name="arch" type="xml">
+            <field name="graduate" position="after">
+                <field name="telegram_chat_id"/>
+                <field name="telegram_user_id"/>
+                <field name="telegram_username"/>
+                <field name="telegram_linked_at"/>
+            </field>
+        </field>
+    </record>
+</odoo>
