@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="view_ab_hr_payroll_sheet_upload_wizard_form" model="ir.ui.view">
-            <field name="name">ab.hr.payroll.sheet.upload.wizard.form</field>
-            <field name="model">ab.hr.payroll.sheet.upload.wizard</field>
+            <field name="name">ab_hr_payroll_sheet.upload.wizard.form</field>
+            <field name="model">ab_hr_payroll_sheet_upload_wizard</field>
             <field name="arch" type="xml">
                 <form string="Upload Payroll Sheets">
                     <sheet>
@@ -11,7 +11,8 @@
                             <strong>File format:</strong>
                             Upload PDF or XLSX files named like
                             <code>Employee_Full_Name_1234_Department.pdf</code>.
-                            ZIP files are accepted for bulk upload and should contain PDF/XLSX files with the same naming format.
+                            ZIP files are accepted for bulk upload and should contain PDF/XLSX files with the same
+                            naming format.
                             The employee HR code can appear after the employee full name.
                             Duplicate validation is applied per payroll period and payroll type.
                         </div>

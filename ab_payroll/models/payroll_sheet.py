@@ -33,7 +33,7 @@ EMPLOYEE_PAYROLL_MESSAGE = (
 
 
 class AbHrPayrollSheet(models.Model):
-    _name = "ab.hr.payroll.sheet"
+    _name = "ab_hr_payroll_sheet"
     _description = "Payroll Sheet Distribution"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "upload_date desc, id desc"
@@ -202,13 +202,14 @@ class AbHrPayrollSheet(models.Model):
             limit=1,
         )
 
-    @api.constrains("active", "employee_id", "department_id", "payroll_type", "payroll_period", "file_checksum", "state")
+    @api.constrains("active", "employee_id", "department_id", "payroll_type", "payroll_period", "file_checksum",
+                    "state")
     def _check_duplicate_upload(self):
         for record in self.filtered(
-            lambda rec: rec.employee_id
-            and rec.payroll_type
-            and rec.payroll_type != "preliminary"
-            and rec.file_checksum
+                lambda rec: rec.employee_id
+                            and rec.payroll_type
+                            and rec.payroll_type != "preliminary"
+                            and rec.file_checksum
         ):
             duplicate = record._find_blocking_duplicate()
             if duplicate:
@@ -462,8 +463,9 @@ class AbHrPayrollSheet(models.Model):
             candidates = Employee.search([]) if code_fields else Employee
             exact = candidates.filtered(
                 lambda emp: (
-                    self._normalize_identifier(emp.costcenter_id.code) == normalized_code
-                    or any(self._normalize_identifier(emp[field_name]) == normalized_code for field_name in code_fields)
+                        self._normalize_identifier(emp.costcenter_id.code) == normalized_code
+                        or any(
+                    self._normalize_identifier(emp[field_name]) == normalized_code for field_name in code_fields)
                 )
             )
             employee, ambiguous = self._select_employee_candidate(exact, parsed, "normalized_code")
@@ -589,7 +591,8 @@ class AbHrPayrollSheet(models.Model):
                 "label": _("Manager"),
                 "employee": self.manager_id,
                 "chat_id": manager_chat_id,
-                "missing_message": _("Manager Telegram chat ID is missing for %s.") % (self.manager_id.display_name or "-"),
+                "missing_message": _("Manager Telegram chat ID is missing for %s.") % (
+                            self.manager_id.display_name or "-"),
             }
         )
         if self.distribution_scope == "manager_and_employee":
@@ -602,7 +605,7 @@ class AbHrPayrollSheet(models.Model):
                         "employee": self.employee_id,
                         "chat_id": employee_chat_id,
                         "missing_message": _("Employee Telegram chat ID is missing for %s.")
-                        % (self.employee_id.display_name or "-"),
+                                           % (self.employee_id.display_name or "-"),
                     }
                 )
         return recipients
@@ -711,7 +714,8 @@ class AbHrPayrollSheet(models.Model):
                 "last_error": False if manager else _("Direct manager is missing."),
             }
             if not record.telegram_message_body:
-                vals["telegram_message_body"] = record._default_telegram_message_text(employee, parsed.get("employee_code"))
+                vals["telegram_message_body"] = record._default_telegram_message_text(employee,
+                                                                                      parsed.get("employee_code"))
             record.write(vals)
             record._append_audit(
                 _("Validation result: employee=%s manager=%s match=%s role=%s department=%s")
@@ -823,8 +827,8 @@ class AbHrPayrollSheet(models.Model):
     def _telegram_error_text(self, error):
         error_text = str(error)
         if error_text == (
-            "A request to the Telegram API was unsuccessful. Error code: 400. "
-            "Description: Bad Request: chat not found"
+                "A request to the Telegram API was unsuccessful. Error code: 400. "
+                "Description: Bad Request: chat not found"
         ):
             return _(
                 "A request to the Telegram API was unsuccessful. Error code: 400. "
@@ -969,7 +973,8 @@ class AbHrPayrollSheet(models.Model):
                 self._append_audit(_("Payroll message and file sent to employee."))
             elif not self.employee_file_sent and self.manager_file_sent:
                 self.write({"employee_file_sent": True})
-                self._append_audit(_("Personal payroll message sent; own payroll file was delivered in the manager batch."))
+                self._append_audit(
+                    _("Personal payroll message sent; own payroll file was delivered in the manager batch."))
         except Exception as exc:
             self._mark_delivery_failed(exc)
             return False

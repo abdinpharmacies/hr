@@ -10,7 +10,7 @@ from odoo.tools.translate import _
 
 
 class AbHrPayrollSheetUploadWizard(models.TransientModel):
-    _name = "ab.hr.payroll.sheet.upload.wizard"
+    _name = "ab_hr_payroll_sheet_upload_wizard"
     _description = "Upload Payroll Sheets"
 
     payroll_type = fields.Selection(
@@ -38,8 +38,8 @@ class AbHrPayrollSheetUploadWizard(models.TransientModel):
 
     def action_upload(self):
         self.ensure_one()
-        Sheet = self.env["ab.hr.payroll.sheet"].sudo()
-        created = self.env["ab.hr.payroll.sheet"]
+        Sheet = self.env["ab_hr_payroll_sheet"].sudo()
+        created = self.env["ab_hr_payroll_sheet"]
         for attachment in self.attachment_ids:
             file_name = attachment.name or ""
             extension = os.path.splitext(file_name)[1].lstrip(".").lower()
@@ -60,15 +60,15 @@ class AbHrPayrollSheetUploadWizard(models.TransientModel):
         return {
             "type": "ir.actions.act_window",
             "name": _("Payroll Sheets"),
-            "res_model": "ab.hr.payroll.sheet",
+            "res_model": "ab_hr_payroll_sheet",
             "view_mode": "list,form",
             "domain": [("id", "in", created.ids)],
         }
 
     def _create_from_zip(self, attachment):
         self.ensure_one()
-        Sheet = self.env["ab.hr.payroll.sheet"].sudo()
-        created = self.env["ab.hr.payroll.sheet"]
+        Sheet = self.env["ab_hr_payroll_sheet"].sudo()
+        created = self.env["ab_hr_payroll_sheet"]
         try:
             zip_bytes = base64.b64decode(attachment.datas or b"")
             archive = zipfile.ZipFile(io.BytesIO(zip_bytes))
@@ -88,7 +88,7 @@ class AbHrPayrollSheetUploadWizard(models.TransientModel):
                     "name": inner_name,
                     "type": "binary",
                     "datas": file_datas,
-                    "res_model": "ab.hr.payroll.sheet",
+                    "res_model": "ab_hr_payroll_sheet",
                 }
             )
             sheet = Sheet.create(

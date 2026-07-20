@@ -2,14 +2,14 @@
 <odoo>
     <record id="action_ab_hr_payroll_sheet" model="ir.actions.act_window">
         <field name="name">Payroll Sheets</field>
-        <field name="res_model">ab.hr.payroll.sheet</field>
+        <field name="res_model">ab_hr_payroll_sheet</field>
         <field name="view_mode">list,kanban,form,graph,pivot</field>
         <field name="context">{'active_test': False}</field>
     </record>
 
     <record id="action_ab_hr_payroll_sheet_upload_wizard" model="ir.actions.act_window">
         <field name="name">Upload Payroll Sheets</field>
-        <field name="res_model">ab.hr.payroll.sheet.upload.wizard</field>
+        <field name="res_model">ab_hr_payroll_sheet_upload_wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

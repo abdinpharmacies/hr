@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="view_ab_hr_payroll_sheet_list" model="ir.ui.view">
-            <field name="name">ab.hr.payroll.sheet.list</field>
-            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="name">ab_hr_payroll_sheet.list</field>
+            <field name="model">ab_hr_payroll_sheet</field>
             <field name="arch" type="xml">
                 <list string="Payroll Sheets"
                       decoration-muted="state in ['draft', 'archived']"
@@ -35,8 +35,8 @@
         </record>
 
         <record id="view_ab_hr_payroll_sheet_kanban" model="ir.ui.view">
-            <field name="name">ab.hr.payroll.sheet.kanban</field>
-            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="name">ab_hr_payroll_sheet.kanban</field>
+            <field name="model">ab_hr_payroll_sheet</field>
             <field name="arch" type="xml">
                 <kanban class="o_kanban_small_column" default_group_by="state">
                     <field name="employee_id"/>
@@ -99,16 +99,20 @@
         </record>
 
         <record id="view_ab_hr_payroll_sheet_form" model="ir.ui.view">
-            <field name="name">ab.hr.payroll.sheet.form</field>
-            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="name">ab_hr_payroll_sheet.form</field>
+            <field name="model">ab_hr_payroll_sheet</field>
             <field name="arch" type="xml">
                 <form string="Payroll Sheet">
                     <header>
-                        <button name="action_validate" type="object" string="Validate" class="btn-secondary" invisible="state not in ['draft', 'failed']"/>
-                        <button name="action_queue_distribution" type="object" string="Queue Distribution" class="btn-primary" invisible="state not in ['validated', 'failed']"/>
-                        <button name="action_mark_delivered" type="object" string="Mark Delivered" invisible="state != 'sent'"/>
+                        <button name="action_validate" type="object" string="Validate" class="btn-secondary"
+                                invisible="state not in ['draft', 'failed']"/>
+                        <button name="action_queue_distribution" type="object" string="Queue Distribution"
+                                class="btn-primary" invisible="state not in ['validated', 'failed']"/>
+                        <button name="action_mark_delivered" type="object" string="Mark Delivered"
+                                invisible="state != 'sent'"/>
                         <button name="action_archive" type="object" string="Archive" invisible="state == 'archived'"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,validated,queued,sent,delivered,failed,archived"/>
+                        <field name="state" widget="statusbar"
+                               statusbar_visible="draft,validated,queued,sent,delivered,failed,archived"/>
                     </header>
                     <sheet>
                         <group>
@@ -182,8 +186,8 @@
         </record>
 
         <record id="view_ab_hr_payroll_sheet_search" model="ir.ui.view">
-            <field name="name">ab.hr.payroll.sheet.search</field>
-            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="name">ab_hr_payroll_sheet.search</field>
+            <field name="model">ab_hr_payroll_sheet</field>
             <field name="arch" type="xml">
                 <search string="Payroll Sheets">
                     <field name="employee_id"/>
@@ -192,7 +196,8 @@
                     <field name="manager_id"/>
                     <field name="payroll_period"/>
                     <field name="file_name"/>
-                    <filter name="pending" string="Pending" domain="[('state', 'in', ['draft', 'validated', 'queued'])]"/>
+                    <filter name="pending" string="Pending"
+                            domain="[('state', 'in', ['draft', 'validated', 'queued'])]"/>
                     <filter name="sent" string="Sent" domain="[('state', '=', 'sent')]"/>
                     <filter name="delivered" string="Delivered" domain="[('state', '=', 'delivered')]"/>
                     <filter name="failed" string="Failed" domain="[('state', '=', 'failed')]"/>
@@ -208,8 +213,8 @@
         </record>
 
         <record id="view_ab_hr_payroll_sheet_graph" model="ir.ui.view">
-            <field name="name">ab.hr.payroll.sheet.graph</field>
-            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="name">ab_hr_payroll_sheet.graph</field>
+            <field name="model">ab_hr_payroll_sheet</field>
             <field name="arch" type="xml">
                 <graph string="Payroll Sheet Metrics" type="bar">
                     <field name="department_id" type="row"/>
@@ -221,8 +226,8 @@
         </record>
 
         <record id="view_ab_hr_payroll_sheet_pivot" model="ir.ui.view">
-            <field name="name">ab.hr.payroll.sheet.pivot</field>
-            <field name="model">ab.hr.payroll.sheet</field>
+            <field name="name">ab_hr_payroll_sheet.pivot</field>
+            <field name="model">ab_hr_payroll_sheet</field>
             <field name="arch" type="xml">
                 <pivot string="Payroll Sheet Metrics">
                     <field name="department_id" type="row"/>
