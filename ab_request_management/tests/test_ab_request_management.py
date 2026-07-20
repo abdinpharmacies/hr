@@ -393,6 +393,57 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
 
+    def test_manager_can_assign_employees_from_child_department_hierarchy(self):
+        child_department = self.Departments.create(
+            {
+                "name": "Support Unit",
+                "parent_id": self.department.id,
+            }
+        )
+        nested_department = self.Departments.create(
+            {
+                "name": "Support Sub Unit",
+                "parent_id": child_department.id,
+            }
+        )
+        child_employee = self._create_employee("Child Department Employee", self.second_assignee_user)
+        nested_employee = self._create_employee("Nested Department Employee", self.assignee_user)
+        child_employee.department_id = child_department.id
+        nested_employee.department_id = nested_department.id
+
+        request = self._create_request()
+        with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):
+            request.with_user(self.manager_user).action_approve()
+            request.with_user(self.manager_user).with_context(allow_assignment_write=True).write(
+                {
+                    "assigned_employee_ids": [(6, 0, [child_employee.id, nested_employee.id])],
+                }
+            )
+
+        self.assertSetEqual(set(request.assigned_employee_ids.ids), {child_employee.id, nested_employee.id})
+
+    def test_assignment_employee_domain_includes_department_descendants(self):
+        child_department = self.Departments.create(
+            {
+                "name": "Support Child Domain",
+                "parent_id": self.department.id,
+            }
+        )
+        nested_department = self.Departments.create(
+            {
+                "name": "Support Nested Domain",
+                "parent_id": child_department.id,
+            }
+        )
+
+        request = self._create_request()
+        department_ids = set(request._get_assignable_department_ids())
+
+        self.assertIn(self.department.id, department_ids)
+        self.assertIn(child_department.id, department_ids)
+        self.assertIn(nested_department.id, department_ids)
+        self.assertNotIn(self.other_department.id, department_ids)
+
     def test_admin_has_manager_level_access_on_requests(self):
         request = self._create_request()
         with patch("odoo.addons.mail.models.mail_thread.MailThread.message_post", autospec=True):

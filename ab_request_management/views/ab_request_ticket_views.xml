@@ -497,6 +497,7 @@
                                         </div>
                                         <div class="ab_request_grid_row">
                                             <div class="ab_request_grid_cell ab_request_grid_full">
+                                                <field name="available_assigned_employee_ids" invisible="1"/>
                                                 <label for="assigned_employee_ids" string="Assigned Employees"/>
                                                 <field name="assigned_employee_ids" widget="many2many_tags"
                                                        readonly="not can_edit_assignment_details"/>
