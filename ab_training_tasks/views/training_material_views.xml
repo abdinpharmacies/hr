@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_training_material_search" model="ir.ui.view">
+            <field name="name">ab.training.material.search</field>
+            <field name="model">ab.training.material</field>
+            <field name="arch" type="xml">
+                <search string="Training Materials">
+                    <field name="file_name"/>
+                    <field name="task_title"/>
+                    <field name="member_id"/>
+                    <field name="category_id"/>
+                    <field name="task_type_id"/>
+                    <separator/>
+                    <filter name="images" string="Images" domain="[('file_type', '=', 'image')]"/>
+                    <filter name="pdf" string="PDF" domain="[('file_type', '=', 'pdf')]"/>
+                    <filter name="powerpoint" string="PowerPoint" domain="[('file_type', '=', 'ppt')]"/>
+                    <filter name="videos" string="Videos" domain="[('file_type', '=', 'video')]"/>
+                    <filter name="audio" string="Audio" domain="[('file_type', '=', 'audio')]"/>
+                    <separator/>
+                    <filter name="uploaded_at" string="Upload Date" date="uploaded_at"/>
+                    <separator/>
+                    <filter name="group_file_type" string="File Type" context="{'group_by': 'file_type'}"/>
+                    <filter name="group_category" string="Material Category" context="{'group_by': 'category_id'}"/>
+                    <filter name="group_task_type" string="Task Type" context="{'group_by': 'task_type_id'}"/>
+                    <filter name="group_member" string="Member" context="{'group_by': 'member_id'}"/>
+                    <filter name="group_month" string="Upload Month" context="{'group_by': 'uploaded_at:month'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_training_material_list" model="ir.ui.view">
+            <field name="name">ab.training.material.list</field>
+            <field name="model">ab.training.material</field>
+            <field name="arch" type="xml">
+                <list string="Training Materials" create="false" edit="false" default_order="uploaded_at desc">
+                    <field name="file_data" filename="file_name" string="File"/>
+                    <field name="file_name"/>
+                    <field name="file_type" widget="badge"/>
+                    <field name="task_title"/>
+                    <field name="category_id"/>
+                    <field name="task_type_id" optional="show"/>
+                    <field name="member_id"/>
+                    <field name="file_size_display" optional="show"/>
+                    <field name="uploaded_by" optional="hide"/>
+                    <field name="uploaded_at"/>
+                    <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_training_material_upload_form" model="ir.ui.view">
+            <field name="name">ab.training.material.upload.form</field>
+            <field name="model">ab.training.material</field>
+            <field name="arch" type="xml">
+                <form string="Upload Training Material" class="ab_training_core_form core_ui_form_modern">
+                    <sheet>
+                        <group string="File">
+                            <field name="task_id" invisible="1"/>
+                            <field name="file_name" invisible="1"/>
+                            <field name="accepted_file_extensions" invisible="1"/>
+                            <field name="file_data" filename="file_name" widget="training_material_binary"
+                                   options="{'accepted_field': 'accepted_file_extensions'}"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_training_material_form" model="ir.ui.view">
+            <field name="name">ab.training.material.form</field>
+            <field name="model">ab.training.material</field>
+            <field name="arch" type="xml">
+                <form string="Training Material" create="false" edit="false"
+                      class="ab_training_core_form core_ui_form_modern">
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="file_name"/>
+                            <h1><field name="file_name" readonly="1"/></h1>
+                        </div>
+                        <group>
+                            <group string="File">
+                                <field name="file_data" filename="file_name" readonly="1"/>
+                                <field name="file_type" widget="badge" readonly="1"/>
+                                <field name="mimetype" readonly="1"/>
+                                <field name="file_size_display" readonly="1"/>
+                            </group>
+                            <group string="Training Task">
+                                <field name="task_title" readonly="1"/>
+                                <field name="task_id"
+                                       groups="ab_training_tasks.group_training_tasks_manager"
+                                       readonly="1"/>
+                                <field name="category_id" readonly="1"/>
+                                <field name="task_type_id" readonly="1"/>
+                                <field name="member_id" readonly="1"/>
+                            </group>
+                        </group>
+                        <group string="Upload Details">
+                            <field name="uploaded_by" readonly="1"/>
+                            <field name="uploaded_at" readonly="1"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</odoo>

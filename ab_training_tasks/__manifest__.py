@@ -16,6 +16,7 @@
         'data/training_task_sequence.xml',
         'views/training_category_views.xml',
         'views/training_task_type_views.xml',
+        'views/training_material_views.xml',
         'views/training_task_views.xml',
         'views/training_wallet_views.xml',
         'views/training_wallet_reset_views.xml',
@@ -25,7 +26,9 @@
     'assets': {
         'web.assets_backend': [
             'ab_training_tasks/static/src/js/training_dashboard.js',
+            'ab_training_tasks/static/src/js/training_material_upload.js',
             'ab_training_tasks/static/src/xml/training_dashboard.xml',
+            'ab_training_tasks/static/src/xml/training_material_upload.xml',
             'ab_training_tasks/static/src/scss/training_tasks.scss',
         ],
     },

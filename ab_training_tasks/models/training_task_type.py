@@ -33,7 +33,6 @@ class TrainingTaskType(models.Model):
         currency_field='currency_id',
         default=0.0,
     )
-
     _non_negative_incentive = models.Constraint(
         'CHECK(incentive_value >= 0)',
         'The incentive value cannot be negative.',

@@ -32,6 +32,17 @@
                                 <field name="active" widget="boolean_toggle"/>
                             </group>
                         </group>
+                        <group string="Allowed File Types" class="ab_training_upload_types">
+                            <group>
+                                <field name="allow_image_files" widget="boolean_toggle"/>
+                                <field name="allow_pdf_files" widget="boolean_toggle"/>
+                                <field name="allow_ppt_files" widget="boolean_toggle"/>
+                            </group>
+                            <group>
+                                <field name="allow_video_files" widget="boolean_toggle"/>
+                                <field name="allow_audio_files" widget="boolean_toggle"/>
+                            </group>
+                        </group>
                         <group string="Description" col="1" class="ab_training_wide_text_group">
                             <field name="description" nolabel="1" class="ab_training_textarea_wide"
                                    placeholder="Describe the material category..."/>

@@ -96,11 +96,43 @@ class TrainingTask(models.Model):
     )
     paid_at = fields.Datetime(related='wallet_reset_line_id.reset_at', readonly=True)
     is_paid = fields.Boolean(compute='_compute_is_paid')
+    material_ids = fields.One2many(
+        'ab.training.material',
+        'task_id',
+        string='Training Materials',
+        copy=False,
+    )
+    file_upload_allowed = fields.Boolean(compute='_compute_allowed_file_types')
+    allowed_file_types_display = fields.Char(
+        string='Allowed File Types',
+        compute='_compute_allowed_file_types',
+    )
+    allowed_file_extensions = fields.Char(
+        string='Allowed File Extensions',
+        compute='_compute_allowed_file_types',
+    )
 
     @api.depends('wallet_reset_line_id')
     def _compute_is_paid(self):
         for task in self:
             task.is_paid = bool(task.wallet_reset_line_id)
+
+    @api.depends(
+        'category_id.allow_image_files',
+        'category_id.allow_pdf_files',
+        'category_id.allow_ppt_files',
+        'category_id.allow_video_files',
+        'category_id.allow_audio_files',
+    )
+    @api.depends_context('lang')
+    def _compute_allowed_file_types(self):
+        for task in self:
+            labels = task.category_id._allowed_file_type_labels() if task.category_id else []
+            task.file_upload_allowed = bool(labels)
+            task.allowed_file_types_display = ', '.join(labels) if labels else _('No file uploads allowed')
+            task.allowed_file_extensions = (
+                task.category_id._allowed_file_extensions() if task.category_id else ''
+            )
 
     @api.onchange('category_id')
     def _onchange_category_id(self):
@@ -205,7 +237,7 @@ class TrainingTask(models.Model):
 
         business_fields = {
             'name', 'member_id', 'category_id', 'task_type_id', 'completion_date',
-            'description', 'material_reference',
+            'description', 'material_reference', 'material_ids',
         }
         if not is_manager and requested_fields & business_fields:
             if any(task.member_id != self.env.user for task in self):
@@ -240,6 +272,13 @@ class TrainingTask(models.Model):
             if task_type.category_id != category:
                 raise ValidationError(_(
                     'The selected task type does not belong to the selected material category.'
+                ))
+            incompatible_materials = self.material_ids.filtered(
+                lambda material: not category._allows_file_type(material.file_type)
+            )
+            if incompatible_materials:
+                raise ValidationError(_(
+                    'The task type cannot be changed because existing training materials use disallowed file types.'
                 ))
             company = task_type.company_id
             if company not in member.company_ids:

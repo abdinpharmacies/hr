@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_training_tasks.TrainingMaterialBinaryField"
+       t-inherit="web.BinaryField"
+       t-inherit-mode="primary">
+        <xpath expr="//FileUploader" position="attributes">
+            <attribute name="acceptedFileExtensions">acceptedFileExtensions</attribute>
+        </xpath>
+    </t>
+</templates>
