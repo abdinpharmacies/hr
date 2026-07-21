@@ -4,18 +4,14 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-<<<<<<< Updated upstream
-    'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter', 'ab_hr', 'ab_payroll'],
-=======
     'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter'],
->>>>>>> Stashed changes
-
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',
         'security/record_rules.xml',
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
+        'data/install_extensions.xml',
 
     ],
     'installable': True,
