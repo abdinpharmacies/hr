@@ -66,9 +66,10 @@
             <field name="inherit_id" ref="ab_supplier_claim_cycle.invoice_view_form"/>
             <field name="arch" type="xml">
 
-                <!-- Add form-level styling class -->
+                <!-- Add form-level styling class and custom controller -->
                 <xpath expr="//form" position="attributes">
                     <attribute name="class">scc-form-container</attribute>
+                    <attribute name="js_class">ab_supplier_claim_cycle_form</attribute>
                 </xpath>
 
                 <!-- Replace the simple header with full workflow buttons -->
@@ -111,14 +112,15 @@
                                 class="btn-danger"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
                                 invisible="not assigned_escalation_user or not can_secretarial_override"/>
-                        <button name="action_open_supplier_type_wizard" type="object" string="Set Supplier Type"
-                                class="btn-secondary"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status != 'secretarial' or not can_edit_documents"/>
                         <button name="action_toggle_chatter" type="object"
                                 class="btn-secondary float-end"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
                             💬
+                        </button>
+                        <button name="%(action_ab_supplier_mapping)d" type="action"
+                                class="btn-secondary float-end"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_admin">
+                            ⚙️
                         </button>
                         <field name="status" invisible="1"/>
                     </header>
@@ -141,6 +143,7 @@
                         <field name="escalation_count" invisible="1"/>
                         <field name="has_pending_escalation" invisible="1"/>
                         <field name="escalation_missing_manager" invisible="1"/>
+                        <field name="supplier_type" invisible="1"/>
                         <field name="has_tax_accounts" invisible="1"/>
                         <field name="tax_percentage" invisible="1"/>
                         <field name="tax_amount" invisible="1"/>
@@ -149,7 +152,6 @@
                         <field name="is_dev_override" invisible="1"/>
                         <field name="is_escalation_viewer" invisible="1"/>
                         <field name="show_dev_override_badge" invisible="1"/>
-                        <field name="show_telegram_connect_button" invisible="1"/>
                         <field name="show_chatter" invisible="1"/>
 
                         <!-- DEV OVERRIDE BADGE -->
@@ -170,29 +172,55 @@
                             <div class="scc-supplier-card-header">
                                 <div class="scc-supplier-avatar">S</div>
                                 <div style="flex:1;">
-                                    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+                                    <div style="display:flex;align-items:center;gap:12px;">
                                         <span class="scc-supplier-name">
-                                            <field name="supplier_id" readonly="not can_current_user_edit" options="{'open_form': True}"/>
+                                            <field name="supplier_id" readonly="not can_current_user_edit" options="{'open_form': True}" context="{'supplier_claim_filter': True}"/>
                                             <span class="scc-supplier-link-icon">↗</span>
                                         </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
-                                            🏷 <field name="name" readonly="1" class="o_inline_modifier"/>
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;"
-                                              invisible="supplier_type != 'withholding_tax'">
-                                            🏛 <span>Withholding Tax</span> • <field name="tax_percentage" class="o_inline_modifier"/>%
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
-                                              invisible="supplier_type != 'advance_payment'">
-                                            <span>Advance Payment</span>
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
-                                              invisible="supplier_type != 'non_taxable'">
-                                            <span>Non-Taxable</span>
-                                        </span>
-                                        <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
-                                            📅 <field name="claim_month" readonly="status != 'secretarial'"/>
-                                        </span>
+                                        <div class="scc-meta-badges">
+                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
+                                                🏷 <field name="name" readonly="1" class="o_inline_modifier"/>
+                                            </span>
+                                            <span class="scc-section-badge scc-section-badge--medicine"
+                                                  invisible="supplier_section != 'medicine'">
+                                                💊 <span>ادوية</span>
+                                            </span>
+                                            <span class="scc-section-badge scc-section-badge--cosmetics"
+                                                  invisible="supplier_section != 'cosmetics'">
+                                                💄 <span>تجميل</span>
+                                            </span>
+                                            <span class="scc-section-badge scc-section-badge--medical_preps"
+                                                  invisible="supplier_section != 'medical_preps'">
+                                                🩺 <span>مستحضرات طبية</span>
+                                            </span>
+                                            <span class="scc-section-badge scc-section-badge--supplies"
+                                                  invisible="supplier_section != 'supplies'">
+                                                📦 <span>مستلزمات</span>
+                                            </span>
+                                            <span class="scc-section-badge scc-section-badge--import_medicine"
+                                                  invisible="supplier_section != 'import_medicine'">
+                                                🌍 <span>مستورد ادوية</span>
+                                            </span>
+                                            <span class="scc-section-badge scc-section-badge--import_cosmetics"
+                                                  invisible="supplier_section != 'import_cosmetics'">
+                                                🌐 <span>مستورد تجميل</span>
+                                            </span>
+                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;"
+                                                  invisible="supplier_type != 'withholding_tax'">
+                                                🏛 <span>Withholding Tax</span> • <field name="tax_percentage" class="o_inline_modifier"/>%
+                                            </span>
+                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
+                                                  invisible="supplier_type != 'advance_payment'">
+                                                <span>Advance Payment</span>
+                                            </span>
+                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
+                                                  invisible="supplier_type != 'non_taxable'">
+                                                <span>Non-Taxable</span>
+                                            </span>
+                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
+                                                📅 <field name="claim_month" readonly="status != 'secretarial'"/>
+                                            </span>
+                                        </div>
                                     </div>
                                     <div class="scc-supplier-sub">
                                         <field name="area" readonly="not can_current_user_edit"/>
@@ -255,20 +283,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-
-                        <div class="scc-tg-connect-wrapper" invisible="not show_telegram_connect_button">
-                            <div class="scc-tg-connect-card">
-                                <span class="scc-tg-connect-badge">Setup Required</span>
-                                <div class="scc-tg-connect-icon-wrap">
-                                    <span class="scc-tg-connect-icon">✈️</span>
-                                </div>
-                                <div class="scc-tg-connect-title">Telegram Not Connected</div>
-                                <div class="scc-tg-connect-sub">Connect your Telegram account to receive workflow approvals, escalation alerts, supplier claim notifications and real-time updates.</div>
-                                <button name="action_open_telegram_bot" type="object" class="scc-tg-connect-btn">
-                                    <span>✈️</span> Connect Telegram
-                                </button>
                             </div>
                         </div>
 

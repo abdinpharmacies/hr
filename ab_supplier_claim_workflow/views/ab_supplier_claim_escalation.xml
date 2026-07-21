@@ -9,7 +9,6 @@
                 <list>
                     <field name="claim_id"/>
                     <field name="manager_id"/>
-                    <field name="manager_telegram_badge" optional="show" readonly="1"/>
                     <field name="department_name"/>
                     <field name="current_stage"/>
                     <field name="escalation_time"/>
@@ -32,7 +31,6 @@
                             <group string="Escalation Info">
                                 <field name="claim_id"/>
                                 <field name="manager_id"/>
-                                <field name="manager_telegram_badge" readonly="1"/>
                                 <field name="department_name"/>
                                 <field name="current_stage"/>
                                 <field name="escalation_time"/>

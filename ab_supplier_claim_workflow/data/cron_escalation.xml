@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <function model="ir.config_parameter" name="set_param">
+        <value eval="'supplier_claim.escalation_sla_seconds'"/>
+        <value eval="'86400'"/>
+    </function>
+
     <data noupdate="1">
         <record id="ir_cron_supplier_claim_escalation" model="ir.cron">
             <field name="name">Supplier Claim Stage Escalation</field>
