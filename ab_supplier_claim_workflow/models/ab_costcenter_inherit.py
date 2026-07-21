@@ -6,6 +6,43 @@ from odoo import _, models, fields, api
 class ClsCostCenters(models.Model):
     _inherit = 'ab_costcenter'
 
+    def name_search(self, name='', args=None, operator='ilike', limit=100):
+        if self.env.context.get('supplier_claim_filter'):
+            mapped = self.env['ab.supplier.mapping'].sudo().search([]).mapped('supplier_id').ids
+            if mapped:
+                args = list(args or []) + [('id', 'in', mapped)]
+        return super(ClsCostCenters, self).name_search(name, args, operator, limit)
+
+    supplier_type = fields.Selection(
+        string='Supplier Type',
+        selection=[
+            ('advance_payment', 'Advance Payment'),
+            ('withholding_tax', 'Withholding Tax'),
+            ('non_taxable', 'Non-Taxable'),
+        ],
+        copy=False,
+    )
+    region = fields.Selection(
+        string='Region',
+        selection=[
+            ('north', 'North'),
+            ('south', 'South'),
+        ],
+        copy=False,
+    )
+    section = fields.Selection(
+        string='Section',
+        selection=[
+            ('medicine', 'ادوية'),
+            ('cosmetics', 'تجميل'),
+            ('medical_preps', 'مستحضرات طبية'),
+            ('supplies', 'مستلزمات'),
+            ('import_medicine', 'مستورد ادوية'),
+            ('import_cosmetics', 'مستورد تجميل'),
+        ],
+        copy=False,
+    )
+
     claim_ids = fields.One2many(
         'ab_supplier_claim_cycle', 'supplier_id', string='Supplier Claims',
     )

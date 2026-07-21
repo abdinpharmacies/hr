@@ -1,4 +1,4 @@
-from odoo import _, api, fields, models
+from odoo import fields, models
 
 
 class SupplierClaimEscalation(models.Model):
@@ -21,35 +21,6 @@ class SupplierClaimEscalation(models.Model):
     method = fields.Selection(
         selection=[('odoo_activity', 'Odoo Activity'), ('internal_fallback', 'Internal Fallback')],
         string='Notification Method', readonly=True)
-
-    manager_telegram_badge = fields.Char(
-        string='Telegram',
-        compute='_compute_manager_telegram_badge',
-    )
-
-    def _compute_manager_telegram_badge(self):
-        enabled = self.env['ir.config_parameter'].sudo().get_param(
-            'supplier_claim.telegram_dev_override_enabled', 'False') == 'True'
-        dev_user = self.env['res.users']
-        if enabled:
-            email = self.env['ir.config_parameter'].sudo().get_param(
-                'supplier_claim.telegram_dev_override_email', '')
-            if email:
-                dev_user = self.env['res.users'].sudo().search([
-                    '|', ('login', '=', email), ('email', '=', email)
-                ], limit=1)
-        Employee = self.env.get('ab_hr_employee')
-        user_to_telegram = {}
-        if Employee:
-            employees = Employee.sudo().search([('user_id', 'in', self.mapped('manager_id').ids)])
-            user_to_telegram = {e.user_id.id: bool(e.telegram_chat_id) for e in employees}
-        for rec in self:
-            if enabled and dev_user and rec.manager_id == dev_user:
-                rec.manager_telegram_badge = '\U0001F7E0 ' + _('Telegram Connected (DEV)')
-            elif user_to_telegram.get(rec.manager_id.id):
-                rec.manager_telegram_badge = '\U0001F7E0 ' + _('Telegram Connected')
-            else:
-                rec.manager_telegram_badge = '\u26AA ' + _('Telegram Not Connected')
 
     def action_acknowledge(self):
         for rec in self:
