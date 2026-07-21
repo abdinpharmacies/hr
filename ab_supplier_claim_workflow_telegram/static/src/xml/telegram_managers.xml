@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="ab_supplier_claim_workflow_telegram.TelegramManagers">
+        <div class="o_action" t-translation="on">
+            <div class="o_control_panel">
+                <div class="o_cp_left">
+                    <div class="o_cp_breadcrumb" role="navigation">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item">
+                                <a href="#">Supplier Claim</a>
+                            </li>
+                            <li class="breadcrumb-item active">Telegram Connected Employees</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+            <div class="o_content">
+                <div class="o_form_view o_form_nosheet">
+                    <div class="oe_title">
+                        <h1>Telegram Connected Employees</h1>
+                        <p class="text-muted">Employees who have connected to the Telegram bot.</p>
+                    </div>
+
+                    <t t-if="state.loading">
+                        <div class="text-center py-5">
+                            <i class="fa fa-spinner fa-spin fa-3x"/>
+                            <p class="mt-2">Loading...</p>
+                        </div>
+                    </t>
+
+                    <t t-elif="state.employees.length === 0">
+                        <div class="alert alert-info mt-3">
+                            <i class="fa fa-info-circle me-2"/>
+                            No employees have connected to the Telegram bot yet.
+                        </div>
+                    </t>
+
+                    <t t-else="">
+                        <table class="table table-bordered o_list_view mt-3">
+                            <thead>
+                                <tr>
+                                    <th><t t-esc="labels.employeeName"/></th>
+                                    <th><t t-esc="labels.department"/></th>
+                                    <th><t t-esc="labels.telegramUsername"/></th>
+                                    <th><t t-esc="labels.telegramChatId"/></th>
+                                    <th><t t-esc="labels.linkedAt"/></th>
+                                    <th><t t-esc="labels.action"/></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="state.employees" t-as="e" t-key="e.id">
+                                    <tr>
+                                        <td><t t-esc="e.name"/></td>
+                                        <td>
+                                            <t t-if="e.department_name">
+                                                <t t-esc="e.department_name"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">—</span>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="e.telegram_username">
+                                                @<t t-esc="e.telegram_username"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">—</span>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="e.telegram_chat_id">
+                                                <code><t t-esc="e.telegram_chat_id"/></code>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">—</span>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <t t-if="e.linked_at">
+                                                <t t-esc="e.linked_at"/>
+                                            </t>
+                                            <t t-else="">
+                                                <span class="text-muted">—</span>
+                                            </t>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-info"
+                                                    t-on-click="openEmployee(e.id)">
+                                                <i class="fa fa-eye me-1"/> View
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <p class="text-muted small mt-2">
+                            Total: <t t-esc="state.employees.length"/> employee(s) connected.
+                        </p>
+                    </t>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

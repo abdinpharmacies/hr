@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="0">
+    <function model="ab_supplier_claim_telegram_registration" name="migrate_legacy_registration_data"/>
+    <function model="ab_supplier_claim_telegram_registration" name="import_existing_managers"/>
+</odoo>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_supplier_claim_cycle_form_telegram" model="ir.ui.view">
+        <field name="name">supplier.claim.cycle.form.telegram</field>
+        <field name="model">ab_supplier_claim_cycle</field>
+        <field name="inherit_id" ref="ab_supplier_claim_workflow.invoice_view_form"/>
+        <field name="arch" type="xml">
+            <field name="show_chatter" position="after">
+                <field name="show_telegram_connect_button" invisible="1"/>
+            </field>
+            <xpath expr="//field[@name='claim_document']/ancestor::div[contains(@class, 'scc-form-section')][1]" position="before">
+                <div class="scc-tg-connect-wrapper" invisible="not show_telegram_connect_button">
+                    <div class="scc-tg-connect-card">
+                        <span class="scc-tg-connect-badge">Setup Required</span>
+                        <div class="scc-tg-connect-icon-wrap">
+                            <span class="scc-tg-connect-icon">✈️</span>
+                        </div>
+                        <div class="scc-tg-connect-title">Telegram Not Connected</div>
+                        <div class="scc-tg-connect-sub">Connect your Telegram account to receive workflow approvals, escalation alerts, supplier claim notifications and real-time updates.</div>
+                        <button name="action_open_telegram_bot" type="object" class="scc-tg-connect-btn">
+                            <span>✈️</span> Connect Telegram
+                        </button>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
