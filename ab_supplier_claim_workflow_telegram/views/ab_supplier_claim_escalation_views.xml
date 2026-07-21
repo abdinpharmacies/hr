@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_supplier_claim_escalation_tree_telegram" model="ir.ui.view">
+        <field name="name">ab.supplier.claim.escalation.list.telegram</field>
+        <field name="model">ab.supplier.claim.escalation</field>
+        <field name="inherit_id" ref="ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_tree"/>
+        <field name="arch" type="xml">
+            <field name="manager_id" position="after">
+                <field name="manager_telegram_badge" optional="show" readonly="1"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_ab_supplier_claim_escalation_form_telegram" model="ir.ui.view">
+        <field name="name">ab.supplier.claim.escalation.form.telegram</field>
+        <field name="model">ab.supplier.claim.escalation</field>
+        <field name="inherit_id" ref="ab_supplier_claim_workflow.view_ab_supplier_claim_escalation_form"/>
+        <field name="arch" type="xml">
+            <field name="manager_id" position="after">
+                <field name="manager_telegram_badge" readonly="1"/>
+            </field>
+        </field>
+    </record>
+</odoo>
+
