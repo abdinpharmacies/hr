@@ -1,0 +1,530 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_supplier_claim_workflow_telegram
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-19 00:00+0000\n"
+"PO-Revision-Date: 2026-07-19 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: ar_001\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+""
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "<b>Claim Number:</b> %s"
+msgstr "<b>رقم المطالبة:</b> %s"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "<b>Department:</b> %s"
+msgstr "<b>القسم:</b> %s"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "<b>Supplier:</b> %s"
+msgstr "<b>المورد:</b> %s"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Active</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">نشط</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Chat ID</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">معرف المحادثة</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Linked At</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">وقت الربط</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Manager at</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">مدير في</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-stage-field-label o_translate_inline\">Telegram "
+"Connected</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">متصل بتيليجرام</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-stage-field-label o_translate_inline\">Telegram "
+"Username</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">اسم مستخدم تيليجرام</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">Department</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">القسم</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Employee "
+"Name</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">اسم الموظف</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">Is Working</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">يعمل</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<div class=\"scc-supplier-info-label o_translate_inline\">Superior "
+"Department</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">القسم الأعلى</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">User</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">المستخدم</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "<div class=\"scc-supplier-info-label o_translate_inline\">Work Phone</div>"
+msgstr "<div class=\"scc-supplier-info-label o_translate_inline\">هاتف العمل</div>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                            <span class=\"o_translate_inline\">Role Assignment</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">⚙</span>\n"
+"                            <span class=\"o_translate_inline\">إسناد الدور</span>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<span class=\"scc-form-section-title-icon\">📡</span>\n"
+"                            <span class=\"o_translate_inline\">Telegram Connection</span>"
+msgstr ""
+"<span class=\"scc-form-section-title-icon\">📡</span>\n"
+"                            <span class=\"o_translate_inline\">اتصال تيليجرام</span>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_supplier_claim_cycle_form_telegram
+msgid "<span class=\"scc-tg-connect-badge\">Setup Required</span>"
+msgstr "<span class=\"scc-tg-connect-badge\">الإعداد مطلوب</span>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_supplier_claim_cycle_form_telegram
+msgid "<span class=\"scc-tg-connect-icon\">✈️</span>"
+msgstr "<span class=\"scc-tg-connect-icon\">✈️</span>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid ""
+"<span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;background:#e8f5e9;color:#2e7d32;\" invisible=\"not telegram_connected\">\n"
+"                                        <i class=\"fa fa-check-circle\" aria-hidden=\"true\" style=\"font-size:14px;\"/> <span class=\"o_translate_inline\">Telegram Connected</span>\n"
+"                                    </span>"
+msgstr ""
+"<span style=\"display:inline-flex;align-items:center;gap:4px;padding:3px 12px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;background:#e8f5e9;color:#2e7d32;\" invisible=\"not telegram_connected\">\n"
+"                                        <i class=\"fa fa-check-circle\" aria-hidden=\"true\" style=\"font-size:14px;\"/> <span class=\"o_translate_inline\">متصل بتيليجرام</span>\n"
+"                                    </span>"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_supplier_claim_cycle_form_telegram
+msgid "<span>✈️</span> Connect Telegram"
+msgstr "<span>✈️</span> ربط تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model,name:ab_supplier_claim_workflow_telegram.model_res_groups
+msgid "Access Groups"
+msgstr "مجموعات الوصول"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/js/telegram_managers.js:0
+msgid "Action"
+msgstr "الإجراء"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.actions.act_window,help:ab_supplier_claim_workflow_telegram.action_ab_supplier_claim_telegram_registration
+msgid "All senders connected to the Supplier Claim Telegram bot."
+msgstr "كل المرسلين المتصلين ببوت تيليجرام لمطالبات الموردين."
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow_telegram.selection__ab_supplier_claim_telegram_registration__manager_department__bank_accounts
+msgid "Bank Accounts"
+msgstr "حسابات البنوك"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_supplier_claim_cycle_form_telegram
+msgid ""
+"Connect your Telegram account to receive workflow approvals, escalation "
+"alerts, supplier claim notifications and real-time updates."
+msgstr "اربط حساب تيليجرام الخاص بك لاستلام موافقات سير العمل وتنبيهات التصعيد وإشعارات مطالبات المورد والتحديثات الفورية."
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__department_id
+msgid "Department"
+msgstr "القسم"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_cycle__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_escalation__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__display_name
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_res_groups__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__eplus_code
+msgid "E-Plus Code"
+msgstr "كود E-Plus"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__employee_id
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__employee_name
+msgid "Employee Name"
+msgstr "اسم الموظف"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_manager.py:0
+msgid "Employee has no Telegram connection"
+msgstr "الموظف ليس لديه اتصال تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_manager.py:0
+msgid "Employee not found"
+msgstr "الموظف غير موجود"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_telegram_registration.py:0
+msgid "Employee not found with this E-Plus code"
+msgstr "لم يتم العثور على الموظف بهذا الكود"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+msgid "Employees who have connected to the Telegram bot."
+msgstr "الموظفون الذين اتصلوا ببوت تيليجرام."
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_cycle__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_escalation__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_res_groups__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow_telegram.selection__ab_supplier_claim_telegram_registration__manager_department__inventory
+msgid "Inventory"
+msgstr "المخزون"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__is_working
+msgid "Is Working"
+msgstr "يعمل"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__job_id
+msgid "Job"
+msgstr "الوظيفة"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__linked_at
+msgid "Linked At"
+msgstr "وقت الربط"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+msgid "Loading..."
+msgstr "جار التحميل..."
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__manager_department
+msgid "Manager at"
+msgstr "مدير في"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.actions.act_window,name:ab_supplier_claim_workflow_telegram.action_ab_supplier_claim_telegram_managers
+#: model:ir.ui.menu,name:ab_supplier_claim_workflow_telegram.menu_ab_supplier_claim_telegram_managers
+msgid "Managers"
+msgstr "المديرون"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.actions.act_window,help:ab_supplier_claim_workflow_telegram.action_ab_supplier_claim_telegram_managers
+msgid "Managers assigned to a department role via the Telegram bot."
+msgstr "المديرون المسندون إلى دور قسم عبر بوت تيليجرام."
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "N/A"
+msgstr "غير متاح"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+msgid "No employees have connected to the Telegram bot yet."
+msgstr "لم يتصل أي موظف ببوت تيليجرام بعد."
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"No managers are connected to Telegram yet for the %(dept)s department.\n"
+"Time: %(time)s"
+msgstr ""
+"لا يوجد مديرون متصلون بتيليجرام حتى الآن لقسم %(dept)s.\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"No managers connected to Telegram yet in this department.\n"
+"Time: %(time)s"
+msgstr ""
+"لا يوجد مديرون متصلون بتيليجرام حتى الآن في هذا القسم.\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "Not Connected to Telegram"
+msgstr "غير متصل بتيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "Open Odoo and check"
+msgstr "افتح أودو وتابع"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "Please review immediately."
+msgstr "يرجى المراجعة فوراً."
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow_telegram.selection__ab_supplier_claim_telegram_registration__manager_department__purchase
+msgid "Purchase"
+msgstr "المشتريات"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__user_id
+msgid "Related User"
+msgstr "المستخدم المرتبط"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "Select role..."
+msgstr "اختر الدور..."
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_cycle__show_telegram_connect_button
+msgid "Show Telegram Connect Button"
+msgstr "إظهار زر ربط تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__superior_department_id
+msgid "Superior Department"
+msgstr "القسم الأعلى"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+msgid "Supplier Claim"
+msgstr "مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model,name:ab_supplier_claim_workflow_telegram.model_ab_supplier_claim_cycle
+msgid "Supplier Claim Cycle"
+msgstr "دورة مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model,name:ab_supplier_claim_workflow_telegram.model_ab_supplier_claim_escalation
+msgid "Supplier Claim Escalation"
+msgstr "تصعيد مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model,name:ab_supplier_claim_workflow_telegram.model_ab_supplier_claim_telegram_registration
+msgid "Supplier Claim Telegram Registration"
+msgstr "تسجيل تيليجرام المطالبات"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.actions.server,name:ab_supplier_claim_workflow_telegram.ir_cron_ab_supplier_claim_telegram_import_ir_actions_server
+msgid "Supplier Claim: Import Telegram Registrations"
+msgstr "مطالبات المورد: استيراد تسجيلات تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow_telegram.selection__ab_supplier_claim_telegram_registration__manager_department__suppliers
+msgid "Suppliers"
+msgstr "الموردون"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow_telegram.selection__ab_supplier_claim_telegram_registration__manager_department__tax_accounts
+msgid "Tax Accounts"
+msgstr "حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_escalation__manager_telegram_badge
+msgid "Telegram"
+msgstr "تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__telegram_chat_id
+msgid "Telegram Chat ID"
+msgstr "معرف محادثة تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_escalation.py:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__telegram_connected
+msgid "Telegram Connected"
+msgstr "متصل بتيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_escalation.py:0
+msgid "Telegram Connected (DEV)"
+msgstr "تيليجرام متصل (تطوير)"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+#: model:ir.actions.client,name:ab_supplier_claim_workflow_telegram.action_telegram_managers
+msgid "Telegram Connected Employees"
+msgstr "الموظفون المتصلون بتيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.ui.menu,name:ab_supplier_claim_workflow_telegram.menu_ab_supplier_claim_telegram_registration
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_list
+msgid "Telegram Management"
+msgstr "إدارة التيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_escalation.py:0
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_supplier_claim_cycle_form_telegram
+msgid "Telegram Not Connected"
+msgstr "تيليجرام غير متصل"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow_telegram.view_ab_supplier_claim_telegram_registration_form
+msgid "Telegram Registration"
+msgstr "تسجيل تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.actions.act_window,name:ab_supplier_claim_workflow_telegram.action_ab_supplier_claim_telegram_registration
+#: model:ir.ui.menu,name:ab_supplier_claim_workflow_telegram.menu_ab_supplier_claim_telegram_senders
+msgid "Telegram Senders"
+msgstr "مرسلو التيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/js/telegram_managers.js:0
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__telegram_username
+msgid "Telegram Username"
+msgstr "اسم مستخدم تيليجرام"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"The manager assigned to this department is still not connected to Telegram.\n"
+"Time: %(time)s"
+msgstr ""
+"المدير المعيّن لهذا القسم لا يزال غير متصل بتيليجرام.\n"
+"الوقت: %(time)s"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_telegram_registration.py:0
+#: model:ir.model.constraint,message:ab_supplier_claim_workflow_telegram.constraint_ab_supplier_claim_telegram_registration_uniq_employee
+msgid ""
+"This employee is already registered. Each employee can have only one "
+"Telegram link."
+msgstr "هذا الموظف مسجل بالفعل. يمكن لكل موظف امتلاك رابط تيليجرام واحد فقط."
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+msgid "Total:"
+msgstr "الإجمالي:"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+msgid "View"
+msgstr "عرض"
+
+#. module: ab_supplier_claim_workflow_telegram
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow_telegram.field_ab_supplier_claim_telegram_registration__work_phone
+msgid "Work Phone"
+msgstr "هاتف العمل"
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml:0
+msgid "employee(s) connected."
+msgstr "موظف/موظفون متصلون."
+
+#. module: ab_supplier_claim_workflow_telegram
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
+msgid "🚨 <b>Claim Escalation Alert</b>"
+msgstr "🚨 <b>تنبيه تصعيد المطالبة</b>"
