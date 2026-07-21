@@ -35,7 +35,7 @@
                             <div class="scc-mapping-hero-title">
                                 <field name="supplier_id" options="{'no_create': True}" placeholder="Select Supplier..."/>
                             </div>
-                            <div class="scc-mapping-hero-sub">
+                            <div class="scc-mapping-hero-sub o_translate_inline">
                                 Supplier Classification Mapping
                             </div>
                         </div>
@@ -45,23 +45,23 @@
                         <div class="scc-glass-card scc-mapping-section-card">
                             <div class="scc-mapping-section-title">
                                 <span class="scc-mapping-section-icon">🏷</span>
-                                <span>Classification</span>
+                                <span class="o_translate_inline">Classification</span>
                             </div>
                             <div class="scc-mapping-fields">
                                 <div class="scc-mapping-field-row">
-                                    <span class="scc-mapping-field-label o_form_label">Supplier Type</span>
+                                    <span class="scc-mapping-field-label o_form_label o_translate_inline">Supplier Type</span>
                                     <div class="scc-mapping-field-value">
                                         <field name="supplier_type" placeholder="Select type..."/>
                                     </div>
                                 </div>
                                 <div class="scc-mapping-field-row">
-                                    <span class="scc-mapping-field-label o_form_label">Section</span>
+                                    <span class="scc-mapping-field-label o_form_label o_translate_inline">Section</span>
                                     <div class="scc-mapping-field-value">
                                         <field name="section" placeholder="Select section..."/>
                                     </div>
                                 </div>
                                 <div class="scc-mapping-field-row">
-                                    <span class="scc-mapping-field-label o_form_label">Region</span>
+                                    <span class="scc-mapping-field-label o_form_label o_translate_inline">Region</span>
                                     <div class="scc-mapping-field-value">
                                         <field name="region" placeholder="Select region..."/>
                                     </div>
@@ -72,17 +72,17 @@
                         <div class="scc-glass-card scc-mapping-contact-card">
                             <div class="scc-mapping-section-title">
                                 <span class="scc-mapping-section-icon">📞</span>
-                                <span>Contact Info</span>
+                                <span class="o_translate_inline">Contact Info</span>
                             </div>
                             <div class="scc-mapping-fields">
                                 <div class="scc-mapping-field-row">
-                                    <span class="scc-mapping-field-label o_form_label">Mobile Phone</span>
+                                    <span class="scc-mapping-field-label o_form_label o_translate_inline">Mobile Phone</span>
                                     <div class="scc-mapping-field-value">
                                         <field name="mobile_phone" placeholder="—" widget="phone"/>
                                     </div>
                                 </div>
                                 <div class="scc-mapping-field-row">
-                                    <span class="scc-mapping-field-label o_form_label">Work Email</span>
+                                    <span class="scc-mapping-field-label o_form_label o_translate_inline">Work Email</span>
                                     <div class="scc-mapping-field-value">
                                         <field name="work_email" placeholder="—" widget="email"/>
                                     </div>
