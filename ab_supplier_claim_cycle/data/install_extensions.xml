@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="ir.module.module" name="_supplier_claim_install_extension_modules"/>
+</odoo>
