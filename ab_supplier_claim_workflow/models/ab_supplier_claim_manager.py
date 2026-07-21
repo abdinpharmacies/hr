@@ -60,8 +60,6 @@ class ResGroups(models.Model):
                 'group_id': group.id if group else False,
                 'manager_id': manager.id if manager else False,
                 'manager_name': manager.name if manager else False,
-                'telegram_username': manager.telegram_username if manager else '',
-                'has_telegram': bool(manager and manager.telegram_chat_id),
                 'user_id': manager.user_id.id if manager and manager.user_id else False,
             })
         return results
@@ -89,73 +87,11 @@ class ResGroups(models.Model):
         employee = Employee.browse(employee_id).exists()
         if not employee:
             return {'error': _('Employee not found')}
-        if not employee.telegram_chat_id:
-            return {'error': _('Employee has no Telegram connection')}
         self._store_manager(dept_code, employee)
         if employee.user_id:
             group.sudo().write({'users': [(4, employee.user_id.id)]})
         return {
             'success': True,
             'manager_name': employee.name,
-            'telegram_username': employee.telegram_username or '',
-            'has_telegram': bool(employee.telegram_chat_id),
             'user_id': employee.user_id.id if employee.user_id else False,
         }
-
-    @api.model
-    def get_eligible_manager_candidates(self, exclude_dept_code=None):
-        CLAIM_GROUP_MAP = {
-            'inventory': 'supplier_claim_group_inventory',
-            'purchase': 'supplier_claim_group_purchase',
-            'suppliers': 'supplier_claim_group_suppliers',
-            'bank_accounts': 'supplier_claim_group_bank_acc',
-            'tax_accounts': 'supplier_claim_group_tax_accounts',
-        }
-        try:
-            Employee = self.env['ab_hr_employee'].sudo()
-        except KeyError:
-            return []
-        already_assigned_ids = set()
-        for dept_code, xml_id in CLAIM_GROUP_MAP.items():
-            if dept_code == exclude_dept_code:
-                continue
-            mgr = self._get_stored_manager(dept_code)
-            if mgr:
-                already_assigned_ids.add(mgr.id)
-        candidates = Employee.search([
-            ('telegram_chat_id', '!=', False),
-            ('telegram_chat_id', '!=', ''),
-            ('id', 'not in', list(already_assigned_ids)),
-        ])
-        return [{
-            'id': e.id,
-            'name': e.name,
-            'telegram_username': e.telegram_username or '',
-        } for e in candidates]
-
-    @api.model
-    def get_telegram_connected_employees(self):
-        try:
-            Employee = self.env['ab_hr_employee'].sudo()
-        except KeyError:
-            return []
-        employees = Employee.search([
-            ('telegram_chat_id', '!=', False),
-            ('telegram_chat_id', '!=', ''),
-        ], order='name')
-        results = []
-        for e in employees:
-            linked_at = e.telegram_linked_at
-            results.append({
-                'id': e.id,
-                'name': e.name,
-                'department_name': e.department_id.name if e.department_id else '',
-                'department_id': e.department_id.id if e.department_id else False,
-                'telegram_username': e.telegram_username or '',
-                'telegram_chat_id': e.telegram_chat_id or '',
-                'telegram_user_id': e.telegram_user_id or '',
-                'linked_at': linked_at.isoformat() if linked_at else False,
-                'user_id': e.user_id.id if e.user_id else False,
-                'user_name': e.user_id.name if e.user_id else '',
-            })
-        return results

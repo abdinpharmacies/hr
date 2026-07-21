@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="ab_supplier_mapping_tree" model="ir.ui.view">
+        <field name="name">ab.supplier.mapping.tree</field>
+        <field name="model">ab.supplier.mapping</field>
+        <field name="arch" type="xml">
+            <list class="scc-mapping-list" js_class="ab_supplier_mapping">
+                <field name="supplier_id"/>
+                <field name="mobile_phone" optional="show"/>
+                <field name="work_email" optional="show"/>
+                <field name="section" widget="badge"
+                       decoration-info="section == 'medicine'"
+                       decoration-success="section in ('medical_preps', 'supplies')"
+                       decoration-warning="section in ('cosmetics', 'import_cosmetics')"
+                       decoration-danger="section == 'import_medicine'"/>
+                <field name="supplier_type" widget="badge"
+                       decoration-success="supplier_type == 'advance_payment'"
+                       decoration-warning="supplier_type == 'withholding_tax'"
+                       decoration-info="supplier_type == 'non_taxable'"/>
+                <field name="region" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ab_supplier_mapping_form" model="ir.ui.view">
+        <field name="name">ab.supplier.mapping.form</field>
+        <field name="model">ab.supplier.mapping</field>
+        <field name="arch" type="xml">
+            <form class="scc-mapping-form">
+                <sheet>
+                    <div class="scc-mapping-hero">
+                        <div class="scc-mapping-hero-icon">🔗</div>
+                        <div class="scc-mapping-hero-body">
+                            <div class="scc-mapping-hero-title">
+                                <field name="supplier_id" options="{'no_create': True}" placeholder="Select Supplier..."/>
+                            </div>
+                            <div class="scc-mapping-hero-sub">
+                                Supplier Classification Mapping
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="scc-mapping-grid">
+                        <div class="scc-glass-card scc-mapping-section-card">
+                            <div class="scc-mapping-section-title">
+                                <span class="scc-mapping-section-icon">🏷</span>
+                                <span>Classification</span>
+                            </div>
+                            <div class="scc-mapping-fields">
+                                <div class="scc-mapping-field-row">
+                                    <span class="scc-mapping-field-label o_form_label">Supplier Type</span>
+                                    <div class="scc-mapping-field-value">
+                                        <field name="supplier_type" placeholder="Select type..."/>
+                                    </div>
+                                </div>
+                                <div class="scc-mapping-field-row">
+                                    <span class="scc-mapping-field-label o_form_label">Section</span>
+                                    <div class="scc-mapping-field-value">
+                                        <field name="section" placeholder="Select section..."/>
+                                    </div>
+                                </div>
+                                <div class="scc-mapping-field-row">
+                                    <span class="scc-mapping-field-label o_form_label">Region</span>
+                                    <div class="scc-mapping-field-value">
+                                        <field name="region" placeholder="Select region..."/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="scc-glass-card scc-mapping-contact-card">
+                            <div class="scc-mapping-section-title">
+                                <span class="scc-mapping-section-icon">📞</span>
+                                <span>Contact Info</span>
+                            </div>
+                            <div class="scc-mapping-fields">
+                                <div class="scc-mapping-field-row">
+                                    <span class="scc-mapping-field-label o_form_label">Mobile Phone</span>
+                                    <div class="scc-mapping-field-value">
+                                        <field name="mobile_phone" placeholder="—" widget="phone"/>
+                                    </div>
+                                </div>
+                                <div class="scc-mapping-field-row">
+                                    <span class="scc-mapping-field-label o_form_label">Work Email</span>
+                                    <div class="scc-mapping-field-value">
+                                        <field name="work_email" placeholder="—" widget="email"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_ab_supplier_mapping" model="ir.actions.act_window">
+        <field name="name">Supplier Mappings</field>
+        <field name="res_model">ab.supplier.mapping</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>
