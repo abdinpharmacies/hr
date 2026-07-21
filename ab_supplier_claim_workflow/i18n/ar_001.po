@@ -1933,6 +1933,7 @@ msgstr "القسم الأعلى"
 
 #. module: ab_supplier_claim_workflow
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_delegate_phone__partner_id
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__supplier_id
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__supplier_id
 msgid "Supplier"
 msgstr "المورد"
@@ -2070,6 +2071,7 @@ msgstr "رقم مرجع المورد"
 
 #. module: ab_supplier_claim_workflow
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__supplier_type
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__supplier_type
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_type_setup_wizard__supplier_type
 msgid "Supplier Type"
 msgstr "نوع المورد"
@@ -2521,6 +2523,170 @@ msgstr "تيليجرام متصل (تطوير)"
 #: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
 msgid "Finished"
 msgstr "تم الانتهاء"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model,name:ab_supplier_claim_workflow.model_ab_supplier_mapping
+msgid "Supplier Mapping"
+msgstr "ربط المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.actions.act_window,name:ab_supplier_claim_workflow.action_ab_supplier_mapping
+msgid "Supplier Mappings"
+msgstr "ربط الموردين"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Supplier Classification Mapping"
+msgstr "ربط تصنيف المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Classification"
+msgstr "التصنيف"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Contact Info"
+msgstr "معلومات الاتصال"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__section
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Section"
+msgstr "القسم"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__region
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Region"
+msgstr "المنطقة"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Mobile Phone"
+msgstr "رقم المحمول"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__mobile_phone
+msgid "Work Mobile"
+msgstr "هاتف العمل المحمول"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__work_email
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Work Email"
+msgstr "البريد الإلكتروني للعمل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__costcenter_name
+msgid "Cost Center Name"
+msgstr "اسم مركز التكلفة"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Select Supplier..."
+msgstr "اختر المورد..."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Select type..."
+msgstr "اختر النوع..."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Select section..."
+msgstr "اختر القسم..."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid "Select region..."
+msgstr "اختر المنطقة..."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_mapping.py:0
+msgid "A mapping for this supplier already exists."
+msgstr "يوجد ربط لهذا المورد بالفعل."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_mapping.py:0
+msgid "Supplier Type is required."
+msgstr "نوع المورد مطلوب."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<div class=\"scc-mapping-hero-sub o_translate_inline\">\n"
+"                                Supplier Classification Mapping\n"
+"                            </div>"
+msgstr ""
+"<div class=\"scc-mapping-hero-sub o_translate_inline\">\n"
+"                                ربط تصنيف المورد\n"
+"                            </div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<span class=\"scc-mapping-section-icon\">🏷</span>\n"
+"                                <span class=\"o_translate_inline\">Classification</span>"
+msgstr ""
+"<span class=\"scc-mapping-section-icon\">🏷</span>\n"
+"                                <span class=\"o_translate_inline\">التصنيف</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<span class=\"scc-mapping-section-icon\">📞</span>\n"
+"                                <span class=\"o_translate_inline\">Contact Info</span>"
+msgstr ""
+"<span class=\"scc-mapping-section-icon\">📞</span>\n"
+"                                <span class=\"o_translate_inline\">معلومات الاتصال</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">Mobile Phone</span>"
+msgstr ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">رقم المحمول</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">Region</span>"
+msgstr ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">المنطقة</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">Section</span>"
+msgstr ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">القسم</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">Supplier Type</span>"
+msgstr ""
+"<span class=\"scc-mapping-field-label o_form_label "
+"o_translate_inline\">نوع المورد</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+msgid ""
+"<span class=\"scc-mapping-field-label o_form_label o_translate_inline\">Work"
+" Email</span>"
+msgstr ""
+"<span class=\"scc-mapping-field-label o_form_label o_translate_inline\">البريد"
+" الإلكتروني للعمل</span>"
 
 #~ msgid ""
 #~ "<span class=\"scc-form-section-title-icon\">⚙</span>\n"
