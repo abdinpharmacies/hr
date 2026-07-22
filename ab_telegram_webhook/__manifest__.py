@@ -1,13 +1,15 @@
 {
     "name": "AB Telegram Webhook",
-    "summary": "Central Telegram webhook and Bot API connector",
+    "summary": "Telegram webhook echo test using telebot",
     "version": "19.0.1.0.0",
     "license": "LGPL-3",
     "author": "Abdin Pharmacies",
-    "developer": "Alhassan Hossny",
     "website": "https://www.abdinpharmacies.com",
     "category": "Tools",
     "depends": ["base"],
+    "external_dependencies": {
+        "python": ["telebot"],
+    },
     "data": [
         "security/ir.model.access.csv",
         "data/setup.xml",
