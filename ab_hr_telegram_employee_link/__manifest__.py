@@ -1,17 +1,14 @@
 # -*- coding: utf-8 -*-
 {
     "name": "HR Telegram Employee Link",
-    "summary": "Link Telegram chat IDs to HR employees by employee code",
-    "version": "19.0.1.1.1",
+    "summary": "Enable payroll Telegram delivery through the central bot service",
+    "version": "19.0.1.3.0",
     "license": "LGPL-3",
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
     "category": "Human Resources",
-    "depends": ["ab_payroll", "ab_telegram_webhook"],
-    "external_dependencies": {"python": ["telebot"]},
-    "data": [
-        "views/ab_hr_employee_views.xml",
-    ],
+    "depends": ["ab_payroll", "ab_telegram_bot"],
+    "data": [],
     "installable": True,
     "application": False,
 }
