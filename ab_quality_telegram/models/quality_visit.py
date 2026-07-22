@@ -18,14 +18,7 @@ class AbQualityAssuranceVisit(models.Model):
         return result
 
     def _notify_section_department_managers_telegram(self, status):
-        if "ab_hr_bot" not in self.env:
-            _logger.info(
-                "ab_quality_assurance: ab_hr_bot is not available; skipping Quality Telegram notifications."
-            )
-            return
-
-        TelegramService = self.env["ab_telegram_service"]
-        BotLink = self.env["ab_hr_bot"].sudo()
+        TelegramBot = self.env["ab_telegram_bot"].sudo()
         for record in self:
             manager_sections = record._get_unique_section_department_managers()
             if not manager_sections:
@@ -42,38 +35,20 @@ class AbQualityAssuranceVisit(models.Model):
                 sections = manager_data["sections"]
                 if manager.id in notified_manager_ids:
                     continue
-                try:
-                    bot_link = BotLink.find_or_register_employee_chat(manager)
-                except ValidationError as exc:
-                    _logger.warning(
-                        "ab_quality_assurance: manager Telegram binding conflict visit_id=%s manager_employee_id=%s reason=%s",
-                        record.id,
-                        manager.id,
-                        str(exc),
-                    )
-                    continue
-                if not bot_link or not bot_link.chat_id:
-                    _logger.info(
-                        "ab_quality_assurance: no Telegram mapping found for section manager employee_id=%s visit_id=%s",
-                        manager.id,
-                        record.id,
-                    )
-                    continue
-                if bot_link.chat_id in sent_chat_ids:
-                    continue
 
                 message = record._build_section_manager_telegram_message(status, sections)
-                sent = TelegramService.send_telegram_message(bot_link.chat_id, message)
-                if sent:
-                    sent_chat_ids.add(bot_link.chat_id)
+                result = TelegramBot.send_to_record(manager, message)
+                chat_id = result.get("chat_id")
+                if result.get("sent") and chat_id and chat_id not in sent_chat_ids:
+                    sent_chat_ids.add(chat_id)
                     record._mark_telegram_manager_notified(status, manager.id)
                 _logger.info(
-                    "ab_quality_assurance: section manager notification visit_id=%s manager_employee_id=%s chat_id=%s status=%s sent=%s",
+                    "ab_quality_assurance: section manager notification visit_id=%s manager_employee_id=%s status=%s sent=%s reason=%s",
                     record.id,
                     manager.id,
-                    bot_link.chat_id,
                     status,
-                    sent,
+                    result.get("sent"),
+                    result.get("reason"),
                 )
 
     def _get_telegram_notified_manager_ids(self, status):
