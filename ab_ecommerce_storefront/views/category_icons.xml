@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="category_icon" name="Abdin Storefront Category Icon">
+        <t t-set="ab_category_presentation"
+           t-value="website._ab_storefront_category_presentation(ab_category)"/>
+        <span t-attf-class="ab-storefront-category-icon ab-storefront-category-icon-#{ab_category_presentation['tone']}"
+              aria-hidden="true">
+            <i t-attf-class="fa #{ab_category_presentation['icon']}"/>
+        </span>
+    </template>
+
+    <template id="shop_filmstrip_category_icons"
+              name="Abdin Shop Filmstrip Category Icons"
+              inherit_id="website_sale.filmstrip_categories"
+              priority="90">
+        <xpath expr="//div[@name='o_wsale_filmstrip_image']" position="replace">
+            <t t-set="ab_category" t-value="c"/>
+            <t t-call="ab_ecommerce_storefront.category_icon"/>
+        </xpath>
+        <xpath expr="//div[@name='o_wsale_filmstrip_placeholder']" position="replace"/>
+        <xpath expr="//a[@t-att-aria-label='c.name']" position="attributes">
+            <attribute name="t-att-aria-label">website._ab_storefront_category_label(c)</attribute>
+        </xpath>
+        <xpath expr="//span[@t-field='c.name']" position="replace">
+            <span t-out="website._ab_storefront_category_label(c)"/>
+        </xpath>
+    </template>
+</odoo>

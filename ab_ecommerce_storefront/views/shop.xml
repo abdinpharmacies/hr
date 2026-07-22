@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="shop_category_navigation_item" name="Abdin Shop Category Navigation Item">
+        <t t-set="ab_children" t-value="c.child_id"/>
+        <t t-if="not request.env.user._is_internal()"
+           t-set="ab_children"
+           t-value="ab_children.filtered('has_published_products')"/>
+        <li class="ab-storefront-side-category-item">
+            <a t-att-href="keep('%s/category/%s' % (shop_path, request.env['ir.http']._slug(c)))"
+               t-attf-class="ab-storefront-side-category-link #{'active' if category and c.id == category.id else ''} #{'is-path' if category and c.id in category.parents_and_self.ids else ''}"
+               t-att-aria-current="'page' if category and c.id == category.id else None">
+                <span class="ab-storefront-side-category-label">
+                    <t t-set="ab_category" t-value="c"/>
+                    <t t-call="ab_ecommerce_storefront.category_icon"/>
+                    <span t-out="website._ab_storefront_category_label(c)"/>
+                </span>
+                <i t-if="ab_children" class="fa fa-angle-right" aria-hidden="true"/>
+            </a>
+            <ul t-if="ab_children" class="ab-storefront-side-category-children list-unstyled">
+                <t t-foreach="ab_children" t-as="c">
+                    <t t-call="ab_ecommerce_storefront.shop_category_navigation_item"/>
+                </t>
+            </ul>
+        </li>
+    </template>
+
+    <template id="shop_category_navigation" name="Abdin Shop Category Navigation">
+        <nav class="ab-storefront-side-categories" aria-label="Shop categories">
+            <h2>All categories</h2>
+            <ul class="ab-storefront-side-category-list list-unstyled mb-0">
+                <li class="ab-storefront-side-category-item">
+                    <a t-att-href="keep(shop_path)"
+                       t-attf-class="ab-storefront-side-category-link #{'active' if not category else ''}"
+                       t-att-aria-current="'page' if not category else None">
+                        <span class="ab-storefront-side-category-label">
+                            <span class="ab-storefront-category-icon ab-storefront-category-icon-green" aria-hidden="true">
+                                <i class="fa fa-shopping-bag"/>
+                            </span>
+                            <span>All products</span>
+                        </span>
+                    </a>
+                </li>
+                <t t-foreach="categories" t-as="c">
+                    <t t-call="ab_ecommerce_storefront.shop_category_navigation_item"/>
+                </t>
+            </ul>
+        </nav>
+    </template>
+
+    <template id="shop" name="Abdin eCommerce Shop" inherit_id="website_sale.products" priority="90">
+        <xpath expr="//t[@t-set='hasLeftColumn']" position="attributes">
+            <attribute name="t-value">categories or opt_wsale_categories or opt_wsale_attributes</attribute>
+        </xpath>
+        <xpath expr="//t[@t-set='wsale_has_filters_btn']" position="attributes">
+            <attribute name="t-value">categories or opt_wsale_categories or opt_wsale_attributes or opt_wsale_attributes_top</attribute>
+        </xpath>
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add="ab-storefront-shop" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_container']" position="before">
+            <section class="ab-storefront-shop-hero">
+                <div class="container py-4 py-lg-5">
+                    <span class="ab-storefront-kicker">
+                        <t t-if="category">Browse category</t>
+                        <t t-else="">Abdin online pharmacy</t>
+                    </span>
+                    <h1 class="mb-2">
+                        <span t-if="category" t-out="website._ab_storefront_category_label(category)"/>
+                        <span t-else="">Healthcare products for every day</span>
+                    </h1>
+                    <p class="mb-0">
+                        <t t-if="category">Explore trusted products selected for your health and wellbeing.</t>
+                        <t t-else="">Search medicines, personal care, wellness, and pharmacy essentials.</t>
+                    </p>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_container']" position="attributes">
+            <attribute name="class" add="ab-storefront-shop-container" separator=" "/>
+        </xpath>
+        <xpath expr="//aside[@id='products_grid_before']" position="attributes">
+            <attribute name="class" add="ab-storefront-filter-panel" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='products_grid']" position="attributes">
+            <attribute name="class" add="ab-storefront-products-grid" separator=" "/>
+        </xpath>
+        <xpath expr="//section[@id='o_wsale_products_grid']" position="attributes">
+            <attribute name="class" add="ab-storefront-product-grid" separator=" "/>
+        </xpath>
+        <xpath expr="//aside[@id='products_grid_before']//t[@t-if='show_price_filter' and @t-call='website_sale.filter_products_price']" position="after">
+            <t t-if="categories" t-call="ab_ecommerce_storefront.shop_category_navigation"/>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_container']" position="after">
+            <section class="ab-storefront-shop-assurance">
+                <div class="container py-4">
+                    <div class="row g-3 text-center text-md-start">
+                        <div class="col-6 col-lg-3"><i class="fa fa-check-circle me-2"/>Genuine products</div>
+                        <div class="col-6 col-lg-3"><i class="fa fa-lock me-2"/>Secure checkout</div>
+                        <div class="col-6 col-lg-3"><i class="fa fa-truck me-2"/>Convenient delivery</div>
+                        <div class="col-6 col-lg-3"><i class="fa fa-phone me-2"/>Help on 19036</div>
+                    </div>
+                </div>
+            </section>
+        </xpath>
+    </template>
+
+    <template id="shop_category_navigation_offcanvas"
+              name="Abdin Shop Category Navigation Offcanvas"
+              inherit_id="website_sale.o_wsale_offcanvas"
+              priority="90">
+        <xpath expr="//div[@id='o_wsale_offcanvas_content']/t[@t-call='website_sale.filter_products_price']" position="after">
+            <div t-if="categories" class="accordion-item d-lg-none ab-storefront-side-categories-mobile">
+                <div class="accordion-body py-3">
+                    <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="shop_product_card" name="Abdin Shop Product Card" inherit_id="website_sale.products_item" priority="90">
+        <xpath expr="//form" position="attributes">
+            <attribute name="class" add="ab-storefront-product-card" separator=" "/>
+        </xpath>
+        <xpath expr="//input[@name='csrf_token']/parent::div" position="attributes">
+            <attribute name="class" add="ab-storefront-product-media" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_wsale_product_information')]" position="attributes">
+            <attribute name="class" add="ab-storefront-product-body" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="shop_product_buttons" name="Abdin Shop Product Buttons" inherit_id="website_sale.shop_product_buttons" priority="90">
+        <xpath expr="//button[hasclass('o_wsale_product_btn_primary')]" position="attributes">
+            <attribute name="class" add="w-100" separator=" "/>
+        </xpath>
+    </template>
+</odoo>

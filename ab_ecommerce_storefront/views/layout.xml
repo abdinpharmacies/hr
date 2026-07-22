@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="layout" name="Abdin eCommerce Layout" inherit_id="website.layout" priority="120">
+        <xpath expr="//body" position="attributes">
+            <attribute name="class" add="ab-storefront" separator=" "/>
+        </xpath>
+
+        <xpath expr="//header[@id='top']" position="replace">
+            <header t-if="not no_header" id="top" data-anchor="true" class="ab-storefront-header">
+                <t t-set="ab_header_categories" t-value="website._ab_storefront_categories(limit=7)"/>
+
+                <div class="ab-storefront-announcement">
+                    <div class="container d-flex align-items-center justify-content-between gap-3 py-2">
+                        <span class="d-flex align-items-center gap-2">
+                            <i class="fa fa-shield" aria-hidden="true"/>
+                            <span>Trusted pharmacy care, delivered to your door</span>
+                        </span>
+                        <div class="d-none d-md-flex align-items-center gap-4">
+                            <a href="tel:19036" class="text-reset text-decoration-none">
+                                <i class="fa fa-phone me-1" aria-hidden="true"/>
+                                Hotline <span class="o_force_ltr">19036</span>
+                            </a>
+                            <a href="/contactus" class="text-reset text-decoration-none">Contact us</a>
+                        </div>
+                    </div>
+                </div>
+
+                <nav class="ab-storefront-main-nav navbar navbar-expand-lg">
+                    <div class="container flex-wrap gap-3 py-3">
+                        <a href="/" class="ab-storefront-brand navbar-brand d-flex align-items-center gap-2 me-auto" aria-label="Abdin Pharmacies home">
+                            <img t-att-src="website.image_url(website, 'logo')"
+                                 alt="Abdin Pharmacies"
+                                 width="176"
+                                 height="58"
+                                 loading="eager"/>
+                            <span class="ab-storefront-brand-fallback">
+                                <strong>Abdin</strong>
+                                <small>Pharmacies</small>
+                            </span>
+                        </a>
+
+                        <div class="ab-storefront-search-wrap d-none d-lg-block order-lg-1">
+                            <t t-call="website.website_search_box_input">
+                                <t t-set="search_type" t-value="'products'"/>
+                                <t t-set="action" t-value="'/shop'"/>
+                                <t t-set="limit" t-value="8"/>
+                                <t t-set="display_image" t-value="'true'"/>
+                                <t t-set="display_description" t-value="'true'"/>
+                                <t t-set="display_extra_link" t-value="'true'"/>
+                                <t t-set="display_detail" t-value="'true'"/>
+                                <t t-set="placeholder">What are you looking for?</t>
+                                <t t-set="_form_classes" t-value="'ab-storefront-search input-group'"/>
+                                <t t-set="_input_classes" t-value="'form-control'"/>
+                                <t t-set="_submit_classes" t-value="'btn btn-primary'"/>
+                            </t>
+                        </div>
+
+                        <ul class="ab-storefront-actions navbar-nav flex-row align-items-center order-lg-2">
+                            <t t-call="website_sale_wishlist.header_wishlist_link">
+                                <t t-set="_icon" t-value="True"/>
+                                <t t-set="_link_class" t-value="'ab-storefront-action btn position-relative'"/>
+                                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 rounded-pill'"/>
+                            </t>
+                            <t t-call="website_sale.header_cart_link">
+                                <t t-set="_icon" t-value="True"/>
+                                <t t-set="_link_class" t-value="'ab-storefront-action btn position-relative'"/>
+                                <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 rounded-pill'"/>
+                            </t>
+                            <li t-if="request.env.user._is_public()" class="nav-item d-none d-sm-block">
+                                <a t-att-href="'/web/login?redirect=%s' % request.httprequest.path"
+                                   class="ab-storefront-action btn"
+                                   aria-label="Sign in"
+                                   title="Sign in">
+                                    <i class="fa fa-user" aria-hidden="true"/>
+                                </a>
+                            </li>
+                            <li t-else="" class="nav-item d-none d-sm-block">
+                                <a href="/my/home"
+                                   class="ab-storefront-action btn"
+                                   aria-label="My account"
+                                   title="My account">
+                                    <i class="fa fa-user" aria-hidden="true"/>
+                                </a>
+                            </li>
+                            <t t-call="website.placeholder_header_language_selector">
+                                <t t-set="_item_class" t-value="'nav-item d-none d-md-block ab-storefront-language-item'"/>
+                                <t t-set="_btn_class" t-value="'ab-storefront-language btn'"/>
+                                <t t-set="_dropdown_menu_class" t-value="'dropdown-menu-end'"/>
+                            </t>
+                            <li class="nav-item d-lg-none">
+                                <button class="ab-storefront-action btn"
+                                        type="button"
+                                        data-bs-toggle="offcanvas"
+                                        data-bs-target="#abStorefrontMobileNav"
+                                        aria-controls="abStorefrontMobileNav"
+                                        aria-label="Open navigation">
+                                    <i class="fa fa-bars" aria-hidden="true"/>
+                                </button>
+                            </li>
+                        </ul>
+
+                        <div class="ab-storefront-search-wrap d-lg-none w-100 order-3">
+                            <t t-call="website.website_search_box_input">
+                                <t t-set="search_type" t-value="'products'"/>
+                                <t t-set="action" t-value="'/shop'"/>
+                                <t t-set="limit" t-value="8"/>
+                                <t t-set="display_image" t-value="'true'"/>
+                                <t t-set="display_description" t-value="'false'"/>
+                                <t t-set="display_extra_link" t-value="'true'"/>
+                                <t t-set="display_detail" t-value="'true'"/>
+                                <t t-set="placeholder">Search medicines and wellness products</t>
+                                <t t-set="_form_classes" t-value="'ab-storefront-search input-group'"/>
+                                <t t-set="_input_classes" t-value="'form-control'"/>
+                                <t t-set="_submit_classes" t-value="'btn btn-primary'"/>
+                            </t>
+                        </div>
+                    </div>
+                </nav>
+
+                <div class="ab-storefront-category-nav d-none d-lg-block">
+                    <div class="container d-flex align-items-center gap-2">
+                        <div class="dropdown">
+                            <button class="ab-storefront-categories-toggle btn dropdown-toggle"
+                                    type="button"
+                                    data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                <i class="fa fa-th-large me-2" aria-hidden="true"/>
+                                Shop by category
+                            </button>
+                            <div class="dropdown-menu ab-storefront-category-menu">
+                                <a href="/shop" class="dropdown-item fw-semibold">All products</a>
+                                <a t-foreach="ab_header_categories"
+                                   t-as="ab_category"
+                                   t-att-href="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)"
+                                   class="dropdown-item ab-storefront-category-menu-link">
+                                    <t t-call="ab_ecommerce_storefront.category_icon"/>
+                                    <span t-out="website._ab_storefront_category_label(ab_category)"/>
+                                </a>
+                            </div>
+                        </div>
+                        <ul class="navbar-nav flex-row align-items-center flex-grow-1 overflow-hidden">
+                            <li t-foreach="ab_header_categories" t-as="ab_category" class="nav-item">
+                                <a t-att-href="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)"
+                                   class="nav-link">
+                                    <span t-out="website._ab_storefront_category_label(ab_category)"/>
+                                </a>
+                            </li>
+                            <li t-if="not ab_header_categories" class="nav-item">
+                                <a href="/shop" class="nav-link">All products</a>
+                            </li>
+                        </ul>
+                        <a href="/shop" class="ab-storefront-shop-link text-decoration-none text-nowrap">
+                            Shop now
+                            <i class="fa fa-arrow-right ms-1" aria-hidden="true"/>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="offcanvas offcanvas-end ab-storefront-mobile-nav"
+                     tabindex="-1"
+                     id="abStorefrontMobileNav"
+                     aria-labelledby="abStorefrontMobileNavLabel">
+                    <div class="offcanvas-header">
+                        <h2 class="offcanvas-title h5 mb-0" id="abStorefrontMobileNavLabel">Abdin Pharmacies</h2>
+                        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"/>
+                    </div>
+                    <div class="offcanvas-body">
+                        <a href="/shop" class="ab-storefront-mobile-primary-link">
+                            <i class="fa fa-shopping-bag" aria-hidden="true"/>
+                            All products
+                        </a>
+                        <p class="ab-storefront-mobile-heading">Categories</p>
+                        <nav class="nav flex-column mb-4">
+                            <a t-foreach="ab_header_categories"
+                               t-as="ab_category"
+                               t-att-href="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)"
+                               class="nav-link ab-storefront-mobile-category-link">
+                                <t t-call="ab_ecommerce_storefront.category_icon"/>
+                                <span t-out="website._ab_storefront_category_label(ab_category)"/>
+                            </a>
+                        </nav>
+                        <div class="ab-storefront-mobile-contact mt-4">
+                            <a href="tel:19036" class="btn btn-primary w-100">
+                                Call hotline <span class="o_force_ltr">19036</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+        </xpath>
+
+        <xpath expr="//footer[@id='bottom']" position="replace">
+            <footer t-if="not no_footer" id="bottom" data-anchor="true" class="ab-storefront-footer o_footer">
+                <t t-set="ab_footer_categories" t-value="website._ab_storefront_categories(limit=5)"/>
+                <div id="footer" class="container py-5">
+                    <div class="row g-4 g-lg-5">
+                        <div class="col-12 col-lg-4">
+                            <a href="/" class="ab-storefront-footer-brand d-inline-flex align-items-center gap-3 text-decoration-none">
+                                <img t-att-src="website.image_url(website, 'logo')"
+                                     alt="Abdin Pharmacies"
+                                     width="170"
+                                     height="56"
+                                     loading="lazy"/>
+                            </a>
+                            <p class="mt-3 mb-4">
+                                Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, delivered with confidence across Egypt.
+                            </p>
+                            <div class="d-flex flex-wrap gap-2">
+                                <a href="/website/social/facebook" class="ab-storefront-social" target="_blank" aria-label="Facebook">
+                                    <i class="fa fa-facebook" aria-hidden="true"/>
+                                </a>
+                                <a href="/website/social/instagram" class="ab-storefront-social" target="_blank" aria-label="Instagram">
+                                    <i class="fa fa-instagram" aria-hidden="true"/>
+                                </a>
+                                <a href="/website/social/linkedin" class="ab-storefront-social" target="_blank" aria-label="LinkedIn">
+                                    <i class="fa fa-linkedin" aria-hidden="true"/>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <h2 class="h6">Shop</h2>
+                            <ul class="list-unstyled">
+                                <li><a href="/shop">All products</a></li>
+                                <li t-foreach="ab_footer_categories" t-as="ab_category">
+                                    <a t-att-href="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)">
+                                        <span t-out="website._ab_storefront_category_label(ab_category)"/>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <h2 class="h6">Customer care</h2>
+                            <ul class="list-unstyled">
+                                <li><a href="/my/home">My account</a></li>
+                                <li><a href="/my/orders">My orders</a></li>
+                                <li><a href="/shop/wishlist">Wishlist</a></li>
+                                <li><a href="/contactus">Contact us</a></li>
+                                <li><a href="/privacy-policy">Privacy policy</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-4">
+                            <h2 class="h6">We are here to help</h2>
+                            <a href="tel:19036" class="ab-storefront-hotline text-decoration-none">
+                                <span class="ab-storefront-hotline-icon"><i class="fa fa-phone" aria-hidden="true"/></span>
+                                <span>
+                                    <small>Call our hotline</small>
+                                    <strong class="o_force_ltr">19036</strong>
+                                </span>
+                            </a>
+                            <p t-if="res_company.email" class="mt-3 mb-0">
+                                <i class="fa fa-envelope-o me-2" aria-hidden="true"/>
+                                <a t-att-href="'mailto:%s' % res_company.email" t-out="res_company.email"/>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ab-storefront-copyright">
+                    <div class="container d-flex flex-column flex-md-row justify-content-between gap-2 py-3">
+                        <span>Copyright © Abdin Pharmacies</span>
+                        <span>Healthcare with care, every day.</span>
+                    </div>
+                </div>
+            </footer>
+        </xpath>
+    </template>
+</odoo>

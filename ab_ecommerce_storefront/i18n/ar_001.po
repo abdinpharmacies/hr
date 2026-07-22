@@ -1,0 +1,678 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#  * ab_ecommerce_storefront
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-22 00:00+0000\n"
+"PO-Revision-Date: 2026-07-22 00:00+0000\n"
+"Last-Translator: Alhassan Hossny\n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Abdin Pharmacies"
+msgstr "صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Trusted pharmacy care, delivered to your door"
+msgstr "رعاية صيدلية موثوقة تصل إلى بابك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Hotline"
+msgstr "الخط الساخن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Contact us"
+msgstr "تواصل معنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "What are you looking for?"
+msgstr "عمَّ تبحث؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Search medicines and wellness products"
+msgstr "ابحث عن الأدوية ومنتجات العناية الصحية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Shop by category"
+msgstr "تسوق حسب القسم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
+msgid "All products"
+msgstr "كل المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
+msgid "All categories"
+msgstr "كل الأقسام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop_category_navigation
+msgid "Shop categories"
+msgstr "أقسام المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Shop now"
+msgstr "تسوق الآن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Categories"
+msgstr "الأقسام"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Explore"
+msgstr "استكشف"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Call hotline"
+msgstr "اتصل بالخط الساخن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Trusted pharmacy care and healthcare essentials from Abdin Pharmacies, delivered with confidence across Egypt."
+msgstr "رعاية صيدلية موثوقة ومستلزمات صحية من صيدليات عابدين تصل إليك بثقة في أنحاء مصر."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Shop"
+msgstr "المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Customer care"
+msgstr "خدمة العملاء"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "My account"
+msgstr "حسابي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "My orders"
+msgstr "طلباتي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Wishlist"
+msgstr "المفضلة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Privacy policy"
+msgstr "سياسة الخصوصية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "We are here to help"
+msgstr "نحن هنا لمساعدتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Call our hotline"
+msgstr "اتصل بخطنا الساخن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Copyright © Abdin Pharmacies"
+msgstr "حقوق النشر © صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.layout
+msgid "Healthcare with care, every day."
+msgstr "رعاية صحية باهتمام، كل يوم."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Care you can trust"
+msgstr "رعاية تستحق ثقتك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Everything your family needs, from a pharmacy that cares."
+msgstr "كل ما تحتاجه أسرتك من صيدلية تهتم بك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Shop medicines, personal care, wellness essentials, and everyday healthcare products from Abdin Pharmacies."
+msgstr "تسوق الأدوية والعناية الشخصية ومستلزمات الصحة والمنتجات الصحية اليومية من صيدليات عابدين."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Call"
+msgstr "اتصل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Genuine products"
+msgstr "منتجات أصلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Secure checkout"
+msgstr "دفع آمن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Pharmacy essentials"
+msgstr "أساسيات الصيدلية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Wellness and care"
+msgstr "الصحة والعناية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Convenient delivery"
+msgstr "توصيل مريح"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Trusted care"
+msgstr "رعاية موثوقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "From Abdin Pharmacies"
+msgstr "من صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Easy delivery"
+msgstr "توصيل سهل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Convenient ordering"
+msgstr "طلب بكل سهولة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Secure payment"
+msgstr "دفع آمن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Protected checkout"
+msgstr "إتمام طلب محمي"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Need help?"
+msgstr "تحتاج مساعدة؟"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Call 19036"
+msgstr "اتصل على 19036"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Find what you need"
+msgstr "اعثر على ما تحتاجه"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View all products"
+msgstr "عرض كل المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Everyday health"
+msgstr "صحة كل يوم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Your healthcare essentials in one place"
+msgstr "كل احتياجاتك الصحية في مكان واحد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse the complete range"
+msgstr "تصفح المجموعة الكاملة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Here when you need us"
+msgstr "معك عندما تحتاجنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Talk to Abdin Pharmacies"
+msgstr "تحدث مع صيدليات عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Contact our team"
+msgstr "تواصل مع فريقنا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Selected for you"
+msgstr "مختارة لك"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Featured products"
+msgstr "منتجات مميزة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Shop all"
+msgstr "تسوق الكل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Out of stock"
+msgstr "غير متوفر"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Offer"
+msgstr "عرض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Add to cart"
+msgstr "أضف إلى السلة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View product"
+msgstr "عرض المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Care that stays close to you."
+msgstr "رعاية تظل دائمًا قريبة منك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse trusted products online or call our pharmacy team for help."
+msgstr "تصفح المنتجات الموثوقة عبر الإنترنت أو اتصل بفريق الصيدلية للمساعدة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse products"
+msgstr "تصفح المنتجات"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Popular right now"
+msgstr "الأكثر رواجًا الآن"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Best sellers"
+msgstr "الأكثر مبيعًا"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View all"
+msgstr "عرض الكل"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Save on your favorites"
+msgstr "وفّر على منتجاتك المفضلة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Offers"
+msgstr "العروض"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "View more"
+msgstr "عرض المزيد"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Fresh offers are coming soon."
+msgstr "عروض جديدة قادمة قريبًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Browse our pharmacy essentials while we prepare the next deals."
+msgstr "تصفح احتياجات الصيدلية بينما نجهز العروض القادمة."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Everyday wellness"
+msgstr "عافية كل يوم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Simple choices for healthier, brighter days."
+msgstr "اختيارات بسيطة لأيام أكثر صحة وإشراقًا."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Discover personal care, vitamins, wellness, and family essentials selected for everyday life."
+msgstr "اكتشف منتجات العناية الشخصية والفيتامينات والعافية واحتياجات الأسرة المختارة للحياة اليومية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Explore wellness"
+msgstr "اكتشف منتجات العافية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Convenient pharmacy care"
+msgstr "رعاية صيدلية مريحة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Trusted healthcare, delivered closer to you."
+msgstr "رعاية صحية موثوقة تصل إليك أينما كنت."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Order your healthcare essentials online and let Abdin Pharmacies take care of the rest."
+msgstr "اطلب احتياجاتك الصحية عبر الإنترنت ودع صيدليات عابدين تتولى الباقي."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Previous slide"
+msgstr "الشريحة السابقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Next slide"
+msgstr "الشريحة التالية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Slide 1"
+msgstr "الشريحة 1"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Slide 2"
+msgstr "الشريحة 2"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
+msgid "Slide 3"
+msgstr "الشريحة 3"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Abdin online pharmacy"
+msgstr "صيدلية عابدين الإلكترونية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Browse category"
+msgstr "تصفح القسم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Healthcare products for every day"
+msgstr "منتجات صحية لكل يوم"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Search medicines, personal care, wellness, and pharmacy essentials."
+msgstr "ابحث عن الأدوية والعناية الشخصية والصحة ومستلزمات الصيدلية."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.shop
+msgid "Explore trusted products selected for your health and wellbeing."
+msgstr "استكشف منتجات موثوقة مختارة لصحتك وعافيتك."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Trusted Abdin product"
+msgstr "منتج موثوق من عابدين"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Pharmacy help:"
+msgstr "مساعدة الصيدلية:"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Carefully sourced"
+msgstr "مختارة بعناية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Order with confidence"
+msgstr "اطلب بثقة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Need assistance?"
+msgstr "تحتاج إلى مساعدة؟"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_panadol_extra
+msgid "Panadol Extra Optizorb | 24 Tablets"
+msgstr "بانادول إكسترا أوبتيزورب | 24 قرصًا"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_panadol_extra
+msgid "Pack of 24 tablets. Use only as directed on the package and ask a pharmacist if needed."
+msgstr "عبوة من 24 قرصًا. يُستخدم فقط وفقًا لإرشادات العبوة مع استشارة الصيدلي عند الحاجة."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_brufen_400
+msgid "Brufen 400 mg | 30 Tablets"
+msgstr "بروفين 400 مجم | 30 قرصًا"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_brufen_400
+msgid "Ibuprofen 400 mg in a pack of 30 tablets. Use only as directed and consult a pharmacist when needed."
+msgstr "إيبوبروفين 400 مجم في عبوة من 30 قرصًا. يُستخدم فقط وفقًا للإرشادات مع استشارة الصيدلي عند الحاجة."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_limitless_man_max
+msgid "Limitless Man Max | 30 Tablets"
+msgstr "ليمتلس مان ماكس | 30 قرصًا"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_man_max
+msgid "Daily multivitamin and mineral supplement for men, supplied as 30 tablets."
+msgstr "مكمل يومي متعدد الفيتامينات والمعادن للرجال، عبوة 30 قرصًا."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_limitless_woman_max
+msgid "Limitless Woman Max | 30 Tablets"
+msgstr "ليمتلس وومان ماكس | 30 قرصًا"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_limitless_woman_max
+msgid "Daily multivitamin and mineral supplement for women, supplied as 30 tablets."
+msgstr "مكمل يومي متعدد الفيتامينات والمعادن للسيدات، عبوة 30 قرصًا."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_evasline_hand_cream
+msgid "Evasline Hand Cream Passion | 60 g"
+msgstr "إيفازلاين كريم لليدين باشن | 60 جم"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_evasline_hand_cream
+msgid "Passion-scented hand cream in a convenient 60 g tube for everyday hand care."
+msgstr "كريم لليدين برائحة باشن في عبوة عملية 60 جم للعناية اليومية باليدين."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_sensodyne_original
+msgid "Sensodyne Original Toothpaste | 100 ml"
+msgstr "سنسوداين معجون أسنان أوريجينال | 100 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_sensodyne_original
+msgid "Original-flavour daily toothpaste for sensitive teeth in a 100 ml tube."
+msgstr "معجون أسنان يومي بطعم أوريجينال للأسنان الحساسة في عبوة 100 مل."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_betadine_60ml
+msgid "Betadine Antiseptic Solution | 60 ml"
+msgstr "بيتادين محلول مطهر | 60 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_betadine_60ml
+msgid "Povidone-iodine antiseptic solution in a 60 ml bottle. Follow the package directions."
+msgstr "محلول مطهر بوفيدون-يود في عبوة 60 مل. اتبع إرشادات الاستخدام المدونة على العبوة."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_dettol_50ml
+msgid "Dettol Antiseptic Liquid | 50 ml"
+msgstr "ديتول سائل مطهر | 50 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_dettol_50ml
+msgid "Concentrated antiseptic liquid in a compact 50 ml bottle. Dilute and use as directed."
+msgstr "سائل مطهر مركز في عبوة صغيرة 50 مل. يُخفف ويُستخدم وفقًا للإرشادات."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_accu_chek_active
+msgid "Accu-Chek Active Blood Glucose Monitor"
+msgstr "أكيو-تشيك أكتيف جهاز قياس سكر الدم"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_accu_chek_active
+msgid "Compact blood glucose monitoring kit intended for convenient self-testing."
+msgstr "جهاز مدمج لمتابعة سكر الدم ومخصص للقياس الذاتي بسهولة."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_one_touch_select_plus
+msgid "OneTouch Select Plus Blood Glucose Monitor"
+msgstr "وان تاتش سيليكت بلس جهاز قياس سكر الدم"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_one_touch_select_plus
+msgid "Easy-to-read blood glucose monitoring kit with colour range guidance."
+msgstr "جهاز سهل القراءة لمتابعة سكر الدم مع إرشاد لوني للنطاق."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_eva_rose_water
+msgid "Eva Rose Water | 100 ml"
+msgstr "إيفا ماء ورد | 100 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_eva_rose_water
+msgid "Rose water for a refreshing addition to a daily beauty routine, in a 100 ml bottle."
+msgstr "ماء ورد لإضافة منعشة إلى روتين العناية اليومي في عبوة 100 مل."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_loreal_hyaluron_serum
+msgid "L'Oréal Hyaluron Expert Serum | 30 ml"
+msgstr "لوريال هيالورون إكسبرت سيروم | 30 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_loreal_hyaluron_serum
+msgid "Hyaluronic acid face serum supplied in a 30 ml dropper bottle."
+msgstr "سيروم للوجه بحمض الهيالورونيك في عبوة قطارة 30 مل."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_eva_bebe_rash_cream
+msgid "Eva Clinic Bebe Diaper Rash Cream | 100 g"
+msgstr "إيفا كلينيك بيبي كريم طفح الحفاض | 100 جم"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_eva_bebe_rash_cream
+msgid "Protective diaper-area care cream for babies in a 100 g tube."
+msgstr "كريم واقٍ للعناية بمنطقة الحفاض للأطفال في عبوة 100 جم."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_johnsons_no_more_tangles
+msgid "Johnson's No More Tangles Baby Shampoo | 500 ml"
+msgstr "جونسون نو مور تانجلز شامبو للأطفال | 500 مل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_johnsons_no_more_tangles
+msgid "Gentle detangling baby shampoo supplied in a family-size 500 ml bottle."
+msgstr "شامبو لطيف للأطفال يساعد على فك التشابك في عبوة عائلية 500 مل."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_isis_anise
+msgid "ISIS Anise Herbal Tea | 20 Bags"
+msgstr "إيزيس يانسون أعشاب | 20 كيسًا"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_anise
+msgid "Anise herbal infusion supplied as 20 individually portioned tea bags."
+msgstr "مشروب أعشاب باليانسون في عبوة تحتوي على 20 كيسًا منفصلًا."
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,name:ab_ecommerce_storefront.product_isis_ginger_cinnamon
+msgid "ISIS Ginger & Cinnamon Herbal Tea | 12 Bags"
+msgstr "إيزيس زنجبيل وقرفة أعشاب | 12 كيسًا"
+
+#. module: ab_ecommerce_storefront
+#: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_ginger_cinnamon
+msgid "Warming ginger and cinnamon herbal infusion supplied as 12 tea bags."
+msgstr "مشروب أعشاب دافئ بالزنجبيل والقرفة في عبوة 12 كيسًا."
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_medications
+msgid "Medications"
+msgstr "الأدوية"
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_vitamins
+msgid "Vitamins"
+msgstr "الفيتامينات"
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_personal_care
+msgid "Personal Care"
+msgstr "العناية الشخصية"
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_first_aid
+msgid "First Aid"
+msgstr "الإسعافات الأولية"
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_health_devices
+msgid "Health Devices"
+msgstr "الأجهزة الصحية"
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_beauty
+msgid "Beauty"
+msgstr "الجمال والعناية"
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_baby_care
+msgid "Baby Care"
+msgstr "العناية بالطفل"
+
+#. module: ab_ecommerce_storefront
+#: model:product.public.category,name:ab_ecommerce_storefront.category_wellness
+msgid "Wellness"
+msgstr "الصحة والعافية"
