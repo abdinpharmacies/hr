@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_hr_bot_system,access_ab_hr_bot_system,model_ab_hr_bot,base.group_system,1,1,1,1
