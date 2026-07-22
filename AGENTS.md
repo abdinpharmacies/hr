@@ -24,8 +24,8 @@ Module creation rules:
 - Keep the module self-contained and limit changes to the module being developed.
 - Use module technical names with underscores `_`, not dots `.`.
 - Keep `author` for company/team ownership.
-- All new modules include `developer = "Alhassan Hossny"` in `__manifest__.py`.
-- Before finishing any newly created module, verify its `__manifest__.py` includes `developer = "Alhassan Hossny"` without replacing the team/company `author`.
+- All new modules include `developer = "'<current git user>',"` in `__manifest__.py`.
+- Before finishing any newly created module, verify its `__manifest__.py` includes `developer = "'<current git user>',"` without replacing the team/company `author`.
 
 ## Pharmacy ERP Data Protection Rules
 
@@ -1036,7 +1036,7 @@ Most modules use `19.0.1.0.0` instead of `19.0`. This is cosmetic, not a functio
 ### Session Notes
 
 - Target: Odoo 19.0.
-- Developer: Alhassan Hossny.
+- Developer: '<current git user>',.
 - Template: `ab_template` structure.
 - Data order: `security/security_groups.xml` -> `security/record_rules.xml` -> `security/ir.model.access.csv` -> `views/menus.xml` -> views.
 - Focus: start with critical issues first.
