@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="640" viewBox="0 0 1600 640" fill="none">
+    <defs>
+        <linearGradient id="background" x1="80" y1="30" x2="1510" y2="620" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#EFFAF6"/>
+            <stop offset=".55" stop-color="#D6EFE6"/>
+            <stop offset="1" stop-color="#FADFC3"/>
+        </linearGradient>
+        <linearGradient id="bottle" x1="0" y1="0" x2="1" y2="1">
+            <stop stop-color="#FFFFFF"/>
+            <stop offset="1" stop-color="#D8ECE4"/>
+        </linearGradient>
+        <filter id="shadow" x="-40%" y="-30%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="24" stdDeviation="22" flood-color="#185E4B" flood-opacity=".2"/>
+        </filter>
+    </defs>
+    <rect width="1600" height="640" fill="url(#background)"/>
+    <circle cx="1320" cy="304" r="270" fill="#FFF" fill-opacity=".36"/>
+    <path d="M1436 90C1370 146 1351 211 1379 283C1458 257 1504 196 1518 99C1486 94 1458 91 1436 90Z" fill="#16834F" fill-opacity=".72"/>
+    <path d="M1379 283C1394 214 1435 156 1493 112" stroke="#0B5F39" stroke-opacity=".5" stroke-width="5" stroke-linecap="round"/>
+    <path d="M1168 121C1098 174 1071 243 1089 323C1178 303 1235 241 1260 135C1226 127 1195 122 1168 121Z" fill="#6DB58F"/>
+    <path d="M1089 323C1113 242 1164 180 1233 140" stroke="#16834F" stroke-opacity=".55" stroke-width="5" stroke-linecap="round"/>
+    <g filter="url(#shadow)">
+        <rect x="1190" y="250" width="176" height="272" rx="40" fill="url(#bottle)"/>
+        <rect x="1231" y="204" width="94" height="70" rx="20" fill="#EF8B2C"/>
+        <rect x="1215" y="337" width="126" height="87" rx="16" fill="#16834F"/>
+        <circle cx="1278" cy="380" r="23" fill="#FFF" fill-opacity=".92"/>
+        <path d="M1278 366V394M1264 380H1292" stroke="#16834F" stroke-width="7" stroke-linecap="round"/>
+    </g>
+    <g filter="url(#shadow)">
+        <rect x="1395" y="323" width="112" height="198" rx="25" fill="#FFF" fill-opacity=".94"/>
+        <rect x="1421" y="286" width="60" height="55" rx="14" fill="#2674A8"/>
+        <rect x="1412" y="383" width="78" height="54" rx="12" fill="#BFE3D1"/>
+    </g>
+    <circle cx="1010" cy="480" r="55" fill="#EF8B2C" fill-opacity=".18"/>
+    <circle cx="1518" cy="220" r="30" fill="#2674A8" fill-opacity=".2"/>
+    <path d="M900 582C1110 502 1300 548 1600 484V640H900V582Z" fill="#EF8B2C" fill-opacity=".1"/>
+</svg>

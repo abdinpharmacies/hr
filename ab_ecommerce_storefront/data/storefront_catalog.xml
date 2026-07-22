@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <!--
+        Initial storefront catalog. These records are deliberately noupdate so
+        that catalog managers can change names, prices, publication, and images
+        later without a module upgrade overwriting their work.
+    -->
+
+    <!-- Enable Odoo's native compare-at price display for storefront offers. -->
+    <record id="base.group_user" model="res.groups">
+        <field name="implied_ids" eval="[Command.link(ref('website_sale.group_product_price_comparison'))]"/>
+    </record>
+
+    <record id="category_medications" model="product.public.category">
+        <field name="name">Medications</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="category_vitamins" model="product.public.category">
+        <field name="name">Vitamins</field>
+        <field name="sequence">20</field>
+    </record>
+    <record id="category_personal_care" model="product.public.category">
+        <field name="name">Personal Care</field>
+        <field name="sequence">30</field>
+    </record>
+    <record id="category_first_aid" model="product.public.category">
+        <field name="name">First Aid</field>
+        <field name="sequence">40</field>
+    </record>
+    <record id="category_health_devices" model="product.public.category">
+        <field name="name">Health Devices</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="category_beauty" model="product.public.category">
+        <field name="name">Beauty</field>
+        <field name="sequence">60</field>
+    </record>
+    <record id="category_baby_care" model="product.public.category">
+        <field name="name">Baby Care</field>
+        <field name="sequence">70</field>
+    </record>
+    <record id="category_wellness" model="product.public.category">
+        <field name="name">Wellness</field>
+        <field name="sequence">80</field>
+    </record>
+
+    <record id="product_panadol_extra" model="product.template">
+        <field name="name">Panadol Extra Optizorb | 24 Tablets</field>
+        <field name="default_code">AB-WEB-001</field>
+        <field name="list_price">58.0</field>
+        <field name="website_sequence">10</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_medications')])]"/>
+        <field name="description_sale">Pack of 24 tablets. Use only as directed on the package and ask a pharmacist if needed.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/panadol_extra.webp"/>
+    </record>
+    <record id="product_brufen_400" model="product.template">
+        <field name="name">Brufen 400 mg | 30 Tablets</field>
+        <field name="default_code">AB-WEB-002</field>
+        <field name="list_price">78.0</field>
+        <field name="website_sequence">20</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_medications')])]"/>
+        <field name="description_sale">Ibuprofen 400 mg in a pack of 30 tablets. Use only as directed and consult a pharmacist when needed.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/brufen_400.webp"/>
+    </record>
+
+    <record id="product_limitless_man_max" model="product.template">
+        <field name="name">Limitless Man Max | 30 Tablets</field>
+        <field name="default_code">AB-WEB-003</field>
+        <field name="list_price">240.0</field>
+        <field name="website_sequence">30</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_vitamins')])]"/>
+        <field name="description_sale">Daily multivitamin and mineral supplement for men, supplied as 30 tablets.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/limitless_man_max.webp"/>
+    </record>
+    <record id="product_limitless_woman_max" model="product.template">
+        <field name="name">Limitless Woman Max | 30 Tablets</field>
+        <field name="default_code">AB-WEB-004</field>
+        <field name="list_price">240.0</field>
+        <field name="website_sequence">40</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_vitamins')])]"/>
+        <field name="description_sale">Daily multivitamin and mineral supplement for women, supplied as 30 tablets.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/limitless_woman_max.webp"/>
+    </record>
+
+    <record id="product_evasline_hand_cream" model="product.template">
+        <field name="name">Evasline Hand Cream Passion | 60 g</field>
+        <field name="default_code">AB-WEB-005</field>
+        <field name="list_price">59.0</field>
+        <field name="compare_list_price">70.0</field>
+        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
+        <field name="website_sequence">50</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_personal_care')])]"/>
+        <field name="description_sale">Passion-scented hand cream in a convenient 60 g tube for everyday hand care.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/evasline_hand_cream.webp"/>
+    </record>
+    <record id="product_sensodyne_original" model="product.template">
+        <field name="name">Sensodyne Original Toothpaste | 100 ml</field>
+        <field name="default_code">AB-WEB-006</field>
+        <field name="list_price">109.0</field>
+        <field name="compare_list_price">125.0</field>
+        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
+        <field name="website_sequence">60</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_personal_care')])]"/>
+        <field name="description_sale">Original-flavour daily toothpaste for sensitive teeth in a 100 ml tube.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/sensodyne_original.webp"/>
+    </record>
+
+    <record id="product_betadine_60ml" model="product.template">
+        <field name="name">Betadine Antiseptic Solution | 60 ml</field>
+        <field name="default_code">AB-WEB-007</field>
+        <field name="list_price">60.0</field>
+        <field name="website_sequence">70</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_first_aid')])]"/>
+        <field name="description_sale">Povidone-iodine antiseptic solution in a 60 ml bottle. Follow the package directions.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/betadine_60ml.webp"/>
+    </record>
+    <record id="product_dettol_50ml" model="product.template">
+        <field name="name">Dettol Antiseptic Liquid | 50 ml</field>
+        <field name="default_code">AB-WEB-008</field>
+        <field name="list_price">41.0</field>
+        <field name="website_sequence">80</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_first_aid')])]"/>
+        <field name="description_sale">Concentrated antiseptic liquid in a compact 50 ml bottle. Dilute and use as directed.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/dettol_50ml.webp"/>
+    </record>
+
+    <record id="product_accu_chek_active" model="product.template">
+        <field name="name">Accu-Chek Active Blood Glucose Monitor</field>
+        <field name="default_code">AB-WEB-009</field>
+        <field name="list_price">600.0</field>
+        <field name="website_sequence">90</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_health_devices')])]"/>
+        <field name="description_sale">Compact blood glucose monitoring kit intended for convenient self-testing.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/accu_chek_active.webp"/>
+    </record>
+    <record id="product_one_touch_select_plus" model="product.template">
+        <field name="name">OneTouch Select Plus Blood Glucose Monitor</field>
+        <field name="default_code">AB-WEB-010</field>
+        <field name="list_price">450.0</field>
+        <field name="website_sequence">100</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_health_devices')])]"/>
+        <field name="description_sale">Easy-to-read blood glucose monitoring kit with colour range guidance.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/one_touch_select_plus.webp"/>
+    </record>
+
+    <record id="product_eva_rose_water" model="product.template">
+        <field name="name">Eva Rose Water | 100 ml</field>
+        <field name="default_code">AB-WEB-011</field>
+        <field name="list_price">40.0</field>
+        <field name="website_sequence">110</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_beauty')])]"/>
+        <field name="description_sale">Rose water for a refreshing addition to a daily beauty routine, in a 100 ml bottle.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/eva_rose_water.webp"/>
+    </record>
+    <record id="product_loreal_hyaluron_serum" model="product.template">
+        <field name="name">L'Oréal Hyaluron Expert Serum | 30 ml</field>
+        <field name="default_code">AB-WEB-012</field>
+        <field name="list_price">549.0</field>
+        <field name="compare_list_price">625.0</field>
+        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
+        <field name="website_sequence">120</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_beauty')])]"/>
+        <field name="description_sale">Hyaluronic acid face serum supplied in a 30 ml dropper bottle.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/loreal_hyaluron_serum.webp"/>
+    </record>
+
+    <record id="product_eva_bebe_rash_cream" model="product.template">
+        <field name="name">Eva Clinic Bebe Diaper Rash Cream | 100 g</field>
+        <field name="default_code">AB-WEB-013</field>
+        <field name="list_price">100.0</field>
+        <field name="website_sequence">130</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_baby_care')])]"/>
+        <field name="description_sale">Protective diaper-area care cream for babies in a 100 g tube.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/eva_bebe_rash_cream.webp"/>
+    </record>
+    <record id="product_johnsons_no_more_tangles" model="product.template">
+        <field name="name">Johnson's No More Tangles Baby Shampoo | 500 ml</field>
+        <field name="default_code">AB-WEB-014</field>
+        <field name="list_price">129.0</field>
+        <field name="compare_list_price">145.0</field>
+        <field name="website_ribbon_id" ref="website_sale.sale_ribbon"/>
+        <field name="website_sequence">140</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_baby_care')])]"/>
+        <field name="description_sale">Gentle detangling baby shampoo supplied in a family-size 500 ml bottle.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/johnsons_no_more_tangles.webp"/>
+    </record>
+
+    <record id="product_isis_anise" model="product.template">
+        <field name="name">ISIS Anise Herbal Tea | 20 Bags</field>
+        <field name="default_code">AB-WEB-015</field>
+        <field name="list_price">35.0</field>
+        <field name="website_sequence">150</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_wellness')])]"/>
+        <field name="description_sale">Anise herbal infusion supplied as 20 individually portioned tea bags.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/isis_anise.webp"/>
+    </record>
+    <record id="product_isis_ginger_cinnamon" model="product.template">
+        <field name="name">ISIS Ginger &amp; Cinnamon Herbal Tea | 12 Bags</field>
+        <field name="default_code">AB-WEB-016</field>
+        <field name="list_price">20.0</field>
+        <field name="website_sequence">160</field>
+        <field name="is_published" eval="True"/>
+        <field name="type">consu</field>
+        <field name="uom_id" ref="uom.product_uom_unit"/>
+        <field name="public_categ_ids" eval="[(6, 0, [ref('category_wellness')])]"/>
+        <field name="description_sale">Warming ginger and cinnamon herbal infusion supplied as 12 tea bags.</field>
+        <field name="image_1920" type="base64" file="ab_ecommerce_storefront/static/src/img/products/isis_ginger_cinnamon.webp"/>
+    </record>
+</odoo>

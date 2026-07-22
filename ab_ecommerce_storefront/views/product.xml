@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="product" name="Abdin eCommerce Product" inherit_id="website_sale.product" priority="90">
+        <xpath expr="//div[@id='wrap']" position="attributes">
+            <attribute name="class" add="ab-storefront-product-page" separator=" "/>
+        </xpath>
+        <xpath expr="//section[@id='product_detail']" position="before">
+            <section class="ab-storefront-product-assurance-top">
+                <div class="container d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between gap-2 py-2">
+                    <span><i class="fa fa-shield me-2" aria-hidden="true"/>Trusted Abdin product</span>
+                    <span><i class="fa fa-lock me-2" aria-hidden="true"/>Secure checkout</span>
+                    <span><i class="fa fa-phone me-2" aria-hidden="true"/>Pharmacy help: <span class="o_force_ltr">19036</span></span>
+                </div>
+            </section>
+        </xpath>
+        <xpath expr="//section[@id='product_detail']" position="attributes">
+            <attribute name="class" add="ab-storefront-product-detail" separator=" "/>
+        </xpath>
+        <xpath expr="//div[@id='o_wsale_product_details_content']" position="attributes">
+            <attribute name="class" add="ab-storefront-product-content" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('o_wsale_product_details_content_section_cta')]" position="after">
+            <div class="ab-storefront-product-promises mb-4">
+                <div>
+                    <i class="fa fa-check-circle" aria-hidden="true"/>
+                    <span><strong>Genuine products</strong><small>Carefully sourced</small></span>
+                </div>
+                <div>
+                    <i class="fa fa-truck" aria-hidden="true"/>
+                    <span><strong>Easy delivery</strong><small>Order with confidence</small></span>
+                </div>
+                <div>
+                    <i class="fa fa-headphones" aria-hidden="true"/>
+                    <span><strong>Need assistance?</strong><small>Call 19036</small></span>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='product_full_description']" position="attributes">
+            <attribute name="class" add="ab-storefront-product-description container" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="product_title" name="Abdin Product Title" inherit_id="website_sale.product_title" priority="90">
+        <xpath expr="//h1" position="attributes">
+            <attribute name="class" add="ab-storefront-product-title" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="product_price" name="Abdin Product Price" inherit_id="website_sale.product_price" priority="90">
+        <xpath expr="//div[@name='product_price']" position="attributes">
+            <attribute name="class" add="ab-storefront-product-price" separator=" "/>
+        </xpath>
+    </template>
+
+    <template id="product_cta" name="Abdin Product Call To Action" inherit_id="website_sale.cta_wrapper" priority="90">
+        <xpath expr="//div[@id='o_wsale_cta_wrapper']" position="attributes">
+            <attribute name="class" add="ab-storefront-product-cta" separator=" "/>
+        </xpath>
+        <xpath expr="//a[@id='add_to_cart']" position="attributes">
+            <attribute name="class" add="btn-lg" separator=" "/>
+        </xpath>
+    </template>
+</odoo>
