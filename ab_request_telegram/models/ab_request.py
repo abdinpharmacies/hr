@@ -2,7 +2,6 @@ import html
 import logging
 
 from odoo import models
-from odoo.exceptions import ValidationError
 
 _logger = logging.getLogger(__name__)
 
@@ -16,46 +15,20 @@ class AbRequest(models.Model):
         return result
 
     def _notify_department_manager_telegram(self):
-        BotLink = self.env["ab_hr_bot"].sudo()
-        TelegramService = self.env["ab_telegram_service"]
+        TelegramBot = self.env["ab_telegram_bot"].sudo()
         for record in self:
             manager = record.manager_id or record.request_type_id.department_id.manager_id
             if not manager:
                 _logger.info("ab_request_telegram: request %s has no department manager.", record.id)
                 continue
 
-            manager_ref_id = manager.costcenter_id.bc_id
-            if not manager_ref_id:
-                _logger.info("ab_request_telegram: request %s manager has no costcenter bc_id.", record.id)
-                continue
-
-            try:
-                bot_link = BotLink.search([("employee_ref_id", "=", manager_ref_id)], limit=1)
-                if not bot_link:
-                    bot_link = BotLink.find_or_register_employee_chat(manager)
-            except ValidationError as exc:
-                _logger.warning(
-                    "ab_request_telegram: manager Telegram binding conflict request_id=%s manager_employee_id=%s reason=%s",
-                    record.id,
-                    manager.id,
-                    str(exc),
-                )
-                continue
-            if not bot_link:
-                _logger.info(
-                    "ab_request_telegram: no Telegram mapping found or auto-created for manager employee_id=%s request_id=%s",
-                    manager.id,
-                    record.id,
-                )
-                continue
-
-            sent = TelegramService.send_telegram_message(bot_link.chat_id, record._build_manager_telegram_message())
+            result = TelegramBot.send_to_record(manager, record._build_manager_telegram_message())
             _logger.info(
-                "ab_request_telegram: manager notification request_id=%s manager_employee_id=%s chat_id=%s sent=%s",
+                "ab_request_telegram: manager notification request_id=%s manager_employee_id=%s sent=%s reason=%s",
                 record.id,
                 manager.id,
-                bot_link.chat_id,
-                sent,
+                result.get("sent"),
+                result.get("reason"),
             )
 
     def _build_manager_telegram_message(self):

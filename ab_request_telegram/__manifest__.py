@@ -1,15 +1,12 @@
 {
     "name": "Request Telegram Notifications",
-    "version": "19.0.1.0.0",
+    "version": "19.0.2.0.0",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
     "application": False,
-    "depends": ["ab_request_management", "ab_payroll", "ab_telegram_webhook"],
-    "data": [
-        "security/ir.model.access.csv",
-        "views/ab_hr_bot_views.xml",
-    ],
+    "depends": ["ab_request_management", "ab_telegram_bot"],
+    "data": [],
     "installable": True,
 }
