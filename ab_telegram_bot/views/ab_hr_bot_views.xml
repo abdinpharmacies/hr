@@ -40,6 +40,7 @@
         <menuitem
             id="menu_ab_telegram_bot_root"
             name="Telegram Bot"
+            web_icon="ab_telegram_bot,static/description/icon.png"
             groups="base.group_system"
             sequence="90"
         />

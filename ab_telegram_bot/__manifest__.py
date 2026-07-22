@@ -7,6 +7,7 @@
     "developer": "Alhassan Hossny",
     "website": "https://www.abdinpharmacies.com",
     "category": "Tools",
+    "icon": "ab_telegram_bot/static/description/icon.png",
     "depends": ["base"],
     "data": [
         "security/ir.model.access.csv",
