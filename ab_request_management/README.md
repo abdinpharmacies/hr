@@ -134,22 +134,37 @@ Notifications
 - On assignment → assignees notified
 - On feedback → manager notified
 
-Website Portal Requests
-=======================
+External Public Requests
+========================
 
 Purpose
 -------
 
-The module includes a public website intake form for customer requests and complaints. Website submissions are stored separately from the internal employee workflow in model ``ab_request_website`` and are shown in the backend menu:
+The module includes a public intake form for people who do not have an Odoo account. External submissions are stored separately from the internal employee workflow in model ``ab_request_website`` and are shown in the backend menu:
 
-``Requests and Complaints → Website Requests``
+``Requests and Complaints → External Requests``
 
-This keeps public customer submissions isolated from the employee-based ``ab_request`` workflow and avoids exposing internal request ACLs to public users.
+This keeps external submissions isolated from the employee-based ``ab_request`` workflow and avoids invoking required internal user and employee fields. Public visitors have no model ACL; the CSRF-protected controller validates and creates only the submitted external record through a narrow elevated operation.
+
+Public Configuration
+--------------------
+
+Request administrators or HR Request Visibility Users must explicitly enable ``Available on Public Form`` on both a category and each request type that should be exposed. Existing categories and types remain private by default. The form lists only enabled options, filters types by category, and verifies the relationship again on the server.
+
+Backend Access
+--------------
+
+- Department managers see external requests routed to request types they manage.
+- HR Request Visibility Users see external complaints only.
+- Request administrators see all external requests.
+- Ordinary request users have no access to external submissions or outsider contact details.
+
+External records use the controlled workflow ``New → Under Review → Closed`` and an ``EXT/<year>/`` reference. They remain separate from internal requests.
 
 Public Routes
 -------------
 
-- ``/requests/customer-form``: embeddable public form
+- ``/requests/external-form``: Arabic RTL embeddable external-customer form
 - ``/requests/customer-submit``: form submit route
 
 Embed Code
@@ -159,13 +174,13 @@ Use this code inside the website custom embed/code field when the form is embedd
 
 .. code-block:: html
 
-   <iframe src="/requests/customer-form" style="width:100%; min-height:780px; border:0;"></iframe>
+   <iframe src="/requests/external-form" style="width:100%; min-height:780px; border:0;"></iframe>
 
 If the form is embedded from an external website, use the full production domain:
 
 .. code-block:: html
 
-   <iframe src="https://your-production-domain.com/requests/customer-form" style="width:100%; min-height:780px; border:0;"></iframe>
+   <iframe src="https://your-production-domain.com/requests/external-form" style="width:100%; min-height:780px; border:0;"></iframe>
 
 Production Deployment
 ---------------------
@@ -195,10 +210,10 @@ Production Deployment
 Expected Result
 ---------------
 
-- Website form loads without the website header/footer inside the iframe.
-- Public submissions create records in ``ab_request_website``.
-- Backend users can review submissions from ``Website Requests``.
-- The dashboard shows a ``Website Requests`` counter for new website submissions.
+- The external form loads without the website header/footer inside the iframe.
+- Public submissions create records only in ``ab_request_website``.
+- Authorized backend users review submissions from ``External Requests``.
+- The dashboard shows an ``External Requests`` counter for new submissions.
 
 Telegram Module
 ===============
