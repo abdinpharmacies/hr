@@ -985,6 +985,7 @@ msgstr "النوع"
 #. module: ab_request_management
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_type_action
 #: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_request_types
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_category_view_form
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_list
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_search
 msgid "Request Types"
@@ -2364,3 +2365,468 @@ msgstr "النوع *"
 #: code:addons/ab_request_management/static/src/js/ab_request_dashboard.js:0
 msgid "My Tickets"
 msgstr "الخاص بي"
+
+#. module: ab_request_management
+msgid "Available on Public Form"
+msgstr "متاح في النموذج العام"
+
+#. module: ab_request_management
+msgid "Enable this category for unauthenticated external request submissions."
+msgstr "فعّل هذا التصنيف لاستقبال الطلبات الخارجية دون تسجيل الدخول."
+
+#. module: ab_request_management
+msgid "Enable this type for unauthenticated external request submissions."
+msgstr "فعّل هذا النوع لاستقبال الطلبات الخارجية دون تسجيل الدخول."
+
+#. module: ab_request_management
+msgid "A public request category must have a name."
+msgstr "يجب أن يكون للتصنيف المتاح في النموذج العام اسم."
+
+#. module: ab_request_management
+msgid "Disable public availability on the category's request types first."
+msgstr "عطّل الإتاحة العامة لأنواع الطلبات التابعة للتصنيف أولاً."
+
+#. module: ab_request_management
+msgid "Only request administrators can change public form availability."
+msgstr "يمكن لمسؤولي الطلبات فقط تغيير الإتاحة في النموذج العام."
+
+#. module: ab_request_management
+msgid "A public request type must belong to a category."
+msgstr "يجب أن ينتمي نوع الطلب المتاح للعامة إلى تصنيف."
+
+#. module: ab_request_management
+msgid "A public request type must belong to a public category."
+msgstr "يجب أن ينتمي نوع الطلب المتاح للعامة إلى تصنيف متاح للعامة."
+
+#. module: ab_request_management
+msgid "External Requests"
+msgstr "الطلبات الخارجية"
+
+#. module: ab_request_management
+msgid "External Request"
+msgstr "طلب خارجي"
+
+#. module: ab_request_management
+msgid "External Request or Complaint"
+msgstr "طلب أو شكوى خارجية"
+
+#. module: ab_request_management
+msgid "External Reference"
+msgstr "المرجع الخارجي"
+
+#. module: ab_request_management
+msgid "External"
+msgstr "خارجي"
+
+#. module: ab_request_management
+msgid "External Requester"
+msgstr "مقدم الطلب الخارجي"
+
+#. module: ab_request_management
+msgid "Classification"
+msgstr "التصنيف"
+
+#. module: ab_request_management
+msgid "Start Review"
+msgstr "بدء المراجعة"
+
+#. module: ab_request_management
+msgid "Public Form"
+msgstr "النموذج العام"
+
+#. module: ab_request_management
+msgid "Use the external request workflow actions to change the state."
+msgstr "استخدم إجراءات سير عمل الطلب الخارجي لتغيير الحالة."
+
+#. module: ab_request_management
+msgid "Category is required."
+msgstr "التصنيف مطلوب."
+
+#. module: ab_request_management
+msgid "The selected category and request type are not available for public requests."
+msgstr "التصنيف ونوع الطلب المحددان غير متاحين للطلبات العامة."
+
+#. module: ab_request_management
+msgid "%s is required."
+msgstr "%s مطلوب."
+
+#. module: ab_request_management
+msgid "%(field)s must not exceed %(maximum)s characters."
+msgstr "يجب ألا يتجاوز %(field)s عدد %(maximum)s حرفاً."
+
+#. module: ab_request_management
+msgid "Customer name"
+msgstr "اسم العميل"
+
+#. module: ab_request_management
+msgid "Customer phone"
+msgstr "هاتف العميل"
+
+#. module: ab_request_management
+msgid "Customer email"
+msgstr "البريد الإلكتروني للعميل"
+
+#. module: ab_request_management
+msgid "Enter a valid phone number containing between 7 and 15 digits."
+msgstr "أدخل رقم هاتف صحيحاً يحتوي على عدد من 7 إلى 15 رقماً."
+
+#. module: ab_request_management
+msgid "Enter a valid email address."
+msgstr "أدخل عنوان بريد إلكتروني صحيحاً."
+
+#. module: ab_request_management
+msgid "You are not allowed to process these external requests."
+msgstr "غير مسموح لك بمعالجة هذه الطلبات الخارجية."
+
+#. module: ab_request_management
+msgid "Only new external requests can be moved under review."
+msgstr "يمكن نقل الطلبات الخارجية الجديدة فقط إلى قيد المراجعة."
+
+#. module: ab_request_management
+msgid "Only external requests under review can be closed."
+msgstr "يمكن إغلاق الطلبات الخارجية قيد المراجعة فقط."
+
+#. module: ab_request_management
+msgid "Too many submissions were received. Please wait a few minutes and try again."
+msgstr "تم استلام عدد كبير من الطلبات. يُرجى الانتظار بضع دقائق ثم المحاولة مرة أخرى."
+
+#. module: ab_request_management
+msgid "Please check the form fields and try again."
+msgstr "يُرجى مراجعة حقول النموذج ثم المحاولة مرة أخرى."
+
+#. module: ab_request_management
+msgid "The selected category or request type is not available."
+msgstr "التصنيف أو نوع الطلب المحدد غير متاح."
+
+#. module: ab_request_management
+#. odoo-python
+#: code:addons/ab_request_management/controllers/customer_request.py:0
+msgid "External Requests & Complaints"
+msgstr "الطلبات والشكاوى الخارجية"
+
+#. module: ab_request_management
+msgid "Use this form if you do not have an Odoo account."
+msgstr "استخدم هذا النموذج إذا لم يكن لديك حساب على أودو."
+
+#. module: ab_request_management
+msgid "No public request categories are currently available."
+msgstr "لا توجد تصنيفات طلبات عامة متاحة حالياً."
+
+#. module: ab_request_management
+msgid "Category *"
+msgstr "التصنيف *"
+
+#. module: ab_request_management
+#. odoo-python
+#: code:addons/ab_request_management/controllers/customer_request.py:0
+msgid "Choose a category first..."
+msgstr "اختر التصنيف أولاً..."
+
+#. module: ab_request_management
+msgid "Your external request or complaint has been received. Reference:"
+msgstr "تم استلام طلبك أو شكواك الخارجية. المرجع:"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_thanks
+msgid "Your external request or complaint has been received."
+msgstr "تم استلام طلبك أو شكواك الخارجية."
+
+#. module: ab_request_management
+msgid "Public Request Types"
+msgstr "أنواع الطلبات العامة"
+
+#. module: ab_request_management
+msgid "Visible on Public Form"
+msgstr "ظاهر في النموذج العام"
+
+#. module: ab_request_management
+msgid "The category is listed publicly only when this is enabled and it has at least one public request type."
+msgstr "يظهر التصنيف للعامة فقط عند تفعيل هذا الخيار ووجود نوع طلب عام واحد على الأقل."
+
+#. module: ab_request_management
+msgid "The type is listed publicly only when this and its owning category are both enabled."
+msgstr "يظهر النوع للعامة فقط عند تفعيل هذا الخيار وتفعيل التصنيف التابع له."
+
+#. module: ab_request_management
+msgid "Public form setup is incomplete"
+msgstr "إعداد النموذج العام غير مكتمل"
+
+#. module: ab_request_management
+msgid "Enable “Available on Public Form” on at least one request type in this category."
+msgstr "فعّل «متاح في النموذج العام» لنوع طلب واحد على الأقل ضمن هذا التصنيف."
+
+#. module: ab_request_management
+msgid "Visible on the public form"
+msgstr "ظاهر في النموذج العام"
+
+#. module: ab_request_management
+msgid "This category has at least one public request type and is ready for external submissions."
+msgstr "يحتوي هذا التصنيف على نوع طلب عام واحد على الأقل، وهو جاهز لاستقبال الطلبات الخارجية."
+
+#. module: ab_request_management
+msgid "This type will appear publicly under its selected category."
+msgstr "سيظهر هذا النوع للعامة ضمن التصنيف المحدد."
+
+#. module: ab_request_management
+msgid "External Request Form"
+msgstr "نموذج الطلب الخارجي"
+
+#. module: ab_request_management
+msgid "External Service Desk"
+msgstr "مكتب الخدمات الخارجية"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "How can we help?"
+msgstr "كيف يمكننا مساعدتك؟"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Send a request or complaint without signing in to Odoo."
+msgstr "أرسل طلباً أو شكوى دون تسجيل الدخول إلى أودو."
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Form sections"
+msgstr "أقسام النموذج"
+
+#. module: ab_request_management
+msgid "Contact"
+msgstr "بيانات التواصل"
+
+#. module: ab_request_management
+msgid "Public form"
+msgstr "النموذج العام"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Submit your request"
+msgstr "أرسل طلبك"
+
+#. module: ab_request_management
+msgid "* Required fields"
+msgstr "* حقول مطلوبة"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Please review your information"
+msgstr "يرجى مراجعة بياناتك"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Form setup is incomplete"
+msgstr "إعداد النموذج غير مكتمل"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "No public request categories with public request types are currently available."
+msgstr "لا توجد حالياً تصنيفات عامة تحتوي على أنواع طلبات عامة متاحة."
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Your contact information"
+msgstr "بيانات التواصل الخاصة بك"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "We will use these details only to identify and follow up on this submission."
+msgstr "سنستخدم هذه البيانات فقط للتعرف على هذا الطلب ومتابعته."
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Your full name"
+msgstr "اسمك بالكامل"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Your phone number"
+msgstr "رقم هاتفك"
+
+#. module: ab_request_management
+msgid "Optional"
+msgstr "اختياري"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Classify your request"
+msgstr "صنّف طلبك"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Choose a category first, then select one of its available request types."
+msgstr "اختر التصنيف أولاً، ثم اختر أحد أنواع الطلبات المتاحة ضمنه."
+
+#. module: ab_request_management
+#. odoo-python
+#: code:addons/ab_request_management/controllers/customer_request.py:0
+msgid "Choose a category..."
+msgstr "اختر تصنيفاً..."
+
+#. module: ab_request_management
+msgid "Request type"
+msgstr "نوع الطلب"
+
+#. module: ab_request_management
+#. odoo-python
+#: code:addons/ab_request_management/controllers/customer_request.py:0
+msgid "Choose a request type..."
+msgstr "اختر نوع الطلب..."
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Tell us what happened"
+msgstr "أخبرنا بما حدث"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Use a clear subject and include the details needed to understand your request."
+msgstr "استخدم عنواناً واضحاً وأضف التفاصيل اللازمة لفهم طلبك."
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "A short summary"
+msgstr "ملخص قصير"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Describe your request or complaint"
+msgstr "صف طلبك أو شكواك"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Do not include passwords, payment card numbers, or other secrets."
+msgstr "لا تضع كلمات المرور أو أرقام بطاقات الدفع أو أي بيانات سرية أخرى."
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "After submission, you will receive a reference number for follow-up."
+msgstr "بعد الإرسال، ستحصل على رقم مرجعي للمتابعة."
+
+#. module: ab_request_management
+msgid "Submit request"
+msgstr "إرسال الطلب"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "External submissions are stored separately from internal employee requests."
+msgstr "تُحفظ الطلبات الخارجية بشكل منفصل عن طلبات الموظفين الداخلية."
+
+#. module: ab_request_management
+msgid "External Request Thanks"
+msgstr "تأكيد استلام الطلب الخارجي"
+
+#. module: ab_request_management
+#. odoo-python
+#: code:addons/ab_request_management/controllers/customer_request.py:0
+msgid "Request Received"
+msgstr "تم استلام الطلب"
+
+#. module: ab_request_management
+msgid "Submission received"
+msgstr "تم استلام الإرسال"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_thanks
+msgid "Thank you"
+msgstr "شكراً لك"
+
+#. module: ab_request_management
+msgid "Reference number"
+msgstr "الرقم المرجعي"
+
+#. module: ab_request_management
+msgid "Only request administrators or visibility users can change public form availability."
+msgstr "يمكن لمسؤولي الطلبات أو مستخدمي صلاحية العرض فقط تغيير الإتاحة في النموذج العام."
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_language_switcher
+msgid "Language"
+msgstr "اللغة"
+
+#. module: ab_request_management
+msgid "Public Request Language Switcher"
+msgstr "مبدّل لغة نموذج الطلب العام"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "<span class=\"ab-public-request-eyebrow\">External Service Desk</span>"
+msgstr "<span class=\"ab-public-request-eyebrow\">مكتب الخدمات الخارجية</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "<span class=\"ab-public-request-kicker\">Public form</span>"
+msgstr "<span class=\"ab-public-request-kicker\">النموذج العام</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "<span class=\"ab-public-request-required-note\">* Required fields</span>"
+msgstr "<span class=\"ab-public-request-required-note\">* حقول مطلوبة</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_thanks
+msgid ""
+"<span class=\"ab-public-request-success-icon\" aria-hidden=\"true\">✓</span>\n"
+"                            <span class=\"ab-public-request-kicker\">Submission received</span>"
+msgstr ""
+"<span class=\"ab-public-request-success-icon\" aria-hidden=\"true\">✓</span>\n"
+"                            <span class=\"ab-public-request-kicker\">تم استلام الإرسال</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid ""
+"<span><b>1</b> Contact</span>\n"
+"                                <span><b>2</b> Classification</span>\n"
+"                                <span><b>3</b> Details</span>"
+msgstr ""
+"<span><b>1</b> التواصل</span>\n"
+"                                <span><b>2</b> التصنيف</span>\n"
+"                                <span><b>3</b> التفاصيل</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_thanks
+msgid "<span>Reference number</span>"
+msgstr "<span>الرقم المرجعي</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Category <em>*</em>"
+msgstr "التصنيف <em>*</em>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Details <em>*</em>"
+msgstr "التفاصيل <em>*</em>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Email <span>Optional</span>"
+msgstr "البريد الإلكتروني <span>اختياري</span>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Name <em>*</em>"
+msgstr "الاسم <em>*</em>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Phone <em>*</em>"
+msgstr "الهاتف <em>*</em>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Request type <em>*</em>"
+msgstr "نوع الطلب <em>*</em>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Subject <em>*</em>"
+msgstr "الموضوع <em>*</em>"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid ""
+"Submit request\n"
+"                                    <span aria-hidden=\"true\">→</span>"
+msgstr ""
+"إرسال الطلب\n"
+"                                    <span aria-hidden=\"true\">←</span>"

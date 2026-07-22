@@ -4,17 +4,20 @@
         <field name="name">ab_request_website.search</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <search string="Website">
+            <search string="External Requests">
                 <field name="name"/>
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
                 <field name="customer_email"/>
                 <field name="subject"/>
+                <field name="request_category_id"/>
                 <field name="request_type_id"/>
                 <filter name="filter_new" string="New" domain="[('state', '=', 'new')]"/>
-                <filter name="filter_reviewed" string="Reviewed" domain="[('state', '=', 'reviewed')]"/>
-                <filter name="filter_converted" string="Converted" domain="[('state', '=', 'converted')]"/>
+                <filter name="filter_under_review" string="Under Review" domain="[('state', '=', 'reviewed')]"/>
+                <filter name="filter_closed" string="Closed" domain="[('state', '=', 'closed')]"/>
+                <separator/>
                 <filter name="group_state" string="State" context="{'group_by': 'state'}"/>
+                <filter name="group_category" string="Category" context="{'group_by': 'request_category_id'}"/>
                 <filter name="group_type" string="Type" context="{'group_by': 'request_type_id'}"/>
             </search>
         </field>
@@ -24,13 +27,19 @@
         <field name="name">ab_request_website.list</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <list string="Website" default_order="create_date desc">
+            <list string="External Requests" default_order="create_date desc" create="false" delete="false"
+                  decoration-info="state == 'new'" decoration-muted="state == 'closed'">
+                <field name="active" column_invisible="True"/>
                 <field name="name"/>
-                <field name="state"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'new'"
+                       decoration-warning="state == 'reviewed'"
+                       decoration-muted="state == 'closed'"/>
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
                 <field name="customer_email" optional="show"/>
                 <field name="subject"/>
+                <field name="request_category_id" optional="show"/>
                 <field name="request_type_id"/>
                 <field name="create_date"/>
             </list>
@@ -41,33 +50,51 @@
         <field name="name">ab_request_website.form</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <form string="Website Entry">
+            <form string="External Request" create="false" delete="false">
                 <header>
-                    <field name="state" widget="statusbar" statusbar_visible="new,reviewed,converted,closed"/>
+                    <button name="action_mark_under_review"
+                            string="Start Review"
+                            type="object"
+                            class="btn-primary"
+                            groups="ab_request_management.group_ab_request_management_viewer,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"
+                            invisible="state != 'new'"/>
+                    <button name="action_close"
+                            string="Close"
+                            type="object"
+                            class="btn-primary"
+                            groups="ab_request_management.group_ab_request_management_viewer,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"
+                            invisible="state != 'reviewed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,reviewed,closed" readonly="1"/>
                 </header>
                 <sheet>
+                    <field name="active" invisible="1"/>
                     <div class="oe_title">
+                        <span class="badge text-bg-info">External</span>
                         <label for="subject"/>
                         <h1>
-                            <field name="subject"/>
+                            <field name="subject" readonly="state == 'closed'"/>
                         </h1>
                     </div>
                     <group>
-                        <group string="Customer">
+                        <group string="External Requester">
                             <field name="name" readonly="1"/>
-                            <field name="customer_name"/>
-                            <field name="customer_phone"/>
-                            <field name="customer_email"/>
-                            <field name="source"/>
+                            <field name="customer_name" readonly="state == 'closed'"/>
+                            <field name="customer_phone" readonly="state == 'closed'"/>
+                            <field name="customer_email" readonly="state == 'closed'"/>
+                            <field name="source" readonly="1"/>
                         </group>
-                        <group string="Request">
-                            <field name="request_category_id"/>
-                            <field name="request_type_id"/>
+                        <group string="Classification">
+                            <field name="request_category_id"
+                                   domain="[('is_public', '=', True)]"
+                                   readonly="state == 'closed'"/>
+                            <field name="request_type_id"
+                                   domain="[('category_id', '=', request_category_id), ('is_public', '=', True)]"
+                                   readonly="state == 'closed'"/>
                             <field name="create_date" readonly="1"/>
                         </group>
                     </group>
                     <group string="Details">
-                        <field name="description" nolabel="1"/>
+                        <field name="description" nolabel="1" readonly="state == 'closed'"/>
                     </group>
                 </sheet>
             </form>
@@ -75,7 +102,7 @@
     </record>
 
     <record id="ab_request_website_action" model="ir.actions.act_window">
-        <field name="name">Website</field>
+        <field name="name">External Requests</field>
         <field name="res_model">ab_request_website</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="ab_request_website_view_search"/>

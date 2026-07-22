@@ -1,112 +1,239 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <template id="customer_request_form" name="Customer Request Form">
-        <html>
+    <template id="customer_request_form" name="External Request Form">
+        <html t-att-dir="'rtl' if request.env.lang and request.env.lang.startswith('ar') else 'ltr'">
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <style>
-                    body { margin: 0; font-family: Arial, sans-serif; color: #20242a; background: transparent; }
-                    .ab-request-embed { max-width: 920px; margin: 0 auto; padding: 24px; }
-                    .ab-request-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-                    .ab-request-full { grid-column: 1 / -1; }
-                    .ab-request-title { margin: 0 0 4px; font-size: 24px; line-height: 1.2; }
-                    .ab-request-muted { margin: 0; color: #667085; }
-                    .ab-request-label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 600; }
-                    .ab-request-input { width: 100%; box-sizing: border-box; border: 1px solid #d0d5dd; border-radius: 6px; padding: 10px 12px; font-size: 15px; background: #fff; }
-                    .ab-request-input:focus { border-color: #2f6fdd; outline: 2px solid rgba(47, 111, 221, 0.16); }
-                    .ab-request-alert { padding: 12px 14px; border-radius: 6px; background: #fff1f0; color: #b42318; border: 1px solid #fecdca; }
-                    .ab-request-submit { border: 0; border-radius: 6px; padding: 11px 18px; background: #2f6fdd; color: #fff; font-weight: 700; cursor: pointer; }
-                    @media (max-width: 720px) {
-                        .ab-request-embed { padding: 16px; }
-                        .ab-request-grid { grid-template-columns: 1fr; }
-                    }
-                </style>
+                <title t-out="page_title"/>
+                <t t-call-assets="ab_request_management.assets_public_request"/>
             </head>
-            <body>
-                <form action="/requests/customer-submit" method="post" class="ab-request-embed ab-request-grid">
-                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <body class="ab-public-request-page">
+                <main class="ab-public-request-workspace">
+                    <div class="ab-public-request-shell">
+                        <header class="core_ui_card core_ui_card_hero ab-public-request-hero">
+                            <span class="ab-public-request-eyebrow">External Service Desk</span>
+                            <h1>How can we help?</h1>
+                            <p>Send a request or complaint without signing in to Odoo.</p>
+                            <div class="ab-public-request-steps" aria-label="Form sections">
+                                <span><b>1</b> Contact</span>
+                                <span><b>2</b> Classification</span>
+                                <span><b>3</b> Details</span>
+                            </div>
+                        </header>
 
-                    <div class="ab-request-full">
-                        <h2 class="ab-request-title">Requests &amp; Complaints</h2>
-                        <p class="ab-request-muted">Send your request or complaint to our team.</p>
+                        <form action="/requests/customer-submit"
+                              method="post"
+                              class="core_ui_card ab-public-request-form"
+                              data-ab-external-request-form="1">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <div class="ab-request-honeypot" aria-hidden="true">
+                                <label for="website_url">Website URL</label>
+                                <input id="website_url" name="website_url" type="text" tabindex="-1" autocomplete="off"/>
+                            </div>
+
+                            <div class="ab-public-request-form-heading">
+                                <div>
+                                    <span class="ab-public-request-kicker">Public form</span>
+                                    <h2>Submit your request</h2>
+                                </div>
+                                <span class="ab-public-request-required-note">* Required fields</span>
+                            </div>
+
+                            <div t-if="error" class="core_ui_alert danger ab-public-request-alert" role="alert">
+                                <span class="ab-public-request-alert-symbol">!</span>
+                                <div class="core_ui_alert_content">
+                                    <div class="core_ui_alert_title">Please review your information</div>
+                                    <t t-out="error"/>
+                                </div>
+                            </div>
+
+                            <div t-if="not has_public_options" class="core_ui_alert warning ab-public-request-alert" role="status">
+                                <span class="ab-public-request-alert-symbol">!</span>
+                                <div class="core_ui_alert_content">
+                                    <div class="core_ui_alert_title">Form setup is incomplete</div>
+                                    No public request categories with public request types are currently available.
+                                </div>
+                            </div>
+
+                            <section class="ab-public-request-section">
+                                <div class="ab-public-request-section-heading">
+                                    <span>1</span>
+                                    <div>
+                                        <h3>Your contact information</h3>
+                                        <p>We will use these details only to identify and follow up on this submission.</p>
+                                    </div>
+                                </div>
+                                <div class="ab-public-request-grid">
+                                    <div class="core_ui_form_group">
+                                        <label for="customer_name">Name <em>*</em></label>
+                                        <input id="customer_name"
+                                               name="customer_name"
+                                               class="core_ui_input"
+                                               required="required"
+                                               maxlength="120"
+                                               autocomplete="name"
+                                               placeholder="Your full name"
+                                               t-att-value="post.get('customer_name')"/>
+                                    </div>
+
+                                    <div class="core_ui_form_group">
+                                        <label for="customer_phone">Phone <em>*</em></label>
+                                        <input id="customer_phone"
+                                               name="customer_phone"
+                                               class="core_ui_input"
+                                               required="required"
+                                               inputmode="tel"
+                                               maxlength="30"
+                                               autocomplete="tel"
+                                               placeholder="Your phone number"
+                                               t-att-value="post.get('customer_phone')"/>
+                                    </div>
+
+                                    <div class="core_ui_form_group ab-public-request-full">
+                                        <label for="customer_email">Email <span>Optional</span></label>
+                                        <input id="customer_email"
+                                               name="customer_email"
+                                               type="email"
+                                               class="core_ui_input"
+                                               maxlength="254"
+                                               autocomplete="email"
+                                               placeholder="name@example.com"
+                                               t-att-value="post.get('customer_email')"/>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="ab-public-request-section">
+                                <div class="ab-public-request-section-heading">
+                                    <span>2</span>
+                                    <div>
+                                        <h3>Classify your request</h3>
+                                        <p>Choose a category first, then select one of its available request types.</p>
+                                    </div>
+                                </div>
+                                <div class="ab-public-request-grid">
+                                    <div class="core_ui_form_group">
+                                        <label for="request_category_id">Category <em>*</em></label>
+                                        <select id="request_category_id"
+                                                name="request_category_id"
+                                                class="core_ui_input core_ui_select"
+                                                required="required"
+                                                t-att-disabled="not has_public_options">
+                                            <option value=""><t t-out="category_prompt"/></option>
+                                            <option t-foreach="categories"
+                                                    t-as="category"
+                                                    t-att-value="category.id"
+                                                    t-att-selected="'selected' if post.get('request_category_id') == str(category.id) else None">
+                                                <t t-out="category.name"/>
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="core_ui_form_group">
+                                        <label for="request_type_id">Request type <em>*</em></label>
+                                        <select id="request_type_id"
+                                                name="request_type_id"
+                                                class="core_ui_input core_ui_select"
+                                                required="required"
+                                                t-att-data-selected-value="post.get('request_type_id', '')"
+                                                t-att-data-placeholder-empty="select_category_prompt"
+                                                t-att-data-placeholder-ready="request_type_prompt"
+                                                disabled="disabled">
+                                            <option value=""><t t-out="select_category_prompt"/></option>
+                                            <option t-foreach="request_types"
+                                                    t-as="request_type"
+                                                    t-att-value="request_type.id"
+                                                    t-att-data-category-id="request_type.category_id.id">
+                                                <t t-out="request_type.name"/>
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="ab-public-request-section">
+                                <div class="ab-public-request-section-heading">
+                                    <span>3</span>
+                                    <div>
+                                        <h3>Tell us what happened</h3>
+                                        <p>Use a clear subject and include the details needed to understand your request.</p>
+                                    </div>
+                                </div>
+                                <div class="ab-public-request-grid">
+                                    <div class="core_ui_form_group ab-public-request-full">
+                                        <label for="subject">Subject <em>*</em></label>
+                                        <input id="subject"
+                                               name="subject"
+                                               class="core_ui_input"
+                                               required="required"
+                                               maxlength="200"
+                                               placeholder="A short summary"
+                                               t-att-value="post.get('subject')"/>
+                                    </div>
+
+                                    <div class="core_ui_form_group ab-public-request-full">
+                                        <label for="description">Details <em>*</em></label>
+                                        <textarea id="description"
+                                                  name="description"
+                                                  class="core_ui_input core_ui_textarea"
+                                                  required="required"
+                                                  rows="6"
+                                                  maxlength="3000"
+                                                  placeholder="Describe your request or complaint"><t t-out="post.get('description')"/></textarea>
+                                        <div class="core_ui_help_text">Do not include passwords, payment card numbers, or other secrets.</div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <footer class="ab-public-request-actions">
+                                <p>After submission, you will receive a reference number for follow-up.</p>
+                                <button type="submit"
+                                        class="core_ui_btn core_ui_btn_primary ab-public-request-submit"
+                                        t-att-disabled="not has_public_options">
+                                    Submit request
+                                    <span aria-hidden="true">→</span>
+                                </button>
+                            </footer>
+                        </form>
+
+                        <p class="ab-public-request-footer-note">External submissions are stored separately from internal employee requests.</p>
                     </div>
-
-                    <t t-if="error">
-                        <div class="ab-request-full">
-                            <div class="ab-request-alert" t-out="error"/>
-                        </div>
-                    </t>
-
-                    <div>
-                        <label class="ab-request-label" for="customer_name">Name *</label>
-                        <input id="customer_name" name="customer_name" class="ab-request-input" required="required" maxlength="120" t-att-value="post.get('customer_name') if post else ''"/>
-                    </div>
-
-                    <div>
-                        <label class="ab-request-label" for="customer_phone">Phone *</label>
-                        <input id="customer_phone" name="customer_phone" class="ab-request-input" required="required" inputmode="tel" maxlength="30" t-att-value="post.get('customer_phone') if post else ''"/>
-                    </div>
-
-                    <div>
-                        <label class="ab-request-label" for="customer_email">Email</label>
-                        <input id="customer_email" name="customer_email" type="email" class="ab-request-input" maxlength="120" t-att-value="post.get('customer_email') if post else ''"/>
-                    </div>
-
-                    <div>
-                        <label class="ab-request-label" for="request_category_id">Category</label>
-                        <select id="request_category_id" name="request_category_id" class="ab-request-input">
-                            <option value="">Choose...</option>
-                            <option t-foreach="categories" t-as="category" t-att-value="category.id" t-att-selected="'selected' if post and post.get('request_category_id') == str(category.id) else None">
-                                <t t-out="category.name"/>
-                            </option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="ab-request-label" for="request_type_id">Type *</label>
-                        <select id="request_type_id" name="request_type_id" class="ab-request-input" required="required">
-                            <option value="">Choose...</option>
-                            <option t-foreach="request_types" t-as="request_type" t-att-value="request_type.id" t-att-selected="'selected' if post and post.get('request_type_id') == str(request_type.id) else None">
-                                <t t-out="request_type.name"/>
-                            </option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label class="ab-request-label" for="subject">Subject *</label>
-                        <input id="subject" name="subject" class="ab-request-input" required="required" maxlength="200" t-att-value="post.get('subject') if post else ''"/>
-                    </div>
-
-                    <div class="ab-request-full">
-                        <label class="ab-request-label" for="description">Details *</label>
-                        <textarea id="description" name="description" class="ab-request-input" required="required" rows="5" maxlength="3000"><t t-out="post.get('description') if post else ''"/></textarea>
-                    </div>
-
-                    <div class="ab-request-full">
-                        <button type="submit" class="ab-request-submit">Submit</button>
-                    </div>
-                </form>
+                </main>
+                <script type="module" src="/ab_request_management/static/src/js/customer_request_form.js"></script>
             </body>
         </html>
     </template>
 
-    <template id="customer_request_thanks" name="Customer Request Thanks">
-        <html>
+    <template id="customer_request_thanks" name="External Request Thanks">
+        <html t-att-dir="'rtl' if request.env.lang and request.env.lang.startswith('ar') else 'ltr'">
             <head>
                 <meta charset="utf-8"/>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-                <style>
-                    body { margin: 0; font-family: Arial, sans-serif; color: #20242a; background: transparent; }
-                    .ab-request-embed { max-width: 920px; margin: 0 auto; padding: 24px; }
-                    .ab-request-success { padding: 14px 16px; border-radius: 6px; background: #ecfdf3; color: #067647; border: 1px solid #abefc6; }
-                </style>
+                <title t-out="page_title"/>
+                <t t-call-assets="ab_request_management.assets_public_request"/>
             </head>
-            <body>
-                <div class="ab-request-embed ab-request-success">
-                    Your request or complaint has been received. Reference:
-                    <strong t-out="website_request.name"/>
-                </div>
+            <body class="ab-public-request-page">
+                <main class="ab-public-request-workspace ab-public-request-workspace-success">
+                    <div class="ab-public-request-success-shell">
+                        <section class="core_ui_card ab-public-request-success-card">
+                            <span class="ab-public-request-success-icon" aria-hidden="true">✓</span>
+                            <span class="ab-public-request-kicker">Submission received</span>
+                            <h1>Thank you</h1>
+                            <t t-if="website_request">
+                                <p>Your external request or complaint has been received.</p>
+                                <div class="ab-public-request-reference">
+                                    <span>Reference number</span>
+                                    <strong t-out="website_request.name"/>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <p>Your external request or complaint has been received.</p>
+                            </t>
+                        </section>
+                    </div>
+                </main>
             </body>
         </html>
     </template>

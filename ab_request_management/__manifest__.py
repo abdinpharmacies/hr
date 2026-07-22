@@ -1,10 +1,10 @@
 {
     'name': 'Requests and Complaints',
-    'version': '19.0.1.1.0',
+    'version': '19.0.1.5.1',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
-    'depends': ['base', 'mail', 'web', 'ab_hr'],
+    'depends': ['base', 'mail', 'web', 'ab_hr', 'ab_core_ui'],
     'data': [
         'security/security_groups.xml',
         'security/record_rules.xml',
@@ -20,6 +20,11 @@
         'views/menus.xml',
     ],
     'assets': {
+        'ab_request_management.assets_public_request': [
+            'ab_core_ui/static/src/scss/core_ui_variables.scss',
+            'ab_core_ui/static/src/scss/core_ui_components.scss',
+            'ab_request_management/static/src/scss/customer_request_form.scss',
+        ],
         'web.assets_backend': [
             'ab_request_management/static/src/js/ab_request_dashboard.js',
             'ab_request_management/static/src/js/ab_request_list_controller_patch.js',
