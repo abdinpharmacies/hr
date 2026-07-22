@@ -4,7 +4,12 @@
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,
+<<<<<<< HEAD
     'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter'],
+=======
+    'depends': ['base', 'mail', 'ab_supplier', 'ab_costcenter', 'ab_hr'],
+
+>>>>>>> parent of a18f20d (ab_payroll/feat: separate payroll sheets from ab_hr)
     'data': [
         'security/groups.xml',
         'security/ir.model.access.csv',
