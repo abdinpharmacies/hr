@@ -17,7 +17,7 @@
                         </div>
                         <div class="scc-tg-connect-title">Telegram Not Connected</div>
                         <div class="scc-tg-connect-sub">Connect your Telegram account to receive workflow approvals, escalation alerts, supplier claim notifications and real-time updates.</div>
-                        <button name="action_open_telegram_bot" type="object" class="scc-tg-connect-btn">
+                        <button type="button" class="scc-tg-connect-btn" data-scc-open-telegram-bot="1">
                             <span>✈️</span> Connect Telegram
                         </button>
                     </div>

@@ -26,8 +26,9 @@ class SupplierClaimEscalation(models.Model):
         employees = self.env['ab_hr_employee'].sudo().search([
             ('user_id', 'in', self.mapped('manager_id').ids),
         ])
+        Registration = self.env['ab_supplier_claim_telegram_registration'].sudo()
         user_to_telegram = {
-            employee.user_id.id: bool(employee.telegram_chat_id and employee.telegram_user_id)
+            employee.user_id.id: Registration._employee_has_real_telegram_identity(employee)
             for employee in employees
         }
         for rec in self:
