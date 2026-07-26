@@ -60,6 +60,13 @@
         </record>
 
         <!-- Inherited form view -->
+        <record id="action_ab_supplier_claim_tracking" model="ir.actions.act_window">
+            <field name="name">Supplier Tracking Portal</field>
+            <field name="res_model">ab_supplier_claim_cycle</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
         <record id="invoice_view_form" model="ir.ui.view">
             <field name="name">supplier.claim.cycle.form</field>
             <field name="model">ab_supplier_claim_cycle</field>
@@ -99,7 +106,7 @@
                         <button name="action_close_claim" type="object" string="Close Claim"
                                 class="btn-primary"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
-                                invisible="status != 'supplier_notification' or supplier_notified == False or not can_current_user_act"/>
+                                invisible="(status not in ('supplier_notification', 'delivery')) or supplier_notified == False or not can_current_user_act"/>
                         <button name="action_secretarial_force_next" type="object" string="Move to Next Stage"
                                 class="btn-info"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -122,6 +129,12 @@
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_admin">
                             ⚙️
                         </button>
+                        <button name="action_open_tracking_dialog" type="object"
+                                class="btn-secondary float-end"
+                                groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="not id">
+                            🔗
+                        </button>
                         <field name="status" invisible="1"/>
                     </header>
                 </xpath>
@@ -137,6 +150,10 @@
                         <field name="can_finish" invisible="1"/>
                         <field name="can_secretarial_override" invisible="1"/>
                         <field name="supplier_notified" invisible="1"/>
+                        <field name="whatsapp_message_sent" invisible="1"/>
+                        <field name="whatsapp_message_sent_by" invisible="1"/>
+                        <field name="whatsapp_message_sent_date" invisible="1"/>
+                        <field name="check_delivery_status" invisible="1"/>
                         <field name="has_blocking_issue" invisible="1"/>
                         <field name="stage_escalated" invisible="1"/>
                         <field name="escalation_ids" invisible="1"/>
@@ -366,7 +383,7 @@
                             </div>
 
                             <!-- Supplier Notification Fields -->
-                            <div invisible="status not in ('supplier_notification', 'closed')" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
+                            <div invisible="status not in ('supplier_notification', 'delivery', 'closed')" style="margin-top:16px;padding-top:16px;border-top:1px solid #e5e7eb;">
                                 <div class="scc-form-section-title" style="margin-bottom:12px;">
                                     <span style="width:24px;height:24px;border-radius:6px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;">📞</span>
                                     <span class="o_translate_inline">Supplier Notification</span>
@@ -375,25 +392,28 @@
                                     <div class="scc-stage-field">
                                         <span class="scc-stage-field-label o_translate_inline">Contact Name</span>
                                         <span class="scc-stage-field-value">
-                                            <field name="contact_name" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                            <field name="contact_name" readonly="status in ('closed', 'delivery') or (status == 'supplier_notification' and supplier_notified)"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
                                         <span class="scc-stage-field-label o_translate_inline">Contact Phone</span>
                                         <span class="scc-stage-field-value">
-                                            <field name="contact_phone" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                            <field name="contact_phone" widget="phone"
+                                                   required="status == 'supplier_notification' and not supplier_notified"
+                                                   readonly="status in ('closed', 'delivery') or (status == 'supplier_notification' and supplier_notified)"
+                                                   placeholder="01000000000"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
                                         <span class="scc-stage-field-label o_translate_inline">Email</span>
                                         <span class="scc-stage-field-value">
-                                            <field name="supplier_email" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                            <field name="supplier_email" readonly="status in ('closed', 'delivery') or (status == 'supplier_notification' and supplier_notified)"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
                                         <span class="scc-stage-field-label o_translate_inline">Delegate</span>
                                         <span class="scc-stage-field-value">
-                                            <field name="delegate_phone_ids" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)" placeholder="—" widget="many2many_tags" options="{'no_create_edit': True}" context="{'default_partner_id': supplier_id}"/>
+                                            <field name="delegate_phone_ids" readonly="status in ('closed', 'delivery') or (status == 'supplier_notification' and supplier_notified)" placeholder="—" widget="many2many_tags" options="{'no_create_edit': True}" context="{'default_partner_id': supplier_id}"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
@@ -411,7 +431,7 @@
                                     <div class="scc-stage-field" style="grid-column:span 2;">
                                         <span class="scc-stage-field-label o_translate_inline">Notification Notes</span>
                                         <span class="scc-stage-field-value">
-                                            <field name="notification_notes" readonly="status == 'closed' or (status == 'supplier_notification' and supplier_notified)"/>
+                                            <field name="notification_notes" readonly="status in ('closed', 'delivery') or (status == 'supplier_notification' and supplier_notified)"/>
                                         </span>
                                     </div>
                                     <div class="scc-stage-field">
@@ -426,7 +446,7 @@
 
                         <!-- Cheque Delivery Documents -->
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
+                             invisible="status not in ('supplier_notification', 'delivery', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">📎</span>
                                 <span class="o_translate_inline">Cheque Delivery Documents</span>
@@ -502,7 +522,7 @@
 
                         <!-- sub_delivery_status on form -->
                         <div class="scc-form-section scc-animate-in scc-animate-in-delay-2"
-                             invisible="status not in ('supplier_notification', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
+                             invisible="status not in ('supplier_notification', 'delivery', 'closed') or check_delivery_status not in ('check_delivered', 'mixed')">
                             <div class="scc-form-section-title">
                                 <span class="scc-form-section-title-icon">🚚</span>
                                 <span class="o_translate_inline">Delivery Status</span>
@@ -511,7 +531,8 @@
                                 <span class="scc-stage-field-label o_translate_inline">Sub Status</span>
                                 <span class="scc-stage-field-value">
                                     <field name="sub_delivery_status" nolabel="1"
-                                           required="check_delivery_status in ('check_delivered', 'mixed')"/>
+                                           required="check_delivery_status in ('check_delivered', 'mixed')"
+                                           readonly="status != 'delivery' or not can_current_user_edit"/>
                                 </span>
                             </div>
                         </div>
@@ -535,11 +556,208 @@
 
                 <!-- Remove the base chatter and add conditional chatter -->
                 <xpath expr="//chatter" position="replace">
-                    <chatter invisible="not show_chatter"
-                             groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+                    <chatter groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"/>
                 </xpath>
             </field>
         </record>
 
+        <!-- ===== Supplier Tracking Portal Dialog ===== -->
+        <record id="view_ab_supplier_claim_cycle_tracking_form" model="ir.ui.view">
+            <field name="name">ab.supplier.claim.cycle.tracking.form</field>
+            <field name="model">ab_supplier_claim_cycle</field>
+            <field name="priority">99</field>
+            <field name="arch" type="xml">
+                <form string="Supplier Tracking Portal" js_class="ab_supplier_claim_cycle_form"
+                      class="scc-premium-dialog-form">
+                    <sheet>
+                        <div class="scc-premium-dialog" data-scc-backend-card="1">
+
+                            <field name="tracking_token" invisible="1"/>
+                            <field name="tracking_is_online" invisible="1"/>
+
+                            <!-- Modal Header Bar -->
+                            <div class="scc-dialog-topbar">
+                                <span class="scc-dialog-topbar-title">🔐 Supplier Tracking Portal</span>
+                                <button type="button" class="scc-dialog-close-btn" data-scc-dialog-close="1" title="Close">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                            </div>
+
+                            <!-- Premium Gradient Header -->
+                            <div class="scc-dialog-hero">
+                                <div class="scc-dialog-hero-bg"></div>
+                                <div class="scc-dialog-hero-content">
+                                    <div class="scc-dialog-hero-left">
+                                        <div class="scc-dialog-hero-icon">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                        </div>
+                                        <div>
+                                            <div class="scc-dialog-hero-title">Secure Tracking Link</div>
+                                            <div class="scc-dialog-hero-sub">Share a secure public tracking link with the supplier</div>
+                                        </div>
+                                    </div>
+                                    <div class="scc-dialog-hero-right">
+                                        <div class="scc-access-status-chip" data-scc-status-chip="1">
+                                            <span class="scc-chip-dot"></span>
+                                            <span class="scc-chip-text">Offline</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Glass Card Content -->
+                            <div class="scc-dialog-body">
+
+                                <!-- URL Section -->
+                                <div class="scc-dialog-section">
+                                    <div class="scc-dialog-section-label">
+                                        <svg class="scc-dialog-section-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                        Tracking URL
+                                    </div>
+                                    <div class="scc-dialog-url-wrap">
+                                        <field name="tracking_url" readonly="1" widget="CopyClipboardChar"
+                                               class="scc-dialog-url-field" nolabel="1"/>
+                                        <div class="scc-dialog-url-actions">
+                                            <button type="button" class="scc-dialog-icon-btn" data-scc-copy-url="1" title="Copy URL">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                            </button>
+                                            <button type="button" class="scc-dialog-icon-btn" data-scc-open-url="1" title="Open in new tab">
+                                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="scc-dialog-divider"></div>
+
+                                <!-- Visit Statistics -->
+                                <div class="scc-dialog-stats">
+                                    <div class="scc-glass scc-stat-mini-card">
+                                        <span class="scc-stat-icon">👁</span>
+                                        <span class="scc-stat-value">
+                                            <field name="tracking_visit_count" readonly="1" nolabel="1"/>
+                                        </span>
+                                        <span class="scc-stat-label">Visits</span>
+                                    </div>
+                                    <div class="scc-glass scc-stat-mini-card">
+                                        <span class="scc-stat-icon">🕒</span>
+                                        <span class="scc-stat-value scc-stat-value--sm">
+                                            <field name="tracking_last_visit" readonly="1" nolabel="1"/>
+                                        </span>
+                                        <span class="scc-stat-label">Last Visit</span>
+                                    </div>
+                                    <div class="scc-glass scc-stat-mini-card">
+                                        <span class="scc-stat-icon">📡</span>
+                                        <span class="scc-stat-value scc-stat-value--sm">
+                                            <field name="tracking_last_seen" readonly="1" nolabel="1"/>
+                                        </span>
+                                        <span class="scc-stat-label">Last Seen</span>
+                                    </div>
+                                </div>
+
+                                <!-- QR + Meta Side-by-side -->
+                                <div class="scc-dialog-qr-row">
+                                    <div class="scc-dialog-qr-section">
+                                        <div class="scc-dialog-qr-frame-container">
+                                            <svg class="scc-qr-ring" viewBox="0 0 120 120" data-scc-qr-ring="1">
+                                                <circle class="scc-qr-ring-bg" cx="60" cy="60" r="54"/>
+                                                <circle class="scc-qr-ring-fill" cx="60" cy="60" r="54"
+                                                        stroke-dasharray="339.292"
+                                                        stroke-dashoffset="0"
+                                                        data-scc-ring-progress="1"/>
+                                            </svg>
+                                            <div class="scc-dialog-qr-frame" data-scc-qr-container="1">
+                                                <field name="tracking_qr_url" readonly="1" widget="image_url"
+                                                       class="scc-dialog-qr-img" nolabel="1"/>
+                                                <div class="scc-qr-tooltip" data-scc-qr-ring-tooltip="1">✓ Token Active</div>
+                                                <div class="scc-qr-overlay" data-scc-qr-overlay="1">
+                                                    <button type="button" class="scc-glass scc-qr-overlay-btn" data-scc-download-qr="1">
+                                                        <span>⬇</span> Download
+                                                    </button>
+                                                    <button type="button" class="scc-glass scc-qr-overlay-btn" data-scc-preview-qr="1">
+                                                        <span>🔍</span> Preview
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="scc-dialog-qr-meta">
+                                        <div class="scc-dialog-meta-badge">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                            Secure Access
+                                        </div>
+                                        <div class="scc-dialog-meta-badge is-auto">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                                            Auto Generated
+                                        </div>
+                                        <div class="scc-dialog-meta-created">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                            <field name="create_date" readonly="1" nolabel="1"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Footer Actions -->
+                                <div class="scc-dialog-actions">
+                                    <button type="button" class="scc-dialog-btn scc-dialog-btn-primary" data-scc-share-btn="1">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+                                        Share
+                                        <svg class="scc-share-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </button>
+                                    <button type="button" class="scc-dialog-btn scc-dialog-btn-ghost" data-scc-dialog-close="1">Close</button>
+                                </div>
+
+                                <!-- Floating Recent Visits Drawer -->
+                                <div class="scc-visits-drawer" data-scc-visits-drawer="1">
+                                    <button type="button" class="scc-visits-fab" data-scc-visits-drawer-toggle="1" aria-label="Recent Visits" title="Recent Visits">
+                                        <span class="scc-visits-fab-icon">👁</span>
+                                        <span class="scc-visits-badge" data-scc-visits-badge="1">0</span>
+                                    </button>
+                                    <section class="scc-visits-panel" data-scc-visits-panel="1">
+                                        <button type="button" class="scc-visits-panel-header" data-scc-visits-drawer-collapse="1">
+                                            <span class="scc-visits-panel-title">
+                                                <span>👁</span>
+                                                <span>Recent Visits</span>
+                                            </span>
+                                            <span class="scc-visits-panel-collapse">▲ Collapse</span>
+                                        </button>
+                                        <div class="scc-dialog-visits" data-scc-visits-accordion="1"/>
+                                    </section>
+                                </div>
+
+                                <!-- Share Popover -->
+                                <div class="scc-glass scc-share-popover" data-scc-share-popover="1">
+                                    <button type="button" class="scc-share-option" data-scc-share="copy">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                                        Copy Link
+                                    </button>
+                                    <button type="button" class="scc-share-option" data-scc-share="open">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                                        Open Tracking Page
+                                    </button>
+                                    <button type="button" class="scc-share-option" data-scc-share="download-qr">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                                        Download QR
+                                    </button>
+                                    <button type="button" class="scc-share-option" data-scc-share="email">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                        Email
+                                    </button>
+                                    <button type="button" class="scc-share-option" data-scc-share="whatsapp">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                                        WhatsApp
+                                    </button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_supplier_claim_tracking" model="ir.actions.act_window">
+            <field name="view_id" ref="view_ab_supplier_claim_cycle_tracking_form"/>
+        </record>
     </data>
 </odoo>

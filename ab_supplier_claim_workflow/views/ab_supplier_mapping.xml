@@ -76,7 +76,7 @@
                             </div>
                             <div class="scc-mapping-fields">
                                 <div class="scc-mapping-field-row">
-                                    <span class="scc-mapping-field-label o_form_label o_translate_inline">Mobile Phone</span>
+                                    <span class="scc-mapping-field-label o_form_label o_translate_inline">Contact Phone</span>
                                     <div class="scc-mapping-field-value">
                                         <field name="mobile_phone" placeholder="—" widget="phone"/>
                                     </div>
