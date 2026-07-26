@@ -62,10 +62,8 @@ class ResGroups(models.Model):
             if manager:
                 already_assigned_ids.add(manager.id)
         links = self.env['ab_hr_bot'].sudo().search([])
-        linked_employee_ids = [link.employee_id for link in links if link.employee_id]
+        linked_employee_ids = [link.employee_id for link in links if link.employee_id and link.chat_id]
         employees = self.env['ab_hr_employee'].sudo().search([
-            '|',
-            '&', ('telegram_chat_id', '!=', False), ('telegram_chat_id', '!=', ''),
             ('id', 'in', linked_employee_ids or [0]),
             ('id', 'not in', list(already_assigned_ids)),
         ])
@@ -78,15 +76,19 @@ class ResGroups(models.Model):
     @api.model
     def get_telegram_connected_employees(self):
         links = self.env['ab_hr_bot'].sudo().search([])
-        linked_employee_ids = [link.employee_id for link in links if link.employee_id]
+        link_by_employee_id = {
+            link.employee_id: link
+            for link in links
+            if link.employee_id and link.chat_id
+        }
+        linked_employee_ids = list(link_by_employee_id)
         employees = self.env['ab_hr_employee'].sudo().search([
-            '|',
-            '&', ('telegram_chat_id', '!=', False), ('telegram_chat_id', '!=', ''),
             ('id', 'in', linked_employee_ids or [0]),
         ], order='name')
         results = []
         for employee in employees:
-            linked_at = employee.telegram_linked_at
+            link = link_by_employee_id.get(employee.id)
+            linked_at = link.create_date if link else False
             results.append({
                 'id': employee.id,
                 'name': employee.name,
@@ -94,7 +96,7 @@ class ResGroups(models.Model):
                 'department_id': employee.department_id.id if employee.department_id else False,
                 'telegram_username': self._get_employee_telegram_username(employee) or '',
                 'telegram_chat_id': self._get_employee_telegram_chat_id(employee) or '',
-                'telegram_user_id': employee.telegram_user_id or '',
+                'telegram_user_id': '',
                 'linked_at': linked_at.isoformat() if linked_at else False,
                 'user_id': employee.user_id.id if employee.user_id else False,
                 'user_name': employee.user_id.name if employee.user_id else '',
