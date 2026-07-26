@@ -137,10 +137,19 @@ class AbSupplierClaimTelegramRegistration(models.Model):
                 'text': _('Employee code %s is not active.') % code,
                 'note': 'employee_not_active',
             }
+        chat_id = str(message_data.get('telegram_chat_id') or '').strip()
+        telegram_user_id = str(message_data.get('telegram_user_id') or '').strip()
+        username = (message_data.get('username') or '').strip()
+        self.env['ab_hr_bot'].sudo().register_employee_chat(
+            employee.id,
+            chat_id,
+            telegram_username=username,
+            employee_ref_id=employee.accid or employee.id,
+        )
         employee.sudo().write({
-            'telegram_chat_id': str(message_data.get('telegram_chat_id') or '').strip() or False,
-            'telegram_user_id': str(message_data.get('telegram_user_id') or '').strip() or False,
-            'telegram_username': (message_data.get('username') or '').strip() or False,
+            'telegram_chat_id': chat_id or False,
+            'telegram_user_id': telegram_user_id or chat_id or False,
+            'telegram_username': username or False,
             'telegram_linked_at': fields.Datetime.now(),
         })
         self.sudo()._ensure_registration_from_employee(employee)
@@ -199,11 +208,37 @@ class AbSupplierClaimTelegramRegistration(models.Model):
             rec.telegram_connected = rec._employee_has_real_telegram_identity(rec.employee_id)
 
     @api.model
+    def _get_employee_telegram_link(self, employee):
+        employee = employee.sudo().exists() if employee else employee
+        if not employee:
+            return self.env['ab_hr_bot']
+        return self.env['ab_hr_bot'].sudo().search([('employee_id', '=', employee.id)], limit=1)
+
+    @api.model
+    def _get_employee_telegram_chat_id(self, employee):
+        link = self._get_employee_telegram_link(employee)
+        if link and link.chat_id:
+            return link.chat_id
+        return (employee.telegram_chat_id or '').strip() if employee else False
+
+    @api.model
+    def _get_employee_telegram_username(self, employee):
+        link = self._get_employee_telegram_link(employee)
+        if link and link.telegram_username:
+            return link.telegram_username
+        return (employee.telegram_username or '').strip() if employee else False
+
+    @api.model
     def _employee_has_real_telegram_identity(self, employee):
         return bool(
             employee
-            and (employee.telegram_chat_id or '').strip()
-            and (employee.telegram_user_id or '').strip()
+            and (
+                self._get_employee_telegram_chat_id(employee)
+                or (
+                    (employee.telegram_chat_id or '').strip()
+                    and (employee.telegram_user_id or '').strip()
+                )
+            )
         )
 
     @api.onchange('manager_department')
@@ -296,11 +331,12 @@ class AbSupplierClaimTelegramRegistration(models.Model):
     @api.model
     def _cron_import_telegram_registrations(self):
         icp = self.env['ir.config_parameter'].sudo()
-        if icp.get_param('telebot_webhook_url'):
-            return
         last_offset = int(icp.get_param('ab_supplier_claim_cycle.telegram_last_update_id', '0'))
-        telegram_service = self.env['ab_telegram_service'].sudo()
-        updates = telegram_service.get_updates(offset=last_offset + 1)
+        response = self.env['ab_telegram_bot'].sudo()._call_telegram_api(
+            'getUpdates',
+            query_params={'offset': last_offset + 1, 'timeout': 0},
+        )
+        updates = (response or {}).get('result') or []
         if not updates:
             return
         max_update_id = last_offset
@@ -312,9 +348,16 @@ class AbSupplierClaimTelegramRegistration(models.Model):
             text = (message.get('text') or '').strip()
             if not text:
                 continue
-            result = telegram_service.dispatch_webhook_payload(update) or {}
-            if result.get('reason') == 'employee_telegram_linked':
-                self._ensure_registration_from_employee_code(text)
+            chat = message.get('chat') or {}
+            sender = message.get('from') or {}
+            result = self._link_employee_from_telegram_message({
+                'telegram_user_id': str(sender.get('id') or ''),
+                'telegram_chat_id': str(chat.get('id') or ''),
+                'text': text,
+                'username': (sender.get('username') or '').strip(),
+            }) or {}
+            if result.get('handled') and result.get('text') and chat.get('id'):
+                self.env['ab_telegram_bot'].sudo().send_message(chat.get('id'), result['text'])
         if max_update_id > last_offset:
             icp.set_param('ab_supplier_claim_cycle.telegram_last_update_id', str(max_update_id))
 

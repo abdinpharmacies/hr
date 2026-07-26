@@ -6,11 +6,15 @@ class ResGroups(models.Model):
 
     @api.model
     def _employee_has_real_telegram_identity(self, employee):
-        return bool(
-            employee
-            and (employee.telegram_chat_id or '').strip()
-            and (employee.telegram_user_id or '').strip()
-        )
+        return self.env['ab_supplier_claim_telegram_registration'].sudo()._employee_has_real_telegram_identity(employee)
+
+    @api.model
+    def _get_employee_telegram_chat_id(self, employee):
+        return self.env['ab_supplier_claim_telegram_registration'].sudo()._get_employee_telegram_chat_id(employee)
+
+    @api.model
+    def _get_employee_telegram_username(self, employee):
+        return self.env['ab_supplier_claim_telegram_registration'].sudo()._get_employee_telegram_username(employee)
 
     @api.model
     def get_supplier_claim_dept_managers(self):
@@ -21,7 +25,7 @@ class ResGroups(models.Model):
         for row in results:
             manager = employee_by_id.get(row.get('manager_id'))
             row.update({
-                'telegram_username': manager.telegram_username if manager else '',
+                'telegram_username': self._get_employee_telegram_username(manager) if manager else '',
                 'has_telegram': self._employee_has_real_telegram_identity(manager),
             })
         return results
@@ -36,7 +40,7 @@ class ResGroups(models.Model):
         result = super().assign_supplier_claim_manager(dept_code, employee_id)
         if result.get('success'):
             result.update({
-                'telegram_username': employee.telegram_username or '',
+                'telegram_username': self._get_employee_telegram_username(employee) or '',
                 'has_telegram': self._employee_has_real_telegram_identity(employee),
             })
         return result
@@ -57,26 +61,28 @@ class ResGroups(models.Model):
             manager = self._get_stored_manager(dept_code)
             if manager:
                 already_assigned_ids.add(manager.id)
+        links = self.env['ab_hr_bot'].sudo().search([])
+        linked_employee_ids = [link.employee_id for link in links if link.employee_id]
         employees = self.env['ab_hr_employee'].sudo().search([
-            ('telegram_chat_id', '!=', False),
-            ('telegram_chat_id', '!=', ''),
-            ('telegram_user_id', '!=', False),
-            ('telegram_user_id', '!=', ''),
+            '|',
+            '&', ('telegram_chat_id', '!=', False), ('telegram_chat_id', '!=', ''),
+            ('id', 'in', linked_employee_ids or [0]),
             ('id', 'not in', list(already_assigned_ids)),
         ])
         return [{
             'id': employee.id,
             'name': employee.name,
-            'telegram_username': employee.telegram_username or '',
+            'telegram_username': self._get_employee_telegram_username(employee) or '',
         } for employee in employees]
 
     @api.model
     def get_telegram_connected_employees(self):
+        links = self.env['ab_hr_bot'].sudo().search([])
+        linked_employee_ids = [link.employee_id for link in links if link.employee_id]
         employees = self.env['ab_hr_employee'].sudo().search([
-            ('telegram_chat_id', '!=', False),
-            ('telegram_chat_id', '!=', ''),
-            ('telegram_user_id', '!=', False),
-            ('telegram_user_id', '!=', ''),
+            '|',
+            '&', ('telegram_chat_id', '!=', False), ('telegram_chat_id', '!=', ''),
+            ('id', 'in', linked_employee_ids or [0]),
         ], order='name')
         results = []
         for employee in employees:
@@ -86,8 +92,8 @@ class ResGroups(models.Model):
                 'name': employee.name,
                 'department_name': employee.department_id.name if employee.department_id else '',
                 'department_id': employee.department_id.id if employee.department_id else False,
-                'telegram_username': employee.telegram_username or '',
-                'telegram_chat_id': employee.telegram_chat_id or '',
+                'telegram_username': self._get_employee_telegram_username(employee) or '',
+                'telegram_chat_id': self._get_employee_telegram_chat_id(employee) or '',
                 'telegram_user_id': employee.telegram_user_id or '',
                 'linked_at': linked_at.isoformat() if linked_at else False,
                 'user_id': employee.user_id.id if employee.user_id else False,

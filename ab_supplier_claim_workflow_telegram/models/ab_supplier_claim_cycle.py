@@ -1,6 +1,7 @@
 import logging
 
 from odoo import _, api, fields, models
+from odoo.exceptions import UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class SupplierClaimCycle(models.Model):
         employee = Employee.search([('user_id', '=', self.env.user.id)], limit=1)
         show = bool(
             employee
-            and not (employee.telegram_chat_id and employee.telegram_user_id)
+            and not self.env['ab_supplier_claim_telegram_registration']._employee_has_real_telegram_identity(employee)
             and self.env['ab_supplier_claim_telegram_registration'].sudo().search_count([
                 ('employee_id', '=', employee.id),
                 ('manager_department', '!=', False),
@@ -43,16 +44,23 @@ class SupplierClaimCycle(models.Model):
             '|', ('login', '=', email), ('email', '=', email)
         ], limit=1)
 
+    @api.model
+    def get_telegram_bot_url(self):
+        response = self.env['ab_telegram_bot'].sudo()._call_telegram_api('getMe')
+        bot_username = ((response or {}).get('result') or {}).get('username')
+        if not bot_username:
+            raise UserError(_("Telegram bot username could not be resolved from the active bot token."))
+        bot_username = bot_username.strip().lstrip('@')
+        icp = self.env['ir.config_parameter'].sudo()
+        icp.set_param('telegram.bot.username', bot_username)
+        icp.set_param('supplier_claim.telegram_bot_username', bot_username)
+        return 'https://t.me/%s' % bot_username
+
     def action_open_telegram_bot(self):
         self.ensure_one()
-        bot_username = self.env['ir.config_parameter'].sudo().get_param(
-            'supplier_claim.telegram_bot_username', ''
-        ) or self.env['ir.config_parameter'].sudo().get_param(
-            'telegram.bot.username', 'AbdinDevBot'
-        )
         return {
             'type': 'ir.actions.act_url',
-            'url': 'https://t.me/%s' % bot_username,
+            'url': self.get_telegram_bot_url(),
             'target': 'new',
         }
 
@@ -76,15 +84,12 @@ class SupplierClaimCycle(models.Model):
         employee = self.env['ab_hr_employee'].sudo().search([
             ('user_id', '=', manager.id),
         ], limit=1)
-        if (
-            not employee
-            or not employee.telegram_chat_id
-            or not employee.telegram_user_id
-        ):
+        chat_id = self.env['ab_supplier_claim_telegram_registration'].sudo()._get_employee_telegram_chat_id(employee)
+        if not chat_id:
             _logger.info('Telegram skipped: no verified Telegram identity for user %s', manager.display_name)
             return False
         text = self._build_escalation_telegram_message(stage_key=stage_key)
-        return self.env['ab_telegram_service'].sudo().send_message(employee.telegram_chat_id, text)
+        return self.env['ab_telegram_bot'].sudo().send_message(chat_id, text, parse_mode='HTML')
 
     def _resolve_escalation_details(self, stage_key=None):
         result = super()._resolve_escalation_details(stage_key=stage_key)
@@ -99,6 +104,10 @@ class SupplierClaimCycle(models.Model):
         if not dept_code:
             return result
 
+        # In the Telegram extension, a department escalation manager is valid
+        # only when explicitly configured in Telegram Senders and connected.
+        result['managers'] = []
+        result['manager_users'] = []
         registrations = self.env['ab_supplier_claim_telegram_registration'].sudo().search([
             ('manager_department', '=', dept_code),
             ('telegram_connected', '=', True),
@@ -109,21 +118,20 @@ class SupplierClaimCycle(models.Model):
             if (
                 reg.employee_id
                 and reg.employee_id.user_id
-                and reg.employee_id.telegram_chat_id
-                and reg.employee_id.telegram_user_id
+                and reg._employee_has_real_telegram_identity(reg.employee_id)
             ):
                 telegram_managers |= reg.employee_id
                 telegram_manager_users |= reg.employee_id.user_id
         if telegram_manager_users:
             result['managers'] = list(telegram_managers)
             result['manager_users'] = list(telegram_manager_users)
-            stage_groups = self._get_stage_group_xmlids()
-            group_xmlid = stage_groups.get(stage_key or self.status)
-            if group_xmlid:
-                result['group_xmlid'] = group_xmlid
-                group = self.env.ref(group_xmlid, raise_if_not_found=False)
-                if group:
-                    result['users'] = list(group.sudo().user_ids)
+        stage_groups = self._get_stage_group_xmlids()
+        group_xmlid = stage_groups.get(stage_key or self.status)
+        if group_xmlid:
+            result['group_xmlid'] = group_xmlid
+            group = self.env.ref(group_xmlid, raise_if_not_found=False)
+            if group:
+                result['users'] = list(group.sudo().user_ids)
         return result
 
     def _format_no_escalation_managers_note(self, department, time):
