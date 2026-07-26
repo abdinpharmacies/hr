@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="claim_error_wizard_form" model="ir.ui.view">
+        <field name="name">ab.claim.error.wizard.form</field>
+        <field name="model">ab.claim.error.wizard</field>
+        <field name="priority">1</field>
+        <field name="arch" type="xml">
+            <form class="scc-clean-dialog">
+                <div class="scc-dialog-body">
+                    <div class="scc-dialog-header">
+                        <div class="scc-dialog-icon is-error">⚠</div>
+                        <div>
+                            <div class="scc-dialog-title o_translate_inline">Missing Required Information</div>
+                            <div class="scc-dialog-sub o_translate_inline">Please review the details below</div>
+                        </div>
+                    </div>
+                    <div class="scc-dialog-field">
+                        <div class="scc-error-card">
+                            <field name="error_message" class="scc-error-text"/>
+                        </div>
+                    </div>
+                    <div class="scc-dialog-footer">
+                        <button name="action_ok" type="object" string="OK" class="btn-primary"/>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+</odoo>

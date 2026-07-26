@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="supplier_claim_tracking_page" name="Supplier Claim Tracking Portal">
+        <t t-call="web.layout">
+            <t t-set="title">Supplier Claim Tracking</t>
+            <t t-set="head">
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <t t-call-assets="web.assets_frontend"/>
+            </t>
+            <t t-set="body_classname">scc-portal-body</t>
+            <div class="scc-portal-page"
+                 t-att-dir="'rtl' if (request.env.context.get('lang') or '').startswith('ar') else 'ltr'"
+                 t-att-data-scc-presence-url="tracking.get('tracking_presence_url')">
+                <main class="scc-portal-shell">
+
+                    <!-- ============ HERO ============ -->
+                    <section class="scc-glass scc-hero scc-entrance" style="animation-delay:0ms">
+                        <div class="scc-hero-left">
+                            <div class="scc-hero-eyebrow">Supplier Claim</div>
+                            <h1 class="scc-hero-title" t-esc="tracking['claim_number']"/>
+                            <div class="scc-hero-supplier" t-esc="tracking['supplier_name']"/>
+                        </div>
+                        <div class="scc-hero-right">
+                            <span class="scc-status-pill">
+                                <span class="scc-status-pill-dot"/>
+                                <t t-esc="tracking['current_status']"/>
+                            </span>
+                            <span class="scc-status-pill-label">
+                                <t t-esc="tracking['current_department']"/>
+                            </span>
+                        </div>
+                    </section>
+
+                    <!-- ============ PROGRESS ============ -->
+                    <section class="scc-glass scc-progress scc-entrance" style="animation-delay:80ms">
+                        <div class="scc-progress-header">
+                            <h2 class="scc-progress-title">Workflow Progress</h2>
+                            <span class="scc-progress-percent">
+                                <span t-esc="tracking['progress']"/>%
+                            </span>
+                        </div>
+                        <div class="scc-progress-track">
+                            <div class="scc-progress-fill"
+                                 t-att-style="'--scc-progress-val: ' + str(tracking['progress']) + '%;'"/>
+                        </div>
+                        <div class="scc-progress-label">
+                            <span>Completed</span>
+                            <span>
+                                <t t-esc="tracking['progress']"/> / 100
+                            </span>
+                        </div>
+                    </section>
+
+                    <!-- ============ MAIN GRID ============ -->
+                    <div class="scc-portal-main-grid">
+
+                        <!-- ===== TIMELINE ===== -->
+                        <section class="scc-glass scc-timeline-section scc-entrance" style="animation-delay:160ms">
+                            <div class="scc-timeline-header">
+                                <h2 class="scc-timeline-title">Workflow Timeline</h2>
+                            </div>
+                            <div class="scc-timeline">
+                                <t t-foreach="tracking['timeline']" t-as="stage">
+                                    <div t-attf-class="scc-stage is-#{stage['state']}">
+                                        <div class="scc-stage-marker">
+                                            <div class="scc-stage-dot" t-esc="stage['icon']"/>
+                                            <div class="scc-stage-line"/>
+                                        </div>
+                                        <div class="scc-stage-content">
+                                            <div class="scc-stage-label" t-esc="stage['label']"/>
+                                            <t t-if="stage.get('is_current')">
+                                                <div class="scc-stage-here">● You are here</div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </t>
+                            </div>
+                        </section>
+
+                        <!-- ===== SIDEBAR ===== -->
+                        <aside class="scc-portal-sidebar">
+
+                            <!-- ===== TRACKING ACCESS CARD ===== -->
+                            <section class="scc-glass scc-access-card scc-entrance" style="animation-delay:240ms" data-scc-access-card="1">
+
+                                <!-- Skeleton Overlay -->
+                                <div class="scc-skeleton-overlay" data-scc-skeleton="1">
+                                    <div class="scc-skeleton-row">
+                                        <div class="scc-skeleton scc-skeleton-circle"></div>
+                                        <div class="scc-skeleton-group">
+                                            <div class="scc-skeleton scc-skeleton-title"></div>
+                                            <div class="scc-skeleton scc-skeleton-text" style="width:35%"></div>
+                                        </div>
+                                        <div class="scc-skeleton" style="width:68px;height:26px;border-radius:999px;flex-shrink:0"></div>
+                                    </div>
+                                    <div class="scc-skeleton scc-skeleton-card"></div>
+                                    <div class="scc-skeleton-grid">
+                                        <div class="scc-skeleton" style="height:68px;border-radius:14px"></div>
+                                        <div class="scc-skeleton" style="height:68px;border-radius:14px"></div>
+                                        <div class="scc-skeleton" style="height:68px;border-radius:14px"></div>
+                                    </div>
+                                    <div class="scc-skeleton-row" style="gap:20px">
+                                        <div class="scc-skeleton scc-skeleton-circle" style="width:96px;height:96px;flex-shrink:0"></div>
+                                        <div class="scc-skeleton-group" style="flex:1">
+                                            <div class="scc-skeleton scc-skeleton-text"></div>
+                                            <div class="scc-skeleton scc-skeleton-text" style="width:55%"></div>
+                                            <div class="scc-skeleton scc-skeleton-text" style="width:40%"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Header Row -->
+                                <div class="scc-access-header">
+                                    <div class="scc-access-header-left">
+                                        <span class="scc-access-icon">🔗</span>
+                                        <div>
+                                            <div class="scc-access-title">Supplier Tracking Portal</div>
+                                            <div class="scc-access-subtitle">Secure Access Link</div>
+                                        </div>
+                                    </div>
+                                    <div class="scc-access-status-chip" t-att-class="'scc-access-status-chip ' + ('is-active' if tracking.get('is_online') else '')" data-scc-status-chip="1">
+                                        <span class="scc-chip-dot"></span>
+                                        <span class="scc-chip-text"><t t-esc="'Online' if tracking.get('is_online') else 'Offline'"/></span>
+                                    </div>
+                                </div>
+
+                                <!-- Link Section -->
+                                <div class="scc-access-link-section">
+                                    <div class="scc-access-link-row">
+                                        <span class="scc-access-link-text" t-esc="tracking['tracking_url']"/>
+                                        <button class="scc-access-copy-btn" data-scc-copy-link="1" aria-label="Copy link" title="Copy link">
+                                            <span>📋</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="scc-access-divider"></div>
+
+                                <!-- Statistics Row -->
+                                <div class="scc-access-stats">
+                                    <div class="scc-glass scc-stat-mini-card" data-scc-stat="visits">
+                                        <span class="scc-stat-icon">👁</span>
+                                        <span class="scc-stat-value" data-scc-stat-value="1" t-esc="tracking.get('visit_count', 0)"/>
+                                        <span class="scc-stat-label">Visits</span>
+                                    </div>
+                                    <div class="scc-glass scc-stat-mini-card" data-scc-stat="last_visit">
+                                        <span class="scc-stat-icon">🕒</span>
+                                        <span class="scc-stat-value scc-stat-value--sm" data-scc-stat-value="1" t-esc="tracking.get('last_visit') or '—'"/>
+                                        <span class="scc-stat-label">Last Visit</span>
+                                    </div>
+                                    <div class="scc-glass scc-stat-mini-card" data-scc-stat="created">
+                                        <span class="scc-stat-icon">📅</span>
+                                        <span class="scc-stat-value scc-stat-value--sm" t-esc="tracking['created_date']"/>
+                                        <span class="scc-stat-label">Created</span>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="scc-access-divider"></div>
+
+                                <!-- QR Section -->
+                                <div class="scc-access-qr-section">
+                                    <div class="scc-qr-frame-container">
+                                        <svg class="scc-qr-ring" viewBox="0 0 120 120" data-scc-qr-ring="1">
+                                            <circle class="scc-qr-ring-bg" cx="60" cy="60" r="54"/>
+                                            <circle class="scc-qr-ring-fill" cx="60" cy="60" r="54"
+                                                    stroke-dasharray="339.292"
+                                                    stroke-dashoffset="0"
+                                                    data-scc-ring-progress="1"/>
+                                        </svg>
+                                        <div class="scc-glass scc-qr-frame" data-scc-qr-container="1">
+                                            <img class="scc-qr-image"
+                                                 t-att-src="tracking['tracking_qr_url']"
+                                                 alt="Tracking QR Code"
+                                                 data-scc-qr-img="1"/>
+                                            <div class="scc-qr-tooltip" data-scc-qr-ring-tooltip="1">Expires in —</div>
+                                            <!-- Hover Overlay -->
+                                            <div class="scc-qr-overlay" data-scc-qr-overlay="1">
+                                                <button class="scc-glass scc-qr-overlay-btn" data-scc-download-qr="1">
+                                                    <span>⬇</span> Download QR
+                                                </button>
+                                                <button class="scc-glass scc-qr-overlay-btn" data-scc-preview-qr="1">
+                                                    <span>🔍</span> Preview
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="scc-qr-meta">
+                                        <t t-if="tracking.get('created_date')">
+                                            <div class="scc-qr-meta-row">
+                                                <span class="scc-qr-meta-icon">📅</span>
+                                                <span t-esc="'Generated ' + tracking['created_date']"/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="scc-access-divider"></div>
+
+                                <!-- Activity Timeline -->
+                                <div class="scc-access-activity" data-scc-activity="1">
+                                    <div class="scc-activity-header">Activity</div>
+                                    <div class="scc-activity-list" data-scc-activity-list="1">
+                                        <t t-foreach="tracking.get('activity_events', [])" t-as="event">
+                                            <div class="scc-activity-item" t-attf-data-timestamp="#{event.get('timestamp', '')}">
+                                                <div class="scc-activity-dot"></div>
+                                                <div class="scc-activity-content">
+                                                    <span class="scc-activity-label" t-esc="event.get('label', '')"/>
+                                                    <span class="scc-activity-date" t-esc="event.get('date', '')"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+
+                                <!-- Footer / Share -->
+                                <div class="scc-access-footer">
+                                    <button class="scc-glass scc-access-share-btn" data-scc-share-btn="1">
+                                        <span>Share</span>
+                                        <span class="scc-share-arrow">▼</span>
+                                    </button>
+                                </div>
+
+                                <!-- Share Popover (hidden by default) -->
+                                <div class="scc-glass scc-share-popover" data-scc-share-popover="1">
+                                    <button class="scc-share-option" data-scc-share="copy">📋 Copy Link</button>
+                                    <button class="scc-share-option" data-scc-share="open">↗ Open Link</button>
+                                    <button class="scc-share-option" data-scc-share="download-qr">⬇ Download QR</button>
+                                    <button class="scc-share-option" data-scc-share="email">✉ Email</button>
+                                    <button class="scc-share-option" data-scc-share="whatsapp">💬 WhatsApp</button>
+                                    <button class="scc-share-option" data-scc-share="telegram">✈ Telegram</button>
+                                </div>
+
+                            </section>
+
+                            <!-- Alerts -->
+                            <div>
+
+                                <t t-if="tracking.get('delay')">
+                                    <section class="scc-glass scc-alert-card is-warning scc-entrance" style="animation-delay:300ms">
+                                        <div class="scc-alert-header">
+                                            <span class="scc-alert-icon">⚠</span>
+                                            <div class="scc-alert-title">Delayed</div>
+                                        </div>
+                                        <div class="scc-alert-body" t-esc="tracking['delay']['reason']"/>
+                                        <div class="scc-alert-meta">
+                                            <span t-esc="tracking['delay']['department']"/>
+                                            <span> · </span>
+                                            <span t-esc="tracking['delay']['date']"/>
+                                        </div>
+                                    </section>
+                                </t>
+
+                                <t t-if="tracking.get('rejection')">
+                                    <section class="scc-glass scc-alert-card is-danger scc-entrance" style="animation-delay:320ms">
+                                        <div class="scc-alert-header">
+                                            <span class="scc-alert-icon">✕</span>
+                                            <div class="scc-alert-title">Rejected</div>
+                                        </div>
+                                        <div class="scc-alert-body" t-esc="tracking['rejection']['reason']"/>
+                                        <div class="scc-alert-meta">
+                                            <span t-esc="tracking['rejection']['department']"/>
+                                            <span> · </span>
+                                            <span t-esc="tracking['rejection']['date']"/>
+                                        </div>
+                                    </section>
+                                </t>
+
+                                <t t-if="tracking.get('escalation')">
+                                    <section class="scc-glass scc-alert-card is-info scc-entrance" style="animation-delay:340ms">
+                                        <div class="scc-alert-header">
+                                            <span class="scc-alert-icon">↑</span>
+                                            <div class="scc-alert-title">Escalated</div>
+                                        </div>
+                                        <div class="scc-alert-body">This claim has been escalated.</div>
+                                        <div class="scc-alert-meta">
+                                            <span t-esc="tracking['escalation']['department']"/>
+                                            <span> · </span>
+                                            <span t-esc="tracking['escalation']['date']"/>
+                                        </div>
+                                    </section>
+                                </t>
+
+                                <t t-if="tracking.get('supplier_notified')">
+                                    <section class="scc-glass scc-alert-card is-success scc-entrance" style="animation-delay:360ms">
+                                        <div class="scc-alert-header">
+                                            <span class="scc-alert-icon">✓</span>
+                                            <div class="scc-alert-title">Supplier Notified</div>
+                                        </div>
+                                        <div class="scc-alert-body">Please collect your cheque.</div>
+                                        <div class="scc-alert-meta" t-esc="tracking['notification_date']"/>
+                                    </section>
+                                </t>
+
+                                <t t-if="tracking.get('cheque_delivered')">
+                                    <section class="scc-glass scc-alert-card is-success scc-entrance" style="animation-delay:380ms">
+                                        <div class="scc-alert-header">
+                                            <span class="scc-alert-icon">✓</span>
+                                            <div class="scc-alert-title">Completed</div>
+                                        </div>
+                                        <div class="scc-alert-body">Cheque delivered successfully.</div>
+                                        <div class="scc-alert-meta" t-esc="tracking['collection_date']"/>
+                                    </section>
+                                </t>
+
+                            </div>
+
+                        </aside>
+                    </div>
+                </main>
+
+                <!-- ===== THEME PICKER ===== -->
+                <div class="scc-theme-picker" aria-label="Theme picker">
+                    <button class="scc-theme-trigger" aria-label="Change theme" title="Change theme">
+                        <span class="scc-theme-icon">✦</span>
+                    </button>
+                    <div class="scc-theme-menu" role="radiogroup" aria-label="Select theme">
+                        <button class="scc-theme-swatch is-active" data-theme="default" style="--swatch-color: #6366f1" role="radio" aria-checked="true" aria-label="Default indigo theme" title="Indigo"></button>
+                        <button class="scc-theme-swatch" data-theme="emerald" style="--swatch-color: #10b981" role="radio" aria-checked="false" aria-label="Emerald green theme" title="Emerald"></button>
+                        <button class="scc-theme-swatch" data-theme="rose" style="--swatch-color: #f43f5e" role="radio" aria-checked="false" aria-label="Rose theme" title="Rose"></button>
+                        <button class="scc-theme-swatch" data-theme="amber" style="--swatch-color: #f59e0b" role="radio" aria-checked="false" aria-label="Amber theme" title="Amber"></button>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+</odoo>

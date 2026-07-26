@@ -1,14 +1,21 @@
 import logging
+import base64
+import io
+import re
+import secrets
+import urllib.parse
 
 from datetime import timedelta
 
 from odoo import SUPERUSER_ID, _, api, fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tools import config
 from odoo.tools.misc import format_datetime
 
 _logger = logging.getLogger(__name__)
 
-STAGE_SEQUENCE = ('secretarial', 'inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'closed')
+PHONE_DIGIT_TRANSLATION = str.maketrans('٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹', '01234567890123456789')
+STAGE_SEQUENCE = ('secretarial', 'inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc', 'sign_check', 'supplier_notification', 'delivery', 'closed')
 STAGE_LABELS = {
     'secretarial': 'Secretarial',
     'inventory': 'Inventory',
@@ -18,6 +25,7 @@ STAGE_LABELS = {
     'bank_acc': 'Bank Account',
     'sign_check': 'Sign Check',
     'supplier_notification': 'Supplier Notification',
+    'delivery': 'Delivery',
     'closed': 'Check delivery',
 }
 STAGE_ORDER = {s: i for i, s in enumerate(STAGE_SEQUENCE)}
@@ -54,6 +62,44 @@ class SupplierClaimCycle(models.Model):
 
     name = fields.Char(string='Claim Number', default='New', required=True, readonly=True, copy=False)
     _uniq_name = models.Constraint('UNIQUE(name)', 'Claim number must be unique.')
+    tracking_token = fields.Char(
+        string='Tracking Token',
+        default=lambda self: self._generate_tracking_token(),
+        readonly=True,
+        copy=False,
+        index=True,
+    )
+    tracking_url = fields.Char(
+        string='Tracking URL',
+        compute='_compute_tracking_url',
+        readonly=True,
+    )
+    tracking_qr_url = fields.Char(
+        string='Tracking QR Code',
+        compute='_compute_tracking_url',
+        readonly=True,
+    )
+    tracking_first_accessed = fields.Datetime(readonly=True, copy=False)
+    tracking_last_seen = fields.Datetime(string='Last Seen', readonly=True, copy=False)
+    tracking_is_online = fields.Boolean(string='Online', readonly=True, copy=False)
+    tracking_visit_ids = fields.One2many(
+        'ab.supplier.claim.tracking.visit',
+        'claim_id',
+        string='Last Visits',
+        readonly=True,
+        copy=False,
+    )
+    tracking_visit_count = fields.Integer(
+        string='Visits',
+        compute='_compute_tracking_visit_stats',
+        store=True,
+    )
+    tracking_last_visit = fields.Datetime(
+        string='Last Visit',
+        compute='_compute_tracking_visit_stats',
+        store=True,
+    )
+    _uniq_tracking_token = models.Constraint('UNIQUE(tracking_token)', 'Tracking token must be unique.')
     stage_history_ids = fields.One2many('ab_supplier_claim_stage_history', 'claim_id', string='Stage History', copy=False)
 
     supplier_section = fields.Selection(
@@ -116,7 +162,7 @@ class SupplierClaimCycle(models.Model):
     bank_reason = fields.Text(string="Bank Account Reason", copy=False)
     delay_reason = fields.Text(string="Delay / Rejection Reason", tracking=True)
     check_delivery_status = fields.Selection(
-        selection=[('ready', 'Ready'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
+        selection=[('ready', 'Delivered'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
                    ('check_delivered', 'Issue Check'),
                    ('mixed', 'Mixed (Bank Transfer + Cheque)'),
                    ('shipped', 'Shipped')],
@@ -124,14 +170,17 @@ class SupplierClaimCycle(models.Model):
         tracking=True,
     )
     sub_delivery_status = fields.Selection(
-        selection=[('ready', 'Ready'), ('shipped', 'Shipped')],
+        selection=[('ready', 'Delivered'), ('shipped', 'Shipped')],
         string="Delivery Sub Status",
     )
     supplier_notified = fields.Boolean(string="Supplier Notified", readonly=True, copy=False)
     supplier_notified_by = fields.Many2one('res.users', string="Notified By", readonly=True, copy=False)
     supplier_notification_date = fields.Datetime(string="Notification Date", readonly=True, copy=False)
+    whatsapp_message_sent = fields.Boolean(string="WhatsApp Message Sent", readonly=True, copy=False)
+    whatsapp_message_sent_by = fields.Many2one('res.users', string="WhatsApp Sent By", readonly=True, copy=False)
+    whatsapp_message_sent_date = fields.Datetime(string="WhatsApp Sent Date", readonly=True, copy=False)
     contact_name = fields.Char(string='Contact Name', readonly=True, copy=False)
-    contact_phone = fields.Char(string='Contact Phone', readonly=True, copy=False)
+    contact_phone = fields.Char(string='Contact Phone', copy=False)
     contact_result = fields.Selection(
         selection=[('contacted', 'Contacted'), ('already_delivered', 'Already Delivered')],
         string='Contact Result',
@@ -235,20 +284,452 @@ class SupplierClaimCycle(models.Model):
         for rec in self:
             rec.has_tax_accounts = rec.supplier_type == WITHHOLDING_TAX_SUPPLIER_TYPE
 
+    @api.model
+    def _generate_tracking_token(self):
+        token = secrets.token_urlsafe(32)
+        while self.sudo().search_count([('tracking_token', '=', token)], limit=1):
+            token = secrets.token_urlsafe(32)
+        return token
+
+    @api.depends('tracking_token', 'name')
+    def _compute_tracking_url(self):
+        base_url = self._get_tracking_base_url()
+        for rec in self:
+            if not rec.tracking_token or not base_url:
+                rec.tracking_url = False
+                rec.tracking_qr_url = False
+                continue
+            tracking_url = '%s/supplier-claim/%s/%s' % (
+                base_url,
+                urllib.parse.quote(rec.name or 'claim', safe=''),
+                urllib.parse.quote(rec.tracking_token, safe=''),
+            )
+            rec.tracking_url = tracking_url
+            rec.tracking_qr_url = rec._make_tracking_qr_data_uri(tracking_url, base_url)
+
+    def _get_tracking_base_url(self):
+        base_url = self.env['ir.config_parameter'].sudo().get_param('web.base.url', '').rstrip('/')
+        if not base_url:
+            return ''
+        parsed = urllib.parse.urlsplit(base_url)
+        if parsed.hostname not in ('127.0.0.1', 'localhost', '0.0.0.0') or parsed.port:
+            return base_url
+        http_port = config.get('http_port') or config.get('xmlrpc_port')
+        try:
+            http_port = int(http_port)
+        except (TypeError, ValueError):
+            return base_url
+        if (parsed.scheme == 'http' and http_port == 80) or (parsed.scheme == 'https' and http_port == 443):
+            return base_url
+        netloc = parsed.hostname
+        if parsed.username:
+            userinfo = parsed.username
+            if parsed.password:
+                userinfo = '%s:%s' % (userinfo, parsed.password)
+            netloc = '%s@%s' % (userinfo, netloc)
+        return urllib.parse.urlunsplit((parsed.scheme, '%s:%s' % (netloc, http_port), parsed.path, '', ''))
+
+    def _make_tracking_qr_data_uri(self, tracking_url, base_url):
+        try:
+            import qrcode
+            from qrcode.image.svg import SvgImage
+        except ImportError:
+            return '%s/report/barcode/QR/%s?width=180&height=180' % (
+                base_url,
+                urllib.parse.quote(tracking_url, safe=''),
+            )
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            box_size=8,
+            border=3,
+        )
+        qr.add_data(tracking_url)
+        qr.make(fit=True)
+        image = qr.make_image(image_factory=SvgImage)
+        output = io.BytesIO()
+        image.save(output)
+        encoded = base64.b64encode(output.getvalue()).decode('ascii')
+        return 'data:image/svg+xml;base64,%s' % encoded
+
+    def _ensure_tracking_token(self):
+        for rec in self.sudo():
+            if not rec.tracking_token:
+                rec.with_context(supplier_claim_internal_write=True).write({
+                    'tracking_token': rec._generate_tracking_token(),
+                })
+        return True
+
+    @api.depends('tracking_visit_ids.visit_date')
+    def _compute_tracking_visit_stats(self):
+        for rec in self:
+            visits = rec.tracking_visit_ids
+            rec.tracking_visit_count = len(visits)
+            rec.tracking_last_visit = visits[:1].visit_date if visits else False
+
+    def _record_tracking_visit(self, ip_address='', user_agent=''):
+        self.ensure_one()
+        now = fields.Datetime.now()
+        vals = {
+            'tracking_last_seen': now,
+            'tracking_is_online': True,
+        }
+        if not self.tracking_first_accessed:
+            vals['tracking_first_accessed'] = now
+        self.with_context(supplier_claim_internal_write=True).write(vals)
+        self.env['ab.supplier.claim.tracking.visit'].sudo().create({
+            'claim_id': self.id,
+            'visit_date': now,
+            'ip_address': ip_address or '',
+            'user_agent': (user_agent or '')[:255],
+        })
+        return True
+
+    def _set_tracking_presence(self, online=True):
+        self.ensure_one()
+        vals = {
+            'tracking_last_seen': fields.Datetime.now(),
+            'tracking_is_online': bool(online),
+        }
+        self.with_context(supplier_claim_internal_write=True).write(vals)
+        return True
+
+    @api.model
+    def _backfill_tracking_tokens(self):
+        seen_tokens = set()
+        for claim in self.sudo().search([], order='id'):
+            if claim.tracking_token and claim.tracking_token not in seen_tokens:
+                seen_tokens.add(claim.tracking_token)
+                continue
+            token = self._generate_tracking_token()
+            while token in seen_tokens:
+                token = self._generate_tracking_token()
+            claim.with_context(supplier_claim_internal_write=True).write({
+                'tracking_token': token,
+            })
+            seen_tokens.add(token)
+        return True
+
+    @api.model
+    def _find_by_tracking_token(self, tracking_token, claim_number=None):
+        token = (tracking_token or '').strip()
+        if not token:
+            return self
+        domain = [('tracking_token', '=', token)]
+        if claim_number:
+            domain.append(('name', '=', (claim_number or '').strip()))
+        return self.sudo().search(domain, limit=1)
+
+    def action_open_tracking_page(self):
+        self.ensure_one()
+        self._ensure_tracking_token()
+        return {
+            'type': 'ir.actions.act_url',
+            'url': self.tracking_url,
+            'target': 'new',
+        }
+
+    def action_open_tracking_dialog(self):
+        self.ensure_one()
+        self._ensure_tracking_token()
+        action = self.env.ref('ab_supplier_claim_workflow.action_ab_supplier_claim_tracking').read()[0]
+        action.update({
+            'res_id': self.id,
+            'target': 'new',
+        })
+        return action
+
+    def action_copy_tracking_link(self):
+        self.ensure_one()
+        self._ensure_tracking_token()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'supplier_claim_copy_tracking_link',
+            'params': {
+                'url': self.tracking_url,
+            },
+        }
+
+    def _get_public_stage_history(self, stage, decisions=None):
+        histories = self.stage_history_ids.filtered(lambda h: h.stage == stage)
+        if decisions:
+            histories = histories.filtered(lambda h: h.decision in decisions)
+        return histories.sorted(lambda h: h.action_date or h.create_date)
+
+    def _get_public_stage_event(self, stage, decision):
+        histories = self._get_public_stage_history(stage, [decision])
+        return histories[-1] if histories else self.env['ab_supplier_claim_stage_history']
+
+    def _get_public_delay_info(self, timeline):
+        sla_seconds = self._get_escalation_sla_seconds()
+        now = fields.Datetime.now()
+        for entry in timeline:
+            if not entry.get('is_current'):
+                continue
+            pending_history = self._get_public_stage_event(entry['stage'], 'pending')
+            if not pending_history or not pending_history.action_date:
+                continue
+            delay_date = pending_history.action_date + timedelta(seconds=sla_seconds)
+            if now <= delay_date:
+                continue
+            return {
+                'title': _('Delayed'),
+                'stage': entry['stage'],
+                'department': entry['label'],
+                'reason': self.delay_reason or _('No delay reason was provided.'),
+                'date': format_datetime(self.env, delay_date, dt_format='medium'),
+            }
+        return {}
+
+    def _get_public_rejection_info(self):
+        latest = self.env['ab_supplier_claim_stage_history']
+        latest_accepted = {}
+        for history in self.stage_history_ids.sorted(lambda h: h.action_date or h.create_date):
+            if history.decision == 'accepted':
+                latest_accepted[history.stage] = history.action_date or history.create_date
+            if history.decision == 'rejected':
+                accepted_date = latest_accepted.get(history.stage)
+                history_date = history.action_date or history.create_date
+                if not accepted_date or history_date > accepted_date:
+                    latest = history
+        if not latest:
+            return {}
+        return {
+            'title': _('Rejected'),
+            'stage': latest.stage,
+            'department': self._get_translated_stage_label(latest.stage),
+            'reason': latest.notes or _('No reason was provided.'),
+            'date': format_datetime(self.env, latest.action_date, dt_format='medium') if latest.action_date else '',
+        }
+
+    def _get_public_escalation_info(self):
+        latest = self.stage_history_ids.filtered(lambda h: h.decision == 'escalated').sorted(
+            lambda h: h.action_date or h.create_date
+        )
+        if not latest:
+            return {}
+        history = latest[-1]
+        return {
+            'title': _('Escalated'),
+            'message': _('This claim has been escalated.'),
+            'department': self._get_translated_stage_label(history.stage),
+            'date': format_datetime(self.env, history.action_date, dt_format='medium') if history.action_date else '',
+        }
+
+    def _get_public_current_status_text(self):
+        self.ensure_one()
+        if self.status == 'closed':
+            return _('Completed')
+        if self.supplier_notified:
+            return _('Cheque Ready')
+        if self.status == 'supplier_notification':
+            return _('Waiting for Supplier Notification')
+        return _('Waiting for %(department)s Department') % {
+            'department': self._get_translated_stage_label(self.status),
+        }
+
+    def _get_public_activity_events(self):
+        self.ensure_one()
+        events = []
+        histories = self.stage_history_ids.sorted(
+            lambda h: h.action_date or h.create_date, reverse=True
+        )[:5]
+        for h in histories:
+            stage_label = self._get_translated_stage_label(h.stage)
+            action_label = dict(h._fields['decision'].selection).get(h.decision, h.decision)
+            events.append({
+                'type': 'stage_change',
+                'stage': h.stage,
+                'action': action_label,
+                'label': stage_label,
+                'user': h.user_id.display_name or '',
+                'date': format_datetime(self.env, h.action_date or h.create_date, dt_format='medium'),
+                'timestamp': str(h.action_date or h.create_date),
+            })
+        if not events:
+            events.append({
+                'type': 'created',
+                'label': _('Claim Created'),
+                'date': format_datetime(self.env, self.create_date, dt_format='medium'),
+                'timestamp': str(self.create_date),
+            })
+        return events
+
+    def _get_public_tracking_data(self):
+        self.ensure_one()
+        self._ensure_tracking_token()
+        timeline_data = self.action_get_timeline_data()
+        stage_entries = [
+            entry for entry in timeline_data.get('timeline', [])
+            if entry.get('type') == 'stage'
+        ]
+        rejection_info = self._get_public_rejection_info()
+        delay_info = self._get_public_delay_info(stage_entries)
+        escalation_info = self._get_public_escalation_info()
+
+        timeline = []
+        completed_count = 0
+        for entry in stage_entries:
+            stage = entry['stage']
+            rejected = rejection_info and rejection_info.get('stage') == stage
+            delayed = delay_info and delay_info.get('stage') == stage
+            completed = bool(entry.get('is_completed')) and not rejected
+            if completed:
+                completed_count += 1
+            state = 'completed' if completed else 'pending'
+            icon = '✓' if completed else '○'
+            if entry.get('is_current') and not completed:
+                state = 'current'
+                icon = '●'
+            if rejected:
+                state = 'rejected'
+                icon = '✗'
+            elif delayed:
+                state = 'delayed'
+                icon = '!'
+            timeline.append({
+                'stage': stage,
+                'label': entry['label'],
+                'state': state,
+                'icon': icon,
+                'is_current': bool(entry.get('is_current')),
+            })
+
+        total_stages = max(len(stage_entries), 1)
+        progress = int(round((completed_count / total_stages) * 100))
+        if self.status == 'closed':
+            progress = 100
+
+        now = fields.Datetime.now()
+        created = self.create_date or now
+        token_age = (now - created).days
+        base_url = self._get_tracking_base_url()
+        tracking_presence_url = ''
+        if base_url and self.tracking_token:
+            tracking_presence_url = '%s/supplier-claim-presence/%s/%s' % (
+                base_url,
+                urllib.parse.quote(self.name or 'claim', safe=''),
+                urllib.parse.quote(self.tracking_token, safe=''),
+            )
+
+        return {
+            'claim_number': self.name,
+            'supplier_name': self.supplier_id.display_name or '',
+            'current_status': self._get_public_current_status_text(),
+            'current_department': self._get_translated_stage_label(self.status),
+            'progress': progress,
+            'timeline': timeline,
+            'delay': delay_info,
+            'rejection': rejection_info,
+            'escalation': escalation_info,
+            'supplier_notified': bool(self.supplier_notified),
+            'notification_date': format_datetime(self.env, self.supplier_notification_date, dt_format='medium') if self.supplier_notification_date else '',
+            'cheque_delivered': self.status == 'closed',
+            'collection_date': format_datetime(self.env, self.write_date, dt_format='medium') if self.status == 'closed' and self.write_date else '',
+            'tracking_url': self.tracking_url,
+            'tracking_presence_url': tracking_presence_url,
+            'tracking_qr_url': self.tracking_qr_url,
+            'created_date': format_datetime(self.env, created, dt_format='medium'),
+            'visit_count': self.tracking_visit_count,
+            'last_visit': format_datetime(self.env, self.tracking_last_visit, dt_format='medium') if self.tracking_last_visit else '',
+            'token_age_days': token_age,
+            'is_online': self.tracking_is_online,
+            'activity_events': self._get_public_activity_events(),
+        }
+
     @api.onchange('supplier_id')
     def _onchange_supplier_id(self):
         if self.supplier_id:
             self.supplier_email = self.supplier_id.work_email or ''
-            default_delegate = self.env['ab.delegate.phone'].search([
-                ('partner_id', '=', self.supplier_id.id),
-                ('is_default', '=', True),
-            ], limit=1)
-            if default_delegate:
-                self.delegate_phone_ids = [(4, default_delegate.id)]
+            self.contact_phone = self._get_valid_supplier_master_contact_phone(self.supplier_id) or ''
+            delegate_phones = self._get_supplier_delegate_phone_candidates(create_missing=False)
+            if delegate_phones:
+                self.delegate_phone_ids = [(6, 0, delegate_phones.ids)]
             if self.supplier_id.supplier_type:
                 self.supplier_type = self.supplier_id.supplier_type
             if self.supplier_id.region:
                 self.area = self.supplier_id.region
+
+    def _split_delegate_phone_values(self, value):
+        phones = []
+        for phone in re.split(r'[,،;\n]+', value or ''):
+            phone = phone.strip()
+            if phone and phone not in phones:
+                phones.append(phone)
+        return phones
+
+    def _get_supplier_delegate_phone_candidates(self, create_missing=False):
+        self.ensure_one()
+        if not self.supplier_id:
+            return self.env['ab.delegate.phone']
+
+        DelegatePhone = self.env['ab.delegate.phone'].sudo()
+        existing = DelegatePhone.search([('partner_id', '=', self.supplier_id.id)], order='is_default desc, id')
+        if existing:
+            default_existing = existing.filtered('is_default')
+            return default_existing or existing
+
+        if not create_missing:
+            return self.env['ab.delegate.phone']
+
+        source_phone_text = self.supplier_id.mobile_phone or self.contact_phone or ''
+        phones = self._split_delegate_phone_values(source_phone_text)
+        delegates = DelegatePhone
+        for index, phone in enumerate(phones):
+            delegates |= DelegatePhone.create({
+                'name': phone,
+                'partner_id': self.supplier_id.id,
+                'is_default': index == 0,
+            })
+        return delegates
+
+    def _ensure_delegate_phone_selection(self):
+        for rec in self:
+            if rec.delegate_phone_ids or not rec.supplier_id:
+                continue
+            delegates = rec._get_supplier_delegate_phone_candidates(create_missing=True)
+            if delegates:
+                rec.with_context(supplier_claim_internal_write=True).write({
+                    'delegate_phone_ids': [(6, 0, delegates.ids)],
+                })
+        return True
+
+    def _get_delegate_phone_text(self):
+        self.ensure_one()
+        if self.delegate_phone_ids:
+            return ', '.join(self.delegate_phone_ids.mapped('name'))
+        return self.contact_phone or self.supplier_id.mobile_phone or ''
+
+    def _get_supplier_mapping_phone_text(self):
+        self.ensure_one()
+        return self._normalize_contact_phone(self.contact_phone) or self._get_delegate_phone_text()
+
+    def _sync_supplier_mapping_contact_phone(self):
+        for rec in self:
+            phone = rec._normalize_contact_phone(rec.contact_phone)
+            if rec.supplier_id and phone:
+                rec.supplier_id.sudo().write({'mobile_phone': phone})
+        return True
+
+    @api.model
+    def _normalize_contact_phone(self, phone):
+        return (phone or '').strip().translate(PHONE_DIGIT_TRANSLATION)
+
+    @api.model
+    def _is_valid_contact_phone(self, phone):
+        normalized_phone = self._normalize_contact_phone(phone)
+        return bool(re.fullmatch(r'\+?[0-9]{8,15}', normalized_phone))
+
+    @api.model
+    def _get_valid_supplier_master_contact_phone(self, supplier):
+        phone = self._normalize_contact_phone(supplier.mobile_phone) if supplier else ''
+        return phone if self._is_valid_contact_phone(phone) else False
+
+    @api.constrains('contact_phone')
+    def _check_contact_phone_format(self):
+        for rec in self:
+            if rec.contact_phone and not rec._is_valid_contact_phone(rec.contact_phone):
+                raise ValidationError(_("Please enter a valid phone number using digits only."))
 
     def _calculate_and_freeze_tax(self):
         self.ensure_one()
@@ -340,17 +821,31 @@ class SupplierClaimCycle(models.Model):
             'bank_acc': 'ab_supplier_claim_workflow.supplier_claim_group_bank_acc',
             'sign_check': 'ab_supplier_claim_cycle.supplier_claim_group_user',
             'supplier_notification': 'ab_supplier_claim_cycle.supplier_claim_group_user',
+            'delivery': 'ab_supplier_claim_cycle.supplier_claim_group_user',
         }
 
     def _requires_tax_accounts_stage(self):
         self.ensure_one()
         return self.supplier_type == WITHHOLDING_TAX_SUPPLIER_TYPE
 
+    def _requires_delivery_stage(self):
+        self.ensure_one()
+        return (
+            self.status == 'delivery'
+            or self.check_delivery_status == 'shipped'
+            or self.sub_delivery_status == 'shipped'
+            or bool(self.stage_history_ids.filtered(lambda h: h.stage == 'delivery'))
+        )
+
     def _get_workflow_sequence(self):
         self.ensure_one()
-        if self._requires_tax_accounts_stage():
-            return STAGE_SEQUENCE
-        return tuple(stage for stage in STAGE_SEQUENCE if stage != 'tax_accounts')
+        return tuple(
+            stage for stage in STAGE_SEQUENCE
+            if (
+                (stage != 'tax_accounts' or self._requires_tax_accounts_stage())
+                and (stage != 'delivery' or self._requires_delivery_stage())
+            )
+        )
 
     def _get_parallel_decision_fields(self):
         self.ensure_one()
@@ -541,8 +1036,13 @@ class SupplierClaimCycle(models.Model):
         if not self._is_supplier_claim_secretarial() and not self._is_supplier_claim_admin():
             raise AccessError(_("Only Secretarial or Admin users can create supplier claims."))
         for vals in vals_list:
+            self._normalize_check_delivery_status_vals(vals)
+            if vals.get('supplier_id') and not vals.get('contact_phone'):
+                supplier = self.env['ab_costcenter'].browse(vals['supplier_id'])
+                vals['contact_phone'] = self._get_valid_supplier_master_contact_phone(supplier)
             if not vals.get('name') or vals.get('name') == 'New':
                 vals['name'] = self.env['ir.sequence'].next_by_code('ab.supplier.claim.cycle') or _('New')
+            vals.setdefault('tracking_token', self._generate_tracking_token())
             vals.setdefault('status', 'secretarial')
             vals['department_decision'] = 'accepted'
             if vals.get('status') != 'secretarial' and not self._is_supplier_claim_admin():
@@ -550,11 +1050,30 @@ class SupplierClaimCycle(models.Model):
         records = super().create(vals_list)
         for rec in records:
             rec._create_stage_history('secretarial', 'accepted', _('Created Request'))
+        records._sync_supplier_mapping_contact_phone()
         return records
 
+    @api.model
+    def _normalize_check_delivery_status_vals(self, vals):
+        if 'check_delivery_status' not in vals or 'sub_delivery_status' in vals:
+            return vals
+        if vals['check_delivery_status'] in ('check_delivered', 'mixed'):
+            vals['sub_delivery_status'] = 'shipped'
+        elif vals['check_delivery_status'] in ('cash', 'bank_transfer', 'ready', False):
+            vals['sub_delivery_status'] = False
+        return vals
+
     def write(self, vals):
+        vals = dict(vals)
+        self._normalize_check_delivery_status_vals(vals)
+        if 'supplier_id' in vals and 'contact_phone' not in vals:
+            supplier = self.env['ab_costcenter'].browse(vals['supplier_id']) if vals['supplier_id'] else False
+            vals['contact_phone'] = self._get_valid_supplier_master_contact_phone(supplier)
         if self.env.context.get('supplier_claim_internal_write'):
-            return super().write(vals)
+            result = super().write(vals)
+            if 'contact_phone' in vals or 'supplier_id' in vals:
+                self._sync_supplier_mapping_contact_phone()
+            return result
         if 'status' in vals:
             raise AccessError(_("Use workflow actions to move supplier claims between stages."))
         if not self._is_supplier_claim_admin() and not self._is_supplier_claim_secretarial():
@@ -570,7 +1089,10 @@ class SupplierClaimCycle(models.Model):
                         raise AccessError(_("Only the current department can edit this supplier claim."))
                 elif not rec._user_can_handle_stage(rec.status):
                     raise AccessError(_("Only the current department can edit this supplier claim."))
-        return super().write(vals)
+        result = super().write(vals)
+        if 'contact_phone' in vals or 'supplier_id' in vals:
+            self._sync_supplier_mapping_contact_phone()
+        return result
 
     def action_accept(self):
         for rec in self:
@@ -915,20 +1437,24 @@ class SupplierClaimCycle(models.Model):
                         ),
                     },
                 }
+            if not rec._is_valid_contact_phone(rec.contact_phone):
+                return {
+                    'type': 'ir.actions.act_window',
+                    'name': _('Missing Required Information'),
+                    'res_model': 'ab.claim.error.wizard',
+                    'view_mode': 'form',
+                    'target': 'new',
+                    'context': {
+                        'default_error_message': _(
+                            'Please enter a valid phone number using digits only.'
+                        ),
+                    },
+                }
+            if rec.check_delivery_status in ('check_delivered', 'mixed') and not rec.sub_delivery_status:
+                rec.with_context(supplier_claim_internal_write=True).write({
+                    'sub_delivery_status': 'shipped',
+                })
             if rec.check_delivery_status not in ('cash', 'bank_transfer'):
-                if rec.check_delivery_status in ('check_delivered', 'mixed') and not rec.sub_delivery_status:
-                    return {
-                        'type': 'ir.actions.act_window',
-                        'name': _('Missing Required Information'),
-                        'res_model': 'ab.claim.error.wizard',
-                        'view_mode': 'form',
-                        'target': 'new',
-                        'context': {
-                            'default_error_message': _(
-                                'Please select a sub status (Ready or Shipped) for cheque delivery.'
-                            ),
-                        },
-                    }
                 if not rec.cheque_image or not rec.supplier_id_image:
                     return {
                         'type': 'ir.actions.act_window',
@@ -947,9 +1473,10 @@ class SupplierClaimCycle(models.Model):
                 'supplier_notified_by': self.env.user.id,
                 'supplier_notification_date': fields.Datetime.now(),
             })
+            rec._ensure_delegate_phone_selection()
             rec.supplier_id.sudo().write({
                 'work_email': rec.supplier_email or '',
-                'mobile_phone': ', '.join(rec.delegate_phone_ids.mapped('name')) or '',
+                'mobile_phone': rec._get_supplier_mapping_phone_text(),
             })
             rec._create_stage_history('supplier_notification', 'accepted', rec.notification_notes or '')
             rec.message_post(
@@ -960,20 +1487,104 @@ class SupplierClaimCycle(models.Model):
                     'notes': rec.notification_notes or _("No notes"),
                 }
             )
+            if rec.check_delivery_status in ('check_delivered', 'mixed'):
+                rec.with_context(supplier_claim_internal_write=True).write({
+                    'status': 'delivery',
+                    'sub_delivery_status': 'shipped',
+                    'department_decision': 'pending',
+                    'delay_reason': False,
+                    'stage_escalated': False,
+                    'escalation_missing_manager': False,
+                    'assigned_escalation_user': False,
+                })
+                rec._create_stage_history('delivery', 'pending')
+
+    def _get_supplier_whatsapp_phone(self):
+        self.ensure_one()
+        phone = re.sub(r'\D+', '', self._normalize_contact_phone(self.contact_phone))
+        if phone.startswith('00'):
+            phone = phone[2:]
+        elif phone.startswith('0'):
+            phone = '20%s' % phone[1:]
+        return phone if 8 <= len(phone) <= 15 else ''
+
+    def _requires_whatsapp_notification(self):
+        self.ensure_one()
+        return self.check_delivery_status in ('check_delivered', 'mixed')
+
+    def action_open_supplier_whatsapp(self):
+        for rec in self:
+            if not rec._is_supplier_claim_admin() and not rec._is_supplier_claim_secretarial():
+                raise AccessError(_("Only Secretarial or Admin users can contact the supplier."))
+            if not rec._requires_whatsapp_notification():
+                raise UserError(_("WhatsApp notification is only required for cheque delivery claims."))
+            if rec.status not in ('supplier_notification', 'delivery') or not rec.supplier_notified:
+                raise UserError(_("WhatsApp notification is only available after the supplier is marked as notified."))
+            phone = rec._get_supplier_whatsapp_phone()
+            if not phone:
+                raise UserError(_("Please enter a valid contact phone before sending a WhatsApp message."))
+            message = _(
+                "Hello, please visit the office to collect your cheque for supplier claim %(claim)s."
+            ) % {'claim': rec.name}
+            rec.with_context(supplier_claim_internal_write=True).write({
+                'whatsapp_message_sent': True,
+                'whatsapp_message_sent_by': self.env.user.id,
+                'whatsapp_message_sent_date': fields.Datetime.now(),
+            })
+            rec.message_post(body=_("WhatsApp message opened for supplier contact: %(phone)s") % {'phone': phone})
+            return {
+                'type': 'ir.actions.act_url',
+                'url': 'https://wa.me/%s?text=%s' % (phone, urllib.parse.quote(message)),
+                'target': 'new',
+            }
+        return False
+
+    def action_validate_close(self):
+        """Return close-blockers as a list of error message strings (no exceptions)."""
+        self.ensure_one()
+        errors = []
+        if not self.supplier_notified:
+            errors.append(_("Supplier must be marked as notified before closing the claim."))
+        if self._requires_whatsapp_notification() and not self.whatsapp_message_sent:
+            errors.append(_("Please send the WhatsApp message to the supplier before closing the claim."))
+        if not self.check_delivery_status:
+            errors.append(_("Cheque Delivery Status must be set before closing the claim."))
+        if self.check_delivery_status in ('check_delivered', 'mixed'):
+            if not self.sub_delivery_status:
+                errors.append(_("Please select a sub status (Delivered or Shipped) for cheque delivery."))
+            elif self.status != 'delivery':
+                errors.append(_("Please complete the Delivery stage before closing the claim."))
+            elif self.sub_delivery_status != 'ready':
+                errors.append(_("Please set the delivery status to Delivered before closing the claim."))
+            if not self.cheque_image:
+                errors.append(_("Please attach the cheque image before confirming cheque delivery."))
+            if not self.supplier_id_image:
+                errors.append(_("Please attach the supplier ID image before confirming cheque delivery."))
+        return errors
+
+    def _normalize_delivery_values_for_close(self):
+        for rec in self:
+            vals = {}
+            if rec.check_delivery_status == 'shipped':
+                vals['check_delivery_status'] = 'ready'
+            if vals:
+                rec.with_context(supplier_claim_internal_write=True).write(vals)
+        return True
 
     def action_close_claim(self):
         for rec in self:
             rec._check_can_act_current_stage()
-            if not rec.supplier_notified:
-                raise UserError(_("Supplier must be marked as notified before closing the claim."))
-            if not rec.check_delivery_status:
-                raise UserError(_("Cheque Delivery Status must be set before closing the claim."))
+            errors = rec.action_validate_close()
+            if errors:
+                raise UserError(errors[0])
             error = rec._validate_cheque_delivery_documents()
             if error:
                 return error
+            rec._normalize_delivery_values_for_close()
+            rec._ensure_delegate_phone_selection()
             rec.supplier_id.sudo().write({
                 'work_email': rec.supplier_email or '',
-                'mobile_phone': ', '.join(rec.delegate_phone_ids.mapped('name')) or '',
+                'mobile_phone': rec._get_supplier_mapping_phone_text(),
             })
             rec._move_to_next_stage()
 
@@ -1232,18 +1843,7 @@ class SupplierClaimCycle(models.Model):
         return self._get_translated_stage_label(stage)
 
     def _get_translated_stage_label(self, stage):
-        labels = {
-            'secretarial': _('Secretarial'),
-            'inventory': _('Inventory'),
-            'purchase': _('Purchase'),
-            'suppliers': _('Suppliers'),
-            'tax_accounts': _('Tax Accounts'),
-            'bank_acc': _('Bank Account'),
-            'sign_check': _('Sign Check'),
-            'supplier_notification': _('Supplier Notification'),
-            'closed': _('Check delivery'),
-        }
-        return labels.get(stage, stage)
+        return dict(self._fields['status']._description_selection(self.env)).get(stage, stage)
 
     def _get_display_stage_label(self, label):
         normalized_label = (label or '').strip()
@@ -1444,9 +2044,12 @@ class SupplierClaimCycle(models.Model):
             'has_blocking_issue': self.has_blocking_issue,
         }
 
+    @api.depends_context('lang')
     @api.depends(
         'status',
         'supplier_type',
+        'check_delivery_status',
+        'sub_delivery_status',
         'stage_history_ids',
         'stage_history_ids.decision',
         'stage_history_ids.user_id',
@@ -1691,7 +2294,7 @@ class SupplierClaimCycle(models.Model):
                 'target': 'new',
                 'context': {
                     'default_error_message': _(
-                        'Please select a sub status (Ready or Shipped) for cheque delivery.'
+                        'Please select a sub status (Delivered or Shipped) for cheque delivery.'
                     ),
                 },
             }

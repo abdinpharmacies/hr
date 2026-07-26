@@ -898,6 +898,9 @@ msgstr "اسم جهة الاتصال"
 
 #. module: ab_supplier_claim_workflow
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__contact_phone
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__mobile_phone
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
 msgid "Contact Phone"
 msgstr "هاتف التواصل"
 
@@ -1676,6 +1679,12 @@ msgstr "يرجى تحديد حالة فرعية (جاهز أو تم الشحن) 
 #. module: ab_supplier_claim_workflow
 #. odoo-python
 #: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please select a sub status (Delivered or Shipped) for cheque delivery."
+msgstr "يرجى تحديد حالة فرعية (تم التسليم أو تم الشحن) لتسليم الشيك."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
 msgid ""
 "Please upload the supplier claim document in the Claim Documents section "
 "before starting the cycle."
@@ -1710,6 +1719,12 @@ msgstr "المشتريات"
 #: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sub_delivery_status__ready
 msgid "Ready"
 msgstr "جاهز"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__check_delivery_status__ready
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sub_delivery_status__ready
+msgid "Delivered"
+msgstr "تم التسليم"
 
 #. module: ab_supplier_claim_workflow
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
@@ -2564,12 +2579,12 @@ msgstr "المنطقة"
 #. module: ab_supplier_claim_workflow
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.ab_supplier_mapping_form
 msgid "Mobile Phone"
-msgstr "رقم المحمول"
+msgstr "هاتف التواصل"
 
 #. module: ab_supplier_claim_workflow
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__mobile_phone
 msgid "Work Mobile"
-msgstr "هاتف العمل المحمول"
+msgstr "هاتف التواصل"
 
 #. module: ab_supplier_claim_workflow
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_mapping__work_email
@@ -2701,3 +2716,524 @@ msgstr ""
 #~ msgstr ""
 #~ "<span class=\"scc-form-section-title-icon\">📡</span>\n"
 #~ "                            <span>اتصال تيليجرام</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<h3 class=\"scc-tracking-admin-title o_translate_inline\">Supplier Tracking Portal</h3>\n"
+"                                <div class=\"scc-portal-label o_translate_inline\">Secure supplier tracking link</div>"
+msgstr ""
+"<h3 class=\"scc-tracking-admin-title o_translate_inline\">بوابة تتبع مطالبة المورد</h3>\n"
+"                                <div class=\"scc-portal-label o_translate_inline\">رابط آمن لتتبع مطالبة المورد</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid ""
+"<span>Current Department</span>\n"
+"                                <span> · </span>"
+msgstr ""
+"<span>القسم الحالي</span>\n"
+"                                <span> · </span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "<span>Workflow Progress</span>"
+msgstr "<span>تقدم سير العمل</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Cheque Delivered"
+msgstr "تم تسليم الشيك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Cheque Ready"
+msgstr "الشيك جاهز"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Copy Tracking Link"
+msgstr "نسخ رابط التتبع"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Current Status"
+msgstr "الحالة الحالية"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Delayed"
+msgstr "متأخر"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "No delay reason was provided."
+msgstr "لم يتم إدخال سبب التأخير."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "No reason was provided."
+msgstr "لم يتم إدخال سبب."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Open Tracking Page"
+msgstr "فتح صفحة التتبع"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Please collect your cheque."
+msgstr "يرجى استلام الشيك."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Progress"
+msgstr "التقدم"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "QR Code"
+msgstr "رمز QR"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Supplier Claim Tracking"
+msgstr "تتبع مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Supplier Claim Tracking QR Code"
+msgstr "رمز QR لتتبع مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Supplier has been notified."
+msgstr "تم إخطار المورد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "This claim has been escalated."
+msgstr "تم تصعيد هذه المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/tracking_link_action.js:0
+msgid "Tracking Link"
+msgstr "رابط التتبع"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_qr_url
+msgid "Tracking QR Code"
+msgstr "رمز QR للتتبع"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_token
+msgid "Tracking Token"
+msgstr "رمز التتبع الآمن"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_url
+msgid "Tracking URL"
+msgstr "رابط التتبع"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/tracking_link_action.js:0
+msgid "Tracking link copied."
+msgstr "تم نسخ رابط التتبع."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/tracking_link_action.js:0
+msgid "Tracking link is not available."
+msgstr "رابط التتبع غير متاح."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Waiting for %(department)s Department"
+msgstr "في انتظار قسم %(department)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Waiting for Supplier Notification"
+msgstr "في انتظار إخطار المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Workflow Timeline"
+msgstr "الجدول الزمني لسير العمل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Hello, please visit the office to collect your cheque for supplier claim %(claim)s."
+msgstr "مرحبا، يرجى زيارة المكتب لاستلام الشيك الخاص بمطالبة المورد %(claim)s."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Only Secretarial or Admin users can contact the supplier."
+msgstr "يمكن لمستخدمي السكرتارية أو المدير فقط التواصل مع المورد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter a valid contact phone before sending a WhatsApp message."
+msgstr "يرجى إدخال هاتف تواصل صحيح قبل إرسال رسالة واتساب."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Send WhatsApp Message"
+msgstr "إرسال رسالة واتساب"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "WhatsApp notification is only available after the supplier is marked as notified."
+msgstr "إشعار واتساب متاح فقط بعد وضع علامة أنه تم إخطار المورد."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "QR Code Downloaded"
+msgstr "تم تنزيل رمز QR"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "QR Code Full Size"
+msgstr "رمز QR بالحجم الكامل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "QR code not available"
+msgstr "رمز QR غير متاح"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Secure Link Copied"
+msgstr "تم نسخ الرابط الآمن"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Track your claim here: "
+msgstr "تتبع مطالبتك من هنا: "
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Track your supplier claim: "
+msgstr "تتبع مطالبة المورد: "
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "URL selected"
+msgstr "تم تحديد الرابط"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_tracking_visit__user_agent
+msgid "Browser"
+msgstr "المتصفح"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_tracking_visit__ip_address
+msgid "IP Address"
+msgstr "عنوان IP"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_last_seen
+msgid "Last Seen"
+msgstr "آخر ظهور"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_last_visit
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Last Visit"
+msgstr "آخر زيارة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_visit_ids
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_cycle_tracking_form
+msgid "Last Visits"
+msgstr "آخر الزيارات"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_is_online
+msgid "Online"
+msgstr "متصل"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_tracking_visit__visit_date
+msgid "Visit Date"
+msgstr "تاريخ الزيارة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__tracking_visit_count
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.supplier_claim_tracking_page
+msgid "Visits"
+msgstr "الزيارات"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Device"
+msgstr "الجهاز"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "No supplier visits yet"
+msgstr "لا توجد زيارات للمورد بعد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Offline"
+msgstr "غير متصل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_cycle_tracking_form
+msgid "Recent Visits"
+msgstr "الزيارات الأخيرة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Show Less"
+msgstr "عرض أقل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Supplier Visitor"
+msgstr "زائر المورد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "The tracking link hasn't been opened."
+msgstr "لم يتم فتح رابط التتبع."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Unknown Browser"
+msgstr "متصفح غير معروف"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Unknown Device"
+msgstr "جهاز غير معروف"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "View All Visits"
+msgstr "عرض كل الزيارات"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/claim_chatter_toggle.js:0
+msgid "Visit Time"
+msgstr "وقت الزيارة"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_cycle_tracking_form
+msgid "▲ Collapse"
+msgstr "▲ طي"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__whatsapp_message_sent
+msgid "WhatsApp Message Sent"
+msgstr "تم إرسال رسالة واتساب"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__whatsapp_message_sent_by
+msgid "WhatsApp Sent By"
+msgstr "أُرسلت واتساب بواسطة"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__whatsapp_message_sent_date
+msgid "WhatsApp Sent Date"
+msgstr "تاريخ إرسال واتساب"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Please send the WhatsApp message to the supplier before closing the claim."
+msgstr "يرجى إرسال رسالة واتساب إلى المورد قبل إغلاق المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "WhatsApp message opened for supplier contact: %(phone)s"
+msgstr "تم فتح رسالة واتساب للتواصل مع المورد: %(phone)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Cannot Close Claim"
+msgstr "لا يمكن إغلاق المطالبة"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "A few actions are still required before this claim can be closed."
+msgstr "ما زالت هناك بعض الإجراءات المطلوبة قبل إغلاق هذه المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Mark supplier as notified"
+msgstr "تأكيد إخطار المورد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Send WhatsApp message to supplier"
+msgstr "إرسال رسالة واتساب إلى المورد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Set cheque delivery status"
+msgstr "تحديد حالة تسليم الشيك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Choose delivery sub-status"
+msgstr "اختيار الحالة الفرعية للتسليم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Complete the Delivery stage"
+msgstr "إكمال مرحلة التسليم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Mark delivery status as Delivered"
+msgstr "تحديد حالة التسليم إلى تم التسليم"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Mark delivery status as Ready"
+msgstr "تحديد حالة التسليم إلى جاهز"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Attach cheque image"
+msgstr "إرفاق صورة الشيك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Attach supplier ID image"
+msgstr "إرفاق صورة هوية المورد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Got it"
+msgstr "فهمت"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Understood"
+msgstr "حسنًا"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "This claim cannot be closed yet"
+msgstr "لا يمكن إغلاق هذه المطالبة بعد"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__status__delivery
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__stage__delivery
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Delivery"
+msgstr "التسليم"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.claim_error_wizard_form
+msgid "Please review the details below"
+msgstr "يرجى مراجعة التفاصيل أدناه"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.claim_error_wizard_form
+msgid "OK"
+msgstr "موافق"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.claim_error_wizard_form
+msgid ""
+"<div class=\"scc-dialog-title o_translate_inline\">Missing Required "
+"Information</div>\n"
+"                            <div class=\"scc-dialog-sub "
+"o_translate_inline\">Please review the details below</div>"
+msgstr ""
+"<div class=\"scc-dialog-title o_translate_inline\">بيانات مطلوبة غير مكتملة</"
+"div>\n"
+"                            <div class=\"scc-dialog-sub "
+"o_translate_inline\">يرجى مراجعة التفاصيل أدناه</div>"
+
+#. module: ab_supplier_claim_workflow
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please complete the Delivery stage before closing the claim."
+msgstr "يرجى إكمال مرحلة التسليم قبل إغلاق المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Please set the delivery status to Ready before closing the claim."
+msgstr "يرجى ضبط حالة التسليم إلى جاهز قبل إغلاق المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#. odoo-javascript
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: code:addons/ab_supplier_claim_workflow/static/src/js/scc_close_error_dialog.js:0
+msgid "Please set the delivery status to Delivered before closing the claim."
+msgstr "يرجى ضبط حالة التسليم إلى تم التسليم قبل إغلاق المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Please enter a valid phone number using digits only."
+msgstr "يرجى إدخال رقم هاتف صحيح باستخدام الأرقام فقط."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "WhatsApp notification is only required for cheque delivery claims."
+msgstr "إشعار واتساب مطلوب فقط لمطالبات تسليم الشيك."

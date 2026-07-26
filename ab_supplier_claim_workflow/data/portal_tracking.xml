@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="ab_supplier_claim_cycle" name="_backfill_tracking_tokens"/>
+</odoo>
