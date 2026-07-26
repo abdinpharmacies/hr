@@ -16,6 +16,7 @@ class SupplierClaimStageHistory(models.Model):
         ('bank_acc', 'Bank Account'),
         ('sign_check', 'Sign Check'),
         ('supplier_notification', 'Supplier Notification'),
+        ('delivery', 'Delivery'),
         ('closed', 'Closed'),
     ], required=True)
     sequence = fields.Integer(default=0)

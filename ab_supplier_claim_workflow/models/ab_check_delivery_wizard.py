@@ -19,8 +19,13 @@ class CheckDeliveryWizard(models.TransientModel):
         self.ensure_one()
         if not self.check_delivery_status:
             raise ValidationError(_('Cheque Delivery Status is required.'))
-        self.claim_id.with_context(supplier_claim_internal_write=True).write({
+        vals = {
             'check_delivery_status': self.check_delivery_status,
-        })
+        }
+        if self.check_delivery_status in ('check_delivered', 'mixed'):
+            vals['sub_delivery_status'] = 'shipped'
+        else:
+            vals['sub_delivery_status'] = False
+        self.claim_id.with_context(supplier_claim_internal_write=True).write(vals)
         self.claim_id._move_to_next_stage()
         return {'type': 'ir.actions.act_window_close'}

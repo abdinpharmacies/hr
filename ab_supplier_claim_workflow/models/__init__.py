@@ -2,6 +2,7 @@ from . import ab_supplier_claim_manager
 from . import ab_supplier_claim_cycle
 from . import ab_supplier_stage_history
 from . import ab_supplier_claim_escalation
+from . import ab_supplier_claim_tracking_visit
 from . import ab_check_delivery_wizard
 from . import ab_claim_error_wizard
 from . import ab_supplier_claim_issue
