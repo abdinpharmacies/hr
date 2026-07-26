@@ -7,7 +7,7 @@ class AbSupplierClaimTelegramRegistration(models.Model):
     _name = 'ab_supplier_claim_telegram_registration'
     _description = 'Supplier Claim Telegram Registration'
     _rec_name = 'eplus_code'
-    _order = 'linked_at desc'
+    _order = 'write_date desc'
 
     employee_id = fields.Many2one('ab_hr_employee', string='Employee', required=True)
     eplus_code = fields.Char(
@@ -33,26 +33,26 @@ class AbSupplierClaimTelegramRegistration(models.Model):
     telegram_connected = fields.Boolean(
         string='Telegram Connected',
         compute='_compute_telegram_connected',
-        store=True,
+        search='_search_telegram_connected',
         compute_sudo=True,
     )
     telegram_chat_id = fields.Char(
         string='Telegram Chat ID',
-        related='employee_id.telegram_chat_id',
+        compute='_compute_telegram_link_fields',
         readonly=True,
-        store=False,
+        compute_sudo=True,
     )
     telegram_username = fields.Char(
         string='Telegram Username',
-        related='employee_id.telegram_username',
+        compute='_compute_telegram_link_fields',
         readonly=True,
-        store=False,
+        compute_sudo=True,
     )
     linked_at = fields.Datetime(
         string='Linked At',
-        related='employee_id.telegram_linked_at',
+        compute='_compute_telegram_link_fields',
         readonly=True,
-        store=True,
+        compute_sudo=True,
     )
     manager_department = fields.Selection([
         ('inventory', 'Inventory'),
@@ -202,44 +202,54 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         for rec in self:
             rec.is_working = rec.employee_id.job_status == 'active'
 
-    @api.depends('employee_id.telegram_chat_id', 'employee_id.telegram_user_id')
+    @api.depends('employee_id')
     def _compute_telegram_connected(self):
         for rec in self:
             rec.telegram_connected = rec._employee_has_real_telegram_identity(rec.employee_id)
+
+    @api.depends('employee_id')
+    def _compute_telegram_link_fields(self):
+        for rec in self:
+            link = rec._get_employee_telegram_link(rec.employee_id)
+            rec.telegram_chat_id = link.chat_id if link else False
+            rec.telegram_username = link.telegram_username if link else False
+            rec.linked_at = link.create_date if link else False
+
+    @api.model
+    def _search_telegram_connected(self, operator, value):
+        linked_employee_ids = set(
+            self.env['ab_hr_bot'].sudo().search([
+                ('chat_id', '!=', False),
+                ('chat_id', '!=', ''),
+            ]).mapped('employee_id')
+        )
+        connected = operator not in ('!=', 'not in') if value else operator in ('!=', 'not in')
+        return [('employee_id', 'in' if connected else 'not in', list(linked_employee_ids) or [0])]
 
     @api.model
     def _get_employee_telegram_link(self, employee):
         employee = employee.sudo().exists() if employee else employee
         if not employee:
             return self.env['ab_hr_bot']
-        return self.env['ab_hr_bot'].sudo().search([('employee_id', '=', employee.id)], limit=1)
+        return self.env['ab_hr_bot'].sudo().search([
+            ('employee_id', '=', employee.id),
+            ('chat_id', '!=', False),
+            ('chat_id', '!=', ''),
+        ], limit=1)
 
     @api.model
     def _get_employee_telegram_chat_id(self, employee):
         link = self._get_employee_telegram_link(employee)
-        if link and link.chat_id:
-            return link.chat_id
-        return (employee.telegram_chat_id or '').strip() if employee else False
+        return link.chat_id if link else False
 
     @api.model
     def _get_employee_telegram_username(self, employee):
         link = self._get_employee_telegram_link(employee)
-        if link and link.telegram_username:
-            return link.telegram_username
-        return (employee.telegram_username or '').strip() if employee else False
+        return link.telegram_username if link else False
 
     @api.model
     def _employee_has_real_telegram_identity(self, employee):
-        return bool(
-            employee
-            and (
-                self._get_employee_telegram_chat_id(employee)
-                or (
-                    (employee.telegram_chat_id or '').strip()
-                    and (employee.telegram_user_id or '').strip()
-                )
-            )
-        )
+        return bool(employee and self._get_employee_telegram_link(employee))
 
     @api.onchange('manager_department')
     def _onchange_manager_department(self):
@@ -325,41 +335,11 @@ class AbSupplierClaimTelegramRegistration(models.Model):
 
     @api.model
     def migrate_legacy_registration_data(self):
-        self.search([])._compute_telegram_connected()
         return True
 
     @api.model
     def _cron_import_telegram_registrations(self):
-        icp = self.env['ir.config_parameter'].sudo()
-        last_offset = int(icp.get_param('ab_supplier_claim_cycle.telegram_last_update_id', '0'))
-        response = self.env['ab_telegram_bot'].sudo()._call_telegram_api(
-            'getUpdates',
-            query_params={'offset': last_offset + 1, 'timeout': 0},
-        )
-        updates = (response or {}).get('result') or []
-        if not updates:
-            return
-        max_update_id = last_offset
-        for update in updates:
-            update_id = update.get('update_id', 0)
-            if update_id > max_update_id:
-                max_update_id = update_id
-            message = update.get('message') or {}
-            text = (message.get('text') or '').strip()
-            if not text:
-                continue
-            chat = message.get('chat') or {}
-            sender = message.get('from') or {}
-            result = self._link_employee_from_telegram_message({
-                'telegram_user_id': str(sender.get('id') or ''),
-                'telegram_chat_id': str(chat.get('id') or ''),
-                'text': text,
-                'username': (sender.get('username') or '').strip(),
-            }) or {}
-            if result.get('handled') and result.get('text') and chat.get('id'):
-                self.env['ab_telegram_bot'].sudo().send_message(chat.get('id'), result['text'])
-        if max_update_id > last_offset:
-            icp.set_param('ab_supplier_claim_cycle.telegram_last_update_id', str(max_update_id))
+        return True
 
     def action_open_bot(self):
         self.ensure_one()
