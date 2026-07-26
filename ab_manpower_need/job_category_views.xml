@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_hr_job_cat_view_list" model="ir.ui.view">
+        <field name="name">ab_hr_job_cat_view_list</field>
+        <field name="model">ab_hr_job_cat</field>
+        <field name="arch" type="xml">
+            <list string="Job Categories">
+                <field name="name"/>
+                <field name="job_ids" widget="many2many_tags"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ab_hr_job_cat_view_form" model="ir.ui.view">
+        <field name="name">ab_hr_job_cat_view_form</field>
+        <field name="model">ab_hr_job_cat</field>
+        <field name="arch" type="xml">
+            <form string="Job Category">
+                <sheet>
+                    <field name="active" invisible="1"/>
+                    <widget name="web_ribbon"
+                            title="Archived"
+                            bg_color="bg-danger"
+                            invisible="active"/>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                    <notebook>
+                        <page string="Jobs" name="jobs">
+                            <field name="job_ids"
+                                   widget="many2many_tags"
+                                   options="{'no_create': True, 'no_create_edit': True}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="ab_hr_job_cat_view_search" model="ir.ui.view">
+        <field name="name">ab_hr_job_cat_view_search</field>
+        <field name="model">ab_hr_job_cat</field>
+        <field name="arch" type="xml">
+            <search string="Job Categories">
+                <field name="name"/>
+                <field name="job_ids"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="manpower_hour_need_view_form_with_job_category" model="ir.ui.view">
+        <field name="name">ab_hr_manpower_hour_need.form.with.job.category</field>
+        <field name="model">ab_hr_manpower_hour_need</field>
+        <field name="priority">10</field>
+        <field name="arch" type="xml">
+            <form string="Manpower Need Per Hour">
+                <sheet>
+                    <group>
+                        <group string="Planning Scope">
+                            <field name="workplace"/>
+                            <field name="workplace_region"/>
+                            <field name="job_category_id"/>
+                            <field name="available_job_ids" invisible="1"/>
+                            <field name="job_title"
+                                   domain="[('id', 'in', available_job_ids)] if job_category_id else []"/>
+                        </group>
+                        <group string="Manual Planning">
+                            <field name="required_employee_count"/>
+                            <field name="current_employee_count" readonly="1"/>
+                            <field name="employee_shortage_display" readonly="1"/>
+                            <field name="required_operating_hours"/>
+                            <field name="default_actual_daily_hours"/>
+                        </group>
+                    </group>
+                    <group string="Hours Summary">
+                        <group>
+                            <field name="actual_available_hours"/>
+                            <field name="shortage_hours_display" readonly="1"/>
+                            <field name="hours_capacity_status"
+                                   widget="badge"
+                                   readonly="1"
+                                   decoration-danger="hours_capacity_status == 'shortage'"
+                                   decoration-success="hours_capacity_status == 'increase'"
+                                   decoration-info="hours_capacity_status == 'balanced'"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Employees">
+                            <field name="employee_line_ids" readonly="1">
+                                <list string="Employees">
+                                    <field name="employee_id"/>
+                                    <field name="user_id"/>
+                                    <field name="job_title"/>
+                                    <field name="department_id"/>
+                                    <field name="actual_hours" sum="Actual Hours"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="ab_hr_job_cat_action" model="ir.actions.act_window">
+        <field name="name">Job Categories</field>
+        <field name="res_model">ab_hr_job_cat</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <menuitem id="ab_hr_job_cat_menu"
+              name="Job Categories"
+              parent="ab_hr.manpower_root_menu"
+              action="ab_hr_job_cat_action"
+              groups="ab_manpower_need.group_ab_hr_manpower_hour_need"
+              sequence="36"/>
+</odoo>
