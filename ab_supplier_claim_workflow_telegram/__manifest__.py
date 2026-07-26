@@ -6,7 +6,7 @@
     'author': 'Abdin Pharmacies',
     'developer': 'Alhassan Hossny',
     'application': False,
-    'depends': ['ab_supplier_claim_workflow', 'ab_telegram_webhook'],
+    'depends': ['ab_supplier_claim_workflow', 'ab_telegram_bot'],
     'pre_init_hook': 'pre_init_hook',
     'data': [
         'security/ir.model.access.csv',
@@ -20,6 +20,7 @@
     'assets': {
         'web.assets_backend': [
             'ab_supplier_claim_workflow_telegram/static/src/scss/supplier_claim_workflow_telegram.scss',
+            'ab_supplier_claim_workflow_telegram/static/src/js/telegram_connect_button.js',
             'ab_supplier_claim_workflow_telegram/static/src/js/telegram_managers.js',
             'ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml',
         ],

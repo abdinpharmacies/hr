@@ -1,20 +1,30 @@
 from odoo import api, models
 
 
-class AbTelegramService(models.AbstractModel):
-    _inherit = "ab_telegram_service"
+class AbSupplierClaimHrTelegramBot(models.Model):
+    _inherit = "ab_hr_bot"
 
     @api.model
-    def _dispatch_telegram_message(self, message_data):
-        result = super()._dispatch_telegram_message(message_data) or {}
-        if result.get("note") == "employee_telegram_linked":
-            self.env["ab_supplier_claim_telegram_registration"].sudo()._ensure_registration_from_employee_code(
-                message_data.get("text")
-            )
-            return result
-        if result.get("handled"):
-            return result
-        result = self.env["ab_supplier_claim_telegram_registration"].sudo()._link_employee_from_telegram_message(
-            message_data
-        ) or {}
-        return result
+    def bot_process_message(
+        self,
+        telegram_user_id,
+        telegram_chat_id,
+        text,
+        username="",
+        first_name="",
+        last_name="",
+        phone="",
+        language_code="",
+        chat_type="private",
+    ):
+        return self.env["ab_supplier_claim_telegram_registration"].sudo()._link_employee_from_telegram_message({
+            "telegram_user_id": telegram_user_id,
+            "telegram_chat_id": telegram_chat_id,
+            "text": text,
+            "username": username,
+            "first_name": first_name,
+            "last_name": last_name,
+            "phone": phone,
+            "language_code": language_code,
+            "chat_type": chat_type,
+        }) or {"handled": False}
