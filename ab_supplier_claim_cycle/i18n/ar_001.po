@@ -2361,6 +2361,12 @@ msgid "This Telegram account is already linked."
 msgstr "حساب تيليجرام هذا مرتبط بالفعل."
 
 #. module: ab_supplier_claim_cycle
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_cycle__status__delivery
+#: model:ir.model.fields.selection,name:ab_supplier_claim_cycle.selection__ab_supplier_claim_stage_history__stage__delivery
+msgid "Delivery"
+msgstr "التسليم"
+
+#. module: ab_supplier_claim_cycle
 #. odoo-python
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_telegram_registration.py:0
 #: model:ir.model.constraint,message:ab_supplier_claim_cycle.constraint_ab_supplier_claim_telegram_registration_uniq_employee
@@ -2568,3 +2574,8 @@ msgstr "🏛 <span>خصم من المنبع</span> •"
 #: code:addons/ab_supplier_claim_cycle/models/ab_supplier_claim_cycle.py:0
 msgid "🚨 <b>Claim Escalation Alert</b>"
 msgstr "🚨 <b>تنبيه تصعيد المطالبة</b>"
+
+#. module: ab_supplier_claim_cycle
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_cycle.claim_error_wizard_form
+msgid "Please review the details below"
+msgstr "يرجى مراجعة التفاصيل أدناه"
