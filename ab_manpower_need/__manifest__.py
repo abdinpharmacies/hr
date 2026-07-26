@@ -1,6 +1,6 @@
 {
     'name': 'Manpower Need',
-    'version': '19.0.1.0.1',
+    'version': '19.0.1.2.0',
     'license': 'LGPL-3',
     'category': 'Abdin',
     'author': 'Abdin Pharmacies',
@@ -10,6 +10,8 @@
     'data': [
         'security/security_groups.xml',
         'security/ir.model.access.csv',
+        'job_category_security.xml',
+        'job_category_views.xml',
         'views/manpower_hour_need_views.xml',
     ],
     'assets': {
