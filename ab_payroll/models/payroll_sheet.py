@@ -511,53 +511,24 @@ class AbHrPayrollSheet(models.Model):
             return employee
         return self.env["ab_hr_employee"]
 
+    @api.model
+    def _resolve_recipient_chat_id(self, recipient):
+        recipient = recipient.sudo().exists() if recipient else recipient
+        if not recipient or "telegram_chat_id" not in recipient._fields:
+            return False
+        return str(recipient.telegram_chat_id or "").strip() or False
+
     def _resolve_manager_chat_id(self):
         self.ensure_one()
-        manager = self.manager_id
-        if not manager:
-            return False
-        if "telegram_chat_id" in manager._fields and manager.telegram_chat_id:
-            return manager.telegram_chat_id
-        if not manager.user_id:
-            return False
-        if "ab_user_telegram_link" not in self.env:
-            return False
-        link = self.env["ab_user_telegram_link"].sudo().search(
-            [
-                ("user_id", "=", manager.user_id.id),
-                ("status", "in", ["linked", "stale"]),
-                ("telegram_chat_id", "!=", False),
-            ],
-            limit=1,
-        )
-        return link.telegram_chat_id if link else False
+        return self._resolve_recipient_chat_id(self.manager_id)
 
     def _resolve_employee_chat_id(self):
         self.ensure_one()
-        employee = self.employee_id
-        if not employee:
-            return False
-        if "telegram_chat_id" in employee._fields and employee.telegram_chat_id:
-            return employee.telegram_chat_id
-        if not employee.user_id:
-            return False
-        if "ab_user_telegram_link" not in self.env:
-            return False
-        link = self.env["ab_user_telegram_link"].sudo().search(
-            [
-                ("user_id", "=", employee.user_id.id),
-                ("status", "in", ["linked", "stale"]),
-                ("telegram_chat_id", "!=", False),
-            ],
-            limit=1,
-        )
-        return link.telegram_chat_id if link else False
+        return self._resolve_recipient_chat_id(self.employee_id)
 
     @api.model
     def _get_telegram_service(self):
-        if "ab_telegram_service" not in self.env:
-            return False
-        return self.env["ab_telegram_service"].sudo()
+        return False
 
     @api.model
     def _get_telegram_sender_token(self):
@@ -568,11 +539,14 @@ class AbHrPayrollSheet(models.Model):
 
     def _ensure_telegram_sender_token(self):
         telegram_service = self._get_telegram_service()
-        if telegram_service is False or not hasattr(telegram_service, "send_payroll_document"):
+        required_methods = ("send_payroll_message", "send_payroll_document")
+        if telegram_service is False or not all(
+            hasattr(telegram_service, method) for method in required_methods
+        ):
             raise UserError(
                 _(
                     "Payroll Telegram integration is not installed. "
-                    "Install HR Telegram Employee Link to enable distribution."
+                    "Install Payroll Telegram to enable distribution."
                 )
             )
         if not self._get_telegram_sender_token():
