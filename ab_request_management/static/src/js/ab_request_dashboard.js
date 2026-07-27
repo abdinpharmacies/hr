@@ -133,7 +133,7 @@ export class AbRequestDashboard extends Component {
             },
             {
                 key: "website_requests",
-                label: _t("External Requests"),
+                label: _t("Complaints Form"),
                 value: websiteRequests,
                 icon: "fa fa-globe",
                 accent: "#1f8f8a",

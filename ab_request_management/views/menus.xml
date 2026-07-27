@@ -48,7 +48,7 @@
                   groups="ab_request_management.group_ab_request_management_viewer,ab_request_management.group_ab_request_management_admin"/>
 
         <menuitem id="ab_request_management_menu_website_requests"
-                  name="External Requests"
+                  name="Complaints Form"
                   parent="ab_request_management_menu_root"
                   action="ab_request_website_action"
                   sequence="45"

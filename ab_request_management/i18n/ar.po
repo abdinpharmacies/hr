@@ -1942,7 +1942,7 @@ msgstr "طلب من الموقع"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
 msgid "Website Requests"
-msgstr "طلبات الموقع"
+msgstr "فورم الشكاوى"
 
 #. module: ab_request_management
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_website_action
@@ -1950,7 +1950,7 @@ msgstr "طلبات الموقع"
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_list
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_search
 msgid "Website Requests and Complaints"
-msgstr "طلبات الموقع"
+msgstr "فورم الشكاوى"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
@@ -2247,7 +2247,7 @@ msgstr "الموضوع *"
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_list
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_search
 msgid "Website"
-msgstr "طلبات الموقع"
+msgstr "فورم الشكاوى"
 
 #. module: ab_request_management
 #. odoo-python
@@ -2401,6 +2401,12 @@ msgstr "يجب أن ينتمي نوع الطلب المتاح للعامة إل�
 #. module: ab_request_management
 msgid "External Requests"
 msgstr "الطلبات الخارجية"
+
+#. module: ab_request_management
+#. odoo-javascript
+#: code:addons/ab_request_management/static/src/js/ab_request_dashboard.js:0
+msgid "Complaints Form"
+msgstr "فورم الشكاوى"
 
 #. module: ab_request_management
 msgid "External Request"
