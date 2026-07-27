@@ -1,11 +1,20 @@
 /** @odoo-module **/
 
-import { Component, onWillStart, onWillUnmount, useState, xml } from "@odoo/owl";
+import { Component, onWillStart, onWillUnmount, onMounted, useState, useRef, xml } from "@odoo/owl";
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { CoreInput, CoreSearchSelect, CoreSelect } from "@ab_core_ui/core_ui/components/input/input";
+import { money, number, decimal, pct } from "./utils/formatters.js";
+import { KpiCard } from "./components/kpi_card.js";
+import { DonutChart } from "./components/donut_chart.js";
+import { BarChart } from "./components/bar_chart.js";
+import { RankingTable } from "./components/ranking_table.js";
+import { DataTable } from "./components/data_table.js";
+import { LoadingSkeleton } from "./components/loading_skeleton.js";
+import { ThemeToggle } from "./components/theme_toggle.js";
 
+const THEME_STORAGE_KEY = "ab_sales_dashboard.theme";
 const COLLECTION_LABELS = {
     cash: _t("Cash"),
     delivery: _t("Delivery"),
@@ -16,101 +25,25 @@ const COLLECTION_LABELS = {
 const FILTER_STORAGE_KEY = "ab_sales_dashboard.filters";
 const SYNC_POLL_DELAY_MS = 750;
 const DATE_FILTER_KEYS = new Set([
-    "day",
-    "yesterday",
-    "last_7_days",
-    "last_30_days",
-    "last_90_days",
-    "month",
-    "year",
-    "custom",
+    "day", "yesterday", "last_7_days", "last_30_days", "last_90_days", "month", "year", "custom",
 ]);
 
-const UI_TEXT = {
-    title: _t("Sales Dashboard"),
-    subtitle: _t("Abdin Pharmacies - complete overview of sales performance"),
-    allStores: _t("All Stores"),
-    refreshing: _t("Refreshing..."),
-    refreshFromEplus: _t("Refresh from E-Plus"),
-    filterByStore: _t("Filter by store"),
-    showFilters: _t("Show filters"),
-    hideFilters: _t("Hide filters"),
-    dateFilter: _t("Date Filter"),
-    daily: _t("Daily"),
-    yesterday: _t("Yesterday"),
-    last7Days: _t("Last 7 Days"),
-    last30Days: _t("Last 30 Days"),
-    last90Days: _t("Last 90 Days"),
-    dateFrom: _t("Date From"),
-    dateTo: _t("Date To"),
-    month: _t("Month"),
-    year: _t("Year"),
-    search: _t("Search"),
-    previousPage: _t("Previous"),
-    nextPage: _t("Next"),
-    page: _t("Page"),
-    of: _t("of"),
-    records: _t("records"),
-    noRecords: _t("No records found."),
-    sectionLoadFailed: _t("Could not load all records for this section."),
-    limitedRows: _t("Only stored snapshot rows are available for this section."),
-    loading: _t("Loading dashboard..."),
-    syncing: _t("Syncing..."),
-    syncStarted: _t("Dashboard sync started."),
-    syncFinished: _t("Dashboard sync finished."),
-    syncFailed: _t("Dashboard sync finished with failed days."),
-    sourceUnavailable: _t("E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored."),
-    syncedDays: _t("Synced days"),
-    partialStoredSummary: _t("Partial stored summary"),
-    reportDataUnavailable: _t("Report data unavailable for this range. Run shorter E-Plus refreshes first to build daily facts."),
-    cacheProgress: _t("Cached days"),
-    branchDaysSynchronized: _t("branch-days synchronized"),
-    notAvailableForSummary: _t("Not available for summary range."),
-    totalSales: _t("Total Sales"),
-    previousPeriodAverage: _t("vs previous period average"),
-    averageDailySales: _t("Average Daily Sales"),
-    previous: _t("Previous:"),
-    invoiceCount: _t("Invoice Count"),
-    totalUnitsSold: _t("Total Units Sold"),
-    uniqueProductsSold: _t("Unique Products Sold"),
-    totalProductSales: _t("Total Product Sales"),
-    avgProductsPerInvoice: _t("Avg. Products / Invoice"),
-    storesWithSales: _t("Stores with Sales"),
-    avgProductsSoldPerStore: _t("Avg. Products / Store"),
-    bearingPercentage: _t("Bearing Percentage"),
-    company: _t("Company:"),
-    medicineVsNonMedicine: _t("Medicine vs Non-Medicine"),
-    medicineSales: _t("Medicine Sales"),
-    nonMedicineSales: _t("Non-Medicine Sales"),
-    ofTotal: _t("of total"),
-    collectionMethodSales: _t("Sales by Collection Method"),
-    fourCategories: _t("4 categories"),
-    salesByUsers: _t("Sales by Users"),
-    rankedDescending: _t("Ranked descending"),
-    user: _t("User"),
-    percentage: _t("Percentage"),
-    topSoldItems: _t("Top Sold Items"),
-    saleTimesCurrentBalance: _t("Sales + sale times + current balance"),
-    item: _t("Item"),
-    saleTimes: _t("Sale Times"),
-    currentBalance: _t("Current Balance"),
-    unit: _t("unit"),
-    customerSales: _t("Customer Sales"),
-    invoiceCustomerItems: _t("Invoice + Customer + Items"),
-    invoice: _t("Invoice"),
-    customer: _t("Customer"),
-    items: _t("Items"),
-    invoiceTotal: _t("Invoice Total"),
-    refreshed: _t("Sales dashboard refreshed."),
-};
+const INVOICE_COLUMNS = [
+    { field: "invoice_no", label: _t("Invoice") },
+    { field: "customer_name", label: _t("Customer") },
+    { field: "items_summary", label: _t("Items"), format: "truncate", maxLen: 50 },
+    { field: "invoice_total", label: _t("Total"), format: "money" },
+];
 
 class SalesDashboardAction extends Component {
-    static components = { CoreInput, CoreSearchSelect, CoreSelect };
+    static components = {
+        CoreInput, CoreSearchSelect, CoreSelect,
+        KpiCard, DonutChart, BarChart, RankingTable, DataTable, LoadingSkeleton, ThemeToggle,
+    };
 
     setup() {
         this.orm = useService("orm");
         this.notification = useService("notification");
-        this.ui = UI_TEXT;
         this.syncPollTimer = null;
         this.sectionSearchTimers = {};
         this.sectionRequestVersions = {};
@@ -124,14 +57,19 @@ class SalesDashboardAction extends Component {
         this.toggleStoreMenu = this.toggleStoreMenu.bind(this);
         this.toggleMobileFilters = this.toggleMobileFilters.bind(this);
         this.openStoreMenu = this.openStoreMenu.bind(this);
+        this.toggleTheme = this.toggleTheme.bind(this);
+        this.rootRef = useRef("dashboardRoot");
+
         const savedFilters = this.loadSavedFilters();
+        const savedTheme = this.loadSavedTheme();
         this.state = useState({
             loading: true,
             refreshing: false,
             syncing: false,
             storeMenuOpen: false,
             mobileFiltersOpen: false,
-            storeSearch: UI_TEXT.allStores,
+            storeSearch: _t("All Stores"),
+            theme: savedTheme,
             activeDateFilter: savedFilters.active_date_filter,
             filters: {
                 date_from: savedFilters.date_from,
@@ -146,6 +84,7 @@ class SalesDashboardAction extends Component {
                 customer_sales: this.emptySectionPage(),
             },
         });
+
         onWillStart(async () => {
             await this.loadDashboard(false);
             await this.refreshSyncProgress();
@@ -160,21 +99,12 @@ class SalesDashboardAction extends Component {
         });
     }
 
+    // -- Section helpers --
     emptySectionPage() {
-        return {
-            rows: [],
-            page: 1,
-            pageSize: 20,
-            totalCount: 0,
-            totalPages: 1,
-            search: "",
-            loading: false,
-            available: false,
-            limited: false,
-            error: false,
-        };
+        return { rows: [], page: 1, pageSize: 20, totalCount: 0, totalPages: 1, search: "", loading: false, available: false, limited: false, error: false };
     }
 
+    // -- Filter persistence --
     loadSavedFilters() {
         const latestReportDate = this.latestReportDate();
         const defaults = {
@@ -189,9 +119,7 @@ class SalesDashboardAction extends Component {
                 date_from: this.clampIsoToLatestReportDate(saved.date_from || defaults.date_from),
                 date_to: this.clampIsoToLatestReportDate(saved.date_to || defaults.date_to),
                 store_id: Number(saved.store_id || 0),
-                active_date_filter: DATE_FILTER_KEYS.has(saved.active_date_filter)
-                    ? saved.active_date_filter
-                    : "last_7_days",
+                active_date_filter: DATE_FILTER_KEYS.has(saved.active_date_filter) ? saved.active_date_filter : "last_7_days",
             };
         } catch {
             return { ...defaults, active_date_filter: "last_7_days" };
@@ -206,17 +134,41 @@ class SalesDashboardAction extends Component {
                     active_date_filter: this.state.activeDateFilter,
                 }));
             }
-        } catch {
-            // Browser storage is optional; the dashboard still works without it.
+        } catch { /* optional */ }
+    }
+
+    // -- Theme persistence --
+    loadSavedTheme() {
+        try {
+            const raw = window.localStorage && window.localStorage.getItem(THEME_STORAGE_KEY);
+            return raw === "light" ? "light" : "dark";
+        } catch { return "dark"; }
+    }
+
+    persistTheme() {
+        try {
+            if (window.localStorage) {
+                window.localStorage.setItem(THEME_STORAGE_KEY, this.state.theme);
+            }
+        } catch { /* optional */ }
+    }
+
+    toggleTheme(theme) {
+        if (theme === this.state.theme) return;
+        const el = this.rootRef.el;
+        if (el) el.classList.add("sd-theme-transition");
+        this.state.theme = theme;
+        this.persistTheme();
+        if (el) {
+            setTimeout(() => el.classList.remove("sd-theme-transition"), 400);
         }
     }
 
+    // -- Dashboard loading --
     async loadDashboard(refresh) {
         this.state.loading = !this.state.data;
         this.state.storeMenuOpen = false;
-        if (refresh) {
-            this.state.refreshing = true;
-        }
+        if (refresh) { this.state.refreshing = true; }
         try {
             const data = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_data", [this.state.filters]);
             this.state.data = data;
@@ -229,9 +181,7 @@ class SalesDashboardAction extends Component {
             this.loadAvailableSectionPages();
         } finally {
             this.state.loading = false;
-            if (refresh) {
-                this.state.refreshing = false;
-            }
+            if (refresh) { this.state.refreshing = false; }
         }
     }
 
@@ -239,13 +189,8 @@ class SalesDashboardAction extends Component {
         this.state.filters[name] = name === "store_id" ? Number(value || 0) : value;
     }
 
-    toggleStoreMenu() {
-        this.state.storeMenuOpen = !this.state.storeMenuOpen;
-    }
-
-    openStoreMenu() {
-        this.state.storeMenuOpen = true;
-    }
+    toggleStoreMenu() { this.state.storeMenuOpen = !this.state.storeMenuOpen; }
+    openStoreMenu() { this.state.storeMenuOpen = true; }
 
     onStoreSearchInput(valueOrEvent) {
         this.state.storeSearch = this.inputValue(valueOrEvent) || "";
@@ -254,46 +199,35 @@ class SalesDashboardAction extends Component {
 
     selectStore(storeId, storeName) {
         this.state.filters.store_id = Number(storeId || 0);
-        this.state.storeSearch = storeName || this.ui.allStores;
+        this.state.storeSearch = storeName || _t("All Stores");
         this.state.storeMenuOpen = false;
         this.persistFilters();
         return this.loadDashboard(false);
     }
 
+    // -- Date presets --
     applyDatePreset(preset) {
-        const latestReportDate = this.latestReportDate();
-        let dateFrom = latestReportDate;
-        let dateTo = latestReportDate;
-
-        if (preset === "yesterday") {
-            dateFrom = latestReportDate;
-        } else if (preset === "last_7_days") {
-            dateFrom = this.addDays(latestReportDate, -6);
-        } else if (preset === "last_30_days") {
-            dateFrom = this.addDays(latestReportDate, -29);
-        } else if (preset === "last_90_days") {
-            dateFrom = this.addDays(latestReportDate, -89);
-        }
-
+        const latest = this.latestReportDate();
+        let dateFrom = latest;
+        if (preset === "yesterday") { dateFrom = latest; }
+        else if (preset === "last_7_days") { dateFrom = this.addDays(latest, -6); }
+        else if (preset === "last_30_days") { dateFrom = this.addDays(latest, -29); }
+        else if (preset === "last_90_days") { dateFrom = this.addDays(latest, -89); }
         this.state.filters.date_from = this.toIsoDate(dateFrom);
-        this.state.filters.date_to = this.toIsoDate(dateTo);
+        this.state.filters.date_to = this.toIsoDate(latest);
         this.state.activeDateFilter = preset;
         this.persistFilters();
         return this.loadDashboard(false);
     }
 
     inputValue(valueOrEvent) {
-        return typeof valueOrEvent === "object" && valueOrEvent && valueOrEvent.target
-            ? valueOrEvent.target.value
-            : valueOrEvent;
+        return typeof valueOrEvent === "object" && valueOrEvent && valueOrEvent.target ? valueOrEvent.target.value : valueOrEvent;
     }
 
     applyMonthSelection(valueOrEvent) {
         const value = this.inputValue(valueOrEvent);
-        if (!value) {
-            return;
-        }
-        const [year, month] = value.split("-").map((part) => Number(part));
+        if (!value) return;
+        const [year, month] = value.split("-").map(Number);
         const dateFrom = new Date(year, month - 1, 1);
         const dateTo = this.clampToLatestReportDate(new Date(year, month, 0));
         this.state.activeDateFilter = "month";
@@ -302,9 +236,7 @@ class SalesDashboardAction extends Component {
 
     applyDaySelection(valueOrEvent) {
         const value = this.clampIsoToLatestReportDate(this.inputValue(valueOrEvent));
-        if (!value) {
-            return;
-        }
+        if (!value) return;
         this.state.filters.date_from = value;
         this.state.filters.date_to = value;
         this.state.activeDateFilter = "day";
@@ -314,9 +246,7 @@ class SalesDashboardAction extends Component {
 
     applyYearSelection(valueOrEvent) {
         const year = Number(this.inputValue(valueOrEvent) || 0);
-        if (!year) {
-            return;
-        }
+        if (!year) return;
         const dateFrom = new Date(year, 0, 1);
         const dateTo = this.clampToLatestReportDate(new Date(year, 11, 31));
         this.state.activeDateFilter = "year";
@@ -339,10 +269,9 @@ class SalesDashboardAction extends Component {
         }
     }
 
+    // -- Refresh / Sync --
     async onRefresh() {
-        if (this.state.refreshing) {
-            return;
-        }
+        if (this.state.refreshing) return;
         this.stopSyncPolling();
         this.state.refreshing = true;
         this.state.syncing = true;
@@ -350,7 +279,7 @@ class SalesDashboardAction extends Component {
         try {
             const progress = await this.orm.call("ab.sales.dashboard.snapshot", "start_dashboard_sync", [this.state.filters]);
             this.state.syncProgress = progress;
-            this.notification.add(this.ui.syncStarted, { type: "info" });
+            this.notification.add(_t("Dashboard sync started."), { type: "info" });
             this.scheduleSyncPoll(0);
         } catch (error) {
             this.state.refreshing = false;
@@ -359,6 +288,7 @@ class SalesDashboardAction extends Component {
         }
     }
 
+    // -- Section pagination --
     initializeSectionPages(data) {
         const initialRows = {
             sales_by_user: data.user_lines || [],
@@ -367,18 +297,10 @@ class SalesDashboardAction extends Component {
         };
         const unsupported = new Set(((data.report_meta || {}).unsupported_sections) || []);
         for (const section of Object.keys(initialRows)) {
-            const sectionState = this.state.sectionPages[section];
-            Object.assign(sectionState, {
-                rows: initialRows[section],
-                page: 1,
-                pageSize: 20,
-                totalCount: initialRows[section].length,
-                totalPages: 1,
-                search: "",
-                loading: false,
-                available: Boolean(data.has_snapshot) && !unsupported.has(section),
-                limited: false,
-                error: false,
+            const s = this.state.sectionPages[section];
+            Object.assign(s, {
+                rows: initialRows[section], page: 1, pageSize: 20, totalCount: initialRows[section].length, totalPages: 1,
+                search: "", loading: false, available: Boolean(data.has_snapshot) && !unsupported.has(section), limited: false, error: false,
             });
             this.sectionRequestVersions[section] = (this.sectionRequestVersions[section] || 0) + 1;
         }
@@ -393,552 +315,347 @@ class SalesDashboardAction extends Component {
     }
 
     async loadSectionPage(section, page) {
-        const sectionState = this.state.sectionPages[section];
-        if (!sectionState || !sectionState.available || this.unmounted) {
-            return;
-        }
-        const requestVersion = (this.sectionRequestVersions[section] || 0) + 1;
-        this.sectionRequestVersions[section] = requestVersion;
-        sectionState.loading = true;
-        sectionState.error = false;
+        const s = this.state.sectionPages[section];
+        if (!s || !s.available || this.unmounted) return;
+        const ver = (this.sectionRequestVersions[section] || 0) + 1;
+        this.sectionRequestVersions[section] = ver;
+        s.loading = true;
+        s.error = false;
         const filters = { ...this.state.filters };
         try {
-            const result = await this.orm.call(
-                "ab.sales.dashboard.snapshot",
-                "get_dashboard_section_page",
-                [filters, section, page, sectionState.search]
-            );
-            if (this.unmounted || this.sectionRequestVersions[section] !== requestVersion) {
-                return;
-            }
+            const result = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_section_page", [filters, section, page, s.search]);
+            if (this.unmounted || this.sectionRequestVersions[section] !== ver) return;
             let rows = result.rows || [];
             if (section === "top_items") {
-                const balances = new Map(
-                    ((this.state.data && this.state.data.item_lines) || []).map((row) => [
-                        Number(row.eplus_item_id || 0),
-                        row.current_balance,
-                    ])
-                );
-                rows = rows.map((row) => balances.has(Number(row.eplus_item_id || 0))
-                    ? { ...row, current_balance: balances.get(Number(row.eplus_item_id || 0)) }
-                    : row);
+                const balances = new Map(((this.state.data && this.state.data.item_lines) || []).map(r => [Number(r.eplus_item_id || 0), r.current_balance]));
+                rows = rows.map(r => balances.has(Number(r.eplus_item_id || 0)) ? { ...r, current_balance: balances.get(Number(r.eplus_item_id || 0)) } : r);
             }
-            Object.assign(sectionState, {
-                rows,
-                page: Number(result.page || 1),
-                pageSize: Number(result.page_size || 20),
-                totalCount: Number(result.total_count || 0),
-                totalPages: Math.max(Number(result.total_pages || 1), 1),
-                available: result.available !== false,
-                limited: Boolean(result.limited),
-                error: false,
+            Object.assign(s, {
+                rows, page: Number(result.page || 1), pageSize: Number(result.page_size || 20),
+                totalCount: Number(result.total_count || 0), totalPages: Math.max(Number(result.total_pages || 1), 1),
+                available: result.available !== false, limited: Boolean(result.limited), error: false,
             });
         } catch {
-            if (this.sectionRequestVersions[section] === requestVersion) {
-                sectionState.error = true;
-            }
+            if (this.sectionRequestVersions[section] === ver) s.error = true;
         } finally {
-            if (this.sectionRequestVersions[section] === requestVersion) {
-                sectionState.loading = false;
-            }
+            if (this.sectionRequestVersions[section] === ver) s.loading = false;
         }
     }
 
     onSectionSearchInput(section, valueOrEvent) {
-        const sectionState = this.state.sectionPages[section];
-        sectionState.search = (this.inputValue(valueOrEvent) || "").slice(0, 100);
+        const s = this.state.sectionPages[section];
+        s.search = (this.inputValue(valueOrEvent) || "").slice(0, 100);
         clearTimeout(this.sectionSearchTimers[section]);
-        this.sectionSearchTimers[section] = setTimeout(() => {
-            this.loadSectionPage(section, 1);
-        }, 300);
+        this.sectionSearchTimers[section] = setTimeout(() => this.loadSectionPage(section, 1), 300);
     }
 
     changeSectionPage(section, direction) {
-        const sectionState = this.state.sectionPages[section];
-        const nextPage = Math.min(Math.max(sectionState.page + direction, 1), sectionState.totalPages);
-        if (!sectionState.loading && nextPage !== sectionState.page) {
-            this.loadSectionPage(section, nextPage);
-        }
+        const s = this.state.sectionPages[section];
+        const nextPage = Math.min(Math.max(s.page + direction, 1), s.totalPages);
+        if (!s.loading && nextPage !== s.page) this.loadSectionPage(section, nextPage);
     }
 
     sectionRowNumber(section, index) {
-        const sectionState = this.state.sectionPages[section];
-        return ((sectionState.page - 1) * sectionState.pageSize) + index + 1;
-    }
-
-    isDateFilterActive(filterKey) {
-        return this.state.activeDateFilter === filterKey;
-    }
-
-    async refreshSyncProgress() {
-        if (!this.state.filters.date_from || !this.state.filters.date_to) {
-            this.state.syncProgress = null;
-            return null;
-        }
-        const progress = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_sync_progress", [this.state.filters]);
-        this.state.syncProgress = progress && progress.has_sync_state ? progress : null;
-        return this.state.syncProgress;
-    }
-
-    resumeSyncPollingIfNeeded() {
-        const progress = this.state.syncProgress;
-        if (progress && progress.is_active) {
-            this.state.refreshing = true;
-            this.state.syncing = true;
-            this.scheduleSyncPoll(0);
-        }
-    }
-
-    scheduleSyncPoll(delay = SYNC_POLL_DELAY_MS) {
-        this.stopSyncPolling();
-        if (this.unmounted) {
-            return;
-        }
-        this.syncPollTimer = setTimeout(() => this.pollDashboardSync(), delay);
-    }
-
-    stopSyncPolling() {
-        if (this.syncPollTimer) {
-            clearTimeout(this.syncPollTimer);
-            this.syncPollTimer = null;
-        }
-    }
-
-    async pollDashboardSync() {
-        if (this.unmounted) {
-            return;
-        }
-        try {
-            const progress = await this.orm.call("ab.sales.dashboard.snapshot", "process_dashboard_sync_day", [this.state.filters]);
-            this.state.syncProgress = progress;
-            if (progress.is_active) {
-                this.scheduleSyncPoll();
-                return;
-            }
-
-            this.state.refreshing = false;
-            this.state.syncing = false;
-            await this.loadDashboard(false);
-            await this.refreshSyncProgress();
-            if (progress.last_status === "source_unavailable") {
-                this.notification.add(this.ui.sourceUnavailable, { type: "warning" });
-            } else if (progress.failed_days) {
-                this.notification.add(this.ui.syncFailed, { type: "warning" });
-            } else if (progress.is_complete) {
-                this.notification.add(this.ui.syncFinished, { type: "success" });
-            }
-        } catch (error) {
-            this.state.refreshing = false;
-            this.state.syncing = false;
-            this.stopSyncPolling();
-            const message = (error && error.message) || String(error || "");
-            this.notification.add(message || this.ui.syncFailed, { type: "danger" });
-        }
-    }
-
-    get isRtl() {
-        const html = document.documentElement;
-        const lang = (html.lang || "").toLowerCase();
-        return html.dir === "rtl" || lang.startsWith("ar");
-    }
-
-    get direction() {
-        return this.isRtl ? "rtl" : "ltr";
-    }
-
-    toggleMobileFilters() {
-        this.state.mobileFiltersOpen = !this.state.mobileFiltersOpen;
-        if (!this.state.mobileFiltersOpen) {
-            this.state.storeMenuOpen = false;
-        }
-    }
-
-    get locale() {
-        const lang = (document.documentElement.lang || "").replace("_", "-");
-        return this.isRtl ? "ar-EG" : (lang || "en-US");
-    }
-
-    addDays(date, days) {
-        const result = new Date(date);
-        result.setDate(result.getDate() + days);
-        return result;
-    }
-
-    latestReportDate() {
-        return this.addDays(new Date(), -1);
-    }
-
-    get latestReportDateIso() {
-        return this.toIsoDate(this.latestReportDate());
-    }
-
-    get monthOptions() {
-        const latest = this.latestReportDate();
-        const formatter = new Intl.DateTimeFormat(this.locale, { month: "long", year: "numeric" });
-        const options = [];
-        for (let offset = 0; offset < 36; offset++) {
-            const month = new Date(latest.getFullYear(), latest.getMonth() - offset, 1);
-            options.push({
-                value: `${month.getFullYear()}-${String(month.getMonth() + 1).padStart(2, "0")}`,
-                label: formatter.format(month),
-            });
-        }
-        return options;
-    }
-
-    get yearOptions() {
-        const latestYear = this.latestReportDate().getFullYear();
-        return Array.from({ length: 10 }, (_value, index) => `${latestYear - index}`);
-    }
-
-    get selectedMonthValue() {
-        const dateFrom = this.parseIsoDate(this.state.filters.date_from);
-        const dateTo = this.parseIsoDate(this.state.filters.date_to);
-        if (!dateFrom || !dateTo || dateFrom.getDate() !== 1) {
-            return "";
-        }
-        const expectedEnd = this.clampToLatestReportDate(
-            new Date(dateFrom.getFullYear(), dateFrom.getMonth() + 1, 0)
-        );
-        if (!this.sameDate(this.state.filters.date_to, expectedEnd)) {
-            return "";
-        }
-        return `${dateFrom.getFullYear()}-${String(dateFrom.getMonth() + 1).padStart(2, "0")}`;
-    }
-
-    get selectedDayValue() {
-        return this.state.filters.date_from === this.state.filters.date_to
-            ? this.state.filters.date_from
-            : "";
-    }
-
-    get selectedYearValue() {
-        const dateFrom = this.parseIsoDate(this.state.filters.date_from);
-        const dateTo = this.parseIsoDate(this.state.filters.date_to);
-        if (!dateFrom || !dateTo || dateFrom.getMonth() !== 0 || dateFrom.getDate() !== 1) {
-            return "";
-        }
-        const expectedEnd = this.clampToLatestReportDate(new Date(dateFrom.getFullYear(), 11, 31));
-        return this.sameDate(this.state.filters.date_to, expectedEnd) ? String(dateFrom.getFullYear()) : "";
-    }
-
-    clampToLatestReportDate(date) {
-        const latestReportDate = this.latestReportDate();
-        if (!date || date > latestReportDate) {
-            return latestReportDate;
-        }
-        return date;
-    }
-
-    clampIsoToLatestReportDate(value) {
-        if (!value) {
-            return value;
-        }
-        return this.toIsoDate(this.clampToLatestReportDate(this.parseIsoDate(value)));
-    }
-
-    toIsoDate(date) {
-        const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-        return localDate.toISOString().slice(0, 10);
-    }
-
-    sameDate(left, right) {
-        return left === this.toIsoDate(right);
-    }
-
-    sameRange(dateFrom, dateTo, start, end) {
-        return this.sameDate(dateFrom, start) && this.sameDate(dateTo, end);
-    }
-
-    parseIsoDate(value) {
-        if (!value) {
-            return null;
-        }
-        const [year, month, day] = value.split("-").map((part) => Number(part));
-        if (!year || !month || !day) {
-            return null;
-        }
-        return new Date(year, month - 1, day);
-    }
-
-    storeDisplayName(storeId, stores) {
-        const cleanId = Number(storeId || 0);
-        if (!cleanId) {
-            return this.ui.allStores;
-        }
-        const store = (stores || []).find((item) => Number(item.id) === cleanId);
-        return store ? store.name : this.ui.allStores;
-    }
-
-    get filteredStores() {
-        const stores = (this.state.data && this.state.data.stores) || [];
-        const search = (this.state.storeSearch || "").trim().toLowerCase();
-        const selectedStoreLabel = this.storeDisplayName(this.state.filters.store_id, stores).toLowerCase();
-        if (!search || search === this.ui.allStores.toLowerCase() || search === selectedStoreLabel) {
-            return stores.slice(0, 50);
-        }
-        return stores.filter((store) => (store.name || "").toLowerCase().includes(search)).slice(0, 50);
-    }
-
-    get dateFilterLabel() {
-        const dateFrom = this.state.filters.date_from;
-        const dateTo = this.state.filters.date_to;
-        const latestReportDate = this.latestReportDate();
-
-        if (this.sameDate(dateTo, latestReportDate)) {
-            if (this.sameDate(dateFrom, latestReportDate)) {
-                return this.ui.yesterday;
-            }
-            if (this.sameDate(dateFrom, this.addDays(latestReportDate, -6))) {
-                return this.ui.last7Days;
-            }
-            if (this.sameDate(dateFrom, this.addDays(latestReportDate, -29))) {
-                return this.ui.last30Days;
-            }
-            if (this.sameDate(dateFrom, this.addDays(latestReportDate, -89))) {
-                return this.ui.last90Days;
-            }
-        }
-        if (this.sameRange(dateFrom, dateTo, latestReportDate, latestReportDate)) {
-            return this.ui.yesterday;
-        }
-
-        if (dateFrom && dateTo) {
-            return `${dateFrom} - ${dateTo}`;
-        }
-        return this.ui.dateFilter;
-    }
-
-    money(value) {
-        return new Intl.NumberFormat(this.locale, {
-            style: "currency",
-            currency: "EGP",
-            maximumFractionDigits: 0,
-        }).format(Number(value || 0));
-    }
-
-    number(value) {
-        return new Intl.NumberFormat(this.locale, { maximumFractionDigits: 0 }).format(Number(value || 0));
-    }
-
-    decimal(value) {
-        return new Intl.NumberFormat(this.locale, { maximumFractionDigits: 2 }).format(Number(value || 0));
-    }
-
-    pct(value) {
-        return `${this.decimal(value)}%`;
-    }
-
-    abs(value) {
-        return Math.abs(Number(value || 0));
-    }
-
-    collectionLabel(category) {
-        return COLLECTION_LABELS[category] || category;
-    }
-
-    get reportMeta() {
-        return (this.state.data && this.state.data.report_meta) || {};
-    }
-
-    get reportStatusTone() {
-        const meta = this.reportMeta;
-        if (meta.coverage_state === "unavailable") {
-            return "danger";
-        }
-        if (meta.coverage_state === "partial") {
-            return "warning";
-        }
-        return "";
-    }
-
-    get reportStatusMessage() {
-        const meta = this.reportMeta;
-        if (!meta.mode) {
-            return "";
-        }
-        if (meta.coverage_state === "unavailable") {
-            return this.ui.reportDataUnavailable;
-        }
-        if (meta.coverage_state === "partial") {
-            return `${this.ui.partialStoredSummary}: ${this.number(meta.covered_store_days)} / ${this.number(meta.expected_store_days)} ${this.ui.branchDaysSynchronized}.`;
-        }
-        return "";
-    }
-
-    get cacheProgressVisible() {
-        return Boolean(this.progressTotalDays);
-    }
-
-    get activeSyncProgress() {
-        const progress = this.state.syncProgress;
-        return progress && progress.has_sync_state ? progress : null;
-    }
-
-    get progressDoneDays() {
-        const progress = this.activeSyncProgress;
-        if (progress) {
-            return Number(progress.done_days || 0);
-        }
-        return Number(this.reportMeta.fully_covered_days || 0);
-    }
-
-    get progressTotalDays() {
-        const progress = this.activeSyncProgress;
-        if (progress) {
-            return Number(progress.requested_days || 0);
-        }
-        return Number(this.reportMeta.requested_days || 0);
-    }
-
-    get cacheProgressPct() {
-        const progress = this.activeSyncProgress;
-        if (progress) {
-            return Math.max(0, Math.min(100, Number(progress.progress_pct || 0)));
-        }
-        const requestedDays = this.progressTotalDays;
-        if (!requestedDays) {
-            return 0;
-        }
-        return Math.max(0, Math.min(100, (100 * this.progressDoneDays) / requestedDays));
-    }
-
-    get cacheProgressStyle() {
-        return `width: ${this.cacheProgressPct.toFixed(2)}%;`;
-    }
-
-    get cacheProgressLabel() {
-        const label = this.activeSyncProgress ? this.ui.syncedDays : this.ui.cacheProgress;
-        return `${label}: ${this.number(this.progressDoneDays)} / ${this.number(this.progressTotalDays)} (${this.pct(this.cacheProgressPct)})`;
+        const s = this.state.sectionPages[section];
+        return ((s.page - 1) * s.pageSize) + index + 1;
     }
 
     sectionUnsupported(section) {
         return ((this.reportMeta && this.reportMeta.unsupported_sections) || []).includes(section);
     }
 
-    get medicineTotal() {
-        const data = this.state.data || {};
-        return Number(data.medicine_sales || 0) + Number(data.non_medicine_sales || 0);
+    // -- Sync progress --
+    async refreshSyncProgress() {
+        if (!this.state.filters.date_from || !this.state.filters.date_to) { this.state.syncProgress = null; return null; }
+        const progress = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_sync_progress", [this.state.filters]);
+        this.state.syncProgress = progress && progress.has_sync_state ? progress : null;
+        return this.state.syncProgress;
     }
 
-    get medicinePct() {
-        return this.medicineTotal ? (100 * Number(this.state.data.medicine_sales || 0)) / this.medicineTotal : 0;
+    resumeSyncPollingIfNeeded() {
+        const p = this.state.syncProgress;
+        if (p && p.is_active) { this.state.refreshing = true; this.state.syncing = true; this.scheduleSyncPoll(0); }
     }
 
-    get nonMedicinePct() {
-        return this.medicineTotal ? (100 * Number(this.state.data.non_medicine_sales || 0)) / this.medicineTotal : 0;
+    scheduleSyncPoll(delay = SYNC_POLL_DELAY_MS) {
+        this.stopSyncPolling();
+        if (this.unmounted) return;
+        this.syncPollTimer = setTimeout(() => this.pollDashboardSync(), delay);
     }
+
+    stopSyncPolling() { if (this.syncPollTimer) { clearTimeout(this.syncPollTimer); this.syncPollTimer = null; } }
+
+    async pollDashboardSync() {
+        if (this.unmounted) return;
+        try {
+            const progress = await this.orm.call("ab.sales.dashboard.snapshot", "process_dashboard_sync_day", [this.state.filters]);
+            this.state.syncProgress = progress;
+            if (progress.is_active) { this.scheduleSyncPoll(); return; }
+            this.state.refreshing = false;
+            this.state.syncing = false;
+            await this.loadDashboard(false);
+            await this.refreshSyncProgress();
+            if (progress.last_status === "source_unavailable") {
+                this.notification.add(_t("E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored."), { type: "warning" });
+            } else if (progress.failed_days) {
+                this.notification.add(_t("Dashboard sync finished with failed days."), { type: "warning" });
+            } else if (progress.is_complete) {
+                this.notification.add(_t("Dashboard sync finished."), { type: "success" });
+            }
+        } catch (error) {
+            this.state.refreshing = false;
+            this.state.syncing = false;
+            this.stopSyncPolling();
+            const message = (error && error.message) || String(error || "");
+            this.notification.add(message || _t("Dashboard sync failed."), { type: "danger" });
+        }
+    }
+
+    // -- Date helpers --
+    addDays(date, days) { const r = new Date(date); r.setDate(r.getDate() + days); return r; }
+    latestReportDate() { return this.addDays(new Date(), -1); }
+    get latestReportDateIso() { return this.toIsoDate(this.latestReportDate()); }
+
+    get monthOptions() {
+        const latest = this.latestReportDate();
+        const formatter = new Intl.DateTimeFormat(this.locale, { month: "long", year: "numeric" });
+        const options = [];
+        for (let i = 0; i < 36; i++) {
+            const m = new Date(latest.getFullYear(), latest.getMonth() - i, 1);
+            options.push({ value: `${m.getFullYear()}-${String(m.getMonth() + 1).padStart(2, "0")}`, label: formatter.format(m) });
+        }
+        return options;
+    }
+
+    get yearOptions() { const y = this.latestReportDate().getFullYear(); return Array.from({ length: 10 }, (_, i) => `${y - i}`); }
+
+    get selectedMonthValue() {
+        const f = this.parseIsoDate(this.state.filters.date_from);
+        const t = this.parseIsoDate(this.state.filters.date_to);
+        if (!f || !t || f.getDate() !== 1) return "";
+        const exp = this.clampToLatestReportDate(new Date(f.getFullYear(), f.getMonth() + 1, 0));
+        return this.sameDate(this.state.filters.date_to, exp) ? `${f.getFullYear()}-${String(f.getMonth() + 1).padStart(2, "0")}` : "";
+    }
+
+    get selectedDayValue() { return this.state.filters.date_from === this.state.filters.date_to ? this.state.filters.date_from : ""; }
+
+    get selectedYearValue() {
+        const f = this.parseIsoDate(this.state.filters.date_from);
+        const t = this.parseIsoDate(this.state.filters.date_to);
+        if (!f || !t || f.getMonth() !== 0 || f.getDate() !== 1) return "";
+        return this.sameDate(this.state.filters.date_to, this.clampToLatestReportDate(new Date(f.getFullYear(), 11, 31))) ? String(f.getFullYear()) : "";
+    }
+
+    clampToLatestReportDate(date) { const l = this.latestReportDate(); return !date || date > l ? l : date; }
+    clampIsoToLatestReportDate(value) { return value ? this.toIsoDate(this.clampToLatestReportDate(this.parseIsoDate(value))) : value; }
+    toIsoDate(date) { return new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().slice(0, 10); }
+    sameDate(left, right) { return left === this.toIsoDate(right); }
+    sameRange(df, dt, s, e) { return this.sameDate(df, s) && this.sameDate(dt, e); }
+    parseIsoDate(v) { if (!v) return null; const [y, m, d] = v.split("-").map(Number); return (!y || !m || !d) ? null : new Date(y, m - 1, d); }
+    storeDisplayName(id, stores) { const c = Number(id || 0); if (!c) return _t("All Stores"); const s = (stores || []).find(i => Number(i.id) === c); return s ? s.name : _t("All Stores"); }
+
+    get filteredStores() {
+        const stores = (this.state.data && this.state.data.stores) || [];
+        const search = (this.state.storeSearch || "").trim().toLowerCase();
+        const sel = this.storeDisplayName(this.state.filters.store_id, stores).toLowerCase();
+        if (!search || search === _t("All Stores").toLowerCase() || search === sel) return stores.slice(0, 50);
+        return stores.filter(s => (s.name || "").toLowerCase().includes(search)).slice(0, 50);
+    }
+
+    isDateFilterActive(k) { return this.state.activeDateFilter === k; }
+
+    get dateFilterLabel() {
+        const { date_from, date_to } = this.state.filters;
+        const latest = this.latestReportDate();
+        if (this.sameDate(date_to, latest)) {
+            if (this.sameDate(date_from, latest)) return _t("Yesterday");
+            if (this.sameDate(date_from, this.addDays(latest, -6))) return _t("Last 7 Days");
+            if (this.sameDate(date_from, this.addDays(latest, -29))) return _t("Last 30 Days");
+            if (this.sameDate(date_from, this.addDays(latest, -89))) return _t("Last 90 Days");
+        }
+        if (date_from && date_to) return `${date_from} — ${date_to}`;
+        return _t("Date Filter");
+    }
+
+    get isRtl() { const h = document.documentElement; return h.dir === "rtl" || (h.lang || "").toLowerCase().startsWith("ar"); }
+    get direction() { return this.isRtl ? "rtl" : "ltr"; }
+    get locale() { return this.isRtl ? "ar-EG" : ((document.documentElement.lang || "").replace("_", "-") || "en-US"); }
+
+    toggleMobileFilters() { this.state.mobileFiltersOpen = !this.state.mobileFiltersOpen; if (!this.state.mobileFiltersOpen) this.state.storeMenuOpen = false; }
+
+    // -- Formatting --
+    money(v) { return money(v); }
+    number(v) { return number(v); }
+    decimal(v) { return decimal(v); }
+    pct(v) { return pct(v); }
+    abs(v) { return Math.abs(Number(v || 0)); }
+    toN(v) { return Number(v || 0); }
+    collectionLabel(c) { return COLLECTION_LABELS[c] || c; }
+
+    // -- Computed properties --
+    get reportMeta() { return (this.state.data && this.state.data.report_meta) || {}; }
+
+    get reportStatusTone() {
+        const m = this.reportMeta;
+        if (m.coverage_state === "unavailable") return "danger";
+        if (m.coverage_state === "partial") return "warning";
+        return "";
+    }
+
+    get reportStatusMessage() {
+        const m = this.reportMeta;
+        if (!m.mode) return "";
+        if (m.coverage_state === "unavailable") return _t("Report data unavailable for this range. Run shorter E-Plus refreshes first to build daily facts.");
+        if (m.coverage_state === "partial") return `${_t("Partial stored summary")}: ${this.number(m.covered_store_days)} / ${this.number(m.expected_store_days)} ${_t("branch-days synchronized")}.`;
+        return "";
+    }
+
+    get cacheProgressVisible() { return Boolean(this.progressTotalDays); }
+    get activeSyncProgress() { const p = this.state.syncProgress; return p && p.has_sync_state ? p : null; }
+    get progressDoneDays() { const p = this.activeSyncProgress; return p ? Number(p.done_days || 0) : Number(this.reportMeta.fully_covered_days || 0); }
+    get progressTotalDays() { const p = this.activeSyncProgress; return p ? Number(p.requested_days || 0) : Number(this.reportMeta.requested_days || 0); }
+
+    get cacheProgressPct() {
+        const p = this.activeSyncProgress;
+        if (p) return Math.max(0, Math.min(100, Number(p.progress_pct || 0)));
+        return this.progressTotalDays ? Math.max(0, Math.min(100, (100 * this.progressDoneDays) / this.progressTotalDays)) : 0;
+    }
+
+    get cacheProgressStyle() { return `width: ${this.cacheProgressPct.toFixed(2)}%;`; }
+    get cacheProgressLabel() {
+        const label = this.activeSyncProgress ? _t("Synced days") : _t("Cached days");
+        return `${label}: ${this.number(this.progressDoneDays)} / ${this.number(this.progressTotalDays)} (${this.pct(this.cacheProgressPct)})`;
+    }
+
+    get medicineTotal() { const d = this.state.data || {}; return Number(d.medicine_sales || 0) + Number(d.non_medicine_sales || 0); }
+    get medicinePct() { return this.medicineTotal ? (100 * Number((this.state.data || {}).medicine_sales || 0)) / this.medicineTotal : 0; }
+    get nonMedicinePct() { return this.medicineTotal ? (100 * Number((this.state.data || {}).non_medicine_sales || 0)) / this.medicineTotal : 0; }
+
+    userRowKey(row, index) { return row.row_key || row.employee_eplus_id || index; }
+    itemRowKey(row, index) { return row.row_key || row.eplus_item_id || index; }
+    invoiceRowKey(row, index) { return row.row_key || row.invoice_no || index; }
 }
 
+// ============================================================================
+// Template
+// ============================================================================
 SalesDashboardAction.template = xml`
-<div class="ab_sales_dashboard" t-att-dir="direction">
+<div class="ab_sales_dashboard"
+     t-ref="dashboardRoot"
+     t-att-dir="direction"
+     t-att-class="{'sd-theme-dark': state.theme === 'dark', 'sd-theme-light': state.theme === 'light'}">
+
+    <!-- Control Panel / Header -->
     <div class="o_control_panel ab_sales_dashboard__control_panel"
          t-att-class="{'ab_sales_dashboard__control_panel--mobile_open': state.mobileFiltersOpen}">
-        <div class="o_control_panel_main ab_sales_dashboard__toolbar">
+        <div class="ab_sales_dashboard__toolbar">
             <div class="o_control_panel_breadcrumbs d-flex align-items-center gap-1">
                 <div class="o_control_panel_main_buttons d-flex gap-1 d-empty-none d-print-none"/>
                 <div class="o_breadcrumb d-flex gap-1 text-truncate">
                     <div class="o_last_breadcrumb_item active d-flex fs-4 min-w-0 align-items-center">
-                        <span class="min-w-0 text-truncate" t-esc="ui.title"/>
+                        <div class="ab_sales_dashboard__title_area">
+                            <div class="ab_sales_dashboard__header_row">
+                                <span class="sd-title">Sales Dashboard</span>
+                                <ThemeToggle theme="state.theme" onToggle="toggleTheme"/>
+                            </div>
+                            <span class="sd-subtitle">Abdin Pharmacies — performance overview</span>
+                        </div>
                     </div>
                     <div class="o_control_panel_breadcrumbs_actions d-inline-flex d-print-none"/>
                 </div>
                 <div class="me-auto"/>
                 <button type="button"
-                        class="btn btn-outline-secondary ab_sales_dashboard__mobile_filter_toggle d-print-none"
-                        aria-controls="ab_sales_dashboard_filters"
-                        t-att-aria-expanded="state.mobileFiltersOpen"
-                        t-att-aria-label="state.mobileFiltersOpen ? ui.hideFilters : ui.showFilters"
-                        t-att-title="state.mobileFiltersOpen ? ui.hideFilters : ui.showFilters"
+                        class="btn ab_sales_dashboard__mobile_filter_toggle d-print-none"
                         t-on-click="toggleMobileFilters">
-                    <i t-att-class="state.mobileFiltersOpen ? 'fa fa-times' : 'fa fa-bars'" aria-hidden="true"/>
+                    <i t-att-class="state.mobileFiltersOpen ? 'fa fa-times' : 'fa fa-bars'"/>
                 </button>
             </div>
-            <div id="ab_sales_dashboard_filters" class="o_control_panel_actions o_sp_dashboard_search ab_sales_dashboard__filters">
+            <div class="ab_sales_dashboard__filters">
                 <CoreSearchSelect className="'ab_sales_dashboard__store_search'"
                                   value="state.filters.store_id"
                                   searchValue="state.storeSearch"
-                                  placeholder="ui.filterByStore"
-                                  allLabel="ui.allStores"
-                                  emptyText="ui.noRecords"
-                                  resultsLabel="ui.records"
-                                  clearLabel="ui.allStores"
-                                  ariaLabel="ui.filterByStore"
+                                  placeholder="'Filter by store'"
+                                  allLabel="'All Stores'"
+                                  emptyText="'No records found.'"
+                                  resultsLabel="'records'"
+                                  clearLabel="'All Stores'"
+                                  ariaLabel="'Filter by store'"
                                   options="filteredStores"
                                   open="state.storeMenuOpen"
                                   disabled="state.refreshing"
-                                  onInput="(value) => this.onStoreSearchInput(value)"
+                                  onInput="(v) => this.onStoreSearchInput(v)"
                                   onFocus="() => this.openStoreMenu()"
                                   onToggle="() => this.toggleStoreMenu()"
-                                  onSelect="(storeId, storeName) => this.selectStore(storeId, storeName)"/>
+                                  onSelect="(id, name) => this.selectStore(id, name)"/>
                 <div class="ab_sales_dashboard__date_inputs"
                      t-att-class="{'ab_sales_dashboard__date_inputs--active': isDateFilterActive('custom')}">
                     <CoreInput type="'date'"
-                               label="ui.dateFrom"
+                               label="'Date From'"
                                className="'ab_sales_dashboard__date_field'"
                                value="state.filters.date_from"
                                max="latestReportDateIso"
                                disabled="state.refreshing"
-                               onChange="(value) => this.updateCustomDate('date_from', value)"/>
+                               onChange="(v) => this.updateCustomDate('date_from', v)"/>
                     <CoreInput type="'date'"
-                               label="ui.dateTo"
+                               label="'Date To'"
                                className="'ab_sales_dashboard__date_field'"
                                value="state.filters.date_to"
                                max="latestReportDateIso"
                                disabled="state.refreshing"
-                               onChange="(value) => this.updateCustomDate('date_to', value)"/>
+                               onChange="(v) => this.updateCustomDate('date_to', v)"/>
                 </div>
-                <div class="ab_sales_dashboard__quick_ranges" role="group" t-att-aria-label="ui.dateFilter">
-                    <CoreInput type="'date'"
-                               bare="true"
+                <div class="ab_sales_dashboard__quick_ranges" role="group" aria-label="'Date Filter'">
+                    <CoreInput type="'date'" bare="true"
                                inputClass="'ab_sales_dashboard__period_select ab_sales_dashboard__day_select' + (isDateFilterActive('day') ? ' ab_sales_dashboard__range_active' : '')"
-                               ariaLabel="ui.daily"
-                               title="ui.daily"
                                max="latestReportDateIso"
                                disabled="state.refreshing"
                                value="selectedDayValue"
-                               onChange="(value) => this.applyDaySelection(value)"/>
-                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="ui.yesterday"/>
-                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="ui.last7Days"/>
-                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="ui.last30Days"/>
-                    <button class="btn btn-outline-secondary" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="ui.last90Days"/>
+                               onChange="(v) => this.applyDaySelection(v)"/>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')">Yesterday</button>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')">7 Days</button>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')">30 Days</button>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')">90 Days</button>
                     <CoreSelect className="'ab_sales_dashboard__period_select_field'"
                                 selectClass="'ab_sales_dashboard__period_select'"
                                 variant="isDateFilterActive('month') ? 'active' : ''"
-                                ariaLabel="ui.month"
-                                placeholder="ui.month"
+                                placeholder="'Month'"
                                 disabled="state.refreshing"
                                 value="selectedMonthValue"
                                 options="monthOptions"
-                                onChange="(value) => this.applyMonthSelection(value)"/>
+                                onChange="(v) => this.applyMonthSelection(v)"/>
                     <CoreSelect className="'ab_sales_dashboard__period_select_field'"
                                 selectClass="'ab_sales_dashboard__period_select'"
                                 variant="isDateFilterActive('year') ? 'active' : ''"
-                                ariaLabel="ui.year"
-                                placeholder="ui.year"
+                                placeholder="'Year'"
                                 disabled="state.refreshing"
                                 value="selectedYearValue"
                                 options="yearOptions"
-                                onChange="(value) => this.applyYearSelection(value)"/>
+                                onChange="(v) => this.applyYearSelection(v)"/>
                 </div>
                 <button type="button"
                         class="btn btn-primary ab_sales_dashboard__refresh_button"
                         t-on-click="onRefresh"
-                        t-att-disabled="state.refreshing"
-                        t-att-title="ui.refreshFromEplus">
-                    <t t-if="state.refreshing" t-esc="ui.syncing"/>
-                    <t t-else="" t-esc="ui.refreshFromEplus"/>
+                        t-att-disabled="state.refreshing">
+                    <t t-if="state.refreshing"><i class="fa fa-spinner fa-spin me-1"/><t t-esc="'Syncing...'"/></t>
+                    <t t-else=""><i class="fa fa-refresh me-1"/><t t-esc="'Refresh from E-Plus'"/></t>
                 </button>
             </div>
         </div>
     </div>
 
+    <!-- Dashboard Body -->
     <div class="ab_sales_dashboard__body">
+
+        <!-- Loading State -->
         <t t-if="state.loading &amp;&amp; !state.data">
-            <div class="ab_sales_dashboard__empty" t-esc="ui.loading"/>
+            <LoadingSkeleton/>
         </t>
+
+        <!-- Dashboard Content -->
         <t t-elif="state.data">
-            <div t-if="cacheProgressVisible" class="ab_sales_dashboard__cache_progress">
+
+            <!-- Sync Progress -->
+            <div t-if="cacheProgressVisible" class="ab_sales_dashboard__cache_progress sd-animate-in">
                 <div class="ab_sales_dashboard__cache_progress_header">
                     <span t-esc="cacheProgressLabel"/>
                 </div>
@@ -946,231 +663,216 @@ SalesDashboardAction.template = xml`
                     <div class="ab_sales_dashboard__cache_progress_bar" t-att-style="cacheProgressStyle"/>
                 </div>
             </div>
-            <div t-if="reportStatusMessage" t-att-class="'ab_sales_dashboard__notice ab_sales_dashboard__notice--' + reportStatusTone">
+
+            <!-- Status Notice -->
+            <div t-if="reportStatusMessage"
+                 t-att-class="'ab_sales_dashboard__notice ab_sales_dashboard__notice--' + reportStatusTone + ' sd-animate-in'">
                 <t t-esc="reportStatusMessage"/>
             </div>
 
-        <section class="ab_sales_dashboard__kpis">
-            <article class="ab_sales_dashboard__kpi ab_sales_dashboard__kpi--wide">
-                <span t-esc="ui.totalSales"/>
-                <strong t-esc="money(state.data.total_sales)"/>
-                <em>
-                    <t t-if="state.data.avg_daily_growth_pct &gt;= 0">▲</t>
-                    <t t-else="">▼</t>
-                    <t t-esc="pct(abs(state.data.avg_daily_growth_pct))"/>
-                    <t t-esc="ui.previousPeriodAverage"/>
-                </em>
-            </article>
-            <article class="ab_sales_dashboard__kpi">
-                <span t-esc="ui.averageDailySales"/>
-                <strong t-esc="money(state.data.avg_daily_sales)"/>
-                <em><t t-esc="ui.previous"/> <t t-esc="money(state.data.prev_avg_daily_sales)"/></em>
-            </article>
-            <article class="ab_sales_dashboard__kpi">
-                <span t-esc="ui.invoiceCount"/>
-                <strong t-esc="number(state.data.invoice_count)"/>
-                <em t-esc="state.data.store_filter_label"/>
-            </article>
-            <article class="ab_sales_dashboard__kpi">
-                <span t-esc="ui.bearingPercentage"/>
-                <strong t-esc="pct(state.data.bearing_pct)"/>
-                <em><t t-esc="ui.company"/> <t t-esc="money(state.data.company_part_amount)"/></em>
-            </article>
-        </section>
+            <!-- KPI Cards -->
+            <section class="ab_sales_dashboard__kpis">
+                <KpiCard label="'Total Sales'"
+                         value="money(state.data.total_sales)"
+                         icon="'&lt;i class=&quot;fa fa-line-chart&quot;&gt;&lt;/i&gt;'"
+                         variant="'amber'"
+                         trend="state.data.avg_daily_growth_pct"
+                         trendLabel="'vs previous period'"
+                         formatter="(v) => pct(abs(v))"
+                         delay="0"/>
+                <KpiCard label="'Avg. Daily Sales'"
+                         value="money(state.data.avg_daily_sales)"
+                         icon="'&lt;i class=&quot;fa fa-calendar&quot;&gt;&lt;/i&gt;'"
+                         variant="'cyan'"
+                         sub="'Prev: ' + money(state.data.prev_avg_daily_sales)"
+                         delay="60"/>
+                <KpiCard label="'Invoices'"
+                         value="number(state.data.invoice_count)"
+                         icon="'&lt;i class=&quot;fa fa-file-text-o&quot;&gt;&lt;/i&gt;'"
+                         sub="state.data.store_filter_label"
+                         delay="120"/>
+                <KpiCard label="'Bearing %'"
+                         value="pct(state.data.bearing_pct)"
+                         icon="'&lt;i class=&quot;fa fa-pie-chart&quot;&gt;&lt;/i&gt;'"
+                         variant="'violet'"
+                         sub="'Company: ' + money(state.data.company_part_amount)"
+                         delay="180"/>
+            </section>
 
-        <section class="ab_sales_dashboard__split">
-            <article class="ab_sales_dashboard__panel">
-                <div class="ab_sales_dashboard__panel_header">
-                    <h2 t-esc="ui.medicineVsNonMedicine"/>
-                    <span><t t-esc="decimal(medicinePct)"/> / <t t-esc="decimal(nonMedicinePct)"/></span>
-                </div>
-                <div class="ab_sales_dashboard__ratio">
-                    <div class="ab_sales_dashboard__ratio_bar">
-                        <span t-att-style="'width:' + medicinePct + '%'"/>
+            <!-- Medicine Split + Collection Methods -->
+            <section class="ab_sales_dashboard__split">
+                <article class="ab_sales_dashboard__panel">
+                    <div class="ab_sales_dashboard__panel_header">
+                        <h2>Medicine vs Non-Medicine</h2>
+                        <span t-esc="decimal(medicinePct) + ' / ' + decimal(nonMedicinePct)"/>
                     </div>
-                    <div class="ab_sales_dashboard__ratio_values">
-                        <div>
-                            <span class="ab_sales_dashboard__ratio_label">
-                                <i class="ab_sales_dashboard__ratio_marker ab_sales_dashboard__ratio_marker--medicine" aria-hidden="true"/>
-                                <t t-esc="ui.medicineSales"/>
-                            </span>
-                            <strong t-esc="money(state.data.medicine_sales)"/>
-                            <em><t t-esc="pct(medicinePct)"/> <t t-esc="ui.ofTotal"/></em>
-                        </div>
-                        <div>
-                            <span class="ab_sales_dashboard__ratio_label">
-                                <i class="ab_sales_dashboard__ratio_marker ab_sales_dashboard__ratio_marker--non_medicine" aria-hidden="true"/>
-                                <t t-esc="ui.nonMedicineSales"/>
-                            </span>
-                            <strong t-esc="money(state.data.non_medicine_sales)"/>
-                            <em><t t-esc="pct(nonMedicinePct)"/> <t t-esc="ui.ofTotal"/></em>
-                        </div>
+                    <DonutChart valueA="toN(state.data.medicine_sales)"
+                                valueB="toN(state.data.non_medicine_sales)"
+                                labelA="'Medicine Sales'"
+                                labelB="'Non-Medicine Sales'"
+                                colorA="'#10b981'"
+                                colorB="'#475569'"
+                                delay="250"/>
+                </article>
+                <article class="ab_sales_dashboard__panel">
+                    <div class="ab_sales_dashboard__panel_header">
+                        <h2>Sales by Collection Method</h2>
+                        <span t-esc="state.data.collection_lines.length + ' categories'"/>
                     </div>
-                </div>
-            </article>
-            <article class="ab_sales_dashboard__panel">
-                <div class="ab_sales_dashboard__panel_header">
-                    <h2 t-esc="ui.collectionMethodSales"/>
-                    <span t-esc="ui.fourCategories"/>
-                </div>
-                <div class="ab_sales_dashboard__collection">
-                    <t t-foreach="state.data.collection_lines" t-as="line" t-key="line.row_key || line.category || line_index">
-                        <div class="ab_sales_dashboard__collection_card">
-                            <span t-esc="collectionLabel(line.category)"/>
-                            <strong t-esc="money(line.total_sales)"/>
-                            <em><t t-esc="pct(line.pct_of_total)"/> <t t-esc="ui.ofTotal"/></em>
-                        </div>
-                    </t>
-                </div>
-            </article>
-        </section>
+                    <BarChart items="state.data.collection_lines"
+                              labelFormatter="(cat) => this.collectionLabel(cat)"
+                              delay="310"/>
+                </article>
+            </section>
 
-        <section class="ab_sales_dashboard__tables">
-            <article class="ab_sales_dashboard__panel">
+            <!-- User Ranking + Top Items -->
+            <section class="ab_sales_dashboard__tables">
+                <article class="ab_sales_dashboard__panel">
+                    <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
+                        <h2>Sales by Users</h2>
+                        <CoreInput type="'search'"
+                                   className="'ab_sales_dashboard__table_search'"
+                                   icon="'oi oi-search'"
+                                   placeholder="'Search'"
+                                   value="state.sectionPages.sales_by_user.search"
+                                   disabled="!state.sectionPages.sales_by_user.available"
+                                   onInput="(v) => this.onSectionSearchInput('sales_by_user', v)"/>
+                        <span>Ranked descending</span>
+                    </div>
+                    <div t-if="sectionUnsupported('sales_by_user')" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--info">
+                        <i class="fa fa-info-circle"/>
+                        <span>Not available for summary range.</span>
+                    </div>
+                    <div t-if="state.sectionPages.sales_by_user.error" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--warning">
+                        <i class="fa fa-exclamation-triangle"/>
+                        <span>Could not load all records.</span>
+                    </div>
+                    <div t-if="state.sectionPages.sales_by_user.limited" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--muted">
+                        <i class="fa fa-database"/>
+                        <span>Only stored snapshot rows are available.</span>
+                    </div>
+                    <RankingTable rows="state.sectionPages.sales_by_user.rows"
+                                  nameLabel="'User'"
+                                  valueLabel="'Total Sales'"
+                                  pctLabel="'Percentage'"
+                                  nameField="'employee_name'"
+                                  loading="state.sectionPages.sales_by_user.loading"
+                                  delay="380"/>
+                    <div t-if="state.sectionPages.sales_by_user.available" class="ab_sales_dashboard__pagination">
+                        <button type="button" class="btn"
+                                t-att-disabled="state.sectionPages.sales_by_user.loading || state.sectionPages.sales_by_user.page &lt;= 1"
+                                t-on-click="() => this.changeSectionPage('sales_by_user', -1)">
+                            <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
+                        </button>
+                        <span>Page <t t-esc="state.sectionPages.sales_by_user.page"/> of <t t-esc="state.sectionPages.sales_by_user.totalPages"/> · <t t-esc="state.sectionPages.sales_by_user.totalCount"/> records</span>
+                        <button type="button" class="btn"
+                                t-att-disabled="state.sectionPages.sales_by_user.loading || state.sectionPages.sales_by_user.page &gt;= state.sectionPages.sales_by_user.totalPages"
+                                t-on-click="() => this.changeSectionPage('sales_by_user', 1)">
+                            <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
+                        </button>
+                    </div>
+                </article>
+
+                <article class="ab_sales_dashboard__panel">
+                    <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
+                        <h2>Top Sold Items</h2>
+                        <CoreInput type="'search'"
+                                   className="'ab_sales_dashboard__table_search'"
+                                   icon="'oi oi-search'"
+                                   placeholder="'Search'"
+                                   value="state.sectionPages.top_items.search"
+                                   disabled="!state.sectionPages.top_items.available"
+                                   onInput="(v) => this.onSectionSearchInput('top_items', v)"/>
+                        <span>Sales + stock balance</span>
+                    </div>
+                    <div t-if="sectionUnsupported('top_items')" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--info">
+                        <i class="fa fa-info-circle"/>
+                        <span>Not available for summary range.</span>
+                    </div>
+                    <div t-if="state.sectionPages.top_items.error" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--warning">
+                        <i class="fa fa-exclamation-triangle"/>
+                        <span>Could not load all records.</span>
+                    </div>
+                    <div t-if="state.sectionPages.top_items.limited" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--muted">
+                        <i class="fa fa-database"/>
+                        <span>Only stored snapshot rows are available.</span>
+                    </div>
+                    <RankingTable rows="state.sectionPages.top_items.rows"
+                                  nameLabel="'Item'"
+                                  valueLabel="'Total Sales'"
+                                  pctLabel="'Sale Times'"
+                                  nameField="'product_name'"
+                                  subNameField="'eplus_item_code'"
+                                  loading="state.sectionPages.top_items.loading"
+                                  delay="440"/>
+                    <div t-if="state.sectionPages.top_items.available" class="ab_sales_dashboard__pagination">
+                        <button type="button" class="btn"
+                                t-att-disabled="state.sectionPages.top_items.loading || state.sectionPages.top_items.page &lt;= 1"
+                                t-on-click="() => this.changeSectionPage('top_items', -1)">
+                            <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
+                        </button>
+                        <span>Page <t t-esc="state.sectionPages.top_items.page"/> of <t t-esc="state.sectionPages.top_items.totalPages"/> · <t t-esc="state.sectionPages.top_items.totalCount"/> records</span>
+                        <button type="button" class="btn"
+                                t-att-disabled="state.sectionPages.top_items.loading || state.sectionPages.top_items.page &gt;= state.sectionPages.top_items.totalPages"
+                                t-on-click="() => this.changeSectionPage('top_items', 1)">
+                            <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
+                        </button>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Customer Sales Table -->
+            <section class="ab_sales_dashboard__panel sd-animate-in sd-animate-in-7">
                 <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
-                    <h2 t-esc="ui.salesByUsers"/>
+                    <h2>Customer Sales</h2>
                     <CoreInput type="'search'"
                                className="'ab_sales_dashboard__table_search'"
                                icon="'oi oi-search'"
-                               placeholder="ui.search"
-                               ariaLabel="ui.search"
-                               value="state.sectionPages.sales_by_user.search"
-                               disabled="!state.sectionPages.sales_by_user.available"
-                               onInput="(value) => this.onSectionSearchInput('sales_by_user', value)"/>
-                    <span t-esc="ui.rankedDescending"/>
+                               placeholder="'Search'"
+                               value="state.sectionPages.customer_sales.search"
+                               disabled="!state.sectionPages.customer_sales.available"
+                               onInput="(v) => this.onSectionSearchInput('customer_sales', v)"/>
+                    <span>Invoice + Customer + Items</span>
                 </div>
-                <div t-if="sectionUnsupported('sales_by_user')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
-                <div t-if="state.sectionPages.sales_by_user.error" class="ab_sales_dashboard__section_note" t-esc="ui.sectionLoadFailed"/>
-                <div t-if="state.sectionPages.sales_by_user.limited" class="ab_sales_dashboard__section_note" t-esc="ui.limitedRows"/>
-                <table t-att-aria-busy="state.sectionPages.sales_by_user.loading">
-                    <thead>
-                        <tr><th>#</th><th t-esc="ui.user"/><th t-esc="ui.totalSales"/><th t-esc="ui.percentage"/></tr>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="state.sectionPages.sales_by_user.rows" t-as="line" t-key="line.row_key || line.employee_eplus_id || line.employee_name || line_index">
-                            <tr>
-                                <td t-esc="sectionRowNumber('sales_by_user', line_index)"/>
-                                <td t-esc="line.employee_name"/>
-                                <td t-esc="money(line.total_sales)"/>
-                                <td t-esc="pct(line.pct_of_total)"/>
-                            </tr>
-                        </t>
-                        <tr t-if="!state.sectionPages.sales_by_user.rows.length">
-                            <td colspan="4" class="text-center" t-esc="ui.noRecords"/>
-                        </tr>
-                    </tbody>
-                </table>
-                <div t-if="state.sectionPages.sales_by_user.available" class="ab_sales_dashboard__pagination">
-                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.previousPage" t-att-aria-label="ui.previousPage" t-att-disabled="state.sectionPages.sales_by_user.loading || state.sectionPages.sales_by_user.page &lt;= 1" t-on-click="() => this.changeSectionPage('sales_by_user', -1)">
+                <div t-if="sectionUnsupported('customer_sales')" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--info">
+                    <i class="fa fa-info-circle"/>
+                    <span>Not available for summary range.</span>
+                </div>
+                <div t-if="state.sectionPages.customer_sales.error" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--warning">
+                    <i class="fa fa-exclamation-triangle"/>
+                    <span>Could not load all records.</span>
+                </div>
+                <div t-if="state.sectionPages.customer_sales.limited" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--muted">
+                    <i class="fa fa-database"/>
+                    <span>Only stored snapshot rows are available.</span>
+                </div>
+                <DataTable rows="state.sectionPages.customer_sales.rows"
+                           columns="invoiceColumns"
+                           loading="state.sectionPages.customer_sales.loading"
+                           delay="500"/>
+                <div t-if="state.sectionPages.customer_sales.available" class="ab_sales_dashboard__pagination">
+                    <button type="button" class="btn"
+                            t-att-disabled="state.sectionPages.customer_sales.loading || state.sectionPages.customer_sales.page &lt;= 1"
+                            t-on-click="() => this.changeSectionPage('customer_sales', -1)">
                         <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
                     </button>
-                    <span><t t-esc="ui.page"/> <t t-esc="state.sectionPages.sales_by_user.page"/> <t t-esc="ui.of"/> <t t-esc="state.sectionPages.sales_by_user.totalPages"/> · <t t-esc="state.sectionPages.sales_by_user.totalCount"/> <t t-esc="ui.records"/></span>
-                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.nextPage" t-att-aria-label="ui.nextPage" t-att-disabled="state.sectionPages.sales_by_user.loading || state.sectionPages.sales_by_user.page &gt;= state.sectionPages.sales_by_user.totalPages" t-on-click="() => this.changeSectionPage('sales_by_user', 1)">
+                    <span>Page <t t-esc="state.sectionPages.customer_sales.page"/> of <t t-esc="state.sectionPages.customer_sales.totalPages"/> · <t t-esc="state.sectionPages.customer_sales.totalCount"/> records</span>
+                    <button type="button" class="btn"
+                            t-att-disabled="state.sectionPages.customer_sales.loading || state.sectionPages.customer_sales.page &gt;= state.sectionPages.customer_sales.totalPages"
+                            t-on-click="() => this.changeSectionPage('customer_sales', 1)">
                         <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
                     </button>
                 </div>
-            </article>
+            </section>
 
-            <article class="ab_sales_dashboard__panel">
-                <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
-                    <h2 t-esc="ui.topSoldItems"/>
-                    <CoreInput type="'search'"
-                               className="'ab_sales_dashboard__table_search'"
-                               icon="'oi oi-search'"
-                               placeholder="ui.search"
-                               ariaLabel="ui.search"
-                               value="state.sectionPages.top_items.search"
-                               disabled="!state.sectionPages.top_items.available"
-                               onInput="(value) => this.onSectionSearchInput('top_items', value)"/>
-                    <span t-esc="ui.saleTimesCurrentBalance"/>
-                </div>
-                <div t-if="sectionUnsupported('top_items')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
-                <div t-if="state.sectionPages.top_items.error" class="ab_sales_dashboard__section_note" t-esc="ui.sectionLoadFailed"/>
-                <div t-if="state.sectionPages.top_items.limited" class="ab_sales_dashboard__section_note" t-esc="ui.limitedRows"/>
-                <table t-att-aria-busy="state.sectionPages.top_items.loading">
-                    <thead>
-                        <tr><th>#</th><th t-esc="ui.item"/><th t-esc="ui.totalSales"/><th t-esc="ui.saleTimes"/><th t-esc="ui.currentBalance"/></tr>
-                    </thead>
-                    <tbody>
-                        <t t-foreach="state.sectionPages.top_items.rows" t-as="line" t-key="line.row_key || line.eplus_item_id || line.eplus_item_code || line_index">
-                            <tr>
-                                <td t-esc="sectionRowNumber('top_items', line_index)"/>
-                                <td>
-                                    <strong t-esc="line.product_name"/>
-                                    <small t-esc="line.eplus_item_code"/>
-                                </td>
-                                <td t-esc="money(line.total_sales)"/>
-                                <td t-esc="number(line.sale_times)"/>
-                                <td>
-                                    <t t-if="line.current_balance === false || line.current_balance === null">-</t>
-                                    <t t-else=""><t t-esc="decimal(line.current_balance)"/> <t t-esc="ui.unit"/></t>
-                                </td>
-                            </tr>
-                        </t>
-                        <tr t-if="!state.sectionPages.top_items.rows.length">
-                            <td colspan="5" class="text-center" t-esc="ui.noRecords"/>
-                        </tr>
-                    </tbody>
-                </table>
-                <div t-if="state.sectionPages.top_items.available" class="ab_sales_dashboard__pagination">
-                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.previousPage" t-att-aria-label="ui.previousPage" t-att-disabled="state.sectionPages.top_items.loading || state.sectionPages.top_items.page &lt;= 1" t-on-click="() => this.changeSectionPage('top_items', -1)">
-                        <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
-                    </button>
-                    <span><t t-esc="ui.page"/> <t t-esc="state.sectionPages.top_items.page"/> <t t-esc="ui.of"/> <t t-esc="state.sectionPages.top_items.totalPages"/> · <t t-esc="state.sectionPages.top_items.totalCount"/> <t t-esc="ui.records"/></span>
-                    <button type="button" class="btn btn-outline-secondary" t-att-title="ui.nextPage" t-att-aria-label="ui.nextPage" t-att-disabled="state.sectionPages.top_items.loading || state.sectionPages.top_items.page &gt;= state.sectionPages.top_items.totalPages" t-on-click="() => this.changeSectionPage('top_items', 1)">
-                        <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
-                    </button>
-                </div>
-            </article>
-        </section>
-
-        <section class="ab_sales_dashboard__panel">
-            <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
-                <h2 t-esc="ui.customerSales"/>
-                <CoreInput type="'search'"
-                           className="'ab_sales_dashboard__table_search'"
-                           icon="'oi oi-search'"
-                           placeholder="ui.search"
-                           ariaLabel="ui.search"
-                           value="state.sectionPages.customer_sales.search"
-                           disabled="!state.sectionPages.customer_sales.available"
-                           onInput="(value) => this.onSectionSearchInput('customer_sales', value)"/>
-                <span t-esc="ui.invoiceCustomerItems"/>
-            </div>
-            <div t-if="sectionUnsupported('customer_sales')" class="ab_sales_dashboard__section_note" t-esc="ui.notAvailableForSummary"/>
-            <div t-if="state.sectionPages.customer_sales.error" class="ab_sales_dashboard__section_note" t-esc="ui.sectionLoadFailed"/>
-            <div t-if="state.sectionPages.customer_sales.limited" class="ab_sales_dashboard__section_note" t-esc="ui.limitedRows"/>
-            <table t-att-aria-busy="state.sectionPages.customer_sales.loading">
-                <thead>
-                    <tr><th t-esc="ui.invoice"/><th t-esc="ui.customer"/><th t-esc="ui.items"/><th t-esc="ui.invoiceTotal"/></tr>
-                </thead>
-                <tbody>
-                    <t t-foreach="state.sectionPages.customer_sales.rows" t-as="line" t-key="line.row_key || line.invoice_no || line_index">
-                        <tr>
-                            <td t-esc="line.invoice_no"/>
-                            <td t-esc="line.customer_name"/>
-                            <td t-esc="line.items_summary"/>
-                            <td t-esc="money(line.invoice_total)"/>
-                        </tr>
-                    </t>
-                    <tr t-if="!state.sectionPages.customer_sales.rows.length">
-                        <td colspan="4" class="text-center" t-esc="ui.noRecords"/>
-                    </tr>
-                </tbody>
-            </table>
-            <div t-if="state.sectionPages.customer_sales.available" class="ab_sales_dashboard__pagination">
-                <button type="button" class="btn btn-outline-secondary" t-att-title="ui.previousPage" t-att-aria-label="ui.previousPage" t-att-disabled="state.sectionPages.customer_sales.loading || state.sectionPages.customer_sales.page &lt;= 1" t-on-click="() => this.changeSectionPage('customer_sales', -1)">
-                    <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
-                </button>
-                <span><t t-esc="ui.page"/> <t t-esc="state.sectionPages.customer_sales.page"/> <t t-esc="ui.of"/> <t t-esc="state.sectionPages.customer_sales.totalPages"/> · <t t-esc="state.sectionPages.customer_sales.totalCount"/> <t t-esc="ui.records"/></span>
-                <button type="button" class="btn btn-outline-secondary" t-att-title="ui.nextPage" t-att-aria-label="ui.nextPage" t-att-disabled="state.sectionPages.customer_sales.loading || state.sectionPages.customer_sales.page &gt;= state.sectionPages.customer_sales.totalPages" t-on-click="() => this.changeSectionPage('customer_sales', 1)">
-                    <i t-att-class="isRtl ? 'oi oi-chevron-left' : 'oi oi-chevron-right'"/>
-                </button>
-            </div>
-        </section>
         </t>
     </div>
 </div>
 `;
+
+// Expose invoiceColumns as a getter on the class
+Object.defineProperty(SalesDashboardAction.prototype, "invoiceColumns", {
+    get() { return INVOICE_COLUMNS; },
+});
 
 registry.category("actions").add("ab_sales_dashboard.dashboard", SalesDashboardAction);
