@@ -2,7 +2,7 @@
 {
     "name": "Abdin Payroll",
     "summary": "Secure payroll sheet validation and Telegram distribution",
-    "version": "19.0.1.1.1",
+    "version": "19.0.1.1.2",
     "license": "LGPL-3",
     "category": "Human Resources/Payroll",
     "author": "Abdin Pharmacies",

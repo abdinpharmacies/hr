@@ -23,15 +23,13 @@ Installing `ab_payroll` installs these direct dependencies:
 - `ab_hr`
 
 Telegram distribution is an optional integration. Install
-`ab_hr_telegram_employee_link` to add employee Telegram fields, employee-code
-linking, payroll message/document delivery, and the `ab_telegram_webhook`
-dependency. Uninstalling the bridge removes the Telegram dependency without
-making `ab_payroll` depend on the webhook. `ab_user_extra` is not required for
-payroll.
+`ab_payroll_telegram` to connect payroll delivery to the central
+`ab_telegram_bot` service. Uninstalling the bridge removes the Telegram
+dependency without affecting payroll sheet management.
 
 ## Required Telegram Setup
 
-1. Install `ab_hr_telegram_employee_link`.
+1. Install `ab_payroll_telegram`.
 
 2. Configure the Telegram bot token in Odoo system parameters:
 
@@ -39,24 +37,9 @@ payroll.
    telegram.bot.token
    ```
 
-3. Configure the Telegram webhook through `ab_telegram_webhook`.
-
-4. Ask every employee who should receive payroll files to send their HR code to
-   the Telegram bot one time.
-
-   Example:
-
-   ```text
-   6565
-   ```
-
-5. The linking module stores the employee Telegram data on the HR employee
-   record, including:
-
-   - Telegram Chat ID
-   - Telegram User ID
-   - Telegram Username
-   - Telegram Linked At
+3. Create an Employee Telegram Chat Mapping for every manager or employee who
+   should receive payroll files. Each mapping connects the HR employee record
+   ID to a Telegram chat ID.
 
 Payroll distribution should not be used until the required employee or manager
 Telegram chat IDs are saved.
@@ -219,13 +202,9 @@ Regular HR users should not be granted payroll sheet access.
 ## Production Installation
 
 Install `ab_payroll` as a clean production module for payroll sheet management.
-Install `ab_hr_telegram_employee_link` separately when Telegram distribution is
-required; Odoo then installs `ab_telegram_webhook` automatically. Request
-management is not required for payroll or employee linking.
-
-Incoming employee codes are handled only by the central webhook. The legacy
-employee `getUpdates` cron is not created on fresh installations, preventing a
-polling process from competing with the configured webhook.
+Install `ab_payroll_telegram` separately when Telegram distribution is
+required; Odoo then installs `ab_telegram_bot` automatically. Request
+management and Telegram user-account linking are not part of payroll delivery.
 
 ## Important Operational Notes
 
