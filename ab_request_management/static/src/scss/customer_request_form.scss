@@ -36,6 +36,28 @@ body.ab-public-request-page {
   box-shadow: var(--core-ui-shadow-lg);
 }
 
+.ab-public-request-title {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--core-ui-space-sm);
+}
+
+.ab-public-request-logo {
+  display: block;
+  width: auto;
+  max-width: 176px;
+  height: 58px;
+  object-fit: contain;
+}
+
+.ab-public-request-brand-name {
+  color: var(--core-ui-primary);
+  font-size: var(--core-ui-font-size-xl);
+  font-weight: var(--core-ui-font-weight-bold);
+  line-height: var(--core-ui-line-height-tight);
+}
+
 .ab-public-request-eyebrow,
 .ab-public-request-kicker {
   display: inline-flex;
@@ -123,8 +145,11 @@ body.ab-public-request-page {
 }
 
 .ab-public-request-required-note {
-  color: var(--core-ui-text-muted);
+  display: block;
+  margin-top: var(--core-ui-space-xs);
+  color: var(--core-ui-danger);
   font-size: var(--core-ui-font-size-xs);
+  font-weight: var(--core-ui-font-weight-medium);
   white-space: nowrap;
 }
 
@@ -325,6 +350,15 @@ body.ab-public-request-page {
   .ab-public-request-grid {
     grid-template-columns: 1fr;
     gap: var(--core-ui-space-md);
+  }
+
+  .ab-public-request-title {
+    gap: var(--core-ui-space-sm);
+  }
+
+  .ab-public-request-logo {
+    max-width: 150px;
+    height: 50px;
   }
 
   .ab-public-request-full {
