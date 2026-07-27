@@ -22,15 +22,20 @@
         <record id="group_ab_internal_shipment_warehouse_receipt" model="res.groups">
             <field name="name">Warehouse Receipt Confirmation</field>
             <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
-            <field name="implied_ids" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
         </record>
 
-        <record id="base.group_user" model="res.groups">
-            <field name="implied_ids" eval="[(3, ref('group_ab_internal_shipment_user'))]"/>
+        <record id="group_ab_internal_shipment_admin" model="res.groups">
+            <field name="name">Shipment Admin</field>
+            <field name="privilege_id" ref="privilege_ab_internal_shipment"/>
         </record>
 
         <record id="base.group_system" model="res.groups">
-            <field name="implied_ids" eval="[(3, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="implied_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_admin'))]"/>
         </record>
+
+        <record id="base.group_user" model="res.groups">
+            <field name="implied_ids" eval="[(4, ref('ab_internal_shipment_tracking.group_ab_internal_shipment_user'))]"/>
+        </record>
+
     </data>
 </odoo>
