@@ -2520,7 +2520,7 @@ msgstr "التصنيف *"
 #. odoo-python
 #: code:addons/ab_request_management/controllers/customer_request.py:0
 msgid "Choose a category first..."
-msgstr "اختر التصنيف أولاً..."
+msgstr "اختر القسم أولاً..."
 
 #. module: ab_request_management
 msgid "Your external request or complaint has been received. Reference:"
@@ -2573,7 +2573,12 @@ msgstr "نموذج الطلب الخارجي"
 
 #. module: ab_request_management
 msgid "External Service Desk"
-msgstr "مكتب الخدمات الخارجية"
+msgstr "صيدليات عابدين"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Abdin Pharmacies"
+msgstr "صيدليات عابدين"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
@@ -2625,7 +2630,7 @@ msgstr "لا توجد حالياً تصنيفات عامة تحتوي على أ�
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
 msgid "Your contact information"
-msgstr "بيانات التواصل الخاصة بك"
+msgstr "بيانات التواصل"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
@@ -2649,18 +2654,28 @@ msgstr "اختياري"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
 msgid "Classify your request"
-msgstr "صنّف طلبك"
+msgstr "تحديد الشكوى"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
 msgid "Choose a category first, then select one of its available request types."
-msgstr "اختر التصنيف أولاً، ثم اختر أحد أنواع الطلبات المتاحة ضمنه."
+msgstr "اختر القسم اولا، ثم اختر نوع الشكوى"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Complaint department"
+msgstr "القسم التابع له الشكوى"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
+msgid "Complaint reason"
+msgstr "سبب الشكوى"
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/controllers/customer_request.py:0
 msgid "Choose a category..."
-msgstr "اختر تصنيفاً..."
+msgstr "اختر القسم..."
 
 #. module: ab_request_management
 msgid "Request type"
@@ -2670,7 +2685,7 @@ msgstr "نوع الطلب"
 #. odoo-python
 #: code:addons/ab_request_management/controllers/customer_request.py:0
 msgid "Choose a request type..."
-msgstr "اختر نوع الطلب..."
+msgstr "اختر نوع الشكوى..."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form

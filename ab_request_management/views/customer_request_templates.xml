@@ -12,9 +12,16 @@
                 <main class="ab-public-request-workspace">
                     <div class="ab-public-request-shell">
                         <header class="core_ui_card core_ui_card_hero ab-public-request-hero">
-                            <span class="ab-public-request-eyebrow">External Service Desk</span>
-                            <h1>How can we help?</h1>
-                            <p>Send a request or complaint without signing in to Odoo.</p>
+                            <div class="ab-public-request-title">
+                                <img t-att-src="'/web/image?model=res.company&amp;field=appbar_image&amp;id=%s' % request.env.company.id"
+                                     class="ab-public-request-logo"
+                                     alt="Abdin Pharmacies"
+                                     width="176"
+                                     height="58"
+                                     loading="eager"/>
+                                <span class="ab-public-request-brand-name">صيدليات عابدين</span>
+                                <h1>How can we help?</h1>
+                            </div>
                             <div class="ab-public-request-steps" aria-label="Form sections">
                                 <span><b>1</b> Contact</span>
                                 <span><b>2</b> Classification</span>
@@ -37,8 +44,8 @@
                                 <div>
                                     <span class="ab-public-request-kicker">Public form</span>
                                     <h2>Submit your request</h2>
+                                    <span class="ab-public-request-required-note">* Required fields</span>
                                 </div>
-                                <span class="ab-public-request-required-note">* Required fields</span>
                             </div>
 
                             <div t-if="error" class="core_ui_alert danger ab-public-request-alert" role="alert">
@@ -115,7 +122,7 @@
                                 </div>
                                 <div class="ab-public-request-grid">
                                     <div class="core_ui_form_group">
-                                        <label for="request_category_id">Category <em>*</em></label>
+                                        <label for="request_category_id">القسم التابع له الشكوى <em>*</em></label>
                                         <select id="request_category_id"
                                                 name="request_category_id"
                                                 class="core_ui_input core_ui_select"
@@ -132,7 +139,7 @@
                                     </div>
 
                                     <div class="core_ui_form_group">
-                                        <label for="request_type_id">Request type <em>*</em></label>
+                                        <label for="request_type_id">نوع الشكوى <em>*</em></label>
                                         <select id="request_type_id"
                                                 name="request_type_id"
                                                 class="core_ui_input core_ui_select"
