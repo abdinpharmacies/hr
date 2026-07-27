@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 import itertools
+from collections.abc import Iterable
 
 from odoo import models, fields, api
 from odoo.tools.translate import _
@@ -289,9 +290,10 @@ class Employees(models.Model):
         if operator not in ['=', '!='] or not isinstance(val, bool):
             raise UserError(_('Operation not supported'))
         sql = """
-            select distinct employee_id from ab_hr_job_occupied job 
-                where job.termination_date is null
-        """
+              select distinct employee_id
+              from ab_hr_job_occupied job
+              where job.termination_date is null \
+              """
         self.env.cr.execute(sql)
         employees = self.env.cr.fetchall()
         employee_ids = [row[0] for row in employees]
@@ -308,13 +310,14 @@ class Employees(models.Model):
     def _search_internal_working_employee(self, operator, val):
         if operator not in ['=', '!='] or not isinstance(val, bool):
             raise UserError(_('Operation not supported'))
-        self.flush()
+        # self.flush()
         sql = """
-            select distinct employee_id 
-            from ab_hr_job_occupied job
-            left join ab_hr_job hj on job.job_id = hj.id
-                where job.termination_date is null and hj.internal_job=True 
-        """
+              select distinct employee_id
+              from ab_hr_job_occupied job
+                       left join ab_hr_job hj on job.job_id = hj.id
+              where job.termination_date is null
+                and hj.internal_job = True \
+              """
         self.env.cr.execute(sql)
         employees = self.env.cr.fetchall()
         employee_ids = list(itertools.chain.from_iterable(employees))
@@ -339,7 +342,13 @@ class Employees(models.Model):
 
     @api.model
     def _search_display_name(self, operator, value):
+        if not isinstance(value, str) and isinstance(value, Iterable) and not isinstance(value, (bytes, dict)):
+            string_values = [item for item in value if isinstance(item, str)]
+            if len(string_values) == 1:
+                value = string_values[0]
         mod_name = get_modified_name(value)
+        if not isinstance(value, str):
+            return super()._search_display_name(operator, value)
         return [
             '|', '|',
             ('mod_name', operator, mod_name),
