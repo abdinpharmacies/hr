@@ -1,0 +1,913 @@
+// ============================================================
+// RECONCILIATION CONSOLE — Operations Console Edition
+// Transform Odoo list/form into a modern SaaS operations monitor.
+// Scoped under .ab-recon-action. Inherits --sd-* theme tokens.
+// ============================================================
+
+// ─── Action Container ──────────────────────────────────────
+.ab-recon-action {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--sd-bg-deep);
+
+    .o_content {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--sd-bg-deep);
+    }
+}
+
+// ─── Hero Header ──────────────────────────────────────────
+.rcon-hero {
+    padding: 28px 36px 20px;
+    flex-shrink: 0;
+    background: var(--sd-bg-elevated);
+    border-bottom: 1px solid var(--sd-table-border);
+}
+
+.rcon-hero__content {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.rcon-hero__text { flex: 1; min-width: 0; }
+
+.rcon-hero__title {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--sd-text-primary);
+    line-height: 1.2;
+    margin: 0 0 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.rcon-hero__subtitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sd-accent-violet);
+    margin: 0 0 4px;
+    letter-spacing: 0.01em;
+}
+
+.rcon-hero__desc {
+    font-size: 12px;
+    color: var(--sd-text-muted);
+    margin: 0;
+}
+
+// ─── KPI Row ──────────────────────────────────────────────
+.rcon-kpi-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 10px;
+}
+
+.rcon-kpi {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: 10px;
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        border-radius: 3px 0 0 3px;
+        transition: opacity 0.2s ease;
+    }
+
+    &:hover {
+        background: var(--sd-bg-card-hover);
+        border-color: var(--sd-glass-border-hover);
+        transform: translateY(-1px);
+    }
+}
+
+.rcon-kpi__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 13px;
+    flex-shrink: 0;
+}
+
+.rcon-kpi__body { min-width: 0; }
+
+.rcon-kpi__label {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sd-text-muted);
+    line-height: 1;
+    margin-bottom: 3px;
+}
+
+.rcon-kpi__value {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--sd-text-primary);
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    &--sm { font-size: 12px; font-weight: 600; }
+}
+
+.rcon-accent--violet {
+    &::before { background: var(--sd-accent-violet); }
+    .rcon-kpi__icon { background: rgba(139, 92, 246, 0.12); color: var(--sd-accent-violet); }
+}
+.rcon-accent--emerald {
+    &::before { background: var(--sd-accent-emerald); }
+    .rcon-kpi__icon { background: rgba(16, 185, 129, 0.12); color: var(--sd-accent-emerald); }
+}
+.rcon-accent--blue {
+    &::before { background: var(--sd-accent-blue); }
+    .rcon-kpi__icon { background: rgba(59, 130, 246, 0.12); color: var(--sd-accent-blue); }
+}
+.rcon-accent--cyan {
+    &::before { background: var(--sd-accent-cyan); }
+    .rcon-kpi__icon { background: rgba(6, 182, 212, 0.12); color: var(--sd-accent-cyan); }
+}
+.rcon-accent--amber {
+    &::before { background: var(--sd-accent-amber); }
+    .rcon-kpi__icon { background: rgba(245, 158, 11, 0.12); color: var(--sd-accent-amber); }
+}
+.rcon-accent--rose {
+    &::before { background: var(--sd-accent-rose); }
+    .rcon-kpi__icon { background: rgba(244, 63, 94, 0.12); color: var(--sd-accent-rose); }
+}
+
+// ══════════════════════════════════════════════════════════════
+// CONTROL PANEL
+// ══════════════════════════════════════════════════════════════
+.ab-recon-action .o_control_panel {
+    background: var(--sd-bg-elevated);
+    border-bottom: 1px solid var(--sd-table-border);
+    padding: 8px 36px;
+    flex-shrink: 0;
+
+    .o_searchview {
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        border-radius: 8px;
+        color: var(--sd-text-primary);
+
+        &:focus-within {
+            border-color: var(--sd-accent-violet);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.15);
+        }
+
+        .o_searchview_input {
+            color: var(--sd-text-primary);
+            &::placeholder { color: var(--sd-text-muted); }
+        }
+
+        .o_searchview_facet {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: var(--sd-accent-violet);
+            border-radius: 6px;
+        }
+    }
+
+    .o_cp_buttons .btn {
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        color: var(--sd-text-secondary);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 5px 14px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: var(--sd-bg-card-hover);
+            color: var(--sd-text-primary);
+            border-color: var(--sd-glass-border-hover);
+        }
+        &.btn-primary {
+            background: var(--sd-gradient-violet);
+            color: #fff;
+            border-color: transparent;
+            &:hover { filter: brightness(1.1); color: #fff; }
+        }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// LIST TABLE — Operations Grid
+// ══════════════════════════════════════════════════════════════
+.ab-recon-list {
+    .o_list_table {
+        border: none !important;
+        background: transparent !important;
+    }
+
+    .o_list_table > thead > tr > th {
+        color: var(--sd-text-muted);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        white-space: nowrap;
+        border: none;
+        background: var(--sd-bg-elevated);
+        padding: 10px 12px;
+        user-select: none;
+
+        &:hover { color: var(--sd-accent-violet); }
+        &.o_list_record_selector { flex: 0 0 40px; }
+    }
+
+    .o_list_table > tbody > tr.o_data_row {
+        background: var(--sd-bg-card-solid);
+        border-bottom: 1px solid var(--sd-table-border);
+        transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.2s ease;
+
+        &:hover {
+            background: var(--sd-bg-card-hover);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        &.o_record_selected {
+            background: var(--sd-bg-card-hover);
+            box-shadow: inset 0 0 0 2px var(--sd-accent-violet);
+        }
+    }
+
+    // ─── Data cell overrides ───────────────────────────────
+    .o_list_table > tbody > tr.o_data_row > td {
+        color: var(--sd-text-primary);
+        padding: 10px 12px;
+    }
+
+    .o_data_row > td[data-field="name"] {
+        font-weight: 700;
+        font-size: 13px;
+        color: var(--sd-text-primary);
+        letter-spacing: -0.01em;
+    }
+
+    .o_data_row > td[data-field="store_filter_key"] {
+        font-size: 12px;
+        color: var(--sd-text-secondary);
+    }
+
+    .o_data_row > td[data-field="state"] {
+        padding: 6px 12px;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// STATE BADGES
+// ══════════════════════════════════════════════════════════════
+.rcon-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    &::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        flex-shrink: 0;
+    }
+
+    &--draft {
+        background: rgba(100, 116, 139, 0.12);
+        color: var(--sd-text-muted);
+        &::before { background: var(--sd-text-muted); }
+    }
+    &--analyzing {
+        background: rgba(59, 130, 246, 0.12);
+        color: var(--sd-accent-blue);
+        &::before { background: var(--sd-accent-blue); animation: rconPulse 1.2s ease infinite; }
+    }
+    &--ready {
+        background: rgba(6, 182, 212, 0.12);
+        color: var(--sd-accent-cyan);
+        &::before { background: var(--sd-accent-cyan); }
+    }
+    &--running {
+        background: rgba(139, 92, 246, 0.12);
+        color: var(--sd-accent-violet);
+        &::before { background: var(--sd-accent-violet); animation: rconPulse 0.8s ease infinite; }
+    }
+    &--partial {
+        background: rgba(245, 158, 11, 0.12);
+        color: var(--sd-accent-amber);
+        &::before { background: var(--sd-accent-amber); }
+    }
+    &--done {
+        background: rgba(16, 185, 129, 0.12);
+        color: var(--sd-accent-emerald);
+        &::before { background: var(--sd-accent-emerald); }
+    }
+    &--failed {
+        background: rgba(244, 63, 94, 0.12);
+        color: var(--sd-accent-rose);
+        &::before { background: var(--sd-accent-rose); }
+    }
+    &--cancelled {
+        background: var(--sd-input-bg);
+        color: var(--sd-text-dim);
+        &::before { background: var(--sd-text-dim); }
+    }
+}
+
+@keyframes rconPulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.7); }
+}
+
+// ─── Chunk state badges (smaller) ──────────────────────────
+.rcon-state--chunk {
+    padding: 2px 8px;
+    font-size: 9px;
+    &::before { width: 5px; height: 5px; }
+}
+
+// ══════════════════════════════════════════════════════════════
+// METRIC BADGES
+// ══════════════════════════════════════════════════════════════
+.rcon-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+
+    &--emerald { background: rgba(16, 185, 129, 0.1); color: var(--sd-accent-emerald); }
+    &--amber { background: rgba(245, 158, 11, 0.1); color: var(--sd-accent-amber); }
+    &--rose { background: rgba(244, 63, 94, 0.1); color: var(--sd-accent-rose); }
+    &--blue { background: rgba(59, 130, 246, 0.1); color: var(--sd-accent-blue); }
+    &--violet { background: rgba(139, 92, 246, 0.1); color: var(--sd-accent-violet); }
+    &--cyan { background: rgba(6, 182, 212, 0.1); color: var(--sd-accent-cyan); }
+    &--zero {
+        background: var(--sd-input-bg);
+        color: var(--sd-text-dim);
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PROGRESS BARS
+// ══════════════════════════════════════════════════════════════
+.rcon-progress {
+    width: 100%;
+    height: 5px;
+    background: var(--sd-progress-track);
+    border-radius: 3px;
+    overflow: hidden;
+
+    &__fill {
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.6s ease;
+        animation: rconBarGrow 0.8s ease both;
+    }
+
+    &--emerald &__fill { background: linear-gradient(90deg, var(--sd-accent-emerald), var(--sd-accent-cyan)); }
+    &--amber &__fill { background: linear-gradient(90deg, var(--sd-accent-amber), var(--sd-accent-rose)); }
+    &--violet &__fill { background: linear-gradient(90deg, var(--sd-accent-violet), var(--sd-accent-blue)); }
+    &--rose &__fill { background: var(--sd-accent-rose); }
+}
+
+@keyframes rconBarGrow {
+    from { width: 0 !important; }
+}
+
+// ══════════════════════════════════════════════════════════════
+// FORM VIEW — Operations Console
+// ══════════════════════════════════════════════════════════════
+.ab-recon-form {
+    .o_form_sheet_bg {
+        background: var(--sd-bg-deep);
+        border: none;
+    }
+
+    .o_form_sheet {
+        max-width: 100%;
+        padding: 0;
+        border: none;
+    }
+}
+
+// ─── Form Header ──────────────────────────────────────────
+.rcon-form-header {
+    padding: 24px 36px 20px;
+    background: var(--sd-bg-elevated);
+    border-bottom: 1px solid var(--sd-table-border);
+}
+
+.rcon-form-header__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 16px;
+}
+
+.rcon-form-header__title {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--sd-text-primary);
+    letter-spacing: -0.02em;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.rcon-form-header__meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.rcon-form-header__meta-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+    color: var(--sd-text-muted);
+    font-weight: 500;
+
+    i { font-size: 10px; opacity: 0.6; }
+}
+
+// ─── Form Actions Row ─────────────────────────────────────
+.rcon-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .btn {
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 12px;
+        padding: 6px 16px;
+        transition: all 0.2s ease;
+        border: 1px solid var(--sd-glass-border);
+
+        &.btn-primary {
+            background: var(--sd-gradient-violet);
+            color: #fff;
+            border-color: transparent;
+            &:hover { filter: brightness(1.1); color: #fff; }
+        }
+        &.btn-secondary {
+            background: var(--sd-input-bg);
+            color: var(--sd-text-secondary);
+            &:hover {
+                background: var(--sd-bg-card-hover);
+                color: var(--sd-text-primary);
+                border-color: var(--sd-glass-border-hover);
+            }
+        }
+        &.btn-danger {
+            background: rgba(244, 63, 94, 0.1);
+            color: var(--sd-accent-rose);
+            border-color: rgba(244, 63, 94, 0.2);
+            &:hover { background: rgba(244, 63, 94, 0.2); color: var(--sd-accent-rose); }
+        }
+    }
+}
+
+// ─── Metrics Row ──────────────────────────────────────────
+.rcon-metrics-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+    padding: 16px 36px;
+    background: var(--sd-bg-base);
+    border-bottom: 1px solid var(--sd-table-border);
+}
+
+.rcon-metric {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: 8px;
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        font-size: 11px;
+        flex-shrink: 0;
+    }
+
+    &__body { min-width: 0; }
+
+    &__label {
+        font-size: 8px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--sd-text-muted);
+        line-height: 1;
+        margin-bottom: 2px;
+    }
+
+    &__value {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--sd-text-primary);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.2;
+    }
+}
+
+// ─── Progress Section ─────────────────────────────────────
+.rcon-progress-section {
+    padding: 20px 36px;
+    background: var(--sd-bg-deep);
+    border-bottom: 1px solid var(--sd-table-border);
+}
+
+.rcon-progress-section__title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--sd-text-muted);
+    margin: 0 0 12px;
+}
+
+.rcon-progress-bar-large {
+    width: 100%;
+    height: 10px;
+    background: var(--sd-progress-track);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
+
+    &__fill {
+        height: 100%;
+        border-radius: 5px;
+        transition: width 0.6s ease;
+    }
+
+    &--emerald &__fill { background: linear-gradient(90deg, var(--sd-accent-emerald), var(--sd-accent-cyan)); }
+    &--amber &__fill { background: linear-gradient(90deg, var(--sd-accent-amber), var(--sd-accent-rose)); }
+    &--rose &__fill { background: var(--sd-accent-rose); }
+}
+
+.rcon-progress-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 11px;
+    color: var(--sd-text-muted);
+    font-weight: 500;
+
+    &__pct {
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+        color: var(--sd-text-primary);
+    }
+}
+
+// ─── Error Panel ──────────────────────────────────────────
+.rcon-error-panel {
+    margin: 0 36px 16px;
+    padding: 14px 16px;
+    background: rgba(244, 63, 94, 0.06);
+    border: 1px solid rgba(244, 63, 94, 0.2);
+    border-radius: 10px;
+    border-left: 3px solid var(--sd-accent-rose);
+
+    &__title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--sd-accent-rose);
+        margin-bottom: 6px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        &::before {
+            content: '\f071';
+            font-family: FontAwesome;
+            font-size: 11px;
+        }
+    }
+
+    &__message {
+        font-size: 12px;
+        color: var(--sd-text-secondary);
+        line-height: 1.5;
+        word-break: break-word;
+        max-height: 120px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+    }
+}
+
+// ─── Info Panels ──────────────────────────────────────────
+.rcon-info-panel {
+    margin: 0 36px 16px;
+    padding: 14px 16px;
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: 10px;
+
+    &__title {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--sd-text-muted);
+        margin-bottom: 10px;
+    }
+}
+
+// ─── Form Content ─────────────────────────────────────────
+.rcon-form-content {
+    padding: 0;
+    background: var(--sd-bg-deep);
+}
+
+// ─── Form groups override ─────────────────────────────────
+.ab-recon-form {
+    .o_group {
+        padding: 16px 36px;
+
+        .o_inner_group {
+            margin-bottom: 0;
+        }
+    }
+
+    .o_notebook {
+        padding: 0 36px 20px;
+    }
+
+    .o_notebook_headers {
+        border-bottom: 1px solid var(--sd-table-border);
+
+        .nav-tabs {
+            border-bottom: none;
+            gap: 0;
+
+            .nav-link {
+                color: var(--sd-text-muted);
+                font-weight: 600;
+                font-size: 12px;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                border: none;
+                border-bottom: 2px solid transparent;
+                padding: 10px 16px;
+                transition: all 0.2s ease;
+
+                &:hover {
+                    color: var(--sd-text-secondary);
+                    border-bottom-color: var(--sd-text-dim);
+                }
+                &.active {
+                    color: var(--sd-accent-violet);
+                    border-bottom-color: var(--sd-accent-violet);
+                }
+            }
+        }
+    }
+
+    // ─── Form field overrides ──────────────────────────────
+    .o_field_widget {
+        color: var(--sd-text-primary);
+
+        &.o_field_many2many_tags .badge {
+            background: rgba(139, 92, 246, 0.1);
+            color: var(--sd-accent-violet);
+            border-color: rgba(139, 92, 246, 0.2);
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 11px;
+        }
+    }
+
+    .o_statusbar_status .badge {
+        background: var(--sd-input-bg);
+        color: var(--sd-text-muted);
+        border-color: var(--sd-table-border);
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 11px;
+
+        &.o_no_edit {
+            background: var(--sd-bg-card-hover);
+            color: var(--sd-text-primary);
+            border-color: var(--sd-accent-violet);
+        }
+    }
+}
+
+// ─── Chunks table override ────────────────────────────────
+.ab-recon-form {
+    .o_list_table {
+        background: transparent !important;
+    }
+
+    .o_list_table > thead > tr > th {
+        color: var(--sd-text-muted);
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background: var(--sd-bg-elevated);
+        border-bottom: 1px solid var(--sd-table-border);
+        padding: 8px 10px;
+    }
+
+    .o_list_table > tbody > tr.o_data_row > td {
+        color: var(--sd-text-primary);
+        padding: 8px 10px;
+        border-bottom: 1px solid var(--sd-table-border);
+        font-size: 12px;
+    }
+
+    .o_list_table > tbody > tr.o_data_row:hover {
+        background: var(--sd-bg-card-hover);
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PAGER
+// ══════════════════════════════════════════════════════════════
+.ab-recon-action .o_pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 36px;
+    background: var(--sd-bg-elevated);
+    border-top: 1px solid var(--sd-table-border);
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--sd-text-muted);
+    font-weight: 500;
+
+    .o_pager_state {
+        color: var(--sd-text-secondary);
+        font-weight: 600;
+        padding: 0 8px;
+    }
+
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        border-radius: 6px;
+        color: var(--sd-text-secondary);
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover:not(:disabled) {
+            background: var(--sd-bg-card-hover);
+            color: var(--sd-text-primary);
+            border-color: var(--sd-glass-border-hover);
+        }
+        &:disabled { opacity: 0.3; cursor: default; }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// DROPDOWN MENUS
+// ══════════════════════════════════════════════════════════════
+.ab-recon-action .o-dropdown--menu {
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: 10px;
+    box-shadow: var(--sd-shadow-md);
+    padding: 4px;
+
+    .o-dropdown-item, .o_menu_item {
+        color: var(--sd-text-secondary);
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 13px;
+        transition: background 0.15s ease, color 0.15s ease;
+        &:hover { background: var(--sd-input-bg); color: var(--sd-text-primary); }
+        &.active { background: rgba(139, 92, 246, 0.1); color: var(--sd-accent-violet); }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// CHECKBOX
+// ══════════════════════════════════════════════════════════════
+.ab-recon-action {
+    .o_list_record_selector input[type="checkbox"] {
+        accent-color: var(--sd-accent-violet);
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// RESPONSIVE
+// ══════════════════════════════════════════════════════════════
+@media (max-width: 1200px) {
+    .rcon-hero { padding: 20px 24px 16px; }
+    .ab-recon-action .o_control_panel { padding: 8px 24px; }
+    .ab-recon-action .o_pager { padding: 10px 24px; }
+    .rcon-form-header { padding: 20px 24px 16px; }
+    .rcon-metrics-row { padding: 12px 24px; }
+    .rcon-progress-section { padding: 16px 24px; }
+    .rcon-error-panel { margin: 0 24px 12px; }
+    .rcon-info-panel { margin: 0 24px 12px; }
+    .ab-recon-form .o_group { padding: 12px 24px; }
+    .ab-recon-form .o_notebook { padding: 0 24px 16px; }
+}
+
+@media (max-width: 900px) {
+    .rcon-kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .rcon-hero__title { font-size: 20px; }
+    .rcon-metrics-row { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+    .rcon-hero { padding: 16px; }
+    .rcon-hero__title { font-size: 18px; }
+    .rcon-kpi-row { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .rcon-kpi { padding: 8px 10px; }
+    .rcon-kpi__value { font-size: 14px; }
+    .rcon-kpi__icon { width: 26px; height: 26px; font-size: 11px; }
+    .rcon-metrics-row { grid-template-columns: 1fr 1fr; gap: 8px; padding: 12px 16px; }
+    .rcon-form-header { padding: 16px; }
+    .ab-recon-action .o_control_panel { padding: 6px 16px; }
+    .ab-recon-action .o_pager { padding: 8px 16px; }
+    .ab-recon-form .o_group { padding: 12px 16px; }
+    .ab-recon-form .o_notebook { padding: 0 16px 12px; }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PRINT
+// ══════════════════════════════════════════════════════════════
+@media print {
+    .ab-recon-action { background: #fff; .o_content { background: #fff; } }
+    .rcon-hero { background: #fff; border-bottom: 2px solid #1a1a1a; }
+    .rcon-hero__title { color: #1a1a1a; }
+    .rcon-hero__subtitle { color: #333; }
+    .rcon-hero__desc { color: #666; }
+    .rcon-kpi { background: #fff; border-color: #ccc; }
+    .rcon-kpi__value { color: #1a1a1a; }
+    .ab-recon-action .o_control_panel { background: #fff; border-bottom: 1px solid #ccc; }
+    .ab-recon-action .o_pager { background: #fff; border-top-color: #ccc; }
+    .ab-recon-form .o_form_sheet_bg { background: #fff; }
+    .rcon-form-header { background: #fff; border-bottom: 1px solid #ccc; }
+    .rcon-form-header__title { color: #1a1a1a; }
+    .rcon-metrics-row { background: #f9f9f9; }
+    .rcon-metric { background: #fff; border-color: #ccc; }
+    .rcon-metric__value { color: #1a1a1a; }
+}

@@ -5,14 +5,21 @@
             <field name="name">ab.sales.dashboard.snapshot.list</field>
             <field name="model">ab.sales.dashboard.snapshot</field>
             <field name="arch" type="xml">
-                <list string="Sales Dashboard Reports">
-                    <field name="refresh_date"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
-                    <field name="store_filter_label"/>
-                    <field name="total_sales"/>
-                    <field name="invoice_count"/>
-                    <field name="archive_count" optional="show"/>
+                <list string="Sales Dashboard Reports" class="ab_rl_list" multi_edit="0" sample="1"
+                      decoration-info="archive_count == 0"
+                      decoration-warning="archive_count &gt; 0"
+                      decoration-danger="archive_count &gt; 5">
+                    <field name="refresh_date" widget="datetime" string="Generated" optional="show"/>
+                    <field name="name" string="Report" optional="show"/>
+                    <field name="date_from" widget="date" string="From" optional="show"/>
+                    <field name="date_to" widget="date" string="To" optional="show"/>
+                    <field name="store_filter_label" string="Branch" optional="show"/>
+                    <field name="total_sales" widget="monetary" string="Total Sales" sum="Sum"/>
+                    <field name="invoice_count" string="Invoices" sum="Sum"/>
+                    <field name="total_units_sold" string="Units" optional="hide"/>
+                    <field name="unique_products_sold" string="Products" optional="hide"/>
+                    <field name="stores_with_sales" string="Stores" optional="hide"/>
+                    <field name="archive_count" string="Archives" optional="show"/>
                 </list>
             </field>
         </record>
@@ -37,7 +44,7 @@
             <field name="arch" type="xml">
                 <form string="Sales Dashboard Report" create="0" edit="0">
                     <header>
-                        <button name="action_refresh" type="object" string="Refresh Report" class="btn-primary"/>
+                        <button name="action_refresh" type="object" string="Refresh Report" class="btn-secondary"/>
                         <button name="action_archive_report" type="object" string="Archive Report" class="btn-secondary" groups="ab_sales_dashboard.group_ab_sales_dashboard_manager"/>
                     </header>
                     <sheet>
@@ -63,15 +70,15 @@
                                 <field name="store_ids" widget="many2many_tags"/>
                             </group>
                         </group>
-                        <group string="KPIs">
-                            <field name="total_sales"/>
+                        <group string="Executive Summary">
+                            <field name="total_sales" class="ab-rp-kpi-primary"/>
                             <field name="avg_daily_sales"/>
+                            <field name="invoice_count" class="ab-rp-kpi-primary"/>
+                            <field name="total_units_sold" class="ab-rp-kpi-primary"/>
                             <field name="prev_avg_daily_sales"/>
                             <field name="avg_daily_growth_pct"/>
-                            <field name="invoice_count"/>
                             <field name="bearing_pct"/>
-                            <field name="total_units_sold"/>
-                            <field name="unique_products_sold"/>
+                            <field name="unique_products_sold" class="ab-rp-kpi-primary"/>
                             <field name="total_product_sales"/>
                             <field name="avg_products_per_invoice"/>
                             <field name="stores_with_sales"/>
@@ -81,10 +88,10 @@
                             <page string="Collection">
                                 <field name="collection_line_ids">
                                     <list>
-                                        <field name="category"/>
+                                        <field name="category" widget="selection_badge"/>
                                         <field name="invoice_count"/>
                                         <field name="total_sales"/>
-                                        <field name="pct_of_total"/>
+                                        <field name="pct_of_total" widget="pct_bar"/>
                                     </list>
                                 </field>
                             </page>
@@ -94,7 +101,7 @@
                                         <field name="employee_name"/>
                                         <field name="invoice_count"/>
                                         <field name="total_sales"/>
-                                        <field name="pct_of_total"/>
+                                        <field name="pct_of_total" widget="pct_bar"/>
                                     </list>
                                 </field>
                             </page>
@@ -385,20 +392,22 @@
             <field name="name">ab.sales.dashboard.reconciliation.job.list</field>
             <field name="model">ab.sales.dashboard.reconciliation.job</field>
             <field name="arch" type="xml">
-                <list string="Reconciliation Jobs" decoration-danger="state == 'failed'" decoration-warning="state == 'partial'" decoration-success="state == 'done'">
-                    <field name="name"/>
-                    <field name="date_from"/>
-                    <field name="date_to"/>
-                    <field name="state"/>
-                    <field name="total_branch_days"/>
-                    <field name="missing_branch_days"/>
-                    <field name="processed_branch_days"/>
-                    <field name="chunk_count"/>
-                    <field name="completed_chunk_count"/>
-                    <field name="failed_chunk_count"/>
+                <list string="Reconciliation Jobs" class="ab-recon-list" decoration-danger="state == 'failed'" decoration-warning="state == 'partial'" decoration-success="state == 'done'" decoration-info="state == 'running'" decoration-muted="state == 'cancelled'">
+                    <field name="name" optional="show"/>
+                    <field name="state" optional="show"/>
+                    <field name="store_filter_key" optional="show"/>
+                    <field name="date_from" optional="show"/>
+                    <field name="date_to" optional="show"/>
+                    <field name="total_branch_days" sum="Total"/>
+                    <field name="missing_branch_days" sum="Total"/>
+                    <field name="processed_branch_days" sum="Total"/>
+                    <field name="failed_branch_days" sum="Total"/>
+                    <field name="chunk_count" sum="Total"/>
+                    <field name="completed_chunk_count" sum="Total"/>
+                    <field name="failed_chunk_count" sum="Total"/>
                     <field name="started_at"/>
                     <field name="completed_at"/>
-                    <field name="created_by"/>
+                    <field name="created_by" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -407,51 +416,112 @@
             <field name="name">ab.sales.dashboard.reconciliation.job.form</field>
             <field name="model">ab.sales.dashboard.reconciliation.job</field>
             <field name="arch" type="xml">
-                <form string="Reconciliation Job">
+                <form string="Reconciliation Job" class="ab-recon-form">
                     <header>
-                        <button name="action_analyze_coverage" type="object" string="Analyze Coverage" class="btn-primary" invisible="state == 'running'"/>
-                        <button name="action_start_reconciliation" type="object" string="Start Reconciliation" class="btn-primary" invisible="state not in ('ready', 'partial', 'failed')"/>
-                        <button name="action_retry_failed_chunks" type="object" string="Retry Failed" class="btn-secondary" invisible="state not in ('partial', 'failed')"/>
-                        <button name="action_cancel" type="object" string="Cancel" class="btn-secondary" invisible="state in ('done', 'cancelled')"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,analyzing,ready,running,partial,done,failed,cancelled"/>
+                        <div class="rcon-form-actions">
+                            <button name="action_analyze_coverage" type="object" string="Analyze Coverage" class="btn-primary" invisible="state == 'running'"/>
+                            <button name="action_start_reconciliation" type="object" string="Start Reconciliation" class="btn-primary" invisible="state not in ('ready', 'partial', 'failed')"/>
+                            <button name="action_retry_failed_chunks" type="object" string="Retry Failed" class="btn-secondary" invisible="state not in ('partial', 'failed')"/>
+                            <button name="action_cancel" type="object" string="Cancel" class="btn-danger" invisible="state in ('done', 'cancelled')"/>
+                        </div>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,analyzing,ready,running,partial,done"/>
                     </header>
                     <sheet>
-                        <group>
+                        <div class="rcon-form-header">
+                            <div class="rcon-form-header__row">
+                                <h2 class="rcon-form-header__title">
+                                    <field name="name" readonly="1" nolabel="1" class="w-100"/>
+                                </h2>
+                                <div class="rcon-form-header__meta">
+                                    <span class="rcon-form-header__meta-item">
+                                        <i class="fa fa-user"/> <field name="created_by" readonly="1" nolabel="1"/>
+                                    </span>
+                                    <span class="rcon-form-header__meta-item">
+                                        <i class="fa fa-calendar"/> <field name="date_from" readonly="1" nolabel="1"/> &amp;rarr; <field name="date_to" readonly="1" nolabel="1"/>
+                                    </span>
+                                    <span class="rcon-form-header__meta-item">
+                                        <i class="fa fa-building-o"/> <field name="store_filter_key" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rcon-metrics-row">
+                            <div class="rcon-metric">
+                                <div class="rcon-kpi__icon rcon-accent--blue" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-calendar-check-o"/></div>
+                                <div class="rcon-metric__body">
+                                    <div class="rcon-metric__label">Total Days</div>
+                                    <div class="rcon-metric__value"><field name="total_branch_days" readonly="1" nolabel="1"/></div>
+                                </div>
+                            </div>
+                            <div class="rcon-metric">
+                                <div class="rcon-kpi__icon rcon-accent--emerald" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-check-circle"/></div>
+                                <div class="rcon-metric__body">
+                                    <div class="rcon-metric__label">Covered</div>
+                                    <div class="rcon-metric__value"><field name="covered_branch_days" readonly="1" nolabel="1"/></div>
+                                </div>
+                            </div>
+                            <div class="rcon-metric">
+                                <div class="rcon-kpi__icon rcon-accent--amber" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-exclamation-triangle"/></div>
+                                <div class="rcon-metric__body">
+                                    <div class="rcon-metric__label">Missing</div>
+                                    <div class="rcon-metric__value"><field name="missing_branch_days" readonly="1" nolabel="1"/></div>
+                                </div>
+                            </div>
+                            <div class="rcon-metric">
+                                <div class="rcon-kpi__icon rcon-accent--cyan" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-cogs"/></div>
+                                <div class="rcon-metric__body">
+                                    <div class="rcon-metric__label">Processed</div>
+                                    <div class="rcon-metric__value"><field name="processed_branch_days" readonly="1" nolabel="1"/></div>
+                                </div>
+                            </div>
+                            <div class="rcon-metric">
+                                <div class="rcon-kpi__icon rcon-accent--rose" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-times-circle"/></div>
+                                <div class="rcon-metric__body">
+                                    <div class="rcon-metric__label">Failed</div>
+                                    <div class="rcon-metric__value"><field name="failed_branch_days" readonly="1" nolabel="1"/></div>
+                                </div>
+                            </div>
+                            <div class="rcon-metric">
+                                <div class="rcon-kpi__icon rcon-accent--violet" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-puzzle-piece"/></div>
+                                <div class="rcon-metric__body">
+                                    <div class="rcon-metric__label">Chunks</div>
+                                    <div class="rcon-metric__value"><field name="chunk_count" readonly="1" nolabel="1"/> / <field name="completed_chunk_count" readonly="1" nolabel="1"/></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rcon-progress-section" invisible="state not in ('running', 'partial', 'done', 'failed')">
+                            <div class="rcon-progress-section__title">Coverage Progress</div>
+                            <div class="rcon-progress-stats">
+                                <span>Processed:</span>
+                                <span class="rcon-progress-stats__pct"><field name="processed_branch_days" readonly="1" nolabel="1"/></span>
+                                <span>of</span>
+                                <span class="rcon-progress-stats__pct"><field name="missing_branch_days" readonly="1" nolabel="1"/></span>
+                                <span>missing days</span>
+                            </div>
+                        </div>
+                        <div class="rcon-error-panel" invisible="not last_error">
+                            <div class="rcon-error-panel__title">Last Error</div>
+                            <div class="rcon-error-panel__message"><field name="last_error" readonly="1" nolabel="1"/></div>
+                        </div>
+                        <div class="rcon-info-panel">
+                            <div class="rcon-info-panel__title">Schedule</div>
                             <group>
-                                <field name="name" readonly="state != 'draft'"/>
-                                <field name="date_from" readonly="state != 'draft'"/>
-                                <field name="date_to" readonly="state != 'draft'"/>
-                                <field name="store_ids" widget="many2many_tags" readonly="state != 'draft'"/>
-                                <field name="store_filter_key" readonly="1"/>
+                                <group>
+                                    <field name="date_from" readonly="state != 'draft'"/>
+                                    <field name="date_to" readonly="state != 'draft'"/>
+                                    <field name="store_ids" widget="many2many_tags" readonly="state != 'draft'"/>
+                                </group>
+                                <group>
+                                    <field name="started_at" readonly="1"/>
+                                    <field name="completed_at" readonly="1"/>
+                                    <field name="last_processed_date" readonly="1"/>
+                                </group>
                             </group>
-                            <group>
-                                <field name="created_by" readonly="1"/>
-                                <field name="started_at" readonly="1"/>
-                                <field name="completed_at" readonly="1"/>
-                                <field name="last_processed_date" readonly="1"/>
-                            </group>
-                        </group>
-                        <group string="Progress">
-                            <group>
-                                <field name="total_branch_days" readonly="1"/>
-                                <field name="covered_branch_days" readonly="1"/>
-                                <field name="missing_branch_days" readonly="1"/>
-                                <field name="processed_branch_days" readonly="1"/>
-                                <field name="failed_branch_days" readonly="1"/>
-                            </group>
-                            <group>
-                                <field name="chunk_count" readonly="1"/>
-                                <field name="completed_chunk_count" readonly="1"/>
-                                <field name="failed_chunk_count" readonly="1"/>
-                            </group>
-                        </group>
-                        <group string="Last Error" invisible="not last_error">
-                            <field name="last_error" readonly="1" nolabel="1"/>
-                        </group>
+                        </div>
                         <notebook>
                             <page string="Chunks">
                                 <field name="chunk_ids" readonly="1">
-                                    <list string="Chunks" create="0" edit="0" delete="0" decoration-danger="state == 'failed'" decoration-success="state == 'done'">
+                                    <list string="Chunks" create="0" edit="0" delete="0" decoration-danger="state == 'failed'" decoration-success="state == 'done'" decoration-info="state == 'running'">
                                         <field name="sequence"/>
                                         <field name="date_from"/>
                                         <field name="date_to"/>
