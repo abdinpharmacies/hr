@@ -4,7 +4,7 @@
         <field name="name">ab_request_website.search</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <search string="External Requests">
+            <search string="Complaints Form">
                 <field name="name"/>
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
@@ -27,7 +27,7 @@
         <field name="name">ab_request_website.list</field>
         <field name="model">ab_request_website</field>
         <field name="arch" type="xml">
-            <list string="External Requests" default_order="create_date desc" create="false" delete="false"
+            <list string="Complaints Form" default_order="create_date desc" create="false" delete="false"
                   decoration-info="state == 'new'" decoration-muted="state == 'closed'">
                 <field name="active" column_invisible="True"/>
                 <field name="name"/>
@@ -102,7 +102,7 @@
     </record>
 
     <record id="ab_request_website_action" model="ir.actions.act_window">
-        <field name="name">External Requests</field>
+        <field name="name">Complaints Form</field>
         <field name="res_model">ab_request_website</field>
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="ab_request_website_view_search"/>
