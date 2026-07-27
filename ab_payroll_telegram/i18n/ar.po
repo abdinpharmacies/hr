@@ -1,0 +1,97 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_payroll_telegram
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-23 07:34+0000\n"
+"PO-Revision-Date: 2026-06-23 07:34+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+#. module: ab_payroll_telegram
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_bot__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_payroll_telegram
+#: model:ir.model,name:ab_payroll_telegram.model_ab_hr_bot
+msgid "Employee Telegram Chat Mapping"
+msgstr "ربط محادثة تيليجرام بالموظف"
+
+#. module: ab_payroll_telegram
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_bot__id
+msgid "ID"
+msgstr "المعرف"
+
+#~ msgid "Telegram User Link"
+#~ msgstr "ربط مستخدم تيليجرام"
+
+#. module: ab_payroll_telegram
+#. odoo-python
+#: code:addons/ab_payroll_telegram/models/ab_hr_employee.py:0
+msgid "Employee code %s is not active."
+msgstr "كود الموظف %s غير نشط."
+
+#. module: ab_payroll_telegram
+#. odoo-python
+#: code:addons/ab_payroll_telegram/models/ab_hr_employee.py:0
+msgid "Employee is not active."
+msgstr "الموظف غير نشط."
+
+#. module: ab_payroll_telegram
+#. odoo-python
+#: code:addons/ab_payroll_telegram/models/ab_hr_employee.py:0
+msgid "Employee was not found."
+msgstr "لم يتم العثور على الموظف."
+
+#. module: ab_payroll_telegram
+#. odoo-python
+#: code:addons/ab_payroll_telegram/models/ab_hr_employee.py:0
+msgid "No active employee was found for code: %s"
+msgstr "لم يتم العثور على موظف نشط للكود: %s"
+
+#. module: ab_payroll_telegram
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_employee__telegram_chat_id
+msgid "Telegram Chat ID"
+msgstr "معرف محادثة تيليجرام"
+
+#. module: ab_payroll_telegram
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_employee__telegram_linked_at
+msgid "Telegram Linked At"
+msgstr "وقت ربط تيليجرام"
+
+#. module: ab_payroll_telegram
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_employee__telegram_user_id
+msgid "Telegram User ID"
+msgstr "معرف مستخدم تيليجرام"
+
+#. module: ab_payroll_telegram
+#: model:ir.model.fields,field_description:ab_payroll_telegram.field_ab_hr_employee__telegram_username
+msgid "Telegram Username"
+msgstr "اسم مستخدم تيليجرام"
+
+#. module: ab_payroll_telegram
+#. odoo-python
+#: code:addons/ab_payroll_telegram/models/ab_hr_employee.py:0
+msgid "Telegram account linked to employee %s."
+msgstr "تم ربط حساب تيليجرام بالموظف %s."
+
+#. module: ab_payroll_telegram
+#. odoo-python
+#: code:addons/ab_payroll_telegram/models/ab_hr_employee.py:0
+msgid "Telegram service is not installed."
+msgstr "خدمة تيليجرام غير مثبتة."
+
+#. module: ab_payroll_telegram
+#. odoo-python
+#: code:addons/ab_payroll_telegram/models/payroll_telegram_service.py:0
+msgid "Telegram bot token is missing. Configure system parameter telegram.bot.token."
+msgstr "رمز بوت تيليجرام غير موجود. اضبط معامل النظام telegram.bot.token."
