@@ -3,7 +3,7 @@ from odoo import api, models
 
 
 class AbPayrollTelegramSheet(models.Model):
-    _inherit = "ab.hr.payroll.sheet"
+    _inherit = "ab_hr_payroll_sheet"
 
     @api.model
     def _resolve_recipient_chat_id(self, recipient):
