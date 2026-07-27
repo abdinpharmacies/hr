@@ -85,6 +85,49 @@ class SalesDashboardSnapshot(models.Model):
             "target": "current",
         }
 
+    def action_open_report(self):
+        self.ensure_one()
+        return {
+            "type": "ir.actions.client",
+            "tag": "ab_sales_dashboard.report",
+            "name": self.name,
+            "context": {"snapshot_id": self.id},
+        }
+
+    @api.model
+    def get_report_data(self, snapshot_id):
+        snapshot = self.sudo().browse(snapshot_id)
+        if not snapshot.exists():
+            return {"error": True}
+        filters = snapshot._filters_from_record()
+        return self._serialize_dashboard(snapshot, filters)
+
+    @api.model
+    def get_library_summary(self):
+        self.env.cr.execute("""
+            SELECT
+                COUNT(*) AS total_reports,
+                MAX(refresh_date) AS latest_date,
+                COALESCE(SUM(total_sales), 0) AS total_sales,
+                COALESCE(SUM(invoice_count), 0) AS total_invoices,
+                COUNT(DISTINCT NULLIF(store_filter_label, '')) AS unique_stores,
+                COALESCE(AVG(avg_daily_sales), 0) AS avg_daily_sales
+            FROM ab_sales_dashboard_snapshot
+        """)
+        row = self.env.cr.dictfetchone() or {}
+        if not row or row.get("total_reports", 0) == 0:
+            return {
+                "total_reports": 0,
+                "latest_date": False,
+                "total_sales": 0,
+                "total_invoices": 0,
+                "unique_stores": 0,
+                "avg_daily_sales": 0,
+            }
+        if row.get("latest_date"):
+            row["latest_date"] = fields.Datetime.to_string(row["latest_date"])
+        return row
+
     def action_archive_report(self):
         self.ensure_one()
         archive = self.create_management_report_archive()
