@@ -7,7 +7,7 @@
     "category": "Human Resources/Payroll",
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
-    "depends": ["ab_hr", 'ab_hr_telegram_employee_link'],
+    "depends": ["ab_hr", ],
     "data": [
         "security/security_groups.xml",
         "security/ir.model.access.csv",
