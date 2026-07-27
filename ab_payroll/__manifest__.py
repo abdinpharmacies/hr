@@ -7,7 +7,7 @@
     "category": "Human Resources/Payroll",
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
-    "depends": ["ab_hr"],
+    "depends": ["ab_hr", ],
     "data": [
         "security/security_groups.xml",
         "security/ir.model.access.csv",
