@@ -2,17 +2,17 @@
 <odoo>
     <data>
 
-        <!-- Active shipment security rules -->
-        <record id="rule_ab_internal_shipment_admin_read" model="ir.rule">
-            <field name="name">Internal shipments: admin read all</field>
+        <!-- ==================== ab_internal_shipment ==================== -->
+
+        <record id="rule_ab_internal_shipment_admin_all" model="ir.rule">
+            <field name="name">Internal shipments: admin full access</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_user" model="ir.rule">
@@ -24,7 +24,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_recipient_receipt_read" model="ir.rule">
@@ -36,19 +35,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_warehouse_receipt_read" model="ir.rule">
-            <field name="name">Internal shipments: assigned warehouse receipt read</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('state', '=', 'awaiting_warehouse_receipt'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_recipient_in_transit_read" model="ir.rule">
@@ -60,31 +46,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_warehouse_in_transit_read" model="ir.rule">
-            <field name="name">Internal shipments: warehouse in transit tracking read</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('state', '=', 'in_transit'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_warehouse_confirmed_tracking_read" model="ir.rule">
-            <field name="name">Internal shipments: warehouse confirmed tracking read</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('warehouse_received_by_id', '=', user.id)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_received_by_read" model="ir.rule">
@@ -96,19 +57,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_warehouse_received_by_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment warehouse confirmed by user read</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="0"/>
         </record>
 
         <record id="rule_ab_internal_shipment_user_created_write" model="ir.rule">
@@ -120,7 +68,6 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_user_recipient_write" model="ir.rule">
@@ -132,19 +79,6 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_warehouse_receipt_write" model="ir.rule">
-            <field name="name">Internal shipments: assigned warehouse receipt write</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('state', '=', 'awaiting_warehouse_receipt'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
-            <field name="perm_read" eval="0"/>
-            <field name="perm_write" eval="1"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_recipient_received_close_write" model="ir.rule">
@@ -156,7 +90,63 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_warehouse_receipt_read" model="ir.rule">
+            <field name="name">Internal shipments: assigned warehouse receipt read</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('state', '=', 'awaiting_warehouse_receipt'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_warehouse_in_transit_read" model="ir.rule">
+            <field name="name">Internal shipments: warehouse in transit tracking read</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('state', '=', 'in_transit'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_warehouse_confirmed_tracking_read" model="ir.rule">
+            <field name="name">Internal shipments: warehouse confirmed tracking read</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('warehouse_received_by_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_warehouse_receipt_write" model="ir.rule">
+            <field name="name">Internal shipments: assigned warehouse receipt write</field>
+            <field name="model_id" ref="model_ab_internal_shipment"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('state', '=', 'awaiting_warehouse_receipt'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="0"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- ==================== ab_internal_shipment.line ==================== -->
+
+        <record id="rule_ab_internal_shipment_line_admin_all" model="ir.rule">
+            <field name="name">Internal shipment lines: admin full access</field>
+            <field name="model_id" ref="model_ab_internal_shipment_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_line_user" model="ir.rule">
@@ -168,19 +158,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_line_admin_read" model="ir.rule">
-            <field name="name">Internal shipment lines: admin read all</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_line_recipient_receipt_read" model="ir.rule">
@@ -192,19 +169,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_line_warehouse_receipt_read" model="ir.rule">
-            <field name="name">Internal shipment lines: assigned warehouse receipt read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('shipment_id.state', '=', 'awaiting_warehouse_receipt'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_line_recipient_in_transit_read" model="ir.rule">
@@ -216,31 +180,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_line_warehouse_in_transit_read" model="ir.rule">
-            <field name="name">Internal shipment lines: warehouse in transit tracking read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_line_warehouse_confirmed_tracking_read" model="ir.rule">
-            <field name="name">Internal shipment lines: warehouse confirmed tracking read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('shipment_id.warehouse_received_by_id', '=', user.id)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_line_received_by_read" model="ir.rule">
@@ -252,19 +191,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_line_warehouse_received_by_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment lines warehouse confirmed by user read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="0"/>
         </record>
 
         <record id="rule_ab_internal_shipment_line_user_created_write" model="ir.rule">
@@ -276,7 +202,52 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_line_warehouse_receipt_read" model="ir.rule">
+            <field name="name">Internal shipment lines: assigned warehouse receipt read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('shipment_id.state', '=', 'awaiting_warehouse_receipt'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_line_warehouse_in_transit_read" model="ir.rule">
+            <field name="name">Internal shipment lines: warehouse in transit tracking read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_line_warehouse_confirmed_tracking_read" model="ir.rule">
+            <field name="name">Internal shipment lines: warehouse confirmed tracking read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_line"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('shipment_id.warehouse_received_by_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- ==================== ab_internal_shipment.history ==================== -->
+
+        <record id="rule_ab_internal_shipment_history_admin_all" model="ir.rule">
+            <field name="name">Internal shipment history: admin full access</field>
+            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_history_user" model="ir.rule">
@@ -288,19 +259,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_history_admin_read" model="ir.rule">
-            <field name="name">Internal shipment history: admin read all</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
-            <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_history_recipient_receipt_read" model="ir.rule">
@@ -312,19 +270,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_history_warehouse_receipt_read" model="ir.rule">
-            <field name="name">Internal shipment history: assigned warehouse receipt read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('shipment_id.state', '=', 'awaiting_warehouse_receipt'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_history_recipient_in_transit_read" model="ir.rule">
@@ -336,31 +281,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_history_warehouse_in_transit_read" model="ir.rule">
-            <field name="name">Internal shipment history: warehouse in transit tracking read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_history_warehouse_confirmed_tracking_read" model="ir.rule">
-            <field name="name">Internal shipment history: warehouse confirmed tracking read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[('shipment_id.warehouse_received_by_id', '=', user.id)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
         <record id="rule_ab_internal_shipment_history_received_by_read" model="ir.rule">
@@ -372,19 +292,6 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
-        </record>
-
-        <record id="rule_ab_internal_shipment_history_warehouse_received_by_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment history warehouse confirmed by user read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="perm_read" eval="1"/>
-            <field name="perm_write" eval="0"/>
-            <field name="perm_create" eval="0"/>
-            <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="0"/>
         </record>
 
         <record id="rule_ab_internal_shipment_history_user_create" model="ir.rule">
@@ -396,7 +303,39 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_history_warehouse_receipt_read" model="ir.rule">
+            <field name="name">Internal shipment history: assigned warehouse receipt read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('shipment_id.state', '=', 'awaiting_warehouse_receipt'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_history_warehouse_in_transit_read" model="ir.rule">
+            <field name="name">Internal shipment history: warehouse in transit tracking read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_ab_internal_shipment_history_warehouse_confirmed_tracking_read" model="ir.rule">
+            <field name="name">Internal shipment history: warehouse confirmed tracking read</field>
+            <field name="model_id" ref="model_ab_internal_shipment_history"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="domain_force">[('shipment_id.warehouse_received_by_id', '=', user.id)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
         </record>
 
         <record id="rule_ab_internal_shipment_history_warehouse_create" model="ir.rule">
@@ -408,8 +347,9 @@
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
+
+        <!-- ==================== mail.activity ==================== -->
 
         <record id="rule_ab_internal_shipment_activity_user" model="ir.rule">
             <field name="name">Internal shipment activities: user workflow access</field>
@@ -420,147 +360,17 @@
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="1"/>
             <field name="perm_unlink" eval="0"/>
-            <field name="active" eval="1"/>
         </record>
 
-        <!-- Inactive legacy rules kept by XML ID so upgrades disable old complex domains. -->
-        <record id="rule_ab_internal_shipment_sender_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment sender read</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_recipient_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment recipient read</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_warehouse_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment warehouse read</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment system all</field>
-            <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_line_sender_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment line sender read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_line_recipient_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment line recipient read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_line_warehouse_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment line warehouse read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_line_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment line system all</field>
-            <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_history_sender_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment history sender read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_history_recipient_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment history recipient read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_history_warehouse_read" model="ir.rule">
-            <field name="name">Inactive legacy shipment history warehouse read</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_history_receipt_create" model="ir.rule">
-            <field name="name">Inactive legacy shipment history receipt create</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_history_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment history system all</field>
-            <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_chatter_message_user_hidden" model="ir.rule">
-            <field name="name">Inactive legacy shipment message hidden</field>
-            <field name="model_id" ref="mail.model_mail_message"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_chatter_message_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment message system all</field>
-            <field name="model_id" ref="mail.model_mail_message"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_chatter_activity_user_hidden" model="ir.rule">
-            <field name="name">Inactive legacy shipment activity hidden</field>
+        <record id="rule_ab_internal_shipment_activity_admin" model="ir.rule">
+            <field name="name">Internal shipment activities: admin full access</field>
             <field name="model_id" ref="mail.model_mail_activity"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_chatter_activity_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment activity system all</field>
-            <field name="model_id" ref="mail.model_mail_activity"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_menu_user_hide_reporting" model="ir.rule">
-            <field name="name">Inactive legacy shipment menu hidden</field>
-            <field name="model_id" ref="base.model_ir_ui_menu"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_menu_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment menu system all</field>
-            <field name="model_id" ref="base.model_ir_ui_menu"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_server_action_user_hide_reporting" model="ir.rule">
-            <field name="name">Inactive legacy shipment server action hidden</field>
-            <field name="model_id" ref="base.model_ir_actions_server"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_server_action_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment server action system all</field>
-            <field name="model_id" ref="base.model_ir_actions_server"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_window_action_user_hide_reporting" model="ir.rule">
-            <field name="name">Inactive legacy shipment window action hidden</field>
-            <field name="model_id" ref="base.model_ir_actions_act_window"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
-        </record>
-        <record id="rule_ab_internal_shipment_window_action_system" model="ir.rule">
-            <field name="name">Inactive legacy shipment window action system all</field>
-            <field name="model_id" ref="base.model_ir_actions_act_window"/>
-            <field name="domain_force">[(0, '=', 1)]</field>
-            <field name="active" eval="0"/>
+            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_admin'))]"/>
+            <field name="domain_force">[('res_model', '=', 'ab_internal_shipment')]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
         </record>
 
     </data>

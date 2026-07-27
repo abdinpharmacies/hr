@@ -9,7 +9,7 @@
     "application": True,
     "depends": ["base", "mail", "web", "ab_hr", "ab_store"],
     "data": [
-        "security/groups.xml",
+        "security/security_groups.xml",
         "security/ir.model.access.csv",
         "security/record_rules.xml",
         "data/sequence.xml",
