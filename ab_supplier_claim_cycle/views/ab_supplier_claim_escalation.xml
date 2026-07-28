@@ -3,8 +3,8 @@
     <data>
 
         <record id="view_ab_supplier_claim_escalation_tree" model="ir.ui.view">
-            <field name="name">ab.supplier.claim.escalation.tree</field>
-            <field name="model">ab.supplier.claim.escalation</field>
+            <field name="name">ab_supplier_claim_escalation.tree</field>
+            <field name="model">ab_supplier_claim_escalation</field>
             <field name="arch" type="xml">
                 <list>
                     <field name="claim_id"/>
@@ -23,8 +23,8 @@
         </record>
 
         <record id="view_ab_supplier_claim_escalation_form" model="ir.ui.view">
-            <field name="name">ab.supplier.claim.escalation.form</field>
-            <field name="model">ab.supplier.claim.escalation</field>
+            <field name="name">ab_supplier_claim_escalation.form</field>
+            <field name="model">ab_supplier_claim_escalation</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
@@ -59,8 +59,8 @@
         </record>
 
         <record id="view_ab_supplier_claim_escalation_search" model="ir.ui.view">
-            <field name="name">ab.supplier.claim.escalation.search</field>
-            <field name="model">ab.supplier.claim.escalation</field>
+            <field name="name">ab_supplier_claim_escalation.search</field>
+            <field name="model">ab_supplier_claim_escalation</field>
             <field name="arch" type="xml">
                 <search>
                     <field name="claim_id"/>
@@ -79,7 +79,7 @@
 
         <record id="action_ab_supplier_claim_escalation" model="ir.actions.act_window">
             <field name="name">Escalations</field>
-            <field name="res_model">ab.supplier.claim.escalation</field>
+            <field name="res_model">ab_supplier_claim_escalation</field>
             <field name="view_mode">list,form</field>
             <field name="search_view_id" ref="view_ab_supplier_claim_escalation_search"/>
         </record>

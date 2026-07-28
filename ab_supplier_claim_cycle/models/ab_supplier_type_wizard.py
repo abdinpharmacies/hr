@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 
 
 class SupplierTypeSetupWizard(models.TransientModel):
-    _name = 'ab.supplier.type.setup.wizard'
+    _name = 'ab_supplier_type_setup_wizard'
     _description = 'Supplier Type Setup Wizard'
 
     supplier_id = fields.Many2one('ab_costcenter', string='Supplier', required=True, readonly=True)

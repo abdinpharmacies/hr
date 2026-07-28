@@ -2,7 +2,7 @@ from odoo import _, api, fields, models
 
 
 class SupplierClaimIssue(models.Model):
-    _name = 'ab.supplier.claim.issue'
+    _name = 'ab_supplier_claim_issue'
     _description = 'Supplier Claim Blocking Issue'
     _order = 'date desc, id desc'
 
