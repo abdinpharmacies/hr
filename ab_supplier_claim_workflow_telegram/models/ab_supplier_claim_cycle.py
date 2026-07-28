@@ -66,7 +66,8 @@ class SupplierClaimCycle(models.Model):
 
     def _build_escalation_telegram_message(self, stage_key=None):
         self.ensure_one()
-        stage_label = self._get_stage_label(stage_key or self.status)
+        stage = stage_key or self.status
+        stage_label = self._get_stage_label(stage) if hasattr(self, '_get_stage_label') else stage
         return '\n'.join([
             _('🚨 <b>Claim Escalation Alert</b>'),
             '',
@@ -92,7 +93,16 @@ class SupplierClaimCycle(models.Model):
         return self.env['ab_telegram_bot'].sudo().send_message(chat_id, text, parse_mode='HTML')
 
     def _resolve_escalation_details(self, stage_key=None):
-        result = super()._resolve_escalation_details(stage_key=stage_key)
+        parent = super()
+        if hasattr(parent, '_resolve_escalation_details'):
+            result = parent._resolve_escalation_details(stage_key=stage_key)
+        else:
+            result = {
+                'managers': [],
+                'manager_users': [],
+                'users': [],
+                'group_xmlid': False,
+            }
         self.ensure_one()
         dept_code = {
             'inventory': 'inventory',
@@ -125,7 +135,7 @@ class SupplierClaimCycle(models.Model):
         if telegram_manager_users:
             result['managers'] = list(telegram_managers)
             result['manager_users'] = list(telegram_manager_users)
-        stage_groups = self._get_stage_group_xmlids()
+        stage_groups = self._get_stage_group_xmlids() if hasattr(self, '_get_stage_group_xmlids') else {}
         group_xmlid = stage_groups.get(stage_key or self.status)
         if group_xmlid:
             result['group_xmlid'] = group_xmlid
@@ -140,7 +150,7 @@ class SupplierClaimCycle(models.Model):
             'No managers are connected to Telegram yet for the %(dept)s department.\n'
             'Time: %(time)s'
         ) % {
-            'dept': self._get_display_stage_label(department),
+            'dept': self._telegram_stage_display_label(department),
             'time': time,
         }
 
@@ -155,7 +165,7 @@ class SupplierClaimCycle(models.Model):
             'No managers are connected to Telegram yet for the %(dept)s department.\n'
             'Time: %(time)s'
         ) % {
-            'dept': self._get_display_stage_label(department),
+            'dept': self._telegram_stage_display_label(department),
             'time': time,
         }
 
@@ -169,19 +179,32 @@ class SupplierClaimCycle(models.Model):
         notes = notes or ''
         lines = notes.splitlines()
         if not lines:
-            return super()._get_display_history_notes(notes)
+            parent = super()
+            return parent._get_display_history_notes(notes) if hasattr(parent, '_get_display_history_notes') else notes
 
         title = lines[0].strip()
         if title == 'No managers connected to Telegram yet in this department.':
-            return self._format_no_telegram_managers_note(self._get_note_time_value(lines))
+            return self._format_no_telegram_managers_note(self._telegram_note_time_value(lines))
         no_manager_prefix = 'No managers are connected to Telegram yet for the '
         no_manager_suffix = ' department.'
         if title.startswith(no_manager_prefix) and title.endswith(no_manager_suffix):
             department = title[len(no_manager_prefix):-len(no_manager_suffix)]
             return self._format_no_telegram_managers_for_department_note(
                 department,
-                self._get_note_time_value(lines),
+                self._telegram_note_time_value(lines),
             )
         if title == 'The manager assigned to this department is still not connected to Telegram.':
-            return self._format_department_manager_not_connected_note(self._get_note_time_value(lines))
-        return super()._get_display_history_notes(notes)
+            return self._format_department_manager_not_connected_note(self._telegram_note_time_value(lines))
+        parent = super()
+        return parent._get_display_history_notes(notes) if hasattr(parent, '_get_display_history_notes') else notes
+
+    def _telegram_stage_display_label(self, department):
+        self.ensure_one()
+        if hasattr(self, '_get_display_stage_label'):
+            return self._get_display_stage_label(department)
+        return department or ''
+
+    def _telegram_note_time_value(self, lines):
+        if hasattr(self, '_get_note_time_value'):
+            return self._get_note_time_value(lines)
+        return ''
