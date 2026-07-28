@@ -28,6 +28,18 @@ class ab_supplier_claim_cycle(models.Model):
         selection=[('original', 'Original'),
                    ('copy', 'Copy'),
                    ], required=True)
+    check_delivery_status = fields.Selection(
+        selection=[
+            ('ready', 'Delivered'),
+            ('cash', 'Cash'),
+            ('bank_transfer', 'Bank Transfer'),
+            ('check_delivered', 'Issue Check'),
+            ('mixed', 'Mixed (Bank Transfer + Cheque)'),
+            ('shipped', 'Shipped'),
+        ],
+        string="Cheque Delivery Status",
+        tracking=True,
+    )
 
     def btn_status(self):
         status = self.env.context.get('action')

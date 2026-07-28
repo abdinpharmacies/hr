@@ -4,7 +4,7 @@
 
         <record id="supplier_claim_issue_form" model="ir.ui.view">
             <field name="name">supplier.claim.issue.form</field>
-            <field name="model">ab.supplier.claim.issue</field>
+            <field name="model">ab_supplier_claim_issue</field>
             <field name="arch" type="xml">
                 <form>
                     <sheet>
