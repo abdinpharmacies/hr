@@ -114,6 +114,6 @@
               name="Job Categories"
               parent="ab_hr.manpower_root_menu"
               action="ab_hr_job_cat_action"
-              groups="ab_manpower_need.group_ab_hr_manpower_hour_need"
+              groups="ab_manpower_need.group_manpower_user"
               sequence="36"/>
 </odoo>
