@@ -121,7 +121,7 @@ def _strip_noise(name):
 
 def replace_supplier_mappings(env, filepath):
     Supplier = env['ab_costcenter']
-    Mapping = env['ab.supplier.mapping']
+    Mapping = env['ab_supplier_mapping']
     wb = openpyxl.load_workbook(filepath)
     ws = wb.active
 
@@ -195,5 +195,5 @@ def run(env):
         '/home/abdin_02/Mohamed_tips/work/Supplier Claim/بيانات موردين.xlsx'
     )
     print("RESULT:", res)
-    Mapping = env['ab.supplier.mapping']
+    Mapping = env['ab_supplier_mapping']
     print(f"Total mapping records: {Mapping.search_count([])}")

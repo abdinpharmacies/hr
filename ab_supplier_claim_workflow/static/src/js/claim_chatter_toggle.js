@@ -412,7 +412,7 @@ class ClaimFormController extends FormController {
         const poll = setInterval(async () => {
             try {
                 const currentCount = await this.env.services.orm.searchCount(
-                    'ab.supplier.claim.tracking.visit',
+                    'ab_supplier_claim_tracking_visit',
                     [['claim_id', '=', recordId]]
                 );
                 this._updateVisitsBadge(badge, Math.max(currentCount - initialCount, 0));
@@ -434,7 +434,7 @@ class ClaimFormController extends FormController {
         let visits = [];
         try {
             visits = await this.env.services.orm.searchRead(
-                'ab.supplier.claim.tracking.visit',
+                'ab_supplier_claim_tracking_visit',
                 [['claim_id', '=', recordId]],
                 ['visit_date', 'ip_address', 'user_agent'],
                 { order: 'visit_date desc, id desc', limit: 50 }

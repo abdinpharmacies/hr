@@ -3237,3 +3237,26 @@ msgstr "يرجى إدخال رقم هاتف صحيح باستخدام الأرق
 #: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
 msgid "WhatsApp notification is only required for cheque delivery claims."
 msgstr "إشعار واتساب مطلوب فقط لمطالبات تسليم الشيك."
+#. module: ab_supplier_claim_workflow
+msgid "Medicine"
+msgstr "ادوية"
+
+#. module: ab_supplier_claim_workflow
+msgid "Cosmetics"
+msgstr "تجميل"
+
+#. module: ab_supplier_claim_workflow
+msgid "Medical Preparations"
+msgstr "مستحضرات طبية"
+
+#. module: ab_supplier_claim_workflow
+msgid "Supplies"
+msgstr "مستلزمات"
+
+#. module: ab_supplier_claim_workflow
+msgid "Imported Medicine"
+msgstr "مستورد ادوية"
+
+#. module: ab_supplier_claim_workflow
+msgid "Imported Cosmetics"
+msgstr "مستورد تجميل"

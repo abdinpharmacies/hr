@@ -2,8 +2,8 @@
 <odoo>
 
     <record id="ab_supplier_mapping_tree" model="ir.ui.view">
-        <field name="name">ab.supplier.mapping.tree</field>
-        <field name="model">ab.supplier.mapping</field>
+        <field name="name">ab_supplier_mapping.tree</field>
+        <field name="model">ab_supplier_mapping</field>
         <field name="arch" type="xml">
             <list class="scc-mapping-list" js_class="ab_supplier_mapping">
                 <field name="supplier_id"/>
@@ -24,8 +24,8 @@
     </record>
 
     <record id="ab_supplier_mapping_form" model="ir.ui.view">
-        <field name="name">ab.supplier.mapping.form</field>
-        <field name="model">ab.supplier.mapping</field>
+        <field name="name">ab_supplier_mapping.form</field>
+        <field name="model">ab_supplier_mapping</field>
         <field name="arch" type="xml">
             <form class="scc-mapping-form">
                 <sheet>
@@ -97,7 +97,7 @@
 
     <record id="action_ab_supplier_mapping" model="ir.actions.act_window">
         <field name="name">Supplier Mappings</field>
-        <field name="res_model">ab.supplier.mapping</field>
+        <field name="res_model">ab_supplier_mapping</field>
         <field name="view_mode">list,form</field>
     </record>
 

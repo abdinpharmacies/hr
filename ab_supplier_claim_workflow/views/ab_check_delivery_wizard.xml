@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="view_ab_check_delivery_wizard_form" model="ir.ui.view">
-        <field name="name">ab.check.delivery.wizard.form</field>
-        <field name="model">ab.check.delivery.wizard</field>
+        <field name="name">ab_check_delivery_wizard.form</field>
+        <field name="model">ab_check_delivery_wizard</field>
         <field name="priority">15</field>
         <field name="arch" type="xml">
             <form class="scc-clean-dialog">
