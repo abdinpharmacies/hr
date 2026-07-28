@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="group_ab_hr_manpower_hour_need" model="res.groups">
-        <field name="name">HR Manpower Hour Need</field>
-        <field name="privilege_id" ref="ab_hr.privilege_ab_hr"/>
-        <field name="implied_ids" eval="[(4, ref('ab_hr.group_ab_hr_basic_data'))]"/>
+    <record id="module_category_manpower_need" model="ir.module.category">
+        <field name="name">Manpower Need</field>
     </record>
 
-    <record id="ab_hr.group_ab_hr_manager" model="res.groups">
-        <field name="implied_ids" eval="[(4, ref('ab_manpower_need.group_ab_hr_manpower_hour_need'))]"/>
+    <record id="privilege_manpower_need" model="res.groups.privilege">
+        <field name="name">Access</field>
+        <field name="category_id" ref="module_category_manpower_need"/>
+    </record>
+
+    <record id="group_manpower_user" model="res.groups">
+        <field name="name">User</field>
+        <field name="privilege_id" ref="privilege_manpower_need"/>
+    </record>
+
+    <record id="group_manpower_manager" model="res.groups">
+        <field name="name">Manager</field>
+        <field name="privilege_id" ref="privilege_manpower_need"/>
+        <field name="implied_ids" eval="[(4, ref('group_manpower_user'))]"/>
     </record>
 </odoo>

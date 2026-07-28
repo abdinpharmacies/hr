@@ -198,11 +198,6 @@ class ManpowerHourNeed(models.Model):
             rec.actual_available_hours = values['actual_available_hours']
             rec.shortage_hours = rec.required_operating_hours - values['actual_available_hours']
 
-    @api.onchange('required_operating_hours', 'actual_available_hours')
-    def _onchange_hours(self):
-        for rec in self:
-            rec.shortage_hours = rec.required_operating_hours - rec.actual_available_hours
-
     @api.depends('workplace.name', 'job_title.name')
     def _compute_display_name(self):
         for rec in self:
@@ -226,7 +221,7 @@ class ManpowerHourNeed(models.Model):
     def _auto_fetch_actual_capacity(self):
         for rec in self:
             if rec.workplace:
-                rec.with_context(skip_manpower_hour_auto_fetch=True).write(rec._get_actual_capacity_values())
+                rec.write(rec._get_actual_capacity_values())
 
     def _get_actual_workforce_domain(self):
         self.ensure_one()
@@ -329,7 +324,7 @@ class ManpowerHourNeed(models.Model):
     def _get_employee_basic_working_hour_effect(self, employee):
         self.ensure_one()
         if 'ab_hr_basic_effect' not in self.env.registry.models:
-            return self.env['ab_hr_employee']
+            return self.env['ab_hr_basic_effect']
         return self.env['ab_hr_basic_effect'].sudo().search([
             ('employee_id', '=', employee.id),
             ('effect_type_id.basic_working_hour_number', '=', True),
