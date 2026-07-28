@@ -2,7 +2,7 @@ from odoo import fields, models
 
 
 class SupplierClaimTrackingVisit(models.Model):
-    _name = 'ab.supplier.claim.tracking.visit'
+    _name = 'ab_supplier_claim_tracking_visit'
     _description = 'Supplier Claim Tracking Visit'
     _order = 'visit_date desc, id desc'
 

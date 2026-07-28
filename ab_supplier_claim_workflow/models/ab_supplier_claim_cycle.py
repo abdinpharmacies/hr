@@ -83,7 +83,7 @@ class SupplierClaimCycle(models.Model):
     tracking_last_seen = fields.Datetime(string='Last Seen', readonly=True, copy=False)
     tracking_is_online = fields.Boolean(string='Online', readonly=True, copy=False)
     tracking_visit_ids = fields.One2many(
-        'ab.supplier.claim.tracking.visit',
+        'ab_supplier_claim_tracking_visit',
         'claim_id',
         string='Last Visits',
         readonly=True,
@@ -118,7 +118,7 @@ class SupplierClaimCycle(models.Model):
     )
     supplier_email = fields.Char(string='Supplier Email', copy=False)
     representative_phone = fields.Char(string='Representative Phone', copy=False)
-    delegate_phone_ids = fields.Many2many('ab.delegate.phone', string='Delegate Phones',
+    delegate_phone_ids = fields.Many2many('ab_delegate_phone', string='Delegate Phones',
         domain="[('partner_id', '=', supplier_id)]", copy=False, relation='claim_delegate_phone_rel')
 
     status = fields.Selection(
@@ -161,14 +161,6 @@ class SupplierClaimCycle(models.Model):
     tax_reason = fields.Text(string="Tax Accounts Reason", copy=False)
     bank_reason = fields.Text(string="Bank Account Reason", copy=False)
     delay_reason = fields.Text(string="Delay / Rejection Reason", tracking=True)
-    check_delivery_status = fields.Selection(
-        selection=[('ready', 'Delivered'), ('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
-                   ('check_delivered', 'Issue Check'),
-                   ('mixed', 'Mixed (Bank Transfer + Cheque)'),
-                   ('shipped', 'Shipped')],
-        string="Cheque Delivery Status",
-        tracking=True,
-    )
     sub_delivery_status = fields.Selection(
         selection=[('ready', 'Delivered'), ('shipped', 'Shipped')],
         string="Delivery Sub Status",
@@ -224,13 +216,13 @@ class SupplierClaimCycle(models.Model):
         string='Payment Method',
         tracking=True,
     )
-    issue_ids = fields.One2many('ab.supplier.claim.issue', 'claim_id', string='Issues')
+    issue_ids = fields.One2many('ab_supplier_claim_issue', 'claim_id', string='Issues')
     has_blocking_issue = fields.Boolean(compute='_compute_has_blocking_issue')
     show_chatter = fields.Boolean(string='Show Chatter', default=True)
     stage_escalated = fields.Boolean(default=False, string='Stage Escalated')
     escalation_missing_manager = fields.Boolean(default=False, string='Escalation Manager Not Found')
     assigned_escalation_user = fields.Many2one('res.users', string='Assigned Escalation User')
-    escalation_ids = fields.One2many('ab.supplier.claim.escalation', 'claim_id', string='Escalations', copy=False)
+    escalation_ids = fields.One2many('ab_supplier_claim_escalation', 'claim_id', string='Escalations', copy=False)
     escalation_count = fields.Integer(compute='_compute_escalation_count', string='Escalation Count')
     has_pending_escalation = fields.Boolean(compute='_compute_has_pending_escalation', string='Has Pending Escalation',
                                             search='_search_has_pending_escalation')
@@ -264,7 +256,7 @@ class SupplierClaimCycle(models.Model):
         if operator not in ('=', '!='):
             raise NotImplementedError
         target = bool(value)
-        esc = self.env['ab.supplier.claim.escalation']
+        esc = self.env['ab_supplier_claim_escalation']
         try:
             pending_claims = esc.search([('status', '=', 'pending')]).mapped('claim_id')
         except Exception:
@@ -377,7 +369,7 @@ class SupplierClaimCycle(models.Model):
         if not self.tracking_first_accessed:
             vals['tracking_first_accessed'] = now
         self.with_context(supplier_claim_internal_write=True).write(vals)
-        self.env['ab.supplier.claim.tracking.visit'].sudo().create({
+        self.env['ab_supplier_claim_tracking_visit'].sudo().create({
             'claim_id': self.id,
             'visit_date': now,
             'ip_address': ip_address or '',
@@ -661,16 +653,16 @@ class SupplierClaimCycle(models.Model):
     def _get_supplier_delegate_phone_candidates(self, create_missing=False):
         self.ensure_one()
         if not self.supplier_id:
-            return self.env['ab.delegate.phone']
+            return self.env['ab_delegate_phone']
 
-        DelegatePhone = self.env['ab.delegate.phone'].sudo()
+        DelegatePhone = self.env['ab_delegate_phone'].sudo()
         existing = DelegatePhone.search([('partner_id', '=', self.supplier_id.id)], order='is_default desc, id')
         if existing:
             default_existing = existing.filtered('is_default')
             return default_existing or existing
 
         if not create_missing:
-            return self.env['ab.delegate.phone']
+            return self.env['ab_delegate_phone']
 
         source_phone_text = self.supplier_id.mobile_phone or self.contact_phone or ''
         phones = self._split_delegate_phone_values(source_phone_text)
@@ -800,7 +792,7 @@ class SupplierClaimCycle(models.Model):
     def _create_internal_escalation(self, manager, stage_key=None):
         self.ensure_one()
         current_stage = stage_key or self.status
-        self.env['ab.supplier.claim.escalation'].create({
+        self.env['ab_supplier_claim_escalation'].create({
             'claim_id': self.id,
             'manager_id': manager.id,
             'department_name': self._get_stage_label(current_stage),
@@ -1127,7 +1119,7 @@ class SupplierClaimCycle(models.Model):
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Missing Required Information'),
-                        'res_model': 'ab.claim.error.wizard',
+                        'res_model': 'ab_claim_error_wizard',
                         'view_mode': 'form',
                         'target': 'new',
                         'context': {
@@ -1144,7 +1136,7 @@ class SupplierClaimCycle(models.Model):
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Missing Required Information'),
-                        'res_model': 'ab.claim.error.wizard',
+                        'res_model': 'ab_claim_error_wizard',
                         'view_mode': 'form',
                         'target': 'new',
                         'context': {
@@ -1254,7 +1246,7 @@ class SupplierClaimCycle(models.Model):
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Supplier Type Required'),
-                        'res_model': 'ab.supplier.type.setup.wizard',
+                        'res_model': 'ab_supplier_type_setup_wizard',
                         'view_mode': 'form',
                         'target': 'new',
                         'context': {
@@ -1267,7 +1259,7 @@ class SupplierClaimCycle(models.Model):
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Missing Required Information'),
-                        'res_model': 'ab.claim.error.wizard',
+                        'res_model': 'ab_claim_error_wizard',
                         'view_mode': 'form',
                         'target': 'new',
                         'context': {
@@ -1280,7 +1272,7 @@ class SupplierClaimCycle(models.Model):
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Missing Required Information'),
-                        'res_model': 'ab.claim.error.wizard',
+                        'res_model': 'ab_claim_error_wizard',
                         'view_mode': 'form',
                         'target': 'new',
                         'context': {
@@ -1296,7 +1288,7 @@ class SupplierClaimCycle(models.Model):
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Missing Required Information'),
-                        'res_model': 'ab.claim.error.wizard',
+                        'res_model': 'ab_claim_error_wizard',
                         'view_mode': 'form',
                         'target': 'new',
                         'context': {
@@ -1320,7 +1312,7 @@ class SupplierClaimCycle(models.Model):
                 return {
                     'type': 'ir.actions.act_window',
                     'name': _('Confirmation'),
-                    'res_model': 'ab.check.delivery.wizard',
+                    'res_model': 'ab_check_delivery_wizard',
                     'view_mode': 'form',
                     'target': 'new',
                     'context': {'default_claim_id': rec.id},
@@ -1386,7 +1378,7 @@ class SupplierClaimCycle(models.Model):
                 return {
                     'type': 'ir.actions.act_window',
                     'name': _('Confirmation'),
-                    'res_model': 'ab.check.delivery.wizard',
+                    'res_model': 'ab_check_delivery_wizard',
                     'view_mode': 'form',
                     'target': 'new',
                     'context': {'default_claim_id': rec.id},
@@ -1402,7 +1394,7 @@ class SupplierClaimCycle(models.Model):
                 return {
                     'type': 'ir.actions.act_window',
                     'name': _('Missing Required Information'),
-                    'res_model': 'ab.claim.error.wizard',
+                    'res_model': 'ab_claim_error_wizard',
                     'view_mode': 'form',
                     'target': 'new',
                     'context': {
@@ -1415,7 +1407,7 @@ class SupplierClaimCycle(models.Model):
                 return {
                     'type': 'ir.actions.act_window',
                     'name': _('Missing Required Information'),
-                    'res_model': 'ab.claim.error.wizard',
+                    'res_model': 'ab_claim_error_wizard',
                     'view_mode': 'form',
                     'target': 'new',
                     'context': {
@@ -1428,7 +1420,7 @@ class SupplierClaimCycle(models.Model):
                 return {
                     'type': 'ir.actions.act_window',
                     'name': _('Missing Required Information'),
-                    'res_model': 'ab.claim.error.wizard',
+                    'res_model': 'ab_claim_error_wizard',
                     'view_mode': 'form',
                     'target': 'new',
                     'context': {
@@ -1441,7 +1433,7 @@ class SupplierClaimCycle(models.Model):
                 return {
                     'type': 'ir.actions.act_window',
                     'name': _('Missing Required Information'),
-                    'res_model': 'ab.claim.error.wizard',
+                    'res_model': 'ab_claim_error_wizard',
                     'view_mode': 'form',
                     'target': 'new',
                     'context': {
@@ -1459,7 +1451,7 @@ class SupplierClaimCycle(models.Model):
                     return {
                         'type': 'ir.actions.act_window',
                         'name': _('Missing Required Documents'),
-                        'res_model': 'ab.claim.error.wizard',
+                        'res_model': 'ab_claim_error_wizard',
                         'view_mode': 'form',
                         'target': 'new',
                         'context': {
@@ -1985,7 +1977,7 @@ class SupplierClaimCycle(models.Model):
             stage_notes = self._get_display_history_notes(last.notes) if last else ''
 
             is_overdue = False
-            if is_current and last and last.action_date:
+            if is_current and stage != 'closed' and last and last.action_date:
                 can_see_overdue = self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()
                 is_overdue = can_see_overdue and fields.Datetime.now() - last.action_date > timedelta(hours=24)
 
@@ -2289,7 +2281,7 @@ class SupplierClaimCycle(models.Model):
             return {
                 'type': 'ir.actions.act_window',
                 'name': _('Missing Required Information'),
-                'res_model': 'ab.claim.error.wizard',
+                'res_model': 'ab_claim_error_wizard',
                 'view_mode': 'form',
                 'target': 'new',
                 'context': {
@@ -2302,7 +2294,7 @@ class SupplierClaimCycle(models.Model):
             return {
                 'type': 'ir.actions.act_window',
                 'name': _('Missing Required Documents'),
-                'res_model': 'ab.claim.error.wizard',
+                'res_model': 'ab_claim_error_wizard',
                 'view_mode': 'form',
                 'target': 'new',
                 'context': {
@@ -2315,7 +2307,7 @@ class SupplierClaimCycle(models.Model):
             return {
                 'type': 'ir.actions.act_window',
                 'name': _('Missing Required Documents'),
-                'res_model': 'ab.claim.error.wizard',
+                'res_model': 'ab_claim_error_wizard',
                 'view_mode': 'form',
                 'target': 'new',
                 'context': {

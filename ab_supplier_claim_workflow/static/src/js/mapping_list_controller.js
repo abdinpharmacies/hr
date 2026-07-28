@@ -201,7 +201,7 @@ class MappingListController extends ListController {
             if (!resId) return;
             this.actionService.doAction({
                 type: "ir.actions.act_window",
-                res_model: "ab.supplier.mapping",
+                res_model: "ab_supplier_mapping",
                 res_id: resId,
                 views: [[false, "form"]],
             });

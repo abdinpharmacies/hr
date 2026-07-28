@@ -200,27 +200,27 @@
                                             </span>
                                             <span class="scc-section-badge scc-section-badge--medicine"
                                                   invisible="supplier_section != 'medicine'">
-                                                💊 <span>ادوية</span>
+                                                💊 <span>Medicine</span>
                                             </span>
                                             <span class="scc-section-badge scc-section-badge--cosmetics"
                                                   invisible="supplier_section != 'cosmetics'">
-                                                💄 <span>تجميل</span>
+                                                💄 <span>Cosmetics</span>
                                             </span>
                                             <span class="scc-section-badge scc-section-badge--medical_preps"
                                                   invisible="supplier_section != 'medical_preps'">
-                                                🩺 <span>مستحضرات طبية</span>
+                                                🩺 <span>Medical Preparations</span>
                                             </span>
                                             <span class="scc-section-badge scc-section-badge--supplies"
                                                   invisible="supplier_section != 'supplies'">
-                                                📦 <span>مستلزمات</span>
+                                                📦 <span>Supplies</span>
                                             </span>
                                             <span class="scc-section-badge scc-section-badge--import_medicine"
                                                   invisible="supplier_section != 'import_medicine'">
-                                                🌍 <span>مستورد ادوية</span>
+                                                🌍 <span>Imported Medicine</span>
                                             </span>
                                             <span class="scc-section-badge scc-section-badge--import_cosmetics"
                                                   invisible="supplier_section != 'import_cosmetics'">
-                                                🌐 <span>مستورد تجميل</span>
+                                                🌐 <span>Imported Cosmetics</span>
                                             </span>
                                             <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;"
                                                   invisible="supplier_type != 'withholding_tax'">

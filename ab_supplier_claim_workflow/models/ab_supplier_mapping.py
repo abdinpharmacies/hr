@@ -8,7 +8,7 @@ SUPPLIER_MAPPING_SEED_CLEANUP_PARAM = 'supplier_claim.mapping_seed_cleanup_done'
 
 
 class SupplierMapping(models.Model):
-    _name = 'ab.supplier.mapping'
+    _name = 'ab_supplier_mapping'
     _description = 'Supplier Mapping'
     _rec_name = 'supplier_id'
     _uniq_supplier = models.Constraint(

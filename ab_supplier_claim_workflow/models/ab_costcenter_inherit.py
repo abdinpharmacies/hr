@@ -8,7 +8,7 @@ class ClsCostCenters(models.Model):
 
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         if self.env.context.get('supplier_claim_filter'):
-            mapped = self.env['ab.supplier.mapping'].sudo().search([]).mapped('supplier_id').ids
+            mapped = self.env['ab_supplier_mapping'].sudo().search([]).mapped('supplier_id').ids
             if mapped:
                 args = list(args or []) + [('id', 'in', mapped)]
         return super(ClsCostCenters, self).name_search(name, args, operator, limit)
@@ -33,12 +33,12 @@ class ClsCostCenters(models.Model):
     section = fields.Selection(
         string='Section',
         selection=[
-            ('medicine', 'ادوية'),
-            ('cosmetics', 'تجميل'),
-            ('medical_preps', 'مستحضرات طبية'),
-            ('supplies', 'مستلزمات'),
-            ('import_medicine', 'مستورد ادوية'),
-            ('import_cosmetics', 'مستورد تجميل'),
+            ('medicine', 'Medicine'),
+            ('cosmetics', 'Cosmetics'),
+            ('medical_preps', 'Medical Preparations'),
+            ('supplies', 'Supplies'),
+            ('import_medicine', 'Imported Medicine'),
+            ('import_cosmetics', 'Imported Cosmetics'),
         ],
         copy=False,
     )
@@ -47,7 +47,7 @@ class ClsCostCenters(models.Model):
         'ab_supplier_claim_cycle', 'supplier_id', string='Supplier Claims',
     )
     delegate_phone_ids = fields.One2many(
-        'ab.delegate.phone', 'partner_id', string='Delegate Phones',
+        'ab_delegate_phone', 'partner_id', string='Delegate Phones',
     )
     all_delegate_phones = fields.Char(
         string='All Delegate Phones', compute='_compute_all_delegate_phones', store=False,

@@ -137,7 +137,7 @@ def _strip_noise(name):
 
 def import_supplier_mapping(env, filepath='/home/abdin_02/Downloads/بيانات موردين.xlsx'):
     Supplier = env['ab_costcenter']
-    Mapping = env['ab.supplier.mapping']
+    Mapping = env['ab_supplier_mapping']
     wb = openpyxl.load_workbook(filepath)
     ws = wb.active
 

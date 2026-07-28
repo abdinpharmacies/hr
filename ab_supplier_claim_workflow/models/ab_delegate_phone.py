@@ -2,7 +2,7 @@ from odoo import api, models, fields
 
 
 class AbDelegatePhone(models.Model):
-    _name = 'ab.delegate.phone'
+    _name = 'ab_delegate_phone'
     _description = 'Delegate Phone Number'
     _rec_name = 'name'
 
