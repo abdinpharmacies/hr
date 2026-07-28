@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_replica_db_view_form_inherit_sales_excluded_invoices" model="ir.ui.view">
+            <field name="name">ab.replica.db.form.inherit.sales.excluded.invoices</field>
+            <field name="model">ab_replica_db</field>
+            <field name="inherit_id" ref="ab_store.ab_replica_db_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='allowed_sales_store_ids']/ancestor::group[1]" position="after">
+                    <notebook>
+                        <page string="Invoice Exclusions"
+                              name="invoice_exclusions">
+                            <div class="alert alert-info" role="alert">
+                                Paste invoice numbers from a spreadsheet into the box below, then add or remove them
+                                from the return-window exclusion list.
+                            </div>
+                            <field name="invoices_text"
+                                   nolabel="1"
+                                   widget="ab_invoice_exclusion_text"/>
+                        </page>
+                    </notebook>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

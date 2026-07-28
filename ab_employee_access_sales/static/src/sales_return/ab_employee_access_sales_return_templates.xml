@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_employee_access_sales.ReturnUiActionPatch"
+       t-inherit="ab_sales.AbSalesReturnUiApiAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_return_ui_action')]" position="inside">
+            <div class="ab_sales_return_login_overlay"
+                 t-if="state.abReturnAccess.loading || !state.abReturnAccess.session">
+                <AbEmployeeAccessLoginPanel
+                        title="'Employee Login'"
+                        subtitle="returnLoginPanelSubtitle()"
+                        showClose="true"
+                        onClose.bind="closeReturnLoginOverlay"
+                        showScreen="!state.abReturnAccess.loading"
+                        loadingMessage="'Loading employee access...'"
+                        employee="returnLoginPanelEmployeeValue()"
+                        employeeRelation="'ab_employee_access'"
+                        employeeDomain="[['pos_allow_login', '=', true]]"
+                        pin="returnLoginPanelPinValue()"
+                        error="state.abReturnAccess.error"
+                        loading="state.abReturnAccess.loginLoading"
+                        showEmployee="true"
+                        showCancel="false"
+                        required="true"
+                        submitLabel="'Employee Login'"
+                        loadingLabel="'Signing in...'"
+                        employeeLabel="'Employee'"
+                        pinLabel="'PIN'"
+                        employeePlaceholder="'Select employee...'"
+                        pinPlaceholder="'Enter PIN'"
+                        pinInputName="'ab_sales_return_pin'"
+                        onSubmit.bind="submitReturnLoginPanel"
+                        onEmployeeUpdate.bind="onReturnLoginEmployeeUpdate"
+                        onPinInput.bind="returnLoginPanelPinInput"
+                        onPinKeydown.bind="returnLoginPanelPinKeydown"
+                />
+            </div>
+        </xpath>
+    </t>
+</templates>

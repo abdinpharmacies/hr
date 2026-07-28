@@ -1,0 +1,569 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_transfer.PosAction">
+        <t t-if="!state.windowClosed">
+            <div t-attf-class="ab_pos_window_root o_ab_sales_pos_window o_ab_transfer_pos_window #{state.windowMaximized ? 'is-maximized' : ''} #{state.windowMinimized ? 'is-minimized' : ''}"
+                 t-att-style="windowStyle()">
+                <div class="o_ab_sales_pos_window_header ab_pos_window_header" t-on-pointerdown="onWindowDragStart">
+                    <div class="o_ab_sales_pos_window_controls ab_pos_window_controls">
+                        <button class="btn btn-light btn-sm ab_pos_ctrl_btn_save"
+                                type="button"
+                                title="Save settings"
+                                t-on-click="savePosUiSettings"
+                                t-att-disabled="state.posSettingsSaving">
+                            <i class="fa fa-save ab_pos_ctrl_icon_save" aria-hidden="true"/>
+                        </button>
+                        <button class="btn btn-light btn-sm ab_pos_ctrl_btn_fullscreen"
+                                type="button"
+                                title="Full Screen"
+                                t-on-click="toggleFullScreen">
+                            <i class="fa fa-expand ab_pos_ctrl_icon_fullscreen" aria-hidden="true"/>
+                        </button>
+                        <button class="btn btn-light btn-sm ab_pos_ctrl_btn_minimize"
+                                type="button"
+                                title="Minimize"
+                                t-on-click="toggleWindowMinimize">
+                            <i class="fa fa-window-minimize ab_pos_ctrl_icon_minimize" aria-hidden="true"/>
+                        </button>
+                        <button class="btn btn-light btn-sm ab_pos_ctrl_btn_maximize"
+                                type="button"
+                                title="Maximize"
+                                t-on-click="toggleWindowMaximize">
+                            <i class="fa fa-window-maximize ab_pos_ctrl_icon_maximize" aria-hidden="true"/>
+                        </button>
+                        <button class="btn btn-light btn-sm ab_pos_ctrl_btn_close"
+                                type="button"
+                                title="Close"
+                                t-on-click="closeWindow">
+                            <i class="fa fa-times ab_pos_ctrl_icon_close" aria-hidden="true"/>
+                        </button>
+                    </div>
+                </div>
+                <div class="o_ab_sales_pos_window_body ab_pos_window_body">
+                    <div class="o_ab_sales_pos_app o_ab_transfer_pos_app ab_pos_app_shell">
+            <aside t-attf-class="ab_pos_sidebar o_ab_sales_pos_sidebar o_ab_transfer_pos_sidebar #{state.sidebarCollapsed ? 'is-collapsed' : ''}">
+                <div class="o_ab_sales_pos_sidebar_header ab_pos_sidebar_header o_ab_transfer_pos_sidebar_header">
+                    <div class="o_ab_sales_pos_sidebar_top ab_pos_sidebar_top">
+                        <div class="o_ab_sales_pos_brand ab_pos_sidebar_brand">
+                            <div class="o_ab_sales_pos_brand_text">
+                                <div class="o_ab_transfer_pos_brand_title">Transfer POS</div>
+                                <div class="o_ab_transfer_pos_brand_subtitle">Header-driven store transfer flow</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-light o_ab_sales_pos_collapse_btn ab_pos_sidebar_btn_toggle"
+                                type="button"
+                                t-on-click="toggleSidebar"
+                                title="Toggle transfers panel">
+                            <i class="ab_pos_sidebar_icon_toggle"
+                               t-att-class="state.sidebarCollapsed ? 'fa fa-chevron-right' : 'fa fa-chevron-left'"
+                               aria-hidden="true"/>
+                        </button>
+                    </div>
+                    <button class="btn btn-primary o_ab_sales_pos_new_btn ab_pos_sidebar_btn_new_bill"
+                            type="button"
+                            t-on-click="createNewDraft">
+                        <span class="o_ab_sales_pos_new_text">New Transfer</span>
+                        <span class="o_ab_sales_pos_new_icon" aria-hidden="true">+</span>
+                    </button>
+                </div>
+                <div class="o_ab_sales_pos_list ab_pos_bill_list o_ab_transfer_pos_draft_list">
+                    <t t-if="!state.drafts.length">
+                        <div class="o_ab_transfer_pos_empty">No local drafts.</div>
+                    </t>
+                    <t t-foreach="state.drafts" t-as="draft" t-key="draft.id">
+                        <button class="o_ab_sales_pos_list_item ab_pos_bill_list_item o_ab_transfer_pos_draft_card"
+                                t-attf-class="#{draft.id === state.currentDraftId ? 'is-active' : ''}"
+                                type="button"
+                                t-on-click="() => this.selectDraft(draft.id)">
+                            <span class="o_ab_sales_pos_bill_thumb ab_pos_bill_item_thumb"
+                                  t-esc="draft.summary.items_count || 0"/>
+                            <div class="o_ab_transfer_pos_draft_title">
+                                <span t-esc="draft.local_number"/>
+                                <span class="badge text-bg-light" t-esc="draft.summary.items_count"/>
+                            </div>
+                            <div class="o_ab_transfer_pos_draft_meta">
+                                <span t-esc="draft.header.from_store_name || 'No source'"/>
+                                <span>→</span>
+                                <span t-esc="draft.header.to_store_name || 'No destination'"/>
+                            </div>
+                            <div class="o_ab_transfer_pos_draft_meta">
+                                <span t-esc="formatDateTime(draft.updated_at)"/>
+                            </div>
+                        </button>
+                    </t>
+                </div>
+            </aside>
+
+            <main class="o_ab_transfer_pos_main">
+                <t t-if="currentDraft">
+                    <section class="o_ab_transfer_pos_topbar" t-key="currentDraft.id">
+                        <div class="o_ab_transfer_pos_top_head">
+                            <div>
+                                <h2 t-esc="currentDraft.local_number"/>
+                                <div class="o_ab_transfer_pos_muted">
+                                    <span t-esc="formatDateTime(currentDraft.created_at)"/>
+                                </div>
+                            </div>
+                            <div class="o_ab_transfer_pos_top_actions">
+                                <t t-if="currentDraft.header.transfer_request_name">
+                                    <span class="badge text-bg-light" t-esc="currentDraft.header.transfer_request_name"/>
+                                </t>
+                                <button class="btn btn-outline-primary"
+                                        type="button"
+                                        t-on-click="openTransferRequestDialog">
+                                    Load Transfer Request
+                                </button>
+                                <button class="btn btn-outline-secondary" type="button" t-on-click="openHeaderList">Headers</button>
+                                <button class="btn btn-outline-danger" type="button" t-on-click="removeCurrentDraft">Discard</button>
+                                <button class="btn btn-primary"
+                                        type="button"
+                                        t-on-click="submitCurrentDraft"
+                                        t-att-disabled="state.submitting">
+                                    <t t-esc="state.submitting ? 'Submitting...' : 'Submit Transfer'"/>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="o_ab_transfer_pos_header_grid">
+                            <div class="o_ab_transfer_pos_field">
+                                <label>From Store</label>
+                                <ABMany2one relation="'ab_store'"
+                                            value="currentDraft.header.from_store_id ? {id: currentDraft.header.from_store_id, display_name: currentDraft.header.from_store_name} : false"
+                                            update="(value) => this.updateHeaderField('from_store_id', value, 'from_store_name')"
+                                            placeholder="'From Store...'"
+                                            domain="fromStoreDomain"
+                                            canCreate="false"
+                                            canCreateEdit="false"
+                                            canQuickCreate="false"
+                                            canOpen="false"
+                                            canWrite="true"
+                                            string="'From Store'"/>
+                            </div>
+                            <div class="o_ab_transfer_pos_field">
+                                <label>To Store</label>
+                                <ABMany2one relation="'ab_store'"
+                                            value="currentDraft.header.to_store_id ? {id: currentDraft.header.to_store_id, display_name: currentDraft.header.to_store_name} : false"
+                                            update="(value) => this.updateHeaderField('to_store_id', value, 'to_store_name')"
+                                            placeholder="'To Store...'"
+                                            domain="toStoreDomain"
+                                            canCreate="false"
+                                            canCreateEdit="false"
+                                            canQuickCreate="false"
+                                            canOpen="false"
+                                            canWrite="true"
+                                            string="'To Store'"/>
+                            </div>
+                            <div class="o_ab_transfer_pos_field">
+                                <label>User</label>
+                                <input class="form-control"
+                                       readonly="readonly"
+                                       t-att-value="currentDraft.header.user_name || ''"/>
+                            </div>
+                            <div class="o_ab_transfer_pos_totals">
+                                <div class="o_ab_transfer_pos_total">
+                                    <span class="o_ab_transfer_pos_total_label">Total Sale</span>
+                                    <span class="o_ab_transfer_pos_total_value"
+                                          t-esc="formatPrice(currentDraft.summary.total_sell_price || 0)"/>
+                                </div>
+                                <div class="o_ab_transfer_pos_total">
+                                    <span class="o_ab_transfer_pos_total_label">Total Cost</span>
+                                    <span class="o_ab_transfer_pos_total_value"
+                                          t-esc="formatPrice(currentDraft.summary.total_cost || 0)"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="o_ab_transfer_pos_transfer_notes_grid">
+                            <div class="o_ab_transfer_pos_field">
+                                <label>Transfer Type</label>
+                                <select class="form-select"
+                                        required="required"
+                                        t-att-value="currentDraft.header.transfer_type || ''"
+                                        t-on-change="onTransferTypeChange">
+                                    <option value="">Select...</option>
+                                    <t t-foreach="transferTypeOptions" t-as="option" t-key="option.value">
+                                        <option t-att-value="option.value" t-esc="option.label"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <div class="o_ab_transfer_pos_field">
+                                <label>Notes</label>
+                                <textarea class="form-control"
+                                          rows="2"
+                                          t-att-value="currentDraft.header.notes || ''"
+                                          t-on-input="onNotesInput"/>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="o_ab_transfer_pos_body">
+                        <div class="o_ab_transfer_pos_product_grid">
+                            <div class="o_ab_transfer_pos_product_column o_ab_transfer_pos_product_column_search">
+                                <div class="o_ab_transfer_pos_product_search">
+                                    <label class="form-label mb-0 d-flex align-items-center gap-2"
+                                           title="Search">
+                                        <i class="fa fa-search text-muted" aria-hidden="true"/>
+                                    </label>
+                                    <input class="form-control o_ab_transfer_pos_product_search_input"
+                                           placeholder="Type name/code..."
+                                           t-att-value="state.productQuery"
+                                           t-ref="searchInput"
+                                           t-on-keydown="onProductSearchKeydown"
+                                           t-on-input="onProductSearch"/>
+                                    <t t-if="state.loadingProducts">
+                                        <span class="o_ab_transfer_pos_loading">Loading...</span>
+                                    </t>
+                                    <span class="o_ab_transfer_pos_search_count"
+                                          t-esc="state.productResults.length"/>
+                                </div>
+                                <div class="o_ab_transfer_pos_product_hint">
+                                    <span class="badge text-bg-light">Search Results</span>
+                                </div>
+                                <t t-if="state.productResults.length">
+                                    <div class="o_ab_transfer_pos_product_results row row-cols-1 g-2"
+                                         t-ref="cardsContainer">
+                                        <t t-foreach="state.productResults" t-as="p" t-key="p.id" t-foreach-index="idx">
+                                            <div class="col">
+                                                <div role="button"
+                                                     t-attf-class="card position-relative o_ab_transfer_pos_product_card #{idx === state.selectionIndex ? 'border-primary shadow-sm is-selected' : ''}"
+                                                     t-att-data-product-id="p.id"
+                                                     t-att-tabindex="idx === state.selectionIndex ? 0 : -1"
+                                                     t-on-click="() => this.addProductFromSearch(p)">
+                                                    <t t-if="state.qtyBufferProductId === p.id and state.qtyBuffer">
+                                                        <span class="position-absolute top-50 start-50 translate-middle fw-bold text-success o_ab_transfer_pos_qty_buffer"
+                                                              t-esc="state.qtyBuffer"/>
+                                                    </t>
+                                                    <div class="card-body p-2 h-100 d-flex flex-column justify-content-between">
+                                                        <div class="d-flex justify-content-between align-items-start">
+                                                            <div class="d-inline-flex align-items-center gap-1 text-muted o_ab_transfer_pos_product_code">
+                                                                <i class="fa fa-barcode" aria-hidden="true"/>
+                                                                <small class="text-truncate" t-esc="p.code || ''"/>
+                                                            </div>
+                                                            <div class="d-inline-flex align-items-center gap-1 text-muted">
+                                                                <small t-esc="formatQty(p.balance || 0)"/>
+                                                                <i class="fa fa-cubes" aria-hidden="true" title="Balance"/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-grow-1 d-flex flex-column align-items-center justify-content-center text-center px-2">
+                                                            <div class="fw-bold small text-truncate w-100"
+                                                                 t-esc="productLabel(p)"/>
+                                                            <small class="text-muted" t-esc="p.uom_name || ''"/>
+                                                        </div>
+                                                        <div class="d-flex justify-content-between align-items-end">
+                                                            <div class="d-inline-flex align-items-center gap-1">
+                                                                <i class="fa fa-tag text-muted" aria-hidden="true" title="Price"/>
+                                                                <span class="fw-semibold" t-esc="formatPrice(p.default_price)"/>
+                                                            </div>
+                                                            <button type="button"
+                                                                    class="btn btn-sm btn-outline-primary"
+                                                                    t-on-click.stop="() => this.addProductFromSearch(p)">
+                                                                Add
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </t>
+                                <t t-elif="!state.loadingProducts">
+                                    <div class="o_ab_transfer_pos_empty">No products found.</div>
+                                </t>
+                            </div>
+
+                            <div class="o_ab_transfer_pos_product_column o_ab_transfer_pos_lines_panel">
+                                <div class="o_ab_transfer_pos_card_header">
+                                    <h4>Transfer Lines</h4>
+                                    <div class="o_ab_transfer_pos_muted">
+                                        <span t-esc="currentDraft.summary.items_count"/> items
+                                        <span>|</span>
+                                        <span t-esc="formatQty(currentDraft.summary.total_qty)"/> qty
+                                    </div>
+                                </div>
+                                <div class="table-responsive o_ab_transfer_pos_lines_table">
+                                    <table class="table table-sm align-middle o_ab_transfer_pos_table">
+                                        <thead>
+                                            <tr>
+                                                <th>Product</th>
+                                                <th>Source Batch</th>
+                                                <th>Qty</th>
+                                                <th>Requested</th>
+                                                <th>Available</th>
+                                                <th>Expiry</th>
+                                                <th>UOM</th>
+                                                <th>Sell</th>
+                                                <th>Cost</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <t t-if="!currentDraft.lines.length">
+                                                <tr>
+                                                    <td colspan="10" class="text-center text-muted">No lines yet.</td>
+                                                </tr>
+                                            </t>
+                                            <t t-foreach="currentDraft.lines" t-as="line" t-key="line.id">
+                                                <tr t-attf-class="ab_transfer_pos_line_row #{line.id === state.selectedLineId ? 'is-active' : ''}"
+                                                    t-att-data-line-id="line.id"
+                                                    t-att-data-product-id="line.product_id">
+                                                    <td t-on-click="() => this.selectLine(line.id)">
+                                                        <div class="o_ab_transfer_pos_result_name" t-esc="line.product_name"/>
+                                                        <div class="o_ab_transfer_pos_result_meta" t-esc="line.product_code || '-'"/>
+                                                    </td>
+                                                    <td>
+                                                        <select class="form-select form-select-sm"
+                                                                t-att-value="sourceIndex(line)"
+                                                                t-on-change="(ev) => this.onSourceChange(line, ev)">
+                                                            <t t-foreach="line.inventory_rows" t-as="row" t-key="row_index">
+                                                                <option t-att-value="row_index">
+                                                                    <t t-esc="sourceLabel(row, row_index)"/>
+                                                                </option>
+                                                            </t>
+                                                        </select>
+                                                    </td>
+                                                    <td>
+                                                        <input class="form-control form-control-sm"
+                                                               type="text"
+                                                               inputmode="decimal"
+                                                               data-field="qty_str"
+                                                               t-att-value="line.qty_str"
+                                                               t-on-input="(ev) => this.onQtyInput(line, ev)"/>
+                                                    </td>
+                                                    <td t-esc="line.requested_qty ? formatQty(line.requested_qty) : '-'"/>
+                                                    <td t-esc="lineSourceQty(line)"/>
+                                                    <td t-esc="line.expiry_date || '-'"/>
+                                                    <td>
+                                                        <ABMany2one relation="'ab_product_uom'"
+                                                                    value="lineUomValue(line)"
+                                                                    update="(value) => this.onLineUomUpdate(line, value)"
+                                                                    domain="() => line.uom_category_id ? [['category_id', '=', line.uom_category_id]] : [['id', '=', false]]"
+                                                                    placeholder="'UoM...'"
+                                                                    canCreate="false"
+                                                                    canCreateEdit="false"
+                                                                    canQuickCreate="false"
+                                                                    canOpen="false"
+                                                                    canWrite="true"
+                                                                    string="'UoM'"/>
+                                                    </td>
+                                                    <td t-esc="formatQty(line.sell_price)"/>
+                                                    <td t-esc="formatQty(line.cost)"/>
+                                                    <td class="text-end">
+                                                        <button class="btn btn-sm btn-outline-danger"
+                                                                type="button"
+                                                                title="Remove"
+                                                                t-on-click="() => this.removeLine(line.id)">
+                                                            <i class="fa fa-trash" aria-hidden="true"/>
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </t>
+            </main>
+                    </div>
+                </div>
+                <div class="o_ab_sales_pos_window_resizer ab_pos_window_resizer"
+                     t-on-pointerdown="onWindowResizeStart"/>
+            </div>
+        </t>
+    </t>
+
+    <t t-name="ab_transfer.PosTransferRequestLoadDialog">
+        <Dialog title="'Load Transfer Request'" size="'xl'">
+            <div class="o_ab_transfer_request_load_dialog">
+                <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
+                    <div class="small text-muted">Pending requests for the selected destination store.</div>
+                    <button class="btn btn-outline-secondary btn-sm"
+                            type="button"
+                            t-on-click="loadRequests"
+                            t-att-disabled="state.loading">
+                        <t t-esc="state.loading ? 'Loading...' : 'Refresh'"/>
+                    </button>
+                </div>
+                <t t-if="state.loading">
+                    <div class="o_ab_transfer_pos_empty">Loading requests...</div>
+                </t>
+                <t t-elif="!state.requests.length">
+                    <div class="o_ab_transfer_pos_empty">No pending transfer requests.</div>
+                </t>
+                <t t-else="">
+                    <div class="o_ab_transfer_request_load_layout">
+                        <div class="o_ab_transfer_request_load_list">
+                            <t t-foreach="state.requests" t-as="request" t-key="request.id">
+                                <button type="button"
+                                        t-attf-class="o_ab_transfer_request_load_card #{request.id === state.selectedRequestId ? 'is-active' : ''}"
+                                        t-on-click="() => this.selectRequest(request)">
+                                    <div class="o_ab_transfer_request_load_card_head">
+                                        <div>
+                                            <div class="fw-semibold" t-esc="request.display_name"/>
+                                            <div class="text-muted small" t-esc="formatDateTime(request.create_date)"/>
+                                        </div>
+                                        <span class="badge text-bg-light" t-esc="request.state_label || request.state"/>
+                                    </div>
+                                    <div class="o_ab_transfer_request_load_meta">
+                                        <span t-esc="request.from_store_name || '-'"/>
+                                        <span>|</span>
+                                        <span t-esc="request.items_count || 0"/>
+                                        <span>lines</span>
+                                    </div>
+                                </button>
+                            </t>
+                        </div>
+
+                        <div class="o_ab_transfer_request_load_preview">
+                            <t t-if="state.preview.request">
+                                <div class="o_ab_transfer_request_load_header">
+                                    <div class="o_ab_transfer_request_load_title">
+                                        <h4 t-esc="state.preview.request.display_name"/>
+                                        <span t-attf-class="badge o_ab_transfer_request_state_badge #{state.preview.request.execution_state === 'pending' ? 'text-bg-warning' : 'text-bg-success'}"
+                                              t-esc="state.preview.request.execution_state_label || state.preview.request.execution_state"/>
+                                    </div>
+                                    <div class="o_ab_transfer_request_load_header_grid">
+                                        <div class="o_ab_transfer_request_info_item">
+                                            <span>Request Number</span>
+                                            <strong t-esc="state.preview.request.display_name || '-'"/>
+                                        </div>
+                                        <div class="o_ab_transfer_request_info_item">
+                                            <span>Requesting Store</span>
+                                            <strong t-esc="state.preview.request.from_store_name || '-'"/>
+                                        </div>
+                                        <div class="o_ab_transfer_request_info_item">
+                                            <span>Request Date</span>
+                                            <strong t-esc="formatDateTime(state.preview.request.create_date)"/>
+                                        </div>
+                                        <div class="o_ab_transfer_request_info_item">
+                                            <span>Requested By</span>
+                                            <strong t-esc="state.preview.requested_by || '-'"/>
+                                        </div>
+                                        <div class="o_ab_transfer_request_info_item">
+                                            <span>Request State</span>
+                                            <strong t-esc="state.preview.request.state_label || state.preview.request.state || '-'"/>
+                                        </div>
+                                        <div class="o_ab_transfer_request_info_item">
+                                            <span>Execution State</span>
+                                            <strong t-esc="state.preview.request.execution_state_label || state.preview.request.execution_state || '-'"/>
+                                        </div>
+                                        <div class="o_ab_transfer_request_info_item">
+                                            <span>Total Products Count</span>
+                                            <strong t-esc="state.preview.summary.line_count"/>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="o_ab_transfer_request_load_actions">
+                                    <button class="btn btn-primary"
+                                            type="button"
+                                            t-att-disabled="!state.selectedRequestId || state.loading || state.loadingSelected || state.previewLoading"
+                                            t-on-click="confirm">
+                                        <t t-esc="state.loadingSelected ? 'Loading...' : 'Load Request'"/>
+                                    </button>
+                                    <button class="btn btn-outline-secondary" type="button" t-on-click="cancel">Cancel</button>
+                                </div>
+
+                                <t t-if="state.previewLoading">
+                                    <div class="o_ab_transfer_request_preview_loading">Calculating availability...</div>
+                                </t>
+                                <t t-if="state.preview.error">
+                                    <div class="alert alert-warning py-2 mb-2" t-esc="state.preview.error"/>
+                                </t>
+
+                                <div class="o_ab_transfer_request_products_section">
+                                    <h5>Products List</h5>
+                                    <div class="o_ab_transfer_request_product_table">
+                                        <div class="o_ab_transfer_request_product_head">
+                                            <span>Product</span>
+                                            <span>Code</span>
+                                            <span>Requested</span>
+                                            <span>Available</span>
+                                            <span>Will Load</span>
+                                            <span>Status</span>
+                                        </div>
+                                        <t t-foreach="state.preview.products" t-as="product" t-key="product.line_id">
+                                            <div t-attf-class="o_ab_transfer_request_product_row is-#{product.availability_status}">
+                                                <div class="o_ab_transfer_request_product_name">
+                                                    <strong t-esc="product.product_name"/>
+                                                    <t t-if="product.uom_name">
+                                                        <small t-esc="product.uom_name"/>
+                                                    </t>
+                                                </div>
+                                                <div class="o_ab_transfer_request_product_code" t-esc="product.product_code || '-'"/>
+                                                <div class="o_ab_transfer_request_qty" t-esc="formatQty(product.requested_qty)"/>
+                                                <div class="o_ab_transfer_request_qty" t-esc="formatQty(product.available_qty)"/>
+                                                <div class="o_ab_transfer_request_qty is-load" t-esc="formatQty(product.load_qty)"/>
+                                                <div>
+                                                    <span t-attf-class="badge o_ab_transfer_request_status_badge is-#{product.availability_status}"
+                                                          t-esc="product.availability_label"/>
+                                                </div>
+                                            </div>
+                                        </t>
+                                        <t t-if="!state.preview.products.length">
+                                            <div class="o_ab_transfer_pos_empty">No products on this request.</div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div class="o_ab_transfer_pos_empty">Select a request.</div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </Dialog>
+    </t>
+    <t t-name="ab_transfer.PosBarcodeLinkDialog">
+        <Dialog title="'Link Barcode'" size="'md'">
+            <div class="d-flex flex-column gap-3">
+                <t t-if="props.allowEdit">
+                    <div>
+                        <label class="form-label">Barcode</label>
+                        <input class="form-control"
+                               t-ref="barcodeInput"
+                               t-att-value="state.barcode"
+                               t-on-input="onBarcodeInput"
+                               placeholder="Scan or type barcode"/>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="alert alert-warning mb-0">
+                        <strong>Barcode not found:</strong>
+                        <span t-esc="props.barcode"/>
+                    </div>
+                </t>
+                <div>
+                    <label class="form-label">Linked Products (Temp)</label>
+                    <t t-if="state.loadingLinks">
+                        <div class="small text-muted mb-1">Loading linked products...</div>
+                    </t>
+                    <ABMany2many
+                            relation="'ab_product'"
+                            value="state.selected"
+                            onUpdate="onProductsUpdate"
+                            placeholder="'Search product...'"
+                            domain="() => []"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="'Products'"
+                    />
+                </div>
+                <div class="d-flex justify-content-end gap-2">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="cancel">Skip</button>
+                    <button class="btn btn-primary"
+                            type="button"
+                            t-att-disabled="!state.barcode or state.loadingLinks"
+                            t-on-click="confirm">
+                        Save Links
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

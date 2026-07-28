@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_cron_ab_odoo_sync_branch_pull" model="ir.cron">
+            <field name="name">AB Odoo Sync: Branch Pull</field>
+            <field name="active">True</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="model_id" ref="model_ab_odoo_sync_service"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_run_branch_sync()</field>
+        </record>
+
+        <record id="ir_cron_ab_odoo_sync_cleanup" model="ir.cron">
+            <field name="name">AB Odoo Sync: Cleanup Consumed Events</field>
+            <field name="active">True</field>
+            <field name="interval_number">10</field>
+            <field name="interval_type">minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="doall">False</field>
+            <field name="model_id" ref="model_ab_odoo_sync_service"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_cleanup_consumed_events()</field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.BarcodeSelectDialog">
+        <Dialog title="'Select Product'" size="'md'" modalRef="modalRef">
+            <div class="o_barcode_select_list d-flex flex-column gap-2">
+                <t t-if="!props.products || !props.products.length">
+                    <div class="text-muted">No matching products.</div>
+                </t>
+                <t t-foreach="props.products" t-as="product" t-key="product.id">
+                    <button
+                        type="button"
+                        class="btn btn-outline-primary w-100 text-start"
+                        t-on-click="() => this.selectProduct(product)"
+                    >
+                        <t t-esc="product.label"/>
+                    </button>
+                </t>
+            </div>
+        </Dialog>
+    </t>
+
+    <t t-name="ab_sales.BarcodeQtyDialog">
+        <Dialog title="'Quantity'" size="'sm'" modalRef="modalRef">
+            <div class="o_ab_sales_barcode_qty_dialog d-flex flex-column gap-2">
+                <t t-if="props.product">
+                    <div class="row g-2">
+                        <t t-call="ab_sales.ProductCard">
+                            <t t-set="p" t-value="props.product"/>
+                            <t t-set="idx" t-value="0"/>
+                            <t t-set="selectionIndex" t-value="-1"/>
+                            <t t-set="qtyBuffer" t-value="''"/>
+                            <t t-set="qtyBufferProductId" t-value="false"/>
+                            <t t-set="onAdd" t-value="false"/>
+                            <t t-set="onOpenBalance" t-value="openStoresBalance"/>
+                            <t t-set="formatPrice" t-value="formatPrice"/>
+                            <t t-set="formatQty" t-value="formatQty"/>
+                            <t t-set="productLabel" t-value="productLabel"/>
+                        </t>
+                    </div>
+                </t>
+                <label class="form-label m-0">Quantity</label>
+                <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="form-control"
+                    t-ref="qtyInput"
+                    t-model="state.value"
+                    t-on-keydown="onInputKeydown"
+                />
+                <div class="d-flex justify-content-end gap-2 mt-2">
+                    <button type="button" class="btn btn-secondary" t-on-click="cancel">
+                        Cancel
+                    </button>
+                    <button type="button" class="btn btn-primary" t-on-click="confirm">
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

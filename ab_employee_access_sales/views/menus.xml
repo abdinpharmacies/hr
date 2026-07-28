@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem
+                id="menu_ab_employee_access_sales_root"
+                name="POS HR"
+                parent="ab_sales.config_sub_menu"
+                sequence="40"
+                groups="ab_employee_access_sales.group_ab_employee_access_sales_manager,ab_employee_access_sales.group_ab_employee_access_sales_auditor"
+        />
+
+        <menuitem
+                id="menu_ab_employee_access_sales_config"
+                name="Configuration"
+                parent="menu_ab_employee_access_sales_root"
+                sequence="10"
+                groups="ab_employee_access_sales.group_ab_employee_access_sales_manager"
+        />
+        <menuitem
+                id="menu_ab_employee_access_sales_role"
+                name="Roles"
+                parent="menu_ab_employee_access_sales_config"
+                action="ab_employee_access.action_ab_employee_access_sales_role"
+                sequence="10"
+                groups="ab_employee_access_sales.group_ab_employee_access_sales_manager"
+        />
+        <menuitem
+                id="menua_ab_employee_access_sales_employee"
+                name="Employees"
+                parent="menu_ab_employee_access_sales_config"
+                action="ab_employee_access.action_ab_employee_access_sales_employee"
+                sequence="10"
+                groups="ab_employee_access_sales.group_ab_employee_access_sales_manager"
+        />
+        <menuitem
+                id="menu_ab_employee_access_sales_monitor"
+                name="Monitoring"
+                parent="menu_ab_employee_access_sales_config"
+                sequence="20"
+                groups="ab_employee_access_sales.group_ab_employee_access_sales_manager,ab_employee_access_sales.group_ab_employee_access_sales_auditor"
+        />
+    </data>
+</odoo>

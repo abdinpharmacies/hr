@@ -1,0 +1,81 @@
+<odoo>
+    <data>
+
+        <record id="ab_supplier_view_tree" model="ir.ui.view">
+            <field name="name">ab_supplier_view_tree</field>
+            <field name="model">ab_supplier</field>
+            <field name="arch" type="xml">
+                <list multi_edit="1">
+                    <field name="name" optional="show"/>
+                    <field name="costcenter_id" optional="show"/>
+                    <field name="telephone" optional="show"/>
+                    <field name="address" optional="show"/>
+                    <field name="registration_number" optional="show"/>
+                    <field name="max_credit" optional="show"/>
+                    <field name="current_credit" optional="show"/>
+                    <field name="return_interval" optional="show"/>
+                    <field name="end_date" optional="show"/>
+                    <field name="tax_type" optional="show"/>
+                    <field name="section" optional="show"/>
+                    <field name="territory" optional="show"/>
+                    <field name="purchase_limit" optional="show"/>
+                    <field name="active" optional="show"/>
+                    <field name="code" optional="show"/>
+                    <field name="parent_id" optional="show"/>
+                </list>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="ab_supplier_Form">
+            <field name="name">supplier Form</field>
+            <field name="model">ab_supplier</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <div class="oe_title">
+                            <label for="name" string="supplier Name"/>
+                            <h1>
+                                <div class="d-flex">
+                                    <field class="text-break" name="name" placeholder="e.g. Ibn-Sina Pharma"/>
+                                </div>
+                            </h1>
+                        </div>
+                        <group string="Related Costcenter">
+                            <field name="costcenter_id" nolabel="1" class="h4"/>
+                        </group>
+
+                        <notebook>
+                            <page string="Information">
+                                <group col="4">
+                                    <field name="telephone"/>
+                                    <field name="address"/>
+                                    <field name="registration_number"/>
+                                    <field name="max_credit"/>
+                                    <field name="return_interval"/>
+                                    <field name="end_date"/>
+                                    <field name="tax_type"/>
+                                    <field name="section"/>
+                                    <field name="territory"/>
+                                    <field name="purchase_limit"/>
+                                    <field name="active"/>
+                                    <field name="code"/>
+                                    <field name="parent_id"/>
+                                </group>
+                            </page>
+                            <page string="Description">
+                                <group>
+                                    <field name="description" nolabel="1" placeholder="Write your feedback here"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="supplier_action_window">
+            <field name="name">Suppliers</field>
+            <field name="res_model">ab_supplier</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

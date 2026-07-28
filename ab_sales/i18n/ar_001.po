@@ -1,0 +1,3839 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-28 14:52+0000\n"
+"PO-Revision-Date: 2026-04-28 14:52+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "#%s: %s"
+msgstr ""
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "#%s: Store IP is missing."
+msgstr "#%s: المخزن IP مفقود."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "01xxxxxxxxx"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.product_store_balance_html
+msgid ""
+"<i class=\"fa fa-line-chart\" aria-hidden=\"true\"/>\n"
+"                        <span class=\"small\">Store balances</span>"
+msgstr ""
+"<i class=\"fa fa-line-chart\" aria-hidden=\"true\"/>\n"
+"                        <span class=\"small\">أرصدة المخازن</span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"badge text-bg-success ms-2\" invisible=\"not store_id or store_server_online == False\">Connected</span>\n"
+"                        <span class=\"badge text-bg-danger ms-2\" invisible=\"not store_id or store_server_online == True\">Offline</span>"
+msgstr ""
+"<span class=\"badge text-bg-success ms-2\" visual=\"not store_id or store_server_online == False\">متصل</span>\n"
+"                        <span class=\"badge text-bg-danger ms-2\" visual=\"not store_id or store_server_online == True\">غير متصل</span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.product_store_balance_html
+msgid ""
+"<span class=\"d-inline-flex align-items-center gap-2\">\n"
+"                                                    <i class=\"fa fa-building-o text-muted\" aria-hidden=\"true\"/>\n"
+"                                                    <span>Store</span>\n"
+"                                                </span>"
+msgstr ""
+"<span class=\"d-inline-flex align-items-center الفجوة-2\">\n"
+"                                                    <i class=\"fa fa-building-o text-muted\" aria-hidden=\"true\"/>\n"
+"                                                    <span>المخزن</span>\n"
+"                                                </span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Net:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        الصافي:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Product:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        المنتج:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid ""
+"<span class=\"o_stat_text\">\n"
+"                                        Total:\n"
+"                                    </span>"
+msgstr ""
+"<span class=\"o_stat_text\">\n"
+"                                        الإجمالي:\n"
+"                                    </span>"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__paper_size__a4
+msgid "A4"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_inventory_action
+msgid "Ab sales inventory"
+msgstr "مخزون مبيعات عابدين"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Abdin Pharmacies Pharma"
+msgstr "صيدليات عابدين فارما"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_product
+msgid "Abdin Product"
+msgstr "منتج عبدين"
+
+#. module: ab_sales
+#: model:ir.module.category,description:ab_sales.ab_sales_categ
+#: model:ir.module.category,name:ab_sales.ab_sales_categ
+#: model:res.groups.privilege,name:ab_sales.privilege_ab_sales
+msgid "Abdin Sales"
+msgstr "مبيعات عبدين"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Action"
+msgstr "الإجراء"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_needaction
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_needaction
+msgid "Action Needed"
+msgstr "إجراء مطلوب"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Actions"
+msgstr "الإجراءات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__active
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__active
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Active ab_odoo_replication Crons"
+msgstr "مهام Cron النشطة لـ ab_odoo_replication"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_ids
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_ids
+msgid "Activities"
+msgstr "الأنشطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr "تمييز استثناء النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_state
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_state
+msgid "Activity State"
+msgstr "حالة النشاط"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_type_icon
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_type_icon
+msgid "Activity Type Icon"
+msgstr "أيقونة نوع النشاط"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__employee_id
+msgid "Actual Salesperson"
+msgstr "مندوب البيع الفعلي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_sales
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Add Products"
+msgstr "إضافة منتجات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Add all items"
+msgstr "إضافة كل الأصناف"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Add notes"
+msgstr "إضافة ملاحظات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Add products to start building the bill."
+msgstr "أضف منتجات لبدء إنشاء الفاتورة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_address
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Address must be at least 3 characters."
+msgstr "يجب أن يتكون العنوان من 3 أحرف على الأقل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "All 'New Customer' fields must set!"
+msgstr "يجب تعبئة جميع حقول \"العميل الجديد\"!"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "All Invoices"
+msgstr "كل الفواتير"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Already Saved"
+msgstr "محفوظ بالفعل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__promised_customer
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__promised_customer
+msgid "Already told customer we will deliver product"
+msgstr "تم إبلاغ العميل مسبقًا بأننا سنسلم المنتج"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "An invoice already exists with the same token."
+msgstr "توجد فاتورة بالفعل بنفس الرمز المميز."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_select_dialog.xml:0
+msgid "Apply"
+msgstr "تطبيق"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+msgid "Apply ("
+msgstr "تطبيق ("
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+msgid "Applying…"
+msgstr "جارٍ التطبيق…"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Are you sure you want to push this return to E-Plus?"
+msgstr "هل أنت متأكد أنك تريد إرسال هذا المرتجع إلى E-Plus؟"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_assistant
+msgid "Assistant"
+msgstr "مساعد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_attachment_count
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_attachment_count
+msgid "Attachment Count"
+msgstr "عدد المرفقات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__balance
+msgid "Available Balance"
+msgstr "الرصيد المتاح"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__available_prices
+msgid "Available Prices"
+msgstr "الأسعار المتاحة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "BConnect Total Guard failed. Header total (%s) != lines total (%s)."
+msgstr ""
+"فشل التحقق من إجمالي BConnect. إجمالي الرأس (%s) لا يساوي إجمالي السطور "
+"(%s)."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Back"
+msgstr "رجوع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action_sales_line_balance.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__balance
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__balance
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Barcode"
+msgstr "الباركود"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Barcode is required."
+msgstr "الباركود مطلوب."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Barcode not found:"
+msgstr "لم يتم العثور على الباركود:"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__inventory_table_html
+msgid "Batches (Unique)"
+msgstr "الدفعات (الفريدة)"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Bill"
+msgstr "الفاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Bill #"
+msgstr "رقم الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__bill_customer_address
+msgid "Bill Customer Address"
+msgstr "عنوان عميل الفاتورة"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Bill Customer Data"
+msgstr "بيانات عميل الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__bill_customer_name
+msgid "Bill Customer Name"
+msgstr "اسم عميل الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__bill_customer_phone
+msgid "Bill Customer Phone"
+msgstr "هاتف عميل الفاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.actions.client,name:ab_sales.ab_sales_bill_wizard_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_bill_wizard_menu
+msgid "Bill Wizard"
+msgstr "معالج الفاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_header_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_header_menu
+msgid "Bills"
+msgstr "الفواتير"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_product_rank__rank_scope__branch
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Branch is required."
+msgstr "الفرع مطلوب."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Branch:"
+msgstr "الفرع:"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_call_center
+msgid "Call Center"
+msgstr "مركز الاتصال"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+msgid "Can not get data for multiple headers"
+msgstr "لا يمكن جلب البيانات لعدة رؤوس في نفس الوقت"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_select_dialog.xml:0
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_cashier
+msgid "Cashier"
+msgstr "أمين الصندوق"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__c_id
+msgid "Class/source ID used in sales_trans_d and Item_Class_Store (batch)."
+msgstr "معرف الفئة/المصدر المستخدم في sales_trans_d وItem_Class_Store (دفعة)."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Clear"
+msgstr "مسح"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Clear Lines"
+msgstr "مسح السطور"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+msgid "Click products to add them."
+msgstr "انقر على المنتجات لإضافتها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_code
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__product_code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Code or part of product name"
+msgstr "الكود أو جزء من اسم المنتج"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Command execution failed."
+msgstr "فشل تنفيذ الأمر."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Company Pay"
+msgstr "نصيب الشركة"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.config_sub_menu
+msgid "Configurations"
+msgstr "الإعدادات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__protocol__connected
+msgid "Connected"
+msgstr "متصل"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Connected printers require Printer / Share Name."
+msgstr "الطابعات المتصلة تتطلب اسم الطابعة / المشاركة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "Connection to B-Connect failed while inserting Replication_Trans."
+msgstr "فشل الاتصال بـ B-Connect أثناء إدراج Replication_Trans."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Connection to B-Connect failed."
+msgstr "فشل الاتصال بـ B-Connect."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Connection to E-Plus failed."
+msgstr "فشل الاتصال بنظام E-Plus."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Contract"
+msgstr "التعاقد"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Contract Data"
+msgstr "بيانات التعاقد"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_cosmetics
+msgid "Cosmetics Salesman"
+msgstr "مندوب مبيعات مستحضرات التجميل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__cost
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__cost
+msgid "Cost"
+msgstr "التكلفة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Could not retrieve %s from E-Plus (@@IDENTITY is NULL)."
+msgstr "تعذر جلب %s من E-Plus (القيمة @@IDENTITY هي NULL)."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Create"
+msgstr "إنشاء"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Create Bill"
+msgstr "إنشاء فاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__create_date
+msgid "Create Date"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Create a new cached bill or pick one from the left panel."
+msgstr "أنشئ فاتورة مخزنة جديدة أو اختر واحدة من اللوحة اليسرى."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Create new token & submit"
+msgstr "أنشئ رمزًا جديدًا وأرسل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Created"
+msgstr "تم الإنشاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_uid
+msgid "Created by"
+msgstr "تم الإنشاء بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__create_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__cron_id
+msgid "Cron"
+msgstr "مهمة Cron"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "Cron has been triggered."
+msgstr "تم تشغيل مهمة Cron."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "Cron name must start with '%s'."
+msgstr "يجب أن يبدأ اسم مهمة Cron بـ '%s'."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "Cron not found."
+msgstr "لم يتم العثور على مهمة Cron."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Current Customer"
+msgstr "العميل الحالي"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+msgid ""
+"Current sell store is not equal ePlus DB store!\n"
+"ePlus DB store is %s\n"
+"with serial %s"
+msgstr ""
+"المخزن الحالي للبيع لا يطابق المخزن المسجل في قاعدة بيانات E-Plus!\n"
+"مخزن قاعدة بيانات E-Plus هو %s\n"
+"برقم تسلسلي %s"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_id
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_product_rank__rank_scope__customer
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_insurance_name
+msgid "Customer Insurance Name"
+msgstr "اسم تأمين العميل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_insurance_number
+msgid "Customer Insurance Number"
+msgstr "رقم تأمين العميل"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Customer Pay"
+msgstr "تحمل العميل"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Net"
+msgstr "الصافي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__customer_phone
+msgid "Customer Phone"
+msgstr "هاتف العميل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Customer Quick Picks"
+msgstr "اختيارات العملاء السريعة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Customer name must contain at least two words."
+msgstr "يجب أن يحتوي اسم العميل على كلمتين على الأقل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Customer was created but could not be loaded."
+msgstr "تم إنشاء العميل ولكن تعذر تحميله."
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_customer_action
+#: model:ir.ui.menu,name:ab_sales.ab_customer_menu
+msgid "Customers"
+msgstr "العملاء"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Date"
+msgstr "التاريخ"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Date:"
+msgstr "التاريخ:"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__is_default
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_search
+msgid "Default"
+msgstr "افتراضي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__default_price
+msgid "Default Price"
+msgstr "السعر الافتراضي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Default Printer"
+msgstr "الطابعة الافتراضية"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Delivery"
+msgstr "طيار"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__line_ids
+msgid "Details"
+msgstr "التفاصيل"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Direct print failed while building ESC/POS binary: %s"
+msgstr "فشل الطباعة المباشرة أثناء إنشاء ملف ESC/POS الثنائي: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Direct print failed while processing POS image: %s"
+msgstr "فشلت الطباعة المباشرة أثناء معالجة صورة POS: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Direct print failed: %s"
+msgstr "فشلت الطباعة المباشرة: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Direct print failed: receipt image was not generated."
+msgstr "فشلت الطباعة المباشرة: لم يتم إنشاء صورة الإيصال."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Direct print is not available on this server (missing '%s')."
+msgstr "الطباعة المباشرة غير متاحة على هذا الخادم (العنصر '%s' مفقود)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Direct print is not available on this server (missing 'lp')."
+msgstr "الطباعة المباشرة غير متاحة على هذا الخادم (الأمر 'lp' مفقود)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
+msgid "Discount"
+msgstr "خصم"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Discover"
+msgstr "اكتشاف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__display_name
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "Done: %(done)s, Skipped: %(skipped)s, Failed: %(failed)s"
+msgstr "تم: %(done)s، تم التخطي: %(skipped)s، فشل: %(failed)s"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Duplicate token detected."
+msgstr "تم اكتشاف رمز مكرر."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__itm_eplus_id
+msgid "E-Plus Item ID (itm_id)"
+msgstr "معرف عنصر E-Plus (itm_id)"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_return_header
+msgid "E-Plus Sales Return Header"
+msgstr "رأس مرتجع مبيعات E-Plus"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_return_line
+msgid "E-Plus Sales Return Line"
+msgstr "سطر مرتجع مبيعات E-Plus"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "E-Plus push failed: %s"
+msgstr "فشل الإرسال إلى E-Plus: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "E-Plus return push failed: %s"
+msgstr "فشل إرسال المرتجع إلى E-Plus: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "E-Plus return was saved, but Replication_Trans insert failed: %s"
+msgstr "تم حفظ مرتجع E-Plus، لكن فشل إدراج Replication_Trans: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_product_inherit.py:0
+msgid "EPlus connection is not valid."
+msgstr "اتصال E-Plus غير صالح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "ESC/POS binary build failed: %s"
+msgstr "فشل إنشاء ملف ESC/POS الثنائي: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "ESC/POS binary print is only supported on Linux servers."
+msgstr "طباعة ESC/POS الثنائية مدعومة فقط على خوادم Linux."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__employee_delivery_id
+msgid "Employee Delivery"
+msgstr "توصيل الموظف"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+msgid "Enable Arabic/English ABMany2one mapping"
+msgstr "تفعيل ربط ABMany2one بالعربية/الإنجليزية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+msgid "Enable Arabic/English Product Searchbar mapping"
+msgstr "تفعيل ربط شريط بحث المنتجات بالعربية/الإنجليزية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "End Date"
+msgstr "تاريخ الانتهاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_line__qty_str
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__qty_str
+msgid "Enter arithmetic expression, e.g. 1/3, 2.5*4, 10-3, 2*1.25"
+msgstr "أدخل تعبيرًا حسابيًا، مثل 1/3 أو 2.5*4 أو 10-3 أو 2*1.25"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__push_state__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Exact serial"
+msgstr "الرقم التسلسلي المطابق"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Existing invoice not found."
+msgstr "لم يتم العثور على الفاتورة الحالية."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.product_store_balance_html
+msgid "Expand/collapse"
+msgstr "توسيع/طي"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_line__unavailable_reason_other
+msgid "Explain in more detail if you chose 'Other'."
+msgstr "اشرح بمزيد من التفصيل إذا اخترت «أخرى»."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__extra_feed_lines
+msgid "Extra Feed Lines"
+msgstr "تغذية بسطور إضافية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Extra Notes"
+msgstr "ملاحظات إضافية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "F-Transaction ID:"
+msgstr "معرف F-Transaction:"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__f_transaction_id
+msgid "F-Transaction_Header ID (fh_id)"
+msgstr "معرف F-Transaction_Header (fh_id)"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid ""
+"Failed to get new STH ID (SCOPE_IDENTITY/@@IDENTITY/IDENT_CURRENT all "
+"returned NULL). Please check that sales_trans_h.sth_id is an IDENTITY "
+"column."
+msgstr ""
+"فشل في الحصول على رقم STH جديد (الدوال "
+"SCOPE_IDENTITY/@@IDENTITY/IDENT_CURRENT أعادت جميعها القيمة NULL). يرجى "
+"التحقق من أن الحقل sales_trans_h.sth_id هو حقل IDENTITY."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_follower_ids
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_follower_ids
+msgid "Followers"
+msgstr "المتابعون"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_partner_ids
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_partner_ids
+msgid "Followers (Partners)"
+msgstr "المتابعون (الشركاء)"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_type_icon
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr "أيقونة Font Awesome مثل fa-tasks"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Footer text (optional)"
+msgstr "نص التذييل (اختياري)"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+msgid "Frequent"
+msgstr "متكرر"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Full Screen"
+msgstr "ملء الشاشة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Generate a new token to submit this bill."
+msgstr "أنشئ رمزًا جديدًا لإرسال هذه الفاتورة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid ""
+"HTML direct print is not available on this server (missing 'wkhtmltopdf')."
+msgstr ""
+"الطباعة المباشرة بتنسيق HTML غير متاحة على هذا الخادم (الأمر 'wkhtmltopdf' "
+"مفقود)."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__has_balance
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_search_view_inherit
+msgid "Has Balance"
+msgstr "له رصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__has_message
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__has_message
+msgid "Has Message"
+msgstr "به رسائل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__has_pos_balance
+msgid "Has Pos Balance"
+msgstr "يحتوي على رصيد نقطة البيع"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_search_view_inherit
+msgid "Has Store Balance"
+msgstr "يحتوي على رصيد مخزن"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+msgid "Has balance (any)"
+msgstr "يحتوي على رصيد (أي قيمة)"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+msgid "Has balance in current store"
+msgstr "لديه رصيد في المتجر الحالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__header_id
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Header insert failed; header record not found (sth_id=%s)."
+msgstr "فشل إدراج الرأس؛ لم يتم العثور على سجل الرأس (sth_id=%s)."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Header text (optional)"
+msgstr "نص الرأس (اختياري)"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__ip
+msgid "IP / Host"
+msgstr "عنوان IP / المضيف"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "IP range is too large. Maximum is %s addresses."
+msgstr "نطاق IP كبير جدًا. الحد الأقصى هو عناوين %s."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_exception_icon
+msgid "Icon"
+msgstr "أيقونة"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_exception_icon
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr "أيقونة تشير إلى نشاط استثنائي."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_needaction
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr "إذا تم التحديد، فهذا يعني أن هناك رسائل جديدة تتطلب انتباهك."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_has_error
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_has_sms_error
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__message_has_error
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr "إذا تم التحديد، فهذا يعني أن هناك رسائل بها خطأ في التسليم."
+
+#. module: ab_sales
+#: model:ir.actions.server,name:ab_sales.ab_sales_return_server_action_insert_replication_trans
+msgid "Insert Replication_Trans"
+msgstr "إدراج Replication_Trans"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Insurance"
+msgstr "التأمين"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Insurance Name"
+msgstr "الاسم التأميني"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Insurance Number"
+msgstr "الرقم التأميني"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Invalid IP range."
+msgstr "نطاق IP غير صالح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Invalid items payload."
+msgstr "بيانات الأصناف غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Invalid payload."
+msgstr "البيانات غير صالحة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Invalid quantity in a line (<= 0)."
+msgstr "كمية غير صالحة في أحد السطور (<= 0)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Invalid store or product."
+msgstr "المخزن أو المنتج غير صالح."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Invalid store."
+msgstr "المخزن غير صالح."
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_sales_inventory_menu
+msgid "Inventory"
+msgstr "المخزون"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__inventory_json
+msgid "Inventory JSON"
+msgstr "JSON المخزون"
+
+#. module: ab_sales
+#: model:ir.actions.server,name:ab_sales.ir_cron_update_balance_per_pos_ir_actions_server
+msgid "Inventory: Update Balance Per Store"
+msgstr "المخزون: تحديث الرصيد لكل المخزن"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Invoice"
+msgstr "الفاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Invoice #"
+msgstr "رقم الفاتورة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Invoice %s has no lines in B-Connect."
+msgstr "الفاتورة %s لا يوجد لديه خطوط في B-Connect."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Invoice %s not found in B-Connect."
+msgstr "الفاتورة %s غير موجود في B-Connect."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__invoice_address
+msgid "Invoice Address"
+msgstr "عنوان الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__invoice_address_datalist
+msgid "Invoice Address Datalist"
+msgstr "قائمة بيانات عنوان الفاتورة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__origin_header_id
+msgid "Invoice Number"
+msgstr "رقم الفاتورة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Invoice does not Exist"
+msgstr "الفاتورة غير موجودة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Invoice must be in prepending status"
+msgstr "يجب أن تكون الفاتورة في حالة قيد التهيئة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Invoices"
+msgstr "الفواتير"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_ip
+msgid "Ip1"
+msgstr "عنوان IP1"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__is_closed
+msgid "Is Closed"
+msgstr "مغلقة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__is_delivery
+msgid "Is Delivery"
+msgstr "فاتورة توصيل"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_is_follower
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_is_follower
+msgid "Is Follower"
+msgstr "متابع"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Item"
+msgstr "الصنف"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Item #"
+msgstr "رقم الصنف"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__itm_eplus_id
+msgid "Item ID in E-Plus (item_catalog.itm_id)."
+msgstr "معرف العنصر في E-Plus (item_catalog.itm_id)."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Items"
+msgstr "الأصناف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__itm_nexist
+msgid "Itm Nexist"
+msgstr "الصنف غير موجود"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+msgid "LE"
+msgstr "ج.م"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Last Call (UTC)"
+msgstr "آخر استدعاء (UTC)"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__last_manual_run_at
+msgid "Last Manual Run At"
+msgstr "آخر تشغيل يدوي في"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__last_order_date
+msgid "Last Order Date"
+msgstr "تاريخ آخر طلب"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__last_synced_at
+msgid "Last Synced At"
+msgstr "آخر مزامنة في"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_uid
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_ui_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_ui_api__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__write_date
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__write_date
+msgid "Last Updated on"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__line_value
+msgid "Line Value"
+msgstr "قيمة السطر"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Line with missing product E-Plus serial."
+msgstr "سطر بدون رقم تسلسلي للمنتج في E-Plus."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Lines"
+msgstr "السطور"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Lines exceeding available stock"
+msgstr "السطور بدون رصيد"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_unavailable_wizard_line
+msgid "Lines where requested qty exceeds available stock"
+msgstr "سطور بيع ذات رصيد صفر أو غير متاح"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Linked Products (Temp)"
+msgstr "المنتجات المرتبطة (مؤقت)"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Load Lines"
+msgstr "تحميل السطور"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Loading active crons..."
+msgstr "جارٍ تحميل مهام Cron النشطة..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Loading bills..."
+msgstr "جارٍ تحميل الفواتير..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Loading details..."
+msgstr "جارٍ تحميل التفاصيل..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Loading linked products..."
+msgstr "جارٍ تحميل المنتجات المرتبطة..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Loading sales return..."
+msgstr "جارٍ تحميل مرتجع المبيعات..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Loading..."
+msgstr "جارٍ التحميل..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+msgid "Loading…"
+msgstr "جارٍ التحميل…"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
+msgid "Lost Discount"
+msgstr "خصم مفقود"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_manager
+msgid "Manager"
+msgstr "المدير"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_pos_replication_turn_uniq_user_cron
+msgid "Manual replication turn already exists for this user and cron."
+msgstr "دورة النسخ اليدوي موجودة بالفعل لهذا المستخدم ولمهمة Cron هذه."
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_marketing
+msgid "Marketing"
+msgstr "التسويق"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Max Return"
+msgstr "أقصى مرتجع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__max_returnable_qty
+msgid "Max Returnable"
+msgstr "أقصى كمية قابلة للإرجاع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__max_returnable_source
+msgid "Max Returnable (source)"
+msgstr "أقصى كمية قابلة للإرجاع (المصدر)"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Maximize"
+msgstr "تكبير"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__max_returnable_qty
+msgid "Maximum quantity allowed to be returned for this line."
+msgstr "الحد الأقصى للكمية المسموح بإرجاعها لهذا الخط."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_has_error
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_has_error
+msgid "Message Delivery error"
+msgstr "خطأ في تسليم الرسالة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_ids
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_ids
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Minimize"
+msgstr "تصغير"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "Missing cron id."
+msgstr "معرف Cron مفقود."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Missing header_id."
+msgstr "header_id مفقود."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Missing key values for return line update."
+msgstr "القيم الأساسية المفقودة لتحديث خط الإرجاع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Missing required models: %s"
+msgstr "النماذج المطلوبة مفقودة: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "Missing required values to insert Replication_Trans rows."
+msgstr "القيم المطلوبة مفقودة لإدراج صفوف Replication_Trans."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_mobile
+msgid "Mobile"
+msgstr "الجوال"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr "آخر موعد لنشاطي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__name
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Net"
+msgstr "الصافي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__net_amount
+msgid "Net Amount"
+msgstr "القيمة الصافية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Net:"
+msgstr "الصافي:"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__protocol__network
+msgid "Network"
+msgstr "الشبكة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Network printers require IP / Host."
+msgstr "تتطلب طابعات الشبكة IP / Host."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "New Bill"
+msgstr "فاتورة جديدة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "New Customer"
+msgstr "عميل جديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__new_customer_address
+msgid "New Customer Address"
+msgstr "عنوان العميل الجديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__new_customer_name
+msgid "New Customer Name"
+msgstr "اسم العميل الجديد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__new_customer_phone
+msgid "New Customer Phone"
+msgstr "هاتف العميل الجديد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Next"
+msgstr "التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr "آخر موعد للنشاط التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_summary
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_summary
+msgid "Next Activity Summary"
+msgstr "ملخص النشاط التالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_type_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_type_id
+msgid "Next Activity Type"
+msgstr "نوع النشاط التالي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Next Call (UTC)"
+msgstr "الاستدعاء التالي (UTC)"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "No IP for this store."
+msgstr "لا يوجد IP لهذا المتجر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "No Sales Return records selected."
+msgstr "لم يتم تحديد أي سجلات مرتجع المبيعات."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "No Stock Warning"
+msgstr "تحذير: لا يوجد رصيد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "No UoM"
+msgstr "لا توجد وحدة قياس"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "No active ab_odoo_replication cron found."
+msgstr "لم يتم العثور على مهمة Cron نشطة لـ ab_odoo_replication."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "No active store found in BConnect."
+msgstr "لم يتم العثور على متجر نشط في BConnect."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No bill selected"
+msgstr "لم يتم تحديد فاتورة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "No bills found."
+msgstr "لم يتم العثور على فواتير."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No cached bills yet."
+msgstr "لا توجد فواتير مخزنة مؤقتًا بعد."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No invoices found."
+msgstr "لم يتم العثور على فواتير."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No items found in selected invoice."
+msgstr "لم يتم العثور على أي عناصر في الفاتورة المحددة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No lines available."
+msgstr "لا توجد سطور متاحة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "No lines loaded."
+msgstr "لم يتم تحميل أي سطور."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
+msgid "No lines to print."
+msgstr "لا توجد سطور للطباعة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "No lines to return."
+msgstr "لا توجد سطور للإرجاع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "No lines to send."
+msgstr "لا توجد سطور لإرسالها."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "No lines."
+msgstr "لا توجد سطور."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_select_dialog.xml:0
+msgid "No matching products."
+msgstr "لا توجد منتجات مطابقة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_line.py:0
+msgid "No matching stores found for this sell store"
+msgstr "لم يتم العثور على مخازن مطابقة لهذا المخزن للبيع"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.product_store_balance_html
+msgid "No positive balances found for the selected product(s)."
+msgstr "لم يتم العثور على أرصدة موجبة للمنتج (المنتجات) المحددة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/js/ab_sales_renderer_list.js:0
+msgid "No product"
+msgstr "لا يوجد منتج"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "No products found."
+msgstr "لم يتم العثور على منتجات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "No spare customers available for this store."
+msgstr "لا يوجد عملاء احتياطيين متاحين لهذا المتجر."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_uom_repair.py:0
+msgid "No stores with valid IP found for repair."
+msgstr "لم يتم العثور على متاجر ذات عنوان IP صالح للإصلاح."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__push_state__none
+msgid "None"
+msgstr "لا شيء"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__not_entered
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__not_entered
+msgid "Not entered by data entry yet"
+msgstr "لم يتم إدخالها بعد بواسطة مدخل البيانات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__not_transferred
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__not_transferred
+msgid "Not transferred yet from main store"
+msgstr "لم تُنقل بعد من المخزن الرئيسي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__notes
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__notes
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Nothing to print."
+msgstr "لا يوجد شيء للطباعة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Nothing to return."
+msgstr "لا يوجد شيء للإرجاع."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__number_of_products
+msgid "Number Of Products"
+msgstr "عدد المنتجات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_needaction_counter
+msgid "Number of Actions"
+msgstr "عدد الإجراءات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_has_error_counter
+msgid "Number of errors"
+msgstr "عدد الأخطاء"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_needaction_counter
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr "عدد الرسائل التي تتطلب إجراءً"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__message_has_error_counter
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr "عدد الرسائل التي بها خطأ في التسليم"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__source_uom_factor
+msgid "Number of small units in one source unit."
+msgstr "عدد الوحدات الصغيرة في وحدة مصدر واحدة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Offline"
+msgstr "غير متصل"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Online"
+msgstr "متصل"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Only IPv4 ranges are supported."
+msgstr "يتم دعم نطاقات IPv4 فقط."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "Only ab_odoo_replication cron is allowed."
+msgstr "يُسمح فقط بمهمة Cron الخاصة بـ ab_odoo_replication."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Only one default printer is allowed."
+msgstr "يُسمح بطابعة افتراضية واحدة فقط."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Only prepending returns can be moved to pending."
+msgstr "يمكن نقل المرتجعات المعلقة فقط إلى المعلقة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_product_inherit.py:0
+msgid "Operation not supported"
+msgstr "العملية غير مدعومة"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_form
+msgid "Optional operational notes..."
+msgstr "ملاحظات تشغيلية اختيارية..."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__order_count
+msgid "Order Count"
+msgstr "عدد الطلبات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__sale_line_id
+msgid "Original Line (optional)"
+msgstr "السطر الأصلي (اختياري)"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__origin_header_id
+msgid "Original invoice STH ID in B-Connect (sales_trans_h.sth_id)."
+msgstr "معرف STH للفاتورة الأصلية في B-Connect (sales_trans_h.sth_id)."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__source_itm_unit
+msgid "Original sales_trans_d.itm_unit value."
+msgstr "القيمة الأصلية للحقل sales_trans_d.itm_unit."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__sth_id
+msgid "Original sales_trans_h.sth_id (E-Plus header ID)."
+msgstr "sales_trans_h.sth_id الأصلي (معرف رأس E-Plus)."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__unavailable_reason_other
+msgid "Other (details)"
+msgstr "أخرى (تفاصيل)"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__other
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__other
+msgid "Other (please explain)"
+msgstr "أخرى (يرجى الشرح)"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__unavailable_reason_other
+msgid "Other reason (details)"
+msgstr "سبب آخر (تفاصيل)"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "PDF rendering failed: %s"
+msgstr "فشل إنشاء PDF: %s"
+
+#. module: ab_sales
+#: model:ir.actions.client,name:ab_sales.ab_sales_pos_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_pos_menu
+msgid "POS"
+msgstr "نقطة البيع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__paper_size__pos_80mm
+msgid "POS 80mm"
+msgstr "نقطة البيع 80 مم"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
+msgid "POS 80mm format requires a thermal ESC/POS printer queue."
+msgstr "يتطلب تنسيق POS مقاس 80 مم قائمة انتظار الطابعة الحرارية ESC/POS."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+msgid "POS Settings"
+msgstr "إعدادات نقطة البيع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "POS image processing failed: %s"
+msgstr "فشلت معالجة الصور POS: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "POS image rendering failed: %s"
+msgstr "فشل عرض الصورة POS: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "POS image rendering failed: output image not generated."
+msgstr "فشل عرض الصورة POS: لم يتم إنشاء صورة الإخراج."
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_pos_settings_uniq_user_id
+msgid "POS settings already exist for this user."
+msgstr "إعدادات POS موجودة بالفعل لهذا المستخدم."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_header_uniq_pos_client_token
+msgid "POS submit token must be unique."
+msgstr "يجب أن يكون رمز الإرسال POS فريدًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Page"
+msgstr "الصفحة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__paper_size
+msgid "Paper Size"
+msgstr "مقاس الورق"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__password
+msgid "Password"
+msgstr "كلمة المرور"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
+msgid "Pay to Customer"
+msgstr "ادفع للعميل"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__pending
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__period_days
+msgid "Period Days"
+msgstr "أيام الفترة"
+
+#. module: ab_sales
+#: model:res.groups,name:ab_sales.group_ab_sales_pharmacist
+msgid "Pharmacist"
+msgstr "صيدلي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_phone
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Phone is required."
+msgstr "الهاتف مطلوب."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Phone must be 11 digits and start with 010, 011, 012, or 015."
+msgstr ""
+"يجب أن يتكون الهاتف من 11 رقمًا ويبدأ بالرقم 010 أو 011 أو 012 أو 015."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Phone, delivery phone, or name"
+msgstr "الهاتف أو هاتف التسليم أو الاسم"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+msgid "Pinned"
+msgstr "مثبت"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Please Submit this invoice first."
+msgstr "يرجى تقديم هذه الفاتورة أولا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/js/ab_sales_renderer_list.js:0
+msgid "Please choose a product first, then click Balance."
+msgstr "يرجى اختيار المنتج أولاً، ثم انقر فوق الرصيد."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Please choose a reason for each line you still want to sell."
+msgstr "يرجى اختيار سبب لكل سطر تريد بيعه رغم عدم وجود رصيد."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Please correct the data and try again."
+msgstr "يرجى تصحيح البيانات والمحاولة مرة أخرى."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Please enter a positive return quantity on at least one line."
+msgstr "الرجاء إدخال كمية إرجاع موجبة في سطر واحد على الأقل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Please enter sth_id (Original Invoice) first."
+msgstr "الرجاء إدخال sth_id (الفاتورة الأصلي) أولاً."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "Please select a Store first."
+msgstr "الرجاء تحديد المخزن أولاً."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Please select a Store with IP before loading invoice."
+msgstr "الرجاء تحديد المخزن مع IP قبل تحميل الفاتورة."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__port
+msgid "Port"
+msgstr "المنفذ"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Port must be between 1 and 65535."
+msgstr "يجب أن يكون المنفذ بين 1 و65535."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__pos_client_token
+msgid "Pos Client Token"
+msgstr "رمز عميل نقطة البيع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "PowerShell HTML print command failed."
+msgstr "فشل أمر الطباعة PowerShell HTML."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "PowerShell command failed."
+msgstr "فشل أمر PowerShell."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "PowerShell print command failed."
+msgstr "فشل أمر الطباعة في PowerShell."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Pre-Pending"
+msgstr "ما قبل التعليق"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__prepending
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__prepending
+msgid "PrePending"
+msgstr "قيد الإعداد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Prepending"
+msgstr "قيد التهيئة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Preview"
+msgstr "معاينة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Previous"
+msgstr "السابق"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__price
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__price_subtotal
+msgid "Price Subtotal"
+msgstr "إجمالي السعر الفرعي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__price_tax
+msgid "Price Tax"
+msgstr "ضريبة السعر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__available_prices_html
+msgid "Price:Balance"
+msgstr "السعر:الرصيد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Prices"
+msgstr "الأسعار"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__f_transaction_id
+msgid "Primary key from F_Transaction_Header table."
+msgstr "المفتاح الأساسي من جدول F_Transaction_Header."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Print"
+msgstr "طباعة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Print Receipt"
+msgstr "طباعة الإيصال"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Print command failed: %s"
+msgstr "فشل أمر الطباعة: %s"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Printer"
+msgstr "الطابعة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid ""
+"Printer '%s' is a raw queue. HTML/PDF print is blocked to avoid binary "
+"garbage output. Use text print or configure a non-raw driver queue."
+msgstr ""
+"الطابعة '%s' عبارة عن قائمة انتظار أولية. تم حظر طباعة HTML/PDF لتجنب إخراج "
+"البيانات الثنائية المهملة. استخدم طباعة النص أو قم بتكوين قائمة انتظار برامج"
+" التشغيل غير الأولية."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__printer_name
+msgid "Printer / Share Name"
+msgstr "اسم الطابعة / المشاركة"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_printer
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_form
+msgid "Printer Configuration"
+msgstr "إعدادات الطابعة"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_form
+msgid "Printer Profile"
+msgstr "ملف تعريف الطابعة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Printer Test"
+msgstr "اختبار الطابعة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Printer discovery failed: %s"
+msgstr "فشل اكتشاف الطابعة: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Printer discovery is not available on this server (missing lpadmin)."
+msgstr "اكتشاف الطابعة غير متاح على هذا الخادم (مفقود lpadmin)."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Printer name (label only)"
+msgstr "اسم الطابعة (للعرض فقط)"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_printer_uniq_name
+msgid "Printer name must be unique."
+msgstr "يجب أن يكون اسم الطابعة فريدًا."
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_printer_action
+#: model:ir.ui.menu,name:ab_sales.ab_printer_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_list
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_search
+msgid "Printers"
+msgstr "الطابعات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__product_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__product_id
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_search
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"Product '%s' is sold without balance.\n"
+"Must be returned completely!"
+msgstr ""
+"المنتج '%s' يباع بدون رصيد.\n"
+"يجب أن تعاد بالكامل!"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_product_balance_wizard
+msgid "Product Balance Wizard"
+msgstr "معالج أرصدة المنتج"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__product_eplus_serial
+msgid "Product Eplus Serial"
+msgstr "الرقم التسلسلي للمنتج في E-Plus"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+msgid "Product Search"
+msgstr "بحث المنتجات"
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_product_rank_uniq_rank_key
+msgid "Product rank entry already exists for this scope."
+msgstr "إدخال التصنيف المنتج موجود بالفعل لهذا النطاق."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model:ir.ui.menu,name:ab_sales.ab_product_menu
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_product_card_menu
+msgid "Products Cards"
+msgstr "بطاقات المنتجات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__products_not_exist
+msgid "Products Not Exist"
+msgstr "منتجات غير موجودة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_unavailable_reason_required.py:0
+msgid ""
+"Products where requested qty exceeds available balance require a reason before submit.\n"
+"If reason is 'Other', details are required.\n"
+"\n"
+"Missing lines:\n"
+"%s"
+msgstr ""
+"المنتجات عندما تتجاوز الكمية المطلوبة الرصيد المتاح، يجب تقديم سبب قبل الإرسال.\n"
+"إذا كان السبب هو \"غير ذلك\"، فالتفاصيل مطلوبة.\n"
+"\n"
+"الخطوط المفقودة:\n"
+"%s"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Promo"
+msgstr "العرض"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__protocol
+msgid "Protocol"
+msgstr "البروتوكول"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__push_message
+msgid "Push Message"
+msgstr "رسالة الإرسال"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__push_state
+msgid "Push State"
+msgstr "حالة الإرسال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Push to E-Plus"
+msgstr "إرسال إلى E-Plus"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Pushed to E-Plus successfully (sth_id=%s)."
+msgstr "تم الدفع إلى E-Plus بنجاح (sth_id=%s)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Python package 'Pillow' is required for POS image processing: %s"
+msgstr "حزمة Python \"Pillow\" مطلوبة لمعالجة الصور POS: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid ""
+"Python package 'python-escpos' is required for ESC/POS binary printing: %s"
+msgstr "حزمة Python \"python-escpos\" مطلوبة للطباعة الثنائية ESC/POS: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Python package 'python-escpos' is required for POS binary printing: %s"
+msgstr "حزمة Python \"python-escpos\" مطلوبة للطباعة الثنائية POS: %s"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__qty_str
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__qty_str
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__qty_total
+msgid "Qty Total"
+msgstr "إجمالي الكمية"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__qty_to_return
+msgid "Qty to return"
+msgstr "الكمية المطلوب إرجاعها"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/barcode_select_dialog.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__qty
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__qty
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_line_view_tree
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__rank_scope
+msgid "Rank Scope"
+msgstr "نطاق الترتيب"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Raw TCP print failed: %s"
+msgstr "فشلت طباعة TCP الأولية: %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__unavailable_reason
+msgid "Reason"
+msgstr "السبب"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_unavailable_wizard
+msgid "Reason for selling products exceeding available stock"
+msgstr "سبب بيع المنتجات بدون رصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__unavailable_reason
+msgid "Reason for selling without stock"
+msgstr "سبب البيع بدون رصيد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Receipt Footer"
+msgstr "تذييل الإيصال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Receipt Header"
+msgstr "رأس الإيصال"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/product_card.xml:0
+msgid "Recent"
+msgstr "الأحدث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Remove"
+msgstr "إزالة"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_replica_db_menu
+msgid "Replica Databases"
+msgstr "قواعد بيانات Replica"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Replication"
+msgstr "النسخ"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header_replication_trans_inherit.py:0
+msgid "Replication_Trans Bulk Insert"
+msgstr "إدراج Replication_Trans دفعة واحدة"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_sales_reports_menu
+msgid "Reports"
+msgstr "التقارير"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__qty
+msgid "Requested Qty"
+msgstr "الكمية المطلوبة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_bill_wizard_inherit.py:0
+msgid "Required"
+msgstr "مطلوب"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+msgid "Required details..."
+msgstr "التفاصيل المطلوبة..."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Required print binary is missing: %s"
+msgstr "ثنائي الطباعة المطلوب مفقود: %s"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form_unavailable_reason_required
+msgid "Required when qty exceeds balance"
+msgstr "مطلوب عندما تتجاوز الكمية الرصيد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Reset"
+msgstr "إعادة تعيين"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__activity_user_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__activity_user_id
+msgid "Responsible User"
+msgstr "المستخدم المسؤول"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Return"
+msgstr "مرتجع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__header_id
+msgid "Return Header"
+msgstr "رأس المرتجع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Return ID:"
+msgstr "معرف المرتجع:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__line_ids
+msgid "Return Lines"
+msgstr "سطور المرتجع"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Return Value"
+msgstr "قيمة المرتجع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"Return not allowed. Invoice age (%s days) exceeded allowed return period (%s"
+" days)."
+msgstr ""
+"المرتجع غير مسموح به. تجاوز عمر الفاتورة (أيام %s) فترة الإرجاع المسموح بها "
+"(أيام %s)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Return qty for product %s exceeds allowed max (%s)."
+msgstr "الكمية المرتجع للمنتج %s تتجاوز الحد الأقصى المسموح به (%s)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Return quantity cannot be negative for product %s."
+msgstr "لا يمكن أن تكون كمية المرتجع سالبة للمنتج %s."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_line.py:0
+msgid "Return quantity cannot be negative."
+msgstr "لا يمكن أن تكون كمية المرتجع سالبة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_line.py:0
+msgid "Return quantity exceeds max returnable quantity."
+msgstr "تتجاوز كمية المرتجع الحد الأقصى للكمية القابلة للإرجاع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Return value (%s) cannot exceed invoice net (%s)."
+msgstr "لا يمكن أن تتجاوز قيمة المرتجع (%s) صافي الفاتورة (%s)."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_router.py:0
+msgid ""
+"Return was saved, but updating sales_return.returned_items_value failed: %s"
+msgstr "تم حفظ المرتجع، ولكن فشل تحديث sales_return.returned_items_value: %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__notice_header_ids
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Returns"
+msgstr "المرتجعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+msgid ""
+"Returns accepted within 14 days; refrigerated medications and cosmetics are not eligible for\n"
+"                        return or exchange."
+msgstr ""
+"يُقبل الإرجاع خلال 14 يومًا؛أدوية الثلاجة ومستحضرات التجميل لا ترد ولا "
+"تستبدل."
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__std_id
+msgid "Row ID inside sales_trans_d"
+msgstr ""
+"معرف الصف داخل sales_trans_d. ظ†ططھط§ط¬ظ‡ ظپظٹ حيث ط¨طھطط¯ظٹط«ط³ط·ط± "
+"ط§ظظ„ظپط§طھظˆط±ط©."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Run Selected"
+msgstr "تشغيل المحدد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__message_has_sms_error
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr "خطأ في تسليم SMS"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard__header_id
+msgid "Sale"
+msgstr "البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__line_id
+msgid "Sale Line"
+msgstr "سطر البيع"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.sales_menu_root
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Sales Detail"
+msgstr "تفاصيل المبيعات"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_line_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_reports_sales_details_menu
+msgid "Sales Details"
+msgstr "ab_sales_line"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Sales Header"
+msgstr "رأس المبيعات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Sales Net"
+msgstr "صافي المبيعات"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة مبيعات نقطة البيع البرمجية"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_pos_replication_turn
+msgid "Sales POS Replication Manual Turn"
+msgstr "المبيعات POS النسخ المتماثل اليدوي"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_pos_settings
+msgid "Sales POS User Settings"
+msgstr "إعدادات مستخدم نقطة البيع للمبيعات"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_product_rank
+msgid "Sales Product Ranking Cache"
+msgstr "ذاكرة تخزين ترتيب منتجات المبيعات"
+
+#. module: ab_sales
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_return_header_action
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_return_header_action_new
+#: model:ir.ui.menu,name:ab_sales.ab_sales_return_header_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Sales Return"
+msgstr "مرتجع المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_pivot
+msgid "Sales Return Analysis"
+msgstr "تحليل مرتجع المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_search
+msgid "Sales Return Search"
+msgstr "بحث مرتجع المبيعات"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_return_ui_api
+msgid "Sales Return UI API"
+msgstr "واجهة برمجة تطبيقات مرتجع المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_tree
+msgid "Sales Returns"
+msgstr "مرتجعات المبيعات"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_ui_api
+msgid "Sales UI API"
+msgstr "واجهة المبيعات البرمجية"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "Sales bill was not found."
+msgstr "لم يتم العثور على فاتورة المبيعات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "Sales header not found."
+msgstr "لم يتم العثور على رأس المبيعات."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Sales return could not be loaded."
+msgstr "لا يمكن تحميل إرجاع المبيعات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "Sales return could not be opened."
+msgstr "لا يمكن فتح إرجاع المبيعات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "Sales return line was not found."
+msgstr "لم يتم العثور على خط إرجاع المبيعات."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "Sales return was not found."
+msgstr "لم يتم العثور على عائد المبيعات."
+
+#. module: ab_sales
+#: model:ir.actions.server,name:ab_sales.ir_cron_refresh_product_rank_cache_ir_actions_server
+msgid "Sales: Refresh Product Rank Cache"
+msgstr "المبيعات: تحديث ذاكرة التخزين المؤقت للرتبة المنتج"
+
+#. module: ab_sales
+#: model:ir.actions.server,name:ab_sales.ir_cron_sync_sales_status_from_store_ir_actions_server
+msgid "Sales: Sync Pending Status From Store"
+msgstr "المبيعات: مزامنة الحالة المعلقة من المخزن"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/return_form_buttons.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_settings_extension.xml:0
+msgid "Save"
+msgstr "حفظ"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "Save Default"
+msgstr "حفظ كافتراضي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Save Links"
+msgstr "حفظ الروابط"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Save Notes"
+msgstr "حفظ الملاحظات"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Save settings"
+msgstr "حفظ الإعدادات"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__saved
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__saved
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_form
+msgid "Saved"
+msgstr "محفوظة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Saved returns cannot be modified."
+msgstr "لا يمكن تعديل المرتجعات المحفوظة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Saved returns cannot be moved back to pending."
+msgstr "لا يمكن إرجاع المرتجعات المحفوظة إلى المعلقة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Scan or type barcode"
+msgstr "امسح الباركود أو اكتبه"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__score
+msgid "Score"
+msgstr "النتيجة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Search Results"
+msgstr "نتائج البحث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Search by product name..."
+msgstr "ابحث باسم المنتج..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Search result includes old bills too."
+msgstr "تتضمن نتيجة البحث الفواتير القديمة أيضًا."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Select a bill to see details."
+msgstr "حدد الفاتورة لمعرفة التفاصيل."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Select a branch to search BConnect."
+msgstr "حدد فرعًا للبحث عن BConnect."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+msgid "Select unavailable reason..."
+msgstr "حدد سبب عدم التوفر..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+msgid "Selected"
+msgstr "المحدد"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "Selected cron cannot be triggered manually."
+msgstr "لا يمكن تشغيل مهمة Cron المحددة يدويًا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "Selected cron is inactive."
+msgstr "مهمة Cron المحددة غير نشطة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Selected printer is saved as default for next print operations."
+msgstr "يتم حفظ الطابعة المحددة كطابعة افتراضية لعمليات الطباعة التالية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "Selected unit of measure was not found."
+msgstr "لم يتم العثور على وحدة القياس المختارة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Selected:"
+msgstr "المحدد:"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__sell_price
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__sell_price
+msgid "Sell Price"
+msgstr "سعر البيع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Server %s is offline or too slow"
+msgstr "الخادم %s غير متصل أو بطيء جدًا"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Server %s may be offline"
+msgstr "قد يكون الخادم %s غير متصل"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Set Pending"
+msgstr "تعيين كقيد الانتظار"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__settings_json
+msgid "Settings Json"
+msgstr "إعدادات JSON"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__settings_version
+msgid "Settings Version"
+msgstr "إصدار الإعدادات"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__protocol__shared
+msgid "Shared"
+msgstr "مشترك"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Shared printers require IP / Host."
+msgstr "الطابعات المشتركة تتطلب IP / المضيف."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Shared printers require Printer / Share Name."
+msgstr "تتطلب الطابعات المشتركة الطابعة / Share Name."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_product_form_view_inherit
+msgid "Show Balance"
+msgstr "عرض الرصيد"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.product_store_balance_html
+msgid ""
+"Showing balances from offline data (ab_sales_inventory). Live E-Plus "
+"connection is unavailable."
+msgstr ""
+"إظهار الأرصدة من البيانات غير المتصلة بالإنترنت (ab_sales_inventory). "
+"الاتصال المباشر بـ E-Plus غير متاح."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.product_store_balance_html
+msgid ""
+"Showing balances from online data. Live E-Plus connection is available."
+msgstr "إظهار الأرصدة من البيانات عبر الإنترنت. يتوفر اتصال مباشر E-Plus."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Showing latest 20 pending/saved bills."
+msgstr "عرض أحدث 20 فاتورة معلقة/محفوظة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_barcode_link.xml:0
+msgid "Skip"
+msgstr "تخطي"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Sold"
+msgstr "تم البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__qty_sold
+msgid "Sold Qty"
+msgstr "الكمية المباعة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__qty_sold_source
+msgid "Sold Qty (source)"
+msgstr "الكمية المباعة (المصدر)"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Sold Without Balance"
+msgstr "تم البيع بدون رصيد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Sold without balance"
+msgstr "تم البيع بدون رصيد"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_unavailable_wizard_form
+msgid "Some products exceed available stock in this store."
+msgstr "بعض المنتجات تتجاوز المخزون المتاح في هذا المتجر."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_line_view_tree
+msgid "Source"
+msgstr "المصدر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__source_itm_unit
+msgid "Source Unit"
+msgstr "وحدة المصدر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__source_uom_factor
+msgid "Source UoM Factor"
+msgstr "معامل وحدة القياس للمصدر"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "Source invoice was not found in Odoo; cannot validate return period."
+msgstr ""
+"لم يتم العثور على فاتورة المصدر في Odoo؛ لا يمكن التحقق من صحة فترة العودة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid ""
+"Source sales invoice #%s is still pending. Save the source invoice first, "
+"then push the return."
+msgstr ""
+"فاتورة المبيعات المصدر #%s لا تزال معلقة. احفظ فاتورة المصدر أولاً، ثم ادفع "
+"الإرجاع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__status
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__header_status
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_state
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+"حالة مبنية على الأنشطة:\n"
+"متأخر: تاريخ الاستحقاق قد مضى بالفعل\n"
+"اليوم: تاريخ النشاط هو اليوم\n"
+"مُخطط: أنشطة مستقبلية."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__stocktaking_error
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__stocktaking_error
+msgid "Stocktaking error"
+msgstr "خطأ في الجرد"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_inventory__store_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__sto_eplus_serial
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__store_id
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Store %s is not allowed for sales."
+msgstr "المخزن %s غير مسموح به للمبيعات."
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.action_ab_product_balance_wizard
+#: model:ir.model.fields,field_description:ab_sales.field_ab_product_balance_wizard__balance_html
+#: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_product_balance_wizard_form
+msgid "Store Balances"
+msgstr "أرصدة المخازن"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_code
+msgid "Store Code"
+msgstr "كود المخزن"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_line__sto_id
+msgid "Store ID in Item_Class_Store / sales_trans_d."
+msgstr "معرف المخزن في Item_Class_Store / sales_trans_d."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Store IP"
+msgstr "عنوان IP للمخزن"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__store_server_online
+msgid "Store Server Online"
+msgstr "خادم المخزن متصل"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Store and product are required."
+msgstr "المخزن والمنتج مطلوبان."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
+msgid "Store is missing E-Plus serial."
+msgstr "المخزن يفتقد الرقم التسلسلي لـ E-Plus."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Store is required and must have an E-Plus serial."
+msgstr "المخزن مطلوب ويجب أن يحتوي على مسلسل E-Plus."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_balance_refresh.py:0
+#: code:addons/ab_sales/models/ab_sales_pos_customer.py:0
+msgid "Store is required."
+msgstr "المخزن مطلوب."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Store:"
+msgstr "المخزن:"
+
+#. module: ab_sales
+#: model:ir.ui.menu,name:ab_sales.ab_store_menu
+msgid "Stores"
+msgstr "المخازن"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_line__inventory_json
+msgid "Structured inventory data: {'data': [...]}"
+msgstr "بيانات مخزون منظمة: {'data': [...]}"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Submit (F10)"
+msgstr "إرسال (F10)"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/models/ab_sales_unavailable_reason_required.py:0
+msgid "Submit is only allowed for bills created from POS."
+msgstr "الإرسال مسموح فقط للفواتير التي تم إنشاؤها من نقطة البيع."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+msgid "Submitting..."
+msgstr "جارٍ الإرسال..."
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__push_state__success
+msgid "Success"
+msgstr "نجاح"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Summary"
+msgstr "الملخص"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "System dialog (choose on print)"
+msgstr "نافذة النظام (اختر عند الطباعة)"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__target_sell_price
+msgid "Target Sell Price"
+msgstr "سعر البيع المستهدف"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Tel"
+msgstr "الهاتف"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_printer_view_form
+msgid "Test Printer"
+msgstr "اختبار الطابعة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Test print sent to %s."
+msgstr "تم إرسال طباعة اختبار إلى %s."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_printer.xml:0
+msgid "The system print dialog opens on print. Choose the printer there."
+msgstr "تفتح نافذة طباعة النظام عند الطباعة. اختر الطابعة من هناك."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid ""
+"This  product \n"
+"%(prod)s\n"
+" cannot be sold in fractional small units. Requested %(req).4f small units (qty=%(q).4f × factor=%(f).4f). Please adjust the quantity to a whole small unit."
+msgstr ""
+"هذا المنتج \n"
+"%(prod)s\n"
+" لا يمكن بيعها في وحدات صغيرة كسرية. الوحدات الصغيرة %(req).4f المطلوبة (الكمية = %(q).4f × العامل = %(f).4f). يرجى ضبط الكمية إلى وحدة صغيرة كاملة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "This bill has no ePlus serial."
+msgstr "هذه الفاتورة لا تحتوي على رقم تسلسلي لـ E-Plus."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid ""
+"This bill is being submitted by another process. Please retry in a moment."
+msgstr ""
+"يتم إرسال هذه الفاتورة بواسطة عملية أخرى. يرجى إعادة المحاولة بعد لحظة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid ""
+"This cron is already running in background. Please wait for completion."
+msgstr "مهمة Cron هذه تعمل بالفعل في الخلفية. يرجى الانتظار حتى الانتهاء."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid "This cron is scheduled to run in less than 10 seconds. Please wait."
+msgstr "تمت جدولة تشغيل مهمة Cron هذه خلال أقل من 10 ثوانٍ. يرجى الانتظار."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "This is not Replica DB"
+msgstr "هذه ليست قاعدة بيانات Replica"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Toggle bills panel"
+msgstr "تبديل لوحة الفواتير"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_a4
+#: model_terms:ir.ui.view,arch_db:ab_sales.bill_wizard_receipt_print_html_pos
+#: model_terms:ir.ui.view,arch_db:ab_sales.product_store_balance_html
+msgid "Total"
+msgstr "الإجمالي"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__balance
+msgid "Total Balance"
+msgstr "إجمالي الرصيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__total_net_amount
+msgid "Total Net Amount"
+msgstr "إجمالي القيمة الصافية"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__total_price
+msgid "Total Price"
+msgstr "إجمالي السعر"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__total_return_qty
+msgid "Total Qty"
+msgstr "إجمالي الكمية"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Total Return Invoice"
+msgstr "إجمالي فاتورة المرتجع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__total_sales_net
+msgid "Total Sales Net"
+msgstr "إجمالي صافي المبيعات"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__total_return_value
+msgid "Total Value"
+msgstr "إجمالي القيمة"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Type name/code..."
+msgstr "اكتب الاسم/الكود..."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/add_products/add_products_action.xml:0
+msgid "Type name/code…"
+msgstr "اكتب الاسم/الكود…"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_header__activity_exception_decoration
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_return_header__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr "نوع نشاط الاستثناء على السجل."
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_unavailable_wizard_line_view_list
+msgid "Unavailable Product Reason"
+msgstr "سبب عدم توفر المنتج"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "Unavailable:"
+msgstr "غير متوفر:"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_unavailable_reason_required.py:0
+msgid "Unknown product"
+msgstr "منتج غير معروف"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Unsupported print combination: %s / %s"
+msgstr "تركيبة الطباعة غير مدعومة: %s / %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Unsupported print command type: %s"
+msgstr "نوع أمر الطباعة غير مدعوم: %s"
+
+#. module: ab_sales
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_unavailable_wizard_line_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_reports_unavailable_reason_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_unavailable_wizard_line_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_unavailable_wizard_line_view_search
+msgid "Unvailable Product Reason"
+msgstr "سبب عدم توفر المنتج"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__uom_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__uom_id
+msgid "UoM"
+msgstr "وحدة القياس"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__product_uom_category_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__product_uom_category_id
+msgid "UoM Category"
+msgstr "فئة وحدة القياس"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Updated"
+msgstr "تم التحديث"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "Use"
+msgstr "استخدام"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_replication_manual.xml:0
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__user_id
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__user_id
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_printer__username
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/sales_return/ab_sales_return_ui_api.xml:0
+msgid "Value"
+msgstr "القيمة"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Windows RAW spooler print failed: %s"
+msgstr "فشلت طباعة Windows RAW spooler: %s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+msgid "Windows installed-printer RAW printing requires pywin32: %s"
+msgstr "الطباعة RAW للطابعات المثبتة على Windows تتطلب pywin32: %s"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_unavailable_wizard_line__wizard_id
+msgid "Wizard"
+msgstr "المعالج"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "Write your feedback here"
+msgstr "اكتب ملاحظاتك هنا"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/zz_pos_unavailable_reason.xml:0
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__wrong_price
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_unavailable_wizard_line__unavailable_reason__wrong_price
+msgid "Wrong price in system"
+msgstr "سعر خاطئ في النظام"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api_replication_inherit.py:0
+msgid ""
+"You already consumed your chance for this cron interval. Please let another "
+"user try. Next chance: %s UTC"
+msgstr ""
+"لقد استهلكت فرصتك بالفعل خلال فترة Cron هذه. يرجى السماح لمستخدم آخر "
+"بالمحاولة. الفرصة التالية: %s بالتوقيت العالمي"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_ui_api.py:0
+msgid "You do not have access to sales return yet."
+msgstr "ليس لديك صلاحية الوصول إلى مرتجع المبيعات بعد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_return_header.py:0
+msgid "You try to call another Invoice, Please clear the old one!"
+msgstr "أنت تحاول استدعاء فاتورة أخرى، يرجى مسح الفاتورة القديمة أولاً!"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_form
+msgid "ab_sales_header_form"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_search
+msgid "ab_sales_header_search"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_tree
+msgid "ab_sales_header_tree"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_inventory
+msgid "ab_sales_inventory"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_form
+msgid "ab_sales_inventory_form"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_list
+msgid "ab_sales_inventory_list"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_pivot
+msgid "ab_sales_inventory_pivot"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_inventory_view_search
+msgid "ab_sales_inventory_search"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr ""
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_line_view_tree
+msgid "ab_sales_line_tree"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__c_id
+msgid "c_id"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__eplus_serial
+msgid "ePlus Serial"
+msgstr "الرقم التسلسلي في E-Plus"
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/bill_wizard/bill_wizard_action.xml:0
+msgid "ePlus Serial (Exact)"
+msgstr "الرقم التسلسلي لـ E-Plus (مطابق)"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__item_unit1_unit2
+msgid "itm_unit1_unit2"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__item_unit1_unit3
+msgid "itm_unit1_unit3"
+msgstr ""
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "lp command failed."
+msgstr "فشل أمر lp."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.xml:0
+msgid "more lines not shown."
+msgstr "هناك سطور أخرى غير معروضة."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__sales_return_id
+msgid "sales_return ID (sr_id)"
+msgstr "معرف sales_return (sr_id)"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__std_id
+msgid "std_id"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__sth_id
+msgid "sth_id"
+msgstr ""
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__sto_id
+msgid "sto_id"
+msgstr ""
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "wkhtmltoimage command failed."
+msgstr "فشل أمر wkhtmltoimage."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_printer.py:0
+#: code:addons/ab_sales/models/ab_sales_ui_api.py:0
+msgid "wkhtmltopdf command failed."
+msgstr "فشل أمر wkhtmltopdf."

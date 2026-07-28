@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="ab_odoo_replication_log_view_tree" model="ir.ui.view">
+            <field name="name">ab_odoo_replication_log_view_tree</field>
+            <field name="model">ab_odoo_replication_log</field>
+            <field name="arch" type="xml">
+                <list string="ab_odoo_replication_log_tree" multi_edit="1">
+                    <field name="model_name" optional="show"/>
+                    <field name="last_write_date" optional="show"/>
+                    <field name="last_id" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_odoo_replication_log_view_form" model="ir.ui.view">
+            <field name="name">ab_odoo_replication_log_view_form</field>
+            <field name="model">ab_odoo_replication_log</field>
+            <field name="arch" type="xml">
+                <form string="ab_odoo_replication_log_form">
+                    <sheet>
+                        <group>
+                            <field name="model_name"/>
+                            <field name="last_write_date"/>
+                            <field name="last_id"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_odoo_replication_log_view_search" model="ir.ui.view">
+            <field name="name">ab_odoo_replication_log_view_search</field>
+            <field name="model">ab_odoo_replication_log</field>
+            <field name="arch" type="xml">
+                <search string="ab_odoo_replication_log_search">
+                    <field name="model_name"/>
+                    <field name="last_write_date"/>
+                    <field name="last_id"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_odoo_replication_log_view_pivot" model="ir.ui.view">
+            <field name="name">ab_odoo_replication_log_view_pivot</field>
+            <field name="model">ab_odoo_replication_log</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_odoo_replication_log_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_odoo_replication_log_action" model="ir.actions.act_window">
+            <field name="name">Odoo Replication Log</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_odoo_replication_log</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+        <menuitem id="ab_odoo_replication_log_menu"
+                  name="Replication Log"
+                  parent="base.menu_custom"
+                  action="ab_odoo_replication_log_action"
+                  sequence="1000"/>
+
+
+    </data>
+</odoo>

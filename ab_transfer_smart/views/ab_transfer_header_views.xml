@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_transfer_header_view_form_smart" model="ir.ui.view">
+            <field name="name">ab_transfer_header_view_form_smart</field>
+            <field name="model">ab_transfer_header</field>
+            <field name="inherit_id" ref="ab_transfer.ab_transfer_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/header/button[@name='action_submit']" position="attributes">
+                    <attribute name="groups">ab_transfer_smart.group_trnasfer_smart_store_revision</attribute>
+                    <attribute name="invisible">is_submitted or smart_stage != 'pre_submit'</attribute>
+                </xpath>
+                <xpath expr="//form/header/field[@name='selection']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//form/header/button[@name='action_submit']" position="before">
+                    <button name="action_smart_to_store_preparation"
+                            type="object"
+                            string="Store Preparation"
+                            class="btn-secondary"
+                            groups="ab_transfer_smart.group_transfer_smart_purchase"
+                            invisible="is_submitted or smart_stage != 'purchase_preparation'"/>
+                    <button name="action_smart_to_store_revision"
+                            type="object"
+                            string="Store Revision"
+                            class="btn-secondary"
+                            groups="ab_transfer_smart.group_trnasfer_smart_store_preparation"
+                            invisible="is_submitted or smart_stage != 'store_preparation'"/>
+                    <button name="action_smart_pre_submit"
+                            type="object"
+                            string="Pre-Submit"
+                            class="btn-primary"
+                            groups="ab_transfer_smart.group_trnasfer_smart_store_revision"
+                            invisible="is_submitted or smart_stage != 'store_revision'"/>
+                </xpath>
+                <xpath expr="//form/header/field[@name='selection']" position="after">
+                    <button name="action_open_smart_transfer_lines"
+                            type="object"
+                            string="Open Smart Transfer Data"
+                            class="btn-info ms-auto o_smart_transfer_header_end_button o_smart_transfer_header_end_start"/>
+                    <button name="action_print_smart_transfer_lines"
+                            type="object"
+                            string="Print Smart Lines"
+                            class="btn-success o_smart_transfer_header_end_button"/>
+                    <button name="action_print_transfer_lines"
+                            type="object"
+                            string="Print Transfer Lines"
+                            class="btn-success o_smart_transfer_header_end_button"/>
+                </xpath>
+                <xpath expr="//sheet/div[@class='oe_title']" position="before">
+                    <field name="smart_stage" invisible="1"/>
+                    <widget name="web_ribbon"
+                            title="Purchase Preparation"
+                            bg_color="text-bg-info"
+                            invisible="smart_stage != 'purchase_preparation'"/>
+                    <widget name="web_ribbon"
+                            title="Store Preparation"
+                            bg_color="text-bg-primary"
+                            invisible="smart_stage != 'store_preparation'"/>
+                    <widget name="web_ribbon"
+                            title="Store Revision"
+                            bg_color="text-bg-warning"
+                            invisible="smart_stage != 'store_revision'"/>
+                    <widget name="web_ribbon"
+                            title="Pre-Submit"
+                            bg_color="text-bg-secondary"
+                            invisible="smart_stage != 'pre_submit'"/>
+                    <widget name="web_ribbon"
+                            title="Submitted"
+                            bg_color="text-bg-success"
+                            invisible="smart_stage != 'submit'"/>
+                </xpath>
+                <xpath expr="//field[@name='to_store_id']" position="after">
+                    <field name="smart_days"
+                           readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
+                    <field name="smart_stock_method"
+                           readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
+                    <field name="smart_items_count" readonly="1"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/list" position="attributes">
+                    <attribute name="default_order">smart_product_location, product_id</attribute>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/list/field[@name='product_id']" position="after">
+                    <field name="smart_product_location" readonly="1" optional="show"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/list/field[@name='qty']" position="after">
+                    <field name="smart_source_stock_qty" readonly="1" optional="hide"/>
+                    <field name="smart_qty_before_int" readonly="1" optional="hide"/>
+                    <field name="smart_destination_stock_qty" readonly="1" optional="hide"/>
+                    <field name="smart_month1_sales" readonly="1" optional="hide"/>
+                    <field name="smart_month2_sales" readonly="1" optional="hide"/>
+                    <field name="smart_month3_sales" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_stock_qty" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_month1_sales" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_month2_sales" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_month3_sales" readonly="1" optional="hide"/>
+                    <field name="smart_need_destination_store" readonly="1" optional="hide"/>
+                    <field name="smart_need_other_store" readonly="1" optional="hide"/>
+                    <field name="smart_total_need" readonly="1" optional="hide"/>
+                    <field name="smart_distribution_ratio" readonly="1" optional="hide"/>
+                </xpath>
+                <xpath expr="//field[@name='line_ids']/form//field[@name='qty']" position="after">
+                    <field name="smart_source_stock_qty" readonly="1"/>
+                    <field name="smart_qty_before_int" readonly="1"/>
+                    <field name="smart_destination_stock_qty" readonly="1"/>
+                    <field name="smart_month1_sales" readonly="1"/>
+                    <field name="smart_month2_sales" readonly="1"/>
+                    <field name="smart_month3_sales" readonly="1"/>
+                    <field name="smart_other_stores_stock_qty" readonly="1"/>
+                    <field name="smart_other_stores_month1_sales" readonly="1"/>
+                    <field name="smart_other_stores_month2_sales" readonly="1"/>
+                    <field name="smart_other_stores_month3_sales" readonly="1"/>
+                    <field name="smart_need_destination_store" readonly="1"/>
+                    <field name="smart_need_other_store" readonly="1"/>
+                    <field name="smart_total_need" readonly="1"/>
+                    <field name="smart_distribution_ratio" readonly="1"/>
+                </xpath>
+                <xpath expr="//sheet/notebook" position="inside">
+                    <page string="Smart Lines">
+                        <group>
+                            <group>
+                                <field name="smart_dropout_coverage"
+                                       readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
+                            </group>
+                            <group>
+                                <button name="action_smart_apply_dropout_coverage"
+                                        type="object"
+                                        string="Apply Dropout"
+                                        class="btn-warning"
+                                        groups="ab_transfer_smart.group_transfer_smart_purchase"
+                                        invisible="is_submitted or smart_stage != 'purchase_preparation'"/>
+                            </group>
+                        </group>
+                        <field name="smart_line_ids"
+                               readonly="is_submitted or smart_stage in ('pre_submit', 'submit')">
+                            <list editable="bottom" create="0" delete="0"
+                                  default_order="smart_product_location, product_id">
+                                <field name="is_submitted" column_invisible="1"/>
+                                <field name="smart_stage" column_invisible="1"/>
+                                <field name="product_id" readonly="1"/>
+                                <field name="smart_product_location" readonly="1" optional="show"/>
+                                <field name="qty"
+                                       readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
+                                <field name="expiry_date" readonly="1"/>
+                                <field name="uom_id" readonly="1"/>
+                                <field name="exclusion_reason"
+                                       readonly="smart_stage in ('pre_submit', 'submit')"/>
+                                <field name="smart_source_stock_qty" readonly="1" optional="hide"/>
+                                <field name="smart_qty_before_int" readonly="1" optional="hide"/>
+                                <field name="smart_destination_stock_qty" readonly="1" optional="hide"/>
+                                <field name="smart_month1_sales" readonly="1" optional="hide"/>
+                                <field name="smart_month2_sales" readonly="1" optional="hide"/>
+                                <field name="smart_month3_sales" readonly="1" optional="hide"/>
+                                <field name="smart_other_stores_stock_qty" readonly="1" optional="hide"/>
+                                <field name="smart_other_stores_month1_sales" readonly="1" optional="hide"/>
+                                <field name="smart_other_stores_month2_sales" readonly="1" optional="hide"/>
+                                <field name="smart_other_stores_month3_sales" readonly="1" optional="hide"/>
+                                <field name="smart_need_destination_store" readonly="1" optional="hide"/>
+                                <field name="smart_need_other_store" readonly="1" optional="hide"/>
+                                <field name="smart_total_need" readonly="1" optional="hide"/>
+                                <field name="smart_distribution_ratio" readonly="1" optional="hide"/>
+                            </list>
+                            <form string="Smart Transfer Line">
+                                <sheet>
+                                    <group>
+                                        <group>
+                                            <field name="header_id" readonly="1"/>
+                                            <field name="from_store_id" readonly="1"/>
+                                            <field name="to_store_id" readonly="1"/>
+                                            <field name="product_id" readonly="1"/>
+                                        </group>
+                                        <group>
+                                            <field name="qty"
+                                                   readonly="parent.is_submitted or parent.smart_stage != 'purchase_preparation'"/>
+                                            <field name="expiry_date" readonly="1"/>
+                                            <field name="uom_id" readonly="1"/>
+                                            <field name="exclusion_reason"
+                                                   readonly="parent.is_submitted or parent.smart_stage in ('pre_submit', 'submit')"/>
+                                        </group>
+                                    </group>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+                    <page string="Target Product">
+                        <group>
+                            <field name="smart_product_domain"
+                                   widget="domain"
+                                   options="{'model': 'ab_product', 'count_limit': 1000, 'in_dialog': True}"
+                                   readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
+                        </group>
+                        <button name="action_clear_target_products"
+                                type="object"
+                                string="Remove All Products"
+                                class="btn-secondary"
+                                invisible="is_submitted or smart_stage != 'purchase_preparation'"/>
+                        <field name="target_product_ids"
+                               readonly="is_submitted or smart_stage != 'purchase_preparation'">
+                            <list limit="1000">
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="company_id"/>
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Fair Stores">
+                        <field name="fair_store_ids"
+                               readonly="is_submitted or smart_stage != 'purchase_preparation'">
+                            <list limit="100">
+                                <field name="code"/>
+                                <field name="name"/>
+                            </list>
+                        </field>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_transfer_line_view_list_smart" model="ir.ui.view">
+            <field name="name">ab_transfer_line_view_list_smart</field>
+            <field name="model">ab_transfer_line</field>
+            <field name="inherit_id" ref="ab_transfer.ab_transfer_line_view_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='qty']" position="after">
+                    <field name="smart_source_stock_qty" readonly="1" optional="hide"/>
+                    <field name="smart_qty_before_int" readonly="1" optional="hide"/>
+                    <field name="smart_destination_stock_qty" readonly="1" optional="hide"/>
+                    <field name="smart_month1_sales" readonly="1" optional="hide"/>
+                    <field name="smart_month2_sales" readonly="1" optional="hide"/>
+                    <field name="smart_month3_sales" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_stock_qty" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_month1_sales" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_month2_sales" readonly="1" optional="hide"/>
+                    <field name="smart_other_stores_month3_sales" readonly="1" optional="hide"/>
+                    <field name="smart_need_destination_store" readonly="1" optional="hide"/>
+                    <field name="smart_need_other_store" readonly="1" optional="hide"/>
+                    <field name="smart_total_need" readonly="1" optional="hide"/>
+                    <field name="smart_distribution_ratio" readonly="1" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_transfer_line_view_form_smart" model="ir.ui.view">
+            <field name="name">ab_transfer_line_view_form_smart</field>
+            <field name="model">ab_transfer_line</field>
+            <field name="inherit_id" ref="ab_transfer.ab_transfer_line_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form//field[@name='qty']" position="after">
+                    <field name="smart_source_stock_qty" readonly="1"/>
+                    <field name="smart_qty_before_int" readonly="1"/>
+                    <field name="smart_destination_stock_qty" readonly="1"/>
+                    <field name="smart_month1_sales" readonly="1"/>
+                    <field name="smart_month2_sales" readonly="1"/>
+                    <field name="smart_month3_sales" readonly="1"/>
+                    <field name="smart_other_stores_stock_qty" readonly="1"/>
+                    <field name="smart_other_stores_month1_sales" readonly="1"/>
+                    <field name="smart_other_stores_month2_sales" readonly="1"/>
+                    <field name="smart_other_stores_month3_sales" readonly="1"/>
+                    <field name="smart_need_destination_store" readonly="1"/>
+                    <field name="smart_need_other_store" readonly="1"/>
+                    <field name="smart_total_need" readonly="1"/>
+                    <field name="smart_distribution_ratio" readonly="1"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_transfer_header_view_list_smart" model="ir.ui.view">
+            <field name="name">ab_transfer_header_view_list_smart</field>
+            <field name="model">ab_transfer_header</field>
+            <field name="inherit_id" ref="ab_transfer.ab_transfer_header_view_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='items_count']" position="before">
+                    <field name="smart_items_count"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_transfer_smart_line_view_search" model="ir.ui.view">
+            <field name="name">ab_transfer_smart_line_view_search</field>
+            <field name="model">ab_transfer_smart_line</field>
+            <field name="arch" type="xml">
+                <search string="Smart Transfer Lines">
+                    <field name="header_id"/>
+                    <field name="product_id"/>
+                    <field name="from_store_id"/>
+                    <field name="to_store_id"/>
+                    <field name="exclusion_reason"/>
+                    <filter name="filter_included"
+                            string="Included"
+                            domain="[('exclusion_reason', '=', False)]"/>
+                    <filter name="filter_excluded"
+                            string="Excluded"
+                            domain="[('exclusion_reason', '!=', False)]"/>
+                    <separator/>
+                    <filter name="group_by_header" string="Transfer" context="{'group_by': 'header_id'}"/>
+                    <filter name="group_by_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_by_exclusion_reason"
+                            string="Exclusion Reason"
+                            context="{'group_by': 'exclusion_reason'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_transfer_smart_line_view_list" model="ir.ui.view">
+            <field name="name">ab_transfer_smart_line_view_list</field>
+            <field name="model">ab_transfer_smart_line</field>
+            <field name="arch" type="xml">
+                <list string="Smart Transfer Data" editable="bottom" create="0" delete="0">
+                    <field name="is_submitted" column_invisible="1"/>
+                    <field name="smart_stage" column_invisible="1"/>
+                    <field name="header_id" readonly="1"/>
+                    <field name="from_store_id" readonly="1"/>
+                    <field name="to_store_id" readonly="1"/>
+                    <field name="product_id" readonly="1"/>
+                    <field name="qty"
+                           readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
+                    <field name="expiry_date" readonly="1"/>
+                    <field name="uom_id" readonly="1"/>
+                    <field name="exclusion_reason"
+                           readonly="is_submitted or smart_stage in ('pre_submit', 'submit')"/>
+                    <field name="smart_source_stock_qty" readonly="1"/>
+                    <field name="smart_qty_before_int" readonly="1"/>
+                    <field name="smart_destination_stock_qty" readonly="1"/>
+                    <field name="smart_month1_sales" readonly="1"/>
+                    <field name="smart_month2_sales" readonly="1"/>
+                    <field name="smart_month3_sales" readonly="1"/>
+                    <field name="smart_other_stores_stock_qty" readonly="1"/>
+                    <field name="smart_other_stores_month1_sales" readonly="1"/>
+                    <field name="smart_other_stores_month2_sales" readonly="1"/>
+                    <field name="smart_other_stores_month3_sales" readonly="1"/>
+                    <field name="smart_need_destination_store" readonly="1"/>
+                    <field name="smart_need_other_store" readonly="1"/>
+                    <field name="smart_total_need" readonly="1"/>
+                    <field name="smart_distribution_ratio" readonly="1"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_transfer_smart_line_view_form" model="ir.ui.view">
+            <field name="name">ab_transfer_smart_line_view_form</field>
+            <field name="model">ab_transfer_smart_line</field>
+            <field name="arch" type="xml">
+                <form string="Smart Transfer Line">
+                    <field name="is_submitted" invisible="1"/>
+                    <field name="smart_stage" invisible="1"/>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="header_id" readonly="1"/>
+                                <field name="from_store_id" readonly="1"/>
+                                <field name="to_store_id" readonly="1"/>
+                                <field name="product_id" readonly="1"/>
+                            </group>
+                            <group>
+                                <field name="qty"
+                                       readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
+                                <field name="expiry_date" readonly="1"/>
+                                <field name="uom_id" readonly="1"/>
+                                <field name="exclusion_reason"
+                                       readonly="is_submitted or smart_stage in ('pre_submit', 'submit')"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="smart_source_stock_qty" readonly="1"/>
+                            <field name="smart_qty_before_int" readonly="1"/>
+                            <field name="smart_destination_stock_qty" readonly="1"/>
+                            <field name="smart_month1_sales" readonly="1"/>
+                            <field name="smart_month2_sales" readonly="1"/>
+                            <field name="smart_month3_sales" readonly="1"/>
+                            <field name="smart_other_stores_stock_qty" readonly="1"/>
+                            <field name="smart_other_stores_month1_sales" readonly="1"/>
+                            <field name="smart_other_stores_month2_sales" readonly="1"/>
+                            <field name="smart_other_stores_month3_sales" readonly="1"/>
+                            <field name="smart_need_destination_store" readonly="1"/>
+                            <field name="smart_need_other_store" readonly="1"/>
+                            <field name="smart_total_need" readonly="1"/>
+                            <field name="smart_distribution_ratio" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_transfer.menu_root" model="ir.ui.menu">
+            <field name="group_ids"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+        </record>
+
+        <record id="ab_transfer.ab_transfer_parent_menu" model="ir.ui.menu">
+            <field name="group_ids"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+        </record>
+
+        <record id="ab_transfer.ab_transfer_header_menu" model="ir.ui.menu">
+            <field name="group_ids"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+        </record>
+    </data>
+</odoo>

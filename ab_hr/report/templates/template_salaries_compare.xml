@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+
+<odoo>
+    <template id="ab_hr.template_salaries_compare_report">
+        <t t-call="web.html_container">
+            <div class="header"/>
+
+            <div class="article">
+                <t t-if="NO_OF_ALLOWED_EMPLOYEES">
+                    <div class="text-center h1 bg-light">
+                        <div class='h3'>
+                            Number Of
+                            <span class='h2 text-danger'>Employees &gt;
+                                <t t-esc="NO_OF_ALLOWED_EMPLOYEES"/>
+                            </span>
+                            For Full Report Press
+                            <span class='h2 text-info'>Report Button</span>
+                        </div>
+                    </div>
+                </t>
+
+                <div>
+                    <table class="table abdin-table table-hover table-striped ">
+                        <thead class="thead-dark text-light border border-light text-center">
+                            <tr>
+                                <th class="text-info" style='border: 1px solid'>#</th>
+
+                                <t t-foreach="headers" t-as="header">
+                                    <th style='border: 1px solid'>
+                                        <t t-esc="str(header)"/>
+                                    </th>
+                                </t>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            <t t-foreach="rows" t-as="row">
+                                <tr>
+                                    <td class="text-info border border-light">
+                                        <t t-esc="1+row_index"/>
+                                    </td>
+                                    <t t-foreach="row" t-as="value">
+                                        <td class="border border-light text-right">
+                                            <t t-esc="isinstance(value, float) and '{0:,.2f}'.format(value) or value"/>
+                                        </td>
+                                    </t>
+                                </tr>
+                            </t>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+
+            <div class="footer">
+                <div class="h6 text-danger bg-light float-center">
+                    <t t-esc="rows_count_warning"/>
+                </div>
+
+            </div>
+        </t>
+    </template>
+
+</odoo>

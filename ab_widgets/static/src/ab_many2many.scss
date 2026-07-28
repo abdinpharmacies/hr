@@ -1,0 +1,12 @@
+.o_ab_many2many_wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.o_ab_many2many_tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-height: 24px;
+}

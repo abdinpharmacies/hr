@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_header_view_form_promo_inherit" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_form_promo_inherit</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//form/sheet/group/group/field[@name='description']" position="after">
+                    <field name="available_program_ids"
+                           readonly="True"
+                           invisible="not available_program_ids"
+                           widget="many2many_tags"/>
+                    <field name="applied_program_ids"
+                           widget="many2many_tags"
+                           readonly="status != 'prepending'"
+                           invisible="not available_program_ids"
+                           domain="[('id', 'in', available_program_ids)]"
+                    />
+                    <field name="need_qty_to_unlock_promo"
+                           invisible="not available_program_ids"/>
+                </xpath>
+
+                <xpath expr="//form/sheet/div[hasclass('d-flex') and hasclass('justify-content-between')]" position="inside">
+                    <div>
+                        <button name="btn_apply_promotion" type="object" string="Reapply Promotion"
+                                class="btn-success"
+                                invisible="status != 'prepending' or not available_program_ids"/>
+                    </div>
+                    <div>
+                        <button name="btn_show_balance_for_all_stores" type="object"
+                                string="Show Stores Balance" class="btn-success"
+                                invisible="not available_program_ids"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

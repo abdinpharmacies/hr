@@ -1,0 +1,486 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_supplier
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 15.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-01-29 09:37+0000\n"
+"PO-Revision-Date: 2024-01-29 09:37+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_discount__start_day__medical
+msgid " On Med"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_contact_action
+msgid "Ab supplier contact"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_discount_action
+msgid "Ab supplier discount"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_note_action
+msgid "Ab supplier note"
+msgstr "ملاحضات الموردين"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__active
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__address
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_bracket__start_day__cash
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__closed
+msgid "Closed"
+msgstr "مغلق"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__cosmo
+msgid "Cosmetics"
+msgstr "تجميل"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__create_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__create_uid
+msgid "Created by"
+msgstr "انشئ بواسطة"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__create_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__create_date
+msgid "Created on"
+msgstr "تاريخ الانشاء"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__credit_days
+msgid "Credit Days"
+msgstr "ايام الائتمان"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__start_day
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__start_day
+msgid "Credit Type"
+msgstr "نوع الائتمان"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__current_credit
+msgid "Current Credit"
+msgstr "حد الائتمان الحالي"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__description
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "Description"
+msgstr "الشرح"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__discount
+msgid "Discount"
+msgstr "نسبة الخصم"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__display_name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__display_name
+msgid "Display Name"
+msgstr "المسمي علي برنامج الاي بلاس"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__end_date
+msgid "End Date"
+msgstr "تاريخ الانتهاء"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_bracket__start_day__from_end_of_month
+msgid "From End Of Month"
+msgstr "من اّخر الشهر"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_bracket__start_day__from_invoice_date
+msgid "From Invoice Date"
+msgstr "من تاريخ الفاتورة"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__id
+msgid "ID"
+msgstr "بطاقة التعريف"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__imp_cosmo
+msgid "Imported Cosmetics"
+msgstr "تجميل مستورد"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__imp_med
+msgid "Imported Med"
+msgstr "دواء مستورد"
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "Information"
+msgstr "معلومات"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note____last_update
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note____last_update
+msgid "Last Modified on"
+msgstr "تاريخ اّخر تعديل"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__last_update_date
+msgid "Last Update Date"
+msgstr "تاريخ اخر تحديث"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__write_uid
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__write_uid
+msgid "Last Updated by"
+msgstr "اخر تحديث بواسطة"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__write_date
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__write_date
+msgid "Last Updated on"
+msgstr "اخر تحديث في"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_discount__start_day__local_med
+msgid "Local Med"
+msgstr "دواء محلي"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__territory__lower_egypt
+msgid "Lower_Egypt"
+msgstr "الصعيد"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__max_credit
+msgid "Max Credit"
+msgstr "حد السحب"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__medical
+msgid "Medical"
+msgstr "أدويه"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__name
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_note__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__tax_type__non_tax_payment
+msgid "Non-tax Payment"
+msgstr "غير ضريبي"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__section__other
+msgid "Other"
+msgstr "أخري"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__parent_id
+msgid "Parent"
+msgstr "الشركة الأم"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__phone_1
+msgid "Phone 1"
+msgstr "رقم التيلفون"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__purchase_limit
+msgid "Purchase Limit"
+msgstr "حد الشراء"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__registration_number
+msgid "Registration Number"
+msgstr "رقم التسجيل"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__return_interval
+msgid "Return Interval"
+msgstr "امكانية الاسترجاع"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__section
+msgid "Section"
+msgstr "القسم"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_contact__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__supplier_id
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__supplier_id
+msgid "Supplier"
+msgstr "اسم المورد"
+
+#. module: ab_supplier
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_contact_menu
+msgid "Supplier Contact"
+msgstr "بيانات التواصل مع الموردين"
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_bracket_action
+msgid "Supplier Credit"
+msgstr "حد ائتمان الموردين"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_schedule_note__supplier_note_id
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_note_menu
+msgid "Supplier Note"
+msgstr "ملاحظات الموردين"
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.ab_supplier_schedule_note_action
+#: model:ir.ui.menu,name:ab_supplier.ab_supplier_schedule_note_menu
+msgid "Supplier Schedule Note"
+msgstr "ملاحظات مجدولة للموردين"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__tax_type__tax_payment
+msgid "Tax Payment"
+msgstr "ضريبي"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__tax_type
+msgid "Tax Type"
+msgstr "طريقة السداد"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__telephone
+msgid "Telephone"
+msgstr "رقم التليفون"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier__territory
+msgid "Territory"
+msgstr "القطاع"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__tax_type__through_supplier
+msgid "Through Supplier"
+msgstr "بواسطة المورد"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier_discount__start_day__total_claim
+msgid "Total Claim"
+msgstr "اجمالي المطالبة"
+
+#. module: ab_supplier
+#: model:ir.model.fields.selection,name:ab_supplier.selection__ab_supplier__territory__upper_egypt
+msgid "Upper Egypt"
+msgstr "القاهرة"
+
+#. module: ab_supplier
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_bracket__withdrawal_bracket
+#: model:ir.model.fields,field_description:ab_supplier.field_ab_supplier_discount__withdrawal_bracket
+msgid "Withdrawal Value"
+msgstr "قيمة السحب"
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "Write your feedback here"
+msgstr "اكتب تعليقك هنا"
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier
+msgid "ab_supplier"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.actions.act_window,name:ab_supplier.supplier_action_window
+msgid "ab_supplier window"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_contact
+msgid "ab_supplier_contact"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_form
+msgid "ab_supplier_contact_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_pivot
+msgid "ab_supplier_contact_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_search
+msgid "ab_supplier_contact_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_contact_view_tree
+msgid "ab_supplier_contact_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_bracket
+msgid "ab_supplier_bracket"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_form
+msgid "ab_supplier_bracket_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_pivot
+msgid "ab_supplier_bracket_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_search
+msgid "ab_supplier_bracket_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_bracket_view_tree
+msgid "ab_supplier_bracket_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_discount
+msgid "ab_supplier_discount"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_form
+msgid "ab_supplier_discount_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_pivot
+msgid "ab_supplier_discount_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_search
+msgid "ab_supplier_discount_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_discount_view_tree
+msgid "ab_supplier_discount_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_note
+msgid "ab_supplier_note"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_form
+msgid "ab_supplier_note_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_pivot
+msgid "ab_supplier_note_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_search
+msgid "ab_supplier_note_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_note_view_tree
+msgid "ab_supplier_note_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model:ir.model,name:ab_supplier.model_ab_supplier_schedule_note
+msgid "ab_supplier_schedule_note"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_form
+msgid "ab_supplier_schedule_note_form"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_pivot
+msgid "ab_supplier_schedule_note_pivot"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_search
+msgid "ab_supplier_schedule_note_search"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_schedule_note_view_tree
+msgid "ab_supplier_schedule_note_tree"
+msgstr ""
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "e.g. Ibn-Sina Pharma"
+msgstr "مثال: شركة ابن سينا فارما"
+
+#. module: ab_supplier
+#: model_terms:ir.ui.view,arch_db:ab_supplier.ab_supplier_Form
+msgid "supplier Name"
+msgstr "اسم المورد"

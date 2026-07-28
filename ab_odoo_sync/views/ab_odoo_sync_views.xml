@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_odoo_sync_config_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_config.list</field>
+            <field name="model">ab_odoo_sync_config</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="model_name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_config_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_config.form</field>
+            <field name="model">ab_odoo_sync_config</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="model_name"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_config_search" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_config.search</field>
+            <field name="model">ab_odoo_sync_config</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="model_name"/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_config" model="ir.actions.act_window">
+            <field name="name">Sync Config</field>
+            <field name="res_model">ab_odoo_sync_config</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_odoo_sync_config_search"/>
+        </record>
+
+        <record id="view_ab_odoo_sync_event_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_event.list</field>
+            <field name="model">ab_odoo_sync_event</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="id"/>
+                    <field name="create_date"/>
+                    <field name="model_name"/>
+                    <field name="record_id"/>
+                    <field name="operation"/>
+                    <field name="source_server"/>
+                    <field name="changed_fields_json"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_event_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_event.form</field>
+            <field name="model">ab_odoo_sync_event</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="id"/>
+                                <field name="create_date"/>
+                                <field name="model_name"/>
+                                <field name="record_id"/>
+                            </group>
+                            <group>
+                                <field name="operation"/>
+                                <field name="source_server"/>
+                                <field name="changed_fields_json"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="payload_json"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_event_search" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_event.search</field>
+            <field name="model">ab_odoo_sync_event</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="model_name"/>
+                    <field name="record_id"/>
+                    <field name="operation"/>
+                    <field name="source_server"/>
+                    <filter name="op_create" string="Create" domain="[('operation', '=', 'create')]"/>
+                    <filter name="op_write" string="Write" domain="[('operation', '=', 'write')]"/>
+                    <filter name="op_unlink" string="Unlink" domain="[('operation', '=', 'unlink')]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_event" model="ir.actions.act_window">
+            <field name="name">Sync Events</field>
+            <field name="res_model">ab_odoo_sync_event</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_odoo_sync_event_search"/>
+        </record>
+
+        <record id="view_ab_odoo_sync_checkpoint_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_checkpoint.list</field>
+            <field name="model">ab_odoo_sync_checkpoint</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="branch_code"/>
+                    <field name="active"/>
+                    <field name="last_event_id"/>
+                    <field name="last_sync_at"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_checkpoint_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_checkpoint.form</field>
+            <field name="model">ab_odoo_sync_checkpoint</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="branch_code"/>
+                            <field name="active"/>
+                            <field name="last_event_id"/>
+                            <field name="last_sync_at"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_checkpoint_search" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_checkpoint.search</field>
+            <field name="model">ab_odoo_sync_checkpoint</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="branch_code"/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_checkpoint" model="ir.actions.act_window">
+            <field name="name">Sync Checkpoints</field>
+            <field name="res_model">ab_odoo_sync_checkpoint</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_odoo_sync_checkpoint_search"/>
+        </record>
+
+        <menuitem id="menu_ab_odoo_sync_root" name="Odoo Sync" parent="base.menu_custom" sequence="50"
+                  groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_config" name="Sync Config" parent="menu_ab_odoo_sync_root"
+                  action="action_ab_odoo_sync_config" sequence="10" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_events" name="Events" parent="menu_ab_odoo_sync_root"
+                  action="action_ab_odoo_sync_event" sequence="20" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_checkpoints" name="Checkpoints" parent="menu_ab_odoo_sync_root"
+                  action="action_ab_odoo_sync_checkpoint" sequence="30" groups="base.group_system"/>
+    </data>
+</odoo>

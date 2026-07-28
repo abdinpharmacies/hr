@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_supplier_sys,access_ab_supplier_sys,model_ab_supplier,base.group_system,1,1,1,1
+access_ab_supplier_bracket_sys,access_ab_supplier_bracket_sys,model_ab_supplier_bracket,base.group_system,1,1,1,1
+access_ab_supplier_discount_sys,access_ab_supplier_discount_sys,model_ab_supplier_discount,base.group_system,1,1,1,1
+access_ab_supplier_contact_sys,access_ab_supplier_contact_sys,model_ab_supplier_contact,base.group_system,1,1,1,1
+access_ab_supplier_note_sys,access_ab_supplier_note_sys,model_ab_supplier_note,base.group_system,1,1,1,1
+access_ab_supplier_schedule_note_sys,access_ab_supplier_schedule_note_sys,model_ab_supplier_schedule_note,base.group_system,1,1,1,1
+access_ab_supplier_compensation_sys,access_ab_supplier_compensation_sys,model_ab_supplier_compensation,base.group_system,1,1,1,1
+access_ab_supplier_marketing_sys,access_ab_supplier_marketing_sys,model_ab_supplier_marketing,base.group_system,1,1,1,1
+ab_supplier_payment_type_sys,ab_supplier_payment_type_sys,model_ab_supplier_payment_type,base.group_system,1,1,1,1
+
+
+
+
+

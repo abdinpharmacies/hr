@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_origin_one_unit"
+                model="ab_product_origin">
+            <field name="name">Local</field>
+        </record>
+        <record id="ab_product_origin_imported"
+                model="ab_product_origin">
+            <field name="name">Imported</field>
+        </record>
+        <record id="ab_product_origin_manufactured_locally"
+                model="ab_product_origin">
+            <field name="name">Manufactured locally</field>
+        </record>
+        <record id="ab_product_origin_special_import"
+                model="ab_product_origin">
+            <field name="name">Special Import</field>
+        </record>
+        <record id="ab_product_origin_investment"
+                model="ab_product_origin">
+            <field name="name">Investment</field>
+        </record>
+        <record id="ab_product_origin_other"
+                model="ab_product_origin">
+            <field name="name">Other</field>
+        </record>
+    </data>
+</odoo>

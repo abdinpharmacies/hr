@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_transfer_line_view_search" model="ir.ui.view">
+            <field name="name">ab_transfer_line_view_search</field>
+            <field name="model">ab_transfer_line</field>
+            <field name="arch" type="xml">
+                <search string="Transfer Lines">
+                    <field name="header_id"/>
+                    <field name="product_id"/>
+                    <field name="from_store_id"/>
+                    <field name="to_store_id"/>
+                    <field name="user_id"/>
+                    <field name="class_id"/>
+                    <filter name="group_by_header" string="Header" context="{'group_by': 'header_id'}"/>
+                    <filter name="group_by_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_by_store" string="From Store" context="{'group_by': 'from_store_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_transfer_line_view_list" model="ir.ui.view">
+            <field name="name">ab_transfer_line_view_list</field>
+            <field name="model">ab_transfer_line</field>
+            <field name="arch" type="xml">
+                <list string="Transfer Lines">
+                    <field name="is_submitted" column_invisible="1"/>
+                    <field name="header_id"/>
+                    <field name="product_id"/>
+                    <field name="class_id"/>
+                    <field name="qty"/>
+                    <field name="expiry_date"/>
+                    <field name="uom_id"/>
+                    <field name="sell_price"/>
+                    <field name="cost"/>
+                    <field name="purchase_price"/>
+                    <field name="tax_value"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_transfer_line_view_form" model="ir.ui.view">
+            <field name="name">ab_transfer_line_view_form</field>
+            <field name="model">ab_transfer_line</field>
+            <field name="arch" type="xml">
+                <form string="Transfer Line">
+                    <field name="is_submitted" invisible="1"/>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="header_id" readonly="is_submitted"/>
+                                <field name="from_store_id" readonly="1"/>
+                                <field name="to_store_id" readonly="1"/>
+                                <field name="product_id" readonly="is_submitted"/>
+                                <field name="class_id" readonly="is_submitted"/>
+                            </group>
+                            <group>
+                                <field name="qty" readonly="is_submitted"/>
+                                <field name="expiry_date" readonly="is_submitted"/>
+                                <field name="user_id" readonly="1"/>
+                                <field name="uom_id" readonly="is_submitted"/>
+                                <field name="sell_price" readonly="1"/>
+                                <field name="cost" readonly="1"/>
+                                <field name="purchase_price" readonly="1"/>
+                                <field name="tax_value" readonly="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="inventory_table_html" widget="html" readonly="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_transfer_line_action" model="ir.actions.act_window">
+            <field name="name">Transfer Lines</field>
+            <field name="res_model">ab_transfer_line</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_transfer_line_view_search"/>
+        </record>
+
+        <menuitem id="ab_transfer_line_menu"
+                  name="Transfer Lines"
+                  parent="ab_transfer_parent_menu"
+                  action="ab_transfer_line_action"
+                  sequence="20"
+                  groups="base.group_system"/>
+    </data>
+</odoo>

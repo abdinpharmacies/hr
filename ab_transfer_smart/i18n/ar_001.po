@@ -1,0 +1,1219 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_transfer_smart
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-19 15:40+0000\n"
+"PO-Revision-Date: 2026-07-19 15:40+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "%s, and %s more"
+msgstr "%s، و%s أخرى"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.report,print_report_name:ab_transfer_smart.action_report_ab_transfer_smart_lines
+msgid "'Smart Transfer Lines - %s' % (object.display_name or '')"
+msgstr "'سطور التحويل الذكي - %s' % (object.display_name or '')"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.report,print_report_name:ab_transfer_smart.action_report_ab_transfer_lines
+msgid "'Transfer Lines - %s' % (object.display_name or '')"
+msgstr "'سطور التحويل - %s' % (object.display_name or '')"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Apply Dropout"
+msgstr "تطبيق الاستبعاد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__target_mode__batch
+msgid "Batch"
+msgstr "دفعة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_header__smart_product_domain
+msgid "Build a product filter to include matching products in Smart Transfer."
+msgstr "أنشئ فلترًا للأصناف لإدراج الأصناف المطابقة في التحويل الذكي."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__cache_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__cache_date
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_search
+msgid "Cache Date"
+msgstr "تاريخ الكاش"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__class_id
+msgid "Class ID"
+msgstr "معرف الفئة"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__company_id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__company_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Continue Anyway"
+msgstr "المتابعة على أي حال"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__allow_incomplete_sales_cache
+msgid "Continue Without Complete Sales Cache"
+msgstr "المتابعة بدون كاش مبيعات مكتمل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__cost
+msgid "Cost"
+msgstr "التكلفة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__create_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__create_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__create_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__create_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__create_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__create_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_line__exclusion_reason__damaged
+msgid "Damaged"
+msgstr "تالف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_need_destination_store
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_need_destination_store
+msgid "Destination Need"
+msgstr "احتياج الوجهة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_destination_stock_qty
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_destination_stock_qty
+msgid "Destination Stock"
+msgstr "مخزون الوجهة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Destination Store"
+msgstr "المخزن الهدف"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Destination store EPlus serial is missing: %s"
+msgstr "رقم إي بلس التسلسلي للمخزن الهدف غير موجود: %s"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Destination store is required."
+msgstr "المخزن الهدف مطلوب."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__display_name
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__display_name
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__display_name
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_distribution_ratio
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_distribution_ratio
+msgid "Distribution Ratio"
+msgstr "نسبة التوزيع"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__state__done
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Done wizards cannot refresh smart cache."
+msgstr "لا يمكن للمعالجات المكتملة تحديث الكاش الذكي."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__state__draft
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_line__exclusion_reason__dropout_coverage
+msgid "Dropout Coverage"
+msgstr "تغطية الاستبعاد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_dropout_coverage
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__dropout_coverage
+msgid "Dropout Coverage %"
+msgstr "نسبة تغطية الاستبعاد %"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Dropout coverage applied. Excluded: %(excluded)s, Cleared: %(cleared)s, "
+"Manual exclusions kept: %(manual_kept)s."
+msgstr "تم تطبيق تغطية الاستبعاد. المستبعد: %(excluded)s، الذي تم مسحه: %(cleared)s، الاستبعادات اليدوية المحتفظ بها: %(manual_kept)s."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Dropout coverage must be between 0 and 100."
+msgstr "يجب أن تكون تغطية الاستبعاد بين 0 و100."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "Exc."
+msgstr "استبعاد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_header__smart_dropout_coverage
+#: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_smart_wizard__dropout_coverage
+msgid ""
+"Exclude smart lines when destination stock covers this percentage of the "
+"planned quantity."
+msgstr "استبعاد السطور الذكية عندما يغطي مخزون الوجهة هذه النسبة من الكمية المخططة."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+msgid "Excluded"
+msgstr "مستبعد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__exclusion_reason
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "Exclusion Reason"
+msgstr "سبب الاستبعاد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_line__exclusion_reason__expired
+msgid "Expired"
+msgstr "منتهي الصلاحية"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__expiry_date
+msgid "Expiry Date"
+msgstr "تاريخ الصلاحية"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Fair Store"
+msgstr "مخزن عادل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__fair_store_ids
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__fair_store_ids
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Fair Stores"
+msgstr "مخازن عادلة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__from_store_id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__from_store_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "From Store"
+msgstr "من المخزن"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Generate Transfers"
+msgstr "إنشاء التحويلات"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Generated Smart Transfers"
+msgstr "التحويلات الذكية المنشأة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__generated_header_count
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__generated_header_ids
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Generated Transfers"
+msgstr "التحويلات المنشأة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+msgid "Included"
+msgstr "مدرج"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Invalid product filter. Please review the filter conditions."
+msgstr "فلتر الأصناف غير صالح. يرجى مراجعة شروط الفلتر."
+
+#. module: ab_transfer_smart
+#: model:ir.ui.menu,name:ab_transfer_smart.ab_transfer_smart_inventory_menu
+msgid "Inventory"
+msgstr "المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__inventory_json
+msgid "Inventory JSON"
+msgstr "بيانات المخزون JSON"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__inventory_table_html
+msgid "Inventory Table"
+msgstr "جدول المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__items_per_header
+msgid "Items Per Header"
+msgstr "الأصناف لكل رأس"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Items per header must be at least 1."
+msgstr "يجب أن يكون عدد الأصناف لكل رأس 1 على الأقل."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__write_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__write_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__write_uid
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__write_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__write_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__write_date
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_product_location
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_product_location
+msgid "Location"
+msgstr "الموقع"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_smart_wizard__items_per_header
+msgid "Maximum generated smart item lines per transfer header."
+msgstr "الحد الأقصى لسطور الأصناف الذكية المنشأة لكل رأس تحويل."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__sales_cache_missing_days_count
+msgid "Missing Sales Cache Days"
+msgstr "أيام كاش المبيعات الناقصة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_month1_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_month1_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__month1_sales
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_list
+msgid "Month 1 Sales"
+msgstr "مبيعات الشهر 1"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_month2_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_month2_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__month2_sales
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_list
+msgid "Month 2 Sales"
+msgstr "مبيعات الشهر 2"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_month3_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_month3_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__month3_sales
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_list
+msgid "Month 3 Sales"
+msgstr "مبيعات الشهر 3"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Multi Store Smart Transfer"
+msgstr "تحويل ذكي متعدد المخازن"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__display_name
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__display_name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "New Smart Wizard"
+msgstr "معالج ذكي جديد"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "No items are needed for transfer."
+msgstr "لا توجد أصناف مطلوبة للتحويل."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "No smart transfer lines found."
+msgstr "لم يتم العثور على سطور تحويل ذكي."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "No transfer lines found."
+msgstr "لم يتم العثور على سطور تحويل."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Normal method: total sales for the last 3 months is divided by 90 and "
+"multiplied by Smart Days."
+msgstr "الطريقة العادية: يتم قسمة إجمالي مبيعات آخر 3 شهور على 90 ثم ضربه في أيام التحويل الذكي."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_original_qty
+msgid "Original Smart Quantity"
+msgstr "الكمية الذكية الأصلية"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_line.py:0
+msgid "Original smart quantity cannot be edited."
+msgstr "لا يمكن تعديل الكمية الذكية الأصلية."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_other_stores_month1_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_other_stores_month1_sales
+msgid "Other Month 1 Sales"
+msgstr "مبيعات الشهر 1 للمخازن الأخرى"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_other_stores_month2_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_other_stores_month2_sales
+msgid "Other Month 2 Sales"
+msgstr "مبيعات الشهر 2 للمخازن الأخرى"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_other_stores_month3_sales
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_other_stores_month3_sales
+msgid "Other Month 3 Sales"
+msgstr "مبيعات الشهر 3 للمخازن الأخرى"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_need_other_store
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_need_other_store
+msgid "Other Stores Need"
+msgstr "احتياج المخازن الأخرى"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_other_stores_stock_qty
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_other_stores_stock_qty
+msgid "Other Stores Stock"
+msgstr "مخزون المخازن الأخرى"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Please add target products or set a product filter."
+msgstr "يرجى إضافة الأصناف المستهدفة أو ضبط فلتر أصناف."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Please select at least one destination store."
+msgstr "يرجى اختيار مخزن هدف واحد على الأقل."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stage__pre_submit
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Pre-Submit"
+msgstr "ما قبل الإرسال"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Pre-submit completed. Created: %(created)s, Updated: %(updated)s, Excluded: "
+"%(excluded)s."
+msgstr "اكتملت مرحلة ما قبل الإرسال. تم الإنشاء: %(created)s، تم التحديث: %(updated)s، تم الاستبعاد: %(excluded)s."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_line.py:0
+msgid "Pre-submitted smart transfer lines cannot be edited."
+msgstr "لا يمكن تعديل سطور التحويل الذكي بعد مرحلة ما قبل الإرسال."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Print Smart Lines"
+msgstr "طباعة السطور الذكية"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Print Transfer Lines"
+msgstr "طباعة سطور التحويل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__product_id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__product_id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__product_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "Product"
+msgstr "الصنف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__product_code
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__product_code
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_search
+msgid "Product Code"
+msgstr "كود الصنف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__product_eplus_serial
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__product_eplus_serial
+msgid "Product EPlus Serial"
+msgstr "رقم إي بلس التسلسلي للصنف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_product_domain
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__smart_product_domain
+msgid "Product Filter"
+msgstr "فلتر الأصناف"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_search
+msgid "Product Serial"
+msgstr "رقم الصنف التسلسلي"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Products"
+msgstr "الأصناف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stage__purchase_preparation
+#: model:res.groups,name:ab_transfer_smart.group_transfer_smart_purchase
+msgid "Purchase Preparation"
+msgstr "تحضير الشراء"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__purchase_price
+msgid "Purchase Price"
+msgstr "سعر الشراء"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_qty_before_int
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_qty_before_int
+msgid "Qty Before Int"
+msgstr "الكمية قبل التحويل لعدد صحيح"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__qty
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Refresh Smart Cache"
+msgstr "تحديث الكاش الذكي"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Remove All Products"
+msgstr "إزالة كل الأصناف"
+
+#. module: ab_transfer_smart
+#: model:ir.ui.menu,name:ab_transfer_smart.ab_transfer_smart_reports_menu
+msgid "Reports"
+msgstr "التقارير"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__requested_qty
+msgid "Requested Quantity"
+msgstr "الكمية المطلوبة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__sales_cache_warning_message
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
+msgid "Sales Cache Warning"
+msgstr "تحذير كاش المبيعات"
+
+#. module: ab_transfer_smart
+#: model:ir.ui.menu,name:ab_transfer_smart.ab_transfer_smart_sales_per_day_menu
+msgid "Sales Per Day"
+msgstr "المبيعات اليومية"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__sell_price
+msgid "Sell Price"
+msgstr "سعر البيع"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Set Dropout Coverage % before applying dropout."
+msgstr "اضبط نسبة تغطية الاستبعاد % قبل تطبيق الاستبعاد."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__target_mode__single
+msgid "Single Transfer"
+msgstr "تحويل واحد"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_days
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__smart_days
+msgid "Smart Days"
+msgstr "أيام التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_items_count
+msgid "Smart Items Count"
+msgstr "عدد الأصناف الذكية"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_line_ids
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Smart Lines"
+msgstr "السطور الذكية"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.act_window,name:ab_transfer_smart.ab_transfer_smart_sales_cache_action
+#: model:ir.ui.menu,name:ab_transfer_smart.ab_transfer_smart_sales_cache_menu
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_search
+msgid "Smart Sales Cache"
+msgstr "كاش المبيعات الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_stage
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_stage
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "Smart Stage"
+msgstr "مرحلة التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.act_window,name:ab_transfer_smart.ab_transfer_smart_stock_cache_action
+#: model:ir.ui.menu,name:ab_transfer_smart.ab_transfer_smart_stock_cache_menu
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_search
+msgid "Smart Stock Cache"
+msgstr "كاش المخزون الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+#: model:ir.module.category,name:ab_transfer_smart.module_category_transfer_smart
+#: model:res.groups.privilege,name:ab_transfer_smart.privilege_transfer_smart
+msgid "Smart Transfer"
+msgstr "التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Smart Transfer Cache"
+msgstr "كاش التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Smart Transfer Calculation"
+msgstr "حساب التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_list
+msgid "Smart Transfer Data"
+msgstr "بيانات التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_sales_cache
+msgid "Smart Transfer Destination Sales Cache"
+msgstr "كاش مبيعات وجهة التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_stock_cache
+msgid "Smart Transfer Destination Stock Cache"
+msgstr "كاش مخزون وجهة التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart Transfer Dropout"
+msgstr "استبعاد التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_line
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_form
+msgid "Smart Transfer Line"
+msgstr "سطر التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.report,name:ab_transfer_smart.action_report_ab_transfer_smart_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+msgid "Smart Transfer Lines"
+msgstr "سطور التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart Transfer Pre-Submit"
+msgstr "ما قبل إرسال التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart Transfer Stage"
+msgstr "مرحلة التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_wizard
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Smart Transfer Wizard"
+msgstr "معالج التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.act_window,name:ab_transfer_smart.ab_transfer_smart_wizard_action
+#: model:ir.ui.menu,name:ab_transfer_smart.ab_transfer_smart_wizard_menu
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
+msgid "Smart Transfer Wizards"
+msgstr "معالجات التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Smart Transfer sales cache is not ready for other branches. Missing synced "
+"sales days: %s. You can continue for workflow testing, but smart quantities "
+"may be inaccurate."
+msgstr "كاش مبيعات التحويل الذكي غير جاهز للفروع الأخرى. أيام المبيعات المتزامنة الناقصة: %s. يمكنك المتابعة لاختبار سير العمل، لكن الكميات الذكية قد تكون غير دقيقة."
+
+#. module: ab_transfer_smart
+#: model:ir.actions.server,name:ab_transfer_smart.ir_cron_refresh_smart_transfer_cache_ir_actions_server
+msgid "Smart Transfer: Refresh Destination Cache"
+msgstr "التحويل الذكي: تحديث كاش الوجهة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_wizard_id
+msgid "Smart Wizard"
+msgstr "المعالج الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Smart Wizard %s"
+msgstr "المعالج الذكي %s"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Smart Wizard for %s"
+msgstr "معالج ذكي لـ %s"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid ""
+"Smart cache refreshed. Stores: %(stores)s, Stock rows: %(stock_rows)s, Sales"
+" rows: %(sales_rows)s."
+msgstr "تم تحديث الكاش الذكي. المخازن: %(stores)s، سطور المخزون: %(stock_rows)s، سطور المبيعات: %(sales_rows)s."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Smart days must be at least 1."
+msgstr "يجب أن تكون أيام التحويل الذكي 1 على الأقل."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Smart transfer completed. Created: %(created)s, Updated: %(updated)s, "
+"Dropout excluded: %(dropout_excluded)s, Skipped missing products: "
+"%(missing)s, Skipped no source stock: %(no_stock)s."
+msgstr "اكتمل التحويل الذكي. تم الإنشاء: %(created)s، تم التحديث: %(updated)s، المستبعد بتغطية الاستبعاد: %(dropout_excluded)s، تم تخطي أصناف غير موجودة: %(missing)s، تم تخطي أصناف بلا مخزون مصدر: %(no_stock)s."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart transfer moved to Store Preparation."
+msgstr "تم نقل التحويل الذكي إلى تحضير المخزن."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart transfer moved to Store Revision."
+msgstr "تم نقل التحويل الذكي إلى مراجعة المخزن."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_line.py:0
+msgid ""
+"Smart transfer quantities can only be edited during purchase preparation."
+msgstr "يمكن تعديل كميات التحويل الذكي فقط أثناء تحضير الشراء."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_line.py:0
+msgid "Smart transfer quantity cannot be negative."
+msgstr "لا يمكن أن تكون كمية التحويل الذكي سالبة."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_line.py:0
+msgid ""
+"Smart transfer quantity cannot exceed %(max_qty).3f. Allowed over quantity "
+"is %(allowed_over_qty).3f."
+msgstr "لا يمكن أن تتجاوز كمية التحويل الذكي %(max_qty).3f. الكمية الزائدة المسموح بها هي %(allowed_over_qty).3f."
+
+#. module: ab_transfer_smart
+#: model:ir.model.constraint,message:ab_transfer_smart.constraint_ab_transfer_smart_sales_cache_uniq_smart_sales_store_p_35e6d503
+msgid ""
+"Smart transfer sales cache already exists for this store, product, and date."
+msgstr "كاش مبيعات التحويل الذكي موجود بالفعل لهذا المخزن والصنف والتاريخ."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "Smart transfer sales cache refresh failed for %(store)s: %(error)s"
+msgstr "فشل تحديث كاش مبيعات التحويل الذكي للمخزن %(store)s: %(error)s"
+
+#. module: ab_transfer_smart
+#: model:ir.model.constraint,message:ab_transfer_smart.constraint_ab_transfer_smart_stock_cache_uniq_smart_stock_store_p_eb61e109
+msgid ""
+"Smart transfer stock cache already exists for this store, product, and date."
+msgstr "كاش مخزون التحويل الذكي موجود بالفعل لهذا المخزن والصنف والتاريخ."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "Smart transfer stock cache refresh failed for %(store)s: %(error)s"
+msgstr "فشل تحديث كاش مخزون التحويل الذكي للمخزن %(store)s: %(error)s"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_source_stock_qty
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_source_stock_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "Source Stock"
+msgstr "مخزون المصدر"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Source Store"
+msgstr "المخزن المصدر"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__source_header_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
+msgid "Source Transfer"
+msgstr "التحويل المصدر"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Source store and destination store cannot be the same."
+msgstr "لا يمكن أن يكون المخزن المصدر والمخزن الهدف نفس المخزن."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Source store cannot be one of the destination stores."
+msgstr "لا يمكن أن يكون المخزن المصدر أحد المخازن الهدف."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Source store is required."
+msgstr "المخزن المصدر مطلوب."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Source transfer is required for single transfer calculation."
+msgstr "التحويل المصدر مطلوب لحساب التحويل الواحد."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__state
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__state
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "Stock"
+msgstr "المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_stock_method
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__smart_stock_method
+msgid "Stock Calculation Method"
+msgstr "طريقة حساب المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__stock_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_list
+msgid "Stock Quantity"
+msgstr "كمية المخزون"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Stock calculation method is required."
+msgstr "طريقة حساب المخزون مطلوبة."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__store_id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__store_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_search
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "Store EPlus serial is missing: %s"
+msgstr "رقم إي بلس التسلسلي للمخزن غير موجود: %s"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "Store MSSQL server IP1 is missing: %s"
+msgstr "عنوان IP1 لخادم MSSQL الخاص بالمخزن غير موجود: %s"
+
+#. module: ab_transfer_smart
+#: model:res.groups,name:ab_transfer_smart.group_trnasfer_smart_store_manager
+msgid "Store Manager"
+msgstr "مدير المخزن"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stage__store_preparation
+#: model:res.groups,name:ab_transfer_smart.group_trnasfer_smart_store_preparation
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Store Preparation"
+msgstr "تحضير المخزن"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stage__store_revision
+#: model:res.groups,name:ab_transfer_smart.group_trnasfer_smart_store_revision
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Store Revision"
+msgstr "مراجعة المخزن"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "Store is required."
+msgstr "المخزن مطلوب."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_smart_line__inventory_json
+msgid "Structured inventory data: {'data': [...]}"
+msgstr "بيانات مخزون منظمة: {'data': [...]}"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stage__submit
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Submitted transfers cannot be edited."
+msgstr "لا يمكن تعديل التحويلات المرسلة."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Submitted transfers cannot be recalculated."
+msgstr "لا يمكن إعادة حساب التحويلات المرسلة."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__is_submitted
+msgid "Submitted?"
+msgstr "مرسل؟"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__target_mode
+msgid "Target Mode"
+msgstr "وضع الهدف"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Target Product"
+msgstr "الصنف المستهدف"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__target_product_ids
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__target_product_ids
+msgid "Target Products"
+msgstr "الأصناف المستهدفة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Target products are limited to %s products."
+msgstr "الأصناف المستهدفة محدودة بـ %s صنفًا."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Target products have been removed."
+msgstr "تمت إزالة الأصناف المستهدفة."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Target products must have EPlus serials."
+msgstr "يجب أن تحتوي الأصناف المستهدفة على أرقام إي بلس تسلسلية."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__tax_value
+msgid "Tax Value"
+msgstr "قيمة الضريبة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "There are no eligible smart lines to pre-submit."
+msgstr "لا توجد سطور ذكية مؤهلة لمرحلة ما قبل الإرسال."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "There are no smart lines to apply dropout coverage to."
+msgstr "لا توجد سطور ذكية لتطبيق تغطية الاستبعاد عليها."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "This action is only allowed in the %(stage)s stage."
+msgstr "هذا الإجراء مسموح فقط في مرحلة %(stage)s."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "This wizard already generated transfers."
+msgstr "هذا المعالج أنشأ تحويلات بالفعل."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__to_store_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "To Store"
+msgstr "إلى المخزن"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__to_stores_id
+msgid "To Stores"
+msgstr "إلى المخازن"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Too many fair stores are selected for Smart Transfer."
+msgstr "تم اختيار عدد كبير جدًا من المخازن العادلة للتحويل الذكي."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_sales_cache__total_3_months_sales
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_sales_cache_view_list
+msgid "Total 3 Months Sales"
+msgstr "إجمالي مبيعات 3 شهور"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_total_need
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_total_need
+msgid "Total Need"
+msgstr "إجمالي الاحتياج"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "Transfer"
+msgstr "تحويل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__header_id
+msgid "Transfer Header"
+msgstr "رأس التحويل"
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_line
+msgid "Transfer Line"
+msgstr "سطر التحويل"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.report,name:ab_transfer_smart.action_report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "Transfer Lines"
+msgstr "سطور التحويل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__uom_id
+msgid "UOM"
+msgstr "وحدة القياس"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
+msgid "UoM"
+msgstr "وحدة القياس"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__user_id
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__user_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__sales_cache_warning_accepted_at
+msgid "Warning Accepted At"
+msgstr "تم قبول التحذير في"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__sales_cache_warning_accepted_by
+msgid "Warning Accepted By"
+msgstr "تم قبول التحذير بواسطة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Weighted method: last month 50%, previous month 30%, third month 20%. The "
+"weighted month is divided by 30 and multiplied by Smart Days."
+msgstr "طريقة الوزن: آخر شهر 50%، الشهر السابق 30%، الشهر الثالث 20%. يتم قسمة الشهر الموزون على 30 ثم ضربه في أيام التحويل الذكي."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_line__exclusion_reason__wrong_balance
+msgid "Wrong Balance"
+msgstr "رصيد غير صحيح"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "You are not allowed to perform this smart transfer action."
+msgstr "غير مسموح لك بتنفيذ إجراء التحويل الذكي هذا."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "You are not allowed to refresh smart transfer cache."
+msgstr "غير مسموح لك بتحديث كاش التحويل الذكي."
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_header
+msgid "ab_transfer_header"
+msgstr "رأس التحويل"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "id"
+msgstr "المعرف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stock_method__normal
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__smart_stock_method__normal
+msgid "الطريقة العادية"
+msgstr "الطريقة العادية"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stock_method__weighted
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__smart_stock_method__weighted
+msgid "طريقة الوزن"
+msgstr "طريقة الوزن"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_header__smart_stock_method
+msgid ""
+"طريقة الوزن: (آخر شهر × 50%) + (الشهر السابق × 30%) + (الشهر الثالث × 20%) "
+"ثم القسمة على 30 وضرب Smart Days. الطريقة العادية: إجمالي مبيعات آخر 3 شهور "
+"÷ 90 × Smart Days. After planning, destination stock is deducted and the "
+"result is capped by source stock."
+msgstr "طريقة الوزن: (آخر شهر × 50%) + (الشهر السابق × 30%) + (الشهر الثالث × 20%) ثم القسمة على 30 وضرب أيام التحويل الذكي. الطريقة العادية: إجمالي مبيعات آخر 3 شهور ÷ 90 × أيام التحويل الذكي. بعد التخطيط، يتم خصم مخزون الوجهة ويُحد الناتج بمخزون المصدر."

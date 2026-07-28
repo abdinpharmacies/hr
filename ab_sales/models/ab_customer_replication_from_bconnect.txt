@@ -1,0 +1,345 @@
+            Select main.cust_code,
+            main.cust_name_ar,
+            main.cust_mobile,
+            main.cust_tel,
+            main.cust_address,
+            main.cust_def_sell_store,
+            IIF(main.sec_update_date is NULL,main.sec_insert_date,main.sec_update_date) as last_update_date,
+            sec_insert_date,
+            main.cust_id as eplus_serial,
+            IIF(main.cust_active = '1',1,0) as active
+            from customer main
+            where cust_mobile like "what is used in POS"
+
+
+                customer_dict = {
+                    "code": item['cust_code'],
+                    "name": item['cust_name_ar'],
+                    "address": item['cust_address'],
+                    "default_store_id": default_store_id,
+                    "mobile_phone": item['cust_mobile'],
+                    "work_phone": item['cust_tel'],
+                    "last_update_date": item['last_update_date'],
+                    "eplus_serial": item['eplus_serial'],
+                    "active": item['active'],
+                    "eplus_create_date": item['sec_insert_date'],
+                }
+###############
+USE [Genius]
+GO
+/****** Object:  Trigger [dbo].[trg_sales_trans_h_validate_notice]    Script Date: 02/02/2026 03:07:25 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER TRIGGER [dbo].[trg_sales_trans_h_validate_notice]
+ON [dbo].[sales_trans_h]
+AFTER INSERT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    -- Save current session settings
+    DECLARE @old_lock_timeout INT = @@LOCK_TIMEOUT;
+    DECLARE @had_xact_abort  BIT = CASE WHEN (16384 & @@OPTIONS) = 16384 THEN 1 ELSE 0 END; -- XACT_ABORT flag
+
+    -- Set hardened behavior for the trigger
+    SET XACT_ABORT ON;             -- safer rollbacks on runtime errors
+    SET DEADLOCK_PRIORITY LOW;     -- be the victim rather than stall others
+    SET LOCK_TIMEOUT 5000;         -- ms; avoid hanging forever
+	/* Prepare #Tok temp table */
+	BEGIN TRY
+
+		SELECT i.sth_id, t.*
+		INTO #Tok
+		FROM inserted AS i
+		CROSS APPLY dbo.ufn_get_tok_row(i.cust_id, i.sth_notice) AS t;
+
+
+--		select c.cust_id from customer c join #Tok t on c.cust_id = t.cust_id
+
+		/* #Tok table has also validation (has_parent, is_valid_name, is_valid_phone, is_valid_address) */
+		SELECT
+				t.sth_id,
+				err =
+					CASE
+						WHEN t.delim_count < 2
+							THEN N'
+النسق يجب أن يكون:
+الاسم // رقم التليفون // العنوان // ملاحظات أخرى'
+						WHEN t.is_valid_name = 0
+							THEN N'اسم العميل يجب ألا يقل عن كلمتين'
+						WHEN t.is_valid_phone = 0
+							THEN N'رقم التليفون يجب أن يكون 11 رقم بالظبط ويبدأ ب 010/011/012/015'
+						WHEN t.is_valid_address = 0
+							THEN N'عنوان العميل يجب ألا يقل عن ثلاثة حروف'
+						ELSE NULL
+					END
+			INTO #bad
+			FROM #Tok AS t
+			-- WHERE t.cust_id IS NOT NULL
+			WHERE t.cust_id = 66803
+			;
+
+
+			IF EXISTS (SELECT 1 FROM #bad WHERE err IS NOT NULL)
+			BEGIN
+				DECLARE @msg NVARCHAR(4000);
+
+				SELECT @msg = STUFF((
+					SELECT CHAR(10) + N'- رقم الفاتورة=' + CONVERT(NVARCHAR(20), b.sth_id) + N': ' + b.err
+					FROM #bad AS b
+					WHERE b.err IS NOT NULL
+					FOR XML PATH(''), TYPE
+				).value('.', 'nvarchar(max)'), 1, 1, N'');
+
+				SET @msg = LEFT(N'نسق الملاحظات خاطئ
+النسق المتوقع:
+الاسم // رقم الموبايل // العنوان // ملاحظات أخرى' + CHAR(10)
+								+ ISNULL(@msg, N''), 2048);
+
+				THROW 51000, @msg, 1;  -- rolls back the INSERT statement
+				RETURN;
+			END
+
+
+			declare @matched_cust_id int;
+			set @matched_cust_id =  (
+			  SELECT TOP (1) x.cust_id
+			  FROM (
+				  SELECT c1.cust_id
+				  FROM dbo.Customer c1 WITH (NOLOCK) JOIN #Tok t
+				  on  LTRIM(RTRIM(c1.cust_mobile)) = t.cust_phone or LTRIM(RTRIM(c1.cust_tel)) = t.cust_phone
+				  where c1.cust_active = 1
+
+				  UNION ALL
+				  SELECT cd.cd_cust_id
+				  FROM dbo.customer_delivery cd WITH (NOLOCK)
+				  JOIN #Tok t on  LTRIM(RTRIM(cd.cd_tel)) = t.cust_phone
+				  JOIN Customer c WITH (NOLOCK) on cd.cd_cust_id = c.cust_id where c.cust_active = 1
+			  ) AS x
+			  ORDER BY x.cust_id
+			);
+
+			---------------------------------------------------------------
+			/* Update sales_trans_h set cust_id = matched_cust_by_phone */
+			---------------------------------------------------------------
+			/* ===== 1) Link rows that already have a phone match ===== */
+			UPDATE h
+			SET    h.cust_id = @matched_cust_id
+			FROM   dbo.sales_trans_h AS h
+			JOIN   #Tok  AS t
+				   ON t.sth_id = h.sth_id
+						WHERE  h.cust_id = 66803 and @matched_cust_id is not null;
+
+	/* =========================================================
+   2) Loop over remaining rows and assign a spare per row
+   ========================================================= */
+DECLARE
+    @sth_id        INT,
+    @cust_phone    VARCHAR(11),
+    @cust_name     NVARCHAR(200),
+    @cust_address  NVARCHAR(300),
+    @spare_cust_id INT,
+	@current_store_id INT ;
+
+	SET @current_store_id = (select top 1 sto_id from store where activated=1 order by sto_id )
+	DECLARE cur_assign_spare CURSOR LOCAL FAST_FORWARD FOR
+	SELECT t.sth_id, t.cust_phone, t.cust_name, t.cust_address
+	FROM   #Tok AS t
+	JOIN   dbo.sales_trans_h AS h ON h.sth_id = t.sth_id
+	WHERE  @matched_cust_id IS NULL
+	  AND  h.cust_id = 66803                     -- still placeholder
+	ORDER BY t.sth_id;
+
+	OPEN cur_assign_spare;
+
+	FETCH NEXT FROM cur_assign_spare
+	INTO @sth_id, @cust_phone, @cust_name, @cust_address;
+
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		/* Pick the first available spare (locked so others can’t grab it concurrently) */
+		SELECT TOP (1)
+			   @spare_cust_id = c.cust_id
+		FROM   dbo.Customer AS c WITH (NOLOCK)
+		WHERE  c.cust_code LIKE 'spare%' and c.cust_def_sell_store = @current_store_id
+		ORDER BY c.cust_id;
+
+		IF @spare_cust_id IS NULL
+		BEGIN
+			CLOSE cur_assign_spare;
+			DEALLOCATE cur_assign_spare;
+			THROW 51002, N'لا توجد كروت عملاء احتياطية تكفي للعملاء الجدد - الرجاء التواصل مع الدعم الفني لإنشاء عملاء احتياطيين', 1;
+			RETURN;
+		END
+
+		/* Fill that spare’s details */
+		UPDATE c
+		SET    c.cust_mobile  = @cust_phone,
+			   c.cust_name_ar = @cust_name,
+			   c.cust_address = @cust_address,
+			   c.cust_active  = 1,
+			   c.cust_code    = CONVERT(varchar(50), c.cust_id),
+			   c.cust_payment = 4,
+			   c.cust_def_sell_store=@current_store_id,
+			   c.cust_rec_name=1,
+			   c.cust_pay_perc=100,
+			   c.cust_max_credit=11111111111.00,
+			   c.pont2mony=1
+
+		FROM   dbo.Customer AS c
+		WHERE  c.cust_id = @spare_cust_id;
+
+		/* Fill that spare’s customer_delivery */
+		INSERT INTO Customer_Delivery (cd_cust_id, cd_id, cd_contact_person, cd_tel, cd_address, cd_notes,
+			sec_insert_uid, sec_insert_date, sec_update_uid, sec_update_date)
+		VALUES (@spare_cust_id, 1,@cust_name, @cust_phone,  @cust_address, 'منشأ أتوماتيك من الملاحظات',
+			1, GETDATE(), 1, GETDATE() );
+
+
+
+		/* Link the sales row to this spare (only if still placeholder) */
+		UPDATE h
+		SET    h.cust_id = @spare_cust_id
+		FROM   dbo.sales_trans_h AS h
+		WHERE  h.sth_id = @sth_id
+		   AND h.cust_id = 66803;
+
+		FETCH NEXT FROM cur_assign_spare
+		INTO @sth_id, @cust_phone, @cust_name, @cust_address;
+	END
+
+	CLOSE cur_assign_spare;
+	DEALLOCATE cur_assign_spare;
+
+	END TRY
+
+	BEGIN CATCH
+		SET DEADLOCK_PRIORITY NORMAL;
+
+        DECLARE @sql2 NVARCHAR(64) = N'SET LOCK_TIMEOUT ' + CONVERT(NVARCHAR(12), @old_lock_timeout);
+        EXEC sp_executesql @sql2;
+
+        IF @had_xact_abort = 0 SET XACT_ABORT OFF;
+
+        THROW;
+	END CATCH
+END
+
+
+USE [Genius]
+GO
+/****** Object:  UserDefinedFunction [dbo].[ufn_get_tok_row]    Script Date: 02/02/2026 03:11:57 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[ufn_get_tok_row]
+(
+    @cust_id  INT,
+    @notice   NVARCHAR(MAX)
+)
+RETURNS TABLE
+AS
+RETURN
+WITH Prep AS (
+    SELECT notice_trim = LTRIM(RTRIM(@notice))
+),
+NullCheck AS (
+    SELECT
+        is_blank = CASE WHEN notice_trim IS NULL OR notice_trim = N'' THEN 1 ELSE 0 END,
+        notice_trim
+    FROM Prep
+),
+D1 AS (
+    SELECT
+        notice_trim,
+        p1 = NULLIF(CHARINDEX(N'//', notice_trim), 0)
+    FROM NullCheck
+    WHERE is_blank = 0
+),
+T1 AS (
+    SELECT
+      name_raw = LTRIM(RTRIM(SUBSTRING(notice_trim, 1, COALESCE(p1-1, LEN(notice_trim))))),
+      rest1    = CASE WHEN p1 IS NULL THEN N'' ELSE SUBSTRING(notice_trim, p1+2, LEN(notice_trim)-(p1+1)) END,
+      notice_trim
+    FROM D1
+),
+D2 AS (
+    SELECT name_raw, rest1, p2 = NULLIF(CHARINDEX(N'//', rest1), 0), notice_trim FROM T1
+),
+T2 AS (
+    SELECT
+      name_raw,
+      phone_raw = LTRIM(RTRIM(SUBSTRING(rest1, 1, COALESCE(p2-1, LEN(rest1))))),
+      rest2     = CASE WHEN p2 IS NULL THEN N'' ELSE SUBSTRING(rest1, p2+2, LEN(rest1)-(p2+1)) END,
+      notice_trim
+    FROM D2
+),
+D3 AS (
+    SELECT name_raw, phone_raw, rest2, p3 = NULLIF(CHARINDEX(N'//', rest2), 0), notice_trim FROM T2
+),
+Tok AS (
+    SELECT
+      cust_name    = name_raw,
+      cust_phone   = phone_raw,   -- no normalization, just trimmed
+      cust_address = LTRIM(RTRIM(SUBSTRING(rest2, 1, COALESCE(p3-1, LEN(rest2))))),
+      delim_count  = (LEN(notice_trim) - LEN(REPLACE(notice_trim, N'//', N''))) / 2
+    FROM D3
+    UNION ALL
+    -- Handle case when notice is NULL or ''
+    SELECT
+      cust_name    = '',
+      cust_phone   = '',
+      cust_address = '',
+      delim_count  = 0
+    FROM NullCheck
+    WHERE is_blank = 1
+)
+SELECT
+  cust_id   = @cust_id,
+  cust_name,
+  cust_phone ,
+  cust_address,
+  delim_count,
+  /* First match by phone across the 3 sources (as requested) */
+  --matched_cust_by_phone = (select top 1 cust_id from customer
+  --where cust_mobile = cust_phone),
+
+  /* Validation flags (BITs) */
+  is_valid_name    = CASE WHEN cust_name IS NOT NULL
+                               AND cust_name LIKE N'% %'
+                               AND LEN(REPLACE(cust_name, N' ', N'')) >= 4
+                          THEN 1 ELSE 0 END,
+  is_valid_phone   = CASE WHEN dbo.ufn_is_valid_phone(cust_phone) = 1 THEN 1 ELSE 0 END,
+  is_valid_address = CASE WHEN cust_address IS NOT NULL AND LEN(cust_address) >= 3
+                          THEN 1 ELSE 0 END
+FROM Tok;
+
+USE [Genius]
+GO
+/****** Object:  UserDefinedFunction [dbo].[ufn_is_valid_phone]    Script Date: 02/02/2026 03:12:37 PM ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+ALTER FUNCTION [dbo].[ufn_is_valid_phone] (@raw NVARCHAR(50))
+RETURNS BIT
+AS
+BEGIN
+    IF @raw IS NULL RETURN 0;
+
+    DECLARE @p NVARCHAR(50) = LTRIM(RTRIM(@raw));
+
+    -- must be exactly 11 chars
+    IF LEN(@p) <> 11 RETURN 0;
+
+    -- must be digits only
+    IF @p COLLATE Latin1_General_BIN LIKE '%[^0-9]%' RETURN 0;
+
+    -- must start with 010 / 011 / 012 / 015 (3 fixed + 8 remaining)
+    IF @p NOT LIKE N'01[0125]________' RETURN 0;
+
+    RETURN 1;
+END

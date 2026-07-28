@@ -1,0 +1,154 @@
+.ab_pos_product_lead_btn {
+  flex: 0 0 auto;
+  min-width: 94px;
+  height: 28px;
+  padding: 2px 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+  box-shadow: 0 3px 8px rgba(245, 158, 11, 0.25);
+}
+
+.ab_sales_lead_pos_dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ab_sales_lead_product_summary {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #f8fafc;
+}
+
+.ab_sales_lead_product_name {
+  font-weight: 700;
+  color: #111827;
+}
+
+.ab_sales_lead_product_meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.ab_sales_lead_type_switch .btn {
+  min-height: 34px;
+}
+
+.ab_sales_lead_report {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ab_sales_lead_report_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ab_sales_lead_report_totals {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ab_sales_lead_report_totals span {
+  min-width: 120px;
+  padding: 8px 10px;
+  border: 1px solid #dbeafe;
+  border-radius: 8px;
+  background: #eff6ff;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ab_sales_lead_report_totals strong {
+  color: #1d4ed8;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.ab_sales_lead_report_totals small {
+  color: #64748b;
+  font-size: 11px;
+}
+
+.ab_sales_lead_report_store_filter {
+  max-width: 220px;
+}
+
+.ab_sales_lead_report_table_wrap {
+  max-height: 310px;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+}
+
+.ab_sales_lead_report_table {
+  margin-bottom: 0;
+}
+
+.ab_sales_lead_report_table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 12px;
+}
+
+.ab_sales_lead_report_table td {
+  vertical-align: middle;
+}
+
+.ab_sales_lead_report_table td small {
+  display: block;
+  color: #64748b;
+  font-size: 11px;
+}
+
+.ab_sales_lead_report_table tr.has-balance {
+  background: #f0fdf4;
+}
+
+.ab_sales_lead_report_table tr.no-balance {
+  color: #64748b;
+}
+
+.ab_sales_lead_report_empty {
+  min-height: 110px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #64748b;
+}
+
+.ab_sales_lead_dialog_footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@media (max-width: 760px) {
+  .ab_sales_lead_report_header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ab_sales_lead_report_store_filter {
+    max-width: none;
+  }
+}

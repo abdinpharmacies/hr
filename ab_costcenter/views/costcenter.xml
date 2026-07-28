@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+        <record model="ir.ui.view" id="ab_costcenter_list">
+            <field name="name">Cost Centers</field>
+            <field name="model">ab_costcenter</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="mobile_phone" optional="show"/>
+                    <field name="work_email" optional="show"/>
+                    <field name="work_phone" optional="show"/>
+                    <field name="english_name" optional="show"/>
+                    <field name="religion" optional="show"/>
+                    <field name="gender" optional="show"/>
+                    <field name="is_company" optional="show"/>
+                    <field name="identification_id" optional="show"/>
+                    <field name="birthday" optional="show"/>
+                    <field name="establishment_date" optional="show"/>
+                    <field name="eplus_serial" optional="hide"/>
+                    <field name="password" optional="hide" password="1"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_costcenter_view_form" model="ir.ui.view">
+            <field name="name">ab_costcenter_view_form</field>
+            <field name="model">ab_costcenter</field>
+            <field name="arch" type="xml">
+                <form string="ab_costcenter_form">
+                    <sheet>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="mobile_phone"/>
+                            <field name="work_email"/>
+                            <field name="work_phone"/>
+                            <field name="english_name"/>
+                            <field name="religion"/>
+                            <field name="gender"/>
+                            <field name="is_company"/>
+                            <field name="identification_id"/>
+                            <field name="birthday"/>
+                            <field name="establishment_date"/>
+                            <field name="eplus_serial"/>
+                            <field name="password" password="1"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <!-- ______________ Search View ________________ -->
+        <record id="ab_costcenter_search" model="ir.ui.view">
+            <field name="name">Costcenters Search</field>
+            <field name="model">ab_costcenter</field>
+            <field name="arch" type="xml">
+
+                <search string="Cost Centers">
+                    <field name="costcenter_space_sep"/>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="costcenter_type"/>
+                    <field name="tel_no"/>
+                    <field name="branch_id"/>
+                    <field name="hr_name"/>
+                    <field name="bc_id"/>
+                    <field name="official_name"/>
+                    <field name="special_id"/>
+
+                </search>
+            </field>
+        </record>
+
+
+        <!-- actions opening views on models -->
+        <record model="ir.actions.act_window" id="ab_costcenter_action">
+            <field name="name">Cost Centers</field>
+            <field name="res_model">ab_costcenter</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+    </data>
+</odoo>

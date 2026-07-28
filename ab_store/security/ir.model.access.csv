@@ -1,0 +1,10 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_store_user,access_ab_store_user,model_ab_store,base.group_user,1,0,0,0
+access_ab_store_ip_user,access_ab_store_ip_user,model_ab_store_ip,base.group_user,1,0,0,0
+access_ab_replica_db_user,access_ab_replica_db_user,model_ab_replica_db,base.group_user,1,0,0,0
+access_ab_replica_db_system,access_ab_replica_db_system,model_ab_replica_db,base.group_system,1,1,1,0
+
+
+
+
+

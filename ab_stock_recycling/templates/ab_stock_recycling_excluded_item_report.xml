@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="template_ab_stock_recycling_header_report">
+            <t t-call="web.html_container">
+                <div class="header"/>
+                <div class="article">
+                    <div>
+                        <table class="table abdin-table table-hover table-hover sort_html_table">
+                            <thead class="thead-light border border-light text-center">
+                                <tr>
+                                    <th class="text-info" style='border: 1px solid'>#</th>
+
+                                    <t t-foreach="headers" t-as="header">
+                                        <th style='border: 1px solid'
+                                            t-att-class="'sort-as-number' if 'total' in header.lower() else ''">
+                                            <t t-esc="str(header)"/>
+                                        </th>
+                                    </t>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                <t t-foreach="rows" t-as="row">
+                                    <tr>
+                                        <t t-if="len(row)>1">
+                                            <td class="text-info border boder-light">
+                                                <t t-esc="1+row_index"/>
+                                            </td>
+
+                                            <t t-foreach="row" t-as="value">
+                                                <t t-if="not value_first">
+
+                                                    <t t-if="isinstance(value, list)">
+                                                        <td class="border boder-light text-left">
+                                                            <ul>
+                                                                <t t-foreach="value" t-as="li">
+                                                                    <li>
+                                                                        <t t-esc="li"/>
+                                                                    </li>
+                                                                </t>
+                                                            </ul>
+                                                        </td>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td class="border boder-light text-right">
+                                                            <t t-esc="value"/>
+                                                        </td>
+                                                    </t>
+                                                </t>
+                                            </t>
+                                        </t>
+                                        <t t-else="">
+                                            <td class="h6 text-info border boder-light text-center" colspan="7">
+                                                <t t-esc="row[0]"/>
+                                            </td>
+
+                                        </t>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="footer"/>
+            </t>
+        </template>
+
+
+        <record id="action_ab_stock_recycling_header_pdf" model="ir.actions.report">
+            <field name="name">Report</field>
+            <field name="model">ab_stock_recycling_header</field>
+            <field name="report_name">ab_stock_recycling.template_ab_stock_recycling_header_report</field>
+            <field name="report_type">qweb-pdf</field>
+        </record>
+
+
+    </data>
+</odoo>

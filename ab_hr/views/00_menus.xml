@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!--### OVERRIDE HR ICON ###-->
+        <menuitem
+                id="menu_root"
+                name="HR"
+                web_icon="ab_hr,static/description/icon.png"
+                sequence="75"
+                groups="ab_hr.group_ab_hr_basic_data"/>
+
+
+        <!--############################## MENUS ############################-->
+        <!--### UNDER PAYROLL MENU ###-->
+        <menuitem name="Employees"
+                  parent="menu_root"
+                  id="ab_hr_employee_sub_menu"
+                  sequence="1"/>
+
+        <menuitem name="Payroll"
+                  parent="menu_root"
+                  id="ab_hr_salaries_root"
+                  groups="ab_hr.group_ab_hr_payroll_entry"
+                  sequence="50"/>
+
+
+        <!--##################################################################################-->
+        <menuitem name="HRIS"
+                  parent="menu_root"
+                  id="ab_hr_hris_menu"
+                  groups="ab_hr.group_ab_hr_recruiter,ab_hr.group_ab_hr_payroll_specialist"
+                  sequence="40"/>
+
+
+        <menuitem id="history_and_history_reports_sub_menu"
+                  groups="ab_hr.group_ab_hr_recruiter"
+                  name="History and Reports"
+                  parent="menu_root"
+                  sequence="20"/>
+
+
+        <!--        ############ MANPOWER MENUS ################-->
+
+        <menuitem id="manpower_root_menu"
+                  name="Operation Manpower"
+                  parent="menu_root"
+                  sequence="30"/>
+
+        <!--        ############# CONFIG MENU ###################-->
+        <menuitem id="config"
+                  name="Configuration"
+                  parent="menu_root"
+                  groups="ab_hr.group_ab_hr_manager"
+                  sequence="60"/>
+
+    </data>
+</odoo>

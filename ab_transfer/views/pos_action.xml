@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_transfer_pos_action" model="ir.actions.client">
+            <field name="name">Fast Transfer</field>
+            <field name="tag">ab_transfer.pos</field>
+        </record>
+
+        <menuitem id="ab_transfer_parent_menu"
+                  name="Transfer Operations"
+                  parent="menu_root"
+                  sequence="10"
+                  groups="base.group_system"/>
+
+        <menuitem id="ab_transfer_pos_menu"
+                  name="Fast Transfer"
+                  parent="ab_transfer_parent_menu"
+                  action="ab_transfer_pos_action"
+                  sequence="30"
+                  groups="base.group_system"/>
+    </data>
+</odoo>

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!--#################################### Categories ############################-->
+        <record model="ir.module.category" id="category_ab_hr">
+            <field name="name">Abdin HR</field>
+            <field name="description">Category For Abdin HR</field>
+            <field name="sequence">47</field>
+        </record>
+
+        <record model="res.groups.privilege" id="privilege_ab_hr">
+            <field name="name">Abdin HR</field>
+            <field name="category_id" ref="category_ab_hr"/>
+            <field name="sequence">10</field>
+        </record>
+
+        <!--#################################### For Menu Access ############################-->
+        <record id="group_ab_hr_basic_data" model="res.groups">
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="name">HR Basic Data</field>
+
+        </record>
+
+
+        <!--#################################### For Payroll Access ############################-->
+        <record id="group_ab_hr_payroll_entry" model="res.groups">
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="name">HR Payroll Entry</field>
+            <field name="implied_ids" eval="[
+            (4, ref('ab_hr.group_ab_hr_basic_data')),
+            ]"/>
+        </record>
+
+        <!--#################################### HR Secretary ############################-->
+        <record id="group_ab_hr_secretary" model="res.groups">
+            <field name="name">HR Secretary</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('ab_hr.group_ab_hr_basic_data')),
+            ]"/>
+        </record>
+
+
+        <!--#################################### HR Recruiter ############################-->
+        <record id="group_ab_hr_recruiter" model="res.groups">
+            <field name="name">HR Recruiter</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('ab_hr.group_ab_hr_secretary')),
+            ]"/>
+        </record>
+
+
+        <!--#################################### HR Specialist ############################-->
+        <record id="group_ab_hr_personnel_spec" model="res.groups">
+            <field name="name">HR Personnel Specialist</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('ab_hr.group_ab_hr_recruiter')),
+            ]"/>
+        </record>
+
+        <!--#################################### HR Coordinator ############################-->
+        <record id="group_ab_hr_co" model="res.groups">
+            <field name="name">HR Coordinator</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('ab_hr.group_ab_hr_basic_data')),
+            (4, ref('ab_hr.group_ab_hr_personnel_spec')),
+            ]"/>
+        </record>
+
+
+        <!--#################################### HR Payroll Groups ############################-->
+        <record id="group_ab_hr_payroll_specialist" model="res.groups">
+            <field name="name">HR Payroll Specialist</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('ab_hr.group_ab_hr_recruiter')),
+            (4, ref('ab_hr.group_ab_hr_payroll_entry')),
+            ]"/>
+        </record>
+
+        <record id="group_ab_hr_payroll_reviewer" model="res.groups">
+            <field name="name">HR Payroll Reviewer</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('ab_hr.group_ab_hr_payroll_specialist')),
+            ]"/>
+        </record>
+
+        <record id="group_ab_hr_manager" model="res.groups">
+            <field name="name">HR Manager</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('group_ab_hr_payroll_reviewer')),
+            (4, ref('group_ab_hr_co')),
+            ]"/>
+        </record>
+
+
+        <!--#################################### Accounting Payroll Groups ############################-->
+        <record id="group_ab_hr_payroll_accountant" model="res.groups">
+            <field name="name">HR Payroll Accountant</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids" eval="[
+            (4, ref('group_ab_hr_payroll_entry')),
+            ]"/>
+        </record>
+        <!--#################################### Administrator Group ############################-->
+        <record id="group_ab_hr_admin" model="res.groups">
+            <field name="name">HR Administrator</field>
+            <field name="privilege_id" ref="privilege_ab_hr"/>
+            <field name="implied_ids"
+                   eval="[
+               (4, ref('group_ab_hr_manager')),
+               ]"/>
+        </record>
+
+        <record model="res.groups" id="base.group_system">
+            <field name="implied_ids"
+                   eval="[
+               (4, ref('group_ab_hr_admin')),
+               ]"/>
+        </record>
+
+
+    </data>
+</odoo>

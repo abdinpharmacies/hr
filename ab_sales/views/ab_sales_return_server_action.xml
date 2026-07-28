@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_return_server_action_insert_replication_trans" model="ir.actions.server">
+            <field name="name">Insert Replication_Trans</field>
+            <field name="model_id" ref="model_ab_sales_return_header"/>
+            <field name="binding_model_id" ref="model_ab_sales_return_header"/>
+            <field name="binding_view_types">list,form</field>
+            <field name="state">code</field>
+            <field name="code">
+action = records.action_server_insert_replication_trans_rows()
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -1,0 +1,397 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_contract
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-12 19:12+0000\n"
+"PO-Revision-Date: 2026-04-12 19:12+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_contract__discount_percentage_rule__all
+msgid "All"
+msgstr "الكل"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__branch_id
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_contract__discount_percentage_rule__company
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_company_amount
+msgid "Company Amount"
+msgstr "مبلغ الشركة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__company_pay
+msgid "Company Pay"
+msgstr "حصة الشركة"
+
+#. module: ab_sales_contract
+#: model_terms:ir.ui.view,arch_db:ab_sales_contract.ab_customer_form_contract_view_inherit
+msgid "Contact Data"
+msgstr "بيانات الاتصال"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__contract_id
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__contract_id
+msgid "Contract"
+msgstr "العقد"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__discount
+msgid "Contract Discount %"
+msgstr "نسبة خصم العقد %"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_sales_line__ab_contract_discount_source__origin
+msgid "Contract Origin Default"
+msgstr "القيمة الافتراضية من أصل العقد"
+
+#. module: ab_sales_contract
+#: model:ir.actions.act_window,name:ab_sales_contract.ab_contract_product_origin_action
+#: model:ir.ui.menu,name:ab_sales_contract.ab_contract_product_origin_menu
+msgid "Contract Product Rules"
+msgstr "قواعد منتجات العقد"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_sales_line__ab_contract_discount_source__rule
+msgid "Contract Rule"
+msgstr "قاعدة العقد"
+
+#. module: ab_sales_contract
+#: model:ir.actions.act_window,name:ab_sales_contract.ab_contract_action
+#: model:ir.ui.menu,name:ab_sales_contract.ab_contract_menu
+msgid "Contracts"
+msgstr "العقود"
+
+#. module: ab_sales_contract
+#: model_terms:ir.ui.view,arch_db:ab_sales_contract.ab_contract_view_form
+msgid "Copay"
+msgstr "المساهمة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_contract_copay_percent
+msgid "Copay %"
+msgstr "نسبة المساهمة %"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_sales_line__ab_contract_copay_mode__after_discount
+msgid "Copay After Discount"
+msgstr "المساهمة بعد الخصم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_sales_line__ab_contract_copay_mode__before_discount
+msgid "Copay Before Discount"
+msgstr "المساهمة قبل الخصم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_contract_copay_mode
+msgid "Copay Mode"
+msgstr "وضع المساهمة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__create_uid
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__create_uid
+msgid "Created by"
+msgstr "تم الإنشاء بواسطة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__create_date
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__current_points
+msgid "Current Points"
+msgstr "النقاط الحالية"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_customer_amount
+msgid "Customer Amount"
+msgstr "مبلغ العميل"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__cust_pay
+msgid "Customer Pay"
+msgstr "حصة العميل"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__customer_type
+msgid "Customer Type"
+msgstr "نوع العميل"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__default_branch_id
+msgid "Default Branch"
+msgstr "الفرع الافتراضي"
+
+#. module: ab_sales_contract
+#: model_terms:ir.ui.view,arch_db:ab_sales_contract.ab_contract_view_form
+msgid "Default Discounts"
+msgstr "الخصومات الافتراضية"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__discount
+msgid "Discount %"
+msgstr "نسبة الخصم %"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_contract_discount_amount
+msgid "Discount Amount"
+msgstr "قيمة الخصم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__discount_percentage_rule
+msgid "Discount Percentage Rule"
+msgstr "قاعدة نسبة الخصم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_contract_discount_source
+msgid "Discount Source"
+msgstr "مصدر الخصم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__display_name
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__display_name
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__display_name
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_return_header__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_contract
+#: model:ir.model,name:ab_sales_contract.model_ab_sales_return_header
+msgid "E-Plus Sales Return Header"
+msgstr "رأس مرتجع مبيعات E-Plus"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__eplus_create_date
+msgid "Eplus Create Date"
+msgstr "تاريخ إنشاء E-Plus"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__eplus_cust_id
+msgid "Eplus Cust"
+msgstr "عميل E-Plus"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__eplus_cust_code
+msgid "Eplus Cust Code"
+msgstr "كود عميل E-Plus"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__eplus_serial
+msgid "Eplus Serial"
+msgstr "الرقم التسلسلي في E-Plus"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_contract_gross_amount
+msgid "Gross Amount"
+msgstr "المبلغ الإجمالي"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__id
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__id
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__id
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_return_header__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__imported_product_discount
+msgid "Imported Product Discount"
+msgstr "خصم المنتج المستورد"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_customer__customer_type__insurance
+msgid "Insurance"
+msgstr "التأمين"
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_pos_api_contract.py:0
+msgid "Invalid contract."
+msgstr "العقد غير صالح."
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__investment_product_discount
+msgid "Investment Product Discount"
+msgstr "خصم منتج الاستثمار"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__last_update_date
+msgid "Last Update Date"
+msgstr "تاريخ آخر تحديث"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__write_uid
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__write_date
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__local_made_product_discount
+msgid "Local Made Product Discount"
+msgstr "خصم المنتج المحلي المصنع"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__local_product_discount
+msgid "Local Product Discount"
+msgstr "خصم المنتج المحلي"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__max_bill_value
+msgid "Max Bill Value"
+msgstr "أقصى قيمة للفاتورة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__max_credit
+msgid "Max Credit"
+msgstr "الحد الأقصى للائتمان"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_line__ab_contract_net_amount
+msgid "Net Amount"
+msgstr "المبلغ الصافي"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_sales_line__ab_contract_discount_source__none
+msgid "No Discount"
+msgstr "بدون خصم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__other_product_discount
+msgid "Other Product Discount"
+msgstr "خصم المنتجات الأخرى"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__paid_amount
+msgid "Paid Amount"
+msgstr "المبلغ المدفوع"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__paid_percentage
+msgid "Paid Percentage"
+msgstr "النسبة المدفوعة"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_customer__parent_id
+msgid "Parent"
+msgstr "الأصل"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_contract__discount_percentage_rule__person
+#: model:ir.model.fields.selection,name:ab_sales_contract.selection__ab_customer__customer_type__person
+msgid "Person"
+msgstr "فرد"
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_header_inherit.py:0
+msgid "Please choose contract from contract field not customer field"
+msgstr "يرجى اختيار العقد من حقل العقد وليس من حقل العميل"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract_product_origin__product_card_id
+msgid "Product Card"
+msgstr "بطاقة المنتج"
+
+#. module: ab_sales_contract
+#: model:ir.model,name:ab_sales_contract.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة مبيعات نقطة البيع البرمجية"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_contract__special_import_product_discount
+msgid "Special Import Product Discount"
+msgstr "خصم المنتج المستورد الخاص"
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_header_inherit.py:0
+msgid "The selected contract is not active."
+msgstr "العقد المحدد غير نشط."
+
+#. module: ab_sales_contract
+#. odoo-python
+#: code:addons/ab_sales_contract/models/ab_sales_header_inherit.py:0
+msgid ""
+"The total bill after discount cannot be less than the customer's liability."
+msgstr "لا يمكن أن يكون إجمالي الفاتورة بعد الخصم أقل من التزام العميل."
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__total_after_discount
+msgid "Total After Discount"
+msgstr "الإجمالي بعد الخصم"
+
+#. module: ab_sales_contract
+#: model:ir.model.fields,field_description:ab_sales_contract.field_ab_sales_header__discount
+msgid "Total Discount"
+msgstr "إجمالي الخصم"
+
+#. module: ab_sales_contract
+#: model:ir.model,name:ab_sales_contract.model_ab_contract
+msgid "ab_contract"
+msgstr "ab_contract"
+
+#. module: ab_sales_contract
+#: model:ir.model,name:ab_sales_contract.model_ab_contract_product_origin
+msgid "ab_contract_product_origin"
+msgstr "ab_contract_product_origin"
+
+#. module: ab_sales_contract
+#: model:ir.model,name:ab_sales_contract.model_ab_customer
+msgid "ab_customer"
+msgstr "ab_customer"
+
+#. module: ab_sales_contract
+#: model:ir.model,name:ab_sales_contract.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "ab_sales_header"
+
+#. module: ab_sales_contract
+#: model:ir.model,name:ab_sales_contract.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr "ab_sales_line"

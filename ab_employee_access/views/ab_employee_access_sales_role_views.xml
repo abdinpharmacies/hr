@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_employee_access_sales_role_list" model="ir.ui.view">
+            <field name="name">ab_employee_access_sales_role.list</field>
+            <field name="model">ab_employee_access_sales_role</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="sequence" optional="show"/>
+                    <field name="name"/>
+                    <field name="allow_pos_screen" optional="show"/>
+                    <field name="allow_cashier_screen" optional="show"/>
+                    <field name="allow_return_screen" optional="show"/>
+                    <field name="pin_rotation_days" optional="show"/>
+                    <field name="active" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_employee_access_sales_role_form" model="ir.ui.view">
+            <field name="name">ab_employee_access_sales_role.form</field>
+            <field name="model">ab_employee_access_sales_role</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="pin_rotation_days"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Screens">
+                                <group>
+                                    <field name="allow_pos_screen"/>
+                                    <field name="allow_cashier_screen"/>
+                                    <field name="allow_return_screen"/>
+                                </group>
+                            </page>
+                            <page string="Employees">
+                                <field name="profile_ids" readonly="1">
+                                    <list>
+                                        <field name="employee_id"/>
+                                        <field name="department_id"/>
+                                        <field name="job_id"/>
+                                        <field name="pos_allow_login"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_employee_access_sales_role_search" model="ir.ui.view">
+            <field name="name">ab_employee_access_sales_role.search</field>
+            <field name="model">ab_employee_access_sales_role</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="name"/>
+                    <filter name="active_roles" string="Active" domain="[('active', '=', True)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_employee_access_sales_role" model="ir.actions.act_window">
+            <field name="name">POS Roles</field>
+            <field name="res_model">ab_employee_access_sales_role</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_employee_access_sales_role_search"/>
+        </record>
+
+    </data>
+</odoo>

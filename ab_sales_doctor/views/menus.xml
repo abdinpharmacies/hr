@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <menuitem id="ab_doctor_menu"
+                  name="Doctors"
+                  parent="ab_sales.config_sub_menu"
+                  action="ab_doctor_action"
+                  sequence="60"/>
+
+        <menuitem id="ab_product_doctor_prescription_menu"
+                  name="Doctor Prescription Products"
+                  parent="ab_sales.config_sub_menu"
+                  action="ab_product_doctor_prescription_action"
+                  sequence="61"/>
+    </data>
+</odoo>
+

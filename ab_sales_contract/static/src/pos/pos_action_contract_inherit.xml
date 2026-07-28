@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_contract.PosActionContractInherit"
+       t-inherit="ab_sales.PosAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_customer_group')]" position="before">
+            <div class="o_ab_sales_pos_top_group o_ab_sales_pos_contract_group">
+                <div class="o_ab_sales_pos_field_row">
+                    <ABMany2one
+                            relation="'ab_contract'"
+                            value="contractValue()"
+                            update="(value) => this.onContractM2OUpdate(value)"
+                            placeholder="'Contract...'"
+                            domain="() => [['active', '=', true]]"
+                            canCreate="false"
+                            canCreateEdit="false"
+                            canQuickCreate="false"
+                            canOpen="false"
+                            canWrite="true"
+                            string="'Contract'"
+                    />
+                    <t t-if="currentBill.header.contract_allow_total_invoice_discount">
+                        <input class="form-control form-control-sm o_ab_sales_pos_total_invoice_discount"
+                               inputmode="decimal"
+                               placeholder="Invoice discount"
+                               t-att-value="currentBill.header.total_invoice_discount || 0"
+                               t-on-input="(ev) => onTotalInvoiceDiscountInput(ev.target.value)"/>
+                        <span class="badge text-bg-secondary o_ab_sales_pos_total_invoice_discount_source"
+                              t-esc="currentBill.header.contract_total_invoice_discount_source === 'contract_company' ? 'Contract Company' : 'Our Company'"/>
+                    </t>
+                </div>
+            </div>
+        </xpath>
+    </t>
+</templates>

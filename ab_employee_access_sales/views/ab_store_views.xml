@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_store_form_pos_hr" model="ir.ui.view">
+            <field name="name">ab_store.form.pos.hr</field>
+            <field name="model">ab_store</field>
+            <field name="inherit_id" ref="ab_store.store_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='general']/group" position="inside">
+                    <field name="pos_service_user_id"
+                           groups="ab_employee_access_sales.group_ab_employee_access_sales_manager"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

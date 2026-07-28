@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="job_function_ab_odoo_replication_upload_upload_data" model="queue.job.function">
+            <field name="model_id" ref="ab_odoo_replication.model_ab_odoo_replication_upload"/>
+            <field name="method">upload_data</field>
+            <field name="channel_id" ref="queue_job.channel_root"/>
+            <field name="retry_pattern" eval="{1: 10, 2: 20, 3: 30}"/>
+        </record>
+    </data>
+</odoo>

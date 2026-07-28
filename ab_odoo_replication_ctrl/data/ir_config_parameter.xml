@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="ir_config_parameter_ab_odoo_replication_ctrl_enabled" model="ir.config_parameter">
+            <field name="key">ab_odoo_replication_ctrl.enabled</field>
+            <field name="value">1</field>
+        </record>
+    </data>
+</odoo>

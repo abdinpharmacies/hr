@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="manpower_view_tree" model="ir.ui.view">
+            <field name="name">manpower_view_tree</field>
+            <field name="model">ab_hr_manpower</field>
+            <field name="arch" type="xml">
+                <list string="manpower_tree">
+                    <field name="workplace"/>
+                    <field name="workplace_region" optional="hide"/>
+                    <field name="job_title"/>
+                    <field name="territory"/>
+                    <field name="op_manpower"/>
+                </list>
+            </field>
+        </record>
+        <record id="manpower_view_form" model="ir.ui.view">
+            <field name="name">manpower_view_form</field>
+            <field name="model">ab_hr_manpower</field>
+            <field name="arch" type="xml">
+                <form string="manpower_form">
+                    <sheet>
+                        <group>
+                            <field name="workplace"/>
+                            <field name="workplace_region"/>
+                            <field name="job_title"/>
+                            <field name="territory"/>
+                            <field name="op_manpower"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_hr_manpower_view_search" model="ir.ui.view">
+            <field name="name">ab_hr_manpower_view_search</field>
+            <field name="model">ab_hr_manpower</field>
+            <field name="arch" type="xml">
+                <search string="ab_hr_manpower_search">
+                    <field name="workplace"/>
+                    <field name="workplace_region"/>
+                    <field name="job_title"/>
+                    <field name="territory"/>
+                    <field name="op_manpower"/>
+                </search>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_manpower_operation_action" model="ir.actions.act_window">
+            <field name="name">ab_hr_manpower.action</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_manpower</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem name="Manpower"
+                  parent="manpower_root_menu"
+                  id="ab_hr_manpower_operation_menu"
+                  action="ab_hr_manpower_operation_action"
+                  sequence="39"/>
+
+
+        <record id="manpower_need_view_tree" model="ir.ui.view">
+            <field name="name">manpower_need_view_tree</field>
+            <field name="model">ab_hr_manpower_need</field>
+            <field name="arch" type="xml">
+                <list string="manpower_need_tree">
+                    <field name="workplace"/>
+                    <field name="workplace_region" optional="hide"/>
+                    <field name="job_title"/>
+                    <field name="territory"/>
+                    <field name="act_manpower" class="text-center"/>
+                    <field name="op_manpower" class="text-center"/>
+                    <field name="urgent" class="h6 text-danger"/>
+                    <field name="need_manpower"
+                           class="text-center h4"
+                           decoration-danger="need_manpower&lt;0"
+                           decoration-info="need_manpower&gt;0"
+                    />
+                    <field name="can_access_history" invisible="1"/>
+                    <button name="btn_history_detail"
+                            invisible="can_access_history == False"
+                            groups="ab_hr.group_ab_hr_recruiter"
+                            type="object" string="History"/>
+                </list>
+            </field>
+        </record>
+
+        <!--  ab_hr_job_occupied_graph -->
+        <record model="ir.ui.view" id="ab_hr_manpower_need_graph">
+            <field name="name">ab_hr_manpower_need.graph</field>
+            <field name="model">ab_hr_manpower_need</field>
+            <field name="arch" type="xml">
+                <graph string="manpower_need Need Graph">
+                    <field name="job_title" type="row"/>
+                    <field name="need_manpower" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!--  ab_hr_manpower -->
+        <record model="ir.ui.view" id="ab_hr_manpower">
+            <field name="name">ab_hr_manpower_need.pivot</field>
+            <field name="model">ab_hr_manpower_need</field>
+            <field name="arch" type="xml">
+                <pivot string="manpower_need Need pivot">
+                    <field name="job_title" type="row"/>
+                    <field name="workplace" type="row"/>
+                    <field name="territory" type="row"/>
+                    <field name="need_manpower" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="manpower_need_search" model="ir.ui.view">
+            <field name="name">manpower_need_search</field>
+            <field name="model">ab_hr_manpower_need</field>
+            <field name="arch" type="xml">
+                <search string="Manpower Need">
+                    <field name="workplace"/>
+                    <field name="job_title"/>
+                    <field name="territory"/>
+                    <field name="act_manpower"/>
+                    <field name="op_manpower"/>
+                    <field name="need_manpower"/>
+                    <field name="workplace_region"/>
+                    <filter name="filter_req_manpower" string="Required Manpower"
+                            domain="[('need_manpower', '!=', 0)]"/>
+                    <separator/>
+                    <filter name="filter_urgent_manpower" string="Urgent"
+                            domain="[('urgent', '!=', False)]"/>
+
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_hr_manpower_need_action" model="ir.actions.act_window">
+            <field name="name">Manpower Need</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_hr_manpower_need</field>
+            <field name="view_mode">list,pivot,graph</field>
+            <field name="context">
+                {"search_default_filter_req_manpower": 1}
+            </field>
+        </record>
+        <menuitem name="Manpower Need"
+                  parent="manpower_root_menu"
+                  id="ab_hr_manpower_need_menu"
+                  action="ab_hr_manpower_need_action"
+                  sequence="30"/>
+
+
+    </data>
+</odoo>

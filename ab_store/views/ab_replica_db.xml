@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_replica_db_view_list" model="ir.ui.view">
+            <field name="name">ab_replica_db_view_list</field>
+            <field name="model">ab_replica_db</field>
+            <field name="arch" type="xml">
+                <list string="Replica Databases" multi_edit="1">
+                    <field name="name"/>
+                    <field name="db_serial"/>
+                    <field name="return_allowed_days" optional="show"/>
+                    <field name="default_sales_store_id" optional="show"/>
+                    <field name="active" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_replica_db_view_form" model="ir.ui.view">
+            <field name="name">ab_replica_db_view_form</field>
+            <field name="model">ab_replica_db</field>
+            <field name="arch" type="xml">
+                <form string="Replica Database">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                            <field name="db_serial" readonly="1"/>
+                            <field name="return_allowed_days"/>
+                            <field name="active"/>
+                        </group>
+                        <group string="Sales Stores">
+                            <field name="default_sales_store_id"/>
+                            <field name="allowed_sales_store_ids" widget="many2many_tags"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_replica_db_view_search" model="ir.ui.view">
+            <field name="name">ab_replica_db_view_search</field>
+            <field name="model">ab_replica_db</field>
+            <field name="arch" type="xml">
+                <search string="Replica Databases">
+                    <field name="name"/>
+                    <field name="db_serial"/>
+                    <field name="default_sales_store_id"/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_replica_db_action" model="ir.actions.act_window">
+            <field name="name">Replica Databases</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_replica_db</field>
+            <field name="view_mode">list,form</field>
+        </record>
+    </data>
+</odoo>

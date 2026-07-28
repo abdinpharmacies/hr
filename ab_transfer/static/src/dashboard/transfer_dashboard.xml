@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_transfer.TransferDashboardAction">
+        <div class="o_ab_transfer_dashboard">
+            <div class="o_ab_transfer_dashboard_header">
+                <div>
+                    <h2>Transfers</h2>
+                    <div class="o_ab_transfer_dashboard_header_meta">
+                        <span>Drafts</span>
+                        <strong t-esc="formatNumber(state.payload.draft_transfers)"/>
+                    </div>
+                </div>
+                <button type="button"
+                        class="btn btn-outline-primary o_ab_transfer_dashboard_refresh"
+                        t-on-click="loadDashboard"
+                        t-att-disabled="state.loading">
+                    <i class="fa fa-refresh" aria-hidden="true"/>
+                    <span>Refresh</span>
+                </button>
+            </div>
+
+            <t t-if="state.loading">
+                <div class="o_ab_transfer_dashboard_loading">
+                    <i class="fa fa-spinner fa-spin" aria-hidden="true"/>
+                    <span>Loading</span>
+                </div>
+            </t>
+            <t t-else="">
+                <section class="o_ab_transfer_dashboard_actions">
+                    <t t-foreach="state.payload.quick_actions" t-as="item" t-key="item.key">
+                        <button type="button"
+                                t-att-class="actionTileClass(item)"
+                                t-on-click="() => this.openAction(item.action)">
+                            <span class="o_ab_transfer_dashboard_action_icon">
+                                <i t-att-class="iconClass(item.icon)" aria-hidden="true"/>
+                            </span>
+                            <span class="o_ab_transfer_dashboard_action_text">
+                                <strong t-esc="item.title"/>
+                            </span>
+                            <i class="fa fa-chevron-right o_ab_transfer_dashboard_action_arrow" aria-hidden="true"/>
+                        </button>
+                    </t>
+                </section>
+
+                <section class="o_ab_transfer_dashboard_metrics">
+                    <t t-foreach="state.payload.metrics" t-as="metric" t-key="metric.key">
+                        <button type="button"
+                                t-att-class="metricClass(metric)"
+                                t-on-click="() => this.openAction(metric.action)">
+                            <span class="o_ab_transfer_dashboard_metric_icon">
+                                <i t-att-class="iconClass(metric.icon)" aria-hidden="true"/>
+                            </span>
+                            <span class="o_ab_transfer_dashboard_metric_text">
+                                <strong t-esc="formatNumber(metric.value)"/>
+                                <small t-esc="metric.label"/>
+                            </span>
+                        </button>
+                    </t>
+                </section>
+
+                <section class="o_ab_transfer_dashboard_report">
+                    <div class="o_ab_transfer_dashboard_report_head">
+                        <div>
+                            <h3>Request Execution</h3>
+                            <span t-esc="formatNumber(requestExecutionTotal)"/>
+                        </div>
+                        <button type="button"
+                                class="btn btn-sm btn-outline-secondary"
+                                t-on-click="() => this.openAction('ab_transfer.ab_transfer_request_report_action')">
+                            <i class="fa fa-bar-chart" aria-hidden="true"/>
+                            <span>Report</span>
+                        </button>
+                    </div>
+                    <div class="o_ab_transfer_dashboard_execution">
+                        <t t-foreach="state.payload.request_execution" t-as="item" t-key="item.key">
+                            <button type="button"
+                                    t-att-class="executionClass(item)"
+                                    t-on-click="() => this.openAction('ab_transfer.ab_transfer_request_report_action')">
+                                <span class="o_ab_transfer_dashboard_execution_label">
+                                    <strong t-esc="item.label"/>
+                                    <small t-esc="formatNumber(item.value)"/>
+                                </span>
+                                <span class="o_ab_transfer_dashboard_execution_bar">
+                                    <span t-att-style="'width: ' + executionShare(item)"/>
+                                </span>
+                            </button>
+                        </t>
+                    </div>
+                </section>
+            </t>
+        </div>
+    </t>
+</templates>

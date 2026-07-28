@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_sales_header_form_pos_hr" model="ir.ui.view">
+            <field name="name">ab_sales_header.form.pos.hr</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="POS HR"
+                          groups="ab_employee_access_sales.group_ab_employee_access_sales_manager,ab_employee_access_sales.group_ab_employee_access_sales_auditor">
+                        <group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="pos_hr_employee_id"/>
+                                <field name="pos_hr_profile_id"/>
+                                <field name="pos_hr_role_id"/>
+                            </group>
+                            <group>
+                                <field name="pos_hr_session_id"/>
+                                <field name="pos_hr_service_user_id"/>
+                                <field name="pos_hr_device_uid"/>
+                                <field name="pos_hr_device_name"/>
+                                <field name="pos_hr_device_ip"/>
+                            </group>
+                        </group>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_ab_sales_header_list_pos_hr" model="ir.ui.view">
+            <field name="name">ab_sales_header.list.pos.hr</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='store_id']" position="after">
+                    <field name="pos_hr_employee_id" optional="show"/>
+                    <field name="pos_hr_profile_id" optional="hide"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

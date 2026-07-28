@@ -1,0 +1,51 @@
+.ab_masked_pin_input {
+    -webkit-text-security: disc;
+    text-security: disc;
+    letter-spacing: 0.08em;
+}
+
+.ab_employee_access_login_screen {
+    width: 100%;
+}
+
+.ab_employee_access_login_panel {
+    position: relative;
+    width: 100%;
+    max-width: 430px;
+    padding: 1.4rem;
+    border-radius: 1.25rem;
+    border: 1px solid rgba(26, 57, 92, 0.12);
+    background: #ffffff;
+    box-shadow: 0 22px 60px rgba(13, 34, 58, 0.18);
+}
+
+.ab_employee_access_login_title {
+    margin: 0;
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #173452;
+}
+
+.ab_employee_access_login_row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.ab_employee_access_login_close {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border-radius: 999px;
+}
+
+.ab_employee_access_login_subtitle {
+    color: #5b7288;
+}
+
+.ab_employee_access_login_loading {
+    color: #5b7288;
+}

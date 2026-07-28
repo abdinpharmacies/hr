@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_transfer_header_system_all_from_smart" model="ir.rule">
+            <field name="name">Smart Transfer: system access all transfers</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_header"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_transfer_line_system_all_from_smart" model="ir.rule">
+            <field name="name">Smart Transfer: system access all transfer lines</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_line_system_all" model="ir.rule">
+            <field name="name">Smart Transfer: system access all smart lines</field>
+            <field name="model_id" ref="model_ab_transfer_smart_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_wizard_system_all" model="ir.rule">
+            <field name="name">Smart Transfer: system access all smart wizards</field>
+            <field name="model_id" ref="model_ab_transfer_smart_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_stock_cache_system_all" model="ir.rule">
+            <field name="name">Smart Transfer: system access all stock cache</field>
+            <field name="model_id" ref="model_ab_transfer_smart_stock_cache"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_sales_cache_system_all" model="ir.rule">
+            <field name="name">Smart Transfer: system access all sales cache</field>
+            <field name="model_id" ref="model_ab_transfer_smart_sales_cache"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_wizard_read_all" model="ir.rule">
+            <field name="name">Smart Transfer: read smart wizards</field>
+            <field name="model_id" ref="model_ab_transfer_smart_wizard"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_cache_read_all" model="ir.rule">
+            <field name="name">Smart Transfer: read smart cache</field>
+            <field name="model_id" ref="model_ab_transfer_smart_stock_cache"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_sales_cache_read_all" model="ir.rule">
+            <field name="name">Smart Transfer: read smart sales cache</field>
+            <field name="model_id" ref="model_ab_transfer_smart_sales_cache"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_wizard_purchase_write_draft" model="ir.rule">
+            <field name="name">Smart Transfer: purchase write draft smart wizards</field>
+            <field name="model_id" ref="model_ab_transfer_smart_wizard"/>
+            <field name="domain_force">[('state', '=', 'draft')]</field>
+            <field name="groups" eval="[(4, ref('group_transfer_smart_purchase'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_header_smart_purchase_read" model="ir.rule">
+            <field name="name">Smart Transfer: purchase read transfers</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_header"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_transfer_smart_purchase'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_header_smart_purchase_write" model="ir.rule">
+            <field name="name">Smart Transfer: purchase write purchase preparation</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_header"/>
+            <field name="domain_force">[('smart_stage', '=', 'purchase_preparation'), ('is_submitted', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_transfer_smart_purchase'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_header_smart_store_preparation_read" model="ir.rule">
+            <field name="name">Smart Transfer: store preparation read transfers</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_header"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_preparation'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_header_smart_store_preparation_write" model="ir.rule">
+            <field name="name">Smart Transfer: store preparation write stage</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_header"/>
+            <field name="domain_force">[('smart_stage', '=', 'store_preparation'), ('is_submitted', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_preparation'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_header_smart_store_revision_read" model="ir.rule">
+            <field name="name">Smart Transfer: store revision read transfers</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_header"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_revision'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_header_smart_store_revision_write" model="ir.rule">
+            <field name="name">Smart Transfer: store revision write revision stages</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_header"/>
+            <field name="domain_force">[('smart_stage', 'in', ['store_revision', 'pre_submit', 'submit']), ('is_submitted', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_revision'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_line_smart_purchase_read" model="ir.rule">
+            <field name="name">Smart Transfer: purchase read smart lines</field>
+            <field name="model_id" ref="model_ab_transfer_smart_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_transfer_smart_purchase'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_line_smart_purchase_write" model="ir.rule">
+            <field name="name">Smart Transfer: purchase write smart lines</field>
+            <field name="model_id" ref="model_ab_transfer_smart_line"/>
+            <field name="domain_force">[('header_id.smart_stage', '=', 'purchase_preparation'), ('header_id.is_submitted', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_transfer_smart_purchase'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_line_smart_store_preparation_read" model="ir.rule">
+            <field name="name">Smart Transfer: store preparation read smart lines</field>
+            <field name="model_id" ref="model_ab_transfer_smart_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_preparation'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_line_smart_store_preparation_write" model="ir.rule">
+            <field name="name">Smart Transfer: store preparation write smart lines</field>
+            <field name="model_id" ref="model_ab_transfer_smart_line"/>
+            <field name="domain_force">[('header_id.smart_stage', '=', 'store_preparation'), ('header_id.is_submitted', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_preparation'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_line_smart_store_revision_read" model="ir.rule">
+            <field name="name">Smart Transfer: store revision read smart lines</field>
+            <field name="model_id" ref="model_ab_transfer_smart_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_revision'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_line_smart_store_revision_write" model="ir.rule">
+            <field name="name">Smart Transfer: store revision write smart lines</field>
+            <field name="model_id" ref="model_ab_transfer_smart_line"/>
+            <field name="domain_force">[('header_id.smart_stage', '=', 'store_revision'), ('header_id.is_submitted', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_revision'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_line_smart_read_all" model="ir.rule">
+            <field name="name">Smart Transfer: read final transfer lines</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_line_smart_store_revision_write" model="ir.rule">
+            <field name="name">Smart Transfer: revision write final lines before submit</field>
+            <field name="model_id" ref="ab_transfer.model_ab_transfer_line"/>
+            <field name="domain_force">[('header_id.smart_stage', 'in', ['store_revision', 'pre_submit']), ('header_id.is_submitted', '=', False)]</field>
+            <field name="groups" eval="[(4, ref('group_trnasfer_smart_store_revision'))]"/>
+            <field name="perm_read" eval="False"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>

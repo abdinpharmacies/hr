@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <menuitem id="ab_sales_lead_menu"
+                  name="Sales Leads"
+                  parent="ab_sales.sales_menu_root"
+                  action="ab_sales_lead_action"
+                  sequence="85"/>
+    </data>
+</odoo>

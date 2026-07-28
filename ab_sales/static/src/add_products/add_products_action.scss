@@ -1,0 +1,70 @@
+@keyframes o_ab_sales_balance_pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.18);
+    }
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+.o_ab_sales_add_products,
+.o_ab_sales_barcode_qty_dialog {
+    .o_ab_sales_product_card {
+        .badge {
+            font-size: 10px;
+            line-height: 1.05;
+            padding: 2px 5px;
+        }
+    }
+
+    .o_ab_sales_balance_btn {
+        padding: 2px 6px;
+        border: 1px solid transparent;
+        border-radius: 0.375rem; // Bootstrap 5 default radius
+        background: transparent;
+        transition:
+            background-color 120ms ease,
+            border-color 120ms ease,
+            box-shadow 120ms ease,
+            transform 120ms ease;
+
+        > span,
+        > i {
+            transition: transform 120ms ease, filter 120ms ease;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background-color: rgba(13, 110, 253, 0.06);
+            border-color: rgba(13, 110, 253, 0.25);
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.08);
+            transform: translateY(-1px);
+        }
+
+        &:hover > i,
+        &:focus-visible > i {
+            animation: o_ab_sales_balance_pulse 220ms ease-out both;
+        }
+
+        &:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .o_ab_sales_add_products .o_ab_sales_balance_btn,
+    .o_ab_sales_barcode_qty_dialog .o_ab_sales_balance_btn {
+        transition: none;
+
+        > span,
+        > i {
+            transition: none;
+            animation: none !important;
+        }
+    }
+}

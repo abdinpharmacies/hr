@@ -1,0 +1,8 @@
+.o_form_statusbar .o_statusbar_buttons:has(.o_smart_transfer_header_end_button) {
+    flex: 1 1 auto;
+    width: 100%;
+}
+
+.o_form_statusbar .o_smart_transfer_header_end_start {
+    margin-inline-start: auto;
+}

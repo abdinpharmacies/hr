@@ -1,0 +1,240 @@
+/*
+html {
+  direction: rtl;
+}
+*/
+
+$table-dark-accent-bg: #e9ecef;
+$table-hover-bg: #d2e8d4;
+.table-striped tbody tr,
+.abdin-table tr {
+  &:nth-of-type(odd) > * {
+    background-color: $table-dark-accent-bg;
+  }
+
+  &:nth-of-type(even) > * {
+    background-color: white;
+  }
+}
+
+.table-hover {
+  tbody tr:hover > * {
+    color: $table-hover-color;
+    background-color: $table-hover-bg;
+  }
+}
+
+/*
+.o_form_view .o_form_sheet_bg {
+  border-top: 1px solid #ddd;
+  margin-top: -1px;
+  z-index: 11;
+}
+*/
+
+
+/* ####################### Odoo-List View sticky headers  ########################################################## */
+.o_list_view .o_list_table thead {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+/* this is the missing required proprty  */
+/* overflow defaulted to scroll */
+.table-responsive {
+  overflow: visible;
+}
+
+
+.o_list_renderer .o_list_table thead {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+
+/* ####################### Odoo List View and Abdin-Table Head coloring  ########################################################## */
+
+.abdin-table thead th,
+.o_list_table thead th {
+  border: #b9b3b3 solid 1px !important;
+  background-color: #e1dcdc !important;
+  color: #000000 !important;
+
+}
+
+/* ####################### Abdin-Table sticky headers  ########################################################## */
+
+.abdin-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+}
+
+
+.oe_form_field_html.oe_form_field_html {
+  overflow: visible;
+}
+
+
+/* ####################### Tree view TOGGLE icon  ########################################################## */
+.o_optional_columns_dropdown_toggle {
+  color: red;
+  z-index: 999 !important;
+}
+
+/* ######################  Abdin Query CSS ################################################################ */
+.abdin-btn {
+  font-weight: 700;
+  border-radius: 1000px;
+}
+
+.abdin-btn-pdf {
+  font-weight: 700;
+  color: #444;
+}
+
+.abdin-btn:hover {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.abdin-query-html {
+  overflow: scroll !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* ######################  Progressbar background color  ####################################################### */
+.o_progress {
+  background-color: #e6fcf5 !important;
+}
+
+/* ######################  textarea height  ####################################################### */
+.abdin-textbox {
+  max-height: 100% !important;
+  height: 100% !important;
+  width: 100% !important;
+  overflow-y: scroll !important;
+}
+
+/* ######################  textarea container height  ####################################################### */
+.abdin-textbox-container {
+  border: 1px solid #ccc;
+  height: 120px !important;
+  width: 100% !important;
+}
+
+/* ######################  status bar with buttons so you can ml-auto ###################################### */
+.o_statusbar_buttons {
+  width: 100% !important;
+}
+
+/* ######################  allow resize column in list view ##########################*/
+.o_list_table th {
+  max-width: 1000px !important;
+}
+
+/* ######################  when group list view make group name with count visible ##########################*/
+th.o_group_name {
+  overflow: visible !important;
+  /*white-space: normal !important;*/
+}
+
+/* ###################### to make optional columns shown if too long for X2many tree in form ################# */
+.o_form_sheet {
+  overflow: visible !important;
+}
+
+/* ###################### Not clickable menu item ################# */
+/*
+.dropdown-header {
+  color: rgba(103, 111, 118, 1) !important;
+  border-left: #dee2e6 solid 0.2rem !important;
+  border-right: #dee2e6 solid 0.2rem !important;
+  box-shadow: 0 0 0.05rem 0.2rem #dee2e6;
+  font-style: italic;
+
+}
+*/
+
+/* ###################### o_form_readonly VS o_form_editable DIFFERENT BG ################# */
+/*
+.o_form_readonly .o_form_sheet {
+  background-color: rgba(255, 249, 249, 1) !important;
+  border: rgba(255, 212, 59, 1) solid 0.1rem !important
+}
+*/
+
+/*
+.o_form_editable .o_form_sheet {
+  background-color: rgba(248, 255, 248, 1) !important;
+  border: rgba(100, 255, 100, 1) solid 0.1rem !important
+}
+*/
+
+/* ###################### MAKE .modal-content FULL HEIGHT ################ */
+/*
+.modal-content {
+  min-height: 50% !important;
+}
+*/
+
+/* ###################### BUTTONS ARROWS ################ */
+
+/*
+.btn-arrow-right {
+  position: relative;
+}
+
+.btn-arrow-right:after {
+  content: "";
+  position: absolute;
+  left: 101%;
+  transform: translate(0%, -50%);
+  top: 50%;
+  bottom: 50%;
+  height: 0;
+  width: 0;
+  border-left: 20px solid;
+  border-left-color: inherit;
+  border-right: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-top: 20px solid transparent;
+}
+
+tfoot {
+  background-color: #333 !important;
+}
+*/
+
+/* ###################### Bold Notebook Navs ################ */
+.o_notebook_headers .nav-item {
+  font-weight: bold;
+}
+
+.nav-link.active {
+  color: $info !important;
+}
+
+/* ###################### Form View 90% ################ */
+/*
+.o_form_view {
+  .o_form_sheet_bg .o_form_sheet {
+    max-width: 90% !important;
+    width: auto !important;
+  }
+
+  .o_FormRenderer_chatterContainer {
+    max-width: none;
+  }
+}
+*/
+
+/* ###################### Wider Label Class ################ */
+.o_form_view .o_cell.o_wrap_label:has(+ .o_cell.o_wrap_input .wider-label) {
+  flex: 0 0 60% !important;
+  max-width: 60% !important;
+  width: 60% !important;
+  white-space: nowrap !important;
+}

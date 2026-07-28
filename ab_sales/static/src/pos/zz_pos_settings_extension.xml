@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.PosActionSettingsButtonPatch"
+       t-inherit="ab_sales.PosAction"
+       t-inherit-mode="extension">
+        <xpath expr="//div[contains(@class, 'o_ab_sales_pos_window_controls')]/button[1]" position="before">
+            <button class="btn btn-light btn-sm ab_pos_ctrl_btn_settings"
+                    type="button"
+                    title="POS Settings"
+                    t-on-click="openPosSettingsDialog"
+                    t-att-disabled="state.posSettingsSaving">
+                <i class="fa fa-cog ab_pos_ctrl_icon_settings" aria-hidden="true"/>
+            </button>
+        </xpath>
+    </t>
+
+    <t t-name="ab_sales.PosSettingsDialog">
+        <Dialog title="'POS Settings'" size="'md'">
+            <div class="o_ab_sales_pos_submit_dialog">
+                <div class="o_ab_sales_pos_submit_section">
+                    <div class="o_ab_sales_pos_section_title">Product Search</div>
+
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="ab_pos_setting_has_balance_any"
+                               t-att-checked="state.productHasBalanceOnly"
+                               t-on-change="onProductHasBalanceOnlyChange"/>
+                        <label class="form-check-label" for="ab_pos_setting_has_balance_any">
+                            Has balance (any)
+                        </label>
+                    </div>
+
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="ab_pos_setting_has_balance_store"
+                               t-att-checked="state.productHasPosBalanceOnly"
+                               t-on-change="onProductHasPosBalanceOnlyChange"/>
+                        <label class="form-check-label" for="ab_pos_setting_has_balance_store">
+                            Has balance in current store
+                        </label>
+                    </div>
+
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="ab_pos_setting_keyboard_map_searchbar"
+                               t-att-checked="state.enableProductSearchKeyboardMapping"
+                               t-on-change="onEnableProductSearchKeyboardMappingChange"/>
+                        <label class="form-check-label" for="ab_pos_setting_keyboard_map_searchbar">
+                            Enable Arabic/English Product Searchbar mapping
+                        </label>
+                    </div>
+
+                    <div class="form-check form-switch mb-0">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               id="ab_pos_setting_keyboard_map_many2one"
+                               t-att-checked="state.enableAbMany2oneKeyboardMapping"
+                               t-on-change="onEnableAbMany2oneKeyboardMappingChange"/>
+                        <label class="form-check-label" for="ab_pos_setting_keyboard_map_many2one">
+                            Enable Arabic/English ABMany2one mapping
+                        </label>
+                    </div>
+                </div>
+
+                <div class="o_ab_sales_pos_submit_footer">
+                    <button class="btn btn-outline-secondary" type="button" t-on-click="cancel">Cancel</button>
+                    <button class="btn btn-primary"
+                            type="button"
+                            t-att-disabled="state.saving"
+                            t-on-click="save">
+                        Save
+                    </button>
+                </div>
+            </div>
+        </Dialog>
+    </t>
+</templates>

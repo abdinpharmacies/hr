@@ -1,0 +1,62 @@
+.o_ab_transfer_request_pos_window {
+    --request-sidebar-width: 280px;
+}
+
+.o_ab_transfer_request_pos_app {
+    min-width: 0;
+    min-height: 0;
+}
+
+.o_ab_transfer_request_pos_sidebar {
+    width: var(--request-sidebar-width);
+}
+
+.o_ab_transfer_request_pos_sidebar_summary {
+    border-top: 1px solid var(--pos-border);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+}
+
+.o_ab_transfer_request_pos_notes {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_product_card {
+    min-height: 132px;
+}
+
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_lines_table {
+    min-height: 0;
+}
+
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table th:nth-child(1),
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table td:nth-child(1) {
+    min-width: 220px;
+}
+
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table th:nth-child(2),
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table td:nth-child(2) {
+    width: 110px;
+}
+
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table th:nth-child(3),
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table td:nth-child(3) {
+    width: 180px;
+}
+
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table th:nth-child(4),
+.o_ab_transfer_request_pos_window .o_ab_transfer_pos_table td:nth-child(4) {
+    min-width: 180px;
+}
+
+@media (max-width: 900px) {
+    .o_ab_transfer_request_pos_app {
+        grid-template-columns: 1fr;
+    }
+
+    .o_ab_transfer_request_pos_sidebar {
+        display: none;
+    }
+}

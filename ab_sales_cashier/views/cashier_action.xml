@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_cashier_action" model="ir.actions.client">
+            <field name="name">Cashier Window</field>
+            <field name="tag">ab_sales.cashier</field>
+        </record>
+
+        <menuitem id="ab_sales_cashier_menu"
+                  name="Cashier"
+                  parent="ab_sales.sales_menu_root"
+                  action="ab_sales_cashier_action"
+                  sequence="3"
+                  groups="ab_sales.group_ab_sales_cashier,ab_sales.group_ab_sales_manager,base.group_system"/>
+    </data>
+</odoo>

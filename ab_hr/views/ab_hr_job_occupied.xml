@@ -1,0 +1,265 @@
+<odoo>
+    <data>
+        <!--        #######################################################################################-->
+        <!-- ab_hr_job_occupied_list -->
+        <record model="ir.ui.view" id="ab_hr_job_occupied_list">
+            <field name="name">ab_hr_job_occupied.list</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="arch" type="xml">
+                <list limit="100">
+                    <field name="accid" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="job_id" optional="show"/>
+                    <field name="workplace" optional="show"/>
+                    <!--                    <field name="parent_department_id" optional="show"/>-->
+                    <field name="job_status" optional="show"/>
+                    <field name="hiring_date" optional="show"/>
+                    <field name="termination_date" optional="show"/>
+                    <field name="job_status" optional="show"/>
+                    <field name="territory" optional="show"/>
+                    <field name="region" optional="show"/>
+                    <field name="default_salary" optional="hide"/>
+                    <field name="job_manager_id" optional="hide"/>
+                    <field name="is_main_job" optional="show"/>
+                    <field name="internal_working_employee" optional="show"/>
+                    <field name="is_working" optional="show"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_hr_job_occupied_inherit_list" model="ir.ui.view">
+            <field name="name">ab_hr_job_occupied_inherit_list</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="mode">primary</field>
+            <field name="inherit_id" ref="ab_hr_job_occupied_list"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list" position="attributes">
+                    <attribute name="limit">50</attribute>
+                    <attribute name="editable">top</attribute>
+                </xpath>
+                <xpath expr="//field[@name='employee_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- ab_hr_job_occupied_form -->
+        <record model="ir.ui.view" id="ab_hr_job_occupied_form">
+            <field name="name">ab_hr_job_occupied.form</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="arch" type="xml">
+                <form string='Employees Jobs'>
+                    <header>
+                        <field name="is_main_job" widget="boolean_toggle"/>
+                    </header>
+                    <sheet>
+                        <group class="h1 text-muted text-center">
+                            <field name="accid" readonly="1" nolabel="1" class="h1 text-muted"/>
+                        </group>
+                        <group class="h1 text-info text-center">
+                            <field name="employee_id" nolabel="1"/>
+                        </group>
+                        <group col="4" string="Basic Data">
+                            <field name="job_id"/>
+                            <field name="workplace"/>
+                            <field name="manual_manager"
+                                   groups="ab_hr.group_ab_hr_co"
+                                   widget="boolean_toggle"/>
+                            <field name="job_manager_id"/>
+                            <field name="territory"/>
+                            <!--                            <field name="parent_department_id"/>-->
+                        </group>
+                        <group col="4" string="Details">
+                            <field name="hiring_date"/>
+                            <field name="termination_date"/>
+                            <field name="issue_date"/>
+                            <field name="job_status"/>
+                            <field name="default_salary"/>
+                        </group>
+                        <notebook>
+                        </notebook>
+
+                    </sheet>
+
+                    <chatter/>
+                </form>
+            </field>
+        </record>
+
+
+        <!-- Inherit ab_hr_job_occupied_form View to Modify it -->
+        <record id="ab_hr_job_occupied_form_inherit" model="ir.ui.view">
+            <field name="name">ab_hr_job_occupied_form_inherit</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="inherit_id" ref="ab_hr_job_occupied_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//notebook" position="inside">
+                    <page string="History" groups="ab_hr.group_ab_hr_co">
+                        <field name="history_ids" readonly="1"/>
+                    </page>
+                </xpath>
+
+            </field>
+        </record>
+
+        <!-- ab_hr_job_occupied_pivot -->
+        <record model="ir.ui.view" id="ab_hr_job_occupied_pivot">
+            <field name="name">ab_hr_job_occupied.pivot</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="arch" type="xml">
+                <pivot string="Abdin hr Pivot">
+                    <field name="workplace" type="row"/>
+                </pivot>
+            </field>
+        </record>
+
+
+        <!-- ab_hr_job_occupied_search -->
+        <record model="ir.ui.view" id="ab_hr_job_occupied_search">
+            <field name="name">ab_hr_job_occupied.search</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="arch" type="xml">
+                <search string="Abdin hr Search">
+                    <field name="employee_id"/>
+                    <filter name="active_jobs_only" string="Active Jobs" domain="[('job_status','=','active')]"/>
+                    <filter name="active_issue_only" string="Issue Jobs"
+                            domain="[('job_status','=','active'),
+                                    ('issue_date','!=',False)]"/>
+                    <field name="job_id"/>
+                    <field name="workplace"/>
+                    <!--                    <field name="parent_department_id"/>-->
+                    <field name="job_status"/>
+                    <field name="hiring_date"/>
+                    <field name="termination_date"/>
+                    <field name="job_status"/>
+                    <field name="territory"/>
+                    <field name="region"/>
+                    <field name="is_main_job"/>
+                    <searchpanel>
+                        <field name="workplace" icon="fa-users" select="multi"/>
+                        <!--                        <field name="job_id" icon="fa-users"/>-->
+                    </searchpanel>
+
+                </search>
+            </field>
+        </record>
+
+        <!--  ab_hr_job_occupied_graph -->
+        <record model="ir.ui.view" id="ab_hr_job_occupied_graph">
+            <field name="name">ab_hr_job_occupied.graph</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="arch" type="xml">
+                <graph string="Abdin hr Graph">
+                    <field name="workplace" type="row"/>
+                </graph>
+            </field>
+        </record>
+
+
+        <record id="ab_hr_job_occupied_kanban" model="ir.ui.view">
+            <field name="name">ab_hr_job_occupied_kanban</field>
+            <field name="model">ab_hr_job_occupied</field>
+            <field name="priority">10</field>
+            <field name="arch" type="xml">
+                <kanban class="o_ab_hr_employee_kanban">
+                    <field name="id"/>
+                    <field name="job_status"/>
+                    <templates>
+                        <t t-name="card">
+                            <div class="oe_kanban_global_click o_kanban_record_has_image_fill o_hr_kanban_record">
+                                <div class="d-flex flex-column justify-content-between w-100">
+                                    <div class="d-flex justify-content-between">
+                                        <strong>
+                                            <field name="issue_date" invisible="1"/>
+                                            <t t-if="!(!record.termination_date.raw_value)">
+                                                <div class="h4 text-danger">
+                                                    <field name="accid" placeholder="Code"/>
+                                                </div>
+                                            </t>
+                                            <t t-elif="!(!record.issue_date.raw_value)">
+                                                <div class="h4 text-warning">
+                                                    <field name="accid" placeholder="Code"/>
+                                                </div>
+                                            </t>
+                                            <t t-elif="!(!record.hiring_date.raw_value)">
+                                                <div class="h4 text-success">
+                                                    <field name="accid" placeholder="Code"/>
+                                                </div>
+                                            </t>
+                                        </strong>
+                                        <div class="h6" groups="ab_hr.group_ab_hr_co">
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-auto">
+                                        <div class="h6 text-info text-center">
+                                            <field name="employee_id" placeholder="Employee's Name"/>
+                                        </div>
+                                        <div class="h6 text-dark text-center">
+                                            <field name="job_id" placeholder="Employee's Name"/>
+                                        </div>
+                                        <div class="h6 text-dark text-center">
+                                            <field name="workplace" placeholder="Workplace"/>
+                                            -
+                                            <span class="text-dark">
+                                                <field name="territory"/>
+                                            </span>
+                                        </div>
+                                        <div class="h6 text-muted text-center">
+                                            <i class="fa fa-user"/>
+                                            <field name="job_manager_id"/>
+                                            <i class="fa fa-user"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between">
+                                        <div class="text-success">
+                                            <small>
+                                                <field name="hiring_date"/>
+                                            </small>
+                                        </div>
+                                        <div class="text-warning">
+                                            <small>
+                                                <field name="issue_date"/>
+                                            </small>
+                                        </div>
+                                        <t t-if="!(!record.termination_date.raw_value)">
+                                            <div class="text-danger">
+                                                <small>
+                                                    <field name="termination_date"/>
+                                                </small>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="ab_hr_job_occupied_act">
+            <field name="name">Occupied Jobs</field>
+            <field name="res_model">ab_hr_job_occupied</field>
+            <field name="context">{"search_default_active_jobs_only": 1}</field>
+            <field name="view_mode">kanban,list,form,pivot,graph</field>
+        </record>
+
+        <menuitem name="Occupied Jobs"
+                  parent="ab_hr.ab_hr_employee_sub_menu"
+                  id="ab_hr_job_occupied_menu"
+                  action="ab_hr_job_occupied_act"
+                  sequence="20"/>
+
+
+        <record model="ir.actions.act_window" id="ab_hr_job_occupied_form_act">
+            <field name="name">ab_hr_job_occupied.form.act</field>
+            <field name="res_model">ab_hr_job_occupied</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record>
+
+
+    </data>
+</odoo>

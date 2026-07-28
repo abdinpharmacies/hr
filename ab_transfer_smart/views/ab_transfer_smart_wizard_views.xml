@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_transfer_smart_wizard_view_search" model="ir.ui.view">
+            <field name="name">ab_transfer_smart_wizard_view_search</field>
+            <field name="model">ab_transfer_smart_wizard</field>
+            <field name="arch" type="xml">
+                <search string="Smart Transfer Wizards">
+                    <field name="source_header_id"/>
+                    <field name="from_store_id"/>
+                    <field name="to_stores_id"/>
+                    <field name="state"/>
+                    <field name="sales_cache_warning_message"/>
+                    <filter name="filter_draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                    <filter name="filter_done" string="Done" domain="[('state', '=', 'done')]"/>
+                    <filter name="filter_warning"
+                            string="Sales Cache Warning"
+                            domain="[('sales_cache_warning_message', '!=', False)]"/>
+                    <separator/>
+                    <filter name="group_by_state" string="State" context="{'group_by': 'state'}"/>
+                    <filter name="group_by_from_store" string="From Store" context="{'group_by': 'from_store_id'}"/>
+                    <filter name="group_by_source" string="Source Transfer" context="{'group_by': 'source_header_id'}"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_transfer_smart_wizard_view_list" model="ir.ui.view">
+            <field name="name">ab_transfer_smart_wizard_view_list</field>
+            <field name="model">ab_transfer_smart_wizard</field>
+            <field name="arch" type="xml">
+                <list string="Smart Transfer Wizards" create="1" edit="1" delete="0">
+                    <field name="display_name"/>
+                    <field name="state"/>
+                    <field name="target_mode" optional="hide"/>
+                    <field name="source_header_id"/>
+                    <field name="from_store_id"/>
+                    <field name="to_stores_id" widget="many2many_tags"/>
+                    <field name="smart_days"/>
+                    <field name="smart_stock_method" optional="hide"/>
+                    <field name="dropout_coverage"/>
+                    <field name="items_per_header"/>
+                    <field name="sales_cache_missing_days_count" optional="hide"/>
+                    <field name="generated_header_count"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_transfer_smart_wizard_view_form" model="ir.ui.view">
+            <field name="name">ab_transfer_smart_wizard_view_form</field>
+            <field name="model">ab_transfer_smart_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Smart Transfer Wizard" delete="0">
+                    <header>
+                        <button name="action_archive"
+                                type="object"
+                                string="Archive"
+                                class="btn-secondary"
+                                groups="ab_transfer_smart.group_transfer_smart_purchase"
+                                invisible="not active"
+                                confirm="Archive this wizard and all generated transfers?"/>
+                        <button name="action_refresh_smart_cache"
+                                type="object"
+                                string="Refresh Smart Cache"
+                                class="btn-secondary"
+                                groups="ab_transfer_smart.group_transfer_smart_purchase"
+                                invisible="state != 'draft'"/>
+                        <button name="action_generate_transfers"
+                                type="object"
+                                string="Generate Transfers"
+                                class="btn-primary"
+                                groups="ab_transfer_smart.group_transfer_smart_purchase"
+                                invisible="state != 'draft' or sales_cache_warning_message"/>
+                        <button name="action_accept_sales_cache_warning_and_generate"
+                                type="object"
+                                string="Continue Anyway"
+                                class="btn-primary"
+                                groups="ab_transfer_smart.group_transfer_smart_purchase"
+                                invisible="state != 'draft' or not sales_cache_warning_message or allow_incomplete_sales_cache"/>
+                        <button name="action_open_generated_transfers"
+                                type="object"
+                                string="Generated Transfers"
+                                class="btn-secondary"
+                                invisible="generated_header_count == 0"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,done"/>
+                    </header>
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon"
+                                title="Archived"
+                                bg_color="text-bg-danger"
+                                invisible="active"/>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="display_name" readonly="1"/>
+                            </h1>
+                        </div>
+                        <group invisible="not sales_cache_warning_message">
+                            <field name="sales_cache_warning_message" readonly="1" nolabel="1"/>
+                            <field name="sales_cache_missing_days_count" readonly="1"/>
+                            <field name="allow_incomplete_sales_cache" readonly="1"/>
+                            <field name="sales_cache_warning_accepted_by" readonly="1"/>
+                            <field name="sales_cache_warning_accepted_at" readonly="1"/>
+                        </group>
+                        <group>
+                            <group>
+                                <field name="target_mode" readonly="1"/>
+                                <field name="source_header_id" readonly="1"/>
+                                <field name="from_store_id" readonly="state == 'done' or target_mode == 'single'"/>
+                                <field name="to_stores_id"
+                                       widget="many2many_tags"
+                                       readonly="state == 'done' or target_mode == 'single'"/>
+                                <field name="user_id" readonly="state == 'done' or target_mode == 'single'"/>
+                            </group>
+                            <group>
+                                <field name="smart_days" readonly="state == 'done'"/>
+                                <field name="smart_stock_method" readonly="state == 'done'"/>
+                                <field name="dropout_coverage" readonly="state == 'done'"/>
+                                <field name="items_per_header" readonly="state == 'done'"/>
+                                <field name="company_id" readonly="state == 'done'"/>
+                                <field name="notes" readonly="state == 'done'"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Products">
+                                <group>
+                                    <field name="smart_product_domain"
+                                           widget="domain"
+                                           options="{'model': 'ab_product', 'count_limit': 1000, 'in_dialog': True}"
+                                           readonly="state == 'done'"/>
+                                </group>
+                                <field name="target_product_ids" readonly="state == 'done'">
+                                    <list limit="1000">
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                        <field name="company_id"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Fair Stores">
+                                <field name="fair_store_ids" readonly="state == 'done'">
+                                    <list limit="100">
+                                        <field name="code"/>
+                                        <field name="name"/>
+                                        <field name="eplus_serial"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Generated Transfers">
+                                <field name="generated_header_ids" readonly="1">
+                                    <list create="0" edit="0" delete="0">
+                                        <field name="display_name"/>
+                                        <field name="from_store_id"/>
+                                        <field name="to_store_id"/>
+                                        <field name="smart_stage"/>
+                                        <field name="smart_items_count"/>
+                                        <field name="items_count"/>
+                                        <field name="is_submitted"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_transfer_smart_wizard_action" model="ir.actions.act_window">
+            <field name="name">Smart Transfer Wizards</field>
+            <field name="res_model">ab_transfer_smart_wizard</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_transfer_smart_wizard_view_search"/>
+        </record>
+
+        <menuitem id="ab_transfer_smart_wizard_menu"
+                  name="Smart Transfer Wizards"
+                  parent="ab_transfer.ab_transfer_parent_menu"
+                  action="ab_transfer_smart_wizard_action"
+                  sequence="11"
+                  groups="ab_transfer_smart.group_transfer_smart_purchase,ab_transfer_smart.group_trnasfer_smart_store_preparation,ab_transfer_smart.group_trnasfer_smart_store_revision,base.group_system"/>
+    </data>
+</odoo>

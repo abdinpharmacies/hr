@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales.InvoiceExclusionTextField">
+        <div class="o_ab_invoice_exclusion_widget">
+            <div class="row g-4">
+                <div class="col-12 col-lg-4">
+                    <h4>Paste Invoice Numbers</h4>
+                    <p class="text-muted mb-2">
+                        Copy the invoice-number column from Excel and paste it here. Duplicates are ignored automatically.
+                    </p>
+                    <textarea class="form-control"
+                              rows="8"
+                              t-model="state.pasteText"
+                              placeholder="Example: paste one invoice number per line from Excel"/>
+                    <div class="d-flex flex-wrap gap-2 mt-3">
+                        <button type="button"
+                                class="btn btn-primary"
+                                t-att-disabled="state.loading"
+                                t-on-click="addInvoices">
+                            Exclude invoices
+                        </button>
+                        <button type="button"
+                                class="btn btn-secondary"
+                                t-att-disabled="state.loading"
+                                t-on-click="removeInvoices">
+                            Remove invoices
+                        </button>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-8">
+                    <h4>Currently Excluded</h4>
+                    <p class="text-muted mb-2">
+                        <t t-esc="currentCount"/> invoice(s) can bypass the configured return-window days check.
+                    </p>
+                    <textarea class="form-control font-monospace"
+                              rows="12"
+                              readonly="readonly"
+                              placeholder="No excluded invoices yet."><t t-esc="state.currentText"/></textarea>
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>

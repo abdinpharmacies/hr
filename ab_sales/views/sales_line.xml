@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_line_view_tree"
+                model="ir.ui.view">
+            <field name="name">ab_sales_line_view_tree</field>
+            <field name="model">ab_sales_line</field>
+            <field name="arch"
+                   type="xml">
+                <list string="ab_sales_line_tree" create="0" edit="0">
+                    <field name="id" optional="hide"/>
+                    <field name="invoice_number" optional="show"/>
+                    <field name="customer_id" optional="hide"/>
+                    <field name="customer_name" optional="show"/>
+                    <field name="customer_phone" optional="show"/>
+                    <field name="customer_address" optional="show"/>
+
+                    <field name="header_id" optional="hide"/>
+                    <field name="product_id" decoration-danger="balance==0" class="text-wrap"
+                           context="{'pos_store_id': parent.store_id, 'search_default_filter_has_balance': 1, 'search_default_filter_has_pos_balance': 1}"
+                           width="300px"
+                    />
+                    <field name="product_code" width="50px" optional="show"/>
+                    <field name="product_uom_category_id" invisible="True"/>
+                    <field name="uom_id" width="80px"
+                           domain="product_uom_category_id and [('category_id', '=', product_uom_category_id)] or [('id', '=', False)]"/>
+                    <field name="qty" optional="show"/>
+                    <field name="sell_price"/>
+                    <field name="balance" class="h6"
+                           decoration-success="balance>0"
+                           decoration-danger="balance==0"/>
+                    <field name="net_amount" optional="show"/>
+                    <field name="unavailable_reason" optional="show"/>
+                    <field name="unavailable_reason_other" optional="show"/>
+                    <field name="employee_id" optional="show"/>
+                    <field name="create_uid" optional="show"/>
+                    <field name="create_date" optional="show"/>
+                    <field name="write_uid" optional="show"/>
+                    <field name="write_date" optional="show"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_sales_line_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_line_view_search</field>
+            <field name="model">ab_sales_line</field>
+            <field name="arch" type="xml">
+                <search string="ab_sales_line_search">
+                    <field name="invoice_number"/>
+                    <field name="product_id"/>
+                    <field name="customer_name"/>
+                    <field name="customer_phone"/>
+                    <field name="customer_address"/>
+                    <field name="unavailable_reason"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_sales_line_action"
+                model="ir.actions.act_window">
+            <field name="name">Sales Details</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_line</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="ab_sales_reports_sales_details_menu"
+                  name="Sales Details"
+                  parent="ab_sales_reports_menu"
+                  action="ab_sales_line_action"
+                  sequence="1"/>
+
+    </data>
+</odoo>

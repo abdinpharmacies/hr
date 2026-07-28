@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_header_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_form</field>
+            <field name="model">ab_sales_header</field>
+            <field name="arch" type="xml">
+                <form string="ab_sales_header_form" create="0">
+                    <header>
+                        <button name="action_open_sales_return"
+                                type="object"
+                                string="Return"
+                                class="btn-danger"
+                                invisible="status not in ('saved', 'pending') or not eplus_serial"/>
+                        <button name="action_open_add_products" type="object" string="Add Products"
+                                class="btn-secondary" data-hotkey="f2"
+                                invisible="status in ('saved', 'pending')"/>
+                        <span class="badge text-bg-success ms-2"
+                              invisible="not store_id or store_server_online == False">Connected</span>
+                        <span class="badge text-bg-danger ms-2"
+                              invisible="not store_id or store_server_online == True">Offline</span>
+                    </header>
+                    <sheet>
+                        <div class="oe_button_box" name="button_box">
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-dollar">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">
+                                        Total:
+                                    </span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_price"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-list-ol">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">
+                                        Product:
+                                    </span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="number_of_products"/>
+                                    </span>
+                                </div>
+                            </button>
+                            <button name="compute_totals" type="object" class="oe_stat_button" icon="fa-money">
+                                <div class="o_field_widget o_stat_info mr4">
+                                    <span class="o_stat_text">
+                                        Net:
+                                    </span>
+                                </div>
+                                <div class="o_field_widget o_stat_info">
+                                    <span class="o_stat_value">
+                                        <field name="total_net_amount"/>
+                                    </span>
+                                </div>
+                            </button>
+                        </div>
+                        <widget name="web_ribbon" title="Saved" bg_color="bg-success"
+                                invisible="status != 'saved'"/>
+                        <widget name="web_ribbon" title="Pending" bg_color="bg-info"
+                                invisible="status != 'pending'"/>
+                        <group>
+                            <group>
+                                <field name="store_id"
+                                       readonly="status in ('saved', 'pending')"/>
+                                <field name="eplus_serial"/>
+                                <field name="pos_client_token" readonly="1"/>
+                                <field name="store_code"/>
+                                <field name="store_ip"/>
+                                <field name="store_server_online" invisible="True"/>
+                                <field name="description" placeholder="Write your feedback here"
+                                       readonly="status in ('saved', 'pending')"/>
+
+                            </group>
+                            <group>
+                                <notebook>
+                                    <page name="bill_customer" string="Bill Customer Data">
+                                        <group>
+                                            <field name="bill_customer_name" string="Name"
+                                                   readonly="status in ('saved', 'pending')"/>
+                                            <field name="bill_customer_phone" string="Phone"
+                                                   readonly="status in ('saved', 'pending')"/>
+                                            <field name="bill_customer_address" string="Address"
+                                                   readonly="status in ('saved', 'pending')"/>
+                                        </group>
+                                    </page>
+                                    <page name="current_customer" string="Current Customer">
+                                        <group>
+                                            <field name="invoice_address_datalist" invisible="True"/>
+                                            <field name="customer_id" readonly="status in ('saved', 'pending')"/>
+                                            <field name="invoice_address" class="datalist-invoice_address_datalist"
+                                                   readonly="status in ('saved', 'pending')"/>
+                                            <field name="customer_address"/>
+                                            <field name="customer_mobile"/>
+                                            <field name="customer_phone"/>
+                                            <field name="customer_code"/>
+                                        </group>
+                                    </page>
+                                    <page name="new_customer" string="New Customer">
+                                        <group>
+                                            <field name="new_customer_name" string="Name"
+                                                   readonly="status in ('saved', 'pending')"/>
+                                            <field name="new_customer_phone" string="Phone"
+                                                   readonly="status in ('saved', 'pending')"/>
+                                            <field name="new_customer_address" string="Address"
+                                                   readonly="status in ('saved', 'pending')"/>
+                                        </group>
+                                    </page>
+                                </notebook>
+                            </group>
+                        </group>
+                        <field name="store_id" invisible="True" readonly="False"/>
+                        <field name="status" invisible="True" readonly="False"/>
+                        <field name="number_of_products" invisible="True" readonly="False"/>
+                        <div class="d-flex justify-content-between">
+                        </div>
+                        <notebook>
+                            <page string="Sales Detail">
+                                <field name="line_ids" readonly="status in ('saved', 'pending')">
+                                    <list editable="bottom">
+                                        <field name="product_id" decoration-danger="balance==0" class="text-wrap"
+                                               context="{'pos_store_id': parent.store_id, 'search_default_filter_has_balance': 1, 'search_default_filter_has_pos_balance': 1}"
+                                               width="300px"
+                                        />
+                                        <field name="product_code" width="50px" optional="show"/>
+                                        <field name="qty_str" string="Quantity" width="75px"
+                                        />
+                                        <field name="product_uom_category_id" invisible="True"/>
+                                        <field name="uom_id" width="80px"
+                                               domain="product_uom_category_id and [('category_id', '=', product_uom_category_id)] or [('id', '=', False)]"/>
+                                        <field name="qty" optional="hide"/>
+                                        <field name="inventory_json" string="Source" width="75px" optional="hide"/>
+                                        <field name="cost" width="50px" optional="hide"/>
+                                        <field name="available_prices_html"/>
+                                        <field name="inventory_table_html" width="75px" optional="hide"/>
+                                        <field name="target_sell_price" optional="hide" width="75px"/>
+                                        <field name="sell_price"/>
+                                        <field name="balance" class="h6"
+                                               decoration-success="balance>0"
+                                               decoration-danger="balance==0"/>
+                                        <field name="net_amount" optional="show"/>
+                                        <field name="unavailable_reason" optional="hide"/>
+                                        <field name="unavailable_reason_other" optional="hide"/>
+                                        <button name="btn_get_product_balance" type="object" icon="fa-cubes"
+                                                class="btn-primary"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Returns" invisible="not eplus_serial">
+                                <field name="notice_header_ids" readonly="1"
+                                       context="{'default_store_id': store_id, 'default_origin_header_id': eplus_serial}">
+                                    <list create="0" delete="0">
+                                        <field name="origin_header_id"/>
+                                        <field name="store_id"/>
+                                        <field name="status" widget="badge"/>
+                                        <button name="action_set_pending" type="object"
+                                                string="Set Pending"
+                                                class="btn-primary"
+                                                invisible="status != 'prepending'"/>
+                                        <field name="total_return_qty"/>
+                                        <field name="total_return_value"/>
+                                        <field name="total_sales_net" optional="hide"/>
+                                        <field name="create_date" optional="hide"/>
+                                    </list>
+                                </field>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_sales_header_view_tree" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_tree</field>
+            <field name="model">ab_sales_header</field>
+            <field name="arch" type="xml">
+                <list string="ab_sales_header_tree" create="0">
+                    <field name="id" class="text-muted"/>
+                    <field name="eplus_serial"/>
+                    <field name="store_id"/>
+                    <field name="customer_id"/>
+                    <field name="number_of_products"/>
+                    <field name="total_price"/>
+                    <field name="total_net_amount"/>
+                    <field name="status" widget="badge" decoration-info="status=='pending'"
+                           decoration-warning="status=='prepending'" decoration-success="status=='saved'"/>
+                    <field name="description"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_sales_header_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_search</field>
+            <field name="model">ab_sales_header</field>
+            <field name="arch" type="xml">
+                <search string="ab_sales_header_search">
+                    <field name="store_id"/>
+                    <field name="eplus_serial"/>
+                    <field name="id"/>
+                    <field name="line_ids" string="Product"
+                           filter_domain="[('line_ids.product_id', 'ilike', self)]"/>
+                    <field name="customer_id"/>
+                    <field name="customer_phone"/>
+                    <field name="status"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_sales_header_action" model="ir.actions.act_window">
+            <field name="name">Bills</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_header</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="ab_sales.ab_sales_header_view_tree"/>
+        </record>
+
+        <menuitem id="ab_sales_header_menu" name="Bills" parent="sales_menu_root"
+                  action="ab_sales_header_action" sequence="3"
+                  groups="ab_sales.group_ab_sales_manager,base.group_system"/>
+    </data>
+</odoo>

@@ -1,0 +1,479 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_promo_program
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-01-01 08:50+0000\n"
+"PO-Revision-Date: 2026-01-01 08:50+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program.py:0
+msgid "- with min amount %s %s -"
+msgstr "- مع حد أدنى للمبلغ %s %s -"
+
+#. module: ab_promo_program
+#: model:ir.actions.act_window,name:ab_promo_program.ab_promo_program_action
+msgid "Ab promo program"
+msgstr "برنامج العروض الترويجية"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.view_ab_promo_program_wizard_form
+msgid "Add Promotions"
+msgstr "إضافة عروض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__partner_ids
+msgid "Allowed Customers"
+msgstr "العملاء المسموح لهم"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__apply_disc_on
+msgid "Apply Disc On"
+msgstr "تطبيق الخصم على"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__budget
+msgid "Budget"
+msgstr "الميزانية"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.view_ab_promo_program_wizard_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program_wizard__from_excel
+msgid ""
+"Copy rows from Excel and paste here (TAB-separated).\n"
+"First line MUST be headers.\n"
+"Use technical field names as headers, e.g.:\n"
+"name, max_repetition_per_invoice, rule_date_from, rule_date_to,\n"
+"rule_min_amount, rule_min_qty, disc_percent, apply_disc_on,\n"
+"fixed_price, product_code, disc_specific_product_ids\n"
+"\n"
+"- All headers are technical names EXCEPT 'product_code',\n"
+"  which is used to link to product_ids via ab_product.code.\n"
+"- 'disc_specific_product_ids' should contain product CODES\n"
+"  (comma-separated) that will be mapped to the Many2many field."
+msgstr ""
+"انسخ الصفوف من إكسل والصقها هنا (مفصولة بعلامة التبويب).\n"
+"يجب أن يكون السطر الأول عناوين.\n"
+"استخدم الأسماء التقنية للحقول كعناوين، مثال:\n"
+"name, max_repetition_per_invoice, rule_date_from, rule_date_to,\n"
+"rule_min_amount, rule_min_qty, disc_percent, apply_disc_on,\n"
+"fixed_price, product_code, disc_specific_product_ids\n"
+"\n"
+"- جميع العناوين أسماء تقنية باستثناء 'product_code',\n"
+"  والذي يُستخدم للربط بـ product_ids عبر ab_product.code.\n"
+"- يجب أن يحتوي 'disc_specific_product_ids' على أكواد المنتجات\n"
+"  (مفصولة بفواصل) التي سيتم ربطها بحقل Many2many."
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__create_uid
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__create_date
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__disc_percent
+msgid "Discount (%)"
+msgstr "الخصم (%)"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__disc_specific_product_ids
+msgid "Discount On Specific Products"
+msgstr "خصم على منتجات محددة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__display_name
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__rule_products_domain
+msgid ""
+"Domain on ab_product, e.g. "
+"[('sale_ok','=',True),('categ_id.name','ilike','Skin')] Leave empty to "
+"accept any product."
+msgstr ""
+"نطاق على ab_product، مثل [('sale_ok','=',True),('categ_id.name','ilike','Skin')] "
+"اتركه فارغًا لقبول أي منتج."
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__product_ids
+msgid "Explicit Products (optional)"
+msgstr "منتجات محددة (اختياري)"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__status__finished
+msgid "Finished"
+msgstr "منتهٍ"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__fixed_price
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__apply_disc_on__fixed_price
+msgid "Fixed Price"
+msgstr "سعر ثابت"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Header row is empty."
+msgstr "صف العناوين فارغ."
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__id
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__rule_same_reward_qty
+msgid ""
+"If true, require exactly rule_min_qty + reward_quantity in cart (mimics 'Buy"
+" X Get Y same product' eligibility checks)."
+msgstr ""
+"إذا كانت مفعّلة، يتطلب وجود rule_min_qty + reward_quantity بالضبط في السلة "
+"(يحاكي تحقق الأهلية لعرض 'اشترِ X واحصل على Y من نفس المنتج')."
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.view_ab_promo_program_wizard_form
+msgid "Import Promotions from Excel"
+msgstr "استيراد العروض من إكسل"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Invalid float value: %s"
+msgstr "قيمة رقم عشري غير صالحة: %s"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Invalid integer value: %s"
+msgstr "قيمة عدد صحيح غير صالحة: %s"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__write_uid
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__write_date
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__store_ids
+msgid "Leave empty to apply to all stores."
+msgstr "اتركه فارغًا للتطبيق على جميع المتاجر."
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Line %s: 'name' is required."
+msgstr "السطر %s: الحقل 'name' مطلوب."
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Line %s: 'product_code' is required."
+msgstr "السطر %s: الحقل 'product_code' مطلوب."
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__max_repetition_per_invoice
+msgid "Max Repetition per Invoice"
+msgstr "أقصى تكرار لكل فاتورة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__max_repetition_per_invoice
+msgid ""
+"Maximum number of times this promotion can be applied within a single "
+"invoice. "
+msgstr "الحد الأقصى لعدد مرات تطبيق هذا العرض ضمن فاتورة واحدة. "
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__rule_min_amount
+msgid "Minimum header untaxed amount to be eligible (optional)."
+msgstr "الحد الأدنى لإجمالي الفاتورة قبل الضريبة للتأهل (اختياري)."
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program.py:0
+msgid "Minimum qty for rule 'Cheapest Product' Must be at least 2"
+msgstr "الحد الأدنى للكمية لقاعدة 'أرخص منتج' يجب أن يكون 2 على الأقل"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program.py:0
+msgid "Minimum qty is 1"
+msgstr "الحد الأدنى للكمية هو 1"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Missing required header(s): %s"
+msgstr "عناوين مطلوبة مفقودة: %s"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "No data to import."
+msgstr "لا توجد بيانات للاستيراد."
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "No rows detected in pasted data."
+msgstr "لم يتم اكتشاف أي صفوف في البيانات الملصقة."
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "No valid lines found to create promotions."
+msgstr "لم يتم العثور على أسطر صالحة لإنشاء العروض."
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__rule_text
+msgid "Offer Description"
+msgstr "وصف العرض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__apply_disc_on__cheapest_product
+msgid "On Cheapest Product"
+msgstr "على أرخص منتج"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__apply_disc_on__on_order
+msgid "On Ordered Quantity"
+msgstr "على الكمية المطلوبة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__apply_disc_on__specific_products
+msgid "On Specific Products"
+msgstr "على منتجات محددة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__partner_domain
+msgid ""
+"Optional dynamic domain on ab_customer, e.g. [('category_id.name', 'in', "
+"['VIP','Gold'])]"
+msgstr ""
+"نطاق ديناميكي اختياري على ab_customer، مثل [('category_id.name', 'in', "
+"['VIP','Gold'])]"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__partner_domain
+msgid "Partner Domain (safe_eval)"
+msgstr "نطاق الشريك (safe_eval)"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__from_excel
+msgid "Paste Excel Data"
+msgstr "الصق بيانات إكسل"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.view_ab_promo_program_wizard_form
+msgid "Paste Excel rows here (tab-separated)"
+msgstr "الصق صفوف إكسل هنا (مفصولة بعلامة التبويب)"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__status__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Please paste Excel data first."
+msgstr "يرجى لصق بيانات إكسل أولاً."
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "Product and Customer Domains"
+msgstr "نطاقات المنتجات والعملاء"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "Products"
+msgstr "المنتجات"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__rule_products_domain
+msgid "Products Domain (safe_eval)"
+msgstr "نطاق المنتجات (safe_eval)"
+
+#. module: ab_promo_program
+#: model:ir.model,name:ab_promo_program.model_ab_promo_program_wizard
+msgid "Promo Program Excel Import Wizard"
+msgstr "معالج استيراد برنامج العروض من إكسل"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "Promotion Criteria"
+msgstr "معايير العرض"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "Promotion Date"
+msgstr "تاريخ العرض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__rule_date_from
+msgid "Rule Date From"
+msgstr "تاريخ العرض من"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__rule_date_to
+msgid "Rule Date To"
+msgstr "تاريخ العرض إلى"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__rule_min_amount
+msgid "Rule Min Amount (Money)"
+msgstr "الحد الأدنى للمبلغ (نقود)"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__rule_min_qty
+msgid "Rule Min Qty"
+msgstr "الحد الأدنى للكمية"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__rule_same_reward_qty
+msgid "Rule Same Reward Qty"
+msgstr "كمية المكافأة المطابقة للقاعدة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__status__running
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__store_ids
+msgid "Stores"
+msgstr "المتاجر"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__supplier_id
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "Supplier Accounting"
+msgstr "محاسبة المورد"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__disc_percent
+msgid "The discount in percentage (could be more than 100 e.g. 200 300 400)"
+msgstr "قيمة الخصم كنسبة مئوية (قد تتجاوز 100 مثل 200 300 400)"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid ""
+"The following product codes were not found (disc_specific_product_ids):\n"
+"%s"
+msgstr ""
+"لم يتم العثور على أكواد المنتجات التالية (disc_specific_product_ids):\n"
+"%s"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid ""
+"The following product codes were not found (product_ids):\n"
+"%s"
+msgstr ""
+"لم يتم العثور على أكواد المنتجات التالية (product_ids):\n"
+"%s"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__rule_min_qty
+msgid "Total qty (over matching products) required."
+msgstr "إجمالي الكمية المطلوبة (للمنتجات المطابقة)."
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid "Unknown value for 'apply_disc_on': %s"
+msgstr "قيمة غير معروفة للحقل 'apply_disc_on': %s"
+
+#. module: ab_promo_program
+#: model:ir.model,name:ab_promo_program.model_ab_promo_program
+msgid "ab_promo_program"
+msgstr "برنامج العروض"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "ab_promo_program_form"
+msgstr "نموذج برنامج العروض"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_pivot
+msgid "ab_promo_program_pivot"
+msgstr "محور برنامج العروض"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_search
+msgid "ab_promo_program_search"
+msgstr "بحث برنامج العروض"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_tree
+msgid "ab_promo_program_tree"
+msgstr "قائمة برنامج العروض"

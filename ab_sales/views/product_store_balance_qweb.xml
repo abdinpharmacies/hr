@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="product_store_balance_html">
+        <div class="o_ab_sales_balance_html" style="max-height: 70vh; overflow: auto;">
+            <t t-if="offline_mode">
+                <div class="alert alert-warning d-flex align-items-center gap-2 mb-2" role="alert">
+                    <i class="fa fa-exclamation-triangle" aria-hidden="true"/>
+                    <div>
+                        Showing balances from offline data (ab_sales_inventory). Live E-Plus connection is unavailable.
+                    </div>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="alert alert-success d-flex align-items-center gap-2 mb-2" role="alert">
+                    <i class="fa fa-check-circle" aria-hidden="true"/>
+                    <div>
+                        Showing balances from online data. Live E-Plus connection is available.
+                    </div>
+                </div>
+            </t>
+            <t t-if="not products">
+                <div class="alert alert-info d-flex align-items-center gap-2 m-0" role="alert">
+                    <i class="fa fa-info-circle" aria-hidden="true"/>
+                    <div>No positive balances found for the selected product(s).</div>
+                </div>
+            </t>
+            <t t-else="">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <div class="d-flex align-items-center gap-2 text-muted">
+                        <i class="fa fa-line-chart" aria-hidden="true"/>
+                        <span class="small">Store balances</span>
+                    </div>
+                </div>
+
+                <t t-foreach="products" t-as="prod" t-foreach-index="pidx" t-key="prod['serial']">
+                    <t t-if="single_product">
+                        <div class="card shadow-sm mb-3">
+                            <div class="card-header bg-white">
+                                <div class="d-flex align-items-start justify-content-between gap-3">
+                                    <div class="d-flex flex-column" style="min-width: 0;">
+                                        <div class="fw-bold text-truncate" t-esc="prod['name']"/>
+                                        <div class="text-muted small d-flex flex-wrap align-items-center gap-3">
+                                            <span class="d-inline-flex align-items-center gap-1">
+                                                <i class="fa fa-barcode" aria-hidden="true"/>
+                                                <span t-esc="prod['code']"/>
+                                            </span>
+                                            <span class="d-inline-flex align-items-center gap-1">
+                                                <i class="fa fa-hashtag" aria-hidden="true"/>
+                                                <span t-esc="prod['serial']"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="text-end">
+                                            <div class="text-muted small mb-1">Total</div>
+                                            <span class="badge text-bg-primary px-3 py-2" style="font-size: 1rem;"
+                                                  t-esc="prod['total_qty']"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover align-top mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <span class="d-inline-flex align-items-center gap-2">
+                                                    <i class="fa fa-building-o text-muted" aria-hidden="true"/>
+                                                    <span>Store</span>
+                                                </span>
+                                            </th>
+                                            <th>
+                                                <span class="d-inline-flex align-items-center gap-2">
+                                                    <i class="fa fa-building-o text-muted" aria-hidden="true"/>
+                                                    <span>Store</span>
+                                                </span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="prod['rows']" t-as="row" t-key="row['key']">
+                                            <t t-if="row['type'] == 'hr'">
+                                                <tr>
+                                                    <td colspan="2" class="py-0">
+                                                        <hr class="my-4"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-set="left" t-value="row['left']"/>
+                                                <t t-set="right" t-value="row['right']"/>
+                                                <tr>
+                                                    <td class="w-50 pe-4">
+                                                        <div class="d-flex justify-content-start gap-3">
+                                                            <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+                                                                <span class="badge text-bg-success px-2 py-1"
+                                                                      style="font-size: 0.95rem;"
+                                                                      t-esc="left['qty']"/>
+                                                                <div class="progress w-100"
+                                                                     style="height: 6px; max-width: 160px;">
+                                                                    <div class="progress-bar bg-success"
+                                                                         role="progressbar"
+                                                                         t-attf-style="width: #{left['pct']}%;"
+                                                                         t-att-aria-valuenow="left['pct']"
+                                                                         aria-valuemin="0"
+                                                                         aria-valuemax="100"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex flex-column" style="min-width: 0;">
+                                                                <div class="fw-semibold text-truncate"
+                                                                     t-esc="left['store_name']"/>
+                                                                <div class="text-muted small d-flex flex-wrap align-items-center gap-2">
+                                                                    <span class="d-inline-flex align-items-center gap-1">
+                                                                        <i class="fa fa-map-marker" aria-hidden="true"/>
+                                                                        <span class="text-truncate"
+                                                                              t-esc="left['store_area']"/>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <t t-if="right">
+                                                        <td class="w-50 ps-4">
+                                                            <div class="d-flex justify-content-start gap-3">
+                                                                <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+                                                                    <span class="badge text-bg-success px-2 py-1"
+                                                                          style="font-size: 0.95rem;"
+                                                                          t-esc="right['qty']"/>
+                                                                    <div class="progress w-100"
+                                                                         style="height: 6px; max-width: 160px;">
+                                                                        <div class="progress-bar bg-success"
+                                                                             role="progressbar"
+                                                                             t-attf-style="width: #{right['pct']}%;"
+                                                                             t-att-aria-valuenow="right['pct']"
+                                                                             aria-valuemin="0"
+                                                                             aria-valuemax="100"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="d-flex flex-column" style="min-width: 0;">
+                                                                    <div class="fw-semibold text-truncate"
+                                                                         t-esc="right['store_name']"/>
+                                                                    <div class="text-muted small d-flex flex-wrap align-items-center gap-2">
+                                                                        <span class="d-inline-flex align-items-center gap-1">
+                                                                            <i class="fa fa-map-marker"
+                                                                               aria-hidden="true"/>
+                                                                            <span class="text-truncate"
+                                                                                  t-esc="right['store_area']"/>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td class="w-50 ps-4"/>
+                                                    </t>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </t>
+                    <t t-else="">
+                        <details class="card shadow-sm mb-3">
+                            <summary class="card-header bg-white"
+                                     style="cursor:pointer; user-select:none; outline:none;">
+                                <div class="d-flex align-items-start justify-content-between gap-3">
+                                    <div class="d-flex flex-column" style="min-width: 0;">
+                                        <div class="fw-bold text-truncate" t-esc="prod['name']"/>
+                                        <div class="text-muted small d-flex flex-wrap align-items-center gap-3">
+                                            <span class="d-inline-flex align-items-center gap-1">
+                                                <i class="fa fa-barcode" aria-hidden="true"/>
+                                                <span t-esc="prod['code']"/>
+                                            </span>
+                                            <span class="d-inline-flex align-items-center gap-1">
+                                                <i class="fa fa-hashtag" aria-hidden="true"/>
+                                                <span t-esc="prod['serial']"/>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-start gap-3">
+                                        <div class="text-end">
+                                            <div class="text-muted small mb-1">Total</div>
+                                            <span class="badge text-bg-primary px-3 py-2" style="font-size: 1rem;"
+                                                  t-esc="prod['total_qty']"/>
+                                        </div>
+                                        <div class="text-muted pt-1" aria-hidden="true" title="Expand/collapse">
+                                            <i class="fa fa-chevron-down"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </summary>
+
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover align-top mb-0">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>
+                                                <span class="d-inline-flex align-items-center gap-2">
+                                                    <i class="fa fa-building-o text-muted" aria-hidden="true"/>
+                                                    <span>Store</span>
+                                                </span>
+                                            </th>
+                                            <th>
+                                                <span class="d-inline-flex align-items-center gap-2">
+                                                    <i class="fa fa-building-o text-muted" aria-hidden="true"/>
+                                                    <span>Store</span>
+                                                </span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <t t-foreach="prod['rows']" t-as="row" t-key="row['key']">
+                                            <t t-if="row['type'] == 'hr'">
+                                                <tr>
+                                                    <td colspan="2" class="py-0">
+                                                        <hr class="my-4"/>
+                                                    </td>
+                                                </tr>
+                                            </t>
+                                            <t t-else="">
+                                                <t t-set="left" t-value="row['left']"/>
+                                                <t t-set="right" t-value="row['right']"/>
+                                                <tr>
+                                                    <td class="w-50 pe-4">
+                                                        <div class="d-flex justify-content-start gap-3">
+                                                            <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+                                                                <span class="badge text-bg-success px-2 py-1"
+                                                                      style="font-size: 0.95rem;"
+                                                                      t-esc="left['qty']"/>
+                                                                <div class="progress w-100"
+                                                                     style="height: 6px; max-width: 160px;">
+                                                                    <div class="progress-bar bg-success"
+                                                                         role="progressbar"
+                                                                         t-attf-style="width: #{left['pct']}%;"
+                                                                         t-att-aria-valuenow="left['pct']"
+                                                                         aria-valuemin="0"
+                                                                         aria-valuemax="100"/>
+                                                                </div>
+                                                            </div>
+                                                            <div class="d-flex flex-column" style="min-width: 0;">
+                                                                <div class="fw-semibold text-truncate"
+                                                                     t-esc="left['store_name']"/>
+                                                                <div class="text-muted small d-flex flex-wrap align-items-center gap-2">
+                                                                    <span class="d-inline-flex align-items-center gap-1">
+                                                                        <i class="fa fa-map-marker" aria-hidden="true"/>
+                                                                        <span class="text-truncate"
+                                                                              t-esc="left['store_area']"/>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+
+                                                    <t t-if="right">
+                                                        <td class="w-50 ps-4">
+                                                            <div class="d-flex justify-content-start gap-3">
+                                                                <div class="d-flex flex-column align-items-end gap-1 flex-shrink-0">
+                                                                    <span class="badge text-bg-success px-2 py-1"
+                                                                          style="font-size: 0.95rem;"
+                                                                          t-esc="right['qty']"/>
+                                                                    <div class="progress w-100"
+                                                                         style="height: 6px; max-width: 160px;">
+                                                                        <div class="progress-bar bg-success"
+                                                                             role="progressbar"
+                                                                             t-attf-style="width: #{right['pct']}%;"
+                                                                             t-att-aria-valuenow="right['pct']"
+                                                                             aria-valuemin="0"
+                                                                             aria-valuemax="100"/>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="d-flex flex-column" style="min-width: 0;">
+                                                                    <div class="fw-semibold text-truncate"
+                                                                         t-esc="right['store_name']"/>
+                                                                    <div class="text-muted small d-flex flex-wrap align-items-center gap-2">
+                                                                        <span class="d-inline-flex align-items-center gap-1">
+                                                                            <i class="fa fa-map-marker"
+                                                                               aria-hidden="true"/>
+                                                                            <span class="text-truncate"
+                                                                                  t-esc="right['store_area']"/>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <td class="w-50 ps-4"/>
+                                                    </t>
+                                                </tr>
+                                            </t>
+                                        </t>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </details>
+                    </t>
+                </t>
+            </t>
+        </div>
+    </template>
+</odoo>

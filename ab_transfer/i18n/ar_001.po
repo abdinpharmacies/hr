@@ -1,0 +1,1828 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_transfer
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-19 15:36+0000\n"
+"PO-Revision-Date: 2026-07-19 15:36+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "At least one line is required."
+msgstr "يجب إضافة سطر واحد على الأقل."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "At least one valid line is required."
+msgstr "يجب إضافة سطر صالح واحد على الأقل."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Available"
+msgstr "المتاح"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Balance"
+msgstr "الرصيد"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Barcode"
+msgstr "الباركود"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Barcode is required."
+msgstr "الباركود مطلوب."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Barcode not found:"
+msgstr "الباركود غير موجود:"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Branch demand entry"
+msgstr "إدخال طلب الفرع"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Calculating availability..."
+msgstr "جارٍ حساب التوفر..."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request__state__cancelled
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request_report__request_state__cancelled
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid ""
+"Cancelled transfer requests must be reset to draft before confirmation."
+msgstr "يجب إعادة طلبات التحويل الملغاة إلى المسودة قبل التأكيد."
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__class_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__class_id
+msgid "Class ID"
+msgstr "معرف الفئة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Close"
+msgstr "إغلاق"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__company_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__company_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__company_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__company_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__company_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__company_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__company_id
+msgid "Company"
+msgstr "الشركة"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request__state__confirmed
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request_report__request_state__confirmed
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Confirmed"
+msgstr "مؤكد"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__cost
+msgid "Cost"
+msgstr "التكلفة"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__create_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__create_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_pos_api__create_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__create_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__create_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__create_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__create_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_pos_api__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__create_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__create_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_pos_api__create_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__create_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__create_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__create_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__create_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_pos_api__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Current branch store MSSQL server IP is missing."
+msgstr "عنوان IP لخادم MSSQL الخاص بمخزن الفرع الحالي غير موجود."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Current user has no linked EPlus cost center."
+msgstr "المستخدم الحالي غير مرتبط بمركز تكلفة في إي بلس."
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__employee_delivery_id
+msgid "Delivery Employee"
+msgstr "موظف التسليم"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__destination_activated
+msgid "Destination Active"
+msgstr "الوجهة مفعلة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__to_store_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__to_store_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Destination Branch"
+msgstr "الفرع الهدف"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "Destination branch is required."
+msgstr "الفرع الهدف مطلوب."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Destination store is invalid."
+msgstr "المخزن الهدف غير صالح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Destination store is not allowed for the current branch."
+msgstr "المخزن الهدف غير مسموح به للفرع الحالي."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Destination store is required before loading a transfer request."
+msgstr "المخزن الهدف مطلوب قبل تحميل طلب التحويل."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Destination store is required."
+msgstr "المخزن الهدف مطلوب."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Discard"
+msgstr "تجاهل"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__display_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__display_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__display_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request__execution_state__done
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Done Execution"
+msgstr "تم التنفيذ"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request__state__draft
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request_report__request_state__draft
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/dashboard/transfer_dashboard.xml:0
+msgid "Drafts"
+msgstr "المسودات"
+
+#. module: ab_transfer
+#: model:ir.model.constraint,message:ab_transfer.constraint_ab_transfer_receive_header_uniq_transfer_receive
+msgid "EPlus transfer already exists in the receive queue."
+msgstr "تحويل إي بلس موجود بالفعل في قائمة انتظار الاستلام."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "EPlus transfer header was not found for receive flag update."
+msgstr "لم يتم العثور على رأس تحويل إي بلس لتحديث علامة الاستلام."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "EPlus transfer header was not found."
+msgstr "لم يتم العثور على رأس تحويل إي بلس."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "EPlus transfer line was not found for destination stock creation."
+msgstr "لم يتم العثور على سطر تحويل إي بلس لإنشاء مخزون الوجهة."
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__employee_name
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__error_message
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__error_message
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_form
+msgid "Errors"
+msgstr "الأخطاء"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__execution_state
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Execution State"
+msgstr "حالة التنفيذ"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__execution_status
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Execution Status"
+msgstr "وضع التنفيذ"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Expiry"
+msgstr "الصلاحية"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__expiry_date
+msgid "Expiry Date"
+msgstr "تاريخ الصلاحية"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_line.py:0
+msgid "Expiry date is required."
+msgstr "تاريخ الصلاحية مطلوب."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"Failed to receive transfer:\n"
+"%s"
+msgstr "فشل استلام التحويل:\n%s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"Failed to sync pending receives:\n"
+"%s"
+msgstr "فشلت مزامنة الاستلامات المعلقة:\n%s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Failed to update destination stock row for product %s."
+msgstr "فشل تحديث سطر مخزون الوجهة للصنف %s."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: model:ir.actions.client,name:ab_transfer.ab_transfer_pos_action
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_pos_menu
+msgid "Fast Transfer"
+msgstr "تحويل سريع"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__from_store_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__from_store_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__from_store_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__from_store_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "From Store"
+msgstr "من المخزن"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__from_store_sql_id
+msgid "From Store ID"
+msgstr "معرف المخزن المصدر"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__from_store_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__from_store_name
+msgid "From Store Name"
+msgstr "اسم المخزن المصدر"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Full Screen"
+msgstr "ملء الشاشة"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request_report__execution_status__fully_executed
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Fully Executed"
+msgstr "منفذ بالكامل"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_line_view_search
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Header-driven store transfer flow"
+msgstr "مسار تحويل مخزني يعتمد على الرأس"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Headers"
+msgstr "الرؤوس"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_pos_api__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_pos_api__id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "Invalid payload."
+msgstr "البيانات المرسلة غير صالحة."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Invalid store or limit."
+msgstr "المخزن أو الحد غير صالح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Invalid store or product."
+msgstr "المخزن أو الصنف غير صالح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Invalid transfer request or store."
+msgstr "طلب التحويل أو المخزن غير صالح."
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__inventory_json
+msgid "Inventory JSON"
+msgstr "بيانات المخزون JSON"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__inventory_table_html
+msgid "Inventory Table"
+msgstr "جدول المخزون"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Item_Class_Store key columns were not found."
+msgstr "لم يتم العثور على أعمدة المفاتيح في Item_Class_Store."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_form
+msgid "Items"
+msgstr "الأصناف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__items_count
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__items_count
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__items_count
+msgid "Items Count"
+msgstr "عدد الأصناف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__write_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__write_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_pos_api__write_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__write_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__write_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__write_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__write_uid
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_pos_api__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__write_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__write_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_pos_api__write_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__write_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__write_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__write_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__write_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_pos_api__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__line_ids
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__line_ids
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_form
+msgid "Lines"
+msgstr "السطور"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Linked Products (Temp)"
+msgstr "الأصناف المرتبطة (مؤقت)"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Load Transfer Request"
+msgstr "تحميل طلب التحويل"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/dashboard/transfer_dashboard.xml:0
+msgid "Loading"
+msgstr "جارٍ التحميل"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Loading linked products..."
+msgstr "جارٍ تحميل الأصناف المرتبطة..."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Loading requests..."
+msgstr "جارٍ تحميل الطلبات..."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Loading..."
+msgstr "جارٍ التحميل..."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Maximize"
+msgstr "تكبير"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Minimize"
+msgstr "تصغير"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "Missing required models: %s"
+msgstr "الموديلات المطلوبة غير موجودة: %s"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__display_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__display_name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "New Request"
+msgstr "طلب جديد"
+
+#. module: ab_transfer
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "New Transfer"
+msgstr "تحويل جديد"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "New Transfer Request"
+msgstr "طلب تحويل جديد"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "No allowed Transfer From Store has an EPlus serial configured."
+msgstr "لا يوجد مخزن مصدر مسموح للتحويل تم ضبط رقم إي بلس التسلسلي له."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "No allowed Transfer From Store has an MSSQL server IP configured."
+msgstr "لا يوجد مخزن مصدر مسموح للتحويل تم ضبط عنوان IP لخادم MSSQL له."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"No allowed Transfer From Store has both EPlus serial and MSSQL server IP "
+"configured."
+msgstr "لا يوجد مخزن مصدر مسموح للتحويل تم ضبط كل من رقم إي بلس التسلسلي وعنوان IP لخادم MSSQL له."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "No available source stock rows were found to load into this transfer."
+msgstr "لم يتم العثور على سطور مخزون مصدر متاحة لتحميلها في هذا التحويل."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "No lines yet."
+msgstr "لا توجد سطور بعد."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "No local drafts."
+msgstr "لا توجد مسودات محلية."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "No pending lines were found for this transfer."
+msgstr "لم يتم العثور على سطور معلقة لهذا التحويل."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "No pending transfer requests."
+msgstr "لا توجد طلبات تحويل معلقة."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "No products found."
+msgstr "لم يتم العثور على أصناف."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "No products on this request."
+msgstr "لا توجد أصناف في هذا الطلب."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__notes
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__notes
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__notes
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Only confirmed transfer requests can be loaded."
+msgstr "يمكن تحميل طلبات التحويل المؤكدة فقط."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Only pending transfer requests can be loaded."
+msgstr "يمكن تحميل طلبات التحويل المعلقة فقط."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Only pending transfers can be received."
+msgstr "يمكن استلام التحويلات المعلقة فقط."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Partial"
+msgstr "جزئي"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request_report__execution_status__partially_executed
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Partially Executed"
+msgstr "منفذ جزئيًا"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_header__selection__pending
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_receive_header__state__pending
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request__execution_state__pending
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_request_report__execution_status__pending
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_search
+msgid "Pending"
+msgstr "معلق"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Pending Execution"
+msgstr "بانتظار التنفيذ"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Pending Only"
+msgstr "المعلقة فقط"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Pending Receives"
+msgstr "استلامات معلقة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Pending Requests"
+msgstr "طلبات معلقة"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_search
+msgid "Pending Transfer Receives"
+msgstr "استلامات التحويل المعلقة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Pending Transfer Requests"
+msgstr "طلبات التحويل المعلقة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Pending Transfers"
+msgstr "تحويلات معلقة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Pending receives and lines were synced successfully."
+msgstr "تمت مزامنة الاستلامات والسطور المعلقة بنجاح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"Pending receives synced, but line sync failed:\n"
+"%s"
+msgstr "تمت مزامنة الاستلامات المعلقة، لكن فشلت مزامنة السطور:\n%s"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Pending requests for the selected destination store."
+msgstr "الطلبات المعلقة للمخزن الهدف المحدد."
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__pharm_price
+msgid "Pharm Price"
+msgstr "سعر الصيدلية"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_header__selection__prepending
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+msgid "Prepending"
+msgstr "قيد التحضير"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_transfer
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_line.py:0
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__product_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__product_display_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__product_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__product_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__product_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Product"
+msgstr "الصنف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__product_code
+msgid "Product Code"
+msgstr "كود الصنف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__product_sql_id
+msgid "Product ID"
+msgstr "معرف الصنف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__product_name
+msgid "Product Name"
+msgstr "اسم الصنف"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Products"
+msgstr "الأصناف"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Products List"
+msgstr "قائمة الأصناف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__purchase_price
+msgid "Purchase Price"
+msgstr "سعر الشراء"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__qty
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_line.py:0
+msgid "Quantity must be greater than zero."
+msgstr "يجب أن تكون الكمية أكبر من صفر."
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_form
+msgid "Receive"
+msgstr "استلام"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Receive %s"
+msgstr "استلام %s"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__header_id
+msgid "Receive Header"
+msgstr "رأس الاستلام"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__receive_qty
+msgid "Receive Qty"
+msgstr "كمية الاستلام"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__state
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__state
+msgid "Receive Status"
+msgstr "حالة الاستلام"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: model:ir.actions.act_window,name:ab_transfer.ab_transfer_receive_header_action
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_receive_header_menu
+msgid "Receive Transfer"
+msgstr "استلام تحويل"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Receive User"
+msgstr "مستخدم الاستلام"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_receive_header__state__received
+msgid "Received"
+msgstr "تم الاستلام"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__received_at
+msgid "Received At"
+msgstr "تم الاستلام في"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__received_qty
+msgid "Received Qty"
+msgstr "الكمية المستلمة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/dashboard/transfer_dashboard.xml:0
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__related_transfer_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Related Transfer"
+msgstr "التحويل المرتبط"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__remaining_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_list
+msgid "Remaining Quantity"
+msgstr "الكمية المتبقية"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Remove"
+msgstr "إزالة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/dashboard/transfer_dashboard.xml:0
+msgid "Report"
+msgstr "التقرير"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__request_date
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Request Date"
+msgstr "تاريخ الطلب"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/dashboard/transfer_dashboard.xml:0
+msgid "Request Execution"
+msgstr "تنفيذ الطلب"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Request Lines"
+msgstr "سطور الطلب"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Request Number"
+msgstr "رقم الطلب"
+
+#. module: ab_transfer
+#: model:ir.actions.client,name:ab_transfer.ab_transfer_request_pos_action
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_request_pos_menu
+msgid "Request POS"
+msgstr "طلب نقطة البيع"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Request Report"
+msgstr "تقرير الطلب"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Request State"
+msgstr "حالة الطلب"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__request_state
+msgid "Request Status"
+msgstr "وضع الطلب"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Requested"
+msgstr "مطلوب"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__requested_by_id
+msgid "Requested By"
+msgstr "مطلوب بواسطة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Requested Qty"
+msgstr "الكمية المطلوبة"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__requested_qty
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__requested_qty
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__requested_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_list
+msgid "Requested Quantity"
+msgstr "الكمية المطلوبة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "Requested quantity must be greater than zero."
+msgstr "يجب أن تكون الكمية المطلوبة أكبر من صفر."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__requesting_store_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Requesting Store"
+msgstr "المخزن الطالب"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "Requesting store is required."
+msgstr "المخزن الطالب مطلوب."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Requests"
+msgstr "الطلبات"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_form
+msgid "Reset to Draft"
+msgstr "إعادة إلى المسودة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "SQL Server did not return Store_Trans_h.stnh_id."
+msgstr "لم يُرجع SQL Server القيمة Store_Trans_h.stnh_id."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Save Links"
+msgstr "حفظ الروابط"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Save settings"
+msgstr "حفظ الإعدادات"
+
+#. module: ab_transfer
+#: model:ir.model.fields.selection,name:ab_transfer.selection__ab_transfer_header__selection__saved
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+msgid "Saved"
+msgstr "محفوظ"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Scan or type barcode"
+msgstr "امسح الباركود أو اكتبه"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Search Results"
+msgstr "نتائج البحث"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Select a request."
+msgstr "اختر طلبًا."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Select..."
+msgstr "اختر..."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Sell"
+msgstr "بيع"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__sell_price
+msgid "Sell Price"
+msgstr "سعر البيع"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__sent_at
+msgid "Sent At"
+msgstr "أُرسل في"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Skip"
+msgstr "تخطي"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: model:ir.actions.act_window,name:ab_transfer.ab_transfer_header_action
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_header_menu
+msgid "Smart Transfer"
+msgstr "تحويل ذكي"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"Some EPlus items do not exist in Odoo products. Create/link products by "
+"EPlus serial (itm_id) before receiving: %s"
+msgstr "بعض أصناف إي بلس غير موجودة في أصناف أودو. أنشئ أو اربط الأصناف برقم إي بلس التسلسلي (itm_id) قبل الاستلام: %s"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Source Batch"
+msgstr "تشغيلة المصدر"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Source store %s is not allowed for sales POS."
+msgstr "المخزن المصدر %s غير مسموح به لنقطة بيع المبيعات."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Source store MSSQL server IP is missing."
+msgstr "عنوان IP لخادم MSSQL الخاص بالمخزن المصدر غير موجود."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer/models/ab_transfer_line.py:0
+msgid "Source store and destination store cannot be the same."
+msgstr "لا يمكن أن يكون المخزن المصدر والمخزن الهدف نفس المخزن."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Source store and product are required."
+msgstr "المخزن المصدر والصنف مطلوبان."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Source store is invalid."
+msgstr "المخزن المصدر غير صالح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Source store is required before loading a transfer request."
+msgstr "المخزن المصدر مطلوب قبل تحميل طلب التحويل."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Source store is required."
+msgstr "المخزن المصدر مطلوب."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__selection
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__state
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__state
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__state
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__from_store_sql_id
+msgid "Store EPlus ID"
+msgstr "معرف المخزن في إي بلس"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__to_store_sql_id
+msgid "Store ID"
+msgstr "معرف المخزن"
+
+#. module: ab_transfer
+#: model:ir.model.fields,help:ab_transfer.field_ab_transfer_line__inventory_json
+msgid "Structured inventory data: {'data': [...]}"
+msgstr "بيانات مخزون منظمة: {'data': [...]}"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_form
+msgid "Submit"
+msgstr "إرسال"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Submitted Today"
+msgstr "تم إرساله اليوم"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_line.py:0
+msgid "Submitted transfer lines cannot be edited."
+msgstr "لا يمكن تعديل سطور التحويل المرسلة."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Submitted transfers cannot be edited."
+msgstr "لا يمكن تعديل التحويلات المرسلة."
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__is_submitted
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__is_submitted
+msgid "Submitted?"
+msgstr "مرسل؟"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_list
+msgid "Sync"
+msgstr "مزامنة"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__stnh_toh_id
+msgid "TOH ID"
+msgstr "معرف TOH"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__tax_value
+msgid "Tax Value"
+msgstr "قيمة الضريبة"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid ""
+"The request requesting store must match the transfer destination store."
+msgstr "يجب أن يطابق المخزن الطالب في الطلب المخزن الهدف للتحويل."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "This transfer is no longer pending in EPlus."
+msgstr "لم يعد هذا التحويل معلقًا في إي بلس."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid ""
+"This transfer request is already being submitted by another user. Please "
+"refresh and try again."
+msgstr "يتم إرسال طلب التحويل هذا بالفعل بواسطة مستخدم آخر. يرجى التحديث والمحاولة مرة أخرى."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "This transfer was already received in EPlus."
+msgstr "تم استلام هذا التحويل مسبقًا في إي بلس."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__to_store_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__to_store_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__to_store_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_search
+msgid "To Store"
+msgstr "إلى المخزن"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__to_store_sql_id
+msgid "To Store ID"
+msgstr "معرف المخزن الهدف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__to_store_name
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__to_store_name
+msgid "To Store Name"
+msgstr "اسم المخزن الهدف"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Toggle transfers panel"
+msgstr "إظهار أو إخفاء لوحة التحويلات"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__total_cost
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__total_cost_value
+msgid "Total Cost"
+msgstr "إجمالي التكلفة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Total Products Count"
+msgstr "إجمالي عدد الأصناف"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__total_requested_qty
+msgid "Total Requested Quantity"
+msgstr "إجمالي الكمية المطلوبة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__total_sell_value
+msgid "Total Sale"
+msgstr "إجمالي البيع"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__total_sell_price
+msgid "Total Sell Price"
+msgstr "إجمالي سعر البيع"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__display_name
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_form
+msgid "Transfer"
+msgstr "تحويل"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "Transfer %s"
+msgstr "تحويل %s"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__sec_insert_date
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__transfer_date
+msgid "Transfer Date"
+msgstr "تاريخ التحويل"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__header_id
+msgid "Transfer Header"
+msgstr "رأس التحويل"
+
+#. module: ab_transfer
+#: model:ir.model,name:ab_transfer.model_ab_transfer_line
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_line_view_form
+msgid "Transfer Line"
+msgstr "سطر التحويل"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: model:ir.actions.act_window,name:ab_transfer.ab_transfer_line_action
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_line_menu
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_line_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_line_view_search
+msgid "Transfer Lines"
+msgstr "سطور التحويل"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__transfer_serial
+msgid "Transfer Number"
+msgstr "رقم التحويل"
+
+#. module: ab_transfer
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_parent_menu
+msgid "Transfer Operations"
+msgstr "عمليات التحويل"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Transfer POS"
+msgstr "نقطة بيع التحويل"
+
+#. module: ab_transfer
+#: model:ir.model,name:ab_transfer.model_ab_transfer_pos_api
+msgid "Transfer POS API"
+msgstr "واجهة API لنقطة بيع التحويل"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_form
+msgid "Transfer Receive"
+msgstr "استلام التحويل"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_receive_header_view_form
+msgid "Transfer Receive Item"
+msgstr "صنف استلام التحويل"
+
+#. module: ab_transfer
+#: model:ir.model,name:ab_transfer.model_ab_transfer_receive_header
+msgid "Transfer Receive Queue"
+msgstr "قائمة انتظار استلام التحويل"
+
+#. module: ab_transfer
+#: model:ir.model,name:ab_transfer.model_ab_transfer_receive_line
+msgid "Transfer Receive Queue Line"
+msgstr "سطر قائمة انتظار استلام التحويل"
+
+#. module: ab_transfer
+#: model:ir.actions.server,name:ab_transfer.ir_cron_sync_pending_transfer_receives_ir_actions_server
+msgid "Transfer Receive: Sync Pending Receives"
+msgstr "استلام التحويل: مزامنة الاستلامات المعلقة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.actions.act_window,name:ab_transfer.ab_transfer_request_action
+#: model:ir.model,name:ab_transfer.model_ab_transfer_request
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__transfer_request_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__request_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__request_id
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_request_menu
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_request_parent_menu
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_form
+msgid "Transfer Request"
+msgstr "طلب تحويل"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "Transfer Request %s"
+msgstr "طلب تحويل %s"
+
+#. module: ab_transfer
+#: model:ir.model,name:ab_transfer.model_ab_transfer_request_line
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_form
+msgid "Transfer Request Line"
+msgstr "سطر طلب التحويل"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Transfer Request POS"
+msgstr "نقطة بيع طلب التحويل"
+
+#. module: ab_transfer
+#: model:ir.model,name:ab_transfer.model_ab_transfer_request_pos_api
+msgid "Transfer Request POS API"
+msgstr "واجهة API لنقطة بيع طلب التحويل"
+
+#. module: ab_transfer
+#: model:ir.actions.act_window,name:ab_transfer.ab_transfer_request_report_action
+#: model:ir.model,name:ab_transfer.model_ab_transfer_request_report
+#: model:ir.ui.menu,name:ab_transfer.ab_transfer_request_report_menu
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_graph
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_pivot
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_search
+msgid "Transfer Request Report"
+msgstr "تقرير طلبات التحويل"
+
+#. module: ab_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "Transfer Requests"
+msgstr "طلبات التحويل"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_header__transfer_serial
+msgid "Transfer Serial"
+msgstr "رقم التحويل التسلسلي"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Transfer Type"
+msgstr "نوع التحويل"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/dashboard/transfer_dashboard.js:0
+msgid "Transfer dashboard failed to load."
+msgstr "فشل تحميل لوحة معلومات التحويلات."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"Transfer receive lines are loaded from EPlus. Manual creation is not "
+"allowed."
+msgstr "يتم تحميل سطور استلام التحويل من إي بلس. الإنشاء اليدوي غير مسموح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Transfer receive lines cannot be deleted manually."
+msgstr "لا يمكن حذف سطور استلام التحويل يدويًا."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Transfer receive lines cannot be edited manually."
+msgstr "لا يمكن تعديل سطور استلام التحويل يدويًا."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"Transfer receive records are loaded from EPlus. Manual creation is not "
+"allowed."
+msgstr "يتم تحميل سجلات استلام التحويل من إي بلس. الإنشاء اليدوي غير مسموح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"Transfer receive records are managed from EPlus and cannot be edited "
+"manually."
+msgstr "تتم إدارة سجلات استلام التحويل من إي بلس ولا يمكن تعديلها يدويًا."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "Transfer receive records cannot be deleted manually."
+msgstr "لا يمكن حذف سجلات استلام التحويل يدويًا."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Transfer request has no lines."
+msgstr "طلب التحويل لا يحتوي على سطور."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Transfer request is invalid."
+msgstr "طلب التحويل غير صالح."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Transfer request is required."
+msgstr "طلب التحويل مطلوب."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "Transfer type is required."
+msgstr "نوع التحويل مطلوب."
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_receive_line__transferred_qty
+msgid "Transferred Qty"
+msgstr "الكمية المحولة"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_report__transferred_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_report_view_list
+msgid "Transferred Quantity"
+msgstr "الكمية المحولة"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/dashboard/transfer_dashboard.xml:0
+#: model:ir.ui.menu,name:ab_transfer.menu_root
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+msgid "Transfers"
+msgstr "التحويلات"
+
+#. module: ab_transfer
+#: model:ir.actions.client,name:ab_transfer.ab_transfer_dashboard_action
+msgid "Transfers Dashboard"
+msgstr "لوحة معلومات التحويلات"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "Type name/code..."
+msgstr "اكتب الاسم/الكود..."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__uom_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__uom_id
+msgid "UOM"
+msgstr "وحدة القياس"
+
+#. module: ab_transfer
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__uom_category_id
+msgid "UoM Category"
+msgstr "فئة وحدة القياس"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_header__user_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_line__user_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request__user_id
+#: model:ir.model.fields,field_description:ab_transfer.field_ab_transfer_request_line__user_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_header_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer.ab_transfer_request_view_search
+msgid "User"
+msgstr "المستخدم"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_pos_api.py:0
+msgid "User is required."
+msgstr "المستخدم مطلوب."
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "Will Load"
+msgstr "سيتم تحميله"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid ""
+"You can only access transfer receive lines assigned to the current branch."
+msgstr "يمكنك الوصول فقط إلى سطور استلام التحويل المخصصة للفرع الحالي."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "You can only access transfers assigned to the current branch."
+msgstr "يمكنك الوصول فقط إلى التحويلات المخصصة للفرع الحالي."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_request.py:0
+msgid "You cannot confirm a transfer request without lines."
+msgstr "لا يمكنك تأكيد طلب تحويل بدون سطور."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "You cannot continue without lines."
+msgstr "لا يمكنك المتابعة بدون سطور."
+
+#. module: ab_transfer
+#: model:ir.model,name:ab_transfer.model_ab_transfer_header
+msgid "ab_transfer_header"
+msgstr "رأس التحويل"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_receive.py:0
+msgid "and %s more"
+msgstr "و%s أخرى"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "items"
+msgstr "أصناف"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+msgid "lines"
+msgstr "سطور"
+
+#. module: ab_transfer
+#. odoo-javascript
+#: code:addons/ab_transfer/static/src/pos/pos_action.xml:0
+#: code:addons/ab_transfer/static/src/pos/transfer_request_pos_action.xml:0
+msgid "qty"
+msgstr "كمية"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "الحقل %(field)s غير موجود على الموديل %(model)s."
+msgstr "الحقل %(field)s غير موجود على الموديل %(model)s."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "الحقل مطلوب: %s"
+msgstr "الحقل مطلوب: %s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "الرصيد غير كافٍ للصنف %s في المخزن المصدر. المتاح: %s / المطلوب: %s"
+msgstr "الرصيد غير كافٍ للصنف %s في المخزن المصدر. المتاح: %s / المطلوب: %s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "الصنف %s غير موجود في item_catalog على SQL Server."
+msgstr "الصنف %s غير موجود في item_catalog على SQL Server."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "الكمية يجب أن تكون أكبر من صفر في السطر %s."
+msgstr "الكمية يجب أن تكون أكبر من صفر في السطر %s."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "المخزن الهدف غير مفعل في SQL Server."
+msgstr "المخزن الهدف غير مفعل في SQL Server."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "المخزن الهدف غير موجود في SQL Server."
+msgstr "المخزن الهدف غير موجود في SQL Server."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "تاريخ الصلاحية مطلوب للصنف %s."
+msgstr "تاريخ الصلاحية مطلوب للصنف %s."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "تعذر استخراج المعرف الخارجي للحقل: %s"
+msgstr "تعذر استخراج المعرف الخارجي للحقل: %s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "تعذر قراءة بيانات الوحدة للصنف %s من item_catalog."
+msgstr "تعذر قراءة بيانات الوحدة للصنف %s من item_catalog."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "تم إرسال هذا التحويل إلى إي بلس مسبقًا."
+msgstr "تم إرسال هذا التحويل إلى إي بلس مسبقًا."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid ""
+"فشل إرسال التحويل إلى إي بلس:\n"
+"%s"
+msgstr "فشل إرسال التحويل إلى إي بلس:\n%s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "قيمة selection غير معرفة في mapping الخاص بـ SQL: %s"
+msgstr "قيمة selection غير معرفة في mapping الخاص بـ SQL: %s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "لا توجد بيانات مخزون للصنف %s في Item_Class_Store."
+msgstr "لا توجد بيانات مخزون للصنف %s في Item_Class_Store."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "لا يمكن الإرسال بدون أصناف."
+msgstr "لا يمكن الإرسال بدون أصناف."
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "لا يوجد حقل معرف خارجي مضبوط للموديل %(model)s في الحقل: %(label)s"
+msgstr "لا يوجد حقل معرف خارجي مضبوط للموديل %(model)s في الحقل: %(label)s"
+
+#. module: ab_transfer
+#. odoo-python
+#: code:addons/ab_transfer/models/ab_transfer_header.py:0
+msgid "يوجد نقص في بيانات السطر %s. الحقل المطلوب: %s"
+msgstr "يوجد نقص في بيانات السطر %s. الحقل المطلوب: %s"

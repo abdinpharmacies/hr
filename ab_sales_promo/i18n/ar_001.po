@@ -1,0 +1,201 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_promo
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-12 16:11+0000\n"
+"PO-Revision-Date: 2026-04-12 16:11+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid " and %s more..."
+msgstr " و%s أخرى..."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Add %(missing)s unit(s) to unlock promotion %(promo)s."
+msgstr "أضف %(missing)s وحدة إضافية للاستفادة من العرض %(promo)s."
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__amount_tax
+msgid "Amount Tax"
+msgstr "قيمة الضريبة"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__amount_total
+msgid "Amount Total"
+msgstr "الإجمالي"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__amount_untaxed
+msgid "Amount Untaxed"
+msgstr "المبلغ قبل الضريبة"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__applied_program_ids
+msgid "Applied Programs"
+msgstr "البرامج المطبقة"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__available_program_ids
+msgid "Available Programs"
+msgstr "البرامج المتاحة"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Choose manually from available promotions."
+msgstr "اختر يدويًا من العروض المتاحة."
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
+msgid "Clear"
+msgstr "مسح"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__currency_id
+msgid "Currency"
+msgstr "العملة"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid "Customer needs <b>%s</b> more unit(s) to unlock promotion <b>%s</b>."
+msgstr "يحتاج العميل إلى <b>%s</b> وحدة إضافية للاستفادة من العرض <b>%s</b>."
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_return_header__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_promo
+#: model:ir.model,name:ab_sales_promo.model_ab_sales_return_header
+msgid "E-Plus Sales Return Header"
+msgstr "رأس مرتجع مبيعات E-Plus"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_return_header__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_pos_api_promo.py:0
+msgid "Invalid lines payload."
+msgstr "بيانات السطور غير صالحة."
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid "Invoice qty(%s) - must not exceed %s"
+msgstr "كمية الفاتورة (%s) يجب ألا تتجاوز %s"
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
+msgid "Missing"
+msgstr "المتبقي"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__need_qty_to_unlock_promo
+msgid "Need Qty To Unlock Promo"
+msgstr "الكمية المطلوبة للاستفادة من العرض"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid "Only one promotion per each invoice"
+msgstr "يسمح بعرض واحد فقط لكل فاتورة"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__promo_manual_override
+msgid "Promo Manual Override"
+msgstr "تجاوز العرض يدويًا"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid "Promotion '%s' requires at least %s unit(s) in the invoice scope."
+msgstr "يتطلب العرض '%s' ما لا يقل عن %s وحدة ضمن نطاق الفاتورة."
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__promo_discount_amount
+msgid "Promotion Discount"
+msgstr "خصم العرض"
+
+#. module: ab_sales_promo
+#: model:ir.ui.menu,name:ab_sales_promo.ab_sales_promo_program_menu
+msgid "Promotion Programs"
+msgstr "برامج العروض"
+
+#. module: ab_sales_promo
+#: model:ir.ui.menu,name:ab_sales_promo.ab_sales_promo_wizard_menu
+msgid "Promotion Wizard"
+msgstr "معالج العروض"
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
+#: model:ir.ui.menu,name:ab_sales_promo.ab_sales_promo_sub_menu
+msgid "Promotions"
+msgstr "العروض"
+
+#. module: ab_sales_promo
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo.ab_sales_header_view_form_promo_inherit
+msgid "Reapply Promotion"
+msgstr "إعادة تطبيق العرض"
+
+#. module: ab_sales_promo
+#: model:ir.model,name:ab_sales_promo.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة مبيعات نقطة البيع البرمجية"
+
+#. module: ab_sales_promo
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo.ab_sales_header_view_form_promo_inherit
+msgid "Show Stores Balance"
+msgstr "عرض أرصدة المخازن"
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_sales_promo
+#. odoo-python
+#: code:addons/ab_sales_promo/models/ab_sales_header_promo_inherit.py:0
+msgid "To apply promotion <b>%s</b>, add any discounted product: <i>%s</i>%s"
+msgstr "لتطبيق العرض <b>%s</b>، أضف أي منتج مخفّض: <i>%s</i>%s"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__amount_total_after_promo
+msgid "Total After Promotion"
+msgstr "الإجمالي بعد العرض"
+
+#. module: ab_sales_promo
+#: model:ir.model,name:ab_sales_promo.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "ab_sales_header"
+
+#. module: ab_sales_promo
+#. odoo-javascript
+#: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
+msgid "unit(s)"
+msgstr "وحدة"

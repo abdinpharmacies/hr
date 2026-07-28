@@ -1,0 +1,42 @@
+.o_ab_many2one_wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.o_ab_many2one_wrapper .o_many2one {
+  width: 100%;
+}
+
+.o_ab_many2one_wrapper .o_field_many2one input {
+  padding-right: 32px;
+}
+
+.o_ab_many2one_clear {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  border: 1px solid #e5e7eb;
+  background: #f3f4f6;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #6b7280;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.o_ab_many2one_clear svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.o_ab_many2one_clear:hover {
+  background: #e5e7eb;
+  color: #374151;
+}

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_promo_program_view_tree" model="ir.ui.view">
+            <field name="name">ab_promo_program_view_tree</field>
+            <field name="model">ab_promo_program</field>
+            <field name="arch" type="xml">
+                <list string="ab_promo_program_tree" multi_edit="1">
+                    <field name="display_name" optional="show"/>
+                    <field name="name" optional="show"/>
+                    <field name="status" optional="show"/>
+                    <field name="sequence" optional="show"/>
+                    <field name="company_id" optional="show"/>
+                    <field name="store_ids" optional="show"/>
+                    <field name="partner_ids" optional="show"/>
+                    <field name="partner_domain" optional="show"/>
+                    <field name="rule_date_from" optional="show"/>
+                    <field name="rule_date_to" optional="show"/>
+                    <field name="rule_min_amount" optional="show"/>
+                    <field name="currency_id" optional="show"/>
+                    <field name="rule_products_domain" optional="show"/>
+                    <field name="rule_min_qty" optional="show"/>
+                    <field name="promo_uom_basis" optional="show"/>
+                    <field name="rule_same_reward_qty" optional="show"/>
+                    <field name="product_ids" optional="show"/>
+                    <field name="disc_percent" optional="show"/>
+                    <field name="apply_disc_on" optional="show"/>
+                    <field name="disc_specific_product_ids" optional="show"/>
+                    <field name="create_uid" optional="hide"/>
+                    <field name="create_date" optional="hide"/>
+                    <field name="write_uid" optional="hide"/>
+                    <field name="write_date" optional="hide"/>
+
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_promo_program_view_form" model="ir.ui.view">
+            <field name="name">ab_promo_program_view_form</field>
+            <field name="model">ab_promo_program</field>
+            <field name="arch" type="xml">
+                <form string="ab_promo_program_form">
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-danger"
+                                invisible="active == True"/>
+
+                        <div class="oe_title">
+                            <label for="name" class="oe_edit_only"/>
+                            <h1>
+                                <field name="name" placeholder="......"/>
+                            </h1>
+                        </div>
+                        <group string="Promotion Date">
+                            <field name="rule_date_from"/>
+                            <field name="rule_date_to"/>
+                        </group>
+                        <group string="Supplier Accounting">
+                            <field name="supplier_id"/>
+                            <field name="budget"/>
+                        </group>
+                        <group string="Product and Customer Domains">
+                            <field name="rule_products_domain" class="wider-label"/>
+                            <field name="partner_domain"/>
+                            <field name="partner_ids" widget="many2many_tags"/>
+                        </group>
+                        <group string="Promotion Criteria">
+                            <field name="rule_min_qty"/>
+                            <field name="promo_uom_basis"/>
+                            <field name="rule_min_amount" class="wider-label"/>
+                            <field name="disc_percent"/>
+                            <field name="max_repetition_per_invoice"/>
+                            <field name="rule_text"/>
+                            <field name="apply_disc_on" widget="radio"/>
+                            <field name="disc_specific_product_ids"
+                                   invisible="apply_disc_on != 'specific_products'"
+                                   widget="many2many_tags"/>
+                            <field name="fixed_price"
+                                   invisible="apply_disc_on != 'fixed_price'"/>
+
+
+                        </group>
+                        <group>
+                            <field name="sequence"/>
+                            <field name="company_id"/>
+                            <field name="store_ids" widget="many2many_tags"/>
+                            <field name="replica_db_ids" widget="many2many_tags"/>
+                            <field name="currency_id"/>
+                            <field name="rule_same_reward_qty"/>
+                        </group>
+                        <notebook>
+                            <page name="Products" string="Products">
+                                <field name="product_ids"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_promo_program_view_search" model="ir.ui.view">
+            <field name="name">ab_promo_program_view_search</field>
+            <field name="model">ab_promo_program</field>
+            <field name="arch" type="xml">
+                <search string="ab_promo_program_search">
+                    <field name="name"/>
+                    <field name="status"/>
+                    <field name="sequence"/>
+                    <field name="company_id"/>
+                    <field name="store_ids"/>
+                    <field name="partner_ids"/>
+                    <field name="partner_domain"/>
+                    <field name="rule_date_from"/>
+                    <field name="rule_date_to"/>
+                    <field name="rule_min_amount"/>
+                    <field name="currency_id"/>
+                    <field name="rule_products_domain"/>
+                    <field name="rule_min_qty"/>
+                    <field name="promo_uom_basis"/>
+                    <field name="rule_same_reward_qty"/>
+                    <field name="product_ids"/>
+                    <field name="disc_percent"/>
+                    <field name="apply_disc_on"/>
+                    <field name="disc_specific_product_ids"/>
+                </search>
+            </field>
+        </record>
+        <record id="ab_promo_program_view_pivot" model="ir.ui.view">
+            <field name="name">ab_promo_program_view_pivot</field>
+            <field name="model">ab_promo_program</field>
+            <field name="arch" type="xml">
+                <pivot string="ab_promo_program_pivot">
+                </pivot>
+            </field>
+        </record>
+
+
+        <record id="ab_promo_program_action" model="ir.actions.act_window">
+            <field name="name">Ab promo program</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_promo_program</field>
+            <field name="view_mode">list,form,pivot</field>
+        </record>
+
+    </data>
+</odoo>
