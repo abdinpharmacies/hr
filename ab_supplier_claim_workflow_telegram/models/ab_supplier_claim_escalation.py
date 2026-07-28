@@ -2,7 +2,7 @@ from odoo import _, fields, models
 
 
 class SupplierClaimEscalation(models.Model):
-    _inherit = 'ab.supplier.claim.escalation'
+    _inherit = 'ab_supplier_claim_escalation'
 
     manager_telegram_badge = fields.Char(
         string='Telegram',

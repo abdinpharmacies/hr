@@ -254,11 +254,11 @@ class AbSupplierClaimTelegramRegistration(models.Model):
     @api.onchange('manager_department')
     def _onchange_manager_department(self):
         dept_group_map = {
-            'inventory': 'ab_supplier_claim_workflow.supplier_claim_group_inventory',
-            'purchase': 'ab_supplier_claim_workflow.supplier_claim_group_purchase',
-            'suppliers': 'ab_supplier_claim_workflow.supplier_claim_group_suppliers',
-            'bank_accounts': 'ab_supplier_claim_workflow.supplier_claim_group_bank_acc',
-            'tax_accounts': 'ab_supplier_claim_workflow.supplier_claim_group_tax_accounts',
+            'inventory': 'ab_supplier_claim_cycle.supplier_claim_group_inventory',
+            'purchase': 'ab_supplier_claim_cycle.supplier_claim_group_purchase',
+            'suppliers': 'ab_supplier_claim_cycle.supplier_claim_group_suppliers',
+            'bank_accounts': 'ab_supplier_claim_cycle.supplier_claim_group_bank_acc',
+            'tax_accounts': 'ab_supplier_claim_cycle.supplier_claim_group_tax_accounts',
         }
         for rec in self:
             if not rec.manager_department or not rec.user_id:
@@ -296,39 +296,29 @@ class AbSupplierClaimTelegramRegistration(models.Model):
 
     @api.model
     def import_existing_managers(self):
-        job_group_map = {
-            'نائب مدير المخازن': 'ab_supplier_claim_workflow.supplier_claim_group_inventory',
-            'مدير قسم حسابات الضرائب': 'ab_supplier_claim_workflow.supplier_claim_group_tax_accounts',
-            'مدير قسم حسابات الموردين': 'ab_supplier_claim_workflow.supplier_claim_group_suppliers',
-            'مدير قسم حسابات البنوك': 'ab_supplier_claim_workflow.supplier_claim_group_bank_acc',
-            'نائب مدير قطاع المشتريات والتجارية': 'ab_supplier_claim_workflow.supplier_claim_group_purchase',
-        }
-        group_to_dept = {
-            'ab_supplier_claim_workflow.supplier_claim_group_inventory': 'inventory',
-            'ab_supplier_claim_workflow.supplier_claim_group_tax_accounts': 'tax_accounts',
-            'ab_supplier_claim_workflow.supplier_claim_group_suppliers': 'suppliers',
-            'ab_supplier_claim_workflow.supplier_claim_group_bank_acc': 'bank_accounts',
-            'ab_supplier_claim_workflow.supplier_claim_group_purchase': 'purchase',
+        job_dept_map = {
+            'نائب مدير المخازن': 'inventory',
+            'مدير قسم حسابات الضرائب': 'tax_accounts',
+            'مدير قسم حسابات الموردين': 'suppliers',
+            'مدير قسم حسابات البنوك': 'bank_accounts',
+            'نائب مدير قطاع المشتريات والتجارية': 'purchase',
         }
         created = 0
-        for job_name, group_xml_id in job_group_map.items():
+        for job_name, dept_code in job_dept_map.items():
             jobs = self.env['ab_hr_job'].sudo().search([('name', '=', job_name)])
             if not jobs:
                 continue
             employees = self.env['ab_hr_employee'].sudo().search([('job_id', 'in', jobs.ids)])
-            group = self.env.ref(group_xml_id, raise_if_not_found=False)
             for employee in employees:
                 existing = self.sudo().search([('employee_id', '=', employee.id)], limit=1)
                 if existing:
                     if not existing.manager_department:
-                        existing.write({'manager_department': group_to_dept.get(group_xml_id)})
+                        existing.write({'manager_department': dept_code})
                     continue
                 rec = self.sudo().create({
                     'employee_id': employee.id,
-                    'manager_department': group_to_dept.get(group_xml_id),
+                    'manager_department': dept_code,
                 })
-                if group and employee.user_id and employee.user_id.id not in group.user_ids.ids:
-                    group.sudo().write({'user_ids': [(4, employee.user_id.id)]})
                 if rec:
                     created += 1
         return {'created': created}
