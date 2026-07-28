@@ -10,7 +10,7 @@ class ClsCostCenters(models.Model):
         'ab_supplier_claim_cycle', 'supplier_id', string='Supplier Claims',
     )
     delegate_phone_ids = fields.One2many(
-        'ab.delegate.phone', 'partner_id', string='Delegate Phones',
+        'ab_delegate_phone', 'partner_id', string='Delegate Phones',
     )
     all_delegate_phones = fields.Char(
         string='All Delegate Phones', compute='_compute_all_delegate_phones', store=False,
@@ -33,8 +33,7 @@ class ClsCostCenters(models.Model):
     )
 
     @api.depends('claim_ids.status', 'claim_ids.write_date',
-                 'claim_ids.create_date', 'claim_ids.amount_of_check',
-                 'claim_ids.claim_month', 'claim_ids.name')
+                 'claim_ids.create_date', 'claim_ids.amount_of_check')
     @api.depends_context('lang')
     def _compute_supplier_claim_activity(self):
         for rec in self:
@@ -69,7 +68,9 @@ class ClsCostCenters(models.Model):
                          _('Rejects'),
                      ))
             for c in claims:
-                month = c.claim_month.strftime('%b %Y') if c.claim_month else '—'
+                month_date = c.claim_month if 'claim_month' in c._fields else fields.Date.to_date(c.create_date)
+                month = month_date.strftime('%b %Y') if month_date else '—'
+                claim_name = c.name if 'name' in c._fields else c.display_name
                 amt = '{:,.0f}'.format(c.amount_of_check) if c.amount_of_check else '0'
                 completed_date = c.write_date.strftime('%d/%m/%Y') if c.write_date else '—'
                 duration_days = (c.write_date - c.create_date).days if c.write_date and c.create_date else None
@@ -90,7 +91,7 @@ class ClsCostCenters(models.Model):
                          '<td>%s</td>'
                          '<td><span class="ab-activity-decision is-approved">%s</span></td>'
                          '<td>%s</td>'
-                         '</tr>' % (c.name or '—', month, completed_date, amt, duration_str, _('Completed'), rejects_html))
+                         '</tr>' % (claim_name or '—', month, completed_date, amt, duration_str, _('Completed'), rejects_html))
             L.append('</tbody></table>')
             L.append('</div>')
             L.append('</div>')
