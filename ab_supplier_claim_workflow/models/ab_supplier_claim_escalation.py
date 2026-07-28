@@ -2,7 +2,7 @@ from odoo import fields, models
 
 
 class SupplierClaimEscalation(models.Model):
-    _name = 'ab.supplier.claim.escalation'
+    _name = 'ab_supplier_claim_escalation'
     _description = 'Supplier Claim Escalation'
     _order = 'escalation_time desc'
 

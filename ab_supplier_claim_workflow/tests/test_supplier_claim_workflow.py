@@ -172,7 +172,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
 
         self._set_workflow_group(self.group_inventory)
         action = claim.with_user(self.workflow_user).action_reject()
-        self.assertEqual(action['res_model'], 'ab.claim.error.wizard')
+        self.assertEqual(action['res_model'], 'ab_claim_error_wizard')
 
     def test_department_rejection_sets_individual_decision(self):
         claim = self._create_claim()
@@ -221,7 +221,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
         self._all_departments_finish(claim)
         self.assertEqual(claim.status, 'sign_check')
 
-        wizard = self.env['ab.check.delivery.wizard'].with_user(self.workflow_user).create({
+        wizard = self.env['ab_check_delivery_wizard'].with_user(self.workflow_user).create({
             'claim_id': claim.id,
             'check_delivery_status': 'check_delivered',
         })
@@ -238,7 +238,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
             'sub_delivery_status': 'ready',
         })
         action = claim.with_user(self.workflow_user).action_supplier_notified()
-        self.assertEqual(action['res_model'], 'ab.claim.error.wizard')
+        self.assertEqual(action['res_model'], 'ab_claim_error_wizard')
 
         claim.with_user(self.workflow_user).write({
             'cheque_image': b'ZmFrZV9jaGVxdWVfcG5n',

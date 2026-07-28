@@ -2,7 +2,7 @@ from odoo import _, fields, models
 
 
 class ClaimErrorWizard(models.TransientModel):
-    _name = 'ab.claim.error.wizard'
+    _name = 'ab_claim_error_wizard'
     _description = 'Claim Error Wizard'
 
     error_message = fields.Text(string='Error', readonly=True, required=True)

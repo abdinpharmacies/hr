@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <record id="claim_error_wizard_form" model="ir.ui.view">
-        <field name="name">ab.claim.error.wizard.form</field>
-        <field name="model">ab.claim.error.wizard</field>
+        <field name="name">ab_claim_error_wizard.form</field>
+        <field name="model">ab_claim_error_wizard</field>
         <field name="priority">1</field>
         <field name="arch" type="xml">
             <form class="scc-clean-dialog">

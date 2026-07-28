@@ -3,14 +3,17 @@ from odoo.exceptions import ValidationError
 
 
 class CheckDeliveryWizard(models.TransientModel):
-    _name = 'ab.check.delivery.wizard'
+    _name = 'ab_check_delivery_wizard'
     _description = 'Check Delivery Status Wizard'
 
     claim_id = fields.Many2one('ab_supplier_claim_cycle', required=True)
     check_delivery_status = fields.Selection(
-        selection=[('cash', 'Cash'), ('bank_transfer', 'Bank Transfer'),
-                   ('check_delivered', 'Issue Check'),
-                   ('mixed', 'Mixed (Bank Transfer + Cheque)')],
+        selection=[
+            ('cash', 'Cash'),
+            ('bank_transfer', 'Bank Transfer'),
+            ('check_delivered', 'Issue Check'),
+            ('mixed', 'Mixed (Bank Transfer + Cheque)'),
+        ],
         string='Cheque Delivery Status',
         required=True,
     )
