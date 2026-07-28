@@ -6,8 +6,7 @@
     'author': 'Abdin Pharmacies',
     'developer': 'Alhassan Hossny',
     'application': False,
-    'depends': ['ab_supplier_claim_workflow', 'ab_telegram_bot'],
-    'pre_init_hook': 'pre_init_hook',
+    'depends': ['ab_supplier_claim_cycle', 'ab_telegram_bot'],
     'data': [
         'security/ir.model.access.csv',
         'data/cron_telegram_updates.xml',
@@ -25,6 +24,6 @@
             'ab_supplier_claim_workflow_telegram/static/src/xml/telegram_managers.xml',
         ],
     },
-    'auto_install': ['ab_supplier_claim_workflow'],
+    'auto_install': ['ab_supplier_claim_cycle'],
     'installable': True,
 }

@@ -3,12 +3,12 @@
     <record id="view_supplier_claim_cycle_form_telegram" model="ir.ui.view">
         <field name="name">supplier.claim.cycle.form.telegram</field>
         <field name="model">ab_supplier_claim_cycle</field>
-        <field name="inherit_id" ref="ab_supplier_claim_workflow.invoice_view_form"/>
+        <field name="inherit_id" ref="ab_supplier_claim_cycle.invoice_view_form"/>
         <field name="arch" type="xml">
-            <field name="show_chatter" position="after">
+            <field name="status" position="after">
                 <field name="show_telegram_connect_button" invisible="1"/>
             </field>
-            <xpath expr="//field[@name='claim_document']/ancestor::div[contains(@class, 'scc-form-section')][1]" position="before">
+            <sheet position="inside">
                 <div class="scc-tg-connect-wrapper" invisible="not show_telegram_connect_button">
                     <div class="scc-tg-connect-card">
                         <span class="scc-tg-connect-badge">Setup Required</span>
@@ -22,7 +22,7 @@
                         </button>
                     </div>
                 </div>
-            </xpath>
+            </sheet>
         </field>
     </record>
 </odoo>
