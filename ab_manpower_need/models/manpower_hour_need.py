@@ -262,7 +262,7 @@ class ManpowerHourNeed(models.Model):
         self.write(self._get_actual_capacity_values())
         return {
             'type': 'ir.actions.act_window',
-            'name': 'Manpower Need Per Hour',
+            'name': _('Manpower Need Per Hour'),
             'res_model': self._name,
             'res_id': self.id,
             'view_mode': 'form',
