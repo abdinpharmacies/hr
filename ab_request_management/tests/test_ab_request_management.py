@@ -2,6 +2,7 @@ from datetime import timedelta
 from unittest.mock import patch
 
 from odoo import fields
+from odoo.addons.ab_request_management.controllers.customer_request import AbRequestCustomerController
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
@@ -581,8 +582,8 @@ class TestAbRequestManagement(TransactionCase):
                 "customer_name": "External Customer",
                 "customer_phone": "+201001234567",
                 "customer_email": "customer@example.com",
+                "requester_type": "employee",
                 "employee_code": " EMP-001 ",
-                "commercial_register_number": " CR-2026 ",
                 "national_id": "12345678901234",
                 "request_category_id": self.complaint_category.id,
                 "request_type_id": self.complaint_request_type.id,
@@ -592,8 +593,30 @@ class TestAbRequestManagement(TransactionCase):
         )
 
         self.assertEqual(website_request.employee_code, "EMP-001")
-        self.assertEqual(website_request.commercial_register_number, "CR-2026")
+        self.assertFalse(website_request.commercial_register_number)
         self.assertEqual(website_request.national_id, "12345678901234")
+
+    def test_external_supplier_request_stores_commercial_register(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+
+        website_request = self.env["ab_request_website"].sudo().create(
+            {
+                "customer_name": "Supplier Customer",
+                "customer_phone": "+201001234567",
+                "requester_type": "supplier",
+                "commercial_register_number": " CR-2026 ",
+                "request_category_id": self.complaint_category.id,
+                "request_type_id": self.complaint_request_type.id,
+                "subject": "External complaint",
+                "description": "Complaint details for the external public form.",
+            }
+        )
+
+        self.assertEqual(website_request.requester_type, "supplier")
+        self.assertEqual(website_request.commercial_register_number, "CR-2026")
+        self.assertFalse(website_request.employee_code)
+        self.assertFalse(website_request.national_id)
 
     def test_external_request_rejects_invalid_national_id(self):
         self.complaint_category.write({"is_public": True})
@@ -630,15 +653,16 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
 
-    def test_external_request_requires_employee_code_or_commercial_register(self):
+    def test_external_employee_request_requires_employee_code(self):
         self.complaint_category.write({"is_public": True})
         self.complaint_request_type.write({"is_public": True})
 
-        with self.assertRaisesRegex(ValidationError, "Employee code or commercial register number is required"):
+        with self.assertRaisesRegex(ValidationError, "Employee code is required"):
             self.env["ab_request_website"].sudo().create(
                 {
                     "customer_name": "External Customer",
                     "customer_phone": "+201001234567",
+                    "requester_type": "employee",
                     "national_id": "12345678901234",
                     "request_category_id": self.complaint_category.id,
                     "request_type_id": self.complaint_request_type.id,
@@ -646,6 +670,74 @@ class TestAbRequestManagement(TransactionCase):
                     "description": "Complaint details for the external public form.",
                 }
             )
+
+    def test_external_supplier_request_requires_commercial_register(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+
+        with self.assertRaisesRegex(ValidationError, "Commercial register number is required"):
+            self.env["ab_request_website"].sudo().create(
+                {
+                    "customer_name": "External Customer",
+                    "customer_phone": "+201001234567",
+                    "requester_type": "supplier",
+                    "request_category_id": self.complaint_category.id,
+                    "request_type_id": self.complaint_request_type.id,
+                    "subject": "External complaint",
+                    "description": "Complaint details for the external public form.",
+                }
+            )
+
+    def test_external_request_rejects_mismatched_identifier_for_type(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+
+        with self.assertRaisesRegex(ValidationError, "only available for supplier requests"):
+            self.env["ab_request_website"].sudo().create(
+                {
+                    "customer_name": "External Customer",
+                    "customer_phone": "+201001234567",
+                    "requester_type": "employee",
+                    "employee_code": "EMP-001",
+                    "commercial_register_number": "CR-2026",
+                    "national_id": "12345678901234",
+                    "request_category_id": self.complaint_category.id,
+                    "request_type_id": self.complaint_request_type.id,
+                    "subject": "External complaint",
+                    "description": "Complaint details for the external public form.",
+                }
+            )
+
+    def test_followup_reference_match_uses_requester_type(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+        website_request = self.env["ab_request_website"].sudo().create(
+            {
+                "customer_name": "Supplier Customer",
+                "customer_phone": "+201001234567",
+                "requester_type": "supplier",
+                "commercial_register_number": "CR-2026",
+                "request_category_id": self.complaint_category.id,
+                "request_type_id": self.complaint_request_type.id,
+                "subject": "External complaint",
+                "description": "Complaint details for the external public form.",
+            }
+        )
+
+        self.assertTrue(
+            AbRequestCustomerController._requester_reference_matches(
+                website_request,
+                "supplier",
+                "CR-2026",
+            )
+        )
+        self.assertFalse(
+            AbRequestCustomerController._requester_reference_matches(
+                website_request,
+                "employee",
+                "CR-2026",
+            )
+        )
 
     def test_external_request_followups_track_visibility_and_attachments(self):
         self.complaint_category.write({"is_public": True})

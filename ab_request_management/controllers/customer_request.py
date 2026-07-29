@@ -86,14 +86,18 @@ class AbRequestCustomerController(http.Controller):
         try:
             category_id = self._parse_positive_id(post.get("request_category_id"))
             request_type_id = self._parse_positive_id(post.get("request_type_id"))
+            requester_type = (post.get("requester_type") or "").strip()
             self._validate_public_selection(category_id, request_type_id)
             website_request = request.env["ab_request_website"].sudo().create(
                 {
                     "customer_name": post.get("customer_name"),
                     "customer_phone": post.get("customer_phone"),
                     "customer_email": post.get("customer_email"),
-                    "employee_code": post.get("employee_code"),
-                    "commercial_register_number": post.get("commercial_register_number"),
+                    "requester_type": requester_type,
+                    "employee_code": post.get("employee_code") if requester_type == "employee" else False,
+                    "commercial_register_number": post.get("commercial_register_number")
+                    if requester_type == "supplier"
+                    else False,
                     "national_id": post.get("national_id"),
                     "request_category_id": category_id,
                     "request_type_id": request_type_id,
@@ -345,9 +349,13 @@ class AbRequestCustomerController(http.Controller):
     @staticmethod
     def _verify_followup_request(post):
         request_reference = (post.get("request_id") or "").strip()
-        requester_reference = (post.get("requester_reference") or "").strip()
-        national_id = (post.get("national_id") or "").strip()
-        if not request_reference or not requester_reference or not national_id:
+        requester_type = (post.get("requester_type") or "").strip()
+        employee_code = (post.get("employee_code") or "").strip()
+        commercial_register_number = (post.get("commercial_register_number") or "").strip()
+        if requester_type not in {"employee", "supplier"}:
+            return request.env["ab_request_website"].sudo().browse()
+        requester_reference = employee_code if requester_type == "employee" else commercial_register_number
+        if not request_reference or not requester_reference:
             return request.env["ab_request_website"].sudo().browse()
 
         website_request = request.env["ab_request_website"].sudo().search(
@@ -357,14 +365,26 @@ class AbRequestCustomerController(http.Controller):
         if not website_request:
             return website_request
 
-        employee_code = (website_request.employee_code or "").strip()
-        commercial_register_number = (website_request.commercial_register_number or "").strip()
-        reference_matches = requester_reference in {
-            value for value in (employee_code, commercial_register_number) if value
-        }
-        if website_request.national_id != national_id or not reference_matches:
+        reference_matches = AbRequestCustomerController._requester_reference_matches(
+            website_request,
+            requester_type,
+            requester_reference,
+        )
+        if not reference_matches:
             return request.env["ab_request_website"].sudo().browse()
         return website_request
+
+    @staticmethod
+    def _requester_reference_matches(website_request, requester_type, requester_reference):
+        stored_requester_type = website_request.requester_type
+        if not stored_requester_type:
+            stored_requester_type = "supplier" if website_request.commercial_register_number else "employee"
+        stored_reference = (
+            (website_request.employee_code or "").strip()
+            if stored_requester_type == "employee"
+            else (website_request.commercial_register_number or "").strip()
+        )
+        return requester_type == stored_requester_type and requester_reference == stored_reference
 
     @staticmethod
     def _record_verified_request(website_request):

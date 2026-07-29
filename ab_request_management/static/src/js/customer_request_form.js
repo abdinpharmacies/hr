@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 const form = document.querySelector("[data-ab-external-request-form]");
+const requesterTypeForms = document.querySelectorAll("[data-ab-requester-type-form]");
 const copyButtons = document.querySelectorAll("[data-ab-copy-value]");
 
 async function copyTextToClipboard(value) {
@@ -43,11 +44,53 @@ for (const copyButton of copyButtons) {
     });
 }
 
+for (const requesterTypeForm of requesterTypeForms) {
+    const requesterTypeInputs = Array.from(requesterTypeForm.querySelectorAll("input[name='requester_type']"));
+    const employeeCodeGroup = requesterTypeForm.querySelector("[data-ab-employee-code-group]");
+    const commercialRegisterGroup = requesterTypeForm.querySelector("[data-ab-commercial-register-group]");
+    const nationalIdGroup = requesterTypeForm.querySelector("[data-ab-national-id-group]");
+    const employeeCodeInput = requesterTypeForm.querySelector("#employee_code");
+    const commercialRegisterInput = requesterTypeForm.querySelector("#commercial_register_number");
+    const nationalIdInput = requesterTypeForm.querySelector("#national_id");
+
+    if (!requesterTypeInputs.length || !employeeCodeInput || !commercialRegisterInput) {
+        continue;
+    }
+
+    function refreshRequesterTypeFields() {
+        const checkedTypeInput = requesterTypeInputs.find((input) => input.checked);
+        const requesterType = checkedTypeInput ? checkedTypeInput.value : "employee";
+        const isEmployee = requesterType === "employee";
+
+        if (employeeCodeGroup) {
+            employeeCodeGroup.hidden = !isEmployee;
+        }
+        if (commercialRegisterGroup) {
+            commercialRegisterGroup.hidden = isEmployee;
+        }
+        if (nationalIdGroup) {
+            nationalIdGroup.hidden = !isEmployee;
+        }
+
+        employeeCodeInput.required = isEmployee;
+        employeeCodeInput.disabled = !isEmployee;
+        commercialRegisterInput.required = !isEmployee;
+        commercialRegisterInput.disabled = isEmployee;
+        if (nationalIdInput) {
+            nationalIdInput.required = isEmployee;
+            nationalIdInput.disabled = !isEmployee;
+        }
+    }
+
+    for (const requesterTypeInput of requesterTypeInputs) {
+        requesterTypeInput.addEventListener("change", refreshRequesterTypeFields);
+    }
+    refreshRequesterTypeFields();
+}
+
 if (form) {
     const categorySelect = form.querySelector("#request_category_id");
     const typeSelect = form.querySelector("#request_type_id");
-    const employeeCodeInput = form.querySelector("#employee_code");
-    const commercialRegisterInput = form.querySelector("#commercial_register_number");
     const typeOptions = Array.from(typeSelect.querySelectorAll("option[data-category-id]"));
     let selectedTypeId = typeSelect.dataset.selectedValue || "";
 
@@ -79,20 +122,6 @@ if (form) {
         refreshRequestTypes();
     });
 
-    function refreshAlternativeRequiredFields() {
-        const hasRequesterReference = Boolean(
-            employeeCodeInput.value.trim() || commercialRegisterInput.value.trim()
-        );
-        const message = hasRequesterReference
-            ? ""
-            : form.dataset.abRequesterReferenceError || "أدخل كود الموظف أو رقم السجل التجاري.";
-        employeeCodeInput.setCustomValidity(message);
-        commercialRegisterInput.setCustomValidity(message);
-    }
-
-    employeeCodeInput.addEventListener("input", refreshAlternativeRequiredFields);
-    commercialRegisterInput.addEventListener("input", refreshAlternativeRequiredFields);
-
     const captchaImage = form.querySelector("#captcha_image");
     const refreshCaptchaBtn = form.querySelector("#refresh_captcha_btn");
     if (captchaImage && refreshCaptchaBtn) {
@@ -103,5 +132,4 @@ if (form) {
     }
 
     refreshRequestTypes();
-    refreshAlternativeRequiredFields();
 }
