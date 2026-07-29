@@ -2358,6 +2358,186 @@
     }
 }
 
+.modal:has(.ab_request_website_followup_form),
+.o_dialog:has(.ab_request_website_followup_form) {
+    .modal-dialog {
+        width: calc(100vw - 2rem);
+        max-width: 920px;
+    }
+
+    .modal-content {
+        overflow: hidden;
+        border: 0;
+        border-radius: 8px;
+        box-shadow: 0 22px 58px rgba(16, 38, 59, 0.2);
+    }
+
+    .modal-header {
+        min-height: 4.1rem;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid rgba(217, 226, 236, 0.92);
+        background: #ffffff;
+    }
+
+    .modal-title {
+        color: var(--ab-request-text);
+        font-weight: 700;
+        letter-spacing: 0;
+    }
+
+    .modal-body {
+        padding: 0;
+        background: #f5f8fb;
+    }
+
+    .modal-footer {
+        gap: 0.45rem;
+        padding: 1rem 1.25rem;
+        border-top: 1px solid rgba(217, 226, 236, 0.92);
+        background: #ffffff;
+    }
+
+    .modal-footer .btn {
+        min-height: 2.35rem;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .modal-footer .btn-primary {
+        border-color: #2d9a9b;
+        background: #2d9a9b;
+        box-shadow: 0 8px 18px rgba(45, 154, 155, 0.18);
+    }
+
+    .modal-footer .btn-primary:hover,
+    .modal-footer .btn-primary:focus-visible {
+        border-color: #247f84;
+        background: #247f84;
+    }
+}
+
+.ab_request_website_followup_form {
+    .o_form_sheet_bg {
+        padding: 1.15rem 1.25rem 1.35rem;
+        background: transparent;
+    }
+
+    .o_form_sheet,
+    .ab_request_website_followup_sheet {
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+.ab_request_website_followup_panel {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px solid rgba(217, 226, 236, 0.95);
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 10px 26px rgba(18, 43, 67, 0.055);
+}
+
+.ab_request_website_followup_field,
+.ab_request_website_followup_attachments {
+    display: grid;
+    gap: 0.45rem;
+}
+
+.ab_request_website_followup_field > label,
+.ab_request_website_followup_attachments > label,
+.ab_request_website_followup_visibility > label {
+    margin: 0;
+    color: #445d73;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+.ab_request_website_followup_note_block textarea.o_input {
+    min-height: 9.5rem;
+    padding: 0.85rem 0.95rem;
+    border: 1px solid rgba(188, 204, 220, 0.98);
+    border-radius: 8px;
+    background: #fbfdff;
+    color: var(--ab-request-text);
+    line-height: 1.55;
+    resize: vertical;
+    transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.ab_request_website_followup_note_block textarea.o_input:hover {
+    border-color: rgba(145, 168, 190, 0.98);
+    background: #ffffff;
+}
+
+.ab_request_website_followup_note_block textarea.o_input:focus {
+    border-color: rgba(47, 111, 221, 0.72);
+    box-shadow: 0 0 0 0.22rem rgba(47, 111, 221, 0.12);
+    background: #ffffff;
+    outline: 0;
+}
+
+.ab_request_website_followup_meta_row {
+    display: grid;
+    grid-template-columns: minmax(13rem, 0.45fr) minmax(18rem, 1fr);
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.ab_request_website_followup_visibility,
+.ab_request_website_followup_attachments {
+    min-height: 4.9rem;
+    padding: 0.9rem;
+    border: 1px solid rgba(217, 226, 236, 0.95);
+    border-radius: 8px;
+    background: #f8fbfd;
+}
+
+.ab_request_website_followup_visibility {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.ab_request_website_followup_visibility .o_field_widget {
+    flex: 0 0 auto;
+}
+
+.ab_request_website_followup_attachments {
+    align-content: start;
+}
+
+.ab_request_website_followup_attachments .o_field_many2many_binary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    align-items: center;
+}
+
+.ab_request_website_followup_attachments .o_field_many2many_binary .btn,
+.ab_request_website_followup_attachments .o_field_many2many_binary .o_attach {
+    min-height: 2.2rem;
+    border: 1px solid rgba(188, 204, 220, 0.98);
+    border-radius: 6px;
+    background: #ffffff;
+    color: #243b53;
+    font-weight: 600;
+}
+
+.ab_request_website_followup_attachments .o_field_many2many_binary .btn:hover,
+.ab_request_website_followup_attachments .o_field_many2many_binary .o_attach:hover {
+    border-color: rgba(45, 154, 155, 0.55);
+    background: #f3fbfb;
+}
+
 .ab_request_type_sheet {
     .ab_request_section {
         min-height: 11rem;
@@ -2383,6 +2563,10 @@
 }
 
 @media (max-width: 767.98px) {
+    .ab_request_website_followup_meta_row {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
     .o_form_view:has(.ab_request_form),
     .o_form_view_container:has(.ab_request_form) {
         .o_form_sheet_bg,

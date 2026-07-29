@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <!--        <menuitem id="ab_request_management_menu_root"-->
-        <!--                  name="Request Management"-->
-        <!--                  sequence="10"-->
-        <!--                  groups="base.group_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
         <menuitem id="ab_request_management_menu_root"
                   name="Requests &amp; Complaints"
                   sequence="10"
                   web_icon="ab_request_management,static/description/1.svg"
                   groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_viewer,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
+
+        <menuitem id="ab_request_management_menu_requests"
+                  name="Requests"
+                  parent="ab_request_management_menu_root"
+                  sequence="5"
+                  active="False"
+                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
+
+        <menuitem id="ab_request_management_menu_complaints_root"
+                  name="Complaints"
+                  parent="ab_request_management_menu_root"
+                  sequence="40"
+                  active="False"
+                  groups="ab_request_management.group_ab_request_management_viewer,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
 
         <menuitem id="ab_request_management_menu_dashboard"
                   name="Dashboard"
@@ -45,82 +54,52 @@
                   parent="ab_request_management_menu_root"
                   action="ab_request_all_action"
                   sequence="40"
-                  groups="ab_request_management.group_ab_request_management_viewer,ab_request_management.group_ab_request_management_admin"/>
+                  groups="ab_request_management.group_ab_request_management_admin"/>
 
         <menuitem id="ab_request_management_menu_website_requests"
-                  name="Complaints Form"
+                  name="Complaints"
                   parent="ab_request_management_menu_root"
                   action="ab_request_website_action"
                   sequence="45"
                   groups="ab_request_management.group_ab_request_management_viewer,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>
 
-        <!--        <menuitem id="ab_request_management_menu_website_requests"-->
-        <!--                  name="Website Requests"-->
-        <!--                  parent="ab_request_management_menu_root"-->
-        <!--                  action="ab_request_website_action"-->
-        <!--                  sequence="45"-->
-        <!--                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
-        <!--        <menuitem id="ab_request_management_menu_website_requests"-->
-        <!--                  name="Website Requests"-->
-        <!--                  parent="ab_request_management_menu_root"-->
-        <!--                  action="ab_request_website_action"-->
-        <!--                  sequence="45"-->
-        <!--                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
-        <!--        <menuitem id="ab_request_management_menu_website_requests"-->
-        <!--                  name="Website Requests"-->
-        <!--                  parent="ab_request_management_menu_root"-->
-        <!--                  action="ab_request_website_action"-->
-        <!--                  sequence="45"-->
-        <!--                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
-        <!--        <menuitem id="ab_request_management_menu_website_requests"-->
-        <!--                  name="Website Requests"-->
-        <!--                  parent="ab_request_management_menu_root"-->
-        <!--                  action="ab_request_website_action"-->
-        <!--                  sequence="45"-->
-        <!--                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
-        <!--        <menuitem id="ab_request_management_menu_website_requests"-->
-        <!--                  name="Website Requests"-->
-        <!--                  parent="ab_request_management_menu_root"-->
-        <!--                  action="ab_request_website_action"-->
-        <!--                  sequence="45"-->
-        <!--                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
-        <!--        <menuitem id="ab_request_management_menu_website_requests"-->
-        <!--                  name="Website Requests"-->
-        <!--                  parent="ab_request_management_menu_root"-->
-        <!--                  action="ab_request_website_action"-->
-        <!--                  sequence="45"-->
-        <!--                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
-        <!--        <menuitem id="ab_request_management_menu_website_requests"-->
-        <!--                  name="Website Requests"-->
-        <!--                  parent="ab_request_management_menu_root"-->
-        <!--                  action="ab_request_website_action"-->
-        <!--                  sequence="45"-->
-        <!--                  groups="ab_request_management.group_ab_request_management_user,ab_request_management.group_ab_request_management_manager,ab_request_management.group_ab_request_management_admin"/>-->
-
         <menuitem id="ab_request_management_menu_settings"
                   name="Settings"
                   parent="ab_request_management_menu_root"
                   sequence="50"
+                  active="False"
                   groups="ab_request_management.group_ab_request_management_admin,ab_request_management.group_ab_request_management_viewer"/>
 
         <menuitem id="ab_request_management_menu_request_types"
                   name="Types"
-                  parent="ab_request_management_menu_settings"
+                  parent="ab_request_management_menu_root"
                   action="ab_request_type_action"
-                  sequence="10"
+                  sequence="60"
                   groups="ab_request_management.group_ab_request_management_admin,ab_request_management.group_ab_request_management_viewer"/>
 
         <menuitem id="ab_request_management_menu_request_categories"
                   name="Categories"
-                  parent="ab_request_management_menu_settings"
+                  parent="ab_request_management_menu_root"
                   action="ab_request_category_action"
-                  sequence="20"
+                  sequence="70"
                   groups="ab_request_management.group_ab_request_management_admin,ab_request_management.group_ab_request_management_viewer"/>
+
+        <record id="ab_request_management_menu_complaint_settings" model="ir.ui.menu">
+            <field name="name">Settings</field>
+            <field name="parent_id" ref="ab_request_management_menu_complaints_root"/>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="ab_request_management_menu_complaint_types" model="ir.ui.menu">
+            <field name="name">Types</field>
+            <field name="parent_id" ref="ab_request_management_menu_complaint_settings"/>
+            <field name="active" eval="False"/>
+        </record>
+
+        <record id="ab_request_management_menu_complaint_categories" model="ir.ui.menu">
+            <field name="name">Categories</field>
+            <field name="parent_id" ref="ab_request_management_menu_complaint_settings"/>
+            <field name="active" eval="False"/>
+        </record>
     </data>
 </odoo>

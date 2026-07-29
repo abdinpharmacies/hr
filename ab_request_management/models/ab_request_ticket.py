@@ -10,26 +10,27 @@ from odoo.tools.translate import _
 REQUEST_SEQUENCE_CODE = "ab_request_ticket.ticket_number"
 ASSIGNMENT_FIELDS = {"assigned_employee_ids", "deadline"}
 NON_CLOSABLE_STATES = {"closed", "rejected", "resolved"}
+INTERNAL_REQUEST_CATEGORY_TYPE = "other"
 AUTO_CLOSE_DAYS = 30
 AUTO_CLOSE_REASON = (
-    "Complaint was automatically closed because the requester did not confirm closure "
-    "within 30 days from the complaint creation date."
+    "Request was automatically closed because the requester did not confirm closure "
+    "within 30 days from the request creation date."
 )
 HR_RESOLUTION_GROUP = "ab_hr.group_ab_hr_personnel_spec"
-REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the requests and complaints system."
+REQUEST_EMPLOYEE_LINK_ERROR = "You must be linked to an employee to use the requests system."
 REQUEST_EMPLOYEE_AUTO_ASSIGN_ERROR = "Requester is assigned automatically from the current user's employee."
 
 
 class AbRequest(models.Model):
     _name = "ab_request"
     _table = "ab_request_ticket"
-    _description = "Request or Complaint"
+    _description = "Request"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "create_date desc, id desc"
     _rec_name = "name"
 
     name = fields.Char(
-        string="Request/Complaint Number",
+        string="Request Number",
         required=True,
         readonly=True,
         copy=False,
@@ -55,7 +56,7 @@ class AbRequest(models.Model):
     )
     request_type_id = fields.Many2one(
         "ab_request_type",
-        string="Request/Complaint Type",
+        string="Request Type",
         required=True,
         ondelete="restrict",
         tracking=True,
@@ -175,7 +176,7 @@ class AbRequest(models.Model):
     is_request_viewer = fields.Boolean(compute="_compute_access_flags")
     can_viewer_close = fields.Boolean(compute="_compute_access_flags")
 
-    _ab_request_name_uniq = models.Constraint("UNIQUE(name)", "Request/complaint number must be unique.")
+    _ab_request_name_uniq = models.Constraint("UNIQUE(name)", "Request number must be unique.")
 
     @api.model
     def _default_employee_id(self):
@@ -238,15 +239,20 @@ class AbRequest(models.Model):
 
     @api.depends("request_category_id", "request_type_id")
     def _compute_available_request_type_ids(self):
-        request_types = self.env["ab_request_type"].search([], order="name")
+        request_types = self.env["ab_request_type"].search(
+            [("category_id.type", "=", INTERNAL_REQUEST_CATEGORY_TYPE)],
+            order="name",
+        )
         for record in self:
             category = record.request_category_id or record.request_type_id.category_id
-            if category:
+            if not category:
+                record.available_request_type_ids = request_types
+            elif category.type == INTERNAL_REQUEST_CATEGORY_TYPE:
                 record.available_request_type_ids = request_types.filtered(
                     lambda request_type: request_type.category_id == category
                 )
             else:
-                record.available_request_type_ids = request_types
+                record.available_request_type_ids = False
 
     @api.depends("assigned_employee_ids", "assigned_employee_id")
     def _compute_assigned_employee_count(self):
@@ -428,6 +434,16 @@ class AbRequest(models.Model):
                     and record.request_type_id.category_id != record.request_category_id
             ):
                 raise ValidationError(_("The selected request type must belong to the selected category."))
+            if (
+                    record.request_category_id
+                    and record.request_category_id.type != INTERNAL_REQUEST_CATEGORY_TYPE
+            ):
+                raise ValidationError(_("Only request categories can be used for internal tickets."))
+            if (
+                    record.request_type_id
+                    and record.request_type_id.category_id.type != INTERNAL_REQUEST_CATEGORY_TYPE
+            ):
+                raise ValidationError(_("Only request types can be used for internal tickets."))
 
     @api.constrains("link")
     def _check_link_url(self):
@@ -582,6 +598,8 @@ class AbRequest(models.Model):
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
             prepared_vals["name"] = self.env["ir.sequence"].sudo().next_by_code(REQUEST_SEQUENCE_CODE) or "New"
         request_type = self.env["ab_request_type"].browse(prepared_vals["request_type_id"])
+        if request_type.category_id.type != INTERNAL_REQUEST_CATEGORY_TYPE:
+            raise ValidationError(_("Only request types can be used for internal tickets."))
         if not request_type.manager_id:
             raise ValidationError(_("The selected request type must have a department manager."))
         if prepared_vals.get("deadline") and fields.Datetime.to_datetime(
@@ -948,19 +966,19 @@ class AbRequest(models.Model):
         return True
 
     @api.model
-    def _cron_auto_close_resolved_complaints(self):
-        """Close resolved complaints that exceeded the requester confirmation window."""
+    def _cron_auto_close_resolved_requests(self):
+        """Close resolved requests that exceeded the requester confirmation window."""
         cutoff_date = fields.Datetime.now() - timedelta(days=AUTO_CLOSE_DAYS)
-        complaints = self.sudo().search(
+        requests = self.sudo().search(
             [
                 ("state", "=", "resolved"),
                 ("create_date", "<=", cutoff_date),
             ]
         )
         reason = _(AUTO_CLOSE_REASON)
-        for complaint in complaints:
-            complaint.with_context(allow_state_write=True).write({"state": "closed"})
-            complaint._post_notification(reason)
+        for record in requests:
+            record.with_context(allow_state_write=True).write({"state": "closed"})
+            record._post_notification(reason)
         return True
 
     def action_view_followups(self):

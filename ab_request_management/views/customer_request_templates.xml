@@ -15,43 +15,45 @@
                             <div class="ab-public-request-title">
                                 <img t-att-src="'/web/image?model=res.company&amp;field=appbar_image&amp;id=%s' % request.env.company.id"
                                      class="ab-public-request-logo"
-                                     alt="Abdin Pharmacies"
+                                     alt="صيدليات عابدين"
                                      width="176"
                                      height="58"
                                      loading="eager"/>
                                 <span class="ab-public-request-brand-name">صيدليات عابدين</span>
-                                <h1>How can we help?</h1>
+                                <h1>كيف يمكننا مساعدتك؟</h1>
                             </div>
-                            <div class="ab-public-request-steps" aria-label="Form sections">
-                                <span><b>1</b> Contact</span>
-                                <span><b>2</b> Classification</span>
-                                <span><b>3</b> Details</span>
+                            <div class="ab-public-request-steps" aria-label="أقسام النموذج">
+                                <span><b>1</b> بيانات التواصل</span>
+                                <span><b>2</b> التصنيف</span>
+                                <span><b>3</b> التفاصيل</span>
+                                <span><b>4</b> التحقق</span>
                             </div>
                         </header>
 
                         <form action="/requests/customer-submit"
                               method="post"
                               class="core_ui_card ab-public-request-form"
-                              data-ab-external-request-form="1">
+                              data-ab-external-request-form="1"
+                              data-ab-requester-reference-error="أدخل كود الموظف أو رقم السجل التجاري.">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                             <div class="ab-request-honeypot" aria-hidden="true">
-                                <label for="website_url">Website URL</label>
+                                <label for="website_url">رابط الموقع</label>
                                 <input id="website_url" name="website_url" type="text" tabindex="-1" autocomplete="off"/>
                             </div>
 
                             <div class="ab-public-request-form-heading">
                                 <div>
-                                    <span class="ab-public-request-kicker">Public form</span>
-                                    <h2>Submit your request</h2>
-                                    <span class="ab-public-request-required-note">* Required fields</span>
+                                    <span class="ab-public-request-kicker">النموذج العام</span>
+                                    <h2>إرسال شكوى</h2>
+                                    <span class="ab-public-request-required-note">* حقول مطلوبة</span>
                                 </div>
                             </div>
 
                             <div t-if="error" class="core_ui_alert danger ab-public-request-alert" role="alert">
                                 <span class="ab-public-request-alert-symbol">!</span>
                                 <div class="core_ui_alert_content">
-                                    <div class="core_ui_alert_title">Please review your information</div>
+                                    <div class="core_ui_alert_title">يرجى مراجعة بياناتك</div>
                                     <t t-out="error"/>
                                 </div>
                             </div>
@@ -59,8 +61,8 @@
                             <div t-if="not has_public_options" class="core_ui_alert warning ab-public-request-alert" role="status">
                                 <span class="ab-public-request-alert-symbol">!</span>
                                 <div class="core_ui_alert_content">
-                                    <div class="core_ui_alert_title">Form setup is incomplete</div>
-                                    No public request categories with public request types are currently available.
+                                    <div class="core_ui_alert_title">إعداد النموذج غير مكتمل</div>
+                                    لا توجد حالياً تصنيفات عامة تحتوي على أنواع شكاوى متاحة.
                                 </div>
                             </div>
 
@@ -68,25 +70,25 @@
                                 <div class="ab-public-request-section-heading">
                                     <span>1</span>
                                     <div>
-                                        <h3>Your contact information</h3>
-                                        <p>We will use these details only to identify and follow up on this submission.</p>
+                                        <h3>بيانات التواصل</h3>
+                                        <p>سنستخدم هذه البيانات فقط للتعرف على الشكوى ومتابعتها.</p>
                                     </div>
                                 </div>
                                 <div class="ab-public-request-grid">
                                     <div class="core_ui_form_group">
-                                        <label for="customer_name">Name <em>*</em></label>
+                                        <label for="customer_name">الاسم <em>*</em></label>
                                         <input id="customer_name"
                                                name="customer_name"
                                                class="core_ui_input"
                                                required="required"
                                                maxlength="120"
                                                autocomplete="name"
-                                               placeholder="Your full name"
+                                               placeholder="الاسم بالكامل"
                                                t-att-value="post.get('customer_name')"/>
                                     </div>
 
                                     <div class="core_ui_form_group">
-                                        <label for="customer_phone">Phone <em>*</em></label>
+                                        <label for="customer_phone">رقم الهاتف <em>*</em></label>
                                         <input id="customer_phone"
                                                name="customer_phone"
                                                class="core_ui_input"
@@ -94,20 +96,59 @@
                                                inputmode="tel"
                                                maxlength="30"
                                                autocomplete="tel"
-                                               placeholder="Your phone number"
+                                               placeholder="رقم الهاتف"
                                                t-att-value="post.get('customer_phone')"/>
                                     </div>
 
                                     <div class="core_ui_form_group ab-public-request-full">
-                                        <label for="customer_email">Email <span>Optional</span></label>
+                                        <label for="customer_email">البريد الإلكتروني <span>اختياري</span></label>
                                         <input id="customer_email"
                                                name="customer_email"
                                                type="email"
                                                class="core_ui_input"
                                                maxlength="254"
                                                autocomplete="email"
-                                               placeholder="name@example.com"
+                                               placeholder="البريد الإلكتروني"
                                                t-att-value="post.get('customer_email')"/>
+                                    </div>
+
+                                    <div class="core_ui_form_group">
+                                        <label for="employee_code">كود الموظف <em>*</em></label>
+                                        <input id="employee_code"
+                                               name="employee_code"
+                                               class="core_ui_input"
+                                               maxlength="50"
+                                               autocomplete="off"
+                                               data-ab-alternative-required="1"
+                                               placeholder="كود الموظف"
+                                               t-att-value="post.get('employee_code')"/>
+                                    </div>
+
+                                    <div class="core_ui_form_group">
+                                        <label for="commercial_register_number">رقم السجل التجاري <em>*</em></label>
+                                        <input id="commercial_register_number"
+                                               name="commercial_register_number"
+                                               class="core_ui_input"
+                                               maxlength="50"
+                                               inputmode="numeric"
+                                               autocomplete="off"
+                                               data-ab-alternative-required="1"
+                                               placeholder="رقم السجل التجاري"
+                                               t-att-value="post.get('commercial_register_number')"/>
+                                    </div>
+
+                                    <div class="core_ui_form_group ab-public-request-full">
+                                        <label for="national_id">الرقم القومي <em>*</em></label>
+                                        <input id="national_id"
+                                               name="national_id"
+                                               class="core_ui_input"
+                                               required="required"
+                                               maxlength="14"
+                                               inputmode="numeric"
+                                               pattern="[0-9]{14}"
+                                               autocomplete="off"
+                                               placeholder="14 رقم"
+                                               t-att-value="post.get('national_id')"/>
                                     </div>
                                 </div>
                             </section>
@@ -116,8 +157,8 @@
                                 <div class="ab-public-request-section-heading">
                                     <span>2</span>
                                     <div>
-                                        <h3>Classify your request</h3>
-                                        <p>Choose a category first, then select one of its available request types.</p>
+                                        <h3>تصنيف الشكوى</h3>
+                                        <p>اختر القسم أولاً، ثم اختر نوع الشكوى المتاح.</p>
                                     </div>
                                 </div>
                                 <div class="ab-public-request-grid">
@@ -164,48 +205,86 @@
                                 <div class="ab-public-request-section-heading">
                                     <span>3</span>
                                     <div>
-                                        <h3>Tell us what happened</h3>
-                                        <p>Use a clear subject and include the details needed to understand your request.</p>
+                                        <h3>تفاصيل الشكوى</h3>
+                                        <p>اكتب موضوعاً واضحاً وأضف التفاصيل اللازمة لفهم الشكوى.</p>
                                     </div>
                                 </div>
                                 <div class="ab-public-request-grid">
                                     <div class="core_ui_form_group ab-public-request-full">
-                                        <label for="subject">Subject <em>*</em></label>
+                                        <label for="subject">الموضوع <em>*</em></label>
                                         <input id="subject"
                                                name="subject"
                                                class="core_ui_input"
                                                required="required"
                                                maxlength="200"
-                                               placeholder="A short summary"
+                                               placeholder="ملخص قصير"
                                                t-att-value="post.get('subject')"/>
                                     </div>
 
                                     <div class="core_ui_form_group ab-public-request-full">
-                                        <label for="description">Details <em>*</em></label>
+                                        <label for="description">التفاصيل <em>*</em></label>
                                         <textarea id="description"
                                                   name="description"
                                                   class="core_ui_input core_ui_textarea"
                                                   required="required"
                                                   rows="6"
                                                   maxlength="3000"
-                                                  placeholder="Describe your request or complaint"><t t-out="post.get('description')"/></textarea>
-                                        <div class="core_ui_help_text">Do not include passwords, payment card numbers, or other secrets.</div>
+                                                  placeholder="اكتب تفاصيل الشكوى"><t t-out="post.get('description')"/></textarea>
+                                        <div class="core_ui_help_text">لا تكتب كلمات مرور أو أرقام بطاقات دفع أو أي بيانات سرية.</div>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <section class="ab-public-request-section">
+                                <div class="ab-public-request-section-heading">
+                                    <span>4</span>
+                                    <div>
+                                        <h3>التحقق البشري</h3>
+                                        <p>أدخل الرمز المكون من 5 أرقام الظاهر في الصورة قبل الإرسال.</p>
+                                    </div>
+                                </div>
+                                <div class="ab-public-request-captcha">
+                                    <div class="ab-public-request-captcha-image-wrap">
+                                        <img id="captcha_image"
+                                             src="/requests/captcha/image"
+                                             alt="رمز التحقق"
+                                             class="ab-public-request-captcha-image"/>
+                                    </div>
+                                    <button type="button"
+                                            class="core_ui_btn core_ui_btn_secondary ab-public-request-captcha-refresh"
+                                            id="refresh_captcha_btn">
+                                        <span aria-hidden="true">↻</span>
+                                        <span class="visually-hidden">تحديث رمز التحقق</span>
+                                    </button>
+                                    <div class="core_ui_form_group">
+                                        <label for="captcha_input">أدخل الرمز <em>*</em></label>
+                                        <input id="captcha_input"
+                                               name="captcha_input"
+                                               class="core_ui_input"
+                                               required="required"
+                                               minlength="5"
+                                               maxlength="5"
+                                               pattern="\d{5}"
+                                               inputmode="numeric"
+                                               autocomplete="off"
+                                               placeholder="رمز من 5 أرقام"
+                                               title="أدخل رمز التحقق المكون من 5 أرقام من الصورة"/>
                                     </div>
                                 </div>
                             </section>
 
                             <footer class="ab-public-request-actions">
-                                <p>After submission, you will receive a reference number for follow-up.</p>
+                                <p>بعد الإرسال، ستحصل على رقم مرجعي للمتابعة.</p>
                                 <button type="submit"
                                         class="core_ui_btn core_ui_btn_primary ab-public-request-submit"
                                         t-att-disabled="not has_public_options">
-                                    Submit request
-                                    <span aria-hidden="true">→</span>
+                                    إرسال الشكوى
+                                    <span aria-hidden="true">←</span>
                                 </button>
                             </footer>
                         </form>
 
-                        <p class="ab-public-request-footer-note">External submissions are stored separately from internal employee requests.</p>
+                        <p class="ab-public-request-footer-note">تُحفظ الشكاوى الخارجية بشكل منفصل عن طلبات الموظفين الداخلية.</p>
                     </div>
                 </main>
                 <script type="module" src="/ab_request_management/static/src/js/customer_request_form.js"></script>
@@ -226,21 +305,165 @@
                     <div class="ab-public-request-success-shell">
                         <section class="core_ui_card ab-public-request-success-card">
                             <span class="ab-public-request-success-icon" aria-hidden="true">✓</span>
-                            <span class="ab-public-request-kicker">Submission received</span>
-                            <h1>Thank you</h1>
+                            <span class="ab-public-request-kicker">تم استلام الإرسال</span>
+                            <h1>شكراً لك</h1>
                             <t t-if="website_request">
-                                <p>Your external request or complaint has been received.</p>
+                                <p>تم استلام شكواك الخارجية.</p>
                                 <div class="ab-public-request-reference">
-                                    <span>Reference number</span>
+                                    <span>الرقم المرجعي</span>
                                     <strong t-out="website_request.name"/>
+                                </div>
+                                <div class="ab-public-request-reference">
+                                    <span>رابط المتابعة</span>
+                                    <a t-att-href="followup_url" t-out="followup_url"/>
+                                    <button type="button"
+                                            class="core_ui_btn core_ui_btn_secondary ab-public-request-copy"
+                                            t-att-data-ab-copy-value="followup_url"
+                                            data-ab-copied-label="تم النسخ"
+                                            data-ab-copy-fallback-label="حدد الرابط وانسخه">
+                                        نسخ الرابط
+                                    </button>
                                 </div>
                             </t>
                             <t t-else="">
-                                <p>Your external request or complaint has been received.</p>
+                                <p>تم استلام شكواك الخارجية.</p>
                             </t>
                         </section>
                     </div>
                 </main>
+                <script type="module" src="/ab_request_management/static/src/js/customer_request_form.js"></script>
+            </body>
+        </html>
+    </template>
+
+    <template id="customer_request_followup_lookup" name="External Request Follow-up Lookup">
+        <html t-att-dir="'rtl' if request.env.lang and request.env.lang.startswith('ar') else 'ltr'">
+            <head>
+                <meta charset="utf-8"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
+                <title t-out="page_title"/>
+                <t t-call-assets="ab_request_management.assets_public_request"/>
+            </head>
+            <body class="ab-public-request-page">
+                <main class="ab-public-request-workspace">
+                    <div class="ab-public-request-shell">
+                        <header class="core_ui_card core_ui_card_hero ab-public-request-hero">
+                            <div class="ab-public-request-title">
+                                <img t-att-src="'/web/image?model=res.company&amp;field=appbar_image&amp;id=%s' % request.env.company.id"
+                                     class="ab-public-request-logo"
+                                     alt="صيدليات عابدين"
+                                     width="176"
+                                     height="58"
+                                     loading="eager"/>
+                                <span class="ab-public-request-brand-name">صيدليات عابدين</span>
+                                <h1>تابع شكواك</h1>
+                            </div>
+                        </header>
+
+                        <form action="/requests/external-followup/search"
+                              method="post"
+                              class="core_ui_card ab-public-request-form">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                            <div class="ab-public-request-form-heading">
+                                <div>
+                                    <span class="ab-public-request-kicker">المتابعة</span>
+                                    <h2>الاستعلام عن حالة الشكوى</h2>
+                                    <span class="ab-public-request-required-note">* حقول مطلوبة</span>
+                                </div>
+                            </div>
+
+                            <div t-if="error" class="core_ui_alert danger ab-public-request-alert" role="alert">
+                                <span class="ab-public-request-alert-symbol">!</span>
+                                <div class="core_ui_alert_content">
+                                    <div class="core_ui_alert_title">فشل التحقق</div>
+                                    <t t-out="error"/>
+                                </div>
+                            </div>
+
+                            <section class="ab-public-request-section">
+                                <div class="ab-public-request-section-heading">
+                                    <span>1</span>
+                                    <div>
+                                        <h3>تحقق من الشكوى</h3>
+                                        <p>أدخل مرجع الشكوى ونفس بيانات الهوية المستخدمة أثناء الإرسال.</p>
+                                    </div>
+                                </div>
+                                <div class="ab-public-request-grid">
+                                    <div class="core_ui_form_group ab-public-request-full">
+                                        <label for="request_id">مرجع الشكوى <em>*</em></label>
+                                        <input id="request_id"
+                                               name="request_id"
+                                               class="core_ui_input"
+                                               required="required"
+                                               autocomplete="off"
+                                               placeholder="رقم الشكوى"
+                                               t-att-value="post.get('request_id')"/>
+                                    </div>
+                                    <div class="core_ui_form_group">
+                                        <label for="requester_reference">كود الموظف أو رقم السجل التجاري <em>*</em></label>
+                                        <input id="requester_reference"
+                                               name="requester_reference"
+                                               class="core_ui_input"
+                                               required="required"
+                                               maxlength="50"
+                                               autocomplete="off"
+                                               placeholder="كود الموظف أو رقم السجل التجاري"
+                                               t-att-value="post.get('requester_reference')"/>
+                                    </div>
+                                    <div class="core_ui_form_group">
+                                        <label for="national_id">الرقم القومي <em>*</em></label>
+                                        <input id="national_id"
+                                               name="national_id"
+                                               class="core_ui_input"
+                                               required="required"
+                                               maxlength="14"
+                                               inputmode="numeric"
+                                               pattern="[0-9]{14}"
+                                               autocomplete="off"
+                                               placeholder="14 رقم"
+                                               t-att-value="post.get('national_id')"/>
+                                    </div>
+                                </div>
+                            </section>
+
+                            <footer class="ab-public-request-actions">
+                                <p>تظهر هنا فقط المتابعات المحددة كمرئية لمقدم الشكوى.</p>
+                                <button type="submit" class="core_ui_btn core_ui_btn_primary ab-public-request-submit">
+                                    بحث
+                                    <span aria-hidden="true">←</span>
+                                </button>
+                            </footer>
+                        </form>
+
+                        <section t-if="website_request" class="core_ui_card ab-public-request-followup-results">
+                            <div class="ab-public-request-form-heading">
+                                <div>
+                                    <span class="ab-public-request-kicker">تم التحقق</span>
+                                    <h2 t-out="website_request.name"/>
+                                    <span class="ab-public-request-required-note" t-out="website_request.state"/>
+                                </div>
+                            </div>
+                            <div t-if="followups" class="ab-public-request-followup-list">
+                                <article t-foreach="followups" t-as="followup" class="ab-public-request-followup-item">
+                                    <time class="ab-public-request-followup-date" t-field="followup.create_date"/>
+                                    <div class="ab-public-request-followup-note" t-out="followup.note"/>
+                                    <div t-if="followup.attachment_ids" class="ab-public-request-followup-attachments">
+                                        <a t-foreach="followup.attachment_ids"
+                                           t-as="attachment"
+                                           t-att-href="'/requests/external-followup/attachment/%s' % attachment.id">
+                                            <t t-out="attachment.name"/>
+                                        </a>
+                                    </div>
+                                </article>
+                            </div>
+                            <div t-else="" class="ab-public-request-empty">
+                                لا توجد متابعات مرئية لهذه الشكوى حتى الآن.
+                            </div>
+                        </section>
+                    </div>
+                </main>
+                <script type="module" src="/ab_request_management/static/src/js/customer_request_form.js"></script>
             </body>
         </html>
     </template>

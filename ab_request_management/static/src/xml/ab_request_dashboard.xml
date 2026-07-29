@@ -5,7 +5,7 @@
             <div class="ab_request_dashboard_shell">
                 <section class="ab_request_dashboard_hero">
                     <div>
-                        <span class="ab_request_dashboard_kicker">Requests &amp; Complaints</span>
+                        <span class="ab_request_dashboard_kicker">Requests</span>
                         <h1>Operations Dashboard</h1>
                         <p>
                             Track workload, approvals, execution flow, and recent movement from one responsive workspace.
@@ -42,7 +42,7 @@
                             </div>
                         </div>
                         <div t-else="" class="ab_request_dashboard_empty">
-                            No department activity yet. Create a request or complaint to start populating this chart.
+                            No department activity yet. Create a request to start populating this chart.
                         </div>
                     </article>
 
@@ -70,7 +70,7 @@
                             </div>
                         </div>
                         <div t-else="" class="ab_request_dashboard_empty">
-                            No workflow activity yet. State analytics appear once requests or complaints are created.
+                            No workflow activity yet. State analytics appear once requests are created.
                         </div>
                     </article>
 
@@ -94,7 +94,7 @@
                             </button>
                         </div>
                         <div t-else="" class="ab_request_dashboard_empty">
-                            No recent requests or complaints yet. Use the New button from a list view to create the first one.
+                            No recent requests yet. Use the New button from a list view to create the first one.
                         </div>
                     </article>
                 </section>
