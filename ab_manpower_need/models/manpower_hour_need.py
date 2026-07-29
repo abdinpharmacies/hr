@@ -20,7 +20,7 @@ class ManpowerHourNeed(models.Model):
         store=True,
     )
     employee_shortage_count = fields.Integer(
-        string='Employees Shortage / Increase',
+        string='Employee Shortage',
         compute='_compute_employee_shortage_count',
         store=True,
     )
@@ -42,7 +42,7 @@ class ManpowerHourNeed(models.Model):
     default_actual_daily_hours = fields.Float(string='Fallback Actual Daily Hours', default=8.0)
     actual_employee_ids = fields.Many2many(
         comodel_name='ab_hr_employee',
-        string='Employees',
+        string='Assigned Employees',
     )
     employee_line_ids = fields.One2many(
         comodel_name='ab_hr_manpower_hour_need_line',
@@ -53,7 +53,7 @@ class ManpowerHourNeed(models.Model):
         string='Actual Hours',
     )
     shortage_hours = fields.Float(
-        string='Shortage / Increase Hours',
+        string='Shortage Hours',
         compute='_compute_shortage_hours',
         compute_sudo=True,
         store=True,
