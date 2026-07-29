@@ -34,7 +34,7 @@
                               method="post"
                               class="core_ui_card ab-public-request-form"
                               data-ab-external-request-form="1"
-                              data-ab-requester-reference-error="أدخل كود الموظف أو رقم السجل التجاري.">
+                              data-ab-requester-type-form="1">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                             <div class="ab-request-honeypot" aria-hidden="true">
@@ -112,19 +112,41 @@
                                                t-att-value="post.get('customer_email')"/>
                                     </div>
 
-                                    <div class="core_ui_form_group">
+                                    <div class="core_ui_form_group ab-public-request-full">
+                                        <fieldset class="ab-public-request-radio-group">
+                                            <legend>نوع مقدم الشكوى <em>*</em></legend>
+                                            <label>
+                                                <input type="radio"
+                                                       name="requester_type"
+                                                       value="employee"
+                                                       required="required"
+                                                       t-att-checked="'checked' if post.get('requester_type', 'employee') == 'employee' else None"/>
+                                                <span>موظف</span>
+                                            </label>
+                                            <label>
+                                                <input type="radio"
+                                                       name="requester_type"
+                                                       value="supplier"
+                                                       required="required"
+                                                       t-att-checked="'checked' if post.get('requester_type') == 'supplier' else None"/>
+                                                <span>مورد</span>
+                                            </label>
+                                        </fieldset>
+                                    </div>
+
+                                    <div class="core_ui_form_group" data-ab-employee-code-group="1">
                                         <label for="employee_code">كود الموظف <em>*</em></label>
                                         <input id="employee_code"
                                                name="employee_code"
                                                class="core_ui_input"
                                                maxlength="50"
                                                autocomplete="off"
-                                               data-ab-alternative-required="1"
+                                               data-ab-requester-type-input="employee"
                                                placeholder="كود الموظف"
                                                t-att-value="post.get('employee_code')"/>
                                     </div>
 
-                                    <div class="core_ui_form_group">
+                                    <div class="core_ui_form_group" data-ab-commercial-register-group="1">
                                         <label for="commercial_register_number">رقم السجل التجاري <em>*</em></label>
                                         <input id="commercial_register_number"
                                                name="commercial_register_number"
@@ -132,12 +154,12 @@
                                                maxlength="50"
                                                inputmode="numeric"
                                                autocomplete="off"
-                                               data-ab-alternative-required="1"
+                                               data-ab-requester-type-input="supplier"
                                                placeholder="رقم السجل التجاري"
                                                t-att-value="post.get('commercial_register_number')"/>
                                     </div>
 
-                                    <div class="core_ui_form_group ab-public-request-full">
+                                    <div class="core_ui_form_group ab-public-request-full" data-ab-national-id-group="1">
                                         <label for="national_id">الرقم القومي <em>*</em></label>
                                         <input id="national_id"
                                                name="national_id"
@@ -362,7 +384,8 @@
 
                         <form action="/requests/external-followup/search"
                               method="post"
-                              class="core_ui_card ab-public-request-form">
+                              class="core_ui_card ab-public-request-form"
+                              data-ab-requester-type-form="1">
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
 
                             <div class="ab-public-request-form-heading">
@@ -400,29 +423,49 @@
                                                placeholder="رقم الشكوى"
                                                t-att-value="post.get('request_id')"/>
                                     </div>
-                                    <div class="core_ui_form_group">
-                                        <label for="requester_reference">كود الموظف أو رقم السجل التجاري <em>*</em></label>
-                                        <input id="requester_reference"
-                                               name="requester_reference"
+                                    <div class="core_ui_form_group ab-public-request-full">
+                                        <fieldset class="ab-public-request-radio-group">
+                                            <legend>نوع مقدم الشكوى <em>*</em></legend>
+                                            <label>
+                                                <input type="radio"
+                                                       name="requester_type"
+                                                       value="employee"
+                                                       required="required"
+                                                       t-att-checked="'checked' if post.get('requester_type', 'employee') == 'employee' else None"/>
+                                                <span>موظف</span>
+                                            </label>
+                                            <label>
+                                                <input type="radio"
+                                                       name="requester_type"
+                                                       value="supplier"
+                                                       required="required"
+                                                       t-att-checked="'checked' if post.get('requester_type') == 'supplier' else None"/>
+                                                <span>مورد</span>
+                                            </label>
+                                        </fieldset>
+                                    </div>
+                                    <div class="core_ui_form_group" data-ab-employee-code-group="1">
+                                        <label for="employee_code">كود الموظف <em>*</em></label>
+                                        <input id="employee_code"
+                                               name="employee_code"
                                                class="core_ui_input"
-                                               required="required"
                                                maxlength="50"
                                                autocomplete="off"
-                                               placeholder="كود الموظف أو رقم السجل التجاري"
-                                               t-att-value="post.get('requester_reference')"/>
+                                               data-ab-requester-type-input="employee"
+                                               placeholder="كود الموظف"
+                                               t-att-value="post.get('employee_code')"/>
                                     </div>
-                                    <div class="core_ui_form_group">
-                                        <label for="national_id">الرقم القومي <em>*</em></label>
-                                        <input id="national_id"
-                                               name="national_id"
+                                    <div class="core_ui_form_group" data-ab-commercial-register-group="1">
+                                        <label for="commercial_register_number">رقم السجل التجاري <em>*</em></label>
+                                        <input id="commercial_register_number"
+                                               name="commercial_register_number"
                                                class="core_ui_input"
-                                               required="required"
-                                               maxlength="14"
+                                               maxlength="50"
                                                inputmode="numeric"
-                                               pattern="[0-9]{14}"
                                                autocomplete="off"
-                                               placeholder="14 رقم"
-                                               t-att-value="post.get('national_id')"/>
+                                               data-ab-requester-type-input="supplier"
+                                               placeholder="رقم السجل التجاري"
+                                               t-att-value="post.get('commercial_register_number')"/>
                                     </div>
                                 </div>
                             </section>

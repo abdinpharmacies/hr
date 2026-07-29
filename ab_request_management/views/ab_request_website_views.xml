@@ -9,6 +9,7 @@
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
                 <field name="customer_email"/>
+                <field name="requester_type"/>
                 <field name="employee_code"/>
                 <field name="commercial_register_number"/>
                 <field name="national_id"/>
@@ -41,6 +42,7 @@
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
                 <field name="customer_email" optional="show"/>
+                <field name="requester_type" optional="show"/>
                 <field name="employee_code" optional="show"/>
                 <field name="commercial_register_number" optional="hide"/>
                 <field name="national_id" optional="hide"/>
@@ -87,8 +89,9 @@
                             <field name="customer_name" readonly="1"/>
                             <field name="customer_phone" readonly="1"/>
                             <field name="customer_email" readonly="1"/>
-                            <field name="employee_code" readonly="1"/>
-                            <field name="commercial_register_number" readonly="1"/>
+                            <field name="requester_type" readonly="1"/>
+                            <field name="employee_code" readonly="1" invisible="requester_type != 'employee'"/>
+                            <field name="commercial_register_number" readonly="1" invisible="requester_type != 'supplier'"/>
                             <field name="national_id" readonly="1"/>
                             <field name="source" readonly="1"/>
                         </group>

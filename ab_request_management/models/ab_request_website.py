@@ -33,6 +33,15 @@ class AbRequestWebsite(models.Model):
     customer_name = fields.Char(required=True)
     customer_phone = fields.Char(required=True)
     customer_email = fields.Char()
+    requester_type = fields.Selection(
+        [
+            ("employee", "Employee"),
+            ("supplier", "Supplier"),
+        ],
+        string="Requester Type",
+        required=True,
+        default="employee",
+    )
     employee_code = fields.Char(string="Employee Code")
     commercial_register_number = fields.Char(string="Commercial Register Number")
     national_id = fields.Char(string="National ID")
@@ -92,6 +101,12 @@ class AbRequestWebsite(models.Model):
     def _prepare_create_vals(self, vals):
         prepared_vals = self._prepare_text_vals(vals)
         prepared_vals["state"] = "new"
+        if not prepared_vals.get("requester_type"):
+            prepared_vals["requester_type"] = (
+                "supplier"
+                if prepared_vals.get("commercial_register_number") and not prepared_vals.get("employee_code")
+                else "employee"
+            )
         if not prepared_vals.get("name") or prepared_vals.get("name") == "New":
             prepared_vals["name"] = (
                 self.env["ir.sequence"].sudo().next_by_code(EXTERNAL_REQUEST_SEQUENCE_CODE) or "New"
@@ -105,6 +120,7 @@ class AbRequestWebsite(models.Model):
                 "customer_name",
                 "customer_phone",
                 "customer_email",
+                "requester_type",
                 "employee_code",
                 "commercial_register_number",
                 "national_id",
@@ -133,6 +149,7 @@ class AbRequestWebsite(models.Model):
         "customer_name",
         "customer_phone",
         "customer_email",
+        "requester_type",
         "employee_code",
         "commercial_register_number",
         "national_id",
@@ -145,6 +162,7 @@ class AbRequestWebsite(models.Model):
                 "customer_name": (record.customer_name or "").strip(),
                 "customer_phone": (record.customer_phone or "").strip(),
                 "customer_email": (record.customer_email or "").strip(),
+                "requester_type": record.requester_type,
                 "employee_code": (record.employee_code or "").strip(),
                 "commercial_register_number": (record.commercial_register_number or "").strip(),
                 "national_id": (record.national_id or "").strip(),
@@ -154,17 +172,26 @@ class AbRequestWebsite(models.Model):
             required_labels = {
                 "customer_name": _("Customer name"),
                 "customer_phone": _("Customer phone"),
-                "national_id": _("National ID"),
                 "subject": _("Subject"),
                 "description": _("Details"),
             }
             for field_name, label in required_labels.items():
                 if not values[field_name]:
                     raise ValidationError(_("%s is required.") % label)
-            if not values["employee_code"] and not values["commercial_register_number"]:
-                raise ValidationError(
-                    _("Employee code or commercial register number is required.")
-                )
+            if values["requester_type"] == "employee":
+                if not values["employee_code"]:
+                    raise ValidationError(_("Employee code is required."))
+                if not values["national_id"]:
+                    raise ValidationError(_("National ID is required."))
+                if values["commercial_register_number"]:
+                    raise ValidationError(_("Commercial register number is only available for supplier requests."))
+            elif values["requester_type"] == "supplier":
+                if not values["commercial_register_number"]:
+                    raise ValidationError(_("Commercial register number is required."))
+                if values["employee_code"]:
+                    raise ValidationError(_("Employee code is only available for employee requests."))
+            else:
+                raise ValidationError(_("Requester type is required."))
 
             length_limits = {
                 "customer_name": (120, _("Customer name")),
@@ -194,7 +221,7 @@ class AbRequestWebsite(models.Model):
                 raise ValidationError(_("Enter a valid phone number containing between 7 and 15 digits."))
             if values["customer_email"] and not single_email_re.fullmatch(values["customer_email"]):
                 raise ValidationError(_("Enter a valid email address."))
-            if not _NATIONAL_ID_PATTERN.fullmatch(values["national_id"]):
+            if values["national_id"] and not _NATIONAL_ID_PATTERN.fullmatch(values["national_id"]):
                 raise ValidationError(_("National ID must contain exactly 14 digits."))
 
     def _check_external_workflow_access(self):
