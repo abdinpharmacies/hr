@@ -27,11 +27,6 @@ msgid "Access"
 msgstr "وصول"
 
 #. module: ab_manpower_need
-#: model:ir.module.module,summary:ab_manpower_need
-msgid "Manpower need per hour planning"
-msgstr "تخطيط احتياج العمالة لكل ساعة"
-
-#. module: ab_manpower_need
 #: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_job_cat__active
 msgid "Active"
 msgstr "نشط"
@@ -58,9 +53,8 @@ msgstr "أيقونة نوع النشاط"
 
 #. module: ab_manpower_need
 #: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__actual_employee_ids
-#: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__employee_line_ids
-msgid "Actual Employees"
-msgstr "الموظفون الفعليون"
+msgid "Assigned Employees"
+msgstr "الموظفون المعينون"
 
 #. module: ab_manpower_need
 #: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__actual_available_hours
@@ -175,7 +169,6 @@ msgid "Employee"
 msgstr "الموظف"
 
 #. module: ab_manpower_need
-#: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__employee_shortage_count
 #: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__employee_shortage_display
 #: model_terms:ir.ui.view,arch_db:ab_manpower_need.manpower_hour_need_view_list
 msgid "Employees Shortage / Increase"
@@ -313,7 +306,6 @@ msgstr "احتياج العمالة بالساعة"
 
 #. module: ab_manpower_need
 #: model:ir.module.category,name:ab_manpower_need.module_category_manpower_need
-#: model:ir.module.module,shortdesc:ab_manpower_need
 msgid "Manpower Need"
 msgstr "احتياج العمالة"
 
@@ -454,11 +446,15 @@ msgid "SMS Delivery error"
 msgstr "خطأ في تسليم الرسالة النصية"
 
 #. module: ab_manpower_need
-#: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__shortage_hours
 #: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__shortage_hours_display
 #: model_terms:ir.ui.view,arch_db:ab_manpower_need.manpower_hour_need_view_list
 msgid "Shortage / Increase Hours"
 msgstr "عجز / زيادة الساعات"
+
+#. module: ab_manpower_need
+#: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__shortage_hours
+msgid "Shortage Hours"
+msgstr "ساعات العجز"
 
 #. module: ab_manpower_need
 #: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__shortage_hours_label
@@ -528,6 +524,12 @@ msgid "Display Name"
 msgstr "الاسم المعروض"
 
 #. module: ab_manpower_need
+#: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__employee_shortage_count
+msgid "Employee Shortage"
+msgstr "عجز الموظفين"
+
+#. module: ab_manpower_need
+#: model:ir.model.fields,field_description:ab_manpower_need.field_ab_hr_manpower_hour_need__employee_line_ids
 #: model_terms:ir.ui.view,arch_db:ab_manpower_need.manpower_hour_need_view_form
 #: model_terms:ir.ui.view,arch_db:ab_manpower_need.manpower_hour_need_view_form_with_job_category
 msgid "Employees"
