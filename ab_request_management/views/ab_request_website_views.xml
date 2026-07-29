@@ -9,6 +9,9 @@
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
                 <field name="customer_email"/>
+                <field name="employee_code"/>
+                <field name="commercial_register_number"/>
+                <field name="national_id"/>
                 <field name="subject"/>
                 <field name="request_category_id"/>
                 <field name="request_type_id"/>
@@ -38,6 +41,9 @@
                 <field name="customer_name"/>
                 <field name="customer_phone"/>
                 <field name="customer_email" optional="show"/>
+                <field name="employee_code" optional="show"/>
+                <field name="commercial_register_number" optional="hide"/>
+                <field name="national_id" optional="hide"/>
                 <field name="subject"/>
                 <field name="request_category_id" optional="show"/>
                 <field name="request_type_id"/>
@@ -72,30 +78,69 @@
                         <span class="badge text-bg-info">External</span>
                         <label for="subject"/>
                         <h1>
-                            <field name="subject" readonly="state == 'closed'"/>
+                            <field name="subject" readonly="1"/>
                         </h1>
                     </div>
                     <group>
                         <group string="External Requester">
                             <field name="name" readonly="1"/>
-                            <field name="customer_name" readonly="state == 'closed'"/>
-                            <field name="customer_phone" readonly="state == 'closed'"/>
-                            <field name="customer_email" readonly="state == 'closed'"/>
+                            <field name="customer_name" readonly="1"/>
+                            <field name="customer_phone" readonly="1"/>
+                            <field name="customer_email" readonly="1"/>
+                            <field name="employee_code" readonly="1"/>
+                            <field name="commercial_register_number" readonly="1"/>
+                            <field name="national_id" readonly="1"/>
                             <field name="source" readonly="1"/>
                         </group>
                         <group string="Classification">
                             <field name="request_category_id"
                                    domain="[('is_public', '=', True)]"
-                                   readonly="state == 'closed'"/>
+                                   readonly="1"/>
                             <field name="request_type_id"
                                    domain="[('category_id', '=', request_category_id), ('is_public', '=', True)]"
-                                   readonly="state == 'closed'"/>
+                                   readonly="1"/>
                             <field name="create_date" readonly="1"/>
                         </group>
                     </group>
                     <group string="Details">
-                        <field name="description" nolabel="1" readonly="state == 'closed'"/>
+                        <field name="description" nolabel="1" readonly="1"/>
                     </group>
+                    <notebook>
+                        <page string="Follow-ups">
+                            <field name="followup_ids" string="Follow-up" mode="list,form" readonly="state == 'closed'">
+                                <list>
+                                    <field name="create_date" readonly="1"/>
+                                    <field name="note"/>
+                                    <field name="visible_to_user" widget="boolean_toggle"/>
+                                    <field name="attachment_ids" widget="many2many_tags"/>
+                                </list>
+                                <form string="Follow-up" class="ab_request_website_followup_form">
+                                    <sheet class="ab_request_website_followup_sheet">
+                                        <div class="ab_request_website_followup_panel">
+                                            <div class="ab_request_website_followup_field ab_request_website_followup_note_block">
+                                                <label for="note" string="Note"/>
+                                                <field name="note"
+                                                       nolabel="1"
+                                                       placeholder="Write the follow-up note..."/>
+                                            </div>
+                                            <div class="ab_request_website_followup_meta_row">
+                                                <div class="ab_request_website_followup_visibility">
+                                                    <field name="visible_to_user" nolabel="1" widget="boolean_toggle"/>
+                                                    <label for="visible_to_user" string="Visible to User"/>
+                                                </div>
+                                                <div class="ab_request_website_followup_attachments">
+                                                    <label for="attachment_ids" string="Attachments"/>
+                                                    <field name="attachment_ids"
+                                                           nolabel="1"
+                                                           widget="many2many_binary"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </sheet>
+                                </form>
+                            </field>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

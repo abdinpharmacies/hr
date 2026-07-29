@@ -54,6 +54,7 @@ class TestAbRequestManagement(TransactionCase):
         self.outsider_employee.department_id = self.other_department.id
         self.request_category = self.RequestCategories.create({"name": "IT Requests"})
         self.other_request_category = self.RequestCategories.create({"name": "HR Requests"})
+        self.complaint_category = self.RequestCategories.create({"name": "External Complaints", "type": "complaint"})
 
         self.request_type = self.env["ab_request_type"].sudo().create(
             {
@@ -67,6 +68,13 @@ class TestAbRequestManagement(TransactionCase):
                 "name": "Leave Request",
                 "department_id": self.department.id,
                 "category_id": self.other_request_category.id,
+            }
+        )
+        self.complaint_request_type = self.env["ab_request_type"].sudo().create(
+            {
+                "name": "Branch Complaint",
+                "department_id": self.department.id,
+                "category_id": self.complaint_category.id,
             }
         )
 
@@ -522,6 +530,16 @@ class TestAbRequestManagement(TransactionCase):
         available_ids = set(request.available_request_type_ids.ids)
         self.assertIn(self.request_type.id, available_ids)
         self.assertNotIn(self.other_request_type.id, available_ids)
+        self.assertNotIn(self.complaint_request_type.id, available_ids)
+
+    def test_internal_ticket_available_types_exclude_complaints_without_category(self):
+        request = self.env["ab_request"].new({})
+        request._compute_available_request_type_ids()
+
+        available_ids = set(request.available_request_type_ids.ids)
+        self.assertIn(self.request_type.id, available_ids)
+        self.assertIn(self.other_request_type.id, available_ids)
+        self.assertNotIn(self.complaint_request_type.id, available_ids)
 
     def test_category_change_clears_mismatched_request_type(self):
         request = self.env["ab_request"].new(
@@ -543,6 +561,136 @@ class TestAbRequestManagement(TransactionCase):
             }
         )
         self.assertEqual(request.request_category_id, self.request_category)
+
+    def test_internal_ticket_creation_rejects_complaint_type(self):
+        with self.assertRaisesRegex(ValidationError, "Only request types"):
+            self.env["ab_request"].with_user(self.requester_user).create(
+                {
+                    "subject": "External category from internal form",
+                    "description": "External categories belong to the external form.",
+                    "request_type_id": self.complaint_request_type.id,
+                }
+            )
+
+    def test_external_request_stores_identity_fields(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+
+        website_request = self.env["ab_request_website"].sudo().create(
+            {
+                "customer_name": "External Customer",
+                "customer_phone": "+201001234567",
+                "customer_email": "customer@example.com",
+                "employee_code": " EMP-001 ",
+                "commercial_register_number": " CR-2026 ",
+                "national_id": "12345678901234",
+                "request_category_id": self.complaint_category.id,
+                "request_type_id": self.complaint_request_type.id,
+                "subject": "External complaint",
+                "description": "Complaint details for the external public form.",
+            }
+        )
+
+        self.assertEqual(website_request.employee_code, "EMP-001")
+        self.assertEqual(website_request.commercial_register_number, "CR-2026")
+        self.assertEqual(website_request.national_id, "12345678901234")
+
+    def test_external_request_rejects_invalid_national_id(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+
+        with self.assertRaisesRegex(ValidationError, "National ID must contain exactly 14 digits"):
+            self.env["ab_request_website"].sudo().create(
+                {
+                    "customer_name": "External Customer",
+                    "customer_phone": "+201001234567",
+                    "employee_code": "EMP-001",
+                    "national_id": "123456",
+                    "request_category_id": self.complaint_category.id,
+                    "request_type_id": self.complaint_request_type.id,
+                    "subject": "External complaint",
+                    "description": "Complaint details for the external public form.",
+                }
+            )
+
+    def test_external_request_requires_national_id(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+
+        with self.assertRaisesRegex(ValidationError, "National ID is required"):
+            self.env["ab_request_website"].sudo().create(
+                {
+                    "customer_name": "External Customer",
+                    "customer_phone": "+201001234567",
+                    "employee_code": "EMP-001",
+                    "request_category_id": self.complaint_category.id,
+                    "request_type_id": self.complaint_request_type.id,
+                    "subject": "External complaint",
+                    "description": "Complaint details for the external public form.",
+                }
+            )
+
+    def test_external_request_requires_employee_code_or_commercial_register(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+
+        with self.assertRaisesRegex(ValidationError, "Employee code or commercial register number is required"):
+            self.env["ab_request_website"].sudo().create(
+                {
+                    "customer_name": "External Customer",
+                    "customer_phone": "+201001234567",
+                    "national_id": "12345678901234",
+                    "request_category_id": self.complaint_category.id,
+                    "request_type_id": self.complaint_request_type.id,
+                    "subject": "External complaint",
+                    "description": "Complaint details for the external public form.",
+                }
+            )
+
+    def test_external_request_followups_track_visibility_and_attachments(self):
+        self.complaint_category.write({"is_public": True})
+        self.complaint_request_type.write({"is_public": True})
+        website_request = self.env["ab_request_website"].sudo().create(
+            {
+                "customer_name": "External Customer",
+                "customer_phone": "+201001234567",
+                "employee_code": "EMP-001",
+                "national_id": "12345678901234",
+                "request_category_id": self.complaint_category.id,
+                "request_type_id": self.complaint_request_type.id,
+                "subject": "External complaint",
+                "description": "Complaint details for the external public form.",
+            }
+        )
+        attachment = self.env["ir.attachment"].sudo().create(
+            {
+                "name": "reply.pdf",
+                "datas": "dGVzdA==",
+                "mimetype": "application/pdf",
+                "type": "binary",
+            }
+        )
+
+        visible_followup = self.env["ab_request_website_followup"].sudo().create(
+            {
+                "request_id": website_request.id,
+                "note": "Visible reply",
+                "visible_to_user": True,
+                "attachment_ids": [(4, attachment.id)],
+            }
+        )
+        hidden_followup = self.env["ab_request_website_followup"].sudo().create(
+            {
+                "request_id": website_request.id,
+                "note": "Internal note",
+                "visible_to_user": False,
+            }
+        )
+
+        self.assertEqual(attachment.res_model, "ab_request_website_followup")
+        self.assertEqual(attachment.res_id, visible_followup.id)
+        self.assertEqual(website_request.followup_ids, visible_followup | hidden_followup)
+        self.assertEqual(website_request.followup_ids.filtered("visible_to_user"), visible_followup)
 
     def test_request_creation_syncs_question_answers_from_request_type(self):
         first_question = self._create_request_question(self.request_type, "What access do you need?", True, 5)

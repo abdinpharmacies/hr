@@ -1,6 +1,6 @@
 {
     'name': 'Requests and Complaints',
-    'version': '19.0.1.5.1',
+    'version': '19.0.1.5.2',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
     'application': True,

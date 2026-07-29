@@ -7,7 +7,7 @@ import { patch } from "@web/core/utils/patch";
 patch(ListController.prototype, {
     get abRequestCreateButtonLabel() {
         if (this.props.resModel === "ab_request") {
-            return _t("New Request or Complaint");
+            return _t("New Request");
         }
         return _t("New");
     },

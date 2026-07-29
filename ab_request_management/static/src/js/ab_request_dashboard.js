@@ -242,7 +242,7 @@ export class AbRequestDashboard extends Component {
     async openList(domain, model = "ab_request") {
         await this.env.services.action.doAction({
             type: "ir.actions.act_window",
-            name: _t("Requests & Complaints"),
+            name: _t("Requests"),
             res_model: model,
             views: [[false, "list"], [false, "form"]],
             domain: domain,

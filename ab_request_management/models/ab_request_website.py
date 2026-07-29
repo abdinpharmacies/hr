@@ -12,6 +12,7 @@ EXTERNAL_MANAGER_GROUP = "ab_request_management.group_ab_request_management_mana
 EXTERNAL_ADMIN_GROUP = "ab_request_management.group_ab_request_management_admin"
 _EXTERNAL_STATE_WRITE_TOKEN = object()
 _PHONE_PATTERN = re.compile(r"^[0-9+().\-\s]+$")
+_NATIONAL_ID_PATTERN = re.compile(r"^[0-9]{14}$")
 
 
 class AbRequestWebsite(models.Model):
@@ -32,6 +33,14 @@ class AbRequestWebsite(models.Model):
     customer_name = fields.Char(required=True)
     customer_phone = fields.Char(required=True)
     customer_email = fields.Char()
+    employee_code = fields.Char(string="Employee Code")
+    commercial_register_number = fields.Char(string="Commercial Register Number")
+    national_id = fields.Char(string="National ID")
+    followup_ids = fields.One2many(
+        "ab_request_website_followup",
+        "request_id",
+        string="Follow-ups",
+    )
     request_category_id = fields.Many2one(
         "ab_request_category",
         string="Category",
@@ -92,7 +101,16 @@ class AbRequestWebsite(models.Model):
     @api.model
     def _prepare_text_vals(self, vals):
         prepared_vals = dict(vals or {})
-        for field_name in ("customer_name", "customer_phone", "customer_email", "subject", "description"):
+        for field_name in (
+                "customer_name",
+                "customer_phone",
+                "customer_email",
+                "employee_code",
+                "commercial_register_number",
+                "national_id",
+                "subject",
+                "description",
+        ):
             if field_name in prepared_vals and isinstance(prepared_vals[field_name], str):
                 prepared_vals[field_name] = prepared_vals[field_name].strip()
         return prepared_vals
@@ -111,30 +129,50 @@ class AbRequestWebsite(models.Model):
             if not category.is_public or not request_type.is_public:
                 raise ValidationError(_("The selected category and request type are not available for public requests."))
 
-    @api.constrains("customer_name", "customer_phone", "customer_email", "subject", "description")
+    @api.constrains(
+        "customer_name",
+        "customer_phone",
+        "customer_email",
+        "employee_code",
+        "commercial_register_number",
+        "national_id",
+        "subject",
+        "description",
+    )
     def _check_external_content(self):
         for record in self:
             values = {
                 "customer_name": (record.customer_name or "").strip(),
                 "customer_phone": (record.customer_phone or "").strip(),
                 "customer_email": (record.customer_email or "").strip(),
+                "employee_code": (record.employee_code or "").strip(),
+                "commercial_register_number": (record.commercial_register_number or "").strip(),
+                "national_id": (record.national_id or "").strip(),
                 "subject": (record.subject or "").strip(),
                 "description": (record.description or "").strip(),
             }
             required_labels = {
                 "customer_name": _("Customer name"),
                 "customer_phone": _("Customer phone"),
+                "national_id": _("National ID"),
                 "subject": _("Subject"),
                 "description": _("Details"),
             }
             for field_name, label in required_labels.items():
                 if not values[field_name]:
                     raise ValidationError(_("%s is required.") % label)
+            if not values["employee_code"] and not values["commercial_register_number"]:
+                raise ValidationError(
+                    _("Employee code or commercial register number is required.")
+                )
 
             length_limits = {
                 "customer_name": (120, _("Customer name")),
                 "customer_phone": (30, _("Customer phone")),
                 "customer_email": (254, _("Customer email")),
+                "employee_code": (50, _("Employee code")),
+                "commercial_register_number": (50, _("Commercial register number")),
+                "national_id": (14, _("National ID")),
                 "subject": (200, _("Subject")),
                 "description": (3000, _("Details")),
             }
@@ -156,6 +194,8 @@ class AbRequestWebsite(models.Model):
                 raise ValidationError(_("Enter a valid phone number containing between 7 and 15 digits."))
             if values["customer_email"] and not single_email_re.fullmatch(values["customer_email"]):
                 raise ValidationError(_("Enter a valid email address."))
+            if not _NATIONAL_ID_PATTERN.fullmatch(values["national_id"]):
+                raise ValidationError(_("National ID must contain exactly 14 digits."))
 
     def _check_external_workflow_access(self):
         """Authorize both the role and the record scope before a state transition."""

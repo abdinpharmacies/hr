@@ -109,7 +109,7 @@ msgstr "أيقونة نوع النشاط"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Add a concise, factual progress update or requester note"
-msgstr "أضف تحديثاً مختصراً وواضحاً أو ملاحظة من مقدم الطلب/الشكوى"
+msgstr "أضف تحديثاً مختصراً وواضحاً أو ملاحظة من مقدم الطلب"
 
 #. module: ab_request_management
 #. odoo-python
@@ -121,13 +121,13 @@ msgstr "مسؤول"
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_all_action
 #: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_all_requests
 msgid "All Requests"
-msgstr "الكل"
+msgstr "الطلبات"
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "All assigned employees must belong to the request department."
-msgstr "يجب أن يكون جميع الموظفين المسندين تابعين لقسم الطلب/الشكوى."
+msgstr "يجب أن يكون جميع الموظفين المسندين تابعين لقسم الطلب."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_form
@@ -187,6 +187,7 @@ msgstr "عدد المرفقات"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__attachment_ids
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "Attachments"
 msgstr "المرفقات"
 
@@ -198,7 +199,7 @@ msgstr "الكاتب"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
 msgid "Awaiting Requester Confirmation"
-msgstr "بانتظار تأكيد مقدم الطلب/الشكوى"
+msgstr "بانتظار تأكيد مقدم الطلب"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__can_add_followup
@@ -218,7 +219,7 @@ msgstr "يمكنه تعديل تفاصيل الإسناد"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__can_work_on_request
 msgid "Can Work On Request"
-msgstr "يمكنه العمل على الطلب/الشكوى"
+msgstr "يمكنه العمل على الطلب"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_followup_wizard_form
@@ -228,12 +229,12 @@ msgstr "إلغاء"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_form
 msgid "Choose the department that owns this request type"
-msgstr "اختر القسم المسؤول عن هذا النوع من الطلب/الشكوى"
+msgstr "اختر القسم المسؤول عن هذا النوع من الطلب"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Close Request"
-msgstr "إغلاق الطلب/الشكوى"
+msgstr "إغلاق الطلب"
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -243,7 +244,7 @@ msgstr "إغلاق الطلب/الشكوى"
 #: model:ir.model.fields.selection,name:ab_request_management.selection__ab_request_website__state__closed
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
 msgid "Closed"
-msgstr "المغلقة"
+msgstr "مغلق"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
@@ -398,6 +399,7 @@ msgstr "مثال: صلاحيات النظام، المشتريات، الصيا�
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_followup_view_form
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "Follow-up"
 msgstr "متابعة"
 
@@ -426,6 +428,7 @@ msgstr "وصف المتابعة مطلوب."
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_followup_view_list
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_list
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "Follow-ups"
 msgstr "المتابعات"
 
@@ -533,12 +536,12 @@ msgstr "متأخر"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__is_request_admin
 msgid "Is Request Admin"
-msgstr "هو مسؤول الطلبات والشكاوى"
+msgstr "هو مسؤول الطلبات"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__is_requester
 msgid "Is Requester"
-msgstr "هو مقدم الطلب/الشكوى"
+msgstr "هو مقدم الطلب"
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -723,14 +726,14 @@ msgstr "عدد الرسائل التي بها خطأ في التسليم"
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only requests in progress can be sent for requester confirmation."
-msgstr "يمكن إرسال الطلبات والشكاوى قيد التنفيذ فقط لتأكيد مقدمها."
+msgstr "يمكن إرسال الطلبات قيد التنفيذ فقط لتأكيد مقدمها."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only requests under requester confirmation can be marked as satisfied."
 msgstr ""
-"يمكن وضع علامة الرضا فقط على الطلبات والشكاوى التي تنتظر تأكيد مقدمها."
+"يمكن وضع علامة الرضا فقط على الطلبات التي تنتظر تأكيد مقدمها."
 
 #. module: ab_request_management
 #. odoo-python
@@ -738,37 +741,37 @@ msgstr ""
 msgid ""
 "Only requests under requester confirmation can be sent back for changes."
 msgstr ""
-"يمكن إعادة الطلبات والشكاوى التي تنتظر تأكيد مقدمها فقط لإجراء تعديلات."
+"يمكن إعادة الطلبات التي تنتظر تأكيد مقدمها فقط لإجراء تعديلات."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only requests under review can be approved."
-msgstr "يمكن اعتماد الطلبات والشكاوى قيد المراجعة فقط."
+msgstr "يمكن اعتماد الطلبات قيد المراجعة فقط."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only requests under review can be rejected."
-msgstr "يمكن رفض الطلبات والشكاوى قيد المراجعة فقط."
+msgstr "يمكن رفض الطلبات قيد المراجعة فقط."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only satisfied or rejected requests can be closed."
-msgstr "يمكن إغلاق الطلبات والشكاوى المؤكدة أو المرفوضة فقط."
+msgstr "يمكن إغلاق الطلبات المؤكدة أو المرفوضة فقط."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only scheduled requests can be assigned."
-msgstr "يمكن إسناد الطلبات والشكاوى المجدولة فقط."
+msgstr "يمكن إسناد الطلبات المجدولة فقط."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only scheduled requests can be moved to in progress."
-msgstr "يمكن نقل الطلبات والشكاوى المجدولة فقط إلى قيد التنفيذ."
+msgstr "يمكن نقل الطلبات المجدولة فقط إلى قيد التنفيذ."
 
 #. module: ab_request_management
 #. odoo-python
@@ -777,7 +780,7 @@ msgid ""
 "Only the assigned employee, department manager, or request admin can add "
 "follow-ups."
 msgstr ""
-"يمكن فقط للموظف المسند أو مدير القسم أو مسؤول الطلبات والشكاوى إضافة "
+"يمكن فقط للموظف المسند أو مدير القسم أو مسؤول الطلبات إضافة "
 "متابعات."
 
 #. module: ab_request_management
@@ -787,14 +790,14 @@ msgid ""
 "Only the assigned employee, department manager, or request admin can perform"
 " this action."
 msgstr ""
-"يمكن فقط للموظف المسند أو مدير القسم أو مسؤول الطلبات والشكاوى تنفيذ هذا "
+"يمكن فقط للموظف المسند أو مدير القسم أو مسؤول الطلبات تنفيذ هذا "
 "الإجراء."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only the department manager or request admin can perform this action."
-msgstr "يمكن فقط لمدير القسم أو مسؤول الطلبات والشكاوى تنفيذ هذا الإجراء."
+msgstr "يمكن فقط لمدير القسم أو مسؤول الطلبات تنفيذ هذا الإجراء."
 
 #. module: ab_request_management
 #. odoo-python
@@ -803,14 +806,14 @@ msgid ""
 "Only the department manager or request admin can update assignees or "
 "deadline."
 msgstr ""
-"يمكن فقط لمدير القسم أو مسؤول الطلبات والشكاوى تحديث المسندين أو الموعد "
+"يمكن فقط لمدير القسم أو مسؤول الطلبات تحديث المسندين أو الموعد "
 "النهائي."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only the requester can perform this action."
-msgstr "يمكن فقط لمقدم الطلب/الشكوى تنفيذ هذا الإجراء."
+msgstr "يمكن فقط لمقدم الطلب تنفيذ هذا الإجراء."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
@@ -842,7 +845,7 @@ msgstr "بانتظار الاعتماد"
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid ""
 "Please select at least one assigned employee before assigning the request."
-msgstr "يرجى اختيار موظف مسند واحد على الأقل قبل إسناد الطلب/الشكوى."
+msgstr "يرجى اختيار موظف مسند واحد على الأقل قبل إسناد الطلب."
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__assigned_employee_id
@@ -897,13 +900,13 @@ msgstr "طلب/شكوى"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Request #"
-msgstr "رقم الطلب/الشكوى"
+msgstr "رقم الطلب"
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Request %(request)s has been assigned to %(employees)s."
-msgstr "تم إسناد الطلب/الشكوى %(request)s إلى %(employees)s."
+msgstr "تم إسناد الطلب %(request)s إلى %(employees)s."
 
 #. module: ab_request_management
 #. odoo-python
@@ -912,12 +915,12 @@ msgid ""
 "Request %(request)s has been created by %(requester)s and is waiting for "
 "review."
 msgstr ""
-"تم إنشاء الطلب/الشكوى %(request)s بواسطة %(requester)s وهو بانتظار المراجعة."
+"تم إنشاء الطلب %(request)s بواسطة %(requester)s وهو بانتظار المراجعة."
 
 #. module: ab_request_management
 #: model:res.groups,name:ab_request_management.group_ab_request_management_admin
 msgid "Request Admin"
-msgstr "مسؤول الطلبات والشكاوى"
+msgstr "مسؤول الطلبات"
 
 #. module: ab_request_management
 #. odoo-python
@@ -936,22 +939,22 @@ msgstr "لوحة التحكم"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__request_deadline_label
 msgid "Request Deadline Label"
-msgstr "تسمية الموعد النهائي للطلب/الشكوى"
+msgstr "تسمية الموعد النهائي للطلب"
 
 #. module: ab_request_management
 #: model:ir.model,name:ab_request_management.model_ab_request_followup
 msgid "Request Follow-up"
-msgstr "متابعة الطلب/الشكوى"
+msgstr "متابعة الطلب"
 
 #. module: ab_request_management
 #: model:ir.model,name:ab_request_management.model_ab_request_followup_wizard
 msgid "Request Follow-up Wizard"
-msgstr "معالج متابعة الطلب/الشكوى"
+msgstr "معالج متابعة الطلب"
 
 #. module: ab_request_management
 #: model:ir.model,name:ab_request_management.model_ab_request_link
 msgid "Request Link"
-msgstr "رابط الطلب/الشكوى"
+msgstr "رابط الطلب"
 
 #. module: ab_request_management
 #: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_root
@@ -959,7 +962,7 @@ msgstr "رابط الطلب/الشكوى"
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
 msgid "Requests and Complaints"
-msgstr "الطلبات والشكاوى"
+msgstr "الطلبات"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__name
@@ -970,7 +973,7 @@ msgstr "الرقم"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__request_role_summary
 msgid "Request Role Summary"
-msgstr "ملخص دور الطلب/الشكوى"
+msgstr "ملخص دور الطلب"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
@@ -994,40 +997,40 @@ msgstr "الأنواع"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__request_ui_summary
 msgid "Request Ui Summary"
-msgstr "ملخص واجهة الطلب/الشكوى"
+msgstr "ملخص واجهة الطلب"
 
 #. module: ab_request_management
 #: model:res.groups,name:ab_request_management.group_ab_request_management_user
 msgid "Request User"
-msgstr "مستخدم الطلبات والشكاوى"
+msgstr "مستخدم الطلبات"
 
 #. module: ab_request_management
 #: model:ir.model.constraint,message:ab_request_management.constraint_ab_request_ticket_ab_request_name_uniq
 msgid "Request number must be unique."
-msgstr "يجب أن يكون رقم الطلب/الشكوى فريداً."
+msgstr "يجب أن يكون رقم الطلب فريداً."
 
 #. module: ab_request_management
 #: model:ir.model.constraint,message:ab_request_management.constraint_ab_request_type_ab_request_type_name_department_uniq
 msgid "Request type must be unique per department."
-msgstr "يجب أن يكون نوع الطلب/الشكوى فريداً لكل قسم."
+msgstr "يجب أن يكون نوع الطلب فريداً لكل قسم."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__requester_id
 msgid "Requester"
-msgstr "مقدم الطلب/الشكوى"
+msgstr "مقدم الطلب"
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Requester %(requester)s has updated request %(request)s."
-msgstr "قام مقدم الطلب/الشكوى %(requester)s بتحديث الطلب/الشكوى %(request)s."
+msgstr "قام مقدم الطلب %(requester)s بتحديث الطلب %(request)s."
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__requester_user_id
 msgid "Requester User"
-msgstr "مستخدم مقدم الطلب/الشكوى"
+msgstr "مستخدم مقدم الطلب"
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -1035,7 +1038,7 @@ msgstr "مستخدم مقدم الطلب/الشكوى"
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_list
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
 msgid "Requests"
-msgstr "الطلبات والشكاوى"
+msgstr "الطلبات"
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -1049,7 +1052,7 @@ msgid ""
 "Requests move through review, execution, requester confirmation, and closure"
 " while preserving a complete timeline."
 msgstr ""
-"تنتقل الطلبات والشكاوى عبر المراجعة والتنفيذ وتأكيد مقدمها ثم الإغلاق مع "
+"تنتقل الطلبات عبر المراجعة والتنفيذ وتأكيد مقدمها ثم الإغلاق مع "
 "الحفاظ على خط زمني كامل."
 
 #. module: ab_request_management
@@ -1189,12 +1192,12 @@ msgstr "طلب أو شكوى جديدة"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Summarize the business request in one clear sentence"
-msgstr "لخّص الطلب/الشكوى في جملة واضحة واحدة"
+msgstr "لخّص الطلب في جملة واضحة واحدة"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
 msgid "Summarize the request in one clear sentence"
-msgstr "لخّص الطلب/الشكوى في جملة واضحة واحدة"
+msgstr "لخّص الطلب في جملة واضحة واحدة"
 
 #. module: ab_request_management
 #. odoo-python
@@ -1225,27 +1228,27 @@ msgstr "يتم تحديد المدير من القسم المحدد ويبقى �
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "The request must be assigned before it can start."
-msgstr "يجب إسناد الطلب/الشكوى قبل بدء العمل."
+msgstr "يجب إسناد الطلب قبل بدء العمل."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "The requester cannot add follow-ups on rejected or closed requests."
 msgstr ""
-"لا يمكن لمقدم الطلب/الشكوى إضافة متابعات على الطلبات والشكاوى المرفوضة أو "
+"لا يمكن لمقدم الطلب إضافة متابعات على الطلبات المرفوضة أو "
 "المغلقة."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "The selected request type must have a department manager."
-msgstr "يجب أن يكون لنوع الطلب/الشكوى المحدد مدير قسم."
+msgstr "يجب أن يكون لنوع الطلب المحدد مدير قسم."
 
 #. module: ab_request_management
 #. odoo-javascript
 #: code:addons/ab_request_management/static/src/js/ab_request_kanban_view.js:0
 msgid "This workflow move is not allowed for requests."
-msgstr "نقل سير العمل هذا غير مسموح للطلبات والشكاوى."
+msgstr "نقل سير العمل هذا غير مسموح للطلبات."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_followup_view_form
@@ -1254,7 +1257,7 @@ msgid ""
 " history."
 msgstr ""
 "لا يمكن تغيير مدخلات الخط الزمني بعد إنشائها للحفاظ على سجل موثوق "
-"للطلب/الشكوى."
+"للطلب."
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -1296,7 +1299,7 @@ msgstr "غير مسند"
 #: code:addons/ab_request_management/static/src/js/ab_request_summary_widget.js:0
 #: model:ir.model.fields.selection,name:ab_request_management.selection__ab_request__state__under_requester_confirmation
 msgid "Under Requester Confirmation"
-msgstr "بانتظار تأكيد مقدم الطلب/الشكوى"
+msgstr "بانتظار تأكيد مقدم الطلب"
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -1381,7 +1384,7 @@ msgstr "https://..."
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "request_id"
-msgstr "معرّف الطلب/الشكوى"
+msgstr "معرّف الطلب"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__request_category_id
@@ -1396,12 +1399,12 @@ msgstr "التصنيف"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_type_view_form
 msgid "Choose the category that owns this request type"
-msgstr "اختر التصنيف المسؤول عن هذا النوع من الطلب/الشكوى"
+msgstr "اختر التصنيف المسؤول عن هذا النوع من الطلب"
 
 #. module: ab_request_management
 #: model:ir.model,name:ab_request_management.model_ab_request_question_answer
 msgid "Request Question Answer"
-msgstr "إجابة سؤال الطلب/الشكوى"
+msgstr "إجابة سؤال الطلب"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__question_answer_ids
@@ -1442,14 +1445,14 @@ msgstr "إجابة مطلوبة"
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_question_answer.py:0
 msgid "The selected answer question must belong to the request type."
-msgstr "يجب أن ينتمي سؤال الإجابة المحدد إلى نوع الطلب/الشكوى."
+msgstr "يجب أن ينتمي سؤال الإجابة المحدد إلى نوع الطلب."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid ""
 "Please answer all required request questions before submitting the request."
-msgstr "يرجى الإجابة على جميع أسئلة الطلب/الشكوى المطلوبة قبل الإرسال."
+msgstr "يرجى الإجابة على جميع أسئلة الطلب المطلوبة قبل الإرسال."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_followup_view_list
@@ -1484,6 +1487,7 @@ msgstr "الحالة"
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_followup.py:0
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "Note"
 msgstr "ملاحظة"
 
@@ -1498,7 +1502,7 @@ msgstr "يمكن لمستخدمي الموارد البشرية فقط تغيي�
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only HR users or request workers can mark a request as resolved."
 msgstr ""
-"يمكن لمستخدمي الموارد البشرية أو العاملين على الطلب/الشكوى فقط تعيينه "
+"يمكن لمستخدمي الموارد البشرية أو العاملين على الطلب فقط تعيينه "
 "كمحلول."
 
 #. module: ab_request_management
@@ -1515,7 +1519,7 @@ msgstr "محلول"
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_all_action
 #: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_all_requests
 msgid "All Requests and Complaints"
-msgstr "الكل"
+msgstr "الطلبات"
 
 #. module: ab_request_management
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_assigned_action
@@ -1595,7 +1599,7 @@ msgstr "البريد الإلكتروني"
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 #: model:res.groups,name:ab_request_management.group_ab_request_management_viewer
 msgid "HR Request Visibility User"
-msgstr "مستخدم رؤية طلبات وشكاوى الموارد البشرية"
+msgstr "مستخدم رؤية طلبات الموارد البشرية"
 
 #. module: ab_request_management
 #. odoo-python
@@ -1604,8 +1608,8 @@ msgid ""
 "HR Request Visibility Users can add follow-up notes and use the Close / Lock"
 " action, but cannot edit request details directly."
 msgstr ""
-"يمكن لمستخدمي رؤية طلبات وشكاوى الموارد البشرية إضافة ملاحظات متابعة "
-"واستخدام إجراء الإغلاق/القفل، لكن لا يمكنهم تعديل تفاصيل الطلب/الشكوى "
+"يمكن لمستخدمي رؤية طلبات الموارد البشرية إضافة ملاحظات متابعة "
+"واستخدام إجراء الإغلاق/القفل، لكن لا يمكنهم تعديل تفاصيل الطلب "
 "مباشرة."
 
 #. module: ab_request_management
@@ -1615,8 +1619,8 @@ msgid ""
 "HR Request Visibility Users can only add follow-ups on requests that are not"
 " closed, rejected, or resolved."
 msgstr ""
-"يمكن لمستخدمي رؤية طلبات وشكاوى الموارد البشرية إضافة متابعات فقط على "
-"الطلبات والشكاوى غير المغلقة أو المرفوضة أو المحلولة."
+"يمكن لمستخدمي رؤية طلبات الموارد البشرية إضافة متابعات فقط على "
+"الطلبات غير المغلقة أو المرفوضة أو المحلولة."
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -1681,13 +1685,13 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only active requests can be marked as resolved."
-msgstr "يمكن تعيين الطلبات والشكاوى النشطة فقط كمحلولة."
+msgstr "يمكن تعيين الطلبات النشطة فقط كمحلولة."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only resolved requests can be closed by requester confirmation."
-msgstr "يمكن إغلاق الطلبات والشكاوى المحلولة فقط بتأكيد مقدمها."
+msgstr "يمكن إغلاق الطلبات المحلولة فقط بتأكيد مقدمها."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
@@ -1721,7 +1725,7 @@ msgstr "المرجع"
 msgid ""
 "Request %(request)s has been marked as resolved. Please confirm the "
 "resolution to close it."
-msgstr "تم تعيين الطلب/الشكوى %(request)s كمحلول. يرجى تأكيد الحل لإغلاقه."
+msgstr "تم تعيين الطلب %(request)s كمحلول. يرجى تأكيد الحل لإغلاقه."
 
 #. module: ab_request_management
 #. odoo-python
@@ -1730,7 +1734,7 @@ msgid ""
 "Request %(request)s was closed and locked by HR Request Visibility User "
 "%(user)s."
 msgstr ""
-"تم إغلاق وقفل الطلب/الشكوى %(request)s بواسطة مستخدم رؤية طلبات وشكاوى "
+"تم إغلاق وقفل الطلب %(request)s بواسطة مستخدم رؤية طلبات "
 "الموارد البشرية %(user)s."
 
 #. module: ab_request_management
@@ -1752,7 +1756,7 @@ msgstr "البيانات"
 #: model:ir.module.category,name:ab_request_management.category_ab_request_management
 #: model:res.groups.privilege,name:ab_request_management.privilege_ab_request_management
 msgid "Request Management"
-msgstr "إدارة الطلبات والشكاوى"
+msgstr "إدارة الطلبات"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
@@ -1782,7 +1786,7 @@ msgstr "أسئلة الطلب أو الشكوى"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
 msgid "Request type is required."
-msgstr "نوع الطلب/الشكوى مطلوب."
+msgstr "نوع الطلب مطلوب."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_list
@@ -1819,7 +1823,7 @@ msgstr "الرقم"
 #. module: ab_request_management
 #: model:ir.model,name:ab_request_management.model_ab_request_question_answer
 msgid "Request/Complaint Question Answer"
-msgstr "إجابة سؤال الطلب/الشكوى"
+msgstr "إجابة سؤال الطلب"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form
@@ -1831,7 +1835,7 @@ msgstr "الأسئلة"
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__request_type_id
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__request_type_id
 msgid "Request/Complaint Type"
-msgstr "النوع"
+msgstr "نوع الشكوى"
 
 #. module: ab_request_management
 #: model:ir.model,name:ab_request_management.model_ab_request_type_question
@@ -1849,25 +1853,25 @@ msgstr "الأنواع"
 #. module: ab_request_management
 #: model:ir.model.constraint,message:ab_request_management.constraint_ab_request_ticket_ab_request_name_uniq
 msgid "Request/complaint number must be unique."
-msgstr "يجب أن يكون رقم الطلب/الشكوى فريداً."
+msgstr "يجب أن يكون رقم الطلب فريداً."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_website.py:0
 msgid "Request/complaint type is required."
-msgstr "نوع الطلب/الشكوى مطلوب."
+msgstr "نوع الشكوى مطلوب."
 
 #. module: ab_request_management
 #: model:ir.model.constraint,message:ab_request_management.constraint_ab_request_type_ab_request_type_name_department_uniq
 msgid "Request/complaint type must be unique per department."
-msgstr "يجب أن يكون نوع الطلب/الشكوى فريداً لكل قسم."
+msgstr "يجب أن يكون نوع الطلب فريداً لكل قسم."
 
 #. module: ab_request_management
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_followup.py:0
 #: model:ir.model.fields.selection,name:ab_request_management.selection__ab_request_followup__source__accept_changes
 msgid "Requester Changes"
-msgstr "تعديلات مقدم الطلب/الشكوى"
+msgstr "تعديلات مقدم الطلب"
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -1887,7 +1891,7 @@ msgid ""
 "Requests and complaints move through review, execution, requester "
 "confirmation, and closure while preserving a complete timeline."
 msgstr ""
-"تنتقل الطلبات والشكاوى عبر المراجعة والتنفيذ وتأكيد مقدمها ثم الإغلاق مع "
+"تنتقل الطلبات عبر المراجعة والتنفيذ وتأكيد مقدمها ثم الإغلاق مع "
 "الحفاظ على خط زمني كامل."
 
 #. module: ab_request_management
@@ -1921,7 +1925,7 @@ msgstr "يجب أن يكون للقسم المحدد مدير."
 #. odoo-python
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "The selected request type must belong to the selected category."
-msgstr "يجب أن ينتمي نوع الطلب/الشكوى المحدد إلى التصنيف المحدد."
+msgstr "يجب أن ينتمي نوع الطلب المحدد إلى التصنيف المحدد."
 
 #. module: ab_request_management
 #. odoo-javascript
@@ -1942,7 +1946,7 @@ msgstr "طلب من الموقع"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
 msgid "Website Requests"
-msgstr "فورم الشكاوى"
+msgstr "الشكاوي"
 
 #. module: ab_request_management
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_website_action
@@ -1950,18 +1954,18 @@ msgstr "فورم الشكاوى"
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_list
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_search
 msgid "Website Requests and Complaints"
-msgstr "فورم الشكاوى"
+msgstr "الشكاوي"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
 msgid "You must be linked to an employee to use the Request system."
-msgstr "يجب أن تكون مرتبطاً بموظف لاستخدام نظام الطلبات والشكاوى."
+msgstr "يجب أن تكون مرتبطاً بموظف لاستخدام نظام الطلبات."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
 msgid ""
 "You must be linked to an employee to use the requests and complaints system."
-msgstr "يجب أن تكون مرتبطاً بموظف لاستخدام نظام الطلبات والشكاوى."
+msgstr "يجب أن تكون مرتبطاً بموظف لاستخدام نظام الطلبات."
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_form:0
@@ -2016,7 +2020,7 @@ msgid ""
 "                                                                <span>Requester Changes</span>"
 msgstr ""
 "<i class=\"fa fa-reply\" aria-hidden=\"true\"/>\n"
-"                                                                <span>تعديلات مقدم الطلب/الشكوى</span>"
+"                                                                <span>تعديلات مقدم الطلب</span>"
 
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
@@ -2067,7 +2071,7 @@ msgid ""
 "Attachments can only be updated by the requester while the request is under "
 "review."
 msgstr ""
-"يمكن لمقدم الطلب/الشكوى تحديث المرفقات فقط أثناء وجود الطلب/الشكوى قيد "
+"يمكن لمقدم الطلب تحديث المرفقات فقط أثناء وجود الطلب قيد "
 "المراجعة."
 
 #. module: ab_request_management
@@ -2078,7 +2082,7 @@ msgstr "الإغلاق التلقائي للشكاوى المحلولة"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__available_request_type_ids
 msgid "Available Request Type"
-msgstr "نوع الطلب/الشكوى المتاح"
+msgstr "نوع الطلب المتاح"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__can_confirm_resolution
@@ -2102,7 +2106,7 @@ msgid ""
 "Closed, rejected, or resolved requests cannot be closed by HR Request "
 "Visibility Users."
 msgstr ""
-"لا يمكن لمستخدمي رؤية طلبات وشكاوى الموارد البشرية إغلاق الطلبات أو الشكاوى "
+"لا يمكن لمستخدمي رؤية طلبات الموارد البشرية إغلاق الطلبات "
 "المغلقة أو المرفوضة أو المحلولة."
 
 #. module: ab_request_management
@@ -2113,17 +2117,17 @@ msgstr "شكوى"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__customer_email
 msgid "Customer Email"
-msgstr "البريد الإلكتروني للعميل"
+msgstr "البريد الإلكتروني لمقدم الشكوى"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__customer_name
 msgid "Customer Name"
-msgstr "اسم العميل"
+msgstr "اسم مقدم الشكوى"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__customer_phone
 msgid "Customer Phone"
-msgstr "هاتف العميل"
+msgstr "هاتف مقدم الشكوى"
 
 #. module: ab_request_management
 #. odoo-python
@@ -2158,7 +2162,7 @@ msgstr "ينتمي كل نوع طلب أو شكوى إلى قسم واحد وي�
 #. module: ab_request_management
 #: model:ir.model.fields.selection,name:ab_request_management.selection__ab_request_website__source__embed
 msgid "Embedded Website Form"
-msgstr "نموذج موقع مدمج"
+msgstr "نموذج الموقع المضمن"
 
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__employee_id
@@ -2168,7 +2172,7 @@ msgstr "الموظف"
 #. module: ab_request_management
 #: model:ir.model.fields,field_description:ab_request_management.field_ab_request__is_request_viewer
 msgid "Is Request Viewer"
-msgstr "هو مستعرض الطلبات والشكاوى"
+msgstr "هو مستعرض الطلبات"
 
 #. module: ab_request_management
 #. odoo-python
@@ -2201,7 +2205,7 @@ msgstr "حدث تقويم النشاط التالي"
 #: code:addons/ab_request_management/models/ab_request_ticket.py:0
 msgid "Only HR Request Visibility Users can use this close/lock action."
 msgstr ""
-"يمكن لمستخدمي رؤية طلبات وشكاوى الموارد البشرية فقط استخدام إجراء "
+"يمكن لمستخدمي رؤية طلبات الموارد البشرية فقط استخدام إجراء "
 "الإغلاق/القفل."
 
 #. module: ab_request_management
@@ -2230,7 +2234,7 @@ msgid ""
 "Requests and complaints move through review, execution, requester confirmation, and closure while preserving a\n"
 "                    complete timeline."
 msgstr ""
-"تمر الطلبات والشكاوى بالمراجعة والتنفيذ وتأكيد مقدمها ثم الإغلاق مع الاحتفاظ"
+"تمر الطلبات بالمراجعة والتنفيذ وتأكيد مقدمها ثم الإغلاق مع الاحتفاظ"
 " بخط زمني كامل."
 
 #. module: ab_request_management
@@ -2241,13 +2245,9 @@ msgstr "الموضوع *"
 #. module: ab_request_management
 #. odoo-javascript
 #: code:addons/ab_request_management/static/src/js/ab_request_dashboard.js:0
-#: model:ir.actions.act_window,name:ab_request_management.ab_request_website_action
 #: model:ir.model.fields.selection,name:ab_request_management.selection__ab_request_website__source__website
-#: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_website_requests
-#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_list
-#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_search
 msgid "Website"
-msgstr "فورم الشكاوى"
+msgstr "الموقع الإلكتروني"
 
 #. module: ab_request_management
 #. odoo-python
@@ -2263,7 +2263,7 @@ msgstr "أمس"
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_list
 #: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_view_search
 msgid "Requests & Complaints"
-msgstr "الطلبات والشكاوى"
+msgstr "الطلبات"
 
 #. module: ab_request_management
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_my_action
@@ -2288,7 +2288,7 @@ msgstr "المراجعة"
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_all_action
 #: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_all_requests
 msgid "All"
-msgstr "الكل"
+msgstr "الطلبات"
 
 #. module: ab_request_management
 #: model:ir.actions.act_window,name:ab_request_management.ab_request_type_action
@@ -2372,11 +2372,11 @@ msgstr "متاح في النموذج العام"
 
 #. module: ab_request_management
 msgid "Enable this category for unauthenticated external request submissions."
-msgstr "فعّل هذا التصنيف لاستقبال الطلبات الخارجية دون تسجيل الدخول."
+msgstr "فعّل هذا التصنيف لاستقبال الشكاوى الخارجية دون تسجيل الدخول."
 
 #. module: ab_request_management
 msgid "Enable this type for unauthenticated external request submissions."
-msgstr "فعّل هذا النوع لاستقبال الطلبات الخارجية دون تسجيل الدخول."
+msgstr "فعّل هذا النوع لاستقبال الشكاوى الخارجية دون تسجيل الدخول."
 
 #. module: ab_request_management
 msgid "A public request category must have a name."
@@ -2400,41 +2400,57 @@ msgstr "يجب أن ينتمي نوع الطلب المتاح للعامة إل�
 
 #. module: ab_request_management
 msgid "External Requests"
-msgstr "الطلبات الخارجية"
+msgstr "الشكاوى الخارجية"
 
 #. module: ab_request_management
 #. odoo-javascript
 #: code:addons/ab_request_management/static/src/js/ab_request_dashboard.js:0
+#: model:ir.actions.act_window,name:ab_request_management.ab_request_website_action
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_list
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_search
 msgid "Complaints Form"
-msgstr "فورم الشكاوى"
+msgstr "نموذج الشكاوى"
 
 #. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website_followup__request_id
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "External Request"
-msgstr "طلب خارجي"
+msgstr "شكوى خارجية"
 
 #. module: ab_request_management
+#: model:ir.model,name:ab_request_management.model_ab_request_website
 msgid "External Request or Complaint"
-msgstr "طلب أو شكوى خارجية"
+msgstr "شكوى خارجية"
 
 #. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__name
 msgid "External Reference"
-msgstr "المرجع الخارجي"
+msgstr "رقم الشكوى الخارجية"
 
 #. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "External"
 msgstr "خارجي"
 
 #. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "External Requester"
-msgstr "مقدم الطلب الخارجي"
+msgstr "مقدم الشكوى"
 
 #. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "Classification"
 msgstr "التصنيف"
 
 #. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
 msgid "Start Review"
 msgstr "بدء المراجعة"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
+msgid "Close"
+msgstr "إغلاق"
 
 #. module: ab_request_management
 msgid "Public Form"
@@ -2462,15 +2478,15 @@ msgstr "يجب ألا يتجاوز %(field)s عدد %(maximum)s حرفاً."
 
 #. module: ab_request_management
 msgid "Customer name"
-msgstr "اسم العميل"
+msgstr "اسم مقدم الشكوى"
 
 #. module: ab_request_management
 msgid "Customer phone"
-msgstr "هاتف العميل"
+msgstr "هاتف مقدم الشكوى"
 
 #. module: ab_request_management
 msgid "Customer email"
-msgstr "البريد الإلكتروني للعميل"
+msgstr "البريد الإلكتروني لمقدم الشكوى"
 
 #. module: ab_request_management
 msgid "Enter a valid phone number containing between 7 and 15 digits."
@@ -2482,15 +2498,15 @@ msgstr "أدخل عنوان بريد إلكتروني صحيحاً."
 
 #. module: ab_request_management
 msgid "You are not allowed to process these external requests."
-msgstr "غير مسموح لك بمعالجة هذه الطلبات الخارجية."
+msgstr "غير مسموح لك بمعالجة هذه الشكاوى الخارجية."
 
 #. module: ab_request_management
 msgid "Only new external requests can be moved under review."
-msgstr "يمكن نقل الطلبات الخارجية الجديدة فقط إلى قيد المراجعة."
+msgstr "يمكن نقل الشكاوى الخارجية الجديدة فقط إلى قيد المراجعة."
 
 #. module: ab_request_management
 msgid "Only external requests under review can be closed."
-msgstr "يمكن إغلاق الطلبات الخارجية قيد المراجعة فقط."
+msgstr "يمكن إغلاق الشكاوى الخارجية قيد المراجعة فقط."
 
 #. module: ab_request_management
 msgid "Too many submissions were received. Please wait a few minutes and try again."
@@ -2508,7 +2524,7 @@ msgstr "التصنيف أو نوع الطلب المحدد غير متاح."
 #. odoo-python
 #: code:addons/ab_request_management/controllers/customer_request.py:0
 msgid "External Requests & Complaints"
-msgstr "الطلبات والشكاوى الخارجية"
+msgstr "الشكاوى الخارجية"
 
 #. module: ab_request_management
 msgid "Use this form if you do not have an Odoo account."
@@ -2567,7 +2583,7 @@ msgstr "ظاهر في النموذج العام"
 
 #. module: ab_request_management
 msgid "This category has at least one public request type and is ready for external submissions."
-msgstr "يحتوي هذا التصنيف على نوع طلب عام واحد على الأقل، وهو جاهز لاستقبال الطلبات الخارجية."
+msgstr "يحتوي هذا التصنيف على نوع طلب عام واحد على الأقل، وهو جاهز لاستقبال الشكاوى الخارجية."
 
 #. module: ab_request_management
 msgid "This type will appear publicly under its selected category."
@@ -2730,7 +2746,7 @@ msgstr "إرسال الطلب"
 #. module: ab_request_management
 #: model_terms:ir.ui.view,arch_db:ab_request_management.customer_request_form
 msgid "External submissions are stored separately from internal employee requests."
-msgstr "تُحفظ الطلبات الخارجية بشكل منفصل عن طلبات الموظفين الداخلية."
+msgstr "تُحفظ الشكاوى الخارجية بشكل منفصل عن طلبات الموظفين الداخلية."
 
 #. module: ab_request_management
 msgid "External Request Thanks"
@@ -2851,3 +2867,196 @@ msgid ""
 msgstr ""
 "إرسال الطلب\n"
 "                                    <span aria-hidden=\"true\">←</span>"
+
+#. module: ab_request_management
+#: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_complaints_root
+#: model:ir.ui.menu,name:ab_request_management.ab_request_management_menu_website_requests
+msgid "Complaints"
+msgstr "الشكاوي"
+
+#. module: ab_request_management
+#: model:ir.model,name:ab_request_management.model_ab_request_website_followup
+msgid "External Request Follow-up"
+msgstr "متابعة الشكوى الخارجية"
+
+#. module: ab_request_management
+msgid "External Request Follow-up Lookup"
+msgstr "الاستعلام عن متابعة الشكوى الخارجية"
+
+#. module: ab_request_management
+msgid "Follow Up External Request"
+msgstr "متابعة الشكوى الخارجية"
+
+#. module: ab_request_management
+msgid "Follow-up link"
+msgstr "رابط المتابعة"
+
+#. module: ab_request_management
+msgid "Copy link"
+msgstr "نسخ الرابط"
+
+#. module: ab_request_management
+msgid "Copied"
+msgstr "تم النسخ"
+
+#. module: ab_request_management
+msgid "Select and copy the link"
+msgstr "حدد الرابط وانسخه"
+
+#. module: ab_request_management
+msgid "Enter employee code or commercial register number."
+msgstr "أدخل كود الموظف أو رقم السجل التجاري."
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__employee_code
+msgid "Employee Code"
+msgstr "كود الموظف"
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__commercial_register_number
+msgid "Commercial Register Number"
+msgstr "رقم السجل التجاري"
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website__national_id
+msgid "National ID"
+msgstr "الرقم القومي"
+
+#. module: ab_request_management
+msgid "Employee code or commercial register number is required."
+msgstr "يجب إدخال كود الموظف أو رقم السجل التجاري."
+
+#. module: ab_request_management
+msgid "National ID is required."
+msgstr "الرقم القومي مطلوب."
+
+#. module: ab_request_management
+msgid "National ID must contain exactly 14 digits."
+msgstr "يجب أن يتكون الرقم القومي من 14 رقماً بالضبط."
+
+#. module: ab_request_management
+msgid "Follow up your request"
+msgstr "تابع الشكوى الخاصة بك"
+
+#. module: ab_request_management
+msgid "Request status lookup"
+msgstr "الاستعلام عن حالة الشكوى"
+
+#. module: ab_request_management
+msgid "Verification failed"
+msgstr "فشل التحقق"
+
+#. module: ab_request_management
+msgid "Verify your request"
+msgstr "تحقق من الشكوى"
+
+#. module: ab_request_management
+msgid "Enter the request reference and the same identity data used during submission."
+msgstr "أدخل مرجع الشكوى ونفس بيانات الهوية المستخدمة أثناء الإرسال."
+
+#. module: ab_request_management
+msgid "Request reference"
+msgstr "مرجع الشكوى"
+
+#. module: ab_request_management
+msgid "Employee code or commercial register"
+msgstr "كود الموظف أو السجل التجاري"
+
+#. module: ab_request_management
+msgid "Only follow-ups marked as visible to the requester are shown here."
+msgstr "تظهر هنا فقط المتابعات المحددة كمرئية لمقدم الشكوى."
+
+#. module: ab_request_management
+msgid "Search"
+msgstr "بحث"
+
+#. module: ab_request_management
+msgid "Verified"
+msgstr "تم التحقق"
+
+#. module: ab_request_management
+msgid "No visible follow-ups are available for this request yet."
+msgstr "لا توجد متابعات مرئية لهذه الشكوى حتى الآن."
+
+#. module: ab_request_management
+#: model:ir.model.fields,field_description:ab_request_management.field_ab_request_website_followup__visible_to_user
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
+msgid "Visible to User"
+msgstr "مرئي لمقدم الشكوى"
+
+#. module: ab_request_management
+#: model_terms:ir.ui.view,arch_db:ab_request_management.ab_request_website_view_form
+msgid "Write the follow-up note..."
+msgstr "اكتب ملاحظة المتابعة..."
+
+#. module: ab_request_management
+msgid "Only request types can be used for internal tickets."
+msgstr "يمكن استخدام أنواع الطلبات فقط في التذاكر الداخلية."
+
+#. module: ab_request_management
+msgid "Only request categories can be used for internal tickets."
+msgstr "يمكن استخدام تصنيفات الطلبات فقط في التذاكر الداخلية."
+
+#. module: ab_request_management
+msgid "Verification"
+msgstr "التحقق"
+
+#. module: ab_request_management
+msgid "Human verification"
+msgstr "التحقق البشري"
+
+#. module: ab_request_management
+msgid "Enter the 5-digit code shown in the image before submitting."
+msgstr "أدخل الرمز المكون من 5 أرقام الظاهر في الصورة قبل الإرسال."
+
+#. module: ab_request_management
+msgid "Verification code"
+msgstr "رمز التحقق"
+
+#. module: ab_request_management
+msgid "Refresh CAPTCHA"
+msgstr "تحديث رمز التحقق"
+
+#. module: ab_request_management
+msgid "Enter code <em>*</em>"
+msgstr "أدخل الرمز <em>*</em>"
+
+#. module: ab_request_management
+msgid "5-digit code"
+msgstr "رمز من 5 أرقام"
+
+#. module: ab_request_management
+msgid "Invalid verification code. Please try again."
+msgstr "رمز التحقق غير صحيح. يُرجى المحاولة مرة أخرى."
+
+#. module: ab_request_management
+msgid "No matching request was found. Please check the reference and verification fields."
+msgstr "لم يتم العثور على شكوى مطابقة. يُرجى مراجعة المرجع وبيانات التحقق."
+
+#. module: ab_request_management
+msgid "Visibility"
+msgstr "الظهور"
+
+#. module: ab_request_management
+msgid "Create Follow-up"
+msgstr "إنشاء متابعة"
+
+#. module: ab_request_management
+msgid "Create Follow-ups"
+msgstr "إنشاء متابعة"
+
+#. module: ab_request_management
+msgid "Save & Close"
+msgstr "حفظ وإغلاق"
+
+#. module: ab_request_management
+msgid "Save & New"
+msgstr "حفظ وإنشاء جديد"
+
+#. module: ab_request_management
+msgid "Attachment"
+msgstr "مرفق"
+
+#. module: ab_request_management
+msgid "New Request"
+msgstr "طلب جديد"
