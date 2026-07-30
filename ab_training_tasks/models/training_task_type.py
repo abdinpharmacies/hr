@@ -2,7 +2,7 @@ from odoo import fields, models
 
 
 class TrainingTaskType(models.Model):
-    _name = 'ab.training.task.type'
+    _name = 'ab_training_task_type'
     _description = 'Training Task Type'
     _rec_name = 'title'
     _order = 'category_id, sequence, title'
@@ -10,7 +10,7 @@ class TrainingTaskType(models.Model):
 
     title = fields.Char(required=True, translate=True)
     category_id = fields.Many2one(
-        'ab.training.task.category',
+        'ab_training_task_category',
         string='Material Category',
         required=True,
         ondelete='restrict',

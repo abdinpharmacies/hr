@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="view_training_task_type_list" model="ir.ui.view">
-            <field name="name">ab.training.task.type.list</field>
-            <field name="model">ab.training.task.type</field>
+            <field name="name">ab_training_task_type.list</field>
+            <field name="model">ab_training_task_type</field>
             <field name="arch" type="xml">
                 <list string="Task Types" default_order="category_id, sequence, title">
                     <field name="sequence" widget="handle"/>
@@ -18,8 +18,8 @@
         </record>
 
         <record id="view_training_task_type_form" model="ir.ui.view">
-            <field name="name">ab.training.task.type.form</field>
-            <field name="model">ab.training.task.type</field>
+            <field name="name">ab_training_task_type.form</field>
+            <field name="model">ab_training_task_type</field>
             <field name="arch" type="xml">
                 <form string="Task Type" class="ab_training_core_form core_ui_form_modern">
                     <sheet>

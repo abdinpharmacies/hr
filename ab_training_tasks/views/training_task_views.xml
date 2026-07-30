@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="view_training_task_search" model="ir.ui.view">
-            <field name="name">ab.training.task.search</field>
-            <field name="model">ab.training.task</field>
+            <field name="name">ab_training_task.search</field>
+            <field name="model">ab_training_task</field>
             <field name="arch" type="xml">
                 <search string="Training Tasks">
                     <field name="name"/>
@@ -27,8 +27,8 @@
         </record>
 
         <record id="view_training_task_list" model="ir.ui.view">
-            <field name="name">ab.training.task.list</field>
-            <field name="model">ab.training.task</field>
+            <field name="name">ab_training_task.list</field>
+            <field name="model">ab_training_task</field>
             <field name="arch" type="xml">
                 <list string="Training Tasks"
                       decoration-success="state == 'approved'"
@@ -52,8 +52,8 @@
         </record>
 
         <record id="view_training_task_kanban" model="ir.ui.view">
-            <field name="name">ab.training.task.kanban</field>
-            <field name="model">ab.training.task</field>
+            <field name="name">ab_training_task.kanban</field>
+            <field name="model">ab_training_task</field>
             <field name="arch" type="xml">
                 <kanban default_group_by="state" class="ab_training_task_kanban">
                     <field name="name"/>
@@ -87,8 +87,8 @@
         </record>
 
         <record id="view_training_task_form" model="ir.ui.view">
-            <field name="name">ab.training.task.form</field>
-            <field name="model">ab.training.task</field>
+            <field name="name">ab_training_task.form</field>
+            <field name="model">ab_training_task</field>
             <field name="arch" type="xml">
                 <form string="Training Task" class="ab_training_core_form core_ui_form_modern">
                     <header>

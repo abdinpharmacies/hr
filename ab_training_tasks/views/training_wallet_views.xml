@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="view_training_wallet_list" model="ir.ui.view">
-            <field name="name">ab.training.wallet.list</field>
-            <field name="model">ab.training.wallet</field>
+            <field name="name">ab_training_wallet.list</field>
+            <field name="model">ab_training_wallet</field>
             <field name="arch" type="xml">
                 <list string="Training Wallets" create="false" delete="false" edit="false">
                     <field name="user_id"/>
@@ -20,8 +20,8 @@
         </record>
 
         <record id="view_training_wallet_form" model="ir.ui.view">
-            <field name="name">ab.training.wallet.form</field>
-            <field name="model">ab.training.wallet</field>
+            <field name="name">ab_training_wallet.form</field>
+            <field name="model">ab_training_wallet</field>
             <field name="arch" type="xml">
                 <form string="Training Wallet" create="false" delete="false" edit="false"
                       class="ab_training_core_form ab_training_wallet_form">

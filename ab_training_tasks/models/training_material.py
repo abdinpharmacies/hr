@@ -32,14 +32,14 @@ POWERPOINT_LEGACY_MIMETYPES = {
 
 
 class TrainingMaterial(models.Model):
-    _name = 'ab.training.material'
+    _name = 'ab_training_material'
     _description = 'Training Material'
     _rec_name = 'file_name'
     _order = 'uploaded_at desc, id desc'
     _check_company_auto = True
 
     task_id = fields.Many2one(
-        'ab.training.task',
+        'ab_training_task',
         required=True,
         ondelete='cascade',
         check_company=True,
@@ -110,7 +110,7 @@ class TrainingMaterial(models.Model):
         prepared_vals = []
         for incoming in vals_list:
             vals = dict(incoming)
-            task = self.env['ab.training.task'].browse(vals.get('task_id')).exists()
+            task = self.env['ab_training_task'].browse(vals.get('task_id')).exists()
             if not task:
                 raise ValidationError(_('A valid training task is required.'))
             if not is_manager:

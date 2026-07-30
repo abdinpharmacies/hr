@@ -8,7 +8,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 
 
 class TrainingTask(models.Model):
-    _name = 'ab.training.task'
+    _name = 'ab_training_task'
     _description = 'Training Task'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'completion_date desc, id desc'
@@ -33,7 +33,7 @@ class TrainingTask(models.Model):
     )
     currency_id = fields.Many2one(related='company_id.currency_id', readonly=True)
     wallet_id = fields.Many2one(
-        'ab.training.wallet',
+        'ab_training_wallet',
         required=True,
         readonly=True,
         ondelete='restrict',
@@ -41,7 +41,7 @@ class TrainingTask(models.Model):
         index=True,
     )
     task_type_id = fields.Many2one(
-        'ab.training.task.type',
+        'ab_training_task_type',
         string='Task Type',
         required=True,
         ondelete='restrict',
@@ -49,7 +49,7 @@ class TrainingTask(models.Model):
         tracking=True,
     )
     category_id = fields.Many2one(
-        'ab.training.task.category',
+        'ab_training_task_category',
         string='Material Category',
         required=True,
         ondelete='restrict',
@@ -87,7 +87,7 @@ class TrainingTask(models.Model):
     rejected_by = fields.Many2one('res.users', readonly=True, copy=False, ondelete='restrict')
     rejected_at = fields.Datetime(readonly=True, copy=False)
     wallet_reset_line_id = fields.Many2one(
-        'ab.training.wallet.reset.line',
+        'ab_training_wallet_reset_line',
         string='Payout Line',
         readonly=True,
         copy=False,
@@ -97,7 +97,7 @@ class TrainingTask(models.Model):
     paid_at = fields.Datetime(related='wallet_reset_line_id.reset_at', readonly=True)
     is_paid = fields.Boolean(compute='_compute_is_paid')
     material_ids = fields.One2many(
-        'ab.training.material',
+        'ab_training_material',
         'task_id',
         string='Training Materials',
         copy=False,
@@ -164,12 +164,12 @@ class TrainingTask(models.Model):
     def create(self, vals_list):
         is_manager = self.env.user.has_group('ab_training_tasks.group_training_tasks_manager')
         prepared_vals = []
-        wallet_model = self.env['ab.training.wallet'].sudo()
+        wallet_model = self.env['ab_training_wallet'].sudo()
         for incoming in vals_list:
             vals = dict(incoming)
             member = self.env['res.users'].browse(vals.get('member_id') or self.env.user.id).exists()
-            category = self.env['ab.training.task.category'].browse(vals.get('category_id')).exists()
-            task_type = self.env['ab.training.task.type'].browse(vals.get('task_type_id')).exists()
+            category = self.env['ab_training_task_category'].browse(vals.get('category_id')).exists()
+            task_type = self.env['ab_training_task_type'].browse(vals.get('task_type_id')).exists()
             if not member or not category or not task_type:
                 raise ValidationError(_('A valid member, material category, and task type are required.'))
             if task_type.category_id != category:
@@ -263,10 +263,10 @@ class TrainingTask(models.Model):
         if requested_fields & snapshot_fields:
             self.ensure_one()
             member = self.env['res.users'].browse(vals.get('member_id', self.member_id.id)).exists()
-            category = self.env['ab.training.task.category'].browse(
+            category = self.env['ab_training_task_category'].browse(
                 vals.get('category_id', self.category_id.id)
             ).exists()
-            task_type = self.env['ab.training.task.type'].browse(vals.get('task_type_id', self.task_type_id.id)).exists()
+            task_type = self.env['ab_training_task_type'].browse(vals.get('task_type_id', self.task_type_id.id)).exists()
             if not member or not category or not task_type:
                 raise ValidationError(_('A valid member, material category, and task type are required.'))
             if task_type.category_id != category:
@@ -283,7 +283,7 @@ class TrainingTask(models.Model):
             company = task_type.company_id
             if company not in member.company_ids:
                 raise ValidationError(_('The member must have access to the task company.'))
-            wallet = self.env['ab.training.wallet'].sudo()._get_or_create(member, company)
+            wallet = self.env['ab_training_wallet'].sudo()._get_or_create(member, company)
             vals.update({
                 'member_id': member.id,
                 'category_id': category.id,
@@ -325,7 +325,7 @@ class TrainingTask(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Reject Training Task'),
-            'res_model': 'ab.training.task.reject.wizard',
+            'res_model': 'ab_training_task_reject_wizard',
             'view_mode': 'form',
             'target': 'new',
             'context': {'default_task_id': self.id},

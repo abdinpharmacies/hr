@@ -27,7 +27,7 @@ TRAINING_FILE_TYPE_ACCEPTS = {
 
 
 class TrainingTaskCategory(models.Model):
-    _name = 'ab.training.task.category'
+    _name = 'ab_training_task_category'
     _description = 'Training Task Category'
     _order = 'sequence, name'
     _check_company_auto = True
@@ -43,7 +43,7 @@ class TrainingTaskCategory(models.Model):
         ondelete='restrict',
     )
     task_type_ids = fields.One2many(
-        'ab.training.task.type',
+        'ab_training_task_type',
         'category_id',
         string='Task Types',
     )
