@@ -4,6 +4,7 @@ import { Component, onWillStart, onWillUnmount, onMounted, useState, useRef, xml
 import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
+import { user } from "@web/core/user";
 import { CoreInput, CoreSearchSelect, CoreSelect } from "@ab_core_ui/core_ui/components/input/input";
 import { money, number, decimal, pct } from "./utils/formatters.js";
 import { KpiCard } from "./components/kpi_card.js";
@@ -56,8 +57,12 @@ const FRONTEND_TRANSLATION_TERMS = [
     _t("Customer Sales"),
     _t("Data Source"),
     _t("Date"),
+    _t("Date Filter"),
+    _t("Date Filter Mode"),
+    _t("Date Range"),
     _t("Distribution"),
     _t("Filter by store"),
+    _t("From"),
     _t("Growth"),
     _t("Invoice #"),
     _t("Invoice + Customer + Items"),
@@ -84,9 +89,11 @@ const FRONTEND_TRANSLATION_TERMS = [
     _t("Prev:"),
     _t("Product Sales"),
     _t("Products / Store"),
+    _t("Quick Filters"),
     _t("Ranked descending"),
     _t("Reconciliation processors"),
     _t("Refresh from E-Plus"),
+    _t("Report Period"),
     _t("Sales + stock balance"),
     _t("Sales Performance Report"),
     _t("Sales Reports Library"),
@@ -96,7 +103,9 @@ const FRONTEND_TRANSLATION_TERMS = [
     _t("Sales reports archive"),
     _t("Search"),
     _t("Share"),
+    _t("Single Day"),
     _t("Syncing..."),
+    _t("To"),
     _t("Top Sold Items"),
     _t("Unique Products"),
     _t("Year"),
@@ -133,6 +142,7 @@ class SalesDashboardAction extends Component {
         this.toggleStoreMenu = this.toggleStoreMenu.bind(this);
         this.toggleMobileFilters = this.toggleMobileFilters.bind(this);
         this.openStoreMenu = this.openStoreMenu.bind(this);
+        this.setDateFilterMode = this.setDateFilterMode.bind(this);
         this.toggleTheme = this.toggleTheme.bind(this);
         this.rootRef = useRef("dashboardRoot");
 
@@ -147,6 +157,7 @@ class SalesDashboardAction extends Component {
             storeSearch: _t("All Stores"),
             theme: savedTheme,
             activeDateFilter: savedFilters.active_date_filter,
+            dateFilterMode: (savedFilters.active_date_filter === "day" || savedFilters.active_date_filter === "yesterday" || savedFilters.date_from === savedFilters.date_to) ? "single" : "range",
             filters: {
                 date_from: savedFilters.date_from,
                 date_to: savedFilters.date_to,
@@ -198,6 +209,11 @@ class SalesDashboardAction extends Component {
                 active_date_filter: DATE_FILTER_KEYS.has(saved.active_date_filter) ? saved.active_date_filter : "last_7_days",
             };
         } catch {
+            try {
+                window.localStorage && window.localStorage.removeItem(FILTER_STORAGE_KEY);
+            } catch {
+                // Ignore storage access failures and fall back to defaults.
+            }
             return { ...defaults, active_date_filter: "last_7_days" };
         }
     }
@@ -292,6 +308,7 @@ class SalesDashboardAction extends Component {
         this.state.filters.date_from = this.toIsoDate(dateFrom);
         this.state.filters.date_to = this.toIsoDate(latest);
         this.state.activeDateFilter = preset;
+        this.state.dateFilterMode = (preset === "yesterday") ? "single" : "range";
         this.persistFilters();
         return this.loadDashboard(false);
     }
@@ -307,6 +324,7 @@ class SalesDashboardAction extends Component {
         const dateFrom = new Date(year, month - 1, 1);
         const dateTo = this.clampToLatestReportDate(new Date(year, month, 0));
         this.state.activeDateFilter = "month";
+        this.state.dateFilterMode = "range";
         return this.applyExplicitDateRange(dateFrom, dateTo);
     }
 
@@ -316,6 +334,7 @@ class SalesDashboardAction extends Component {
         this.state.filters.date_from = value;
         this.state.filters.date_to = value;
         this.state.activeDateFilter = "day";
+        this.state.dateFilterMode = "single";
         this.persistFilters();
         return this.loadDashboard(false);
     }
@@ -326,6 +345,7 @@ class SalesDashboardAction extends Component {
         const dateFrom = new Date(year, 0, 1);
         const dateTo = this.clampToLatestReportDate(new Date(year, 11, 31));
         this.state.activeDateFilter = "year";
+        this.state.dateFilterMode = "range";
         return this.applyExplicitDateRange(dateFrom, dateTo);
     }
 
@@ -337,6 +357,7 @@ class SalesDashboardAction extends Component {
     }
 
     updateCustomDate(name, value) {
+        this.state.dateFilterMode = "range";
         this.updateFilter(name, this.clampIsoToLatestReportDate(value));
         this.state.activeDateFilter = "custom";
         this.persistFilters();
@@ -538,6 +559,16 @@ class SalesDashboardAction extends Component {
         return stores.filter(s => (s.name || "").toLowerCase().includes(search)).slice(0, 50);
     }
 
+    setDateFilterMode(mode) {
+        this.state.dateFilterMode = mode;
+        if (mode === "single") {
+            this.state.filters.date_to = this.state.filters.date_from;
+            this.state.activeDateFilter = "day";
+            this.persistFilters();
+            this.loadDashboard(false);
+        }
+    }
+
     isDateFilterActive(k) { return this.state.activeDateFilter === k; }
 
     get dateFilterLabel() {
@@ -553,9 +584,45 @@ class SalesDashboardAction extends Component {
         return _t("Date Filter");
     }
 
-    get isRtl() { const h = document.documentElement; return h.dir === "rtl" || (h.lang || "").toLowerCase().startsWith("ar"); }
+    get selectedStoreLabel() {
+        const data = this.state.data || {};
+        return this.storeDisplayName(this.state.filters.store_id, data.stores || []);
+    }
+
+    get scopeDateLabel() {
+        const dateFrom = this.parseIsoDate(this.state.filters.date_from);
+        const dateTo = this.parseIsoDate(this.state.filters.date_to);
+        if (!dateFrom || !dateTo) return this.dateFilterLabel;
+        const formatter = new Intl.DateTimeFormat(this.locale, {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+        });
+        const fromLabel = formatter.format(dateFrom);
+        return this.sameDate(this.state.filters.date_from, dateTo)
+            ? fromLabel
+            : `${fromLabel} — ${formatter.format(dateTo)}`;
+    }
+
+    get refreshDateLabel() {
+        const value = this.state.data && this.state.data.refresh_date;
+        if (!value) return "";
+        const date = new Date(`${value.replace(" ", "T")}Z`);
+        if (Number.isNaN(date.getTime())) return value;
+        return new Intl.DateTimeFormat(this.locale, {
+            dateStyle: "medium",
+            timeStyle: "short",
+        }).format(date);
+    }
+
+    get isRtl() {
+        const language = (user.lang || document.documentElement.lang || "").toLowerCase();
+        return language.startsWith("ar") || window.getComputedStyle(document.body).direction === "rtl";
+    }
     get direction() { return this.isRtl ? "rtl" : "ltr"; }
-    get locale() { return this.isRtl ? "ar-EG" : ((document.documentElement.lang || "").replace("_", "-") || "en-US"); }
+    get locale() {
+        return (user.lang || document.documentElement.lang || (this.isRtl ? "ar-EG" : "en-US")).replace("_", "-");
+    }
 
     toggleMobileFilters() { this.state.mobileFiltersOpen = !this.state.mobileFiltersOpen; if (!this.state.mobileFiltersOpen) this.state.storeMenuOpen = false; }
 
@@ -627,96 +694,193 @@ SalesDashboardAction.template = xml`
     <div class="o_control_panel ab_sales_dashboard__control_panel"
          t-att-class="{'ab_sales_dashboard__control_panel--mobile_open': state.mobileFiltersOpen}">
         <div class="ab_sales_dashboard__toolbar">
-            <div class="o_control_panel_breadcrumbs d-flex align-items-center gap-1">
-                <div class="o_control_panel_main_buttons d-flex gap-1 d-empty-none d-print-none"/>
-                <div class="o_breadcrumb d-flex gap-1 text-truncate">
-                    <div class="o_last_breadcrumb_item active d-flex fs-4 min-w-0 align-items-center">
-                        <div class="ab_sales_dashboard__title_area">
-                            <div class="ab_sales_dashboard__header_row">
-                                <span class="sd-title" t-esc="_t('Sales Dashboard')"/>
-                                <ThemeToggle theme="state.theme" onToggle="toggleTheme"/>
+            <div class="ab_sales_dashboard__topbar">
+                <div class="o_control_panel_breadcrumbs d-flex align-items-center gap-1">
+                    <div class="o_control_panel_main_buttons d-flex gap-1 d-empty-none d-print-none"/>
+                    <div class="o_breadcrumb d-flex gap-1 text-truncate">
+                        <div class="o_last_breadcrumb_item active d-flex fs-4 min-w-0 align-items-center">
+                            <div class="ab_sales_dashboard__title_area">
+                                <div class="ab_sales_dashboard__header_row">
+                                    <span class="sd-title" t-esc="_t('Sales Dashboard')"/>
+                                    <ThemeToggle theme="state.theme" onToggle="toggleTheme"/>
+                                </div>
+                                <span class="sd-subtitle" t-esc="_t('Abdin Pharmacies - performance overview')"/>
                             </div>
-                            <span class="sd-subtitle" t-esc="_t('Abdin Pharmacies - performance overview')"/>
                         </div>
+                        <div class="o_control_panel_breadcrumbs_actions d-inline-flex d-print-none"/>
                     </div>
-                    <div class="o_control_panel_breadcrumbs_actions d-inline-flex d-print-none"/>
                 </div>
-                <div class="me-auto"/>
+
+                <div class="ab_sd_df__branch_card">
+                    <CoreSearchSelect className="'ab_sales_dashboard__store_search'"
+                                      value="state.filters.store_id"
+                                      searchValue="state.storeSearch"
+                                      placeholder="_t('Filter by store')"
+                                      allLabel="_t('All Stores')"
+                                      emptyText="_t('No records found.')"
+                                      resultsLabel="_t('records')"
+                                      clearLabel="_t('All Stores')"
+                                      ariaLabel="_t('Filter by store')"
+                                      icon="'fa fa-search'"
+                                      options="filteredStores"
+                                      open="state.storeMenuOpen"
+                                      disabled="state.refreshing"
+                                      onInput="(v) => this.onStoreSearchInput(v)"
+                                      onFocus="() => this.openStoreMenu()"
+                                      onToggle="() => this.toggleStoreMenu()"
+                                      onSelect="(id, name) => this.selectStore(id, name)"/>
+                </div>
+
                 <button type="button"
                         class="btn ab_sales_dashboard__mobile_filter_toggle d-print-none"
                         t-on-click="toggleMobileFilters">
                     <i t-att-class="state.mobileFiltersOpen ? 'fa fa-times' : 'fa fa-bars'"/>
                 </button>
             </div>
+
             <div class="ab_sales_dashboard__filters">
-                <CoreSearchSelect className="'ab_sales_dashboard__store_search'"
-                                  value="state.filters.store_id"
-                                  searchValue="state.storeSearch"
-                                  placeholder="_t('Filter by store')"
-                                  allLabel="_t('All Stores')"
-                                  emptyText="_t('No records found.')"
-                                  resultsLabel="_t('records')"
-                                  clearLabel="_t('All Stores')"
-                                  ariaLabel="_t('Filter by store')"
-                                  options="filteredStores"
-                                  open="state.storeMenuOpen"
-                                  disabled="state.refreshing"
-                                  onInput="(v) => this.onStoreSearchInput(v)"
-                                  onFocus="() => this.openStoreMenu()"
-                                  onToggle="() => this.toggleStoreMenu()"
-                                  onSelect="(id, name) => this.selectStore(id, name)"/>
-                <div class="ab_sales_dashboard__date_inputs"
-                     t-att-class="{'ab_sales_dashboard__date_inputs--active': isDateFilterActive('custom')}">
-                    <CoreInput type="'date'"
-                               label="_t('Date From')"
-                               className="'ab_sales_dashboard__date_field'"
-                               value="state.filters.date_from"
-                               max="latestReportDateIso"
-                               disabled="state.refreshing"
-                               onChange="(v) => this.updateCustomDate('date_from', v)"/>
-                    <CoreInput type="'date'"
-                               label="_t('Date To')"
-                               className="'ab_sales_dashboard__date_field'"
-                               value="state.filters.date_to"
-                               max="latestReportDateIso"
-                               disabled="state.refreshing"
-                               onChange="(v) => this.updateCustomDate('date_to', v)"/>
+                <div class="ab_sd_df__period_card">
+                    <div class="ab_sd_df__mode" role="radiogroup" t-att-aria-label="_t('Date Filter')">
+                        <button type="button"
+                                class="ab_sd_df__mode_btn"
+                                t-att-class="{'ab_sd_df__mode_btn--active': state.dateFilterMode === 'single'}"
+                                t-on-click="() => this.setDateFilterMode('single')"
+                                t-att-aria-pressed="state.dateFilterMode === 'single' ? 'true' : 'false'"
+                                t-att-disabled="state.refreshing">
+                            <i class="fa fa-calendar ab_sd_df__mode_icon"/>
+                            <span t-esc="_t('Single Day')"/>
+                        </button>
+                        <button type="button"
+                                class="ab_sd_df__mode_btn"
+                                t-att-class="{'ab_sd_df__mode_btn--active': state.dateFilterMode === 'range'}"
+                                t-on-click="() => this.setDateFilterMode('range')"
+                                t-att-aria-pressed="state.dateFilterMode === 'range' ? 'true' : 'false'"
+                                t-att-disabled="state.refreshing">
+                            <i class="fa fa-arrows-h ab_sd_df__mode_icon"/>
+                            <span t-esc="_t('Date Range')"/>
+                        </button>
+                    </div>
+
+                    <div class="ab_sd_df__controls">
+                        <div class="ab_sd_df__control_group ab_sd_df__control_group--date">
+                            <div class="ab_sd_df__group_head">
+                                <span class="ab_sd_df__group_title" t-esc="_t('Date')"/>
+                            </div>
+                            <div class="ab_sd_df__inputs">
+                                <t t-if="state.dateFilterMode === 'single'">
+                                    <CoreInput type="'date'"
+                                               label="''"
+                                               className="'ab_sd_df__input'"
+                                               value="selectedDayValue"
+                                               max="latestReportDateIso"
+                                               disabled="state.refreshing"
+                                               onChange="(v) => this.applyDaySelection(v)"/>
+                                </t>
+                                <t t-else="">
+                                    <div class="ab_sd_df__range_row">
+                                        <CoreInput type="'date'"
+                                                   label="_t('From')"
+                                                   className="'ab_sd_df__input'"
+                                                   value="state.filters.date_from"
+                                                   max="latestReportDateIso"
+                                                   disabled="state.refreshing"
+                                                   onChange="(v) => this.updateCustomDate('date_from', v)"/>
+                                        <span class="ab_sd_df__range_sep">—</span>
+                                        <CoreInput type="'date'"
+                                                   label="_t('To')"
+                                                   className="'ab_sd_df__input'"
+                                                   value="state.filters.date_to"
+                                                   max="latestReportDateIso"
+                                                   disabled="state.refreshing"
+                                                   onChange="(v) => this.updateCustomDate('date_to', v)"/>
+                                    </div>
+                                </t>
+                            </div>
+                        </div>
+
+                        <div class="ab_sd_df__control_group ab_sd_df__control_group--quick">
+                            <div class="ab_sd_df__group_head">
+                                <span class="ab_sd_df__group_title" t-esc="_t('Quick Filters')"/>
+                            </div>
+                            <div class="ab_sd_df__presets" role="group" t-att-aria-label="_t('Date Filter')">
+                                <button class="btn ab_sd_df__pill" t-att-class="{'ab_sd_df__pill--active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="_t('Yesterday')"/>
+                                <button class="btn ab_sd_df__pill" t-att-class="{'ab_sd_df__pill--active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="_t('7 Days')"/>
+                                <button class="btn ab_sd_df__pill" t-att-class="{'ab_sd_df__pill--active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="_t('30 Days')"/>
+                                <button class="btn ab_sd_df__pill" t-att-class="{'ab_sd_df__pill--active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="_t('90 Days')"/>
+                            </div>
+                        </div>
+
+                        <div class="ab_sd_df__control_group">
+                            <div class="ab_sd_df__group_head">
+                                <span class="ab_sd_df__group_title" t-esc="_t('Month')"/>
+                            </div>
+                            <CoreSelect className="'ab_sd_df__cal_field'"
+                                        selectClass="'ab_sd_df__cal_select'"
+                                        variant="isDateFilterActive('month') ? 'active' : ''"
+                                        placeholder="_t('Month')"
+                                        disabled="state.refreshing"
+                                        value="selectedMonthValue"
+                                        options="monthOptions"
+                                        onChange="(v) => this.applyMonthSelection(v)"/>
+                        </div>
+
+                        <div class="ab_sd_df__control_group">
+                            <div class="ab_sd_df__group_head">
+                                <span class="ab_sd_df__group_title" t-esc="_t('Year')"/>
+                            </div>
+                            <CoreSelect className="'ab_sd_df__cal_field'"
+                                        selectClass="'ab_sd_df__cal_select'"
+                                        variant="isDateFilterActive('year') ? 'active' : ''"
+                                        placeholder="_t('Year')"
+                                        disabled="state.refreshing"
+                                        value="selectedYearValue"
+                                        options="yearOptions"
+                                        onChange="(v) => this.applyYearSelection(v)"/>
+                        </div>
+
+                        <div class="ab_sd_df__refresh_group">
+                            <button type="button"
+                                    class="ab_sd_df__refresh_btn"
+                                    t-on-click="onRefresh"
+                                    t-att-disabled="state.refreshing">
+                                <t t-if="state.refreshing">
+                                    <i class="fa fa-spinner fa-spin"/>
+                                    <span t-esc="_t('Syncing...')"/>
+                                </t>
+                                <t t-else="">
+                                    <i class="fa fa-refresh"/>
+                                    <span t-esc="_t('Refresh from E-Plus')"/>
+                                </t>
+                            </button>
+                            <span t-if="refreshDateLabel" class="ab_sd_df__refresh_meta">
+                                <i class="fa fa-info-circle" aria-hidden="true"/>
+                                <t t-esc="_t('Refresh Date')"/>:
+                                <t t-esc="refreshDateLabel"/>
+                            </span>
+                        </div>
+                    </div>
                 </div>
-                <div class="ab_sales_dashboard__quick_ranges" role="group" t-att-aria-label="_t('Date Filter')">
-                    <CoreInput type="'date'" bare="true"
-                               inputClass="'ab_sales_dashboard__period_select ab_sales_dashboard__day_select' + (isDateFilterActive('day') ? ' ab_sales_dashboard__range_active' : '')"
-                               max="latestReportDateIso"
-                               disabled="state.refreshing"
-                               value="selectedDayValue"
-                               onChange="(v) => this.applyDaySelection(v)"/>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="_t('Yesterday')"/>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="_t('7 Days')"/>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="_t('30 Days')"/>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="_t('90 Days')"/>
-                    <CoreSelect className="'ab_sales_dashboard__period_select_field'"
-                                selectClass="'ab_sales_dashboard__period_select'"
-                                variant="isDateFilterActive('month') ? 'active' : ''"
-                                placeholder="_t('Month')"
-                                disabled="state.refreshing"
-                                value="selectedMonthValue"
-                                options="monthOptions"
-                                onChange="(v) => this.applyMonthSelection(v)"/>
-                    <CoreSelect className="'ab_sales_dashboard__period_select_field'"
-                                selectClass="'ab_sales_dashboard__period_select'"
-                                variant="isDateFilterActive('year') ? 'active' : ''"
-                                placeholder="_t('Year')"
-                                disabled="state.refreshing"
-                                value="selectedYearValue"
-                                options="yearOptions"
-                                onChange="(v) => this.applyYearSelection(v)"/>
+
+                <div class="ab_sd_df__scope_card">
+                    <div class="ab_sd_df__scope_item">
+                        <span class="ab_sd_df__scope_icon ab_sd_df__scope_icon--date">
+                            <i class="fa fa-clock-o" aria-hidden="true"/>
+                        </span>
+                        <span class="ab_sd_df__scope_copy">
+                            <span class="ab_sd_df__scope_label" t-esc="_t('Date Range')"/>
+                            <strong t-esc="scopeDateLabel"/>
+                        </span>
+                    </div>
+                    <div class="ab_sd_df__scope_item">
+                        <span class="ab_sd_df__scope_icon ab_sd_df__scope_icon--branch">
+                            <i class="fa fa-building-o" aria-hidden="true"/>
+                        </span>
+                        <span class="ab_sd_df__scope_copy">
+                            <span class="ab_sd_df__scope_label" t-esc="_t('Branch')"/>
+                            <strong t-esc="selectedStoreLabel"/>
+                        </span>
+                    </div>
                 </div>
-                <button type="button"
-                        class="btn btn-primary ab_sales_dashboard__refresh_button"
-                        t-on-click="onRefresh"
-                        t-att-disabled="state.refreshing">
-                    <t t-if="state.refreshing"><i class="fa fa-spinner fa-spin me-1"/><t t-esc="_t('Syncing...')"/></t>
-                    <t t-else=""><i class="fa fa-refresh me-1"/><t t-esc="_t('Refresh from E-Plus')"/></t>
-                </button>
             </div>
         </div>
     </div>

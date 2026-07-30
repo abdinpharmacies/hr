@@ -5,21 +5,18 @@
             <field name="name">ab.sales.dashboard.snapshot.list</field>
             <field name="model">ab.sales.dashboard.snapshot</field>
             <field name="arch" type="xml">
-                <list string="Sales Dashboard Reports" class="ab_rl_list" multi_edit="0" sample="1"
-                      decoration-info="archive_count == 0"
-                      decoration-warning="archive_count &gt; 0"
-                      decoration-danger="archive_count &gt; 5">
-                    <field name="refresh_date" widget="datetime" string="Generated" optional="show"/>
+                <list string="Sales Dashboard Reports" class="ab_rl_list" multi_edit="0" sample="1">
                     <field name="name" string="Report" optional="show"/>
-                    <field name="date_from" widget="date" string="From" optional="show"/>
-                    <field name="date_to" widget="date" string="To" optional="show"/>
-                    <field name="store_filter_label" string="Branch" optional="show"/>
-                    <field name="total_sales" widget="monetary" string="Total Sales" sum="Sum"/>
-                    <field name="invoice_count" string="Invoices" sum="Sum"/>
+                    <field name="date_from" widget="date" string="From" optional="hide"/>
+                    <field name="date_to" widget="date" string="To" optional="hide"/>
+                    <field name="total_sales" widget="monetary" string="Total Sales" sum="Sum" optional="hide"/>
+                    <field name="invoice_count" string="Invoices" sum="Sum" optional="hide"/>
                     <field name="total_units_sold" string="Units" optional="hide"/>
+                    <field name="store_filter_label" string="Branch" optional="hide"/>
+                    <field name="refresh_date" widget="datetime" string="Generated" optional="hide"/>
+                    <field name="archive_count" string="Archives" optional="hide"/>
                     <field name="unique_products_sold" string="Products" optional="hide"/>
                     <field name="stores_with_sales" string="Stores" optional="hide"/>
-                    <field name="archive_count" string="Archives" optional="show"/>
                 </list>
             </field>
         </record>
@@ -321,20 +318,20 @@
             <field name="name">ab.sales.dashboard.product.sales.report.list</field>
             <field name="model">ab.sales.dashboard.product.sales.report</field>
             <field name="arch" type="xml">
-                <list string="Product Sales Report" class="ab_product_sales_list" create="0" edit="0" delete="0">
-                    <field name="report_date"/>
-                    <field name="store_id"/>
-                    <field name="item_eplus_id"/>
-                    <field name="item_code"/>
-                    <field name="product_id"/>
-                    <field name="product_name"/>
-                    <field name="item_type"/>
-                    <field name="branches_sold_in"/>
-                    <field name="sale_times"/>
-                    <field name="invoice_count"/>
-                    <field name="units_sold"/>
-                    <field name="total_sales"/>
-                    <field name="average_selling_price"/>
+                <list string="Product Intelligence" class="psi-list" create="0" edit="0" delete="0">
+                    <field name="product_name" widget="list.ps_identity" optional="show"/>
+                    <field name="item_type" widget="list.ps_type" optional="show"/>
+                    <field name="total_sales" widget="list.ps_revenue" sum="Total" optional="show"/>
+                    <field name="units_sold" widget="list.ps_metric" sum="Sum" optional="show"/>
+                    <field name="invoice_count" widget="list.ps_metric" sum="Sum" optional="show"/>
+                    <field name="branches_sold_in" widget="list.ps_metric" optional="show"/>
+                    <field name="sale_times" widget="list.ps_metric" optional="show"/>
+                    <field name="average_selling_price" widget="list.ps_avg_price" optional="show"/>
+                    <field name="report_date" widget="list.ps_date" optional="show"/>
+                    <field name="item_code" widget="list.ps_sku" optional="hide"/>
+                    <field name="store_id" widget="list.ps_store" optional="hide"/>
+                    <field name="product_id" optional="hide"/>
+                    <field name="item_eplus_id" optional="hide"/>
                 </list>
             </field>
         </record>
@@ -344,12 +341,11 @@
             <field name="model">ab.sales.dashboard.product.sales.report</field>
             <field name="arch" type="xml">
                 <pivot string="Product Sales Report">
-                    <field name="product_name" type="row"/>
-                    <field name="store_id" type="col"/>
+                    <field name="report_date" interval="month" type="col"/>
+                    <field name="item_type" type="row"/>
                     <field name="units_sold" type="measure"/>
                     <field name="total_sales" type="measure"/>
                     <field name="invoice_count" type="measure"/>
-                    <field name="sale_times" type="measure"/>
                 </pivot>
             </field>
         </record>
@@ -359,7 +355,7 @@
             <field name="model">ab.sales.dashboard.product.sales.report</field>
             <field name="arch" type="xml">
                 <graph string="Product Sales Report" type="bar">
-                    <field name="product_name" type="row"/>
+                    <field name="report_date" interval="month" type="row"/>
                     <field name="total_sales" type="measure"/>
                     <field name="units_sold" type="measure"/>
                 </graph>

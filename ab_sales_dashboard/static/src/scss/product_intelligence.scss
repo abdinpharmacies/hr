@@ -1,0 +1,838 @@
+// ══════════════════════════════════════════════════════════════
+// PRODUCT INTELLIGENCE — Premium SaaS Product Analytics
+// Uses only --sd-* design tokens from parent dashboard theme.
+// ══════════════════════════════════════════════════════════════
+
+// ─── LAYOUT ─────────────────────────────────────────────
+.ab_product_sales_action {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--sd-bg-deep);
+
+    .o_content {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--sd-bg-deep);
+    }
+}
+
+// ─── HERO ───────────────────────────────────────────────
+.psi-hero {
+    padding: 28px 40px 20px;
+    flex-shrink: 0;
+    background: var(--sd-bg-elevated);
+    border-bottom: 1px solid var(--sd-table-border);
+
+    &__content {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 20px;
+    }
+
+    &__text { flex: 1; min-width: 0; }
+
+    &__title {
+        font-size: 24px;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+        color: var(--sd-text-primary);
+        line-height: 1.2;
+        margin: 0 0 3px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    &__icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        background: var(--sd-gradient-violet);
+        color: #fff;
+        font-size: 15px;
+        flex-shrink: 0;
+    }
+
+    &__subtitle {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--sd-accent-violet);
+        margin: 0 0 3px;
+        letter-spacing: 0.01em;
+    }
+
+    &__desc {
+        font-size: 12px;
+        color: var(--sd-text-muted);
+        margin: 0;
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-shrink: 0;
+    }
+
+    &__pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 5px 12px;
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        border-radius: 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--sd-text-secondary);
+        white-space: nowrap;
+
+        .fa { font-size: 10px; opacity: 0.5; }
+    }
+}
+
+// ─── PREMIUM KPI CARDS ──────────────────────────────────
+.psi-kpi-strip {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 12px;
+}
+
+.psi-kpi-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 20px;
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: var(--sd-radius-md);
+    transition: transform 0.2s ease, box-shadow 0.25s ease;
+    cursor: default;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--sd-shadow-md);
+    }
+
+    &__icon-wrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        transition: transform 0.2s ease;
+
+        svg {
+            width: 22px;
+            height: 22px;
+            stroke-width: 1.5;
+        }
+    }
+
+    &:hover &__icon-wrap {
+        transform: scale(1.05);
+    }
+
+    &__body {
+        min-width: 0;
+        flex: 1;
+        padding-top: 3px;
+    }
+
+    &__label {
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--sd-text-muted);
+        letter-spacing: 0.02em;
+        line-height: 1;
+        margin-bottom: 6px;
+    }
+
+    &__value {
+        font-size: 23px;
+        font-weight: 800;
+        color: var(--sd-text-primary);
+        font-variant-numeric: tabular-nums;
+        line-height: 1.15;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        letter-spacing: -0.02em;
+    }
+
+    &__unit {
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--sd-text-muted);
+        margin-top: 3px;
+    }
+
+    // ─── Variants ──────────────────────────────────────
+
+    &--revenue {
+        .psi-kpi-card__icon-wrap {
+            background: rgba(16, 185, 129, 0.12);
+            color: var(--sd-accent-emerald);
+        }
+    }
+
+    &--units {
+        .psi-kpi-card__icon-wrap {
+            background: rgba(59, 130, 246, 0.12);
+            color: var(--sd-accent-blue);
+        }
+    }
+
+    &--invoices {
+        .psi-kpi-card__icon-wrap {
+            background: rgba(245, 158, 11, 0.12);
+            color: var(--sd-accent-amber);
+        }
+    }
+}
+
+// ─── LEADERBOARD ────────────────────────────────────────
+.psi-leaderboard {
+    padding: 0 40px 16px;
+    flex-shrink: 0;
+
+    &__title {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--sd-text-secondary);
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .fa { font-size: 11px; opacity: 0.5; }
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 8px;
+    }
+}
+
+.psi-leader-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: 10px;
+    cursor: default;
+    transition: all 0.15s ease;
+
+    &:hover {
+        background: var(--sd-bg-card-hover);
+        border-color: var(--sd-glass-border-hover);
+        transform: translateY(-1px);
+        box-shadow: var(--sd-shadow-sm);
+    }
+
+    &__rank {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        font-size: 10px;
+        font-weight: 800;
+        flex-shrink: 0;
+        background: var(--sd-input-bg);
+        color: var(--sd-text-muted);
+
+        &--1 { background: rgba(245, 158, 11, 0.15); color: var(--sd-accent-amber); }
+        &--2 { background: rgba(148, 163, 184, 0.12); color: var(--sd-text-secondary); }
+        &--3 { background: rgba(180, 83, 9, 0.1); color: #d97706; }
+    }
+
+    &__body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__name {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--sd-text-primary);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__meta {
+        font-size: 10px;
+        color: var(--sd-text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    &__revenue {
+        font-size: 12px;
+        font-weight: 800;
+        color: var(--sd-accent-emerald);
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+    }
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 3px;
+        padding: 2px 6px;
+        border-radius: 999px;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+
+        &--emerald { background: rgba(16, 185, 129, 0.1); color: var(--sd-accent-emerald); }
+        &--blue { background: rgba(59, 130, 246, 0.1); color: var(--sd-accent-blue); }
+        &--violet { background: rgba(139, 92, 246, 0.1); color: var(--sd-accent-violet); }
+        &--cyan { background: rgba(6, 182, 212, 0.1); color: var(--sd-accent-cyan); }
+        &--amber { background: rgba(245, 158, 11, 0.1); color: var(--sd-accent-amber); }
+        &--default { background: var(--sd-input-bg); color: var(--sd-text-dim); }
+    }
+}
+
+// ─── CONTROL PANEL ──────────────────────────────────────
+.ab_product_sales_action .o_control_panel {
+    background: var(--sd-bg-elevated);
+    border-bottom: 1px solid var(--sd-table-border);
+    padding: 8px 40px;
+    flex-shrink: 0;
+
+    .o_searchview {
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        border-radius: 8px;
+        color: var(--sd-text-primary);
+
+        &:focus-within {
+            border-color: var(--sd-accent-violet);
+            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.12);
+        }
+
+        .o_searchview_input {
+            color: var(--sd-text-primary);
+            &::placeholder { color: var(--sd-text-muted); }
+        }
+
+        .o_searchview_facet {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: var(--sd-accent-violet);
+            border-radius: 6px;
+        }
+    }
+
+    .o_cp_buttons .btn {
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        color: var(--sd-text-secondary);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 5px 14px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: var(--sd-bg-card-hover);
+            color: var(--sd-text-primary);
+            border-color: var(--sd-glass-border-hover);
+        }
+    }
+}
+
+// ─── TABLE WRAPPER ──────────────────────────────────────
+.psi-table-wrap {
+    margin: 0 40px 0;
+    background: transparent;
+    flex: 1;
+    min-height: 0;
+
+    .o_content { background: transparent; padding: 0; }
+}
+
+// ─── LIST TABLE ─────────────────────────────────────────
+.psi-list {
+    .o_list_table {
+        border-collapse: separate;
+        border-spacing: 0 8px;
+        margin: 0;
+    }
+
+    // Header
+    .o_list_table > thead > tr {
+        background: transparent;
+
+        > th {
+            color: var(--sd-text-muted);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            border: none;
+            padding: 8px 14px 4px;
+            user-select: none;
+            background: transparent;
+
+            &::before {
+                font-family: 'FontAwesome';
+                font-size: 11px;
+                margin-right: 6px;
+                opacity: 0.4;
+                vertical-align: middle;
+            }
+
+            &[data-field="product_name"]::before { content: '\f1b2'; }
+            &[data-field="item_type"]::before { content: '\f0fa'; }
+            &[data-field="total_sales"]::before { content: '\f155'; }
+            &[data-field="units_sold"]::before { content: '\f07a'; }
+            &[data-field="invoice_count"]::before { content: '\f0f6'; }
+            &[data-field="branches_sold_in"]::before { content: '\f1ad'; }
+            &[data-field="sale_times"]::before { content: '\f0e7'; }
+            &[data-field="average_selling_price"]::before { content: '\f201'; }
+            &[data-field="report_date"]::before { content: '\f073'; }
+            &[data-field="item_code"]::before { content: '\f02a'; }
+            &[data-field="store_id"]::before { content: '\f1ad'; }
+        }
+    }
+
+    // Data rows — premium log cards
+    .o_list_table > tbody > tr.o_data_row {
+        position: relative;
+        background: var(--sd-bg-card-solid);
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+        cursor: pointer;
+        outline: 1px solid var(--sd-table-border);
+        outline-offset: -1px;
+        transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+            transform: translateY(-1px);
+            background: var(--sd-bg-card-hover);
+            outline-color: var(--sd-accent-violet);
+            z-index: 1;
+        }
+
+        &.o_record_selected {
+            box-shadow: 0 0 0 2px var(--sd-accent-violet), 0 4px 16px rgba(139, 92, 246, 0.15);
+            outline: none;
+        }
+    }
+
+    // Cells
+    .o_list_table > tbody > tr.o_data_row > td {
+        color: var(--sd-text-primary);
+        padding: 12px 14px;
+        vertical-align: middle;
+        border: none;
+        font-size: 13px;
+        background: inherit;
+        border-left: 3px solid transparent;
+
+        &:first-child {
+            border-radius: 12px 0 0 12px;
+            padding-left: 17px;
+        }
+
+        &:last-child {
+            border-radius: 0 12px 12px 0;
+            padding-right: 18px;
+        }
+    }
+
+    // Left accent on hover
+    .o_list_table > tbody > tr.o_data_row:hover > td:first-child {
+        border-left-color: var(--sd-accent-violet);
+    }
+
+    // Group headers
+    .o_list_table > tbody > tr.o_group_header {
+        background: transparent;
+
+        td {
+            padding: 14px 16px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--sd-text-muted);
+            border: none;
+            background: transparent;
+        }
+    }
+
+    // Checkbox
+    .o_list_record_selector input[type="checkbox"] {
+        accent-color: var(--sd-accent-violet);
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// FIELD WIDGET STYLES
+// ══════════════════════════════════════════════════════════════
+
+// ─── PRODUCT IDENTITY ──────────────────────────────────
+.psi-identity {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        font-size: 14px;
+        flex-shrink: 0;
+        transition: transform 0.15s ease;
+        background: var(--sd-input-bg);
+        color: var(--sd-text-dim);
+
+        &--medicine { background: rgba(16, 185, 129, 0.12); color: var(--sd-accent-emerald); }
+        &--general { background: rgba(59, 130, 246, 0.12); color: var(--sd-accent-blue); }
+    }
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        min-width: 0;
+        flex: 1;
+    }
+
+    &__name {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--sd-text-primary);
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__code {
+        font-size: 10px;
+        font-weight: 500;
+        color: var(--sd-text-dim);
+        line-height: 1.2;
+        font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__status {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+        flex-shrink: 0;
+        border: 1px solid transparent;
+        transition: all 0.15s ease;
+
+        .fa { font-size: 8px; }
+
+        &--emerald { background: rgba(16, 185, 129, 0.1); color: var(--sd-accent-emerald); border-color: rgba(16, 185, 129, 0.2); }
+        &--blue { background: rgba(59, 130, 246, 0.1); color: var(--sd-accent-blue); border-color: rgba(59, 130, 246, 0.2); }
+        &--violet { background: rgba(139, 92, 246, 0.1); color: var(--sd-accent-violet); border-color: rgba(139, 92, 246, 0.2); }
+        &--cyan { background: rgba(6, 182, 212, 0.1); color: var(--sd-accent-cyan); border-color: rgba(6, 182, 212, 0.2); }
+        &--amber { background: rgba(245, 158, 11, 0.1); color: var(--sd-accent-amber); border-color: rgba(245, 158, 11, 0.2); }
+        &--default { background: var(--sd-input-bg); color: var(--sd-text-dim); border-color: transparent; }
+    }
+}
+
+// ─── ITEM TYPE BADGE ──────────────────────────────────
+.psi-type {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    line-height: 1.5;
+
+    .fa { font-size: 9px; }
+
+    &--medicine {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--sd-accent-emerald);
+        border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    &--general {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--sd-accent-blue);
+        border-color: rgba(59, 130, 246, 0.2);
+    }
+}
+
+// ─── REVENUE ──────────────────────────────────────────
+.psi-revenue {
+    font-size: 14px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.02em;
+    color: var(--sd-text-primary);
+
+    &--high { color: var(--sd-accent-emerald); }
+    &--mid { color: var(--sd-accent-cyan); }
+    &--low { color: var(--sd-text-secondary); }
+}
+
+// ─── AVERAGE PRICE ────────────────────────────────────
+.psi-avg-price {
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: var(--sd-text-muted);
+}
+
+// ─── CHIP ─────────────────────────────────────────────
+.psi-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    background: var(--sd-input-bg);
+    color: var(--sd-text-secondary);
+    border: 1px solid var(--sd-glass-border);
+    line-height: 1.5;
+
+    .fa { font-size: 10px; opacity: 0.5; }
+
+    &--store {
+        font-size: 11px;
+        font-weight: 600;
+    }
+}
+
+// ─── FIELD NAME ───────────────────────────────────────
+.psi-field-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sd-text-primary);
+}
+
+// ─── SKU ──────────────────────────────────────────────
+.psi-sku {
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'SF Mono', 'Consolas', 'Monaco', monospace;
+    color: var(--sd-text-dim);
+    letter-spacing: 0.02em;
+}
+
+// ─── DATE ─────────────────────────────────────────────
+.psi-date {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sd-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+
+    &__icon { font-size: 10px; opacity: 0.4; }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PAGER
+// ══════════════════════════════════════════════════════════════
+.ab_product_sales_action .o_pager {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 40px;
+    background: var(--sd-bg-elevated);
+    border-top: 1px solid var(--sd-table-border);
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--sd-text-muted);
+    font-weight: 500;
+
+    .o_pager_state {
+        color: var(--sd-text-secondary);
+        font-weight: 600;
+        padding: 0 8px;
+    }
+
+    button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        border-radius: 6px;
+        color: var(--sd-text-secondary);
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover:not(:disabled) {
+            background: var(--sd-bg-card-hover);
+            color: var(--sd-text-primary);
+            border-color: var(--sd-glass-border-hover);
+        }
+
+        &:disabled { opacity: 0.3; cursor: default; }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// DROPDOWN
+// ══════════════════════════════════════════════════════════════
+.ab_product_sales_action .o-dropdown--menu {
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: 10px;
+    box-shadow: var(--sd-shadow-md);
+    padding: 4px;
+
+    .o-dropdown-item, .o_menu_item {
+        color: var(--sd-text-secondary);
+        border-radius: 6px;
+        padding: 6px 12px;
+        font-size: 13px;
+        transition: background 0.15s ease, color 0.15s ease;
+
+        &:hover { background: var(--sd-input-bg); color: var(--sd-text-primary); }
+        &.active { background: rgba(139, 92, 246, 0.1); color: var(--sd-accent-violet); }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// EMPTY STATE
+// ══════════════════════════════════════════════════════════════
+.ab_product_sales_action .o_list_empty_state {
+    text-align: center;
+    padding: 60px 40px;
+    color: var(--sd-text-muted);
+
+    &::before {
+        content: '\f1b2';
+        font-family: 'FontAwesome';
+        font-size: 48px;
+        display: block;
+        margin-bottom: 16px;
+        opacity: 0.12;
+        color: var(--sd-text-primary);
+    }
+
+    .o_list_empty_state_text {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--sd-text-secondary);
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// RESPONSIVE
+// ══════════════════════════════════════════════════════════════
+@media (max-width: 1200px) {
+    .psi-hero { padding: 20px 24px 16px; }
+    .psi-leaderboard { padding: 0 24px 16px; }
+    .ab_product_sales_action .o_control_panel { padding: 8px 24px; }
+    .ab_product_sales_action .o_pager { padding: 10px 24px; }
+    .psi-table-wrap { margin-left: 24px; margin-right: 24px; }
+}
+
+@media (max-width: 900px) {
+    .psi-hero__title { font-size: 20px; }
+    .psi-kpi-strip { grid-template-columns: 1fr 1fr; }
+    .psi-kpi-card--revenue { grid-column: 1 / -1; }
+    .psi-leaderboard__grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+}
+
+@media (max-width: 600px) {
+    .psi-hero { padding: 16px; }
+    .psi-hero__title { font-size: 18px; }
+    .psi-hero__subtitle { font-size: 11px; }
+    .psi-hero__meta { flex-wrap: wrap; }
+    .psi-kpi-strip { grid-template-columns: 1fr; gap: 10px; }
+    .psi-kpi-card { padding: 14px 16px; gap: 12px; }
+    .psi-kpi-card__icon-wrap { width: 40px; height: 40px; }
+    .psi-kpi-card__icon-wrap svg { width: 19px; height: 19px; }
+    .psi-kpi-card__value { font-size: 19px; }
+    .psi-leaderboard { padding: 0 16px 12px; }
+    .psi-leaderboard__grid { grid-template-columns: 1fr 1fr; }
+    .ab_product_sales_action .o_control_panel { padding: 6px 16px; }
+    .ab_product_sales_action .o_pager { padding: 8px 16px; }
+    .psi-table-wrap { margin-left: 12px; margin-right: 12px; }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PRINT
+// ══════════════════════════════════════════════════════════════
+@media print {
+    .ab_product_sales_action {
+        background: #fff;
+        .o_content { background: #fff; }
+    }
+    .psi-hero { background: #fff; border-bottom: 2px solid #1a1a1a; }
+    .psi-hero__title { color: #1a1a1a; }
+    .psi-hero__subtitle { color: #333; }
+    .psi-hero__desc { color: #666; }
+    .psi-hero__icon { background: #333 !important; color: #fff !important; }
+    .psi-kpi-card { background: #fff; border-color: #ccc; }
+    .psi-kpi-card__value { color: #1a1a1a; }
+    .psi-leader-card { background: #fff; border-color: #ccc; }
+    .psi-leader-card__name { color: #1a1a1a; }
+    .psi-leader-card__revenue { color: #059669; }
+    .ab_product_sales_action .o_control_panel { background: #fff; border-bottom: 1px solid #ccc; }
+    .psi-list .o_list_table > thead > tr { background: transparent; }
+    .psi-list .o_list_table > thead > tr > th { color: #333; }
+    .psi-list .o_list_table > thead > tr > th::before { display: none; }
+    .psi-list .o_list_table > tbody > tr.o_data_row {
+        background: #fff;
+        box-shadow: none !important;
+        transform: none !important;
+        outline: 1px solid #eee;
+        &:hover { background: #fff; box-shadow: none !important; transform: none !important; }
+    }
+    .ab_product_sales_action .o_pager { background: #fff; border-top-color: #ccc; }
+}
