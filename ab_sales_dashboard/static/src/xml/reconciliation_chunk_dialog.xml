@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+<t t-name="ab_sales_dashboard.ReconciliationChunkDialog">
+    <Dialog size="'xl'" header="true" title="" footer="true" contentClass="'rcon-chunk-dialog'" onClose.bind="close">
+
+        <t t-if="state.loading">
+            <div class="rcd-loading">
+                <div class="rcd-loading__spinner"/>
+                <span class="rcd-loading__text">Loading reconciliation task...</span>
+            </div>
+        </t>
+
+        <t t-elif="state.error">
+            <div class="rcd-error-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <span t-esc="state.error"/>
+            </div>
+        </t>
+
+        <t t-else="">
+
+            <section class="rcd-section rcd-hero">
+                <div class="rcd-hero__left">
+                    <div class="rcd-hero__icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                            <path d="M16 7V5a4 4 0 0 0-8 0v2"/>
+                            <line x1="12" y1="12" x2="12" y2="16"/>
+                        </svg>
+                    </div>
+                    <div class="rcd-hero__text">
+                        <h2 class="rcd-hero__title">Reconciliation Chunk</h2>
+                        <p class="rcd-hero__subtitle">
+                            <t t-esc="chunkLabel"/>
+                            <t t-if="state.chunk.store_filter_key">
+                                <span class="rcd-hero__filter">· <t t-esc="state.chunk.store_filter_key"/></span>
+                            </t>
+                        </p>
+                    </div>
+                </div>
+                <div class="rcd-hero__badges">
+                    <span class="rcd-badge" t-attf-class="rcd-badge rcd-badge--#{state.chunk.state}">
+                        <span class="rcd-badge__dot"/>
+                        <span t-esc="statusLabel"/>
+                    </span>
+                    <span class="rcd-count-badge">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <span t-esc="branchCount"/>
+                    </span>
+                </div>
+            </section>
+
+            <section class="rcd-section rcd-summary">
+                <div class="rcd-info-grid">
+                    <div class="rcd-info-card">
+                        <div class="rcd-info-card__icon rcd-info-card__icon--blue">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                <line x1="16" y1="2" x2="16" y2="6"/>
+                                <line x1="8" y1="2" x2="8" y2="6"/>
+                                <line x1="3" y1="10" x2="21" y2="10"/>
+                            </svg>
+                        </div>
+                        <div class="rcd-info-card__body">
+                            <div class="rcd-info-card__label">Date Range</div>
+                            <div class="rcd-info-card__value rcd-info-card__value--date">
+                                <span class="rcd-info-card__date" t-esc="formatDate(state.chunk.date_from)"/>
+                                <span class="rcd-info-card__arrow">↓</span>
+                                <span class="rcd-info-card__date" t-esc="formatDate(state.chunk.date_to)"/>
+                            </div>
+                            <div class="rcd-info-card__helper">Chunk processing window</div>
+                        </div>
+                    </div>
+
+                    <div class="rcd-info-card">
+                        <div class="rcd-info-card__icon rcd-info-card__icon--emerald">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                        </div>
+                        <div class="rcd-info-card__body">
+                            <div class="rcd-info-card__label">Branches</div>
+                            <div class="rcd-info-card__value rcd-info-card__value--num" t-esc="branchCount"/>
+                            <div class="rcd-info-card__helper">Included branch scope</div>
+                        </div>
+                    </div>
+
+                    <div class="rcd-info-card">
+                        <div class="rcd-info-card__icon rcd-info-card__icon--violet">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="4" y1="9" x2="20" y2="9"/>
+                                <line x1="4" y1="15" x2="20" y2="15"/>
+                                <line x1="10" y1="3" x2="8" y2="21"/>
+                                <line x1="16" y1="3" x2="14" y2="21"/>
+                            </svg>
+                        </div>
+                        <div class="rcd-info-card__body">
+                            <div class="rcd-info-card__label">Sequence</div>
+                            <div class="rcd-info-card__value rcd-info-card__value--num" t-esc="state.chunk.sequence"/>
+                            <div class="rcd-info-card__helper">Execution order</div>
+                        </div>
+                    </div>
+
+                    <div class="rcd-info-card">
+                        <div class="rcd-info-card__icon" t-attf-class="rcd-info-card__icon rcd-info-card__icon--#{state.chunk.state}">
+                            <t t-if="state.chunk.state == 'done'">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                            </t>
+                            <t t-elif="state.chunk.state == 'running'">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="23 4 23 10 17 10"/>
+                                    <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                                </svg>
+                            </t>
+                            <t t-elif="state.chunk.state == 'failed'">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                            </t>
+                            <t t-elif="state.chunk.state == 'cancelled'">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="15" y1="9" x2="9" y2="15"/>
+                                    <line x1="9" y1="9" x2="15" y2="15"/>
+                                </svg>
+                            </t>
+                            <t t-else="">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <polyline points="12 6 12 12 16 14"/>
+                                </svg>
+                            </t>
+                        </div>
+                        <div class="rcd-info-card__body">
+                            <div class="rcd-info-card__label">State</div>
+                            <div class="rcd-info-card__value">
+                                <span class="rcd-badge" t-attf-class="rcd-badge rcd-badge--#{state.chunk.state}">
+                                    <span class="rcd-badge__dot"/>
+                                    <span t-esc="statusLabel"/>
+                                </span>
+                            </div>
+                            <div class="rcd-info-card__helper">Current chunk status</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="rcd-section rcd-chips" t-if="branchCount &gt; 0">
+                <div class="rcd-chips__header">
+                    <div class="rcd-chips__title-area">
+                        <svg class="rcd-chips__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        <span class="rcd-chips__title">Branches</span>
+                        <span class="rcd-chips__count" t-esc="branchCount"/>
+                    </div>
+                </div>
+                <div class="rcd-chips__list">
+                    <t t-foreach="visibleChips" t-as="store" t-key="store.id">
+                        <span class="rcd-chip">
+                            <svg class="rcd-chip__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                            <span class="rcd-chip__name" t-esc="store.name || store.code"/>
+                        </span>
+                    </t>
+                    <t t-if="remainingChipCount &gt; 0">
+                        <span class="rcd-chip rcd-chip--more">+<t t-esc="remainingChipCount"/> more</span>
+                    </t>
+                </div>
+            </section>
+
+            <section class="rcd-section rcd-search" t-if="branchCount &gt; 4">
+                <svg class="rcd-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input type="text"
+                       class="rcd-search__input"
+                       placeholder="Search branches by name or code..."
+                       t-on-input="onBranchSearch"
+                       t-att-value="state.branchSearch"/>
+                <button class="rcd-search__clear"
+                        t-att-class="'rcd-search__clear' + (state.branchSearch ? ' rcd-search__clear--visible' : '')"
+                        t-on-click="clearBranchSearch"
+                        type="button"
+                        aria-label="Clear search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </section>
+
+            <section class="rcd-section rcd-table-section">
+                <div class="rcd-table-section__head">
+                    <div>
+                        <div class="rcd-table-section__title">Branches Table</div>
+                        <div class="rcd-table-section__subtitle">Click a branch row to inspect its store profile.</div>
+                    </div>
+                    <span class="rcd-table-section__count"><t t-esc="filteredStores.length"/> shown</span>
+                </div>
+
+                <div class="rcd-table-section__wrap">
+                    <t t-if="branchCount &gt; 0">
+                        <table class="rcd-table">
+                            <thead>
+                                <tr>
+                                    <th class="rcd-table__th--code">Code</th>
+                                    <th>Branch Name</th>
+                                    <th class="rcd-table__th--serial">E-Plus ID</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="filteredStores" t-as="store" t-key="store.id">
+                                    <tr class="rcd-table__row rcd-table__row--clickable" t-on-click="onBranchClick" t-att-data-store-id="store.id">
+                                        <td>
+                                            <span class="rcd-table__code" t-esc="store.code || store.eplus_serial || '—'"/>
+                                        </td>
+                                        <td>
+                                            <div class="rcd-table__name-wrap">
+                                                <span class="rcd-table__name-icon">
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                                        <polyline points="9 22 9 12 15 12 15 22"/>
+                                                    </svg>
+                                                </span>
+                                                <span class="rcd-table__name" t-esc="store.name"/>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="rcd-table__serial" t-esc="store.eplus_serial || '—'"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </t>
+
+                    <t t-if="branchCount &gt; 0 &amp;&amp; filteredStores.length === 0">
+                        <div class="rcd-table-section__empty">
+                            <svg class="rcd-table-section__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <div class="rcd-table-section__empty-title">No matching branches</div>
+                            <div class="rcd-table-section__empty-desc">Try adjusting your search term to find what you are looking for.</div>
+                        </div>
+                    </t>
+
+                    <t t-if="branchCount === 0">
+                        <div class="rcd-table-section__empty">
+                            <svg class="rcd-table-section__empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                                <polyline points="9 22 9 12 15 12 15 22"/>
+                            </svg>
+                            <div class="rcd-table-section__empty-title">No branches assigned</div>
+                            <div class="rcd-table-section__empty-desc">This reconciliation task does not include any branches in its scope.</div>
+                        </div>
+                    </t>
+                </div>
+            </section>
+
+            <div class="rcd-perf" t-if="hasPerformance">
+                <div class="rcd-perf__head">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <span>Performance</span>
+                </div>
+                <div class="rcd-perf__grid">
+                    <div class="rcd-perf__item">
+                        <span class="rcd-perf__label">Source Fetch</span>
+                        <span class="rcd-perf__value" t-esc="fmtDuration(state.chunk.source_duration_ms)"/>
+                    </div>
+                    <div class="rcd-perf__item">
+                        <span class="rcd-perf__label">Persistence</span>
+                        <span class="rcd-perf__value" t-esc="fmtDuration(state.chunk.persistence_duration_ms)"/>
+                    </div>
+                    <div class="rcd-perf__item rcd-perf__item--total">
+                        <span class="rcd-perf__label">Total</span>
+                        <span class="rcd-perf__value rcd-perf__value--total" t-esc="formattedTotalTime"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="rcd-error" t-if="hasError">
+                <div class="rcd-error__head">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span>Error Details</span>
+                </div>
+                <pre class="rcd-error__msg" t-esc="state.chunk.error_message"/>
+            </div>
+
+        </t>
+
+        <t t-set-slot="footer">
+            <div class="rcd-footer">
+                <button class="rcd-btn rcd-btn--primary" t-on-click="close">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                    Close
+                </button>
+            </div>
+        </t>
+
+    </Dialog>
+</t>
+
+</templates>

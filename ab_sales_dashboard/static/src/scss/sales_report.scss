@@ -437,6 +437,106 @@
     &__empty { text-align: center; color: var(--sd-text-dim); padding: var(--rr-space-xl) var(--rr-space-base) !important; font-style: italic; }
 }
 
+.ab-sales-report .rr-table-wrap--activity {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
+}
+
+.ab-sales-report .rr-table--activity {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+    margin: 0;
+
+    thead {
+        background: transparent;
+
+        th {
+            background: transparent;
+            border: none;
+            padding: 8px var(--rr-space-base) 4px;
+        }
+    }
+
+    tbody {
+        tr {
+            position: relative;
+            background: var(--sd-bg-card-solid);
+            border-radius: 12px;
+            box-shadow: var(--sd-shadow-sm);
+            outline: 1px solid var(--sd-table-border);
+            outline-offset: -1px;
+            transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.15s ease;
+
+            &:nth-child(even) {
+                background: var(--sd-bg-card-solid);
+            }
+
+            &:hover {
+                background: var(--sd-bg-card-solid);
+                outline-color: var(--sd-accent-cyan);
+                box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
+                transform: translateY(-1px);
+                z-index: 1;
+            }
+
+            &:hover > td:first-child {
+                border-left-color: var(--sd-accent-cyan);
+            }
+        }
+
+        td {
+            padding: 14px var(--rr-space-base);
+            background: inherit;
+            border: none;
+            border-left: 3px solid transparent;
+
+            &:first-child {
+                border-radius: 12px 0 0 12px;
+                padding-left: 17px;
+            }
+
+            &:last-child {
+                border-radius: 0 12px 12px 0;
+                padding-right: 20px;
+            }
+        }
+    }
+}
+
+.ab-sales-report.sd-theme-dark .rr-table--activity {
+    thead {
+        background: var(--sd-bg-elevated);
+
+        th {
+            background: var(--sd-bg-elevated);
+        }
+    }
+
+    thead th,
+    thead th *,
+    tbody td,
+    tbody td * {
+        color: #fff !important;
+    }
+
+    tbody tr,
+    tbody tr:nth-child(even),
+    tbody tr:hover {
+        background: var(--sd-bg-card-solid);
+    }
+
+    tbody tr:hover {
+        outline-color: var(--sd-accent-cyan);
+        box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
+    }
+
+    tbody tr:hover > td {
+        background: inherit;
+    }
+}
+
 // ── Bars ───────────────────────────────────────────────
 .ab-sales-report .rr-bar {
     width: 100%;

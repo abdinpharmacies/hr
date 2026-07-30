@@ -5,11 +5,10 @@ import { registry } from "@web/core/registry";
 import { useService } from "@web/core/utils/hooks";
 import { _t } from "@web/core/l10n/translation";
 import { money, number, decimal, pct } from "./utils/formatters.js";
-import { ThemeToggle } from "./components/theme_toggle.js";
 
 const THEME_KEY = "ab_sales_dashboard.theme";
 
-const COLLECTION_LABELS = { cash: "Cash", delivery: "Delivery", contract: "Contracts", offer: "Offers" };
+const COLLECTION_LABELS = { cash: _t("Cash"), delivery: _t("Delivery"), contract: _t("Contracts"), offer: _t("Offers") };
 const COLLECTION_COLORS = { cash: "emerald", delivery: "blue", contract: "violet", offer: "amber" };
 
 // ─── Report Header ───────────────────────────────────────
@@ -19,8 +18,8 @@ class ReportHeader extends Component {
             <div class="rr-header__brand">
                 <span class="rr-header__icon"><i class="fa fa-bar-chart"/></span>
                 <div class="rr-header__titles">
-                    <span class="rr-header__title">Sales Performance Report</span>
-                    <span class="rr-header__subtitle">Abdin Pharmacies</span>
+                    <span class="rr-header__title" t-esc="_t('Sales Performance Report')"/>
+                    <span class="rr-header__subtitle" t-esc="_t('Abdin Pharmacies')"/>
                 </div>
             </div>
             <div class="rr-header__meta">
@@ -34,15 +33,14 @@ class ReportHeader extends Component {
                 </span>
                 <span class="rr-chip rr-chip--ok" t-if="props.data &amp;&amp; props.data.has_snapshot">
                     <i class="fa fa-check-circle"/>
-                    Live Data
+                    <t t-esc="_t('Live Data')"/>
                 </span>
                 <span class="rr-chip rr-chip--warn" t-else="">
                     <i class="fa fa-exclamation-triangle"/>
-                    No Snapshot
+                    <t t-esc="_t('No Snapshot')"/>
                 </span>
             </div>
             <div class="rr-header__actions">
-                <ThemeToggle theme="props.theme" onToggle="props.onToggleTheme"/>
                 <button class="rr-btn" t-on-click="props.onRefresh" t-att-disabled="props.loading">
                     <i t-att-class="props.loading ? 'fa fa-spinner fa-spin' : 'fa fa-refresh'"/>
                 </button>
@@ -52,7 +50,7 @@ class ReportHeader extends Component {
             </div>
         </div>
     `;
-    static components = { ThemeToggle };
+    _t = _t;
 }
 
 // ─── KPI Card ────────────────────────────────────────────
@@ -73,29 +71,30 @@ class ChapterTabs extends Component {
             <button class="rr-chapters__tab"
                     t-att-class="{'rr-chapters__tab--active': props.active === 'collection'}"
                     t-on-click="() => props.onSelect('collection')">
-                <i class="fa fa-credit-card"/><t t-esc="'Collection'"/>
+                <i class="fa fa-credit-card"/><t t-esc="_t('Collection')"/>
                 <span class="rr-chapters__badge" t-if="props.counts.collection" t-esc="props.counts.collection"/>
             </button>
             <button class="rr-chapters__tab"
                     t-att-class="{'rr-chapters__tab--active': props.active === 'users'}"
                     t-on-click="() => props.onSelect('users')">
-                <i class="fa fa-users"/><t t-esc="'Users'"/>
+                <i class="fa fa-users"/><t t-esc="_t('Users')"/>
                 <span class="rr-chapters__badge" t-if="props.counts.users" t-esc="props.counts.users"/>
             </button>
             <button class="rr-chapters__tab"
                     t-att-class="{'rr-chapters__tab--active': props.active === 'items'}"
                     t-on-click="() => props.onSelect('items')">
-                <i class="fa fa-cube"/><t t-esc="'Items'"/>
+                <i class="fa fa-cube"/><t t-esc="_t('Items')"/>
                 <span class="rr-chapters__badge" t-if="props.counts.items" t-esc="props.counts.items"/>
             </button>
             <button class="rr-chapters__tab"
                     t-att-class="{'rr-chapters__tab--active': props.active === 'invoices'}"
                     t-on-click="() => props.onSelect('invoices')">
-                <i class="fa fa-file-text-o"/><t t-esc="'Invoices'"/>
+                <i class="fa fa-file-text-o"/><t t-esc="_t('Invoices')"/>
                 <span class="rr-chapters__badge" t-if="props.counts.invoices" t-esc="props.counts.invoices"/>
             </button>
         </nav>
     `;
+    _t = _t;
 }
 
 // ─── Section Header ──────────────────────────────────────
@@ -112,15 +111,15 @@ class SectionHeader extends Component {
 // ─── Collection Section ──────────────────────────────────
 class CollectionSection extends Component {
     static template = xml`
-        <SectionHeader title="'Collection Analysis'" meta="props.rows.length + ' categories'"/>
+        <SectionHeader title="_t('Collection Analysis')" meta="props.rows.length + ' ' + _t('categories')"/>
         <div class="rr-table-wrap">
             <table class="rr-table">
                 <thead><tr>
-                    <th>Category</th>
-                    <th class="rr-table__r">Invoices</th>
-                    <th class="rr-table__r">Total Sales</th>
-                    <th class="rr-table__r">% of Total</th>
-                    <th class="rr-table__bar-h">Distribution</th>
+                    <th t-esc="_t('Category')"/>
+                    <th class="rr-table__r" t-esc="_t('Invoices')"/>
+                    <th class="rr-table__r" t-esc="_t('Total Sales')"/>
+                    <th class="rr-table__r" t-esc="_t('% of Total')"/>
+                    <th class="rr-table__bar-h" t-esc="_t('Distribution')"/>
                 </tr></thead>
                 <tbody>
                     <t t-foreach="props.rows" t-as="row" t-key="row.category">
@@ -138,7 +137,7 @@ class CollectionSection extends Component {
                         </tr>
                     </t>
                     <t t-if="!props.rows.length">
-                        <tr><td colspan="5" class="rr-table__empty">No collection data available.</td></tr>
+                        <tr><td colspan="5" class="rr-table__empty" t-esc="_t('No collection data available.')"/></tr>
                     </t>
                 </tbody>
             </table>
@@ -148,21 +147,22 @@ class CollectionSection extends Component {
     labels = COLLECTION_LABELS;
     colors = COLLECTION_COLORS;
     fmt = { num: number, money: money, pct: pct };
+    _t = _t;
 }
 
 // ─── Users Section ───────────────────────────────────────
 class UsersSection extends Component {
     static template = xml`
-        <SectionHeader title="'Sales by User'" meta="props.rows.length + ' users'"/>
+        <SectionHeader title="_t('Sales by User')" meta="props.rows.length + ' ' + _t('users')"/>
         <div class="rr-table-wrap">
             <table class="rr-table">
                 <thead><tr>
                     <th class="rr-table__rank-h">#</th>
-                    <th>User</th>
-                    <th class="rr-table__r">Invoices</th>
-                    <th class="rr-table__r">Total Sales</th>
-                    <th class="rr-table__r">% of Total</th>
-                    <th class="rr-table__bar-h">Share</th>
+                    <th t-esc="_t('User')"/>
+                    <th class="rr-table__r" t-esc="_t('Invoices')"/>
+                    <th class="rr-table__r" t-esc="_t('Total Sales')"/>
+                    <th class="rr-table__r" t-esc="_t('% of Total')"/>
+                    <th class="rr-table__bar-h" t-esc="_t('Share')"/>
                 </tr></thead>
                 <tbody>
                     <t t-foreach="props.rows" t-as="row" t-key="row.employee_name">
@@ -178,7 +178,7 @@ class UsersSection extends Component {
                         </tr>
                     </t>
                     <t t-if="!props.rows.length">
-                        <tr><td colspan="6" class="rr-table__empty">No user data available.</td></tr>
+                        <tr><td colspan="6" class="rr-table__empty" t-esc="_t('No user data available.')"/></tr>
                     </t>
                 </tbody>
             </table>
@@ -186,22 +186,23 @@ class UsersSection extends Component {
     `;
     static components = { SectionHeader };
     fmt = { num: number, money: money, pct: pct };
+    _t = _t;
 }
 
 // ─── Items Section ───────────────────────────────────────
 class ItemsSection extends Component {
     static template = xml`
-        <SectionHeader title="'Top Sold Items'" meta="props.rows.length + ' items'"/>
-        <div class="rr-table-wrap">
-            <table class="rr-table">
+        <SectionHeader title="_t('Top Sold Items')" meta="props.rows.length + ' ' + _t('items')"/>
+        <div class="rr-table-wrap rr-table-wrap--activity">
+            <table class="rr-table rr-table--activity">
                 <thead><tr>
                     <th class="rr-table__rank-h">#</th>
-                    <th>Code</th>
-                    <th>Item Name</th>
-                    <th class="rr-table__r">Sale Times</th>
-                    <th class="rr-table__r">Sold Qty</th>
-                    <th class="rr-table__r">Total Sales</th>
-                    <th class="rr-table__r">Balance</th>
+                    <th t-esc="_t('Code')"/>
+                    <th t-esc="_t('Item Name')"/>
+                    <th class="rr-table__r" t-esc="_t('Sale Times')"/>
+                    <th class="rr-table__r" t-esc="_t('Sold Qty')"/>
+                    <th class="rr-table__r" t-esc="_t('Total Sales')"/>
+                    <th class="rr-table__r" t-esc="_t('Balance')"/>
                 </tr></thead>
                 <tbody>
                     <t t-foreach="props.rows" t-as="row" t-key="row_index">
@@ -216,7 +217,7 @@ class ItemsSection extends Component {
                         </tr>
                     </t>
                     <t t-if="!props.rows.length">
-                        <tr><td colspan="7" class="rr-table__empty">No item data available.</td></tr>
+                        <tr><td colspan="7" class="rr-table__empty" t-esc="_t('No item data available.')"/></tr>
                     </t>
                 </tbody>
             </table>
@@ -224,20 +225,21 @@ class ItemsSection extends Component {
     `;
     static components = { SectionHeader };
     fmt = { num: number, money: money, pct: pct };
+    _t = _t;
 }
 
 // ─── Invoices Section ────────────────────────────────────
 class InvoicesSection extends Component {
     static template = xml`
-        <SectionHeader title="'Invoice Details'" meta="props.rows.length + ' invoices'"/>
+        <SectionHeader title="_t('Invoice Details')" meta="props.rows.length + ' ' + _t('invoices')"/>
         <div class="rr-table-wrap">
             <table class="rr-table">
                 <thead><tr>
-                    <th>Invoice #</th>
-                    <th>Date</th>
-                    <th>Customer</th>
-                    <th class="rr-table__r">Total</th>
-                    <th class="rr-table__r">Items</th>
+                    <th t-esc="_t('Invoice #')"/>
+                    <th t-esc="_t('Date')"/>
+                    <th t-esc="_t('Customer')"/>
+                    <th class="rr-table__r" t-esc="_t('Total')"/>
+                    <th class="rr-table__r" t-esc="_t('Items')"/>
                 </tr></thead>
                 <tbody>
                     <t t-foreach="props.rows" t-as="row" t-key="row_index">
@@ -250,7 +252,7 @@ class InvoicesSection extends Component {
                         </tr>
                     </t>
                     <t t-if="!props.rows.length">
-                        <tr><td colspan="5" class="rr-table__empty">No invoice data available.</td></tr>
+                        <tr><td colspan="5" class="rr-table__empty" t-esc="_t('No invoice data available.')"/></tr>
                     </t>
                 </tbody>
             </table>
@@ -258,6 +260,7 @@ class InvoicesSection extends Component {
     `;
     static components = { SectionHeader };
     fmt = { num: number, money: money };
+    _t = _t;
 }
 
 // ─── Report Footer ───────────────────────────────────────
@@ -265,19 +268,20 @@ class ReportFooter extends Component {
     static template = xml`
         <footer class="rr-footer">
             <div class="rr-footer__col">
-                <span class="rr-footer__lbl">Data Source</span>
-                <span t-esc="props.source || 'N/A'"/>
+                <span class="rr-footer__lbl" t-esc="_t('Data Source')"/>
+                <span t-esc="props.source || _t('N/A')"/>
             </div>
             <div class="rr-footer__col rr-footer__col--center">
-                <span class="rr-footer__lbl">Generated</span>
-                <span t-esc="props.refreshed || 'N/A'"/>
+                <span class="rr-footer__lbl" t-esc="_t('Generated')"/>
+                <span t-esc="props.refreshed || _t('N/A')"/>
             </div>
             <div class="rr-footer__col rr-footer__col--right">
-                <span class="rr-footer__lbl">Snapshot</span>
-                <span t-esc="props.snapshotId || 'N/A'"/>
+                <span class="rr-footer__lbl" t-esc="_t('Snapshot')"/>
+                <span t-esc="props.snapshotId || _t('N/A')"/>
             </div>
         </footer>
     `;
+    _t = _t;
 }
 
 // ─── Main Report Action ──────────────────────────────────
@@ -323,15 +327,6 @@ class SalesReportAction extends Component {
         catch { return "dark"; }
     }
 
-    onToggleTheme(t) {
-        if (t === this.state.theme) return;
-        const el = this.rootRef.el;
-        if (el) el.classList.add("rr-transition");
-        this.state.theme = t;
-        try { localStorage.setItem(THEME_KEY, t); } catch {}
-        if (el) setTimeout(() => el.classList.remove("rr-transition"), 400);
-    }
-
     async onRefresh() {
         this.state.loading = true;
         await this._load();
@@ -368,6 +363,7 @@ class SalesReportAction extends Component {
     n(name) { return number(this.state.data?.[name]); }
     d(name) { return decimal(this.state.data?.[name]); }
     p(name) { return pct(this.state.data?.[name]); }
+    _t = _t;
 }
 
 SalesReportAction.template = xml`
@@ -376,45 +372,44 @@ SalesReportAction.template = xml`
     <t t-if="state.loading">
         <div class="rr-loading">
             <i class="fa fa-spinner fa-spin fa-3x"/>
-            <span>Loading report...</span>
+            <span t-esc="_t('Loading report...')"/>
         </div>
     </t>
 
     <t t-elif="!state.data || state.data.error">
         <div class="rr-empty">
             <i class="fa fa-exclamation-triangle fa-3x"/>
-            <div class="rr-empty__title">No Report Data</div>
-            <div class="rr-empty__text">No snapshot found.</div>
-            <button class="rr-btn rr-btn--primary" t-on-click="onBack">Back to Reports</button>
+            <div class="rr-empty__title" t-esc="_t('No Report Data')"/>
+            <div class="rr-empty__text" t-esc="_t('No snapshot found.')"/>
+            <button class="rr-btn rr-btn--primary" t-on-click="onBack" t-esc="_t('Back to Reports')"/>
         </div>
     </t>
 
     <t t-else="">
-        <ReportHeader data="state.data" theme="state.theme" loading="state.loading"
-                      onToggleTheme="(t) => this.onToggleTheme(t)"
+        <ReportHeader data="state.data" loading="state.loading"
                       onRefresh="() => this.onRefresh()"
                       onBack="() => this.onBack()"/>
 
         <main class="rr-body">
             <section class="rr-summary">
                 <div class="rr-summary__head">
-                    <span class="rr-summary__title">Executive Summary</span>
+                    <span class="rr-summary__title" t-esc="_t('Executive Summary')"/>
                     <span class="rr-summary__rule"/>
                 </div>
                 <div class="rr-kpi-grid">
-                    <ReportKpi label="'Total Sales'" value="f('total_sales')" variant="'primary'"/>
-                    <ReportKpi label="'Invoices'" value="n('invoice_count')"/>
-                    <ReportKpi label="'Units Sold'" value="n('total_units_sold')"/>
-                    <ReportKpi label="'Unique Products'" value="n('unique_products_sold')"/>
-                    <ReportKpi label="'Avg. Daily Sales'" value="f('avg_daily_sales')"
-                               sub="'Prev: ' + f('prev_avg_daily_sales')"/>
-                    <ReportKpi label="'Growth'" value="p('avg_daily_growth_pct')"
-                               sub="'vs previous period'"/>
-                    <ReportKpi label="'Customer Bearing'" value="p('bearing_pct')" variant="'violet'"/>
-                    <ReportKpi label="'Items / Invoice'" value="d('avg_products_per_invoice')"/>
-                    <ReportKpi label="'Active Stores'" value="n('stores_with_sales')"/>
-                    <ReportKpi label="'Product Sales'" value="f('total_product_sales')"/>
-                    <ReportKpi label="'Products / Store'" value="d('avg_products_sold_per_store')"/>
+                    <ReportKpi label="_t('Total Sales')" value="f('total_sales')" variant="'primary'"/>
+                    <ReportKpi label="_t('Invoices')" value="n('invoice_count')"/>
+                    <ReportKpi label="_t('Units Sold')" value="n('total_units_sold')"/>
+                    <ReportKpi label="_t('Unique Products')" value="n('unique_products_sold')"/>
+                    <ReportKpi label="_t('Avg. Daily Sales')" value="f('avg_daily_sales')"
+                               sub="_t('Prev:') + ' ' + f('prev_avg_daily_sales')"/>
+                    <ReportKpi label="_t('Growth')" value="p('avg_daily_growth_pct')"
+                               sub="_t('vs previous period')"/>
+                    <ReportKpi label="_t('Customer Bearing')" value="p('bearing_pct')" variant="'violet'"/>
+                    <ReportKpi label="_t('Items / Invoice')" value="d('avg_products_per_invoice')"/>
+                    <ReportKpi label="_t('Active Stores')" value="n('stores_with_sales')"/>
+                    <ReportKpi label="_t('Product Sales')" value="f('total_product_sales')"/>
+                    <ReportKpi label="_t('Products / Store')" value="d('avg_products_sold_per_store')"/>
                 </div>
             </section>
 

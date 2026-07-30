@@ -309,6 +309,19 @@
     50% { box-shadow: 0 0 24px var(--sd-glow-cyan); }
 }
 
+@keyframes sd-completePulse {
+    from {
+        opacity: 0;
+        transform: scale(0.82);
+        box-shadow: 0 0 0 var(--sd-glow-emerald);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+        box-shadow: 0 0 14px var(--sd-glow-emerald);
+    }
+}
+
 .sd-animate-in {
     animation: sd-fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -621,6 +634,26 @@
     border-radius: 999px;
     transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     box-shadow: 0 0 12px var(--sd-glow-cyan);
+}
+
+.ab_sales_dashboard__cache_progress_complete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 42px;
+    height: 24px;
+    padding: 0 9px;
+    color: var(--sd-accent-emerald);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid var(--sd-glow-emerald);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: 0;
+    box-shadow: 0 0 14px var(--sd-glow-emerald);
+    animation: sd-completePulse 0.8s ease-out both;
 }
 
 // ─── KPI Cards ─────────────────────────────────────────────

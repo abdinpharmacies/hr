@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { Component, xml, markup } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 import { money, number } from "../utils/formatters.js";
 
 export class DataTable extends Component {
@@ -29,7 +30,7 @@ export class DataTable extends Component {
             </table>
             <div t-if="!props.rows.length &amp;&amp; !props.loading" class="sd-empty-state">
                 <i class="fa fa-inbox"/>
-                <span>No records found.</span>
+                <span t-esc="_t('No records found.')"/>
             </div>
         </div>
     `;
@@ -59,6 +60,8 @@ export class DataTable extends Component {
         }
         return value !== false && value !== null && value !== undefined ? String(value) : (col.fallback || "-");
     }
+
+    _t = _t;
 }
 
 DataTable.props = {

@@ -321,7 +321,7 @@
             <field name="name">ab.sales.dashboard.product.sales.report.list</field>
             <field name="model">ab.sales.dashboard.product.sales.report</field>
             <field name="arch" type="xml">
-                <list string="Product Sales Report" create="0" edit="0" delete="0">
+                <list string="Product Sales Report" class="ab_product_sales_list" create="0" edit="0" delete="0">
                     <field name="report_date"/>
                     <field name="store_id"/>
                     <field name="item_eplus_id"/>
@@ -393,7 +393,7 @@
             <field name="model">ab.sales.dashboard.reconciliation.job</field>
             <field name="arch" type="xml">
                 <list string="Reconciliation Jobs" class="ab-recon-list" decoration-danger="state == 'failed'" decoration-warning="state == 'partial'" decoration-success="state == 'done'" decoration-info="state == 'running'" decoration-muted="state == 'cancelled'">
-                    <field name="name" optional="show"/>
+                    <field name="display_name" string="Job" optional="show"/>
                     <field name="state" optional="show"/>
                     <field name="store_filter_key" optional="show"/>
                     <field name="date_from" optional="show"/>
@@ -418,71 +418,68 @@
             <field name="arch" type="xml">
                 <form string="Reconciliation Job" class="ab-recon-form">
                     <header>
-                        <div class="rcon-form-actions">
-                            <button name="action_analyze_coverage" type="object" string="Analyze Coverage" class="btn-primary" invisible="state == 'running'"/>
-                            <button name="action_start_reconciliation" type="object" string="Start Reconciliation" class="btn-primary" invisible="state not in ('ready', 'partial', 'failed')"/>
-                            <button name="action_retry_failed_chunks" type="object" string="Retry Failed" class="btn-secondary" invisible="state not in ('partial', 'failed')"/>
-                            <button name="action_cancel" type="object" string="Cancel" class="btn-danger" invisible="state in ('done', 'cancelled')"/>
-                        </div>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,analyzing,ready,running,partial,done"/>
+                        <button name="action_analyze_coverage" type="object" string="Analyze Coverage" class="btn-primary" display="always" invisible="state == 'running'"/>
+                        <button name="action_start_reconciliation" type="object" string="Start Reconciliation" class="btn-primary" display="always" invisible="state not in ('ready', 'partial', 'failed')"/>
+                        <button name="action_retry_failed_chunks" type="object" string="Retry Failed" class="btn-secondary" display="always" invisible="state not in ('partial', 'failed')"/>
+                        <button name="action_cancel" type="object" string="Cancel" class="btn-danger" display="always" invisible="state in ('done', 'cancelled')"/>
+                        <field name="state" widget="statusbar" statusbar_visible="draft,analyzing,ready,running,partial,done,failed,cancelled"/>
                     </header>
                     <sheet>
                         <div class="rcon-form-header">
                             <div class="rcon-form-header__row">
-                                <h2 class="rcon-form-header__title">
-                                    <field name="name" readonly="1" nolabel="1" class="w-100"/>
-                                </h2>
+                                <div class="rcon-form-header__title-wrap">
+	                                    <field name="display_name" readonly="1" nolabel="1" class="rcon-form-header__title-field"/>
+                                </div>
                                 <div class="rcon-form-header__meta">
-                                    <span class="rcon-form-header__meta-item">
-                                        <i class="fa fa-user"/> <field name="created_by" readonly="1" nolabel="1"/>
+                                    <span class="rcon-form-header__meta-pill">
+                                        <i class="fa fa-user-circle" title="Created by"/> <field name="created_by" readonly="1" nolabel="1"/>
                                     </span>
-                                    <span class="rcon-form-header__meta-item">
-                                        <i class="fa fa-calendar"/> <field name="date_from" readonly="1" nolabel="1"/> &amp;rarr; <field name="date_to" readonly="1" nolabel="1"/>
-                                    </span>
-                                    <span class="rcon-form-header__meta-item">
-                                        <i class="fa fa-building-o"/> <field name="store_filter_key" readonly="1" nolabel="1"/>
+                                    <span class="rcon-form-header__meta-pill">
+                                        <i class="fa fa-calendar" title="Date from"/> <field name="date_from" readonly="1" nolabel="1"/>
+                                        <span class="rcon-separator"><i class="fa fa-arrow-right" title="to"/></span>
+                                        <field name="date_to" readonly="1" nolabel="1"/>
                                     </span>
                                 </div>
                             </div>
                         </div>
                         <div class="rcon-metrics-row">
                             <div class="rcon-metric">
-                                <div class="rcon-kpi__icon rcon-accent--blue" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-calendar-check-o"/></div>
+                                <div class="rcon-metric__icon rcon-metric__icon--blue"><i class="fa fa-calendar-check-o" title="Processed"/></div>
                                 <div class="rcon-metric__body">
                                     <div class="rcon-metric__label">Total Days</div>
                                     <div class="rcon-metric__value"><field name="total_branch_days" readonly="1" nolabel="1"/></div>
                                 </div>
                             </div>
                             <div class="rcon-metric">
-                                <div class="rcon-kpi__icon rcon-accent--emerald" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-check-circle"/></div>
+                                <div class="rcon-metric__icon rcon-metric__icon--emerald"><i class="fa fa-check-circle" title="Completed"/></div>
                                 <div class="rcon-metric__body">
                                     <div class="rcon-metric__label">Covered</div>
                                     <div class="rcon-metric__value"><field name="covered_branch_days" readonly="1" nolabel="1"/></div>
                                 </div>
                             </div>
                             <div class="rcon-metric">
-                                <div class="rcon-kpi__icon rcon-accent--amber" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-exclamation-triangle"/></div>
+                                <div class="rcon-metric__icon rcon-metric__icon--amber"><i class="fa fa-exclamation-triangle" title="Last processed"/></div>
                                 <div class="rcon-metric__body">
                                     <div class="rcon-metric__label">Missing</div>
                                     <div class="rcon-metric__value"><field name="missing_branch_days" readonly="1" nolabel="1"/></div>
                                 </div>
                             </div>
                             <div class="rcon-metric">
-                                <div class="rcon-kpi__icon rcon-accent--cyan" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-cogs"/></div>
+                                <div class="rcon-metric__icon rcon-metric__icon--cyan"><i class="fa fa-cogs" title="Processing"/></div>
                                 <div class="rcon-metric__body">
                                     <div class="rcon-metric__label">Processed</div>
                                     <div class="rcon-metric__value"><field name="processed_branch_days" readonly="1" nolabel="1"/></div>
                                 </div>
                             </div>
                             <div class="rcon-metric">
-                                <div class="rcon-kpi__icon rcon-accent--rose" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-times-circle"/></div>
+                                <div class="rcon-metric__icon rcon-metric__icon--rose"><i class="fa fa-times-circle" title="Errors"/></div>
                                 <div class="rcon-metric__body">
                                     <div class="rcon-metric__label">Failed</div>
                                     <div class="rcon-metric__value"><field name="failed_branch_days" readonly="1" nolabel="1"/></div>
                                 </div>
                             </div>
                             <div class="rcon-metric">
-                                <div class="rcon-kpi__icon rcon-accent--violet" style="width:28px;height:28px;border-radius:6px;"><i class="fa fa-puzzle-piece"/></div>
+                                <div class="rcon-metric__icon rcon-metric__icon--violet"><i class="fa fa-puzzle-piece" title="Chunks"/></div>
                                 <div class="rcon-metric__body">
                                     <div class="rcon-metric__label">Chunks</div>
                                     <div class="rcon-metric__value"><field name="chunk_count" readonly="1" nolabel="1"/> / <field name="completed_chunk_count" readonly="1" nolabel="1"/></div>
@@ -503,20 +500,51 @@
                             <div class="rcon-error-panel__title">Last Error</div>
                             <div class="rcon-error-panel__message"><field name="last_error" readonly="1" nolabel="1"/></div>
                         </div>
-                        <div class="rcon-info-panel">
-                            <div class="rcon-info-panel__title">Schedule</div>
-                            <group>
-                                <group>
-                                    <field name="date_from" readonly="state != 'draft'"/>
-                                    <field name="date_to" readonly="state != 'draft'"/>
-                                    <field name="store_ids" widget="many2many_tags" readonly="state != 'draft'"/>
-                                </group>
-                                <group>
-                                    <field name="started_at" readonly="1"/>
-                                    <field name="completed_at" readonly="1"/>
-                                    <field name="last_processed_date" readonly="1"/>
-                                </group>
-                            </group>
+                        <div class="rcon-detail-card">
+                            <div class="rcon-detail-card__header">
+                                <span class="rcon-detail-card__icon"><i class="fa fa-clock-o" title="Schedule"/></span>
+                                <span class="rcon-detail-card__title">Schedule &amp; Timing</span>
+                            </div>
+                            <div class="rcon-detail-card__grid">
+                                <div class="rcon-detail-card__field">
+                                    <span class="rcon-detail-card__label">Date From</span>
+                                    <span class="rcon-detail-card__value"><field name="date_from" readonly="state != 'draft'" nolabel="1"/></span>
+                                </div>
+                                <div class="rcon-detail-card__field">
+                                    <span class="rcon-detail-card__label">Date To</span>
+                                    <span class="rcon-detail-card__value"><field name="date_to" readonly="state != 'draft'" nolabel="1"/></span>
+                                </div>
+                                <div class="rcon-detail-card__field" invisible="state == 'draft'">
+                                    <span class="rcon-detail-card__label">Started At</span>
+                                    <span class="rcon-detail-card__value"><field name="started_at" readonly="1" nolabel="1"/></span>
+                                </div>
+                                <div class="rcon-detail-card__field" invisible="state == 'draft'">
+                                    <span class="rcon-detail-card__label">Completed At</span>
+                                    <span class="rcon-detail-card__value"><field name="completed_at" readonly="1" nolabel="1"/></span>
+                                </div>
+                                <div class="rcon-detail-card__field" invisible="state == 'draft'">
+                                    <span class="rcon-detail-card__label">Last Processed</span>
+                                    <span class="rcon-detail-card__value"><field name="last_processed_date" readonly="1" nolabel="1"/></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="rcon-detail-card" invisible="state not in ('running', 'partial', 'done', 'failed')">
+                            <div class="rcon-detail-card__header">
+                                <span class="rcon-detail-card__icon"><i class="fa fa-building-o" title="Branch scope"/></span>
+                                <span class="rcon-detail-card__title">Branch Scope</span>
+                                <span class="rcon-detail-card__count">
+                                    <field name="store_count" readonly="1" nolabel="1"/>
+                                    <span>Branches</span>
+                                </span>
+                            </div>
+                            <div class="rcon-branch-scope">
+                                <field name="store_ids" invisible="1"/>
+                                <field name="store_filter_label" readonly="1" nolabel="1" class="rcon-branch-scope__list"/>
+                            </div>
+                            <div class="rcon-detail-card__field">
+                                <span class="rcon-detail-card__label">Filter Key</span>
+                                <span class="rcon-detail-card__value rcon-detail-card__value--mono"><field name="store_filter_key" readonly="1" nolabel="1"/></span>
+                            </div>
                         </div>
                         <notebook>
                             <page string="Chunks">
@@ -564,21 +592,23 @@
             <field name="name">ab.sales.dashboard.report.telemetry.list</field>
             <field name="model">ab.sales.dashboard.report.telemetry</field>
             <field name="arch" type="xml">
-                <list string="Reporting Analytics" create="0" edit="0" delete="0">
-                    <field name="event_date"/>
-                    <field name="event_type"/>
-                    <field name="report_mode"/>
-                    <field name="range_bucket"/>
-                    <field name="store_scope_bucket"/>
-                    <field name="coverage_state"/>
-                    <field name="requested_days"/>
-                    <field name="selected_store_count"/>
-                    <field name="duration_ms"/>
-                    <field name="result_size_bytes"/>
-                    <field name="unsupported_user_section" optional="hide"/>
-                    <field name="unsupported_item_section" optional="hide"/>
-                    <field name="unsupported_customer_section" optional="hide"/>
+                <list string="Reporting Analytics" class="ab_activity_list" create="0" edit="0" delete="0">
+                    <field name="event_type" optional="show"/>
+                    <field name="report_mode" optional="show"/>
+                    <field name="event_date" optional="show"/>
+                    <field name="coverage_state" optional="show"/>
+                    <field name="duration_ms" optional="show"/>
+                    <field name="result_size_bytes" optional="show"/>
+                    <field name="store_scope_bucket" optional="show"/>
+                    <field name="range_bucket" optional="show"/>
+                    <field name="requested_days" optional="hide"/>
+                    <field name="selected_store_count" optional="hide"/>
                     <field name="created_at" optional="hide"/>
+                    <field name="snapshot_used" optional="hide"/>
+                    <field name="daily_fact_used" optional="hide"/>
+                    <field name="item_fact_used" optional="hide"/>
+                    <field name="archive_used" optional="hide"/>
+                    <field name="product_report_used" optional="hide"/>
                 </list>
             </field>
         </record>
