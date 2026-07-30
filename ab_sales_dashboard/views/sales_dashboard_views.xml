@@ -531,7 +531,7 @@
                         <div class="rcon-detail-card" invisible="state not in ('running', 'partial', 'done', 'failed')">
                             <div class="rcon-detail-card__header">
                                 <span class="rcon-detail-card__icon"><i class="fa fa-building-o" title="Branch scope"/></span>
-                                <span class="rcon-detail-card__title">Branch Scope</span>
+                                <label for="store_filter_label" string="Branch Scope" class="rcon-detail-card__title"/>
                                 <span class="rcon-detail-card__count">
                                     <field name="store_count" readonly="1" nolabel="1"/>
                                     <span>Branches</span>

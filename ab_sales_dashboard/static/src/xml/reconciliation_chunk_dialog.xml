@@ -7,7 +7,7 @@
         <t t-if="state.loading">
             <div class="rcd-loading">
                 <div class="rcd-loading__spinner"/>
-                <span class="rcd-loading__text">Loading reconciliation task...</span>
+                <span class="rcd-loading__text" t-esc="_t('Loading reconciliation task...')"/>
             </div>
         </t>
 
@@ -34,7 +34,7 @@
                         </svg>
                     </div>
                     <div class="rcd-hero__text">
-                        <h2 class="rcd-hero__title">Reconciliation Chunk</h2>
+                        <h2 class="rcd-hero__title" t-esc="_t('Reconciliation Chunk')"/>
                         <p class="rcd-hero__subtitle">
                             <t t-esc="chunkLabel"/>
                             <t t-if="state.chunk.store_filter_key">
@@ -70,13 +70,13 @@
                             </svg>
                         </div>
                         <div class="rcd-info-card__body">
-                            <div class="rcd-info-card__label">Date Range</div>
+                            <div class="rcd-info-card__label" t-esc="_t('Date Range')"/>
                             <div class="rcd-info-card__value rcd-info-card__value--date">
                                 <span class="rcd-info-card__date" t-esc="formatDate(state.chunk.date_from)"/>
                                 <span class="rcd-info-card__arrow">↓</span>
                                 <span class="rcd-info-card__date" t-esc="formatDate(state.chunk.date_to)"/>
                             </div>
-                            <div class="rcd-info-card__helper">Chunk processing window</div>
+                            <div class="rcd-info-card__helper" t-esc="_t('Chunk processing window')"/>
                         </div>
                     </div>
 
@@ -88,9 +88,9 @@
                             </svg>
                         </div>
                         <div class="rcd-info-card__body">
-                            <div class="rcd-info-card__label">Branches</div>
+                            <div class="rcd-info-card__label" t-esc="_t('Branches')"/>
                             <div class="rcd-info-card__value rcd-info-card__value--num" t-esc="branchCount"/>
-                            <div class="rcd-info-card__helper">Included branch scope</div>
+                            <div class="rcd-info-card__helper" t-esc="_t('Included branch scope')"/>
                         </div>
                     </div>
 
@@ -104,9 +104,9 @@
                             </svg>
                         </div>
                         <div class="rcd-info-card__body">
-                            <div class="rcd-info-card__label">Sequence</div>
+                            <div class="rcd-info-card__label" t-esc="_t('Sequence')"/>
                             <div class="rcd-info-card__value rcd-info-card__value--num" t-esc="state.chunk.sequence"/>
-                            <div class="rcd-info-card__helper">Execution order</div>
+                            <div class="rcd-info-card__helper" t-esc="_t('Execution order')"/>
                         </div>
                     </div>
 
@@ -146,14 +146,14 @@
                             </t>
                         </div>
                         <div class="rcd-info-card__body">
-                            <div class="rcd-info-card__label">State</div>
+                            <div class="rcd-info-card__label" t-esc="_t('State')"/>
                             <div class="rcd-info-card__value">
                                 <span class="rcd-badge" t-attf-class="rcd-badge rcd-badge--#{state.chunk.state}">
                                     <span class="rcd-badge__dot"/>
                                     <span t-esc="statusLabel"/>
                                 </span>
                             </div>
-                            <div class="rcd-info-card__helper">Current chunk status</div>
+                            <div class="rcd-info-card__helper" t-esc="_t('Current chunk status')"/>
                         </div>
                     </div>
                 </div>
@@ -166,7 +166,7 @@
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                             <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
-                        <span class="rcd-chips__title">Branches</span>
+                        <span class="rcd-chips__title" t-esc="_t('Branches')"/>
                         <span class="rcd-chips__count" t-esc="branchCount"/>
                     </div>
                 </div>
@@ -181,7 +181,7 @@
                         </span>
                     </t>
                     <t t-if="remainingChipCount &gt; 0">
-                        <span class="rcd-chip rcd-chip--more">+<t t-esc="remainingChipCount"/> more</span>
+                        <span class="rcd-chip rcd-chip--more">+<t t-esc="remainingChipCount"/> <t t-esc="_t('more')"/></span>
                     </t>
                 </div>
             </section>
@@ -193,14 +193,14 @@
                 </svg>
                 <input type="text"
                        class="rcd-search__input"
-                       placeholder="Search branches by name or code..."
+                       t-att-placeholder="_t('Search branches by name or code...')"
                        t-on-input="onBranchSearch"
                        t-att-value="state.branchSearch"/>
                 <button class="rcd-search__clear"
                         t-att-class="'rcd-search__clear' + (state.branchSearch ? ' rcd-search__clear--visible' : '')"
                         t-on-click="clearBranchSearch"
                         type="button"
-                        aria-label="Clear search">
+                        t-att-aria-label="_t('Clear search')">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
@@ -211,10 +211,10 @@
             <section class="rcd-section rcd-table-section">
                 <div class="rcd-table-section__head">
                     <div>
-                        <div class="rcd-table-section__title">Branches Table</div>
-                        <div class="rcd-table-section__subtitle">Click a branch row to inspect its store profile.</div>
+                        <div class="rcd-table-section__title" t-esc="_t('Branches Table')"/>
+                        <div class="rcd-table-section__subtitle" t-esc="_t('Click a branch row to inspect its store profile.')"/>
                     </div>
-                    <span class="rcd-table-section__count"><t t-esc="filteredStores.length"/> shown</span>
+                    <span class="rcd-table-section__count"><t t-esc="filteredStores.length"/> <t t-esc="_t('shown')"/></span>
                 </div>
 
                 <div class="rcd-table-section__wrap">
@@ -222,9 +222,9 @@
                         <table class="rcd-table">
                             <thead>
                                 <tr>
-                                    <th class="rcd-table__th--code">Code</th>
-                                    <th>Branch Name</th>
-                                    <th class="rcd-table__th--serial">E-Plus ID</th>
+                                    <th class="rcd-table__th--code" t-esc="_t('Code')"/>
+                                    <th t-esc="_t('Branch Name')"/>
+                                    <th class="rcd-table__th--serial" t-esc="_t('E-Plus ID')"/>
                                 </tr>
                             </thead>
                             <tbody>
@@ -259,8 +259,8 @@
                                 <circle cx="11" cy="11" r="8"/>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                             </svg>
-                            <div class="rcd-table-section__empty-title">No matching branches</div>
-                            <div class="rcd-table-section__empty-desc">Try adjusting your search term to find what you are looking for.</div>
+                            <div class="rcd-table-section__empty-title" t-esc="_t('No matching branches')"/>
+                            <div class="rcd-table-section__empty-desc" t-esc="_t('Try adjusting your search term to find what you are looking for.')"/>
                         </div>
                     </t>
 
@@ -270,8 +270,8 @@
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                                 <polyline points="9 22 9 12 15 12 15 22"/>
                             </svg>
-                            <div class="rcd-table-section__empty-title">No branches assigned</div>
-                            <div class="rcd-table-section__empty-desc">This reconciliation task does not include any branches in its scope.</div>
+                            <div class="rcd-table-section__empty-title" t-esc="_t('No branches assigned')"/>
+                            <div class="rcd-table-section__empty-desc" t-esc="_t('This reconciliation task does not include any branches in its scope.')"/>
                         </div>
                     </t>
                 </div>
@@ -283,19 +283,19 @@
                         <circle cx="12" cy="12" r="10"/>
                         <polyline points="12 6 12 12 16 14"/>
                     </svg>
-                    <span>Performance</span>
+                    <span t-esc="_t('Performance')"/>
                 </div>
                 <div class="rcd-perf__grid">
                     <div class="rcd-perf__item">
-                        <span class="rcd-perf__label">Source Fetch</span>
+                        <span class="rcd-perf__label" t-esc="_t('Source Fetch')"/>
                         <span class="rcd-perf__value" t-esc="fmtDuration(state.chunk.source_duration_ms)"/>
                     </div>
                     <div class="rcd-perf__item">
-                        <span class="rcd-perf__label">Persistence</span>
+                        <span class="rcd-perf__label" t-esc="_t('Persistence')"/>
                         <span class="rcd-perf__value" t-esc="fmtDuration(state.chunk.persistence_duration_ms)"/>
                     </div>
                     <div class="rcd-perf__item rcd-perf__item--total">
-                        <span class="rcd-perf__label">Total</span>
+                        <span class="rcd-perf__label" t-esc="_t('Total')"/>
                         <span class="rcd-perf__value rcd-perf__value--total" t-esc="formattedTotalTime"/>
                     </div>
                 </div>
@@ -308,7 +308,7 @@
                         <line x1="12" y1="8" x2="12" y2="12"/>
                         <line x1="12" y1="16" x2="12.01" y2="16"/>
                     </svg>
-                    <span>Error Details</span>
+                    <span t-esc="_t('Error Details')"/>
                 </div>
                 <pre class="rcd-error__msg" t-esc="state.chunk.error_message"/>
             </div>
@@ -322,7 +322,7 @@
                         <line x1="18" y1="6" x2="6" y2="18"/>
                         <line x1="6" y1="6" x2="18" y2="18"/>
                     </svg>
-                    Close
+	                    <t t-esc="_t('Close')"/>
                 </button>
             </div>
         </t>

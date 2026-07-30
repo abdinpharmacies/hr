@@ -595,6 +595,7 @@
 .ab-sales-report .rr-footer__col {
     display: flex;
     flex-direction: column;
+    gap: 3px;
 }
 .ab-sales-report .rr-footer__col--center { text-align: center; }
 .ab-sales-report .rr-footer__col--right { text-align: right; }

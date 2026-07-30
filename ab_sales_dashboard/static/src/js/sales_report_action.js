@@ -10,6 +10,17 @@ const THEME_KEY = "ab_sales_dashboard.theme";
 
 const COLLECTION_LABELS = { cash: _t("Cash"), delivery: _t("Delivery"), contract: _t("Contracts"), offer: _t("Offers") };
 const COLLECTION_COLORS = { cash: "emerald", delivery: "blue", contract: "violet", offer: "amber" };
+const REPORT_TRANSLATION_TERMS = [
+    _t("Collection"),
+    _t("Data Source"),
+    _t("Generated"),
+    _t("Item Name"),
+    _t("Sale Times"),
+    _t("Snapshot"),
+    _t("Sold Qty"),
+    _t("Units Sold"),
+];
+void REPORT_TRANSLATION_TERMS;
 
 // ─── Report Header ───────────────────────────────────────
 class ReportHeader extends Component {
@@ -269,7 +280,7 @@ class ReportFooter extends Component {
         <footer class="rr-footer">
             <div class="rr-footer__col">
                 <span class="rr-footer__lbl" t-esc="_t('Data Source')"/>
-                <span t-esc="props.source || _t('N/A')"/>
+                <span t-esc="sourceLabel(props.source)"/>
             </div>
             <div class="rr-footer__col rr-footer__col--center">
                 <span class="rr-footer__lbl" t-esc="_t('Generated')"/>
@@ -281,6 +292,13 @@ class ReportFooter extends Component {
             </div>
         </footer>
     `;
+    sourceLabel(source) {
+        const labels = {
+            snapshot: _t("Snapshot"),
+            none: _t("No Snapshot"),
+        };
+        return labels[source] || source || _t("N/A");
+    }
     _t = _t;
 }
 
