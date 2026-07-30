@@ -3,6 +3,7 @@
 const form = document.querySelector("[data-ab-external-request-form]");
 const requesterTypeForms = document.querySelectorAll("[data-ab-requester-type-form]");
 const copyButtons = document.querySelectorAll("[data-ab-copy-value]");
+const followupResults = document.querySelector("[data-ab-followup-results]");
 
 async function copyTextToClipboard(value) {
     if (navigator.clipboard && window.isSecureContext) {
@@ -132,4 +133,13 @@ if (form) {
     }
 
     refreshRequestTypes();
+}
+
+if (followupResults) {
+    requestAnimationFrame(() => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: "smooth",
+        });
+    });
 }

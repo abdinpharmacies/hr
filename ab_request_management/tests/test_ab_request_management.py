@@ -708,10 +708,10 @@ class TestAbRequestManagement(TransactionCase):
                 }
             )
 
-    def test_followup_reference_match_uses_requester_type(self):
+    def test_followup_identity_match_uses_type_and_employee_national_id(self):
         self.complaint_category.write({"is_public": True})
         self.complaint_request_type.write({"is_public": True})
-        website_request = self.env["ab_request_website"].sudo().create(
+        supplier_request = self.env["ab_request_website"].sudo().create(
             {
                 "customer_name": "Supplier Customer",
                 "customer_phone": "+201001234567",
@@ -723,19 +723,47 @@ class TestAbRequestManagement(TransactionCase):
                 "description": "Complaint details for the external public form.",
             }
         )
+        employee_request = self.env["ab_request_website"].sudo().create(
+            {
+                "customer_name": "Employee Customer",
+                "customer_phone": "+201001234567",
+                "requester_type": "employee",
+                "employee_code": "EMP-001",
+                "national_id": "12345678901234",
+                "request_category_id": self.complaint_category.id,
+                "request_type_id": self.complaint_request_type.id,
+                "subject": "External complaint",
+                "description": "Complaint details for the external public form.",
+            }
+        )
 
         self.assertTrue(
-            AbRequestCustomerController._requester_reference_matches(
-                website_request,
+            AbRequestCustomerController._requester_identity_matches(
+                supplier_request,
                 "supplier",
                 "CR-2026",
             )
         )
+        self.assertTrue(
+            AbRequestCustomerController._requester_identity_matches(
+                employee_request,
+                "employee",
+                "EMP-001",
+                "12345678901234",
+            )
+        )
         self.assertFalse(
-            AbRequestCustomerController._requester_reference_matches(
-                website_request,
+            AbRequestCustomerController._requester_identity_matches(
+                supplier_request,
                 "employee",
                 "CR-2026",
+            )
+        )
+        self.assertFalse(
+            AbRequestCustomerController._requester_identity_matches(
+                employee_request,
+                "employee",
+                "EMP-001",
             )
         )
 
