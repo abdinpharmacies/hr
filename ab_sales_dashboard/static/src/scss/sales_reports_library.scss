@@ -1,6 +1,5 @@
 // ============================================================
-// SALES REPORTS LIBRARY — Premium SaaS Report Library
-// Table-safe styling. No display/flex/grid on table/thead/tbody/tr/td/th.
+// SALES REPORTS LIBRARY — Premium SaaS Report Card Library
 // Scoped under .ab_rl_action. Inherits --sd-* theme tokens.
 // ============================================================
 
@@ -232,41 +231,33 @@
 }
 
 // ══════════════════════════════════════════════════════════════
-// TABLE WRAPPER — rounded card container
-// JS adds .rl-table-wrap to the scrollable div wrapping the table
+// TABLE WRAPPER
 // ══════════════════════════════════════════════════════════════
 .rl-table-wrap {
     margin: 16px 40px 0;
     background: transparent;
-    border: none;
-    border-radius: 0;
-    overflow: visible;
     flex: 1;
     min-height: 0;
-    box-shadow: none;
 
-    // Override the scrollable area inside the wrap
     .o_content {
         background: transparent;
     }
 }
 
 // ══════════════════════════════════════════════════════════════
-// TABLE — Safe visual-only styling
-// NO display/flex/grid on table/thead/tbody/tr/td/th
+// TABLE — minimal structural styles (card td fills the row)
 // ══════════════════════════════════════════════════════════════
 .ab_rl_list {
-
     .o_list_table {
         border-collapse: separate;
         border-spacing: 0 10px;
         margin: 0;
+        width: 100%;
     }
 
-    // ─── Table header ──────────────────────────────────────
+    // ─── Header ──────────────────────────────────────────
     .o_list_table > thead > tr {
         background: transparent;
-
         > th {
             color: var(--sd-text-muted);
             font-size: 10px;
@@ -282,7 +273,6 @@
 
             &:hover { color: var(--sd-accent-cyan); }
 
-            // Column header icons — ::before on th is safe (no field widgets)
             &::before {
                 font-family: 'FontAwesome';
                 font-size: 11px;
@@ -292,530 +282,280 @@
             }
         }
 
-        // Per-column icons via ::before on th
-        > th[data-field="refresh_date"]::before  { content: '\f017'; } // fa-clock-o
-        > th[data-field="name"]::before           { content: '\f15c'; } // fa-file-text-o
-        > th[data-field="date_from"]::before      { content: '\f073'; } // fa-calendar
-        > th[data-field="date_to"]::before        { content: '\f073'; } // fa-calendar
-        > th[data-field="store_filter_label"]::before { content: '\f1ad'; } // fa-building-o
-        > th[data-field="total_sales"]::before    { content: '\f155'; } // fa-usd
-        > th[data-field="invoice_count"]::before  { content: '\f0e6'; } // fa-question-circle (receipt alt)
-        > th[data-field="total_units_sold"]::before { content: '\f07a'; } // fa-shopping-cart
-        > th[data-field="unique_products_sold"]::before { content: '\f085'; } // fa-cogs
-        > th[data-field="stores_with_sales"]::before { content: '\f1ad'; } // fa-building-o
-        > th[data-field="archive_count"]::before  { content: '\f187'; } // fa-archive
+        > th[data-field="name"]::before                 { content: '\f15c'; }
+        > th[data-field="date_from"]::before,
+        > th[data-field="date_to"]::before               { content: '\f073'; }
+        > th[data-field="total_sales"]::before           { content: '\f155'; }
+        > th[data-field="invoice_count"]::before         { content: '\f0e6'; }
+        > th[data-field="total_units_sold"]::before      { content: '\f07a'; }
+        > th[data-field="store_filter_label"]::before    { content: '\f1ad'; }
+        > th[data-field="refresh_date"]::before          { content: '\f017'; }
+        > th[data-field="archive_count"]::before         { content: '\f187'; }
+        > th[data-field="unique_products_sold"]::before  { content: '\f085'; }
+        > th[data-field="stores_with_sales"]::before     { content: '\f1ad'; }
     }
 
-    // ─── Data rows ─────────────────────────────────────────
+    // ─── Data Rows ─────────────────────────────────────────
     .o_list_table > tbody > tr.o_data_row {
         position: relative;
-        background: var(--sd-bg-card-solid);
-        border-radius: 12px;
-        box-shadow: var(--sd-shadow-sm);
-        cursor: pointer;
-        outline: 1px solid var(--sd-table-border);
-        outline-offset: -1px;
-        transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.15s ease;
-        cursor: pointer;
-
-        > td {
-            color: var(--sd-text-primary);
-            padding: 14px 16px;
-            vertical-align: middle;
-            border: none;
-            font-size: 13px;
-            background: inherit;
-            border-left: 3px solid transparent;
-            transition: background 0.15s ease;
-
-            &:first-child {
-                border-radius: 12px 0 0 12px;
-                padding-left: 17px;
-            }
-
-            &:last-child {
-                border-radius: 0 12px 12px 0;
-                padding-right: 20px;
-            }
-        }
-
-        // Alternating row emphasis — subtle stripe
-        &:nth-child(even) {
-            background: var(--sd-table-stripe);
-        }
-
-        &:hover {
-            background: var(--sd-bg-card-solid);
-            outline-color: var(--sd-accent-cyan);
-            box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
-            transform: translateY(-1px);
-            z-index: 1;
-        }
-
-        &:hover > td:first-child {
-            border-left-color: var(--sd-accent-cyan);
-        }
-
-        // Freshness stripe replaces the cyan hover left-edge for freshness rows
-        &.rl-freshness--fresh:hover,
-        &.rl-freshness--today:hover,
-        &.rl-freshness--recent:hover,
-        &.rl-freshness--stale:hover,
-        &.rl-freshness--old:hover {
-            box-shadow: var(--sd-shadow-md);
-        }
-
-        &.o_record_selected {
-            background: var(--sd-bg-card-hover);
-            box-shadow: 0 0 0 2px var(--sd-accent-violet), var(--sd-shadow-md);
-            outline: none;
-        }
-    }
-
-    // Group headers
-    .o_list_table > tbody > tr.o_group_header {
         background: transparent;
-        td {
-            padding: 10px 16px 6px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--sd-text-muted);
+        box-shadow: none;
+        cursor: pointer;
+        outline: none;
+        transition: none;
+        border-radius: 0;
+
+        // Hide the original flat cell border
+        > td {
             border: none;
+            padding: 0;
+            background: transparent;
+        }
+
+        // Selection outline: applied to the card cell
+        &.o_record_selected .rl-card-cell {
+            outline: 2px solid var(--sd-accent-violet);
+            outline-offset: -2px;
+            box-shadow: 0 0 0 4px var(--sd-glow-violet), var(--sd-shadow-md);
         }
     }
 
-    // ─── Per-field styling (cosmetic only, no layout) ──────
+    // Checkbox cell — minimal
+    .o_list_record_selector {
+        width: 32px;
+        min-width: 32px;
+        padding: 0 !important;
+        text-align: center;
+        vertical-align: middle;
 
-    // Generated date
-    .o_data_row > td[data-field="refresh_date"] {
-        font-size: 12px;
-        color: var(--sd-text-secondary);
-        white-space: nowrap;
-    }
-
-    // Report name — slightly stronger
-    .o_data_row > td[data-field="name"] {
-        font-weight: 600;
-        font-size: 13px;
-        color: var(--sd-text-primary);
-    }
-
-    // Date range
-    .o_data_row > td[data-field="date_from"],
-    .o_data_row > td[data-field="date_to"] {
-        font-size: 12px;
-        color: var(--sd-text-secondary);
-        white-space: nowrap;
-        font-variant-numeric: tabular-nums;
-    }
-
-    // Branch
-    .o_data_row > td[data-field="store_filter_label"] {
-        font-size: 12px;
-        color: var(--sd-text-secondary);
-    }
-
-    // Total sales — subtle green accent on the value
-    .o_data_row > td[data-field="total_sales"] {
-        font-weight: 700;
-        font-size: 14px;
-        color: var(--sd-accent-emerald);
-        font-variant-numeric: tabular-nums;
-    }
-
-    // Numeric metric cells
-    .o_data_row > td[data-field="invoice_count"],
-    .o_data_row > td[data-field="total_units_sold"],
-    .o_data_row > td[data-field="unique_products_sold"],
-    .o_data_row > td[data-field="stores_with_sales"],
-    .o_data_row > td[data-field="archive_count"] {
-        font-variant-numeric: tabular-nums;
-        font-size: 13px;
-        color: var(--sd-text-secondary);
-    }
-
-    // Archive count — amber when > 0 (via decoration-warning)
-    .o_data_row > td[data-field="archive_count"] {
-        font-weight: 600;
-    }
-
-    // Checkbox
-    .o_list_record_selector input[type="checkbox"] {
-        accent-color: var(--sd-accent-cyan);
-    }
-}
-
-.ab_rl_action.sd-theme-dark .ab_rl_list {
-    .o_list_table > thead > tr {
-        background: var(--sd-bg-elevated);
-    }
-
-    .o_list_table > thead > tr > th {
-        background: var(--sd-bg-elevated);
-    }
-
-    .o_list_table > thead > tr > th,
-    .o_list_table > thead > tr > th *,
-    .o_list_table > tbody > tr.o_data_row > td,
-    .o_list_table > tbody > tr.o_data_row > td *,
-    .o_list_table > tbody > tr.o_group_header > td,
-    .o_list_table > tbody > tr.o_group_header > td * {
-        color: #fff !important;
-    }
-
-    .o_list_table > tbody > tr.o_data_row,
-    .o_list_table > tbody > tr.o_data_row:nth-child(even),
-    .o_list_table > tbody > tr.o_data_row:hover {
-        background: var(--sd-bg-card-solid);
-    }
-
-    .o_list_table > tbody > tr.o_data_row:hover {
-        outline-color: var(--sd-accent-cyan);
-        box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
-    }
-
-    .o_list_table > tbody > tr.o_data_row:hover > td {
-        background: inherit;
+        input[type="checkbox"] {
+            accent-color: var(--sd-accent-cyan);
+            margin: 0;
+        }
     }
 }
 
 // ══════════════════════════════════════════════════════════════
-// PRODUCT SALES REPORT LIST — same table language as Activity Center
+// REPORT CARD — premium SaaS card
 // ══════════════════════════════════════════════════════════════
-.ab_product_sales_action {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    overflow: hidden;
-    background: var(--sd-bg-deep);
+.rl-card-cell {
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    vertical-align: middle;
+    line-height: 0;
+}
 
-    .o_content {
-        overflow-y: auto;
-        overflow-x: hidden;
-        height: 100%;
+.rl-card {
+    background: var(--sd-bg-card-solid);
+    border: 1px solid var(--sd-table-border);
+    border-radius: var(--sd-radius-md);
+    padding: 16px 20px;
+    transition: box-shadow 0.2s ease, transform 0.15s ease, border-color 0.15s ease;
+    line-height: 1.4;
+
+    &:hover {
+        transform: translateY(-1px);
+        border-color: var(--sd-glass-border-hover);
+        box-shadow: var(--sd-shadow-md);
+    }
+
+    // ─── Top row: icon + name (left) · badges (right) ─────
+    &__top {
         display: flex;
-        flex-direction: column;
-        background: var(--sd-bg-deep);
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 8px;
     }
-}
 
-.ab_product_sales_action .o_control_panel {
-    background: var(--sd-bg-elevated);
-    border-bottom: 1px solid var(--sd-table-border);
-    padding: 8px 40px;
-    flex-shrink: 0;
+    &__head {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+        flex: 1;
+    }
 
-    .o_searchview {
+    &__icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
         background: var(--sd-input-bg);
-        border: 1px solid var(--sd-glass-border);
-        border-radius: 8px;
+        color: var(--sd-accent-cyan);
+        flex-shrink: 0;
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+
+    &__name {
+        font-size: 15px;
+        font-weight: 700;
         color: var(--sd-text-primary);
-
-        &:focus-within {
-            border-color: var(--sd-accent-violet);
-            box-shadow: 0 0 0 2px var(--sd-glow-violet);
-        }
-
-        .o_searchview_input {
-            color: var(--sd-text-primary);
-            &::placeholder { color: var(--sd-text-muted); }
-        }
-
-        .o_searchview_facet {
-            background: var(--sd-input-bg);
-            border-color: var(--sd-table-border);
-            color: var(--sd-accent-violet);
-            border-radius: 6px;
-        }
+        letter-spacing: -0.01em;
+        line-height: 1.3;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
-    .o_cp_buttons .btn {
-        background: var(--sd-input-bg);
-        border: 1px solid var(--sd-glass-border);
-        color: var(--sd-text-secondary);
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 13px;
-        padding: 5px 14px;
-        transition: all 0.2s ease;
-
-        &:hover {
-            background: var(--sd-bg-card-hover);
-            color: var(--sd-text-primary);
-            border-color: var(--sd-glass-border-hover);
-        }
-    }
-}
-
-.psr-table-wrap {
-    margin: 16px 40px 0;
-    background: transparent;
-    flex: 1;
-    min-height: 0;
-
-    .o_content { background: transparent; padding: 0; }
-}
-
-.ab_product_sales_list {
-    .o_list_table {
-        border-collapse: separate;
-        border-spacing: 0 10px;
-        margin: 0;
-    }
-
-    .o_list_table > thead > tr {
-        background: transparent;
-
-        > th {
-            color: var(--sd-text-muted);
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            white-space: nowrap;
-            border: none;
-            padding: 8px 16px 4px;
-            user-select: none;
-            background: transparent;
-
-            &::before {
-                font-family: 'FontAwesome';
-                font-size: 11px;
-                margin-right: 6px;
-                opacity: 0.4;
-                vertical-align: middle;
-            }
-        }
-
-        > th[data-field="report_date"]::before { content: '\f073'; }
-        > th[data-field="store_id"]::before { content: '\f1ad'; }
-        > th[data-field="item_code"]::before { content: '\f02a'; }
-        > th[data-field="product_name"]::before { content: '\f1b2'; }
-        > th[data-field="item_type"]::before { content: '\f0fa'; }
-        > th[data-field="branches_sold_in"]::before { content: '\f1ad'; }
-        > th[data-field="sale_times"]::before { content: '\f0e7'; }
-        > th[data-field="invoice_count"]::before { content: '\f0f6'; }
-        > th[data-field="units_sold"]::before { content: '\f07a'; }
-        > th[data-field="total_sales"]::before { content: '\f155'; }
-        > th[data-field="average_selling_price"]::before { content: '\f201'; }
-    }
-
-    .o_list_table > tbody > tr.o_data_row {
-        position: relative;
-        background: var(--sd-bg-card-solid);
-        border-radius: 12px;
-        box-shadow: var(--sd-shadow-sm);
-        cursor: pointer;
-        outline: 1px solid var(--sd-table-border);
-        outline-offset: -1px;
-        transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.15s ease;
-
-        &:hover {
-            box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
-            transform: translateY(-1px);
-            background: var(--sd-bg-card-solid);
-            outline-color: var(--sd-accent-cyan);
-            z-index: 1;
-        }
-
-        &.o_record_selected {
-            box-shadow: 0 0 0 2px var(--sd-accent-violet), var(--sd-shadow-md);
-            outline: none;
-        }
-
-        > td {
-            color: var(--sd-text-primary);
-            padding: 14px 16px;
-            vertical-align: middle;
-            border: none;
-            font-size: 13px;
-            background: inherit;
-            border-left: 3px solid transparent;
-
-            &:first-child {
-                border-radius: 12px 0 0 12px;
-                padding-left: 17px;
-            }
-
-            &:last-child {
-                border-radius: 0 12px 12px 0;
-                padding-right: 20px;
-            }
-        }
-
-        &:hover > td:first-child {
-            border-left-color: var(--sd-accent-cyan);
-        }
-    }
-
-    .o_list_table > tbody > tr.o_group_header {
-        background: transparent;
-
-        td {
-            padding: 14px 16px 6px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            color: var(--sd-text-muted);
-            border: none;
-            background: transparent;
-        }
-    }
-
-    .o_list_record_selector input[type="checkbox"] {
-        accent-color: var(--sd-accent-violet);
-    }
-}
-
-.ab_product_sales_action.sd-theme-dark .ab_product_sales_list {
-    .o_list_table > thead > tr {
-        background: var(--sd-bg-elevated);
-    }
-
-    .o_list_table > thead > tr > th {
-        background: var(--sd-bg-elevated);
-    }
-
-    .o_list_table > thead > tr > th,
-    .o_list_table > thead > tr > th *,
-    .o_list_table > tbody > tr.o_data_row > td,
-    .o_list_table > tbody > tr.o_data_row > td *,
-    .o_list_table > tbody > tr.o_group_header > td,
-    .o_list_table > tbody > tr.o_group_header > td * {
-        color: #fff !important;
-    }
-
-    .o_list_table > tbody > tr.o_data_row,
-    .o_list_table > tbody > tr.o_data_row:hover {
-        background: var(--sd-bg-card-solid);
-    }
-
-    .o_list_table > tbody > tr.o_data_row:hover {
-        outline-color: var(--sd-accent-cyan);
-        box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
-    }
-
-    .o_list_table > tbody > tr.o_data_row:hover > td {
-        background: inherit;
-    }
-}
-
-// ══════════════════════════════════════════════════════════════
-// FRESHNESS STRIPE — left accent on row via JS-added class
-// Uses only box-shadow (no layout impact)
-// ══════════════════════════════════════════════════════════════
-.ab_rl_list .o_data_row.rl-freshness--fresh {
-    box-shadow: inset 3px 0 0 var(--sd-accent-emerald);
-}
-.ab_rl_list .o_data_row.rl-freshness--today {
-    box-shadow: inset 3px 0 0 var(--sd-accent-cyan);
-}
-.ab_rl_list .o_data_row.rl-freshness--recent {
-    box-shadow: inset 3px 0 0 var(--sd-accent-blue);
-}
-.ab_rl_list .o_data_row.rl-freshness--stale {
-    box-shadow: inset 3px 0 0 var(--sd-accent-amber);
-}
-.ab_rl_list .o_data_row.rl-freshness--old {
-    box-shadow: inset 3px 0 0 var(--sd-text-dim);
-}
-
-// ══════════════════════════════════════════════════════════════
-// RANK BADGES — small numbered squares prepended to name cell
-// ══════════════════════════════════════════════════════════════
-.rl-rank {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 5px;
-    font-size: 10px;
-    font-weight: 800;
-    flex-shrink: 0;
-    margin-right: 6px;
-    vertical-align: middle;
-    animation: rlRankPop 0.3s ease both;
-
-    &--1 { background: rgba(245, 158, 11, 0.15); color: var(--sd-accent-amber); }
-    &--2 { background: rgba(148, 163, 184, 0.12); color: var(--sd-text-secondary); }
-    &--3 { background: rgba(180, 83, 9, 0.1); color: #d97706; }
-    &--4, &--5 { background: var(--sd-input-bg); color: var(--sd-text-muted); font-size: 9px; }
-}
-
-@keyframes rlRankPop {
-    0% { transform: scale(0); opacity: 0; }
-    60% { transform: scale(1.15); }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-// ══════════════════════════════════════════════════════════════
-// FRESHNESS CHIPS — appended inside refresh_date cell
-// ══════════════════════════════════════════════════════════════
-.rl-status {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-    white-space: nowrap;
-    margin-left: 6px;
-    vertical-align: middle;
-
-    &::before {
-        content: '';
-        width: 5px;
-        height: 5px;
-        border-radius: 50%;
+    &__badges {
+        display: flex;
+        align-items: center;
+        gap: 8px;
         flex-shrink: 0;
     }
 
-    &--fresh {
-        background: rgba(16, 185, 129, 0.1);
-        color: var(--sd-accent-emerald);
-        &::before { background: var(--sd-accent-emerald); }
+    // ─── Date range ────────────────────────────────────
+    &__dates {
+        margin-bottom: 10px;
+        padding-left: 46px;
     }
-    &--today {
-        background: rgba(6, 182, 212, 0.1);
-        color: var(--sd-accent-cyan);
-        &::before { background: var(--sd-accent-cyan); }
+
+    &__date-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--sd-text-secondary);
+        white-space: nowrap;
+
+        svg {
+            width: 13px;
+            height: 13px;
+            flex-shrink: 0;
+            opacity: 0.5;
+        }
     }
-    &--ok {
-        background: rgba(59, 130, 246, 0.1);
-        color: var(--sd-accent-blue);
-        &::before { background: var(--sd-accent-blue); }
+
+    // ─── KPI badges row ────────────────────────────────
+    &__kpis {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 10px;
+        padding-left: 46px;
+        flex-wrap: wrap;
     }
-    &--stale {
-        background: rgba(245, 158, 11, 0.1);
-        color: var(--sd-accent-amber);
-        &::before { background: var(--sd-accent-amber); }
+
+    // ─── Footer: branch + time ─────────────────────────
+    &__foot {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-left: 46px;
     }
-    &--muted {
-        background: var(--sd-input-bg);
-        color: var(--sd-text-dim);
-        &::before { background: var(--sd-text-dim); }
+
+    &__meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-size: 11px;
+        font-weight: 500;
+        color: var(--sd-text-muted);
+        white-space: nowrap;
+
+        svg {
+            width: 13px;
+            height: 13px;
+            flex-shrink: 0;
+            opacity: 0.45;
+        }
+
+        &--time { color: var(--sd-text-dim); }
     }
 }
 
 // ══════════════════════════════════════════════════════════════
-// ARCHIVE INDICATOR — subtle dot badge next to report name
+// KPI BADGES — embedded in card
 // ══════════════════════════════════════════════════════════════
-.rl-archived-dot {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--sd-accent-amber);
-    margin-left: 6px;
-    vertical-align: middle;
-    opacity: 0.7;
+.rl-kpi-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--sd-text-secondary);
+    white-space: nowrap;
+    line-height: 1.3;
+    border: 1px solid transparent;
+
+    svg {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+    }
+
+    strong {
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -0.01em;
+    }
+
+    &--revenue {
+        background: rgba(16, 185, 129, 0.08);
+        border-color: rgba(16, 185, 129, 0.15);
+        svg { color: var(--sd-accent-emerald); }
+        strong { color: var(--sd-accent-emerald); }
+    }
+
+    &--invoices {
+        background: rgba(59, 130, 246, 0.08);
+        border-color: rgba(59, 130, 246, 0.15);
+        svg { color: var(--sd-accent-blue); }
+        strong { color: var(--sd-accent-blue); }
+    }
+
+    &--units {
+        background: rgba(245, 158, 11, 0.08);
+        border-color: rgba(245, 158, 11, 0.15);
+        svg { color: var(--sd-accent-amber); }
+        strong { color: var(--sd-accent-amber); }
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// STATUS BADGES
+// ══════════════════════════════════════════════════════════════
+.rl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    line-height: 1.3;
+    text-transform: uppercase;
+
+    svg {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+    }
+
+    &--latest {
+        background: rgba(16, 185, 129, 0.1);
+        color: var(--sd-accent-emerald);
+        border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    &--archived {
+        background: rgba(245, 158, 11, 0.1);
+        color: var(--sd-accent-amber);
+        border: 1px solid rgba(245, 158, 11, 0.2);
+    }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -911,8 +651,12 @@
 }
 
 @media (max-width: 900px) {
-    .rl-kpi-row { grid-template-columns: repeat(3, 1fr); }
     .rl-hero__title { font-size: 20px; }
+    .rl-kpi-row { grid-template-columns: repeat(3, 1fr); }
+    .rl-card { padding: 14px 16px; }
+    .rl-card__dates,
+    .rl-card__kpis,
+    .rl-card__foot { padding-left: 0; }
 }
 
 @media (max-width: 600px) {
@@ -925,7 +669,18 @@
     .rl-kpi__icon { width: 26px; height: 26px; font-size: 11px; }
     .ab_rl_action .o_control_panel { padding: 6px 16px; }
     .ab_rl_action .o_pager { padding: 8px 16px; }
-    .rl-table-wrap { margin-left: 12px; margin-right: 12px; border-radius: 10px; }
+    .rl-table-wrap { margin-left: 12px; margin-right: 12px; }
+    .rl-card { padding: 12px 14px; }
+    .rl-card__head { gap: 8px; }
+    .rl-card__icon { width: 30px; height: 30px; }
+    .rl-card__icon svg { width: 15px; height: 15px; }
+    .rl-card__name { font-size: 13px; }
+    .rl-card__badges { flex-wrap: wrap; gap: 4px; }
+    .rl-card__dates,
+    .rl-card__kpis,
+    .rl-card__foot { padding-left: 0; }
+    .rl-card__kpis { gap: 6px; }
+    .rl-kpi-badge { font-size: 11px; padding: 3px 8px; }
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -941,15 +696,15 @@
     .rl-kpi { background: #fff; border-color: #ccc; }
     .rl-kpi__value { color: #1a1a1a; }
     .ab_rl_action .o_control_panel { background: #fff; border-bottom: 1px solid #ccc; }
+    .rl-card { background: #fff; border-color: #ccc; box-shadow: none !important; }
+    .rl-card__name { color: #1a1a1a; }
+    .rl-card__meta-chip { color: #666; }
+    .rl-kpi-badge { background: #f5f5f5 !important; border-color: #ddd !important; }
+    .rl-kpi-badge strong { color: #1a1a1a !important; }
+    .rl-badge--latest { background: #e8f5e9 !important; color: #2e7d32 !important; border-color: #c8e6c9 !important; }
+    .rl-badge--archived { background: #fff3e0 !important; color: #e65100 !important; border-color: #ffe0b2 !important; }
+    .ab_rl_action .o_pager { background: #fff; border-top-color: #ccc; }
     .ab_rl_list .o_list_table > thead > tr { background: #f5f5f5; }
     .ab_rl_list .o_list_table > thead > tr > th { color: #333; }
     .ab_rl_list .o_list_table > thead > tr > th::before { display: none; }
-    .ab_rl_list .o_list_table > tbody > tr.o_data_row {
-        background: #fff;
-        border-bottom-color: #eee;
-        box-shadow: none !important;
-        &:hover { background: #fff; box-shadow: none !important; }
-    }
-    .rl-table-wrap { box-shadow: none; border-color: #ccc; }
-    .ab_rl_action .o_pager { background: #fff; border-top-color: #ccc; }
 }

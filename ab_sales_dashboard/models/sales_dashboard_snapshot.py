@@ -2766,6 +2766,39 @@ class SalesDashboardProductSalesReport(models.Model):
     total_sales = fields.Float(readonly=True)
     average_selling_price = fields.Float(readonly=True)
 
+    def get_intelligence_summary(self, domain):
+        cr = self.env.cr
+        cr.execute(f"""
+            SELECT COUNT(*), COALESCE(SUM(total_sales), 0), COALESCE(SUM(units_sold), 0),
+                   COALESCE(SUM(invoice_count), 0),
+                   COALESCE(SUM(CASE WHEN item_type = 'medicine' THEN 1 ELSE 0 END), 0)
+            FROM {self._table}
+        """)
+        total, rev, units, invoices, medicines = cr.fetchone()
+        total, rev, units, invoices, medicines = (total or 0), float(rev or 0), float(units or 0), int(invoices or 0), int(medicines or 0)
+        if not total:
+            return {
+                'total_products': 0, 'total_revenue': 0, 'total_units': 0,
+                'total_invoices': 0, 'medicine_count': 0, 'avg_revenue': 0,
+                'best_seller_name': '', 'best_seller_revenue': 0,
+            }
+        cr.execute(f"""
+            SELECT COALESCE(product_name, item_code), total_sales
+            FROM {self._table}
+            ORDER BY total_sales DESC LIMIT 1
+        """)
+        best = cr.fetchone()
+        return {
+            'total_products': total,
+            'total_revenue': rev,
+            'total_units': units,
+            'total_invoices': invoices,
+            'medicine_count': medicines,
+            'avg_revenue': round(rev / total),
+            'best_seller_name': best[0] if best else '',
+            'best_seller_revenue': float(best[1]) if best else 0,
+        }
+
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute(f"""

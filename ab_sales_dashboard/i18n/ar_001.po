@@ -3197,6 +3197,30 @@ msgstr "نوفمبر"
 msgid "Dec"
 msgstr "ديسمبر"
 
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Date Filter Mode"
+msgstr "وضع تصفية التاريخ"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Quick Filters"
+msgstr "اختصارات سريعة"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Report Period"
+msgstr "فترة التقرير"
+
+#. module: ab_sales_dashboard
+#. odoo-javascript
+#: code:addons/ab_sales_dashboard/static/src/js/sales_dashboard_action.js:0
+msgid "Single Day"
+msgstr "يوم واحد"
+
 #~ msgid "&amp;rarr;"
 #~ msgstr "&amp;rarr;"
 

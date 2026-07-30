@@ -345,7 +345,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    background: var(--sd-bg-elevated);
+    background: var(--sd-bg-surface);
     backdrop-filter: var(--sd-glass-blur);
     border-bottom: var(--sd-glass-border);
     box-shadow: var(--sd-shadow-sm);
@@ -357,8 +357,7 @@
     }
 
     .o_control_panel_breadcrumbs {
-        grid-area: title;
-        min-height: 38px;
+        min-height: 42px;
         min-width: 0;
         max-width: 100%;
     }
@@ -367,14 +366,21 @@
 }
 
 .ab_sales_dashboard__toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+    max-width: 1920px;
+    margin: 0 auto;
+    padding: 8px 24px;
+}
+
+.ab_sales_dashboard__topbar {
     display: grid;
-    grid-template-areas:
-        "title store store"
-        "dates ranges refresh";
-    grid-template-columns: minmax(300px, 0.8fr) minmax(0, 1.4fr) max-content;
-    align-items: end;
-    gap: 10px 12px;
-    padding: 12px 28px 16px;
+    grid-template-columns: minmax(280px, 1fr) minmax(360px, 640px) auto;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
 }
 
 .ab_sales_dashboard__body {
@@ -393,7 +399,8 @@
     .sd-title {
         font-size: 22px;
         font-weight: 800;
-        letter-spacing: -0.02em;
+        line-height: 1.2;
+        letter-spacing: 0;
         background: linear-gradient(135deg, var(--sd-text-primary) 0%, var(--sd-text-secondary) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -404,40 +411,144 @@
     }
 
     .sd-subtitle {
-        font-size: 12px;
-        color: var(--sd-text-muted);
+        font-size: 11px;
+        line-height: 1.3;
+        color: var(--sd-text-secondary);
         font-weight: 500;
     }
 }
 
 // ─── Filters ───────────────────────────────────────────────
-.ab_sales_dashboard__filters { display: contents; }
-
-.ab_sales_dashboard__store_search {
-    grid-area: store;
-    justify-self: end;
-    width: 100%;
-    min-width: 260px;
-    max-width: 460px;
+.ab_sales_dashboard__filters {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    min-width: 0;
 }
 
-.ab_sales_dashboard__date_inputs {
-    grid-area: dates;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(145px, 1fr));
-    gap: 8px;
-    width: 100%;
+.ab_sd_df__period_card {
+    background: var(--sd-bg-card);
+    backdrop-filter: var(--sd-glass-blur);
+    border: var(--sd-glass-border);
+    border-radius: var(--sd-radius-lg);
+    padding: 6px 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 10px;
     min-width: 0;
+    box-shadow: var(--sd-shadow-sm);
+    animation: abSdDfCardIn 400ms ease-out both;
+}
 
-    &--active input {
-        border-color: var(--sd-accent-cyan);
-        background: var(--sd-input-focus-bg);
+@keyframes abSdDfCardIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.ab_sd_df__controls {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns:
+        minmax(270px, 1.3fr)
+        minmax(230px, 1.35fr)
+        minmax(100px, 0.65fr)
+        minmax(90px, 0.55fr)
+        minmax(150px, 0.9fr);
+    align-items: end;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ab_sd_df__control_group {
+    min-width: 0;
+}
+
+.ab_sd_df__control_group--date {
+    min-width: 270px;
+}
+
+.ab_sd_df__control_group--date > .ab_sd_df__group_head {
+    display: none;
+}
+
+.ab_sd_df__group_head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.ab_sd_df__group_title {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--sd-text-secondary);
+}
+
+.ab_sd_df__mode {
+    display: flex;
+    flex: 0 0 210px;
+    background: var(--sd-input-bg);
+    border: var(--sd-glass-border);
+    border-radius: var(--sd-radius-md);
+    padding: 3px;
+    gap: 3px;
+    width: fit-content;
+    max-width: 100%;
+}
+
+.ab_sd_df__mode_btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 40px;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 11px;
+    background: transparent;
+    color: var(--sd-text-secondary);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: color var(--sd-transition), background var(--sd-transition), box-shadow var(--sd-transition), transform var(--sd-transition);
+    white-space: nowrap;
+    line-height: 1.3;
+
+    i {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        text-align: center;
+    }
+
+    &:hover:not(:disabled) {
         color: var(--sd-text-primary);
-        font-weight: 700;
+        background: var(--sd-toggle-active);
+    }
+
+    &:disabled { opacity: 0.4; cursor: default; }
+
+    &--active {
+        color: #fff;
+        background: var(--sd-gradient-blue);
+        box-shadow: 0 8px 20px var(--sd-glow-blue);
     }
 }
 
-.ab_sales_dashboard__date_field {
+.ab_sd_df__inputs {
+    min-height: 40px;
+}
+
+.ab_sd_df__input,
+.ab_sd_df__range_row .ab_sd_df__input {
     display: grid;
     gap: 2px;
     margin: 0;
@@ -450,105 +561,306 @@
     input {
         width: 100%;
         min-width: 0;
-        min-height: 38px;
+        min-height: 40px;
         background: var(--sd-input-bg);
         border: var(--sd-glass-border);
-        border-radius: var(--sd-radius-sm);
+        border-radius: var(--sd-radius-md);
         color: var(--sd-text-primary);
-        padding: 0 12px;
+        padding: 0 14px;
+        font-size: 13px;
+        font-weight: 650;
+        transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
 
         &:focus {
-            border-color: var(--sd-accent-cyan);
-            box-shadow: 0 0 0 2px var(--sd-glow-cyan);
+            border-color: var(--sd-accent-blue);
+            box-shadow: 0 0 0 3px var(--sd-glow-blue);
             outline: none;
+            background: var(--sd-input-focus-bg);
+        }
+
+        &[value]:not([value=""]) {
+            color: var(--sd-text-primary);
+            font-weight: 600;
         }
     }
 }
 
-.ab_sales_dashboard__quick_ranges {
-    grid-area: ranges;
-    display: grid;
-    grid-template-columns: minmax(118px, 1.25fr) repeat(6, minmax(0, 1fr));
-    align-self: end;
-    min-width: 0;
+.ab_sd_df__inputs .ab_sd_df__input:only-child {
+    max-width: none;
+}
 
-    > .btn,
-    > .ab_sales_dashboard__period_select,
-    > .ab_sales_dashboard__period_select_field .core_ui_input_control {
-        min-height: 38px;
-        min-width: 0;
-        border-radius: 0;
+.ab_sd_df__range_row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    align-items: end;
+    max-width: none;
+    animation: abSdDfFadeSlideIn 180ms ease-out both;
+
+    .ab_sd_df__input {
+        input {
+            min-width: 0;
+        }
+    }
+}
+
+.ab_sd_df__range_sep {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 13px;
+    color: var(--sd-text-dim);
+    font-size: 14px;
+    font-weight: 500;
+    user-select: none;
+    line-height: 1;
+}
+
+@keyframes abSdDfFadeSlideIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.ab_sd_df__presets {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(68px, 1fr));
+    gap: 0;
+    min-height: 40px;
+    overflow: hidden;
+    border: var(--sd-glass-border);
+    border-radius: var(--sd-radius-md);
+}
+
+.ab_sd_df__pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 5px 10px;
+    border: none;
+    border-inline-end: var(--sd-glass-border);
+    border-radius: 0;
+    background: var(--sd-input-bg);
+    color: var(--sd-text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    line-height: 1.3;
+
+    &:last-child {
+        border-inline-end: none;
     }
 
-    > .btn {
-        white-space: nowrap;
+    &:hover:not(:disabled) {
+        background: var(--sd-bg-card-hover);
+        color: var(--sd-text-primary);
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+    &--active {
+        background: var(--sd-toggle-active);
+        color: var(--sd-text-primary);
+        font-weight: 700;
+        box-shadow: inset 0 0 0 1px var(--sd-accent-blue);
+    }
+}
+
+.ab_sd_df__cal_field {
+    min-width: 0;
+    gap: 0;
+
+    .core_ui_field_control { height: 100%; }
+
+    .ab_sd_df__cal_select,
+    .core_ui_input_control {
+        width: 100%;
+        min-height: 40px;
         background: var(--sd-input-bg);
         border: var(--sd-glass-border);
-        color: var(--sd-text-secondary);
+        border-radius: var(--sd-radius-md);
+        color: var(--sd-text-primary);
         font-size: 13px;
-        font-weight: 500;
+        padding-inline: 12px 30px;
+        box-shadow: none;
+        transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease;
 
-        &:hover:not(:disabled) {
-            background: var(--sd-bg-card-hover);
-            color: var(--sd-text-primary);
-            border-color: var(--sd-glass-border-hover);
+        &:focus {
+            border-color: var(--sd-accent-blue);
+            box-shadow: 0 0 0 3px var(--sd-glow-blue);
+            outline: none;
+            background: var(--sd-input-focus-bg);
         }
+    }
+}
 
-        &:disabled { opacity: 0.4; }
+.ab_sd_df__branch_card {
+    width: 100%;
+    min-width: 0;
+}
+
+.ab_sd_df__branch_card .ab_sales_dashboard__store_search {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+
+    .core_ui_field_control { height: 100%; }
+
+    .core_ui_search_select_control {
+        min-height: 42px;
+        background: var(--sd-bg-card);
+        border: var(--sd-glass-border);
+        border-radius: var(--sd-radius-md);
+        box-shadow: var(--sd-shadow-sm);
+        transition: border-color var(--sd-transition), box-shadow var(--sd-transition), background var(--sd-transition);
     }
 
-    > .ab_sales_dashboard__period_select_field { gap: 0; min-width: 0; }
-    > .ab_sales_dashboard__period_select_field .core_ui_field_control { height: 100%; }
+    .core_ui_search_select_control:focus-within {
+        border-color: var(--sd-accent-blue);
+        box-shadow: 0 0 0 3px var(--sd-glow-blue);
+        background: var(--sd-bg-card-hover);
+    }
 
-    > .ab_sales_dashboard__period_select,
-    > .ab_sales_dashboard__period_select_field .core_ui_input_control {
-        box-shadow: none;
-        background: var(--sd-input-bg);
-        border-color: var(--sd-glass-border);
+    .core_ui_search_select_input,
+    .core_ui_search_select_toggle,
+    .core_ui_search_select_clear,
+    .core_ui_search_select_icon {
         color: var(--sd-text-secondary);
     }
 
-    > :first-child {
-        border-start-start-radius: var(--sd-radius-sm);
-        border-end-start-radius: var(--sd-radius-sm);
+    .core_ui_search_select_input {
+        color: var(--sd-text-primary);
+        font-size: 13px;
+    }
+}
+
+.ab_sd_df__refresh_group {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-end;
+    gap: 5px;
+    min-width: 0;
+}
+
+.ab_sd_df__refresh_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 16px;
+    background: var(--sd-gradient-blue);
+    border: none;
+    border-radius: var(--sd-radius-md);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 8px 20px var(--sd-glow-blue);
+    transition: all 220ms cubic-bezier(0.4, 0, 0.2, 1);
+    line-height: 1.3;
+
+    i {
+        font-size: 14px;
+        transition: transform 300ms ease;
+        flex-shrink: 0;
     }
 
-    > :last-child {
-        border-start-end-radius: var(--sd-radius-sm);
-        border-end-end-radius: var(--sd-radius-sm);
-        .core_ui_input_control {
-            border-start-end-radius: var(--sd-radius-sm);
-            border-end-end-radius: var(--sd-radius-sm);
+    &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px var(--sd-glow-blue);
+
+        i {
+            transform: rotate(-30deg);
         }
     }
 
-    > * + * { margin-inline-start: -1px; }
-
-    > .ab_sales_dashboard__range_active {
-        z-index: 1;
-        border-color: var(--sd-accent-cyan);
-        background: rgba(6, 182, 212, 0.1);
-        color: var(--sd-accent-cyan);
-        font-weight: 700;
-        box-shadow: inset 0 -2px 0 var(--sd-accent-cyan);
+    &:disabled {
+        opacity: 0.5;
+        cursor: default;
     }
-
-    > .core_ui_field_active { z-index: 1; }
 }
 
-.ab_sales_dashboard__period_select {
-    padding-inline: 10px 28px;
-    font-size: 13px;
+.ab_sd_df__refresh_meta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    min-height: 16px;
+    color: var(--sd-text-muted);
+    font-size: 11px;
+    line-height: 1.4;
+    text-align: center;
 }
 
-.ab_sales_dashboard__day_select { padding-inline: 8px; }
+.ab_sd_df__scope_card {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-width: 0;
+    padding: 12px 18px;
+    background: var(--sd-bg-card);
+    backdrop-filter: var(--sd-glass-blur);
+    border: var(--sd-glass-border);
+    border-radius: var(--sd-radius-lg);
+    box-shadow: var(--sd-shadow-sm);
+    animation: abSdDfCardIn 400ms ease-out 80ms both;
+}
 
-.ab_sales_dashboard__refresh_button {
-    grid-area: refresh;
-    align-self: end;
-    min-height: 38px;
-    max-width: 100%;
-    white-space: nowrap;
+.ab_sd_df__scope_item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.ab_sd_df__scope_icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: var(--sd-accent-emerald);
+    background: var(--sd-glow-emerald);
+    font-size: 16px;
+
+    &--branch {
+        color: var(--sd-accent-blue);
+        background: var(--sd-glow-blue);
+    }
+}
+
+.ab_sd_df__scope_copy {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+
+    strong {
+        overflow: hidden;
+        color: var(--sd-text-primary);
+        font-size: 13px;
+        font-weight: 750;
+        line-height: 1.45;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.ab_sd_df__scope_label {
+    color: var(--sd-text-secondary);
+    font-size: 11px;
+    font-weight: 500;
 }
 
 .ab_sales_dashboard__mobile_filter_toggle {
@@ -1379,34 +1691,56 @@
 }
 
 // ─── Responsive ────────────────────────────────────────────
-@media (min-width: 1800px) {
-    .ab_sales_dashboard__toolbar {
-        grid-template-areas: "title store dates ranges refresh";
-        grid-template-columns:
-            minmax(180px, 220px)
-            minmax(260px, 420px)
-            minmax(300px, 320px)
-            minmax(720px, 1fr)
-            max-content;
-        gap: 8px;
+@media (max-width: 1200px) {
+    .ab_sd_df__period_card {
+        align-items: stretch;
+        flex-direction: column;
     }
 
-    .ab_sales_dashboard__store_search {
-        justify-self: stretch;
+    .ab_sd_df__mode {
+        flex-basis: auto;
+    }
+
+    .ab_sd_df__controls {
+        grid-template-columns:
+            minmax(205px, 1.1fr)
+            minmax(280px, 1.5fr)
+            minmax(130px, 0.75fr)
+            minmax(110px, 0.6fr);
+    }
+
+    .ab_sd_df__refresh_group {
+        grid-column: 1 / -1;
+        align-items: flex-end;
+    }
+
+    .ab_sd_df__refresh_btn {
         width: 100%;
+        max-width: 240px;
     }
 }
 
 @media (max-width: 1100px) {
-    .ab_sales_dashboard__toolbar {
-        grid-template-areas:
-            "title"
-            "store"
-            "dates"
-            "ranges"
-            "refresh";
-        grid-template-columns: minmax(0, 1fr);
+    .ab_sales_dashboard__topbar {
+        grid-template-columns: minmax(260px, 1fr) minmax(300px, 1fr) auto;
+        gap: 16px;
+    }
+
+    .ab_sales_dashboard__title_area .sd-title {
+        font-size: 26px;
+    }
+
+    .ab_sd_df__controls {
+        grid-template-columns: minmax(230px, 1fr) minmax(300px, 1.4fr);
+    }
+
+    .ab_sd_df__refresh_group {
+        grid-column: auto;
         align-items: stretch;
+    }
+
+    .ab_sd_df__refresh_btn {
+        width: 100%;
     }
 
     .ab_sales_dashboard__split,
@@ -1416,17 +1750,6 @@
 
     .ab_sales_dashboard__kpis {
         grid-template-columns: 1fr 1fr;
-    }
-
-    .ab_sales_dashboard__store_search {
-        justify-self: stretch;
-        width: 100%;
-        max-width: none;
-        min-width: 0;
-    }
-
-    .ab_sales_dashboard__refresh_button {
-        justify-self: start;
     }
 }
 
@@ -1444,7 +1767,32 @@
 
     .ab_sales_dashboard__control_panel.ab_sales_dashboard__control_panel--mobile_open {
         .ab_sales_dashboard__toolbar { gap: 10px; }
-        .ab_sales_dashboard__filters { display: contents; }
+        .ab_sales_dashboard__filters { display: flex; }
+    }
+
+    .ab_sales_dashboard__toolbar {
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .ab_sales_dashboard__topbar {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 12px;
+    }
+
+    .ab_sales_dashboard__topbar .ab_sd_df__branch_card {
+        grid-column: 1 / -1;
+        grid-row: 2;
+    }
+
+    .ab_sales_dashboard__title_area {
+        .sd-title {
+            font-size: 23px;
+        }
+
+        .sd-subtitle {
+            font-size: 12px;
+        }
     }
 
     .ab_sales_dashboard__mobile_filter_toggle { display: inline-flex; }
@@ -1457,22 +1805,53 @@
         grid-template-columns: 1fr;
     }
 
-    .ab_sales_dashboard__quick_ranges {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px;
+    .ab_sd_df__presets {
+        grid-template-columns: repeat(2, minmax(90px, 1fr));
 
-        > .btn { white-space: normal; }
+        .ab_sd_df__pill {
+            border-bottom: var(--sd-glass-border);
 
-        > * {
-            margin: 0;
-            border-radius: var(--sd-radius-sm);
+            &:nth-child(2) {
+                border-inline-end: none;
+            }
+
+            &:nth-child(n + 3) {
+                border-bottom: none;
+            }
         }
+    }
 
-        > .ab_sales_dashboard__period_select_field .core_ui_input_control {
-            border-radius: var(--sd-radius-sm);
-        }
+    .ab_sd_df__controls {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+    }
 
-        > :first-child { grid-column: 1 / -1; }
+    .ab_sd_df__period_card {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 14px;
+        padding: 14px;
+    }
+
+    .ab_sd_df__mode {
+        width: 100%;
+    }
+
+    .ab_sd_df__mode_btn {
+        flex: 1;
+        min-width: 0;
+        padding-inline: 12px;
+    }
+
+    .ab_sd_df__refresh_group {
+        grid-column: auto;
+    }
+
+    .ab_sd_df__scope_card {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 12px;
+        padding: 14px;
     }
 
     .ab_sales_dashboard__panel_header--table {
@@ -1480,7 +1859,7 @@
         > span { justify-self: start; text-align: start; }
     }
 
-    .ab_sales_dashboard__refresh_button {
+    .ab_sd_df__refresh_btn {
         justify-self: stretch;
         width: 100%;
     }
@@ -1501,8 +1880,20 @@
 }
 
 @media (max-width: 575px) {
-    .ab_sales_dashboard__date_inputs {
+    .ab_sd_df__range_row {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    .ab_sd_df__range_sep { display: none; }
+
+    .ab_sales_dashboard__header_row {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .ab_sd_df__scope_copy strong {
+        white-space: normal;
     }
 }
 
