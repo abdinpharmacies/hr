@@ -777,7 +777,7 @@ class SelfInventoryRequest(models.Model):
     def _create_process_from_request(self, selected_lines):
         self.ensure_one()
         Process = self.env['ab_self_inventory_process'].sudo()
-        process = self.process_id
+        process = self.process_id.sudo()
         vals = {
             'request_id': self.id,
             'requester_id': self.requester_id.id,

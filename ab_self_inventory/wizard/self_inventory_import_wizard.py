@@ -97,28 +97,32 @@ class SelfInventoryImportWizard(models.TransientModel):
             raise ValidationError(_("Actual quantity must be numeric for product code %s.") % code)
 
 
-class SelfInventoryBatchAddLineWizard(models.TransientModel):
+class SelfInventoryAddLineWizard(models.TransientModel):
     _name = 'ab_self_inventory_batch_add_line_wizard'
     _description = 'Self Inventory Manual Add Line'
 
     request_id = fields.Many2one('ab_self_inventory_request', readonly=True)
     batch_id = fields.Many2one('ab_self_inventory_request_batch', readonly=True)
+    process_id = fields.Many2one('ab_self_inventory_process', readonly=True)
     branch_ids = fields.Many2many(
         'ab_store',
         string='Branches',
         domain="[('store_type', '=', 'branch')]",
     )
     product_ids = fields.Many2many('ab_product', string='Products', required=True)
-    available_product_ids = fields.Many2many(
+    excluded_product_ids = fields.Many2many(
         'ab_product',
-        compute='_compute_available_product_ids',
+        compute='_compute_excluded_product_ids',
     )
     note = fields.Char()
 
-    @api.depends('request_id.line_ids.product_id', 'batch_id.line_ids.product_id', 'branch_ids')
-    def _compute_available_product_ids(self):
-        Product = self.env['ab_product'].sudo().with_context(active_test=False)
-        all_products = Product.search([])
+    @api.depends(
+        'request_id.line_ids.product_id',
+        'batch_id.line_ids.product_id',
+        'process_id.line_ids.product_id',
+        'branch_ids',
+    )
+    def _compute_excluded_product_ids(self):
         for wizard in self:
             used_products = self.env['ab_product']
             if wizard.request_id:
@@ -129,7 +133,9 @@ class SelfInventoryBatchAddLineWizard(models.TransientModel):
                 if branches:
                     lines = lines.filtered(lambda line: line.branch_id in branches)
                 used_products = lines.mapped('product_id')
-            wizard.available_product_ids = all_products - used_products
+            elif wizard.process_id:
+                used_products = wizard.process_id.line_ids.mapped('product_id')
+            wizard.excluded_product_ids = used_products
 
     def action_add_lines(self):
         self.ensure_one()
@@ -137,9 +143,34 @@ class SelfInventoryBatchAddLineWizard(models.TransientModel):
             self._add_request_lines()
         elif self.batch_id:
             self._add_batch_lines()
+        elif self.process_id:
+            self._add_process_lines()
         else:
-            raise ValidationError(_("Open Add Line from a self inventory request or batch."))
+            raise ValidationError(_("Open Add Line from a self inventory request, batch, or process."))
         return {'type': 'ir.actions.act_window_close'}
+
+    def _add_process_lines(self):
+        process = self.process_id
+        process._check_can_update_process_line_grid()
+        if not self.product_ids:
+            raise ValidationError(_("Select at least one product."))
+        existing_products = set(process.line_ids.mapped('product_id').ids)
+        duplicate_products = self.product_ids.filtered(
+            lambda product: product.id in existing_products
+        )
+        if duplicate_products:
+            raise ValidationError(
+                _("These products already exist on this process: %s")
+                % ', '.join(duplicate_products.mapped('display_name')[:10])
+            )
+        self.env['ab_self_inventory_process_line'].create([
+            {
+                'process_id': process.id,
+                'product_id': product.id,
+                'explanation': self.note,
+            }
+            for product in self.product_ids
+        ])
 
     def _add_request_lines(self):
         request = self.request_id

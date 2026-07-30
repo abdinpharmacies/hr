@@ -2378,3 +2378,39 @@ msgstr "أصناف محددة"
 
 #~ msgid "Self inventory process lines: manager all"
 #~ msgstr "بنود عمليات الجرد الذاتي: المدير الكل"
+
+#. module: ab_self_inventory
+msgid "A self inventory process is required."
+msgstr "عملية الجرد الذاتي مطلوبة."
+
+#. module: ab_self_inventory
+msgid "Excluded Products"
+msgstr "المنتجات المستبعدة"
+
+#. module: ab_self_inventory
+msgid "Open Add Line from a self inventory request, batch, or process."
+msgstr "افتح إضافة بند من طلب جرد ذاتي أو مجموعة أو عملية."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Product %s already exists on this self inventory process."
+msgstr "المنتج %s موجود بالفعل في عملية الجرد الذاتي هذه."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Requested product lines can only be created from a request."
+msgstr "لا يمكن إنشاء بنود المنتجات المطلوبة إلا من خلال طلب."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Selected product was not found."
+msgstr "لم يتم العثور على المنتج المحدد."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "These products already exist on this process: %s"
+msgstr "هذه المنتجات موجودة بالفعل في هذه العملية: %s"
