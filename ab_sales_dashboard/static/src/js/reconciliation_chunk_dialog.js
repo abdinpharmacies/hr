@@ -3,6 +3,7 @@
 import { Component, useState, onMounted, useExternalListener } from "@odoo/owl";
 import { Dialog } from "@web/core/dialog/dialog";
 import { useService } from "@web/core/utils/hooks";
+import { _t } from "@web/core/l10n/translation";
 import { StorePreviewDialog } from "./store_preview_dialog";
 
 const STATE_LABELS = {
@@ -26,10 +27,12 @@ function formatDate(dateStr) {
     if (!dateStr) return "\u2014";
     const d = new Date(dateStr + "T00:00:00");
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+    return `${d.getDate()} ${_t(months[d.getMonth()])} ${d.getFullYear()}`;
 }
 
 export class ReconciliationChunkDialog extends Component {
+    _t = _t;
+
     setup() {
         this.orm = useService("orm");
         this.action = useService("action");
@@ -49,11 +52,11 @@ export class ReconciliationChunkDialog extends Component {
     }
 
     get chunkLabel() {
-        return `Chunk #${this.state.chunk?.sequence || "?"}`;
+        return `${_t("Chunk")} #${this.state.chunk?.sequence || "?"}`;
     }
 
     get statusLabel() {
-        return STATE_LABELS[this.state.chunk?.state] || "Pending";
+        return _t(STATE_LABELS[this.state.chunk?.state] || "Pending");
     }
 
     get branchCount() {
