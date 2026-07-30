@@ -8,7 +8,7 @@
 
         <record id="action_my_training_tasks" model="ir.actions.act_window">
             <field name="name">My Training Tasks</field>
-            <field name="res_model">ab.training.task</field>
+            <field name="res_model">ab_training_task</field>
             <field name="view_mode">list,kanban,form</field>
             <field name="domain">[('member_id', '=', uid)]</field>
             <field name="context">{'default_member_id': uid}</field>
@@ -16,27 +16,27 @@
 
         <record id="action_training_review_queue" model="ir.actions.act_window">
             <field name="name">Approval Queue</field>
-            <field name="res_model">ab.training.task</field>
+            <field name="res_model">ab_training_task</field>
             <field name="view_mode">list,kanban,form</field>
             <field name="domain">[('state', '=', 'pending')]</field>
         </record>
 
         <record id="action_training_materials" model="ir.actions.act_window">
             <field name="name">Training Materials</field>
-            <field name="res_model">ab.training.material</field>
+            <field name="res_model">ab_training_material</field>
             <field name="view_mode">list,form</field>
             <field name="context">{'create': False}</field>
         </record>
 
         <record id="action_all_training_tasks" model="ir.actions.act_window">
             <field name="name">All Training Tasks</field>
-            <field name="res_model">ab.training.task</field>
+            <field name="res_model">ab_training_task</field>
             <field name="view_mode">list,kanban,form</field>
         </record>
 
         <record id="action_my_training_wallet" model="ir.actions.act_window">
             <field name="name">My Wallet</field>
-            <field name="res_model">ab.training.wallet</field>
+            <field name="res_model">ab_training_wallet</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[('user_id', '=', uid)]</field>
         </record>
@@ -50,32 +50,32 @@
 
         <record id="action_training_wallets" model="ir.actions.act_window">
             <field name="name">Member Wallets</field>
-            <field name="res_model">ab.training.wallet</field>
+            <field name="res_model">ab_training_wallet</field>
             <field name="view_mode">list,form</field>
         </record>
 
         <record id="action_training_wallet_resets" model="ir.actions.act_window">
             <field name="name">Payout History</field>
-            <field name="res_model">ab.training.wallet.reset</field>
+            <field name="res_model">ab_training_wallet_reset</field>
             <field name="view_mode">list,form</field>
             <field name="context">{'create': False}</field>
         </record>
 
         <record id="action_training_categories" model="ir.actions.act_window">
             <field name="name">Material Categories</field>
-            <field name="res_model">ab.training.task.category</field>
+            <field name="res_model">ab_training_task_category</field>
             <field name="view_mode">list,form</field>
         </record>
 
         <record id="action_training_task_types" model="ir.actions.act_window">
             <field name="name">Task Types</field>
-            <field name="res_model">ab.training.task.type</field>
+            <field name="res_model">ab_training_task_type</field>
             <field name="view_mode">list,form</field>
         </record>
 
         <record id="action_training_wallet_reset_all" model="ir.actions.act_window">
             <field name="name">Reset Approved Wallets</field>
-            <field name="res_model">ab.training.wallet.reset.wizard</field>
+            <field name="res_model">ab_training_wallet_reset_wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
             <field name="context">{'default_scope': 'all'}</field>

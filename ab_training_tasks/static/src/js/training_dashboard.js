@@ -26,7 +26,7 @@ export class TrainingDashboard extends Component {
         this.state.loading = true;
         try {
             this.state.data = await this.orm.call(
-                "ab.training.task",
+                "ab_training_task",
                 "get_dashboard_data",
                 [],
                 {month: this.state.month}
@@ -221,7 +221,7 @@ export class TrainingDashboard extends Component {
         await this.action.doAction({
             type: "ir.actions.act_window",
             name: _t("Training Tasks"),
-            res_model: "ab.training.task",
+            res_model: "ab_training_task",
             views: [[false, "list"], [false, "kanban"], [false, "form"]],
             domain,
             target: "current",
@@ -232,7 +232,7 @@ export class TrainingDashboard extends Component {
         await this.action.doAction({
             type: "ir.actions.act_window",
             name: _t("Training Task"),
-            res_model: "ab.training.task",
+            res_model: "ab_training_task",
             res_id: taskId,
             views: [[false, "form"]],
             target: "current",
@@ -243,7 +243,7 @@ export class TrainingDashboard extends Component {
         await this.action.doAction({
             type: "ir.actions.act_window",
             name: _t("New Training Task"),
-            res_model: "ab.training.task",
+            res_model: "ab_training_task",
             views: [[false, "form"]],
             target: "current",
             context: {default_completion_date: new Date().toISOString().slice(0, 10)},

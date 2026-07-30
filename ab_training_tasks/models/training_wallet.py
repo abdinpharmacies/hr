@@ -5,7 +5,7 @@ from odoo.exceptions import AccessError
 
 
 class TrainingWallet(models.Model):
-    _name = 'ab.training.wallet'
+    _name = 'ab_training_wallet'
     _description = 'Training Member Wallet'
     _order = 'user_id'
     _check_company_auto = True
@@ -29,15 +29,15 @@ class TrainingWallet(models.Model):
         readonly=True,
     )
     active = fields.Boolean(default=True)
-    task_ids = fields.One2many('ab.training.task', 'wallet_id', string='Tasks')
+    task_ids = fields.One2many('ab_training_task', 'wallet_id', string='Tasks')
     activity_task_ids = fields.One2many(
-        'ab.training.task',
+        'ab_training_task',
         'wallet_id',
         string='Incentive Activity',
         domain=[('state', 'in', ('pending', 'approved'))],
     )
     reset_line_ids = fields.One2many(
-        'ab.training.wallet.reset.line',
+        'ab_training_wallet_reset_line',
         'wallet_id',
         string='Payout History',
     )
@@ -81,7 +81,7 @@ class TrainingWallet(models.Model):
             'pending_task_count': 0,
         })
         if self.ids:
-            tasks = self.env['ab.training.task'].search([
+            tasks = self.env['ab_training_task'].search([
                 ('wallet_id', 'in', self.ids),
                 ('state', 'in', ('pending', 'approved')),
             ])
@@ -130,7 +130,7 @@ class TrainingWallet(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': _('My Wallet'),
-            'res_model': 'ab.training.wallet',
+            'res_model': 'ab_training_wallet',
             'res_id': wallet.id,
             'view_mode': 'form',
             'views': [(form_view_id, 'form')],
@@ -145,7 +145,7 @@ class TrainingWallet(models.Model):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Reset Member Wallet'),
-            'res_model': 'ab.training.wallet.reset.wizard',
+            'res_model': 'ab_training_wallet_reset_wizard',
             'view_mode': 'form',
             'target': 'new',
             'context': {

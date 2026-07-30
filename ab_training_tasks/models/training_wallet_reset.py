@@ -3,7 +3,7 @@ from odoo.exceptions import AccessError
 
 
 class TrainingWalletReset(models.Model):
-    _name = 'ab.training.wallet.reset'
+    _name = 'ab_training_wallet_reset'
     _description = 'Training Wallet Payout'
     _inherit = ['mail.thread']
     _order = 'reset_at desc, id desc'
@@ -20,7 +20,7 @@ class TrainingWalletReset(models.Model):
     reset_by = fields.Many2one('res.users', required=True, readonly=True, ondelete='restrict')
     reset_at = fields.Datetime(required=True, readonly=True)
     note = fields.Text(readonly=True)
-    line_ids = fields.One2many('ab.training.wallet.reset.line', 'reset_id', string='Members')
+    line_ids = fields.One2many('ab_training_wallet_reset_line', 'reset_id', string='Members')
     total_amount = fields.Monetary(
         compute='_compute_totals',
         store=True,
@@ -53,7 +53,7 @@ class TrainingWalletReset(models.Model):
             raise AccessError(_('Wallet payout logs can only be created through the reset workflow.'))
         for vals in vals_list:
             if vals.get('name', _('New')) == _('New'):
-                vals['name'] = self.env['ir.sequence'].next_by_code('ab.training.wallet.reset') or _('New')
+                vals['name'] = self.env['ir.sequence'].next_by_code('ab_training_wallet_reset') or _('New')
         return super().create(vals_list)
 
     def write(self, vals):
@@ -66,19 +66,19 @@ class TrainingWalletReset(models.Model):
 
 
 class TrainingWalletResetLine(models.Model):
-    _name = 'ab.training.wallet.reset.line'
+    _name = 'ab_training_wallet_reset_line'
     _description = 'Training Wallet Payout Line'
     _order = 'reset_at desc, id desc'
     _check_company_auto = True
 
     reset_id = fields.Many2one(
-        'ab.training.wallet.reset',
+        'ab_training_wallet_reset',
         required=True,
         ondelete='cascade',
         index=True,
     )
     wallet_id = fields.Many2one(
-        'ab.training.wallet',
+        'ab_training_wallet',
         required=True,
         ondelete='restrict',
         check_company=True,
@@ -93,7 +93,7 @@ class TrainingWalletResetLine(models.Model):
     approved_task_count = fields.Integer(required=True, readonly=True)
     pending_amount_at_reset = fields.Monetary(required=True, readonly=True, currency_field='currency_id')
     pending_task_count_at_reset = fields.Integer(required=True, readonly=True)
-    task_ids = fields.One2many('ab.training.task', 'wallet_reset_line_id', string='Paid Tasks')
+    task_ids = fields.One2many('ab_training_task', 'wallet_reset_line_id', string='Paid Tasks')
 
     _non_negative_amounts = models.Constraint(
         'CHECK(approved_amount >= 0 AND pending_amount_at_reset >= 0)',

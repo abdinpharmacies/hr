@@ -5,7 +5,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 
 
 class TrainingWalletResetWizard(models.TransientModel):
-    _name = 'ab.training.wallet.reset.wizard'
+    _name = 'ab_training_wallet_reset_wizard'
     _description = 'Reset Training Wallets'
 
     scope = fields.Selection(
@@ -22,7 +22,7 @@ class TrainingWalletResetWizard(models.TransientModel):
     )
     currency_id = fields.Many2one(related='company_id.currency_id', readonly=True)
     wallet_id = fields.Many2one(
-        'ab.training.wallet',
+        'ab_training_wallet',
         string='Member Wallet',
         domain="[('company_id', '=', company_id)]",
     )
@@ -55,13 +55,13 @@ class TrainingWalletResetWizard(models.TransientModel):
     def _get_scope_tasks(self):
         self.ensure_one()
         if not self.company_id:
-            return self.env['ab.training.task']
+            return self.env['ab_training_task']
         domain = [('company_id', '=', self.company_id.id)]
         if self.scope == 'single':
             if not self.wallet_id:
-                return self.env['ab.training.task']
+                return self.env['ab_training_task']
             domain.append(('wallet_id', '=', self.wallet_id.id))
-        return self.env['ab.training.task'].search(domain)
+        return self.env['ab_training_task'].search(domain)
 
     def action_reset(self):
         self.ensure_one()
@@ -82,15 +82,15 @@ class TrainingWalletResetWizard(models.TransientModel):
         if not approved_tasks:
             raise UserError(_('There are no approved wallet incentives available to reset.'))
 
-        approved_by_wallet = defaultdict(lambda: self.env['ab.training.task'])
-        pending_by_wallet = defaultdict(lambda: self.env['ab.training.task'])
+        approved_by_wallet = defaultdict(lambda: self.env['ab_training_task'])
+        pending_by_wallet = defaultdict(lambda: self.env['ab_training_task'])
         for task in approved_tasks:
             approved_by_wallet[task.wallet_id.id] |= task
         for task in pending_tasks:
             pending_by_wallet[task.wallet_id.id] |= task
 
         operation_context = dict(self.env.context, training_wallet_reset_operation=True)
-        reset = self.env['ab.training.wallet.reset'].sudo().with_context(operation_context).create({
+        reset = self.env['ab_training_wallet_reset'].sudo().with_context(operation_context).create({
             'scope': self.scope,
             'company_id': self.company_id.id,
             'reset_by': self.env.user.id,
@@ -110,7 +110,7 @@ class TrainingWalletResetWizard(models.TransientModel):
                 'pending_amount_at_reset': sum(wallet_pending.mapped('incentive_value')),
                 'pending_task_count_at_reset': len(wallet_pending),
             })
-        lines = self.env['ab.training.wallet.reset.line'].sudo().with_context(operation_context).create(line_vals)
+        lines = self.env['ab_training_wallet_reset_line'].sudo().with_context(operation_context).create(line_vals)
         lines_by_wallet = {line.wallet_id.id: line for line in lines}
         for wallet_id, wallet_tasks in approved_by_wallet.items():
             wallet_tasks.with_context(operation_context).write({
@@ -122,7 +122,7 @@ class TrainingWalletResetWizard(models.TransientModel):
         return {
             'type': 'ir.actions.act_window',
             'name': _('Wallet Payout'),
-            'res_model': 'ab.training.wallet.reset',
+            'res_model': 'ab_training_wallet_reset',
             'res_id': reset.id,
             'view_mode': 'form',
             'target': 'current',

@@ -113,7 +113,7 @@ export class TrainingMaterialOne2ManyField extends X2ManyField {
             {
                 type: "ir.actions.act_window",
                 name: _t("Upload Training Material"),
-                res_model: "ab.training.material",
+                res_model: "ab_training_material",
                 views: [[false, "form"]],
                 target: "new",
                 context: actionContext,

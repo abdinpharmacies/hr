@@ -2,8 +2,8 @@
 <odoo>
     <data>
         <record id="view_training_wallet_reset_wizard_form" model="ir.ui.view">
-            <field name="name">ab.training.wallet.reset.wizard.form</field>
-            <field name="model">ab.training.wallet.reset.wizard</field>
+            <field name="name">ab_training_wallet_reset_wizard.form</field>
+            <field name="model">ab_training_wallet_reset_wizard</field>
             <field name="arch" type="xml">
                 <form string="Reset Approved Wallet Balance" class="ab_training_core_form core_ui_form_modern">
                     <field name="currency_id" invisible="1"/>

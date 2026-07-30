@@ -2,10 +2,10 @@ from odoo import fields, models
 
 
 class TrainingTaskRejectWizard(models.TransientModel):
-    _name = 'ab.training.task.reject.wizard'
+    _name = 'ab_training_task_reject_wizard'
     _description = 'Reject Training Task'
 
-    task_id = fields.Many2one('ab.training.task', required=True, readonly=True)
+    task_id = fields.Many2one('ab_training_task', required=True, readonly=True)
     reason = fields.Text(required=True)
 
     def action_reject(self):
