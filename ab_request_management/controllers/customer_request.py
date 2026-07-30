@@ -352,10 +352,11 @@ class AbRequestCustomerController(http.Controller):
         requester_type = (post.get("requester_type") or "").strip()
         employee_code = (post.get("employee_code") or "").strip()
         commercial_register_number = (post.get("commercial_register_number") or "").strip()
+        national_id = (post.get("national_id") or "").strip()
         if requester_type not in {"employee", "supplier"}:
             return request.env["ab_request_website"].sudo().browse()
         requester_reference = employee_code if requester_type == "employee" else commercial_register_number
-        if not request_reference or not requester_reference:
+        if not request_reference or not requester_reference or (requester_type == "employee" and not national_id):
             return request.env["ab_request_website"].sudo().browse()
 
         website_request = request.env["ab_request_website"].sudo().search(
@@ -365,14 +366,25 @@ class AbRequestCustomerController(http.Controller):
         if not website_request:
             return website_request
 
+        identity_matches = AbRequestCustomerController._requester_identity_matches(
+            website_request,
+            requester_type,
+            requester_reference,
+            national_id,
+        )
+        if not identity_matches:
+            return request.env["ab_request_website"].sudo().browse()
+        return website_request
+
+    @staticmethod
+    def _requester_identity_matches(website_request, requester_type, requester_reference, national_id=""):
         reference_matches = AbRequestCustomerController._requester_reference_matches(
             website_request,
             requester_type,
             requester_reference,
         )
-        if not reference_matches:
-            return request.env["ab_request_website"].sudo().browse()
-        return website_request
+        national_id_matches = requester_type != "employee" or (website_request.national_id or "").strip() == national_id
+        return reference_matches and national_id_matches
 
     @staticmethod
     def _requester_reference_matches(website_request, requester_type, requester_reference):

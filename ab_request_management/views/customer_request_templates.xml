@@ -455,6 +455,18 @@
                                                placeholder="كود الموظف"
                                                t-att-value="post.get('employee_code')"/>
                                     </div>
+                                    <div class="core_ui_form_group" data-ab-national-id-group="1">
+                                        <label for="national_id">الرقم القومي <em>*</em></label>
+                                        <input id="national_id"
+                                               name="national_id"
+                                               class="core_ui_input"
+                                               maxlength="14"
+                                               inputmode="numeric"
+                                               pattern="[0-9]{14}"
+                                               autocomplete="off"
+                                               placeholder="14 رقم"
+                                               t-att-value="post.get('national_id')"/>
+                                    </div>
                                     <div class="core_ui_form_group" data-ab-commercial-register-group="1">
                                         <label for="commercial_register_number">رقم السجل التجاري <em>*</em></label>
                                         <input id="commercial_register_number"
@@ -479,7 +491,9 @@
                             </footer>
                         </form>
 
-                        <section t-if="website_request" class="core_ui_card ab-public-request-followup-results">
+                        <section t-if="website_request"
+                                 class="core_ui_card ab-public-request-followup-results"
+                                 data-ab-followup-results="1">
                             <div class="ab-public-request-form-heading">
                                 <div>
                                     <span class="ab-public-request-kicker">تم التحقق</span>
