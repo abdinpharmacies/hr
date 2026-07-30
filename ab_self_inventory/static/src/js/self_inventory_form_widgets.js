@@ -1031,14 +1031,16 @@ class DataGridWidget extends Component {
                             <input type="text" t-ref="searchInput" t-att-placeholder="_t('Search products...')" t-on-input="onSearchInput" class="o_input"/>
                         </div>
                     </div>
-                    <div class="ab_saas_toolbar_right" t-if="!isProcessColumns">
+                    <div class="ab_saas_toolbar_right" t-if="!isProcessColumns || !isReadonly">
                         <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly"><t t-esc="_t('Add Line')"/></button>
-                        <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
-                        <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Unselect All')"/></button>
-                        <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Delete Selected')"/></button>
-                        <button class="ab_saas_toolbar_btn" t-if="!hideBranchSummary" t-on-click="toggleGrouping">
-                            <t t-if="state.groupByBranch">&#x25BC;</t><t t-else="">&#x25B6;</t> <t t-esc="_t('Group')"/>
-                        </button>
+                        <t t-if="!isProcessColumns">
+                            <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
+                            <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Unselect All')"/></button>
+                            <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--danger" t-if="!state.groupByBranch" t-on-click="() => this.deleteSelected()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Delete Selected')"/></button>
+                            <button class="ab_saas_toolbar_btn" t-if="!hideBranchSummary" t-on-click="toggleGrouping">
+                                <t t-if="state.groupByBranch">&#x25BC;</t><t t-else="">&#x25B6;</t> <t t-esc="_t('Group')"/>
+                            </button>
+                        </t>
                     </div>
                 </div>
 
@@ -1697,7 +1699,6 @@ class DataGridWidget extends Component {
     }
 
     async openAddLine() {
-        if (this.isProcessColumns) return;
         if (!this.resId || this.isReadonly) return;
         try {
             const action = await this.orm.call(this.resModel, "action_open_manual_add_line_wizard", [[this.resId]], {});

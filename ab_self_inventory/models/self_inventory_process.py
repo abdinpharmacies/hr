@@ -10,27 +10,6 @@ _logger = logging.getLogger(__name__)
 REQUESTED_STOCK_SYNC_CHUNK_SIZE = 800
 
 
-BRANCH_PROCESS_STOCK_PRODUCTS_SQL = """
-    SELECT
-        main.itm_id AS itm_id,
-        ic.itm_code AS itm_code
-    FROM Item_Class_Store main WITH (NOLOCK)
-    JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = main.itm_id
-    WHERE main.sto_id = ?
-    GROUP BY main.itm_id, ic.itm_code
-    HAVING SUM(main.itm_qty) <> 0
-"""
-
-BRANCH_PROCESS_PRODUCT_STOCK_SQL = """
-    SELECT
-        SUM(main.itm_qty / NULLIF(ic.itm_unit1_unit3, 0)) AS system_qty
-    FROM Item_Class_Store main WITH (NOLOCK)
-    JOIN Item_Catalog ic WITH (NOLOCK) ON ic.itm_id = main.itm_id
-    WHERE main.sto_id = ? AND (main.itm_id = ? OR ic.itm_code = ?)
-    HAVING SUM(main.itm_qty) <> 0
-"""
-
-
 def _get_process_branch_eplus_serial(branch):
     raw_serial = str(branch.eplus_serial or '').replace(',', '').strip()
     if not raw_serial:
@@ -86,12 +65,6 @@ class SelfInventoryProcess(models.Model):
         compute='_compute_totals',
         digits=(12, 2),
     )
-    available_product_ids = fields.Many2many(
-        'ab_product',
-        compute='_compute_available_product_ids',
-        string='Branch Stock Products',
-    )
-
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -172,11 +145,6 @@ class SelfInventoryProcess(models.Model):
                 and rec.branch_id in receiver_branches
             )
 
-    @api.depends('branch_id', 'line_ids.product_id')
-    def _compute_available_product_ids(self):
-        for rec in self:
-            rec.available_product_ids = rec._get_branch_stock_products()
-
     def write(self, vals):
         auto_receiver = False
         if vals.get('branch_id') and 'receiver_id' not in vals:
@@ -242,74 +210,6 @@ class SelfInventoryProcess(models.Model):
             rec.state = 'draft'
         return True
 
-    def _get_branch_stock_products(self):
-        self.ensure_one()
-        if not self.branch_id.eplus_serial:
-            return self.env['ab_product']
-        try:
-            rows = self._fetch_branch_stock_product_rows()
-        except Exception as ex:
-            _logger.exception("Could not fetch branch stock products for self inventory process %s", self.id)
-            return self.env['ab_product']
-
-        item_ids = [row['itm_id'] for row in rows]
-        item_codes = [row['itm_code'] for row in rows if row['itm_code']]
-        products = self.env['ab_product'].sudo().with_context(active_test=False)
-        products_by_serial = {
-            int(product.eplus_serial or 0): product.id
-            for product in products.search([('eplus_serial', 'in', item_ids)])
-        }
-        products_by_code = {
-            (product.code or '').strip(): product.id
-            for product in products.search([('code', 'in', item_codes)])
-            if product.code
-        }
-        product_ids = []
-        for row in rows:
-            product_id = products_by_serial.get(row['itm_id']) or products_by_code.get(row['itm_code'])
-            if product_id:
-                product_ids.append(product_id)
-        existing_product_ids = set(self.line_ids.mapped('product_id').ids)
-        return products.browse(product_ids).filtered(lambda product: product.id not in existing_product_ids)
-
-    def _fetch_branch_stock_product_rows(self):
-        self.ensure_one()
-        with self.connect_eplus(param_str='?', charset='CP1256') as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(BRANCH_PROCESS_STOCK_PRODUCTS_SQL, (_get_process_branch_eplus_serial(self.branch_id),))
-                columns = [column[0] for column in (cursor.description or [])]
-                rows = []
-                for row in cursor.fetchall():
-                    if not isinstance(row, dict):
-                        row = dict(zip(columns, row))
-                    normalized = {str(key).lower(): value for key, value in row.items()}
-                    rows.append({
-                        'itm_id': int(normalized.get('itm_id') or 0),
-                        'itm_code': str(normalized.get('itm_code') or '').strip(),
-                    })
-                return rows
-
-    def _get_branch_product_stock_qty(self, product):
-        self.ensure_one()
-        product.ensure_one()
-        product_code = (product.code or '').strip()
-        if not self.branch_id.eplus_serial or (not product.eplus_serial and not product_code):
-            return None
-        with self.connect_eplus(param_str='?', charset='CP1256') as conn:
-            with conn.cursor() as cursor:
-                cursor.execute(
-                    BRANCH_PROCESS_PRODUCT_STOCK_SQL,
-                    (_get_process_branch_eplus_serial(self.branch_id), int(product.eplus_serial or 0), product_code),
-                )
-                row = cursor.fetchone()
-                if not row:
-                    return None
-                if isinstance(row, dict):
-                    stock_qty = row.get('system_qty') or row.get('SYSTEM_QTY')
-                else:
-                    stock_qty = row[0]
-                return float(stock_qty or 0.0)
-
     def action_sync_requested_product_quantities(self):
         total_updated = 0
         total_unchanged = 0
@@ -339,7 +239,9 @@ class SelfInventoryProcess(models.Model):
                 if abs((line.system_qty or 0.0) - new_qty) <= 0.0001:
                     total_unchanged += 1
                     continue
-                line.with_context(ab_self_inventory_allow_system_qty_sync=True).write({'system_qty': new_qty})
+                line.sudo().with_context(ab_self_inventory_allow_system_qty_sync=True).write({
+                    'system_qty': new_qty,
+                })
                 total_updated += 1
 
         return {
@@ -442,6 +344,7 @@ class SelfInventoryProcess(models.Model):
 
     def action_open_import_wizard(self):
         self.ensure_one()
+        self._check_can_update_process_line_grid()
         return {
             'name': _('Import Actual Counts'),
             'type': 'ir.actions.act_window',
@@ -449,6 +352,22 @@ class SelfInventoryProcess(models.Model):
             'view_mode': 'form',
             'target': 'new',
             'context': {'default_process_id': self.id},
+        }
+
+    def action_open_manual_add_line_wizard(self):
+        self.ensure_one()
+        self._check_can_update_process_line_grid()
+        wizard = self.env['ab_self_inventory_batch_add_line_wizard'].create({
+            'process_id': self.id,
+        })
+        return {
+            'name': _('Add Line'),
+            'type': 'ir.actions.act_window',
+            'res_model': 'ab_self_inventory_batch_add_line_wizard',
+            'view_mode': 'form',
+            'views': [(False, 'form')],
+            'res_id': wizard.id,
+            'target': 'new',
         }
 
     def action_get_analytics(self):
@@ -621,8 +540,12 @@ class SelfInventoryProcessLine(models.Model):
         self._check_duplicate_products(vals_list)
         for vals in vals_list:
             process = self.env['ab_self_inventory_process'].browse(vals.get('process_id')).exists()
-            if process and process.state not in ('draft', 'in_progress'):
-                raise ValidationError(_("Only active self inventory processes can receive new lines."))
+            if not process:
+                raise ValidationError(_("A self inventory process is required."))
+            if not self.env.su:
+                if vals.get('requested'):
+                    raise ValidationError(_("Requested product lines can only be created from a request."))
+                process._check_can_update_process_line_grid()
             self._prepare_product_values(vals)
             if 'actual_qty' in vals:
                 vals['is_counted'] = True
@@ -630,6 +553,9 @@ class SelfInventoryProcessLine(models.Model):
 
     def write(self, vals):
         mark_counted = 'actual_qty' in vals
+        if not self.env.su:
+            for process in self.mapped('process_id'):
+                process._check_can_update_process_line_grid()
         for rec in self:
             if rec.process_id.state not in ('draft', 'in_progress'):
                 raise ValidationError(_("Only active self inventory process lines can be changed."))
@@ -639,10 +565,13 @@ class SelfInventoryProcessLine(models.Model):
         return super().write(vals)
 
     def unlink(self):
+        if not self.env.su:
+            for process in self.mapped('process_id'):
+                process._check_can_update_process_line_grid()
         for rec in self:
             if rec.process_id.state not in ('draft', 'in_progress'):
                 raise ValidationError(_("Only active self inventory process lines can be deleted."))
-            if rec.requested:
+            if rec.requested and not self.env.su:
                 raise ValidationError(_("Requested self inventory products cannot be deleted."))
         return super().unlink()
 
@@ -660,7 +589,11 @@ class SelfInventoryProcessLine(models.Model):
                 continue
             key = (process_id, product_id)
             if key in incoming_by_process:
-                raise ValidationError(_("already exists product"))
+                product = self.env['ab_product'].browse(product_id)
+                raise ValidationError(
+                    _("Product %s already exists on this self inventory process.")
+                    % product.display_name
+                )
             incoming_by_process[key] = True
 
         if not incoming_by_process:
@@ -671,7 +604,10 @@ class SelfInventoryProcessLine(models.Model):
         ]
         for line in self.search(domain):
             if (line.process_id.id, line.product_id.id) in incoming_by_process:
-                raise ValidationError(_("already exists product"))
+                raise ValidationError(
+                    _("Product %s already exists on this self inventory process.")
+                    % line.product_id.display_name
+                )
 
     def _check_locked_fields(self, vals):
         locked_fields = {
@@ -684,7 +620,7 @@ class SelfInventoryProcessLine(models.Model):
             'unit_cost',
             'is_counted',
         }
-        if self.env.context.get('ab_self_inventory_allow_system_qty_sync'):
+        if self.env.su and self.env.context.get('ab_self_inventory_allow_system_qty_sync'):
             locked_fields.discard('system_qty')
         if locked_fields.intersection(vals):
             raise ValidationError(_("Self inventory products cannot be changed after the request is received."))
@@ -694,16 +630,13 @@ class SelfInventoryProcessLine(models.Model):
         product_id = vals.get('product_id')
         if product_id:
             product = self.env['ab_product'].browse(product_id).exists()
-            if product:
-                vals.setdefault('eplus_item_id', product.eplus_serial or 0)
-                vals.setdefault('eplus_item_code', product.code or '')
-                vals.setdefault('unit_cost', product.default_cost or product.default_price or 0.0)
-                process = self.env['ab_self_inventory_process'].browse(vals.get('process_id')).exists()
-                if process and not vals.get('requested'):
-                    system_qty = process._get_branch_product_stock_qty(product)
-                    if system_qty is None:
-                        raise ValidationError(_("Selected product is not available in this branch stock."))
-                    vals['system_qty'] = system_qty
+            if not product:
+                raise ValidationError(_("Selected product was not found."))
+            vals.setdefault('eplus_item_id', product.eplus_serial or 0)
+            vals.setdefault('eplus_item_code', product.code or '')
+            vals.setdefault('unit_cost', product.default_cost or product.default_price or 0.0)
+            if not vals.get('requested'):
+                vals['system_qty'] = 0.0
 
     @api.depends('system_qty', 'actual_qty', 'unit_cost', 'is_counted', 'explanation')
     def _compute_difference_qty(self):
@@ -747,17 +680,7 @@ class SelfInventoryProcessLine(models.Model):
                 rec.eplus_item_code = rec.product_id.code or ''
                 rec.unit_cost = rec.product_id.default_cost or rec.product_id.default_price or 0.0
                 if rec.process_id and not rec.requested:
-                    system_qty = rec.process_id._get_branch_product_stock_qty(rec.product_id)
-                    if system_qty is None:
-                        rec.product_id = False
-                        rec.system_qty = 0.0
-                        return {
-                            'warning': {
-                                'title': _("Branch Stock"),
-                                'message': _("Selected product is not available in this branch stock."),
-                            }
-                        }
-                    rec.system_qty = system_qty
+                    rec.system_qty = 0.0
 
     @api.constrains('actual_qty')
     def _check_actual_qty(self):
