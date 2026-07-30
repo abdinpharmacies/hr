@@ -1,6 +1,7 @@
 /** @odoo-module **/
 
 import { Component, xml } from "@odoo/owl";
+import { _t } from "@web/core/l10n/translation";
 import { money, pct, number } from "../utils/formatters.js";
 
 export class RankingTable extends Component {
@@ -12,7 +13,7 @@ export class RankingTable extends Component {
                         <th class="sd-rank-th">#</th>
                         <th t-esc="props.nameLabel"/>
                         <th t-esc="props.valueLabel"/>
-                        <th t-esc="props.pctLabel || 'Percentage'"/>
+                        <th t-esc="props.pctLabel || _t('Percentage')"/>
                     </tr>
                 </thead>
                 <tbody>
@@ -46,7 +47,7 @@ export class RankingTable extends Component {
                             <td t-att-colspan="props.subNameField ? 4 : 4">
                                 <div class="sd-empty-state">
                                     <i class="fa fa-inbox"/>
-                                    <span>No records found.</span>
+                                    <span t-esc="_t('No records found.')"/>
                                 </div>
                             </td>
                         </tr>
@@ -91,6 +92,8 @@ export class RankingTable extends Component {
     pct(v) {
         return pct(v);
     }
+
+    _t = _t;
 }
 
 RankingTable.props = {

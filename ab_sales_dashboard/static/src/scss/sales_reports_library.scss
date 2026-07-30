@@ -237,13 +237,13 @@
 // ══════════════════════════════════════════════════════════════
 .rl-table-wrap {
     margin: 16px 40px 0;
-    background: var(--sd-bg-card-solid);
-    border: 1px solid var(--sd-table-border);
-    border-radius: 14px;
-    overflow: hidden;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    overflow: visible;
     flex: 1;
     min-height: 0;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    box-shadow: none;
 
     // Override the scrollable area inside the wrap
     .o_content {
@@ -257,9 +257,15 @@
 // ══════════════════════════════════════════════════════════════
 .ab_rl_list {
 
+    .o_list_table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        margin: 0;
+    }
+
     // ─── Table header ──────────────────────────────────────
     .o_list_table > thead > tr {
-        background: linear-gradient(180deg, var(--sd-bg-elevated) 0%, var(--sd-bg-card-solid) 100%);
+        background: transparent;
 
         > th {
             color: var(--sd-text-muted);
@@ -269,9 +275,9 @@
             letter-spacing: 0.08em;
             white-space: nowrap;
             border: none;
-            border-bottom: 2px solid var(--sd-table-border);
-            padding: 12px 16px;
+            padding: 8px 16px 4px;
             user-select: none;
+            background: transparent;
             transition: color 0.15s ease;
 
             &:hover { color: var(--sd-accent-cyan); }
@@ -302,18 +308,35 @@
 
     // ─── Data rows ─────────────────────────────────────────
     .o_list_table > tbody > tr.o_data_row {
+        position: relative;
         background: var(--sd-bg-card-solid);
-        border-bottom: 1px solid var(--sd-table-border);
-        transition: background 0.15s ease, box-shadow 0.2s ease;
+        border-radius: 12px;
+        box-shadow: var(--sd-shadow-sm);
+        cursor: pointer;
+        outline: 1px solid var(--sd-table-border);
+        outline-offset: -1px;
+        transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.15s ease;
         cursor: pointer;
 
         > td {
             color: var(--sd-text-primary);
-            padding: 12px 16px;
+            padding: 14px 16px;
             vertical-align: middle;
             border: none;
             font-size: 13px;
+            background: inherit;
+            border-left: 3px solid transparent;
             transition: background 0.15s ease;
+
+            &:first-child {
+                border-radius: 12px 0 0 12px;
+                padding-left: 17px;
+            }
+
+            &:last-child {
+                border-radius: 0 12px 12px 0;
+                padding-right: 20px;
+            }
         }
 
         // Alternating row emphasis — subtle stripe
@@ -322,8 +345,15 @@
         }
 
         &:hover {
-            background: var(--sd-bg-card-hover);
-            box-shadow: inset 3px 0 0 var(--sd-accent-cyan), 0 1px 8px rgba(0, 0, 0, 0.08);
+            background: var(--sd-bg-card-solid);
+            outline-color: var(--sd-accent-cyan);
+            box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
+            transform: translateY(-1px);
+            z-index: 1;
+        }
+
+        &:hover > td:first-child {
+            border-left-color: var(--sd-accent-cyan);
         }
 
         // Freshness stripe replaces the cyan hover left-edge for freshness rows
@@ -332,12 +362,13 @@
         &.rl-freshness--recent:hover,
         &.rl-freshness--stale:hover,
         &.rl-freshness--old:hover {
-            box-shadow: inset 3px 0 0 var(--sd-accent-cyan), 0 1px 8px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--sd-shadow-md);
         }
 
         &.o_record_selected {
             background: var(--sd-bg-card-hover);
-            box-shadow: inset 0 0 0 2px var(--sd-accent-cyan);
+            box-shadow: 0 0 0 2px var(--sd-accent-violet), var(--sd-shadow-md);
+            outline: none;
         }
     }
 
@@ -413,6 +444,262 @@
     // Checkbox
     .o_list_record_selector input[type="checkbox"] {
         accent-color: var(--sd-accent-cyan);
+    }
+}
+
+.ab_rl_action.sd-theme-dark .ab_rl_list {
+    .o_list_table > thead > tr {
+        background: var(--sd-bg-elevated);
+    }
+
+    .o_list_table > thead > tr > th {
+        background: var(--sd-bg-elevated);
+    }
+
+    .o_list_table > thead > tr > th,
+    .o_list_table > thead > tr > th *,
+    .o_list_table > tbody > tr.o_data_row > td,
+    .o_list_table > tbody > tr.o_data_row > td *,
+    .o_list_table > tbody > tr.o_group_header > td,
+    .o_list_table > tbody > tr.o_group_header > td * {
+        color: #fff !important;
+    }
+
+    .o_list_table > tbody > tr.o_data_row,
+    .o_list_table > tbody > tr.o_data_row:nth-child(even),
+    .o_list_table > tbody > tr.o_data_row:hover {
+        background: var(--sd-bg-card-solid);
+    }
+
+    .o_list_table > tbody > tr.o_data_row:hover {
+        outline-color: var(--sd-accent-cyan);
+        box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
+    }
+
+    .o_list_table > tbody > tr.o_data_row:hover > td {
+        background: inherit;
+    }
+}
+
+// ══════════════════════════════════════════════════════════════
+// PRODUCT SALES REPORT LIST — same table language as Activity Center
+// ══════════════════════════════════════════════════════════════
+.ab_product_sales_action {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    background: var(--sd-bg-deep);
+
+    .o_content {
+        overflow-y: auto;
+        overflow-x: hidden;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        background: var(--sd-bg-deep);
+    }
+}
+
+.ab_product_sales_action .o_control_panel {
+    background: var(--sd-bg-elevated);
+    border-bottom: 1px solid var(--sd-table-border);
+    padding: 8px 40px;
+    flex-shrink: 0;
+
+    .o_searchview {
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        border-radius: 8px;
+        color: var(--sd-text-primary);
+
+        &:focus-within {
+            border-color: var(--sd-accent-violet);
+            box-shadow: 0 0 0 2px var(--sd-glow-violet);
+        }
+
+        .o_searchview_input {
+            color: var(--sd-text-primary);
+            &::placeholder { color: var(--sd-text-muted); }
+        }
+
+        .o_searchview_facet {
+            background: var(--sd-input-bg);
+            border-color: var(--sd-table-border);
+            color: var(--sd-accent-violet);
+            border-radius: 6px;
+        }
+    }
+
+    .o_cp_buttons .btn {
+        background: var(--sd-input-bg);
+        border: 1px solid var(--sd-glass-border);
+        color: var(--sd-text-secondary);
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 5px 14px;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: var(--sd-bg-card-hover);
+            color: var(--sd-text-primary);
+            border-color: var(--sd-glass-border-hover);
+        }
+    }
+}
+
+.psr-table-wrap {
+    margin: 16px 40px 0;
+    background: transparent;
+    flex: 1;
+    min-height: 0;
+
+    .o_content { background: transparent; padding: 0; }
+}
+
+.ab_product_sales_list {
+    .o_list_table {
+        border-collapse: separate;
+        border-spacing: 0 10px;
+        margin: 0;
+    }
+
+    .o_list_table > thead > tr {
+        background: transparent;
+
+        > th {
+            color: var(--sd-text-muted);
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+            border: none;
+            padding: 8px 16px 4px;
+            user-select: none;
+            background: transparent;
+
+            &::before {
+                font-family: 'FontAwesome';
+                font-size: 11px;
+                margin-right: 6px;
+                opacity: 0.4;
+                vertical-align: middle;
+            }
+        }
+
+        > th[data-field="report_date"]::before { content: '\f073'; }
+        > th[data-field="store_id"]::before { content: '\f1ad'; }
+        > th[data-field="item_code"]::before { content: '\f02a'; }
+        > th[data-field="product_name"]::before { content: '\f1b2'; }
+        > th[data-field="item_type"]::before { content: '\f0fa'; }
+        > th[data-field="branches_sold_in"]::before { content: '\f1ad'; }
+        > th[data-field="sale_times"]::before { content: '\f0e7'; }
+        > th[data-field="invoice_count"]::before { content: '\f0f6'; }
+        > th[data-field="units_sold"]::before { content: '\f07a'; }
+        > th[data-field="total_sales"]::before { content: '\f155'; }
+        > th[data-field="average_selling_price"]::before { content: '\f201'; }
+    }
+
+    .o_list_table > tbody > tr.o_data_row {
+        position: relative;
+        background: var(--sd-bg-card-solid);
+        border-radius: 12px;
+        box-shadow: var(--sd-shadow-sm);
+        cursor: pointer;
+        outline: 1px solid var(--sd-table-border);
+        outline-offset: -1px;
+        transition: box-shadow 0.2s ease, transform 0.15s ease, background 0.15s ease;
+
+        &:hover {
+            box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
+            transform: translateY(-1px);
+            background: var(--sd-bg-card-solid);
+            outline-color: var(--sd-accent-cyan);
+            z-index: 1;
+        }
+
+        &.o_record_selected {
+            box-shadow: 0 0 0 2px var(--sd-accent-violet), var(--sd-shadow-md);
+            outline: none;
+        }
+
+        > td {
+            color: var(--sd-text-primary);
+            padding: 14px 16px;
+            vertical-align: middle;
+            border: none;
+            font-size: 13px;
+            background: inherit;
+            border-left: 3px solid transparent;
+
+            &:first-child {
+                border-radius: 12px 0 0 12px;
+                padding-left: 17px;
+            }
+
+            &:last-child {
+                border-radius: 0 12px 12px 0;
+                padding-right: 20px;
+            }
+        }
+
+        &:hover > td:first-child {
+            border-left-color: var(--sd-accent-cyan);
+        }
+    }
+
+    .o_list_table > tbody > tr.o_group_header {
+        background: transparent;
+
+        td {
+            padding: 14px 16px 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--sd-text-muted);
+            border: none;
+            background: transparent;
+        }
+    }
+
+    .o_list_record_selector input[type="checkbox"] {
+        accent-color: var(--sd-accent-violet);
+    }
+}
+
+.ab_product_sales_action.sd-theme-dark .ab_product_sales_list {
+    .o_list_table > thead > tr {
+        background: var(--sd-bg-elevated);
+    }
+
+    .o_list_table > thead > tr > th {
+        background: var(--sd-bg-elevated);
+    }
+
+    .o_list_table > thead > tr > th,
+    .o_list_table > thead > tr > th *,
+    .o_list_table > tbody > tr.o_data_row > td,
+    .o_list_table > tbody > tr.o_data_row > td *,
+    .o_list_table > tbody > tr.o_group_header > td,
+    .o_list_table > tbody > tr.o_group_header > td * {
+        color: #fff !important;
+    }
+
+    .o_list_table > tbody > tr.o_data_row,
+    .o_list_table > tbody > tr.o_data_row:hover {
+        background: var(--sd-bg-card-solid);
+    }
+
+    .o_list_table > tbody > tr.o_data_row:hover {
+        outline-color: var(--sd-accent-cyan);
+        box-shadow: 0 0 0 2px var(--sd-glow-cyan), var(--sd-shadow-md);
+    }
+
+    .o_list_table > tbody > tr.o_data_row:hover > td {
+        background: inherit;
     }
 }
 

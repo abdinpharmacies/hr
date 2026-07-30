@@ -28,6 +28,8 @@ class SalesDashboardReconciliationJob(models.Model):
         string="Stores",
     )
     store_filter_key = fields.Char(readonly=True, index=True)
+    store_filter_label = fields.Char(string="Branch Scope", compute="_compute_store_filter_label", readonly=True)
+    store_count = fields.Integer(string="Branches", compute="_compute_store_filter_label", readonly=True)
     state = fields.Selection([
         ("draft", "Draft"),
         ("analyzing", "Analyzing"),
@@ -55,6 +57,20 @@ class SalesDashboardReconciliationJob(models.Model):
     last_processed_date = fields.Date(readonly=True)
     created_by = fields.Many2one("res.users", required=True, readonly=True, default=lambda self: self.env.user)
     chunk_ids = fields.One2many("ab.sales.dashboard.reconciliation.chunk", "job_id", readonly=True)
+
+    @api.depends("date_from", "date_to")
+    @api.depends_context("lang")
+    def _compute_display_name(self):
+        for job in self:
+            job.display_name = job._short_job_name()
+
+    @api.depends("store_ids", "store_filter_key")
+    @api.depends_context("lang")
+    def _compute_store_filter_label(self):
+        for job in self:
+            stores = job._stores_for_display()
+            job.store_count = len(stores)
+            job.store_filter_label = self.env["ab.sales.dashboard.snapshot"]._store_filter_label(stores)
 
     def action_analyze_coverage(self):
         for job in self:
@@ -155,6 +171,22 @@ class SalesDashboardReconciliationJob(models.Model):
         if missing:
             raise UserError(_("These stores have no E-Plus serial: %s") % ", ".join(missing.mapped("display_name")))
         return stores
+
+    def _stores_for_display(self):
+        self.ensure_one()
+        if self.store_ids:
+            return self.store_ids
+        if self.store_filter_key and self.store_filter_key != "all":
+            serials = [serial for serial in self.store_filter_key.split(",") if serial]
+            return self.env["ab_store"].sudo().search(
+                [("eplus_serial", "in", serials)],
+                order="eplus_serial",
+            )
+        return self.env["ab_store"].sudo().search([
+            ("active", "=", True),
+            ("allow_sale", "=", True),
+            ("eplus_serial", "!=", False),
+        ], order="eplus_serial")
 
     def _store_eplus_ids(self, stores):
         return sorted(int(store.eplus_serial) for store in stores if store.eplus_serial)
@@ -386,10 +418,12 @@ class SalesDashboardReconciliationJob(models.Model):
         self.write(values)
 
     def _default_job_name(self, stores):
-        return _("Sales Dashboard Reconciliation %(from)s to %(to)s - %(stores)s") % {
+        return self._short_job_name()
+
+    def _short_job_name(self):
+        return _("Sales Dashboard Reconciliation %(from)s to %(to)s") % {
             "from": self.date_from,
             "to": self.date_to,
-            "stores": self.env["ab.sales.dashboard.snapshot"]._store_filter_label(stores),
         }
 
     @api.model

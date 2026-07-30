@@ -35,6 +35,82 @@ const INVOICE_COLUMNS = [
     { field: "invoice_total", label: _t("Total"), format: "money" },
 ];
 
+const FRONTEND_TRANSLATION_TERMS = [
+    _t("% of Total"),
+    _t("30 Days"),
+    _t("7 Days"),
+    _t("90 Days"),
+    _t("Abdin Pharmacies"),
+    _t("Abdin Pharmacies - performance overview"),
+    _t("Active Stores"),
+    _t("Avg. Daily Sales"),
+    _t("Back to Reports"),
+    _t("Balance"),
+    _t("Bearing %"),
+    _t("Browse, compare, and manage historical sales report snapshots."),
+    _t("Code"),
+    _t("Collection Analysis"),
+    _t("Company:"),
+    _t("Could not load all records."),
+    _t("Customer Bearing"),
+    _t("Customer Sales"),
+    _t("Data Source"),
+    _t("Date"),
+    _t("Distribution"),
+    _t("Filter by store"),
+    _t("Growth"),
+    _t("Invoice #"),
+    _t("Invoice + Customer + Items"),
+    _t("Invoice Details"),
+    _t("Items / Invoice"),
+    _t("Live Data"),
+    _t("Loading report..."),
+    _t("Medicine vs Non-Medicine"),
+    _t("Monitor and execute coverage reconciliation tasks across branches."),
+    _t("Month"),
+    _t("No Report Data"),
+    _t("No Snapshot"),
+    _t("No collection data available."),
+    _t("No invoice data available."),
+    _t("No item data available."),
+    _t("No records found."),
+    _t("No snapshot found."),
+    _t("No user data available."),
+    _t("Non-Medicine Sales"),
+    _t("Not available for summary range."),
+    _t("Only stored snapshot rows are available."),
+    _t("Page"),
+    _t("Percentage"),
+    _t("Prev:"),
+    _t("Product Sales"),
+    _t("Products / Store"),
+    _t("Ranked descending"),
+    _t("Reconciliation processors"),
+    _t("Refresh from E-Plus"),
+    _t("Sales + stock balance"),
+    _t("Sales Performance Report"),
+    _t("Sales Reports Library"),
+    _t("Sales by Collection Method"),
+    _t("Sales by User"),
+    _t("Sales by Users"),
+    _t("Sales reports archive"),
+    _t("Search"),
+    _t("Share"),
+    _t("Syncing..."),
+    _t("Top Sold Items"),
+    _t("Unique Products"),
+    _t("Year"),
+    _t("branch-days synchronized"),
+    _t("categories"),
+    _t("invoices"),
+    _t("items"),
+    _t("of"),
+    _t("records"),
+    _t("users"),
+    _t("vs previous period"),
+];
+void FRONTEND_TRANSLATION_TERMS;
+
 class SalesDashboardAction extends Component {
     static components = {
         CoreInput, CoreSearchSelect, CoreSelect,
@@ -491,6 +567,7 @@ class SalesDashboardAction extends Component {
     abs(v) { return Math.abs(Number(v || 0)); }
     toN(v) { return Number(v || 0); }
     collectionLabel(c) { return COLLECTION_LABELS[c] || c; }
+    _t = _t;
 
     // -- Computed properties --
     get reportMeta() { return (this.state.data && this.state.data.report_meta) || {}; }
@@ -522,6 +599,7 @@ class SalesDashboardAction extends Component {
     }
 
     get cacheProgressStyle() { return `width: ${this.cacheProgressPct.toFixed(2)}%;`; }
+    get cacheProgressComplete() { return this.cacheProgressVisible && this.cacheProgressPct >= 100; }
     get cacheProgressLabel() {
         const label = this.activeSyncProgress ? _t("Synced days") : _t("Cached days");
         return `${label}: ${this.number(this.progressDoneDays)} / ${this.number(this.progressTotalDays)} (${this.pct(this.cacheProgressPct)})`;
@@ -555,10 +633,10 @@ SalesDashboardAction.template = xml`
                     <div class="o_last_breadcrumb_item active d-flex fs-4 min-w-0 align-items-center">
                         <div class="ab_sales_dashboard__title_area">
                             <div class="ab_sales_dashboard__header_row">
-                                <span class="sd-title">Sales Dashboard</span>
+                                <span class="sd-title" t-esc="_t('Sales Dashboard')"/>
                                 <ThemeToggle theme="state.theme" onToggle="toggleTheme"/>
                             </div>
-                            <span class="sd-subtitle">Abdin Pharmacies — performance overview</span>
+                            <span class="sd-subtitle" t-esc="_t('Abdin Pharmacies - performance overview')"/>
                         </div>
                     </div>
                     <div class="o_control_panel_breadcrumbs_actions d-inline-flex d-print-none"/>
@@ -574,12 +652,12 @@ SalesDashboardAction.template = xml`
                 <CoreSearchSelect className="'ab_sales_dashboard__store_search'"
                                   value="state.filters.store_id"
                                   searchValue="state.storeSearch"
-                                  placeholder="'Filter by store'"
-                                  allLabel="'All Stores'"
-                                  emptyText="'No records found.'"
-                                  resultsLabel="'records'"
-                                  clearLabel="'All Stores'"
-                                  ariaLabel="'Filter by store'"
+                                  placeholder="_t('Filter by store')"
+                                  allLabel="_t('All Stores')"
+                                  emptyText="_t('No records found.')"
+                                  resultsLabel="_t('records')"
+                                  clearLabel="_t('All Stores')"
+                                  ariaLabel="_t('Filter by store')"
                                   options="filteredStores"
                                   open="state.storeMenuOpen"
                                   disabled="state.refreshing"
@@ -590,35 +668,35 @@ SalesDashboardAction.template = xml`
                 <div class="ab_sales_dashboard__date_inputs"
                      t-att-class="{'ab_sales_dashboard__date_inputs--active': isDateFilterActive('custom')}">
                     <CoreInput type="'date'"
-                               label="'Date From'"
+                               label="_t('Date From')"
                                className="'ab_sales_dashboard__date_field'"
                                value="state.filters.date_from"
                                max="latestReportDateIso"
                                disabled="state.refreshing"
                                onChange="(v) => this.updateCustomDate('date_from', v)"/>
                     <CoreInput type="'date'"
-                               label="'Date To'"
+                               label="_t('Date To')"
                                className="'ab_sales_dashboard__date_field'"
                                value="state.filters.date_to"
                                max="latestReportDateIso"
                                disabled="state.refreshing"
                                onChange="(v) => this.updateCustomDate('date_to', v)"/>
                 </div>
-                <div class="ab_sales_dashboard__quick_ranges" role="group" aria-label="'Date Filter'">
+                <div class="ab_sales_dashboard__quick_ranges" role="group" t-att-aria-label="_t('Date Filter')">
                     <CoreInput type="'date'" bare="true"
                                inputClass="'ab_sales_dashboard__period_select ab_sales_dashboard__day_select' + (isDateFilterActive('day') ? ' ab_sales_dashboard__range_active' : '')"
                                max="latestReportDateIso"
                                disabled="state.refreshing"
                                value="selectedDayValue"
                                onChange="(v) => this.applyDaySelection(v)"/>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')">Yesterday</button>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')">7 Days</button>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')">30 Days</button>
-                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')">90 Days</button>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('yesterday')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('yesterday')" t-esc="_t('Yesterday')"/>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_7_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_7_days')" t-esc="_t('7 Days')"/>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_30_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_30_days')" t-esc="_t('30 Days')"/>
+                    <button class="btn" t-att-class="{'ab_sales_dashboard__range_active': isDateFilterActive('last_90_days')}" type="button" t-att-disabled="state.refreshing" t-on-click="() => this.applyDatePreset('last_90_days')" t-esc="_t('90 Days')"/>
                     <CoreSelect className="'ab_sales_dashboard__period_select_field'"
                                 selectClass="'ab_sales_dashboard__period_select'"
                                 variant="isDateFilterActive('month') ? 'active' : ''"
-                                placeholder="'Month'"
+                                placeholder="_t('Month')"
                                 disabled="state.refreshing"
                                 value="selectedMonthValue"
                                 options="monthOptions"
@@ -626,7 +704,7 @@ SalesDashboardAction.template = xml`
                     <CoreSelect className="'ab_sales_dashboard__period_select_field'"
                                 selectClass="'ab_sales_dashboard__period_select'"
                                 variant="isDateFilterActive('year') ? 'active' : ''"
-                                placeholder="'Year'"
+                                placeholder="_t('Year')"
                                 disabled="state.refreshing"
                                 value="selectedYearValue"
                                 options="yearOptions"
@@ -636,8 +714,8 @@ SalesDashboardAction.template = xml`
                         class="btn btn-primary ab_sales_dashboard__refresh_button"
                         t-on-click="onRefresh"
                         t-att-disabled="state.refreshing">
-                    <t t-if="state.refreshing"><i class="fa fa-spinner fa-spin me-1"/><t t-esc="'Syncing...'"/></t>
-                    <t t-else=""><i class="fa fa-refresh me-1"/><t t-esc="'Refresh from E-Plus'"/></t>
+                    <t t-if="state.refreshing"><i class="fa fa-spinner fa-spin me-1"/><t t-esc="_t('Syncing...')"/></t>
+                    <t t-else=""><i class="fa fa-refresh me-1"/><t t-esc="_t('Refresh from E-Plus')"/></t>
                 </button>
             </div>
         </div>
@@ -658,6 +736,12 @@ SalesDashboardAction.template = xml`
             <div t-if="cacheProgressVisible" class="ab_sales_dashboard__cache_progress sd-animate-in">
                 <div class="ab_sales_dashboard__cache_progress_header">
                     <span t-esc="cacheProgressLabel"/>
+                    <span t-if="cacheProgressComplete"
+                          class="ab_sales_dashboard__cache_progress_complete"
+                          t-att-title="_t('Synced')"
+                          t-att-aria-label="_t('Synced')">
+                        100%
+                    </span>
                 </div>
                 <div class="ab_sales_dashboard__cache_progress_track">
                     <div class="ab_sales_dashboard__cache_progress_bar" t-att-style="cacheProgressStyle"/>
@@ -672,30 +756,30 @@ SalesDashboardAction.template = xml`
 
             <!-- KPI Cards -->
             <section class="ab_sales_dashboard__kpis">
-                <KpiCard label="'Total Sales'"
+                <KpiCard label="_t('Total Sales')"
                          value="money(state.data.total_sales)"
                          icon="'&lt;i class=&quot;fa fa-line-chart&quot;&gt;&lt;/i&gt;'"
                          variant="'amber'"
                          trend="state.data.avg_daily_growth_pct"
-                         trendLabel="'vs previous period'"
+                         trendLabel="_t('vs previous period')"
                          formatter="(v) => pct(abs(v))"
                          delay="0"/>
-                <KpiCard label="'Avg. Daily Sales'"
+                <KpiCard label="_t('Avg. Daily Sales')"
                          value="money(state.data.avg_daily_sales)"
                          icon="'&lt;i class=&quot;fa fa-calendar&quot;&gt;&lt;/i&gt;'"
                          variant="'cyan'"
-                         sub="'Prev: ' + money(state.data.prev_avg_daily_sales)"
+                         sub="_t('Prev:') + ' ' + money(state.data.prev_avg_daily_sales)"
                          delay="60"/>
-                <KpiCard label="'Invoices'"
+                <KpiCard label="_t('Invoices')"
                          value="number(state.data.invoice_count)"
                          icon="'&lt;i class=&quot;fa fa-file-text-o&quot;&gt;&lt;/i&gt;'"
                          sub="state.data.store_filter_label"
                          delay="120"/>
-                <KpiCard label="'Bearing %'"
+                <KpiCard label="_t('Bearing %')"
                          value="pct(state.data.bearing_pct)"
                          icon="'&lt;i class=&quot;fa fa-pie-chart&quot;&gt;&lt;/i&gt;'"
                          variant="'violet'"
-                         sub="'Company: ' + money(state.data.company_part_amount)"
+                         sub="_t('Company:') + ' ' + money(state.data.company_part_amount)"
                          delay="180"/>
             </section>
 
@@ -703,21 +787,21 @@ SalesDashboardAction.template = xml`
             <section class="ab_sales_dashboard__split">
                 <article class="ab_sales_dashboard__panel">
                     <div class="ab_sales_dashboard__panel_header">
-                        <h2>Medicine vs Non-Medicine</h2>
+                        <h2 t-esc="_t('Medicine vs Non-Medicine')"/>
                         <span t-esc="decimal(medicinePct) + ' / ' + decimal(nonMedicinePct)"/>
                     </div>
                     <DonutChart valueA="toN(state.data.medicine_sales)"
                                 valueB="toN(state.data.non_medicine_sales)"
-                                labelA="'Medicine Sales'"
-                                labelB="'Non-Medicine Sales'"
+                                labelA="_t('Medicine Sales')"
+                                labelB="_t('Non-Medicine Sales')"
                                 colorA="'#10b981'"
                                 colorB="'#475569'"
                                 delay="250"/>
                 </article>
                 <article class="ab_sales_dashboard__panel">
                     <div class="ab_sales_dashboard__panel_header">
-                        <h2>Sales by Collection Method</h2>
-                        <span t-esc="state.data.collection_lines.length + ' categories'"/>
+                        <h2 t-esc="_t('Sales by Collection Method')"/>
+                        <span t-esc="state.data.collection_lines.length + ' ' + _t('categories')"/>
                     </div>
                     <BarChart items="state.data.collection_lines"
                               labelFormatter="(cat) => this.collectionLabel(cat)"
@@ -729,32 +813,32 @@ SalesDashboardAction.template = xml`
             <section class="ab_sales_dashboard__tables">
                 <article class="ab_sales_dashboard__panel">
                     <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
-                        <h2>Sales by Users</h2>
+                        <h2 t-esc="_t('Sales by Users')"/>
                         <CoreInput type="'search'"
                                    className="'ab_sales_dashboard__table_search'"
                                    icon="'oi oi-search'"
-                                   placeholder="'Search'"
+                                   placeholder="_t('Search')"
                                    value="state.sectionPages.sales_by_user.search"
                                    disabled="!state.sectionPages.sales_by_user.available"
                                    onInput="(v) => this.onSectionSearchInput('sales_by_user', v)"/>
-                        <span>Ranked descending</span>
+                        <span t-esc="_t('Ranked descending')"/>
                     </div>
                     <div t-if="sectionUnsupported('sales_by_user')" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--info">
                         <i class="fa fa-info-circle"/>
-                        <span>Not available for summary range.</span>
+                        <span t-esc="_t('Not available for summary range.')"/>
                     </div>
                     <div t-if="state.sectionPages.sales_by_user.error" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--warning">
                         <i class="fa fa-exclamation-triangle"/>
-                        <span>Could not load all records.</span>
+                        <span t-esc="_t('Could not load all records.')"/>
                     </div>
                     <div t-if="state.sectionPages.sales_by_user.limited" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--muted">
                         <i class="fa fa-database"/>
-                        <span>Only stored snapshot rows are available.</span>
+                        <span t-esc="_t('Only stored snapshot rows are available.')"/>
                     </div>
                     <RankingTable rows="state.sectionPages.sales_by_user.rows"
-                                  nameLabel="'User'"
-                                  valueLabel="'Total Sales'"
-                                  pctLabel="'Percentage'"
+                                  nameLabel="_t('User')"
+                                  valueLabel="_t('Total Sales')"
+                                  pctLabel="_t('Percentage')"
                                   nameField="'employee_name'"
                                   loading="state.sectionPages.sales_by_user.loading"
                                   delay="380"/>
@@ -764,7 +848,7 @@ SalesDashboardAction.template = xml`
                                 t-on-click="() => this.changeSectionPage('sales_by_user', -1)">
                             <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
                         </button>
-                        <span>Page <t t-esc="state.sectionPages.sales_by_user.page"/> of <t t-esc="state.sectionPages.sales_by_user.totalPages"/> · <t t-esc="state.sectionPages.sales_by_user.totalCount"/> records</span>
+                        <span><t t-esc="_t('Page')"/> <t t-esc="state.sectionPages.sales_by_user.page"/> <t t-esc="_t('of')"/> <t t-esc="state.sectionPages.sales_by_user.totalPages"/> · <t t-esc="state.sectionPages.sales_by_user.totalCount"/> <t t-esc="_t('records')"/></span>
                         <button type="button" class="btn"
                                 t-att-disabled="state.sectionPages.sales_by_user.loading || state.sectionPages.sales_by_user.page &gt;= state.sectionPages.sales_by_user.totalPages"
                                 t-on-click="() => this.changeSectionPage('sales_by_user', 1)">
@@ -775,32 +859,32 @@ SalesDashboardAction.template = xml`
 
                 <article class="ab_sales_dashboard__panel">
                     <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
-                        <h2>Top Sold Items</h2>
+                        <h2 t-esc="_t('Top Sold Items')"/>
                         <CoreInput type="'search'"
                                    className="'ab_sales_dashboard__table_search'"
                                    icon="'oi oi-search'"
-                                   placeholder="'Search'"
+                                   placeholder="_t('Search')"
                                    value="state.sectionPages.top_items.search"
                                    disabled="!state.sectionPages.top_items.available"
                                    onInput="(v) => this.onSectionSearchInput('top_items', v)"/>
-                        <span>Sales + stock balance</span>
+                        <span t-esc="_t('Sales + stock balance')"/>
                     </div>
                     <div t-if="sectionUnsupported('top_items')" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--info">
                         <i class="fa fa-info-circle"/>
-                        <span>Not available for summary range.</span>
+                        <span t-esc="_t('Not available for summary range.')"/>
                     </div>
                     <div t-if="state.sectionPages.top_items.error" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--warning">
                         <i class="fa fa-exclamation-triangle"/>
-                        <span>Could not load all records.</span>
+                        <span t-esc="_t('Could not load all records.')"/>
                     </div>
                     <div t-if="state.sectionPages.top_items.limited" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--muted">
                         <i class="fa fa-database"/>
-                        <span>Only stored snapshot rows are available.</span>
+                        <span t-esc="_t('Only stored snapshot rows are available.')"/>
                     </div>
                     <RankingTable rows="state.sectionPages.top_items.rows"
-                                  nameLabel="'Item'"
-                                  valueLabel="'Total Sales'"
-                                  pctLabel="'Sale Times'"
+                                  nameLabel="_t('Item')"
+                                  valueLabel="_t('Total Sales')"
+                                  pctLabel="_t('Sale Times')"
                                   nameField="'product_name'"
                                   subNameField="'eplus_item_code'"
                                   loading="state.sectionPages.top_items.loading"
@@ -811,7 +895,7 @@ SalesDashboardAction.template = xml`
                                 t-on-click="() => this.changeSectionPage('top_items', -1)">
                             <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
                         </button>
-                        <span>Page <t t-esc="state.sectionPages.top_items.page"/> of <t t-esc="state.sectionPages.top_items.totalPages"/> · <t t-esc="state.sectionPages.top_items.totalCount"/> records</span>
+                        <span><t t-esc="_t('Page')"/> <t t-esc="state.sectionPages.top_items.page"/> <t t-esc="_t('of')"/> <t t-esc="state.sectionPages.top_items.totalPages"/> · <t t-esc="state.sectionPages.top_items.totalCount"/> <t t-esc="_t('records')"/></span>
                         <button type="button" class="btn"
                                 t-att-disabled="state.sectionPages.top_items.loading || state.sectionPages.top_items.page &gt;= state.sectionPages.top_items.totalPages"
                                 t-on-click="() => this.changeSectionPage('top_items', 1)">
@@ -824,27 +908,27 @@ SalesDashboardAction.template = xml`
             <!-- Customer Sales Table -->
             <section class="ab_sales_dashboard__panel sd-animate-in sd-animate-in-7">
                 <div class="ab_sales_dashboard__panel_header ab_sales_dashboard__panel_header--table">
-                    <h2>Customer Sales</h2>
+                    <h2 t-esc="_t('Customer Sales')"/>
                     <CoreInput type="'search'"
                                className="'ab_sales_dashboard__table_search'"
                                icon="'oi oi-search'"
-                               placeholder="'Search'"
+                               placeholder="_t('Search')"
                                value="state.sectionPages.customer_sales.search"
                                disabled="!state.sectionPages.customer_sales.available"
                                onInput="(v) => this.onSectionSearchInput('customer_sales', v)"/>
-                    <span>Invoice + Customer + Items</span>
+                    <span t-esc="_t('Invoice + Customer + Items')"/>
                 </div>
                 <div t-if="sectionUnsupported('customer_sales')" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--info">
                     <i class="fa fa-info-circle"/>
-                    <span>Not available for summary range.</span>
+                    <span t-esc="_t('Not available for summary range.')"/>
                 </div>
                 <div t-if="state.sectionPages.customer_sales.error" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--warning">
                     <i class="fa fa-exclamation-triangle"/>
-                    <span>Could not load all records.</span>
+                    <span t-esc="_t('Could not load all records.')"/>
                 </div>
                 <div t-if="state.sectionPages.customer_sales.limited" class="ab_sales_dashboard__section_note ab_sales_dashboard__section_note--muted">
                     <i class="fa fa-database"/>
-                    <span>Only stored snapshot rows are available.</span>
+                    <span t-esc="_t('Only stored snapshot rows are available.')"/>
                 </div>
                 <DataTable rows="state.sectionPages.customer_sales.rows"
                            columns="invoiceColumns"
@@ -856,7 +940,7 @@ SalesDashboardAction.template = xml`
                             t-on-click="() => this.changeSectionPage('customer_sales', -1)">
                         <i t-att-class="isRtl ? 'oi oi-chevron-right' : 'oi oi-chevron-left'"/>
                     </button>
-                    <span>Page <t t-esc="state.sectionPages.customer_sales.page"/> of <t t-esc="state.sectionPages.customer_sales.totalPages"/> · <t t-esc="state.sectionPages.customer_sales.totalCount"/> records</span>
+                    <span><t t-esc="_t('Page')"/> <t t-esc="state.sectionPages.customer_sales.page"/> <t t-esc="_t('of')"/> <t t-esc="state.sectionPages.customer_sales.totalPages"/> · <t t-esc="state.sectionPages.customer_sales.totalCount"/> <t t-esc="_t('records')"/></span>
                     <button type="button" class="btn"
                             t-att-disabled="state.sectionPages.customer_sales.loading || state.sectionPages.customer_sales.page &gt;= state.sectionPages.customer_sales.totalPages"
                             t-on-click="() => this.changeSectionPage('customer_sales', 1)">
