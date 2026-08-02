@@ -569,8 +569,8 @@ msgstr "عرض الحائز السابق"
 
 #. module: ab_internal_shipment_tracking
 #: model:ir.model.fields.selection,name:ab_internal_shipment_tracking.selection__ab_internal_shipment__delivery_method__hand_delivery
-msgid "Hand Delivery"
-msgstr "تسليم يدوي"
+msgid "Bank Representative Delivery"
+msgstr "تسليم لمناديب البنوك"
 
 
 #. module: ab_internal_shipment_tracking
@@ -625,46 +625,39 @@ msgstr "قيد النقل"
 #. module: ab_internal_shipment_tracking
 #: model:ir.model.fields.selection,name:ab_internal_shipment_tracking.selection__ab_internal_shipment__delivery_method__company_vehicle
 msgid "Internal Company Vehicle"
-msgstr "مركبة الشركة الداخلية"
+msgstr "سيارة الشركة الداخلية"
 
 
 #. module: ab_internal_shipment_tracking
 #: model:ir.model,name:ab_internal_shipment_tracking.model_ab_internal_shipment
+msgid "Shipment Record"
+msgstr "سجل شحنة"
+
+
+#. module: ab_internal_shipment_tracking
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
-msgid "Internal Shipment"
-msgstr "شحنة داخلية"
+msgid "Shipment Details"
+msgstr "تفاصيل الشحنة"
 
 
 #. module: ab_internal_shipment_tracking
 #: model:ir.model,name:ab_internal_shipment_tracking.model_ab_internal_shipment_history
-msgid "Internal Shipment History"
-msgstr "سجل الشحنات الداخلية"
+msgid "Shipment History"
+msgstr "سجل الشحنات"
 
 
 #. module: ab_internal_shipment_tracking
 #: model:ir.model,name:ab_internal_shipment_tracking.model_ab_internal_shipment_line
-msgid "Internal Shipment Line"
-msgstr "سطر شحنة داخلية"
+msgid "Shipment Line"
+msgstr "سطر الشحنة"
 
 
 #. module: ab_internal_shipment_tracking
 #: model:ir.module.category,name:ab_internal_shipment_tracking.category_ab_internal_shipment
 #: model:res.groups.privilege,name:ab_internal_shipment_tracking.privilege_ab_internal_shipment
-msgid "Internal Shipment Tracking"
-msgstr "تتبع الشحنات الداخلية"
-
-
-#. module: ab_internal_shipment_tracking
-#. odoo-python
-#: code:addons/ab_internal_shipment_tracking/models/internal_shipment.py:0
-#. odoo-javascript
-#: code:addons/ab_internal_shipment_tracking/static/src/js/internal_shipment_dashboard.js:0
-#: model:ir.actions.act_window,name:ab_internal_shipment_tracking.ab_internal_shipment_action
-#: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_root
-#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_list
-#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_search
-msgid "Internal Shipments"
-msgstr "الشحنات الداخلية"
+#: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_shipments
+msgid "Shipments"
+msgstr "الشحنات"
 
 
 #. module: ab_internal_shipment_tracking
@@ -1141,15 +1134,8 @@ msgstr "يجب أن تكون كميات سطور الشحنة موجبة."
 
 #. module: ab_internal_shipment_tracking
 #: model_terms:ir.actions.act_window,help:ab_internal_shipment_tracking.ab_internal_shipment_reporting_action
-msgid ""
-"Shipment statistics are generated from existing internal shipment records."
-msgstr "يتم إنشاء إحصائيات الشحنات من سجلات الشحنات الداخلية الموجودة."
-
-
-#. module: ab_internal_shipment_tracking
-#: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_shipments
-msgid "Shipments"
-msgstr "الشحنات"
+msgid "Shipment statistics are generated from existing shipment records."
+msgstr "يتم إنشاء إحصائيات الشحنات من سجلات الشحنات الموجودة."
 
 
 #. module: ab_internal_shipment_tracking

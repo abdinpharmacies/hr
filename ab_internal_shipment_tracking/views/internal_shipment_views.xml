@@ -5,7 +5,7 @@
             <field name="name">ab_internal_shipment.list</field>
             <field name="model">ab_internal_shipment</field>
             <field name="arch" type="xml">
-                <list string="Internal Shipments"
+                <list string="Shipments"
                       class="o_ais_request_list o_ais_shipments_list"
                       decoration-muted="state == 'draft'"
                       decoration-danger="is_delayed"
@@ -38,7 +38,7 @@
             <field name="name">ab_internal_shipment.form</field>
             <field name="model">ab_internal_shipment</field>
             <field name="arch" type="xml">
-                <form string="Internal Shipment" class="o_ais_form">
+                <form string="Shipment Details" class="o_ais_form">
                     <header class="o_ais_workflow_header">
                         <button name="action_send" type="object" string="Dispatch Shipment" class="btn-primary"
                                 invisible="state not in ('draft', 'sent', 'in_transit') or not can_current_user_manage_workflow"/>
@@ -473,7 +473,7 @@
             <field name="name">ab_internal_shipment.search</field>
             <field name="model">ab_internal_shipment</field>
             <field name="arch" type="xml">
-                <search string="Internal Shipments">
+                <search string="Shipments">
                     <field name="name"/>
                     <field name="subject"/>
                     <field name="sender_display"/>
@@ -527,7 +527,7 @@
         </record>
 
         <record id="ab_internal_shipment_action" model="ir.actions.act_window">
-            <field name="name">Internal Shipments</field>
+            <field name="name">Shipments</field>
             <field name="res_model">ab_internal_shipment</field>
             <field name="view_mode">list,form</field>
             <field name="domain">[]</field>
@@ -537,10 +537,10 @@
             <field name="view_ids" eval="[(5, 0, 0), (0, 0, {'view_mode': 'list', 'view_id': ref('ab_internal_shipment_view_list')}), (0, 0, {'view_mode': 'form', 'view_id': ref('ab_internal_shipment_view_form')})]"/>
             <field name="help" type="html">
                 <p class="o_view_nocontent_smiling_face">
-                    Create an internal shipment
+                    Create a shipment
                 </p>
                 <p>
-                    Register the sender, recipient, shipment contents, and delivery details to track internal movement.
+                    Register the sender, recipient, shipment contents, and delivery details to track shipment movement.
                 </p>
             </field>
         </record>
@@ -657,7 +657,7 @@
                     No shipment statistics available
                 </p>
                 <p>
-                    Shipment statistics are generated from existing internal shipment records.
+                    Shipment statistics are generated from existing shipment records.
                 </p>
             </field>
         </record>

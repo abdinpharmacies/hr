@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <menuitem id="ab_internal_shipment_menu_root"
-                  name="Internal Shipments"
+                  name="Shipments"
                   action="ab_internal_shipment_dashboard_action"
                   sequence="35"
                   web_icon="ab_internal_shipment_tracking,static/description/icon.png"

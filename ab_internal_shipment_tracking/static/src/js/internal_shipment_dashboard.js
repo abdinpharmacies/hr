@@ -229,9 +229,9 @@ export class AbInternalShipmentDashboard extends Component {
     getDeliveryMethodLabel(value) {
         return {
             company_vehicle: label("Internal Company Vehicle", "سيارة الشركة الداخلية"),
+            hand_delivery: label("Bank Representative Delivery", "تسليم لمناديب البنوك"),
             external_company: label("External Shipping Company", "شركة شحن خارجية"),
-            hand_delivery: label("Hand Delivery", "تسليم يدوي"),
-            other: label("Other", "غير ذلك"),
+            other: label("Other", "أخرى"),
         }[value] || value || label("Unknown", "غير معروف");
     }
 
@@ -240,13 +240,13 @@ export class AbInternalShipmentDashboard extends Component {
             documents: label("Documents", "مستندات"),
             devices: label("Devices", "أجهزة"),
             mixed: label("Mixed", "متنوع"),
-            other: label("Other", "غير ذلك"),
+            other: label("Other", "أخرى"),
         }[value] || value || label("Unknown", "غير معروف");
     }
 
     getDashboardLabels() {
         return {
-            moduleName: label("Internal Shipments", "الشحنات الداخلية"),
+            moduleName: label("Shipments", "الشحنات"),
             title: label("Operations Dashboard", "لوحة متابعة العمليات"),
             subtitle: label(
                 "Track shipment workload, route stages, pending receipts, and recent movement from one responsive workspace.",
@@ -270,7 +270,7 @@ export class AbInternalShipmentDashboard extends Component {
     async openList(domain) {
         await this.action.doAction({
             type: "ir.actions.act_window",
-            name: label("Internal Shipments", "الشحنات الداخلية"),
+            name: label("Shipments", "الشحنات"),
             res_model: "ab_internal_shipment",
             views: [[false, "list"], [false, "form"]],
             domain,
