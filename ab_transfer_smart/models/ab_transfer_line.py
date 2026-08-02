@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class AbTransferLine(models.Model):
@@ -17,6 +17,12 @@ class AbTransferLine(models.Model):
         digits=(16, 3),
         readonly=True,
         copy=False,
+    )
+    smart_expected_source_stock_qty = fields.Float(
+        string="Expected Stock",
+        digits=(16, 3),
+        compute="_compute_smart_expected_source_stock_qty",
+        readonly=True,
     )
     smart_qty_before_int = fields.Float(
         string="Qty Before Int",
@@ -96,3 +102,24 @@ class AbTransferLine(models.Model):
         readonly=True,
         copy=False,
     )
+
+    @api.depends("smart_source_stock_qty", "product_id", "from_store_id")
+    def _compute_smart_expected_source_stock_qty(self):
+        valid_lines = self.filtered(lambda line: line.product_id and line.from_store_id)
+        reserved_qty_by_key = {}
+        if valid_lines:
+            reserved_qty_by_key = self.env[
+                "ab_transfer_header"
+            ]._read_smart_active_reserved_qty_by_product_store(
+                valid_lines.mapped("product_id").ids,
+                valid_lines.mapped("from_store_id").ids,
+            )
+
+        for line in self:
+            reserved_qty = reserved_qty_by_key.get(
+                (line.product_id.id, line.from_store_id.id),
+                0.0,
+            )
+            line.smart_expected_source_stock_qty = (
+                float(line.smart_source_stock_qty or 0.0) - reserved_qty
+            )

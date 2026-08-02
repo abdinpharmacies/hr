@@ -11,6 +11,7 @@ from odoo.tests.common import TransactionCase
 from odoo.addons.ab_transfer_smart.models.ab_transfer_header import (
     SMART_STAGE_PURCHASE_PREPARATION,
     SMART_STAGE_PRE_SUBMIT,
+    SMART_STAGE_SUBMIT,
     SMART_STAGE_STORE_PREPARATION,
     SMART_STAGE_STORE_REVISION,
     SMART_ROW_BRANCH_STOCK_QTY,
@@ -93,6 +94,24 @@ class TestSmartTransfer(TransactionCase):
             "user_id": user.id,
         })
 
+    def _create_smart_header_for_source(
+            self,
+            source_header,
+            destination_code,
+            destination_serial,
+    ):
+        destination = self._create_store_or_skip({
+            "name": destination_code,
+            "code": destination_code,
+            "eplus_serial": destination_serial,
+            "allow_sale": True,
+        })
+        return self.env["ab_transfer_header"].create({
+            "from_store_id": source_header.from_store_id.id,
+            "to_store_id": destination.id,
+            "user_id": source_header.user_id.id,
+        })
+
     def _create_smart_header_from_existing_records_or_skip(self):
         Header = self.env["ab_transfer_header"]
         Store = self.env["ab_store"].sudo()
@@ -120,6 +139,14 @@ class TestSmartTransfer(TransactionCase):
             "to_store_id": destination.id,
             "user_id": user.id,
         })
+
+    def _get_existing_smart_products_or_skip(self, count):
+        products = self.env["ab_product"].sudo().search([
+            ("uom_id", "!=", False),
+        ], limit=count)
+        if len(products) < count:
+            self.skipTest("Not enough existing products are available for smart transfer tests.")
+        return products
 
     def _create_smart_line(self, header, product, uom, **extra_vals):
         extra_vals.pop("class_id", None)
@@ -475,6 +502,7 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(report_xml.count("Printing Date"), 2)
         self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 2)
         self.assertEqual(report_xml.count("get_smart_report_printing_date_text()"), 2)
+        self.assertIn("smart_expected_source_stock_qty", report_xml)
         self.assertNotIn("get_smart_report_line_chunks", report_xml)
         self.assertNotIn("line_chunk", report_xml)
 
@@ -494,6 +522,7 @@ class TestSmartTransfer(TransactionCase):
         ).read_text(encoding="utf-8")
 
         self.assertNotIn('name="class_id"', view_xml)
+        self.assertIn('name="smart_expected_source_stock_qty"', view_xml)
 
     def test_header_view_keeps_smart_stage_buttons(self):
         view_xml = (
@@ -505,6 +534,10 @@ class TestSmartTransfer(TransactionCase):
         self.assertIn('name="action_smart_to_store_preparation"', view_xml)
         self.assertIn('name="action_smart_to_store_revision"', view_xml)
         self.assertIn('name="action_smart_pre_submit"', view_xml)
+        self.assertIn('name="action_smart_back_to_purchase_preparation"', view_xml)
+        self.assertIn('name="action_smart_back_to_store_preparation"', view_xml)
+        self.assertIn('name="action_smart_back_to_store_revision"', view_xml)
+        self.assertIn("group_trnasfer_smart_store_manager", view_xml)
 
     def test_smart_wizard_form_has_archive_button(self):
         view_xml = (
@@ -808,6 +841,52 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(vals["qty"], 8)
         self.assertEqual(vals["smart_source_stock_qty"], 10)
 
+    def test_expected_source_stock_subtracts_active_smart_reservations(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-EXPECTED-STOCK", 99018, uom)
+        reference_line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=6,
+            smart_source_stock_qty=50,
+        )
+
+        active_preparation = self._create_smart_header_for_source(header, "SMART-EXP-PREP", 8301)
+        self._create_smart_line(active_preparation, product, uom, qty=4)
+        active_preparation.write({"smart_stage": SMART_STAGE_STORE_PREPARATION})
+
+        active_revision = self._create_smart_header_for_source(header, "SMART-EXP-REV", 8302)
+        self._create_smart_line(active_revision, product, uom, qty=3)
+        active_revision.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        active_pre_submit = self._create_smart_header_for_source(header, "SMART-EXP-PRE-SUB", 8303)
+        self._create_smart_line(active_pre_submit, product, uom, qty=2)
+        active_pre_submit.write({"smart_stage": SMART_STAGE_PRE_SUBMIT})
+
+        purchase_preparation = self._create_smart_header_for_source(header, "SMART-EXP-PUR", 8304)
+        self._create_smart_line(purchase_preparation, product, uom, qty=7)
+
+        submitted = self._create_smart_header_for_source(header, "SMART-EXP-SUB", 8305)
+        self._create_smart_line(submitted, product, uom, qty=11)
+        submitted.write({
+            "smart_stage": SMART_STAGE_STORE_REVISION,
+            "is_submitted": True,
+        })
+
+        excluded = self._create_smart_header_for_source(header, "SMART-EXP-EXC", 8306)
+        self._create_smart_line(excluded, product, uom, qty=13, exclusion_reason="expired")
+        excluded.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        reserved_qty = self.env["ab_transfer_header"]._read_smart_active_reserved_qty_by_product_store(
+            [product.id],
+            [header.from_store_id.id],
+        )
+
+        self.assertEqual(reserved_qty[(product.id, header.from_store_id.id)], 9)
+        self.assertEqual(reference_line.smart_expected_source_stock_qty, 41)
+
     def test_fetch_destination_smart_rows_reads_today_cache(self):
         header = self._create_smart_header()
         today = fields.Date.context_today(header)
@@ -956,6 +1035,102 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(header.smart_stage, SMART_STAGE_PRE_SUBMIT)
         self.assertEqual(action["tag"], "display_notification")
         self.assertEqual(action["params"]["next"]["tag"], "soft_reload")
+
+    def test_store_preparation_blocks_when_other_active_smart_transfer_reserved_stock(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-STORE-PREP-STOCK-BLOCK", 99109, uom)
+        self._create_smart_line(header, product, uom, qty=8)
+
+        other_header = self._create_smart_header_for_source(header, "SMART-STORE-PREP-OTHER", 8313)
+        self._create_smart_line(other_header, product, uom, qty=5)
+        other_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={99109: 10},
+        ), self.assertRaisesRegex(UserError, "already reserved"):
+            header.action_smart_to_store_preparation()
+
+        self.assertEqual(header.smart_stage, SMART_STAGE_PURCHASE_PREPARATION)
+        self.assertFalse(header.line_ids)
+
+    def test_store_manager_can_move_smart_stage_backward_before_submit(self):
+        self.env.user.write({
+            "group_ids": [(4, self.env.ref("ab_transfer_smart.group_trnasfer_smart_store_manager").id)],
+        })
+        header = self._create_smart_header_from_existing_records_or_skip()
+
+        header.write({"smart_stage": SMART_STAGE_STORE_PREPARATION})
+        action = header.action_smart_back_to_purchase_preparation()
+        self.assertEqual(header.smart_stage, SMART_STAGE_PURCHASE_PREPARATION)
+        self.assertEqual(action["params"]["next"]["tag"], "soft_reload")
+
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+        action = header.action_smart_back_to_store_preparation()
+        self.assertEqual(header.smart_stage, SMART_STAGE_STORE_PREPARATION)
+        self.assertEqual(action["params"]["next"]["tag"], "soft_reload")
+
+        header.write({"smart_stage": SMART_STAGE_PRE_SUBMIT})
+        action = header.action_smart_back_to_store_revision()
+        self.assertEqual(header.smart_stage, SMART_STAGE_STORE_REVISION)
+        self.assertEqual(action["params"]["next"]["tag"], "soft_reload")
+
+    def test_backward_stage_move_requires_store_manager_group(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        header.write({"smart_stage": SMART_STAGE_PRE_SUBMIT})
+
+        with self.assertRaises(AccessError):
+            header.action_smart_back_to_store_revision()
+
+    def test_store_manager_can_unlink_transfer_lines_when_moving_back_to_revision(self):
+        manager_user = self.env["res.users"].sudo().with_context(no_reset_password=True).create({
+            "name": "Smart Store Manager",
+            "login": "smart_store_manager",
+            "email": "smart_store_manager@example.com",
+            "group_ids": [(6, 0, [
+                self.env.ref("base.group_user").id,
+                self.env.ref("ab_transfer_smart.group_trnasfer_smart_store_manager").id,
+            ])],
+        })
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_products_or_skip(1)
+        header.write({"smart_stage": SMART_STAGE_PRE_SUBMIT})
+        self.env["ab_transfer_line"].create({
+            "header_id": header.id,
+            "product_id": product.id,
+            "class_id": 981,
+            "qty": 1,
+            "expiry_date": fields.Date.today(),
+            "uom_id": product.uom_id.id,
+        })
+
+        action = header.with_user(manager_user).action_smart_back_to_store_revision()
+
+        self.assertEqual(action["params"]["next"]["tag"], "soft_reload")
+        self.assertEqual(header.smart_stage, SMART_STAGE_STORE_REVISION)
+        self.assertFalse(header.line_ids)
+
+    def test_backward_stage_move_is_blocked_after_submit(self):
+        self.env.user.write({
+            "group_ids": [(4, self.env.ref("ab_transfer_smart.group_trnasfer_smart_store_manager").id)],
+        })
+        header = self._create_smart_header_from_existing_records_or_skip()
+        header.write({
+            "smart_stage": SMART_STAGE_PRE_SUBMIT,
+            "is_submitted": True,
+        })
+
+        with self.assertRaisesRegex(UserError, "Submitted"):
+            header.action_smart_back_to_store_revision()
+
+        stage_submit_header = self._create_smart_header_from_existing_records_or_skip()
+        stage_submit_header.write({
+            "smart_stage": SMART_STAGE_SUBMIT,
+        })
+        with self.assertRaisesRegex(UserError, "Pre-Submit"):
+            stage_submit_header.action_smart_back_to_store_revision()
 
     def test_header_calculation_returns_danger_after_cache_when_validation_fails(self):
         header = self.env["ab_transfer_header"].new({
@@ -1380,6 +1555,53 @@ class TestSmartTransfer(TransactionCase):
         with self.assertRaisesRegex(ValidationError, "purchase preparation"):
             line.write({"qty": 0})
 
+    def test_pre_submit_blocks_when_other_active_smart_transfer_reserved_stock(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-PRE-SUB-STOCK-BLOCK", 99107, uom)
+        self._create_smart_line(header, product, uom, qty=8)
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        other_header = self._create_smart_header_for_source(header, "SMART-PRE-SUB-OTHER", 8311)
+        self._create_smart_line(other_header, product, uom, qty=5)
+        other_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={99107: 10},
+        ), self.assertRaisesRegex(UserError, "already reserved"):
+            header.action_smart_pre_submit()
+
+        self.assertEqual(header.smart_stage, SMART_STAGE_STORE_REVISION)
+        self.assertFalse(header.line_ids)
+
+    def test_pre_submit_stock_validation_ignores_current_header_reservation(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-PRE-SUB-STOCK-CURRENT", 99108, uom)
+        self._create_smart_line(header, product, uom, qty=8, smart_source_stock_qty=10)
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        other_header = self._create_smart_header_for_source(header, "SMART-PRE-SUB-SMALL", 8312)
+        self._create_smart_line(other_header, product, uom, qty=2)
+        other_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={99108: 10},
+        ), patch.object(
+                type(header),
+                "_get_source_inventory_rows",
+                return_value=[self._smart_source_row(901, 10)],
+        ):
+            header.action_smart_pre_submit()
+
+        self.assertEqual(header.smart_stage, SMART_STAGE_PRE_SUBMIT)
+        self.assertEqual(header.line_ids.qty, 8)
+        self.assertEqual(header.line_ids.class_id, 901)
+
     def test_pre_submit_copies_only_non_excluded_smart_lines(self):
         header = self._create_smart_header()
         uom = self._create_smart_uom()
@@ -1404,6 +1626,10 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={99021: 20},
+        ), patch.object(
+                type(header),
                 "_get_source_inventory_rows",
                 return_value=[self._smart_source_row(601, 20)],
         ):
@@ -1416,12 +1642,12 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(header.line_ids.class_id, 601)
         self.assertEqual(header.line_ids.smart_source_stock_qty, 20)
 
-    def test_pre_submit_updates_existing_transfer_line_for_product(self):
-        header = self._create_smart_header()
-        uom = self._create_smart_uom()
-        product = self._create_smart_product("SMART-UPDATE", 99031, uom)
+    def test_pre_submit_recreates_existing_transfer_line_for_product(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_products_or_skip(1)
+        uom = product.uom_id
         header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
-        self.env["ab_transfer_line"].create({
+        old_line = self.env["ab_transfer_line"].create({
             "header_id": header.id,
             "product_id": product.id,
             "class_id": 701,
@@ -1435,8 +1661,15 @@ class TestSmartTransfer(TransactionCase):
             uom,
             qty=6,
         )
+        product_serial = header._get_smart_product_serial(product)
+        if not product_serial:
+            self.skipTest("Existing product has no EPlus serial for smart stock validation.")
 
         with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={product_serial: 20},
+        ), patch.object(
                 type(header),
                 "_get_source_inventory_rows",
                 return_value=[self._smart_source_row(702, 20)],
@@ -1446,6 +1679,62 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(len(header.line_ids), 1)
         self.assertEqual(header.line_ids.class_id, 702)
         self.assertEqual(header.line_ids.qty, 6)
+        self.assertFalse(old_line.exists())
+
+    def test_pre_submit_rebuilds_transfer_lines_after_backward_revision_exclusion(self):
+        self.env.user.write({
+            "group_ids": [(4, self.env.ref("ab_transfer_smart.group_trnasfer_smart_store_manager").id)],
+        })
+        header = self._create_smart_header_from_existing_records_or_skip()
+        included_product, excluded_product = self._get_existing_smart_products_or_skip(2)
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+        included_line = self._create_smart_line(
+            header,
+            included_product,
+            included_product.uom_id,
+            qty=3,
+        )
+        excluded_line = self._create_smart_line(
+            header,
+            excluded_product,
+            excluded_product.uom_id,
+            qty=4,
+        )
+        included_serial = header._get_smart_product_serial(included_product)
+        excluded_serial = header._get_smart_product_serial(excluded_product)
+        if not included_serial or not excluded_serial:
+            self.skipTest("Existing products have no EPlus serial for smart stock validation.")
+        source_stock_by_serial = {
+            included_serial: 20,
+            excluded_serial: 20,
+        }
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value=source_stock_by_serial,
+        ), patch.object(
+                type(header),
+                "_get_source_inventory_rows",
+                return_value=[self._smart_source_row(901, 20)],
+        ):
+            header.action_smart_pre_submit()
+            self.assertEqual(
+                set(header.line_ids.mapped("product_id").ids),
+                set((included_product | excluded_product).ids),
+            )
+
+            header.action_smart_back_to_store_revision()
+            self.assertEqual(header.smart_stage, SMART_STAGE_STORE_REVISION)
+            self.assertFalse(header.line_ids)
+
+            excluded_line.write({"exclusion_reason": "expired"})
+            header.action_smart_pre_submit()
+
+        self.assertEqual(header.smart_stage, SMART_STAGE_PRE_SUBMIT)
+        self.assertEqual(len(header.line_ids), 1)
+        self.assertEqual(header.line_ids.product_id, included_product)
+        self.assertEqual(header.line_ids.qty, included_line.qty)
 
     def test_pre_submit_splits_transfer_lines_by_source_class(self):
         header = self._create_smart_header()
@@ -1461,6 +1750,10 @@ class TestSmartTransfer(TransactionCase):
         )
 
         with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={99032: 12},
+        ), patch.object(
                 type(header),
                 "_get_source_inventory_rows",
                 return_value=[

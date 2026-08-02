@@ -192,7 +192,7 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th colspan="6" class="ab-smart-spacer"></th>
+                                        <th colspan="7" class="ab-smart-spacer"></th>
                                     </tr>
                                     <tr class="ab-smart-column-header">
                                         <th class="text-nowrap">Code</th>
@@ -201,13 +201,14 @@
                                         <th class="text-nowrap">UoM</th>
                                         <th class="text-nowrap">Exc.</th>
                                         <th class="text-end text-nowrap">Stock</th>
+                                        <th class="text-end text-nowrap">Expected</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <t t-set="sorted_smart_lines"
                                        t-value="o.get_smart_report_sorted_lines(o.smart_line_ids)"/>
                                     <tr t-if="not sorted_smart_lines">
-                                        <td colspan="6" class="text-center">No smart transfer lines found.</td>
+                                        <td colspan="7" class="text-center">No smart transfer lines found.</td>
                                     </tr>
                                     <tr t-foreach="sorted_smart_lines" t-as="line">
                                         <td class="text-nowrap"><span class="ab-smart-code-text"
@@ -225,6 +226,9 @@
                                         </td>
                                         <td class="text-end text-nowrap">
                                             <span t-esc="('%.1f' % (line.smart_source_stock_qty or 0.0)).rstrip('0').rstrip('.')"/>
+                                        </td>
+                                        <td class="text-end text-nowrap">
+                                            <span t-esc="('%.1f' % (line.smart_expected_source_stock_qty or 0.0)).rstrip('0').rstrip('.')"/>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -285,11 +289,12 @@
                                         <th class="col-1 text-nowrap">UoM</th>
                                         <th class="col-2">Exclusion Reason</th>
                                         <th class="col-2 text-end text-nowrap">Source Stock</th>
+                                        <th class="col-2 text-end text-nowrap">Expected Stock</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr t-if="not sorted_transfer_lines">
-                                        <td colspan="6" class="text-center">No transfer lines found.</td>
+                                        <td colspan="7" class="text-center">No transfer lines found.</td>
                                     </tr>
                                     <tr t-foreach="sorted_transfer_lines" t-as="line">
                                         <td class="col-1 text-nowrap"><span t-field="line.product_id.code"/></td>
@@ -300,6 +305,9 @@
                                         <td class="col-2 text-break"/>
                                         <td class="col-2 text-end text-nowrap">
                                             <span t-esc="'%.1f' % (line.smart_source_stock_qty or 0.0)"/>
+                                        </td>
+                                        <td class="col-2 text-end text-nowrap">
+                                            <span t-esc="'%.1f' % (line.smart_expected_source_stock_qty or 0.0)"/>
                                         </td>
                                     </tr>
                                 </tbody>

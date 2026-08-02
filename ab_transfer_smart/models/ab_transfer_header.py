@@ -28,9 +28,15 @@ SMART_STAGE_STORE_PREPARATION = "store_preparation"
 SMART_STAGE_STORE_REVISION = "store_revision"
 SMART_STAGE_PRE_SUBMIT = "pre_submit"
 SMART_STAGE_SUBMIT = "submit"
+SMART_EXPECTED_BALANCE_STAGES = (
+    SMART_STAGE_STORE_PREPARATION,
+    SMART_STAGE_STORE_REVISION,
+    SMART_STAGE_PRE_SUBMIT,
+)
 SMART_GROUP_PURCHASE = "ab_transfer_smart.group_transfer_smart_purchase"
 SMART_GROUP_STORE_PREPARATION = "ab_transfer_smart.group_trnasfer_smart_store_preparation"
 SMART_GROUP_STORE_REVISION = "ab_transfer_smart.group_trnasfer_smart_store_revision"
+SMART_GROUP_STORE_MANAGER = "ab_transfer_smart.group_trnasfer_smart_store_manager"
 SMART_TRANSFER_LINE_COPY_FIELDS = (
     "uom_id",
     "smart_source_stock_qty",
@@ -340,6 +346,9 @@ class AbTransferHeader(models.Model):
         self._check_smart_group(SMART_GROUP_PURCHASE)
         self._check_smart_stage(SMART_STAGE_PURCHASE_PREPARATION)
         self._check_smart_not_submitted()
+        self._validate_smart_source_stock_available(
+            self.smart_line_ids.filtered(lambda line: not line.exclusion_reason)
+        )
         self.write({"smart_stage": SMART_STAGE_STORE_PREPARATION})
         return self._smart_notification(
             _("Smart Transfer Stage"),
@@ -375,6 +384,50 @@ class AbTransferHeader(models.Model):
                 "Excluded: %(excluded)s."
             )
             % result,
+            "success",
+            next_action=self._smart_soft_reload_action(),
+        )
+
+    def action_smart_back_to_purchase_preparation(self):
+        self.ensure_one()
+        self._check_smart_group(SMART_GROUP_STORE_MANAGER)
+        self._check_smart_stage(SMART_STAGE_STORE_PREPARATION)
+        self._check_smart_not_submitted()
+        self.write({"smart_stage": SMART_STAGE_PURCHASE_PREPARATION})
+        return self._smart_notification(
+            _("Smart Transfer Stage"),
+            _("Smart transfer moved back to Purchase Preparation."),
+            "success",
+            next_action=self._smart_soft_reload_action(),
+        )
+
+    def action_smart_back_to_store_preparation(self):
+        self.ensure_one()
+        self._check_smart_group(SMART_GROUP_STORE_MANAGER)
+        self._check_smart_stage(SMART_STAGE_STORE_REVISION)
+        self._check_smart_not_submitted()
+        self.write({"smart_stage": SMART_STAGE_STORE_PREPARATION})
+        return self._smart_notification(
+            _("Smart Transfer Stage"),
+            _("Smart transfer moved back to Store Preparation."),
+            "success",
+            next_action=self._smart_soft_reload_action(),
+        )
+
+    def action_smart_back_to_store_revision(self):
+        self.ensure_one()
+        self._check_smart_group(SMART_GROUP_STORE_MANAGER)
+        self._check_smart_stage(SMART_STAGE_PRE_SUBMIT)
+        self._check_smart_not_submitted()
+        removed_count = self._clear_smart_transfer_lines(sudo_unlink=True)
+        self.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+        return self._smart_notification(
+            _("Smart Transfer Stage"),
+            _(
+                "Smart transfer moved back to Store Revision. "
+                "Transfer lines removed: %(removed)s."
+            )
+            % {"removed": removed_count},
             "success",
             next_action=self._smart_soft_reload_action(),
         )
@@ -427,31 +480,92 @@ class AbTransferHeader(models.Model):
         if not eligible_lines:
             raise UserError(_("There are no eligible smart lines to pre-submit."))
 
-        existing_lines_by_product = {}
-        for line in self.line_ids.sorted(key=lambda rec: (rec.product_id.id, rec.id)):
-            if not line.product_id:
-                continue
-            existing_lines_by_product.setdefault(line.product_id.id, []).append(line)
+        self._validate_smart_source_stock_available(eligible_lines)
+
+        vals_list = []
+        for smart_line in eligible_lines:
+            vals_list.extend(self._prepare_transfer_line_vals_list_from_smart_line(smart_line))
+
+        self._clear_smart_transfer_lines()
+        if vals_list:
+            self.env["ab_transfer_line"].create(vals_list)
+
         result = {
-            "created": 0,
+            "created": len(vals_list),
             "updated": 0,
             "excluded": excluded_count,
         }
-
-        for smart_line in eligible_lines:
-            vals_list = self._prepare_transfer_line_vals_list_from_smart_line(smart_line)
-            existing_lines = existing_lines_by_product.setdefault(smart_line.product_id.id, [])
-            for vals in vals_list:
-                existing_line = existing_lines.pop(0) if existing_lines else False
-                if existing_line:
-                    existing_line.write(vals)
-                    result["updated"] += 1
-                    continue
-
-                self.env["ab_transfer_line"].create(vals)
-                result["created"] += 1
-
         return result
+
+    def _validate_smart_source_stock_available(self, smart_lines):
+        self.ensure_one()
+        smart_lines = smart_lines.filtered(lambda line: line.product_id)
+        if not smart_lines:
+            return
+
+        products = smart_lines.mapped("product_id")
+        products_by_serial = {}
+        product_serial_by_id = {}
+        for product in products:
+            product_serial = self._get_smart_product_serial(product)
+            if not product_serial:
+                continue
+            products_by_serial.setdefault(product_serial, product)
+            product_serial_by_id[product.id] = product_serial
+
+        live_stock_by_serial = self._get_smart_source_stock_by_product_serial(products_by_serial)
+        reserved_qty_by_key = self._read_smart_active_reserved_qty_by_product_store(
+            products.ids,
+            self.from_store_id.ids,
+            exclude_header_ids=self.ids,
+        )
+        requested_qty_by_product = {}
+        for line in smart_lines:
+            requested_qty_by_product[line.product_id.id] = (
+                requested_qty_by_product.get(line.product_id.id, 0.0)
+                + float(line.qty or 0.0)
+            )
+
+        errors = []
+        for product in products.sorted(lambda rec: (rec.display_name or rec.name or "").casefold()):
+            requested_qty = requested_qty_by_product.get(product.id, 0.0)
+            product_serial = product_serial_by_id.get(product.id)
+            live_stock_qty = live_stock_by_serial.get(product_serial, 0.0)
+            reserved_qty = reserved_qty_by_key.get((product.id, self.from_store_id.id), 0.0)
+            available_qty = live_stock_qty - reserved_qty
+            if float_compare(requested_qty, available_qty, precision_digits=3) <= 0:
+                continue
+
+            errors.append(
+                _(
+                    "%(product)s: live stock %(live).3f, already reserved %(reserved).3f, "
+                    "available %(available).3f, requested %(requested).3f."
+                )
+                % {
+                    "product": product.display_name,
+                    "live": live_stock_qty,
+                    "reserved": reserved_qty,
+                    "available": available_qty,
+                    "requested": requested_qty,
+                }
+            )
+
+        if errors:
+            raise UserError(
+                _(
+                    "Cannot continue because source stock is no longer available. "
+                    "Some quantities are already reserved by active smart transfers:\n%s"
+                )
+                % "\n".join(errors)
+            )
+
+    def _clear_smart_transfer_lines(self, sudo_unlink=False):
+        self.ensure_one()
+        line_ids = self.sudo().line_ids if sudo_unlink else self.line_ids
+        removed_count = len(line_ids)
+        if line_ids:
+            line_ids.unlink()
+        return removed_count
 
     def _prepare_transfer_line_vals_list_from_smart_line(self, smart_line):
         self.ensure_one()
@@ -669,6 +783,46 @@ class AbTransferHeader(models.Model):
             if source_stock_by_serial.get(serial, 0.0) > 0.0
         ]
 
+    @api.model
+    def _read_smart_active_reserved_qty_by_product_store(
+            self,
+            product_ids,
+            store_ids,
+            exclude_header_ids=None,
+    ):
+        product_ids = [int(product_id) for product_id in product_ids or [] if product_id]
+        store_ids = [int(store_id) for store_id in store_ids or [] if store_id]
+        if not product_ids or not store_ids:
+            return {}
+
+        domain = [
+            ("header_id.active", "=", True),
+            ("header_id.smart_stage", "in", list(SMART_EXPECTED_BALANCE_STAGES)),
+            ("header_id.is_submitted", "=", False),
+            ("exclusion_reason", "=", False),
+            ("product_id", "in", product_ids),
+            ("from_store_id", "in", store_ids),
+        ]
+        if exclude_header_ids:
+            domain.append(("header_id", "not in", exclude_header_ids))
+
+        groups = self.env["ab_transfer_smart_line"].sudo().read_group(
+            domain,
+            ["qty:sum"],
+            ["product_id", "from_store_id"],
+            lazy=False,
+        )
+
+        result = {}
+        for group in groups:
+            product_id = self._group_many2one_id(group.get("product_id"))
+            store_id = self._group_many2one_id(group.get("from_store_id"))
+            if not product_id or not store_id:
+                continue
+
+            result[(product_id, store_id)] = float(group.get("qty", 0.0) or 0.0)
+        return result
+
     def _apply_smart_transfer_rows(self, destination_rows):
         self.ensure_one()
         rows = destination_rows or []
@@ -846,13 +1000,17 @@ class AbTransferHeader(models.Model):
         return products_by_serial
 
     @api.model
+    def _get_smart_product_serial(self, product):
+        try:
+            return int(product.eplus_serial or 0)
+        except (TypeError, ValueError):
+            return 0
+
+    @api.model
     def _get_smart_product_serials(self, products):
         serials = set()
         for product in products:
-            try:
-                product_serial = int(product.eplus_serial or 0)
-            except (TypeError, ValueError):
-                product_serial = 0
+            product_serial = self._get_smart_product_serial(product)
             if product_serial:
                 serials.add(product_serial)
         return serials
