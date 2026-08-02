@@ -26,8 +26,8 @@ DASHBOARD_SECTION_KEYS = ("sales_by_user", "top_items", "customer_sales")
 
 
 class SalesDashboardSnapshot(models.Model):
-    _name = "ab.sales.dashboard.snapshot"
-    _inherit = ["ab.sales.dashboard.config.mixin"]
+    _name = "ab_sales_dashboard_snapshot"
+    _inherit = ["ab_sales_dashboard_config_mixin"]
     _description = "Sales Dashboard Report"
     _order = "refresh_date desc, id desc"
 
@@ -54,18 +54,18 @@ class SalesDashboardSnapshot(models.Model):
     avg_products_per_invoice = fields.Float(readonly=True)
     stores_with_sales = fields.Integer(readonly=True)
     avg_products_sold_per_store = fields.Float(readonly=True)
-    collection_line_ids = fields.One2many("ab.sales.dashboard.collection.line", "snapshot_id", readonly=True)
-    user_line_ids = fields.One2many("ab.sales.dashboard.user.line", "snapshot_id", readonly=True)
-    item_line_ids = fields.One2many("ab.sales.dashboard.item.line", "snapshot_id", readonly=True)
-    invoice_line_ids = fields.One2many("ab.sales.dashboard.invoice.line", "snapshot_id", readonly=True)
-    archive_ids = fields.One2many("ab.sales.dashboard.report.archive", "snapshot_id", readonly=True)
+    collection_line_ids = fields.One2many("ab_sales_dashboard_collection_line", "snapshot_id", readonly=True)
+    user_line_ids = fields.One2many("ab_sales_dashboard_user_line", "snapshot_id", readonly=True)
+    item_line_ids = fields.One2many("ab_sales_dashboard_item_line", "snapshot_id", readonly=True)
+    invoice_line_ids = fields.One2many("ab_sales_dashboard_invoice_line", "snapshot_id", readonly=True)
+    archive_ids = fields.One2many("ab_sales_dashboard_report_archive", "snapshot_id", readonly=True)
     archive_count = fields.Integer(string="Archives", compute="_compute_archive_count")
 
     @api.depends("archive_ids")
     def _compute_archive_count(self):
         counts = {}
         if self.ids:
-            grouped = self.env["ab.sales.dashboard.report.archive"].sudo()._read_group(
+            grouped = self.env["ab_sales_dashboard_report_archive"].sudo()._read_group(
                 [("snapshot_id", "in", self.ids)],
                 ["snapshot_id"],
                 ["__count"],
@@ -133,7 +133,7 @@ class SalesDashboardSnapshot(models.Model):
         archive = self.create_management_report_archive()
         return {
             "type": "ir.actions.act_window",
-            "res_model": "ab.sales.dashboard.report.archive",
+            "res_model": "ab_sales_dashboard_report_archive",
             "res_id": archive.id,
             "view_mode": "form",
             "target": "current",
@@ -153,7 +153,7 @@ class SalesDashboardSnapshot(models.Model):
         if not self.env.user.has_group("ab_sales_dashboard.group_ab_sales_dashboard_manager"):
             raise AccessError(_("Only sales dashboard managers can archive sales dashboard reports."))
 
-        Archive = self.env["ab.sales.dashboard.report.archive"]
+        Archive = self.env["ab_sales_dashboard_report_archive"]
         filters = self._filters_from_record()
         started = time.monotonic()
         _logger.info(
@@ -192,7 +192,7 @@ class SalesDashboardSnapshot(models.Model):
                     payload_hash[:12],
                 )
 
-            archive_number = self.env["ir.sequence"].sudo().next_by_code("ab.sales.dashboard.report.archive") or "/"
+            archive_number = self.env["ir.sequence"].sudo().next_by_code("ab_sales_dashboard_report_archive") or "/"
             archive = Archive.with_context(ab_sales_dashboard_allow_archive_create=True).create({
                 "name": archive_number,
                 "archive_number": archive_number,
@@ -251,14 +251,17 @@ class SalesDashboardSnapshot(models.Model):
         else:
             snapshot = self._find_latest_full_snapshot(filters)
             if snapshot:
-                result = self._serialize_dashboard(snapshot, filters)
+                result = self._serialize_dashboard(snapshot, filters, line_limit=DASHBOARD_SECTION_PAGE_SIZE)
             else:
-                derived_payload = self._dashboard_payload_from_daily_facts(filters)
-                if derived_payload:
+                derived_payload = self._dashboard_payload_from_daily_facts(filters, allow_partial=True)
+                derived_meta = derived_payload.get("report_meta", {}) if derived_payload else {}
+                if derived_payload and derived_meta.get("coverage_state") != COVERAGE_UNAVAILABLE:
                     result = self._serialize_dashboard_payload(derived_payload, filters, source="odoo_daily_facts")
                 else:
                     snapshot = self._find_latest_snapshot(filters)
-                    result = self._serialize_dashboard(snapshot, filters, summary_only=bool(snapshot))
+                    result = self._serialize_dashboard(
+                        snapshot, filters, summary_only=bool(snapshot), line_limit=DASHBOARD_SECTION_PAGE_SIZE
+                    )
         self._record_top_level_telemetry(result, filters, started, report_mode=report_mode)
         return result
 
@@ -567,7 +570,7 @@ class SalesDashboardSnapshot(models.Model):
             )
         store_eplus_ids = [int(store.eplus_serial) for store in stores if store.eplus_serial]
         try:
-            source_page = self.env["ab.sales.dashboard.service"].fetch_customer_sales_page(
+            source_page = self.env["ab_sales_dashboard_service"].fetch_customer_sales_page(
                 filters["date_from"],
                 fields.Date.add(filters["date_to"], days=1),
                 store_eplus_ids=store_eplus_ids,
@@ -629,7 +632,7 @@ class SalesDashboardSnapshot(models.Model):
         report_mode = report_mode or report_meta.get("mode") or REPORT_MODE_FULL
         event_type = event_type or ("summary_read" if report_mode == REPORT_MODE_SUMMARY else "dashboard_read")
         source = (result or {}).get("data_source")
-        self.env["ab.sales.dashboard.report.telemetry"].record_operation(
+        self.env["ab_sales_dashboard_report_telemetry"].record_operation(
             event_type,
             report_mode,
             filters=filters,
@@ -652,7 +655,7 @@ class SalesDashboardSnapshot(models.Model):
             raise UserError(_("These stores have no E-Plus serial: %s") % missing)
 
         store_eplus_ids = [int(store.eplus_serial) for store in stores]
-        refresh_data = self.env["ab.sales.dashboard.service"].fetch_refresh_data(
+        refresh_data = self.env["ab_sales_dashboard_service"].fetch_refresh_data(
             filters["date_from"],
             fields.Date.add(filters["date_to"], days=1),
             store_eplus_ids=store_eplus_ids,
@@ -759,25 +762,25 @@ class SalesDashboardSnapshot(models.Model):
     def _snapshot_child_mappings(self):
         return {
             "collection": {
-                "model": "ab.sales.dashboard.collection.line",
+                "model": "ab_sales_dashboard_collection_line",
                 "table": "ab_sales_dashboard_collection_line",
                 "relation_field": "collection_line_ids",
                 "columns": ["snapshot_id", "category", "invoice_count", "total_sales", "pct_of_total"],
             },
             "user": {
-                "model": "ab.sales.dashboard.user.line",
+                "model": "ab_sales_dashboard_user_line",
                 "table": "ab_sales_dashboard_user_line",
                 "relation_field": "user_line_ids",
                 "columns": ["snapshot_id", "employee_eplus_id", "employee_name", "invoice_count", "total_sales", "pct_of_total"],
             },
             "item": {
-                "model": "ab.sales.dashboard.item.line",
+                "model": "ab_sales_dashboard_item_line",
                 "table": "ab_sales_dashboard_item_line",
                 "relation_field": "item_line_ids",
                 "columns": ["snapshot_id", "eplus_item_id", "eplus_item_code", "product_id", "item_name", "sale_times", "sold_qty", "total_sales", "current_balance"],
             },
             "invoice": {
-                "model": "ab.sales.dashboard.invoice.line",
+                "model": "ab_sales_dashboard_invoice_line",
                 "table": "ab_sales_dashboard_invoice_line",
                 "relation_field": "invoice_line_ids",
                 "columns": ["snapshot_id", "invoice_no", "invoice_date", "customer_name", "invoice_total", "item_count", "items_summary"],
@@ -991,7 +994,7 @@ class SalesDashboardSnapshot(models.Model):
         return [{"id": store.id, "name": store.display_name} for store in stores]
 
     @api.model
-    def _serialize_dashboard(self, snapshot, filters, summary_only=False):
+    def _serialize_dashboard(self, snapshot, filters, summary_only=False, line_limit=None):
         started = time.monotonic()
         _logger.info(
             "event=sales_dashboard_serialization_started date_from=%s date_to=%s store_id=%s has_snapshot=%s",
@@ -1059,12 +1062,18 @@ class SalesDashboardSnapshot(models.Model):
             "store_filter_label": snapshot.store_filter_label,
             "refresh_date": fields.Datetime.to_string(snapshot.refresh_date) if snapshot.refresh_date else False,
             "collection_lines": [line._as_dashboard_dict() for line in snapshot.collection_line_ids],
-            "user_lines": [line._as_dashboard_dict() for line in snapshot.user_line_ids],
-            "item_lines": [line._as_dashboard_dict() for line in snapshot.item_line_ids],
-            "invoice_lines": [line._as_dashboard_dict() for line in snapshot.invoice_line_ids],
+            "user_lines": self._serialize_snapshot_lines(snapshot.user_line_ids, line_limit),
+            "item_lines": self._serialize_snapshot_lines(snapshot.item_line_ids, line_limit),
+            "invoice_lines": self._serialize_snapshot_lines(snapshot.invoice_line_ids, line_limit),
         })
         self._log_dashboard_serialization(started, filters, data)
         return data
+
+    @api.model
+    def _serialize_snapshot_lines(self, lines, line_limit=None):
+        if line_limit:
+            lines = lines[:line_limit]
+        return [line._as_dashboard_dict() for line in lines]
 
     @api.model
     def _cache_report_meta(self, filters):
@@ -1233,7 +1242,7 @@ class SalesDashboardSnapshot(models.Model):
         if not stores:
             return
         store_by_eplus = self._store_by_eplus_id(stores)
-        categories = [key for key, _label in self.env["ab.sales.dashboard.daily.collection.fact"]._fields["category"].selection]
+        categories = [key for key, _label in self.env["ab_sales_dashboard_daily_collection_fact"]._fields["category"].selection]
         report_dates = list(self._date_range(filters["date_from"], filters["date_to"]))
         coverage_rows = self._build_sync_coverage_rows(report_dates, stores)
         self._validate_daily_coverage_row_count(coverage_rows, filters, len(stores))
@@ -1268,13 +1277,13 @@ class SalesDashboardSnapshot(models.Model):
 
         store_eplus_ids = sorted(store_by_eplus)
         self._replace_fact_scope(
-            "ab.sales.dashboard.daily.store.fact",
+            "ab_sales_dashboard_daily_store_fact",
             list(store_fact_vals.values()),
             filters,
             store_eplus_ids,
         )
         self._replace_fact_scope(
-            "ab.sales.dashboard.daily.collection.fact",
+            "ab_sales_dashboard_daily_collection_fact",
             list(collection_fact_vals.values()),
             filters,
             store_eplus_ids,
@@ -1288,7 +1297,7 @@ class SalesDashboardSnapshot(models.Model):
             )
         if "item_facts" in daily_payload:
             self._replace_fact_scope(
-                "ab.sales.dashboard.daily.item.fact",
+                "ab_sales_dashboard_daily_item_fact",
                 list(item_fact_vals.values()),
                 filters,
                 store_eplus_ids,
@@ -1502,7 +1511,7 @@ class SalesDashboardSnapshot(models.Model):
     @api.model
     def _daily_fact_persistence_mappings(self):
         return {
-            "ab.sales.dashboard.daily.store.fact": {
+            "ab_sales_dashboard_daily_store_fact": {
                 "table": "ab_sales_dashboard_daily_store_fact",
                 "columns": [
                     "report_date",
@@ -1528,7 +1537,7 @@ class SalesDashboardSnapshot(models.Model):
                     "contract_net_amount",
                 ],
             },
-            "ab.sales.dashboard.daily.collection.fact": {
+            "ab_sales_dashboard_daily_collection_fact": {
                 "table": "ab_sales_dashboard_daily_collection_fact",
                 "columns": [
                     "report_date",
@@ -1562,7 +1571,7 @@ class SalesDashboardSnapshot(models.Model):
                     "synced_at",
                 ],
             },
-            "ab.sales.dashboard.daily.item.fact": {
+            "ab_sales_dashboard_daily_item_fact": {
                 "table": "ab_sales_dashboard_daily_item_fact",
                 "columns": [
                     "report_date",
@@ -1703,7 +1712,7 @@ class SalesDashboardSnapshot(models.Model):
         self._insert_rows_in_batches(
             self._coverage_persistence_mapping(),
             rows,
-            "ab.sales.dashboard.sync.coverage",
+            "ab_sales_dashboard_sync_coverage",
             filters,
         )
 
@@ -1714,7 +1723,7 @@ class SalesDashboardSnapshot(models.Model):
         self._insert_rows_in_batches(
             self._fact_coverage_persistence_mapping(),
             rows,
-            "ab.sales.dashboard.fact.coverage",
+            "ab_sales_dashboard_fact_coverage",
             filters,
         )
         _logger.info(
@@ -1738,18 +1747,18 @@ class SalesDashboardSnapshot(models.Model):
     @api.model
     def _invalidate_daily_reporting_models(self):
         for model_name in (
-            "ab.sales.dashboard.daily.store.fact",
-            "ab.sales.dashboard.daily.collection.fact",
+            "ab_sales_dashboard_daily_store_fact",
+            "ab_sales_dashboard_daily_collection_fact",
             "ab_sales_dashboard_daily_user_fact",
-            "ab.sales.dashboard.daily.item.fact",
-            "ab.sales.dashboard.sync.coverage",
-            "ab.sales.dashboard.fact.coverage",
+            "ab_sales_dashboard_daily_item_fact",
+            "ab_sales_dashboard_sync_coverage",
+            "ab_sales_dashboard_fact_coverage",
         ):
             self.env[model_name].invalidate_model()
 
     @api.model
-    def _dashboard_payload_from_daily_facts(self, filters):
-        return self._build_dashboard_from_daily_facts(filters, allow_partial=False)
+    def _dashboard_payload_from_daily_facts(self, filters, allow_partial=False):
+        return self._build_dashboard_from_daily_facts(filters, allow_partial=allow_partial)
 
     @api.model
     def _build_dashboard_from_daily_facts(self, filters, allow_partial=False):
@@ -2208,7 +2217,7 @@ class SalesDashboardSnapshot(models.Model):
 
     @api.model
     def _empty_daily_summary_payload(self, filters, report_meta):
-        categories = [key for key, _label in self.env["ab.sales.dashboard.daily.collection.fact"]._fields["category"].selection]
+        categories = [key for key, _label in self.env["ab_sales_dashboard_daily_collection_fact"]._fields["category"].selection]
         collection_lines = []
         for category in categories:
             collection_lines.append({
@@ -2300,7 +2309,7 @@ class SalesDashboardSnapshot(models.Model):
 
     @api.model
     def _collection_lines_from_daily_facts(self, filters, store_eplus_ids, total_sales):
-        categories = [key for key, _label in self.env["ab.sales.dashboard.daily.collection.fact"]._fields["category"].selection]
+        categories = [key for key, _label in self.env["ab_sales_dashboard_daily_collection_fact"]._fields["category"].selection]
         totals = {
             category: {
                 "category": category,
@@ -2404,11 +2413,11 @@ class SalesDashboardSnapshot(models.Model):
 
 
 class SalesDashboardCollectionLine(models.Model):
-    _name = "ab.sales.dashboard.collection.line"
+    _name = "ab_sales_dashboard_collection_line"
     _description = "Sales Dashboard Collection Line"
     _order = "total_sales desc, id"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab_sales_dashboard_snapshot", required=True, ondelete="cascade", index=True)
     category = fields.Selection([
         ("cash", "Cash"),
         ("delivery", "Delivery"),
@@ -2432,11 +2441,11 @@ class SalesDashboardCollectionLine(models.Model):
 
 
 class SalesDashboardUserLine(models.Model):
-    _name = "ab.sales.dashboard.user.line"
+    _name = "ab_sales_dashboard_user_line"
     _description = "Sales Dashboard User Line"
     _order = "total_sales desc, id"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab_sales_dashboard_snapshot", required=True, ondelete="cascade", index=True)
     employee_eplus_id = fields.Integer(readonly=True, index=True)
     employee_name = fields.Char(readonly=True)
     invoice_count = fields.Integer(readonly=True)
@@ -2456,11 +2465,11 @@ class SalesDashboardUserLine(models.Model):
 
 
 class SalesDashboardItemLine(models.Model):
-    _name = "ab.sales.dashboard.item.line"
+    _name = "ab_sales_dashboard_item_line"
     _description = "Sales Dashboard Item Line"
     _order = "sale_times desc, sold_qty desc, id"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab_sales_dashboard_snapshot", required=True, ondelete="cascade", index=True)
     eplus_item_id = fields.Integer(readonly=True, index=True)
     eplus_item_code = fields.Char(readonly=True, index=True)
     product_id = fields.Many2one("ab_product", readonly=True, index=True)
@@ -2485,11 +2494,11 @@ class SalesDashboardItemLine(models.Model):
 
 
 class SalesDashboardInvoiceLine(models.Model):
-    _name = "ab.sales.dashboard.invoice.line"
+    _name = "ab_sales_dashboard_invoice_line"
     _description = "Sales Dashboard Invoice Line"
     _order = "invoice_date desc, id desc"
 
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", required=True, ondelete="cascade", index=True)
+    snapshot_id = fields.Many2one("ab_sales_dashboard_snapshot", required=True, ondelete="cascade", index=True)
     invoice_no = fields.Char(readonly=True, index=True)
     invoice_date = fields.Datetime(readonly=True, index=True)
     customer_name = fields.Char(readonly=True)
@@ -2511,14 +2520,14 @@ class SalesDashboardInvoiceLine(models.Model):
 
 
 class SalesDashboardReportArchive(models.Model):
-    _name = "ab.sales.dashboard.report.archive"
-    _inherit = ["ab.sales.dashboard.config.mixin"]
+    _name = "ab_sales_dashboard_report_archive"
+    _inherit = ["ab_sales_dashboard_config_mixin"]
     _description = "Archived Sales Dashboard Report"
     _order = "archived_at desc, id desc"
 
     name = fields.Char(required=True, readonly=True)
     archive_number = fields.Char(required=True, readonly=True, copy=False, index=True)
-    snapshot_id = fields.Many2one("ab.sales.dashboard.snapshot", readonly=True, ondelete="restrict", index=True)
+    snapshot_id = fields.Many2one("ab_sales_dashboard_snapshot", readonly=True, ondelete="restrict", index=True)
     date_from = fields.Date(required=True, readonly=True, index=True)
     date_to = fields.Date(required=True, readonly=True, index=True)
     store_filter_key = fields.Char(readonly=True, index=True)
@@ -2548,7 +2557,7 @@ class SalesDashboardReportArchive(models.Model):
         now = fields.Datetime.now()
         user_id = self.env.user.id
         for vals in vals_list:
-            archive_number = vals.get("archive_number") or sequence.next_by_code("ab.sales.dashboard.report.archive") or "/"
+            archive_number = vals.get("archive_number") or sequence.next_by_code("ab_sales_dashboard_report_archive") or "/"
             vals.setdefault("archive_number", archive_number)
             vals.setdefault("name", archive_number)
             vals.setdefault("archived_at", now)
@@ -2609,7 +2618,7 @@ class SalesDashboardReportArchive(models.Model):
         )
         report_meta = payload.get("report_meta") or {}
         filters = {"date_from": archive.date_from, "date_to": archive.date_to, "store_id": archive.store_ids[:1].id if len(archive.store_ids) == 1 else 0}
-        self.env["ab.sales.dashboard.report.telemetry"].record_operation(
+        self.env["ab_sales_dashboard_report_telemetry"].record_operation(
             "archive_read",
             "archive",
             filters=filters,
@@ -2624,7 +2633,7 @@ class SalesDashboardReportArchive(models.Model):
 
 
 class SalesDashboardDailyStoreFact(models.Model):
-    _name = "ab.sales.dashboard.daily.store.fact"
+    _name = "ab_sales_dashboard_daily_store_fact"
     _description = "Sales Dashboard Daily Store Fact"
     _order = "report_date desc, store_eplus_id"
 
@@ -2646,7 +2655,7 @@ class SalesDashboardDailyStoreFact(models.Model):
 
 
 class SalesDashboardDailyCollectionFact(models.Model):
-    _name = "ab.sales.dashboard.daily.collection.fact"
+    _name = "ab_sales_dashboard_daily_collection_fact"
     _description = "Sales Dashboard Daily Collection Fact"
     _order = "report_date desc, store_eplus_id, category"
 
@@ -2689,7 +2698,7 @@ class SalesDashboardDailyUserFact(models.Model):
 
 
 class SalesDashboardDailyItemFact(models.Model):
-    _name = "ab.sales.dashboard.daily.item.fact"
+    _name = "ab_sales_dashboard_daily_item_fact"
     _description = "Sales Dashboard Daily Item Fact"
     _order = "report_date desc, store_eplus_id, sales_amount desc, item_eplus_id"
 
@@ -2717,7 +2726,7 @@ class SalesDashboardDailyItemFact(models.Model):
 
 
 class SalesDashboardFactCoverage(models.Model):
-    _name = "ab.sales.dashboard.fact.coverage"
+    _name = "ab_sales_dashboard_fact_coverage"
     _description = "Sales Dashboard Fact Coverage"
     _order = "report_date desc, store_eplus_id, fact_type"
 
@@ -2743,7 +2752,7 @@ class SalesDashboardFactCoverage(models.Model):
 
 
 class SalesDashboardProductSalesReport(models.Model):
-    _name = "ab.sales.dashboard.product.sales.report"
+    _name = "ab_sales_dashboard_product_sales_report"
     _description = "Product Sales Report"
     _auto = False
     _order = "total_sales desc, units_sold desc, item_eplus_id"
@@ -2830,7 +2839,7 @@ class SalesDashboardProductSalesReport(models.Model):
 
 
 class SalesDashboardSyncCoverage(models.Model):
-    _name = "ab.sales.dashboard.sync.coverage"
+    _name = "ab_sales_dashboard_sync_coverage"
     _description = "Sales Dashboard Sync Coverage"
     _order = "report_date desc, store_eplus_id"
 

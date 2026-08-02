@@ -93,9 +93,10 @@ class ProductItemType extends Component {
     static props = { name: String, record: Object, readonly: Boolean };
 
     get label() {
-        const v = this.props.record.data[this.props.name];
-        if (!v) return _t("General");
-        return String(v).replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+        const v = String(this.props.record.data[this.props.name] || "").toLowerCase();
+        if (v === "medicine") return _t("Medicine");
+        if (v === "non_medicine") return _t("Non-Medicine");
+        return _t("General");
     }
     get typeCls() {
         const v = String(this.props.record.data[this.props.name] || "").toLowerCase();

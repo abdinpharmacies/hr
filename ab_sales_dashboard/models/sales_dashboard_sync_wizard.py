@@ -288,6 +288,7 @@ class SalesDashboardSyncState(models.Model):
         date_from, date_to = self._validate_sync_range(date_from, date_to)
         store_values = self._store_scope_values(int(store_id or 0))
         requested_days = max((date_to - date_from).days + 1, 1)
+        self._restore_completed_states_from_coverage(date_from, date_to, store_values["store_filter_key"])
         self.env.cr.execute(
             """
                 SELECT state, COUNT(*)
@@ -326,6 +327,22 @@ class SalesDashboardSyncState(models.Model):
         }
 
     @api.model
+    def _restore_completed_states_from_coverage(self, date_from, date_to, store_filter_key):
+        states = self.sudo().search([
+            ("sync_date", ">=", date_from),
+            ("sync_date", "<=", date_to),
+            ("store_filter_key", "=", store_filter_key),
+            ("state", "in", ["pending", "failed"]),
+        ])
+        restored = self.browse()
+        for state in states:
+            if state._has_complete_daily_coverage():
+                state._mark_done(state._dashboard_sync_row_count(False))
+                restored |= state
+        if restored:
+            restored.flush_recordset(["state", "rows_synced", "finished_at", "error_message"])
+
+    @api.model
     def process_next_dashboard_sync_day(self, date_from, date_to, store_id=0, force_resync=True):
         date_from, date_to = self._validate_sync_range(date_from, date_to)
         store_id = int(store_id or 0)
@@ -341,6 +358,21 @@ class SalesDashboardSyncState(models.Model):
             with self.env.cr.savepoint():
                 state._sync_one_state_with_progress(force_resync=force_resync)
         except SalesDashboardSourceUnavailableError:
+            existing_state = self.browse(state_id).exists()
+            if existing_state and existing_state._has_complete_daily_coverage():
+                existing_state._mark_done(existing_state._dashboard_sync_row_count(False))
+                existing_state.flush_recordset(["state", "rows_synced", "finished_at", "error_message"])
+                progress = self.dashboard_sync_progress(date_from, date_to, store_id=store_id)
+                progress.update({
+                    "last_status": "source_unavailable",
+                    "source_unavailable": True,
+                    "is_active": False,
+                    "last_date": fields.Date.to_string(existing_state.sync_date),
+                    "last_error": _(
+                        "E-Plus is unavailable. Dashboard sync is paused; try again after the connection is restored."
+                    ),
+                })
+                return progress
             return self._source_unavailable_progress(
                 date_from,
                 date_to,
@@ -377,7 +409,7 @@ class SalesDashboardSyncState(models.Model):
 
     @api.model
     def _try_sync_claim_lock(self):
-        return self.env["ab.sales.dashboard.snapshot"].sudo()._try_sales_dashboard_sync_claim_lock()
+        return self.env["ab_sales_dashboard_snapshot"].sudo()._try_sales_dashboard_sync_claim_lock()
 
     @api.model
     def _deferred_sync_progress(self, date_from, date_to, store_id, reason, sync_date=False):
@@ -455,7 +487,7 @@ class SalesDashboardSyncState(models.Model):
 
     @api.model
     def _store_scope_values(self, store_id=0):
-        Snapshot = self.env["ab.sales.dashboard.snapshot"].sudo()
+        Snapshot = self.env["ab_sales_dashboard_snapshot"].sudo()
         filters = {"date_from": fields.Date.context_today(self), "date_to": fields.Date.context_today(self), "store_id": int(store_id or 0)}
         stores = Snapshot._stores_from_filters(filters)
         if store_id and not stores:
@@ -607,7 +639,7 @@ class SalesDashboardSyncState(models.Model):
             self._mark_done(self.rows_synced)
             return "skipped"
 
-        Snapshot = self.env["ab.sales.dashboard.snapshot"].sudo()
+        Snapshot = self.env["ab_sales_dashboard_snapshot"].sudo()
         with Snapshot._sales_dashboard_refresh_lock():
             self._mark_running()
             rows_synced = self._sync_dashboard_day()
@@ -657,12 +689,12 @@ class SalesDashboardSyncState(models.Model):
             "date_to": self.sync_date,
             "store_id": self.store_id.id if self.store_id else 0,
         }
-        snapshot = self.env["ab.sales.dashboard.snapshot"].sudo()._create_snapshot(filters)
+        snapshot = self.env["ab_sales_dashboard_snapshot"].sudo()._create_snapshot(filters)
         return self._dashboard_sync_row_count(snapshot)
 
     def _is_dashboard_day_complete(self):
         self.ensure_one()
-        Snapshot = self.env["ab.sales.dashboard.snapshot"].sudo()
+        Snapshot = self.env["ab_sales_dashboard_snapshot"].sudo()
         filters = {
             "date_from": self.sync_date,
             "date_to": self.sync_date,
@@ -679,9 +711,27 @@ class SalesDashboardSyncState(models.Model):
             and Snapshot._has_complete_fact_coverage(self.sync_date, self.sync_date, store_eplus_ids, 1, "user")
         )
 
+    def _has_complete_daily_coverage(self):
+        self.ensure_one()
+        Snapshot = self.env["ab_sales_dashboard_snapshot"].sudo()
+        filters = {
+            "date_from": self.sync_date,
+            "date_to": self.sync_date,
+            "store_id": self.store_id.id if self.store_id else 0,
+        }
+        stores = Snapshot._fact_scope_stores(filters)
+        store_eplus_ids = [int(store.eplus_serial) for store in stores if store.eplus_serial]
+        if not store_eplus_ids:
+            return False
+        return bool(
+            Snapshot._has_complete_sync_coverage(self.sync_date, self.sync_date, store_eplus_ids, 1)
+            and Snapshot._has_complete_fact_coverage(self.sync_date, self.sync_date, store_eplus_ids, 1, "item")
+            and Snapshot._has_complete_fact_coverage(self.sync_date, self.sync_date, store_eplus_ids, 1, "user")
+        )
+
     def _dashboard_sync_row_count(self, snapshot):
         self.ensure_one()
-        Snapshot = self.env["ab.sales.dashboard.snapshot"].sudo()
+        Snapshot = self.env["ab_sales_dashboard_snapshot"].sudo()
         filters = {
             "date_from": self.sync_date,
             "date_to": self.sync_date,
@@ -696,14 +746,14 @@ class SalesDashboardSyncState(models.Model):
             ("store_eplus_id", "in", store_eplus_ids),
         ]
         return (
-            self.env["ab.sales.dashboard.daily.store.fact"].sudo().search_count(daily_domain)
-            + self.env["ab.sales.dashboard.daily.collection.fact"].sudo().search_count(daily_domain)
-            + self.env["ab.sales.dashboard.daily.item.fact"].sudo().search_count(daily_domain)
+            self.env["ab_sales_dashboard_daily_store_fact"].sudo().search_count(daily_domain)
+            + self.env["ab_sales_dashboard_daily_collection_fact"].sudo().search_count(daily_domain)
+            + self.env["ab_sales_dashboard_daily_item_fact"].sudo().search_count(daily_domain)
             + self.env["ab_sales_dashboard_daily_user_fact"].sudo().search_count(daily_domain)
-            + len(snapshot.collection_line_ids)
-            + len(snapshot.user_line_ids)
-            + len(snapshot.item_line_ids)
-            + len(snapshot.invoice_line_ids)
+            + (len(snapshot.collection_line_ids) if snapshot else 0)
+            + (len(snapshot.user_line_ids) if snapshot else 0)
+            + (len(snapshot.item_line_ids) if snapshot else 0)
+            + (len(snapshot.invoice_line_ids) if snapshot else 0)
         )
 
     def _mark_failed(self, error):

@@ -12,8 +12,8 @@ _logger = logging.getLogger(__name__)
 
 
 class SalesDashboardReconciliationJob(models.Model):
-    _name = "ab.sales.dashboard.reconciliation.job"
-    _inherit = ["ab.sales.dashboard.config.mixin"]
+    _name = "ab_sales_dashboard_reconciliation_job"
+    _inherit = ["ab_sales_dashboard_config_mixin"]
     _description = "Sales Dashboard Coverage Reconciliation Job"
     _order = "create_date desc, id desc"
 
@@ -56,7 +56,7 @@ class SalesDashboardReconciliationJob(models.Model):
     last_error = fields.Text(readonly=True)
     last_processed_date = fields.Date(readonly=True)
     created_by = fields.Many2one("res.users", required=True, readonly=True, default=lambda self: self.env.user)
-    chunk_ids = fields.One2many("ab.sales.dashboard.reconciliation.chunk", "job_id", readonly=True)
+    chunk_ids = fields.One2many("ab_sales_dashboard_reconciliation_chunk", "job_id", readonly=True)
 
     @api.depends("date_from", "date_to")
     @api.depends_context("lang")
@@ -70,7 +70,7 @@ class SalesDashboardReconciliationJob(models.Model):
         for job in self:
             stores = job._stores_for_display()
             job.store_count = len(stores)
-            job.store_filter_label = self.env["ab.sales.dashboard.snapshot"]._store_filter_label(stores)
+            job.store_filter_label = self.env["ab_sales_dashboard_snapshot"]._store_filter_label(stores)
 
     def action_analyze_coverage(self):
         for job in self:
@@ -121,7 +121,7 @@ class SalesDashboardReconciliationJob(models.Model):
         store_eplus_ids = self._store_eplus_ids(stores)
         self._validate_reconciliation_scope(stores)
         missing_rows = self._missing_coverage_rows(store_eplus_ids, fact_type="item")
-        metrics = self.env["ab.sales.dashboard.snapshot"]._fact_coverage_metrics(
+        metrics = self.env["ab_sales_dashboard_snapshot"]._fact_coverage_metrics(
             self.date_from,
             self.date_to,
             store_eplus_ids,
@@ -133,7 +133,7 @@ class SalesDashboardReconciliationJob(models.Model):
         state = "ready" if chunks else "done"
         self.write({
             "name": self._default_job_name(stores),
-            "store_filter_key": self.env["ab.sales.dashboard.snapshot"]._store_filter_key(stores),
+            "store_filter_key": self.env["ab_sales_dashboard_snapshot"]._store_filter_key(stores),
             "state": state,
             "total_branch_days": metrics["expected_store_days"],
             "covered_branch_days": metrics["covered_store_days"],
@@ -299,7 +299,7 @@ class SalesDashboardReconciliationJob(models.Model):
             "date_from": date_from,
             "date_to": date_to,
             "store_ids": stores.ids,
-            "store_filter_key": self.env["ab.sales.dashboard.snapshot"]._store_filter_key(stores),
+            "store_filter_key": self.env["ab_sales_dashboard_snapshot"]._store_filter_key(stores),
             "branch_day_count": day_count * len(stores),
         }
 
@@ -317,7 +317,7 @@ class SalesDashboardReconciliationJob(models.Model):
                 "state": "pending",
             })
         if vals_list:
-            self.env["ab.sales.dashboard.reconciliation.chunk"].sudo().create(vals_list)
+            self.env["ab_sales_dashboard_reconciliation_chunk"].sudo().create(vals_list)
 
     def _run_reconciliation_chunks(self, states):
         self.ensure_one()
@@ -380,7 +380,7 @@ class SalesDashboardReconciliationJob(models.Model):
     def _record_reconciliation_telemetry(self, started):
         self.ensure_one()
         stores = self._reconciliation_stores()
-        self.env["ab.sales.dashboard.report.telemetry"].record_operation(
+        self.env["ab_sales_dashboard_report_telemetry"].record_operation(
             "reconciliation_run",
             "reconciliation",
             filters={"date_from": self.date_from, "date_to": self.date_to, "store_id": self.store_ids[:1].id if len(self.store_ids) == 1 else 0},
@@ -433,12 +433,12 @@ class SalesDashboardReconciliationJob(models.Model):
 
 
 class SalesDashboardReconciliationChunk(models.Model):
-    _name = "ab.sales.dashboard.reconciliation.chunk"
-    _inherit = ["ab.sales.dashboard.config.mixin"]
+    _name = "ab_sales_dashboard_reconciliation_chunk"
+    _inherit = ["ab_sales_dashboard_config_mixin"]
     _description = "Sales Dashboard Coverage Reconciliation Chunk"
     _order = "job_id, sequence, id"
 
-    job_id = fields.Many2one("ab.sales.dashboard.reconciliation.job", required=True, readonly=True, ondelete="cascade", index=True)
+    job_id = fields.Many2one("ab_sales_dashboard_reconciliation_job", required=True, readonly=True, ondelete="cascade", index=True)
     sequence = fields.Integer(required=True, readonly=True, index=True)
     date_from = fields.Date(required=True, readonly=True, index=True)
     date_to = fields.Date(required=True, readonly=True, index=True)
@@ -509,7 +509,7 @@ class SalesDashboardReconciliationChunk(models.Model):
             self.attempt_count,
         )
         store_eplus_ids = [int(store.eplus_serial) for store in self.store_ids if store.eplus_serial]
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         source_started = time.monotonic()
         daily_payload = service.fetch_daily_fact_data(
             self.date_from,
@@ -526,7 +526,7 @@ class SalesDashboardReconciliationChunk(models.Model):
         )
 
         persistence_started = time.monotonic()
-        self.env["ab.sales.dashboard.snapshot"]._upsert_daily_facts(
+        self.env["ab_sales_dashboard_snapshot"]._upsert_daily_facts(
             {
                 "date_from": self.date_from,
                 "date_to": self.date_to,
@@ -564,7 +564,7 @@ class SalesDashboardReconciliationChunk(models.Model):
         self.ensure_one()
         store_eplus_ids = [int(store.eplus_serial) for store in self.store_ids if store.eplus_serial]
         day_count = max((self.date_to - self.date_from).days + 1, 1)
-        return self.env["ab.sales.dashboard.snapshot"]._has_complete_fact_coverage(
+        return self.env["ab_sales_dashboard_snapshot"]._has_complete_fact_coverage(
             self.date_from,
             self.date_to,
             store_eplus_ids,

@@ -1,6 +1,6 @@
 /** @odoo-module **/
 
-import { Component, xml, markup } from "@odoo/owl";
+import { Component, xml, markup, useState } from "@odoo/owl";
 import { money, pct } from "../utils/formatters.js";
 
 const ICONS = {
@@ -19,9 +19,16 @@ const COLORS = {
 
 export class BarChart extends Component {
     static template = xml`
-        <div class="sd-bar-chart sd-animate-in" t-att-style="'animation-delay:' + (props.delay || 0) + 'ms'">
+        <div t-att-class="'sd-bar-chart sd-animate-in' + (state.hoveredCategory ? ' sd-bar-chart--hovering' : '')"
+             t-att-style="'animation-delay:' + (props.delay || 0) + 'ms'">
             <t t-foreach="props.items" t-as="item" t-key="item.category || item_index">
-                <div class="sd-bar-item">
+                <div t-att-class="'sd-bar-item' + (state.hoveredCategory === item.category ? ' sd-bar-item--active' : '')"
+                     t-att-style="'--sd-bar-color:' + getColor(item.category)"
+                     t-on-mouseenter="() => this.setHoveredCategory(item.category)"
+                     t-on-mouseleave="() => this.setHoveredCategory(null)"
+                     t-on-focusin="() => this.setHoveredCategory(item.category)"
+                     t-on-focusout="() => this.setHoveredCategory(null)"
+                     tabindex="0">
                     <div class="sd-bar-item-header">
                         <span class="sd-bar-item-label">
                             <span class="sd-bar-icon" t-out="getIcon(item.category)"/>
@@ -39,6 +46,12 @@ export class BarChart extends Component {
         </div>
     `;
 
+    setup() {
+        this.state = useState({
+            hoveredCategory: null,
+        });
+    }
+
     getIcon(category) {
         return ICONS[category] || markup('<i class="fa fa-circle-o"/>');
     }
@@ -53,6 +66,10 @@ export class BarChart extends Component {
 
     formatMoney(v) {
         return money(v);
+    }
+
+    setHoveredCategory(category) {
+        this.state.hoveredCategory = category;
     }
 
     pct(v) {

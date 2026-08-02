@@ -385,6 +385,7 @@
 
 .ab-sales-report .rr-table {
     width: 100%;
+    table-layout: fixed;
     border-collapse: collapse;
     font-size: 13px;
 
@@ -421,6 +422,7 @@
     }
 
     &__r { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+    th.rr-table__r { text-align: right; }
     &__r--bold { font-weight: 700; }
     &__rank-h { width: 40px; text-align: center; }
     &__rank { width: 40px; text-align: center; color: var(--sd-text-dim); font-weight: 600; font-size: 12px; }
@@ -435,6 +437,24 @@
     &__date { color: var(--sd-text-secondary); font-size: 12px; white-space: nowrap; font-variant-numeric: tabular-nums; }
     &__bar-h { width: 200px; }
     &__empty { text-align: center; color: var(--sd-text-dim); padding: var(--rr-space-xl) var(--rr-space-base) !important; font-style: italic; }
+}
+
+.ab-sales-report .rr-table .rr-col-rank { width: 48px; }
+.ab-sales-report .rr-table .rr-col-code { width: 128px; }
+.ab-sales-report .rr-table .rr-col-invoice { width: 140px; }
+.ab-sales-report .rr-table .rr-col-date { width: 132px; }
+.ab-sales-report .rr-table .rr-col-name { width: auto; }
+.ab-sales-report .rr-table .rr-col-item-name { width: auto; }
+.ab-sales-report .rr-table .rr-col-category { width: auto; }
+.ab-sales-report .rr-table .rr-col-num { width: 124px; }
+.ab-sales-report .rr-table .rr-col-money { width: 150px; }
+.ab-sales-report .rr-table .rr-col-pct { width: 116px; }
+.ab-sales-report .rr-table .rr-col-bar { width: 200px; }
+.ab-sales-report .rr-table .rr-col-balance { width: 132px; }
+
+.ab-sales-report .rr-table th,
+.ab-sales-report .rr-table td {
+    box-sizing: border-box;
 }
 
 .ab-sales-report .rr-table-wrap--activity {

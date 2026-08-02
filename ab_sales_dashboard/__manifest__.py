@@ -1,7 +1,7 @@
 {
     "name": "Sales Dashboard",
     "description": "Management sales dashboard backed by BConnect / E-Plus reporting data.",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.0.2",
     "license": "LGPL-3",
     "category": "AbdinSupplyChain",
     "author": "Abdin Pharmacies",

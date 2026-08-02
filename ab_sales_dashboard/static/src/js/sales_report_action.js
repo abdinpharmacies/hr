@@ -124,7 +124,14 @@ class CollectionSection extends Component {
     static template = xml`
         <SectionHeader title="_t('Collection Analysis')" meta="props.rows.length + ' ' + _t('categories')"/>
         <div class="rr-table-wrap">
-            <table class="rr-table">
+            <table class="rr-table rr-table--collection">
+                <colgroup>
+                    <col class="rr-col-category"/>
+                    <col class="rr-col-num"/>
+                    <col class="rr-col-money"/>
+                    <col class="rr-col-pct"/>
+                    <col class="rr-col-bar"/>
+                </colgroup>
                 <thead><tr>
                     <th t-esc="_t('Category')"/>
                     <th class="rr-table__r" t-esc="_t('Invoices')"/>
@@ -166,7 +173,15 @@ class UsersSection extends Component {
     static template = xml`
         <SectionHeader title="_t('Sales by User')" meta="props.rows.length + ' ' + _t('users')"/>
         <div class="rr-table-wrap">
-            <table class="rr-table">
+            <table class="rr-table rr-table--users">
+                <colgroup>
+                    <col class="rr-col-rank"/>
+                    <col class="rr-col-name"/>
+                    <col class="rr-col-num"/>
+                    <col class="rr-col-money"/>
+                    <col class="rr-col-pct"/>
+                    <col class="rr-col-bar"/>
+                </colgroup>
                 <thead><tr>
                     <th class="rr-table__rank-h">#</th>
                     <th t-esc="_t('User')"/>
@@ -178,7 +193,7 @@ class UsersSection extends Component {
                 <tbody>
                     <t t-foreach="props.rows" t-as="row" t-key="row.employee_name">
                         <tr>
-                            <td class="rr-table__rank" t-esc="idx + 1"/>
+                            <td class="rr-table__rank" t-esc="row_index + 1"/>
                             <td class="rr-table__name" t-esc="row.employee_name"/>
                             <td class="rr-table__r" t-esc="fmt.num(row.invoice_count)"/>
                             <td class="rr-table__r rr-table__r--bold" t-esc="fmt.money(row.total_sales)"/>
@@ -205,7 +220,16 @@ class ItemsSection extends Component {
     static template = xml`
         <SectionHeader title="_t('Top Sold Items')" meta="props.rows.length + ' ' + _t('items')"/>
         <div class="rr-table-wrap rr-table-wrap--activity">
-            <table class="rr-table rr-table--activity">
+            <table class="rr-table rr-table--activity rr-table--items">
+                <colgroup>
+                    <col class="rr-col-rank"/>
+                    <col class="rr-col-code"/>
+                    <col class="rr-col-item-name"/>
+                    <col class="rr-col-num"/>
+                    <col class="rr-col-num"/>
+                    <col class="rr-col-money"/>
+                    <col class="rr-col-balance"/>
+                </colgroup>
                 <thead><tr>
                     <th class="rr-table__rank-h">#</th>
                     <th t-esc="_t('Code')"/>
@@ -218,9 +242,9 @@ class ItemsSection extends Component {
                 <tbody>
                     <t t-foreach="props.rows" t-as="row" t-key="row_index">
                         <tr>
-                            <td class="rr-table__rank" t-esc="idx + 1"/>
+                            <td class="rr-table__rank" t-esc="row_index + 1"/>
                             <td class="rr-table__code" t-esc="row.eplus_item_code"/>
-                            <td class="rr-table__name" t-esc="row.item_name"/>
+                            <td class="rr-table__name" t-esc="row.item_name || row.product_name || row.eplus_item_code || ''"/>
                             <td class="rr-table__r" t-esc="fmt.num(row.sale_times)"/>
                             <td class="rr-table__r" t-esc="fmt.num(row.sold_qty)"/>
                             <td class="rr-table__r rr-table__r--bold" t-esc="fmt.money(row.total_sales)"/>
@@ -244,7 +268,14 @@ class InvoicesSection extends Component {
     static template = xml`
         <SectionHeader title="_t('Invoice Details')" meta="props.rows.length + ' ' + _t('invoices')"/>
         <div class="rr-table-wrap">
-            <table class="rr-table">
+            <table class="rr-table rr-table--invoices">
+                <colgroup>
+                    <col class="rr-col-invoice"/>
+                    <col class="rr-col-date"/>
+                    <col class="rr-col-name"/>
+                    <col class="rr-col-money"/>
+                    <col class="rr-col-num"/>
+                </colgroup>
                 <thead><tr>
                     <th t-esc="_t('Invoice #')"/>
                     <th t-esc="_t('Date')"/>
@@ -331,7 +362,7 @@ class SalesReportAction extends Component {
         if (!id) { this.state.loading = false; return; }
         try {
             this.state.data = await this.orm.call(
-                "ab.sales.dashboard.snapshot", "get_report_data", [id],
+                "ab_sales_dashboard_snapshot", "get_report_data", [id],
             );
         } catch {
             this.notification.add(_t("Failed to load report."), { type: "danger" });
@@ -352,10 +383,10 @@ class SalesReportAction extends Component {
 
     async onBack() {
         try {
-            await this.action.loadViews("ab.sales.dashboard.snapshot", { search: 1, list: 1 });
+            await this.action.loadViews("ab_sales_dashboard_snapshot", { search: 1, list: 1 });
             this.action.doAction({
                 type: "ir.actions.act_window",
-                res_model: "ab.sales.dashboard.snapshot",
+                res_model: "ab_sales_dashboard_snapshot",
                 view_mode: "list",
                 target: "current",
             });

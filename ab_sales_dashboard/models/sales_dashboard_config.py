@@ -14,7 +14,7 @@ class SalesDashboardRefreshBusyError(UserError):
 
 
 class SalesDashboardConfigMixin(models.AbstractModel):
-    _name = "ab.sales.dashboard.config.mixin"
+    _name = "ab_sales_dashboard_config_mixin"
     _description = "Sales Dashboard Configuration Helpers"
 
     # Stable transaction-scoped PostgreSQL advisory lock for heavy sales
@@ -86,11 +86,11 @@ class SalesDashboardConfigMixin(models.AbstractModel):
 
     @api.model
     def _max_snapshot_child_rows(self):
-        return self._get_int_param("ab_reports.max_snapshot_child_rows", 100, minimum=1, maximum=1000)
+        return self._get_int_param("ab_reports.max_snapshot_child_rows", 200000, minimum=1, maximum=1000000)
 
     @api.model
     def _max_archive_payload_bytes(self):
-        return self._get_int_param("ab_reports.max_archive_payload_bytes", 1048576, minimum=1, maximum=10485760)
+        return self._get_int_param("ab_reports.max_archive_payload_bytes", 52428800, minimum=1, maximum=104857600)
 
     @api.model
     def _max_reconciliation_branch_days(self):

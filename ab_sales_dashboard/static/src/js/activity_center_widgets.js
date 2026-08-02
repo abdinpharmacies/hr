@@ -18,25 +18,25 @@ function fmtBytes(bytes) {
     return (v / 1048576).toFixed(1) + " MB";
 }
 
-function relativeTime(dateStr) {
-    if (!dateStr) return { label: _t("Unknown") };
-    const d = new Date(dateStr);
-    const now = new Date();
-    const diffMs = now - d;
-    const diffH = diffMs / 3600000;
-    if (diffH < 1) return { label: _t("Just now") };
-    if (diffH < 24) return { label: Math.floor(diffH) + " " + _t("h ago") };
-    const diffD = diffH / 24;
-    if (diffD < 1) return { label: _t("Today") };
-    if (diffD < 2) return { label: _t("Yesterday") };
-    if (diffD < 30) return { label: Math.floor(diffD) + " " + _t("d ago") };
-    return { label: Math.floor(diffD) + " " + _t("d ago") };
+function parseDateValue(value) {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    if (typeof value.toJSDate === "function") return value.toJSDate();
+    const normalized = String(value).replace(" ", "T");
+    const parsed = new Date(normalized);
+    return isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function isDateOnly(dateStr) {
+    return typeof dateStr === "string" && /^\d{4}-\d{2}-\d{2}$/.test(dateStr);
 }
 
 function formatTime(dateStr) {
     if (!dateStr) return "";
+    if (isDateOnly(dateStr)) return "";
     try {
-        const d = new Date(dateStr);
+        const d = parseDateValue(dateStr);
+        if (!d) return "";
         return d.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: false });
     } catch { return ""; }
 }
@@ -44,8 +44,9 @@ function formatTime(dateStr) {
 function formatShortDate(dateStr) {
     if (!dateStr) return "";
     try {
-        const d = new Date(dateStr);
-        return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        const d = parseDateValue(dateStr);
+        if (!d) return "";
+        return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     } catch { return ""; }
 }
 
@@ -56,28 +57,34 @@ function titleCase(str) {
 
 const EVENT_TYPE_CONFIG = {
     dashboard_read: {
+        label: _t("Dashboard Read"),
         icon: "fa-bar-chart",
-        color: "violet",
+        color: "blue",
     },
     dashboard_refresh: {
+        label: _t("Dashboard Refresh"),
         icon: "fa-refresh",
         color: "cyan",
     },
     summary_read: {
+        label: _t("Summary Report"),
         icon: "fa-file-text-o",
-        color: "blue",
+        color: "indigo",
     },
     archive_read: {
+        label: _t("Archive Report"),
         icon: "fa-archive",
-        color: "amber",
+        color: "violet",
     },
     product_report_read: {
+        label: _t("Product Report"),
         icon: "fa-cube",
-        color: "blue",
+        color: "emerald",
     },
     reconciliation_run: {
-        icon: "fa-exchange",
-        color: "emerald",
+        label: _t("Reconciliation"),
+        icon: "fa-cog",
+        color: "amber",
     },
 };
 
@@ -90,8 +97,8 @@ const COVERAGE_CONFIG = {
 
 const PERF_THRESHOLDS = [
     { max: 500, cls: "ac-perf--fast", label: _t("Fast") },
-    { max: 2000, cls: "ac-perf--moderate", label: _t("Moderate") },
-    { max: 10000, cls: "ac-perf--slow", label: _t("Slow") },
+    { max: 1500, cls: "ac-perf--normal", label: _t("Normal") },
+    { max: 4000, cls: "ac-perf--slow", label: _t("Slow") },
     { max: Infinity, cls: "ac-perf--critical", label: _t("Critical") },
 ];
 
@@ -101,13 +108,35 @@ function perfConfig(ms) {
 }
 
 const SCOPE_LABELS = {
-    single_store: _t("1 Store"),
+    single_store: _t("Single Store"),
     "2_10_stores": _t("2–10 Stores"),
     "11_50_stores": _t("11–50 Stores"),
     "51_100_stores": _t("51–100 Stores"),
     over_100_stores: _t("100+ Stores"),
     all_stores: _t("All Stores"),
 };
+
+const MODE_LABELS = {
+    full: _t("Full"),
+    summary: _t("Summary"),
+    archive: _t("Archive"),
+    product_report: _t("Products"),
+    reconciliation: _t("Reconciliation"),
+};
+
+const SOURCE_CONFIG = [
+    { field: "snapshot_used", label: _t("Snapshot"), icon: "fa-camera" },
+    { field: "daily_fact_used", label: _t("Daily Facts"), icon: "fa-line-chart" },
+    { field: "item_fact_used", label: _t("Item Facts"), icon: "fa-cube" },
+    { field: "archive_used", label: _t("Archive"), icon: "fa-archive" },
+    { field: "product_report_used", label: _t("Product Report"), icon: "fa-shopping-cart" },
+];
+
+const WARNING_CONFIG = [
+    { field: "unsupported_customer_section", label: _t("Customers"), icon: "fa-exclamation-triangle" },
+    { field: "unsupported_user_section", label: _t("Users"), icon: "fa-exclamation-triangle" },
+    { field: "unsupported_item_section", label: _t("Products"), icon: "fa-exclamation-triangle" },
+];
 
 // ══════════════════════════════════════════════════════════════
 // 1. EVENT TYPE — Rich identity block
@@ -130,11 +159,11 @@ class ActivityEventType extends Component {
         const raw = this.props.record.data.event_type || "";
         return String(raw).toLowerCase().replace(/\s+/g, "_");
     }
-    get eventConfig() { return EVENT_TYPE_CONFIG[this.eventKey] || { icon: "fa-file-o", color: "default" }; }
+    get eventConfig() { return EVENT_TYPE_CONFIG[this.eventKey] || { label: titleCase(this.props.record.data.event_type), icon: "fa-file-o", color: "default" }; }
     get eventIcon() { return this.eventConfig.icon; }
     get eventColor() { return this.eventConfig.color; }
-    get eventTitle() { return titleCase(this.props.record.data.event_type); }
-    get reportModeLabel() { return titleCase(this.props.record.data.report_mode); }
+    get eventTitle() { return this.eventConfig.label; }
+    get reportModeLabel() { return MODE_LABELS[this.props.record.data.report_mode] || titleCase(this.props.record.data.report_mode); }
 }
 
 registry.category("fields").add("list.activity_event_type", { component: ActivityEventType });
@@ -164,25 +193,29 @@ class ActivityStatus extends Component {
 registry.category("fields").add("list.activity_status", { component: ActivityStatus });
 
 // ══════════════════════════════════════════════════════════════
-// 3. TIME — Relative + absolute hierarchy
+// 3. TIME — Compact absolute timestamp
 // ══════════════════════════════════════════════════════════════
 class ActivityTime extends Component {
     static template = xml`
         <div class="ac-time">
-            <span class="ac-time__rel" t-esc="rel"/>
             <span class="ac-time__abs">
                 <i class="fa fa-calendar ac-time__icon"/>
                 <t t-esc="absDate"/>
-                <t t-esc="absTime"/>
+                <span class="ac-time__separator" t-if="absTime">·</span>
+                <t t-if="absTime" t-esc="absTime"/>
             </span>
         </div>
     `;
     static props = { name: String, record: Object, readonly: Boolean };
 
     get raw() { return this.props.record.data[this.props.name]; }
-    get rel() { return relativeTime(this.raw).label; }
+    get clockRaw() {
+        return this.props.name === "event_date" && this.props.record.data.created_at
+            ? this.props.record.data.created_at
+            : this.raw;
+    }
     get absDate() { return formatShortDate(this.raw); }
-    get absTime() { return this.raw ? formatTime(this.raw) : ""; }
+    get absTime() { return this.clockRaw ? formatTime(this.clockRaw) : ""; }
 }
 
 registry.category("fields").add("list.activity_time", { component: ActivityTime });
@@ -193,9 +226,11 @@ registry.category("fields").add("list.activity_time", { component: ActivityTime 
 class ActivityPerformance extends Component {
     static template = xml`
         <span class="ac-perf" t-att-class="perfCls">
-            <i class="fa fa-bolt"/>
+            <span class="ac-perf__label">
+                <i class="fa fa-bolt"/>
+                <t t-esc="label"/>
+            </span>
             <span class="ac-perf__val" t-esc="value"/>
-            <span class="ac-perf__label" t-esc="label"/>
         </span>
     `;
     static props = { name: String, record: Object, readonly: Boolean };
@@ -274,6 +309,8 @@ class ActivityRange extends Component {
             <t t-esc="label"/>
         </span>
     `;
+    static props = { name: String, record: Object, readonly: Boolean };
+
     get label() {
         const v = this.props.record.data[this.props.name];
         if (!v) return "";
@@ -302,7 +339,7 @@ class ActivityReportMode extends Component {
     get raw() {
         return String(this.props.record.data[this.props.name] || "").toLowerCase().replace(/\s+/g, "_");
     }
-    get label() { return titleCase(this.props.record.data[this.props.name]); }
+    get label() { return MODE_LABELS[this.raw] || titleCase(this.props.record.data[this.props.name]); }
     get modeIcon() {
         const m = {
             full: "fa-file-text-o",
@@ -328,7 +365,58 @@ class ActivityReportMode extends Component {
 registry.category("fields").add("list.activity_report_mode", { component: ActivityReportMode });
 
 // ══════════════════════════════════════════════════════════════
-// 9. METRIC — Number with label
+// 9. SOURCES — Active data-source chips only
+// ══════════════════════════════════════════════════════════════
+class ActivitySources extends Component {
+    static template = xml`
+        <div class="ac-sources">
+            <t t-foreach="sources" t-as="source" t-key="source.field">
+                <span class="ac-source-chip">
+                    <i class="fa" t-att-class="source.icon"/>
+                    <t t-esc="source.label"/>
+                </span>
+            </t>
+            <span class="ac-source-chip ac-source-chip--none" t-if="!sources.length">
+                <i class="fa fa-minus-circle"/>
+                <t t-esc="noneLabel"/>
+            </span>
+        </div>
+    `;
+    static props = { name: String, record: Object, readonly: Boolean };
+
+    get noneLabel() { return _t("No source"); }
+    get sources() {
+        return SOURCE_CONFIG.filter(source => Boolean(this.props.record.data[source.field]));
+    }
+}
+
+registry.category("fields").add("list.activity_sources", { component: ActivitySources });
+
+// ══════════════════════════════════════════════════════════════
+// 10. WARNINGS — Unsupported section chips only
+// ══════════════════════════════════════════════════════════════
+class ActivityWarnings extends Component {
+    static template = xml`
+        <div class="ac-warnings">
+            <t t-foreach="warnings" t-as="warning" t-key="warning.field">
+                <span class="ac-warning-chip">
+                    <i class="fa" t-att-class="warning.icon"/>
+                    <t t-esc="warning.label"/>
+                </span>
+            </t>
+        </div>
+    `;
+    static props = { name: String, record: Object, readonly: Boolean };
+
+    get warnings() {
+        return WARNING_CONFIG.filter(warning => Boolean(this.props.record.data[warning.field]));
+    }
+}
+
+registry.category("fields").add("list.activity_warnings", { component: ActivityWarnings });
+
+// ══════════════════════════════════════════════════════════════
+// 11. METRIC — Number with label
 // ══════════════════════════════════════════════════════════════
 class ActivityMetric extends Component {
     static template = xml`
@@ -355,7 +443,7 @@ class ActivityMetric extends Component {
 registry.category("fields").add("list.activity_metric", { component: ActivityMetric });
 
 // ══════════════════════════════════════════════════════════════
-// 10. BOOLEAN — Enabled/Disabled badge
+// 12. BOOLEAN — Enabled/Disabled badge
 // ══════════════════════════════════════════════════════════════
 class ActivityBoolean extends Component {
     static template = xml`
@@ -375,7 +463,7 @@ class ActivityBoolean extends Component {
 registry.category("fields").add("list.activity_boolean", { component: ActivityBoolean });
 
 // ══════════════════════════════════════════════════════════════
-// 11. UNSUPPORTED — Flag badge
+// 13. UNSUPPORTED — Flag badge
 // ══════════════════════════════════════════════════════════════
 class ActivityUnsupported extends Component {
     static template = xml`

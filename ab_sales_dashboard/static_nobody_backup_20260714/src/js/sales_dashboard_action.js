@@ -119,7 +119,7 @@ class SalesDashboardAction extends Component {
         }
         try {
             const method = refresh ? "refresh_dashboard_data" : "get_dashboard_data";
-            const data = await this.orm.call("ab.sales.dashboard.snapshot", method, [this.state.filters]);
+            const data = await this.orm.call("ab_sales_dashboard_snapshot", method, [this.state.filters]);
             this.state.data = data;
             this.state.filters.date_from = data.date_from;
             this.state.filters.date_to = data.date_to;

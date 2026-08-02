@@ -12,9 +12,9 @@ Phase 1 kept the existing synchronous dashboard behavior:
 
 ```text
 OWL dashboard
-  -> ab.sales.dashboard.snapshot.refresh_dashboard_data()
-  -> ab.sales.dashboard.service.fetch_dashboard_data()
-  -> ab.sales.dashboard.service.fetch_daily_store_facts()
+  -> ab_sales_dashboard_snapshot_refresh_dashboard_data()
+  -> ab_sales_dashboard_service_fetch_dashboard_data()
+  -> ab_sales_dashboard_service_fetch_daily_store_facts()
   -> Odoo daily facts + dashboard report snapshot
 ```
 
@@ -314,10 +314,10 @@ It is not category-specific.
 
 The persistence layer now stores only grouped rows returned by B-Connect:
 
-- `ab.sales.dashboard.daily.store.fact`: `report_date + store_eplus_id`
-- `ab.sales.dashboard.daily.collection.fact`:
+- `ab_sales_dashboard_daily_store_fact`: `report_date + store_eplus_id`
+- `ab_sales_dashboard_daily_collection_fact`:
   `report_date + store_eplus_id + category`
-- `ab.sales.dashboard.sync.coverage`: `report_date + store_eplus_id`
+- `ab_sales_dashboard_sync_coverage`: `report_date + store_eplus_id`
 
 Missing collection categories are interpreted as zero only when every
 requested date/store has a `synced` coverage row. If coverage is incomplete,
@@ -375,7 +375,7 @@ persistence for the bounded dashboard snapshot child rows.
 The snapshot parent model is:
 
 ```text
-model: ab.sales.dashboard.snapshot
+model: ab_sales_dashboard_snapshot
 table: ab_sales_dashboard_snapshot
 semantics: one parent reused per date_from + date_to + store_filter_key
 ```
@@ -383,22 +383,22 @@ semantics: one parent reused per date_from + date_to + store_filter_key
 The child models are bounded reporting rows:
 
 ```text
-ab.sales.dashboard.collection.line -> ab_sales_dashboard_collection_line
+ab_sales_dashboard_collection_line -> ab_sales_dashboard_collection_line
   parent: snapshot_id
   ordering: total_sales desc, id
   logical row: collection category
 
-ab.sales.dashboard.user.line -> ab_sales_dashboard_user_line
+ab_sales_dashboard_user_line -> ab_sales_dashboard_user_line
   parent: snapshot_id
   ordering: total_sales desc, id
   logical row: employee_eplus_id
 
-ab.sales.dashboard.item.line -> ab_sales_dashboard_item_line
+ab_sales_dashboard_item_line -> ab_sales_dashboard_item_line
   parent: snapshot_id
   ordering: sale_times desc, sold_qty desc, id
   logical row: eplus_item_id
 
-ab.sales.dashboard.invoice.line -> ab_sales_dashboard_invoice_line
+ab_sales_dashboard_invoice_line -> ab_sales_dashboard_invoice_line
   parent: snapshot_id
   ordering: invoice_date desc, id desc
   logical row: invoice_no payload row
@@ -522,7 +522,7 @@ management report archive
 The existing snapshot model remains:
 
 ```text
-model: ab.sales.dashboard.snapshot
+model: ab_sales_dashboard_snapshot
 table: ab_sales_dashboard_snapshot
 lookup key: date_from + date_to + store_filter_key
 behavior: reused and updated by refresh
@@ -561,7 +561,7 @@ snapshot child replacement.
 Phase 7 adds:
 
 ```text
-model: ab.sales.dashboard.report.archive
+model: ab_sales_dashboard_report_archive
 table: ab_sales_dashboard_report_archive
 purpose: explicit reviewed management report archive
 ```
@@ -624,7 +624,7 @@ module logs only a safe hash prefix and count; it never logs the payload.
 Archive numbers come from an `ir.sequence` with code:
 
 ```text
-ab.sales.dashboard.report.archive
+ab_sales_dashboard_report_archive
 ```
 
 The configured prefix is:
@@ -935,8 +935,8 @@ across dashboard refreshes and reconciliation chunks.
 Phase 9 adds standard backend list/form/search views for:
 
 ```text
-ab.sales.dashboard.reconciliation.job
-ab.sales.dashboard.reconciliation.chunk
+ab_sales_dashboard_reconciliation_job
+ab_sales_dashboard_reconciliation_chunk
 ```
 
 Only `ab_sales_dashboard.group_ab_sales_dashboard_manager` can create and run
@@ -1248,10 +1248,10 @@ No `date x store x product` zero rows are generated.
 
 ## Item Coverage
 
-Legacy `ab.sales.dashboard.sync.coverage` continues to prove store/collection
+Legacy `ab_sales_dashboard_sync_coverage` continues to prove store/collection
 daily summary coverage. It does not prove item fact completeness.
 
-Phase 10 adds `ab.sales.dashboard.fact.coverage` with grain:
+Phase 10 adds `ab_sales_dashboard_fact_coverage` with grain:
 
 ```text
 report_date
@@ -1363,7 +1363,7 @@ Phase 12 intentionally does not add employee or customer daily facts. It first
 measures whether long-range users actually need those grains often enough to
 justify their storage, synchronization, coverage, and reconciliation cost.
 
-The `ab.sales.dashboard.report.telemetry` model stores one row per dedicated
+The `ab_sales_dashboard_report_telemetry` model stores one row per dedicated
 top-level operation. It never stores report payloads, request/filter JSON, SQL,
 search text, credentials, store-ID arrays, or customer, employee, product, and
 invoice identifiers or names. The stored shape is limited to event and report

@@ -61,6 +61,8 @@ const FRONTEND_TRANSLATION_TERMS = [
     _t("Date Filter Mode"),
     _t("Date Range"),
     _t("Distribution"),
+    _t("Enlarge chart"),
+    _t("Expanded chart"),
     _t("Filter by store"),
     _t("From"),
     _t("Growth"),
@@ -70,9 +72,11 @@ const FRONTEND_TRANSLATION_TERMS = [
     _t("Items / Invoice"),
     _t("Live Data"),
     _t("Loading report..."),
+    _t("Medicine Sales"),
     _t("Medicine vs Non-Medicine"),
     _t("Monitor and execute coverage reconciliation tasks across branches."),
     _t("Month"),
+    _t("Open enlarged chart"),
     _t("No Report Data"),
     _t("No Snapshot"),
     _t("No collection data available."),
@@ -128,6 +132,7 @@ class SalesDashboardAction extends Component {
 
     setup() {
         this.orm = useService("orm");
+        this.action = useService("action");
         this.notification = useService("notification");
         this.syncPollTimer = null;
         this.sectionSearchTimers = {};
@@ -142,6 +147,7 @@ class SalesDashboardAction extends Component {
         this.toggleStoreMenu = this.toggleStoreMenu.bind(this);
         this.toggleMobileFilters = this.toggleMobileFilters.bind(this);
         this.openStoreMenu = this.openStoreMenu.bind(this);
+        this.onDocumentPointerDown = this.onDocumentPointerDown.bind(this);
         this.setDateFilterMode = this.setDateFilterMode.bind(this);
         this.toggleTheme = this.toggleTheme.bind(this);
         this.rootRef = useRef("dashboardRoot");
@@ -165,6 +171,7 @@ class SalesDashboardAction extends Component {
             },
             data: null,
             syncProgress: null,
+            expandedChart: null,
             sectionPages: {
                 sales_by_user: this.emptySectionPage(),
                 top_items: this.emptySectionPage(),
@@ -177,8 +184,12 @@ class SalesDashboardAction extends Component {
             await this.refreshSyncProgress();
             this.resumeSyncPollingIfNeeded();
         });
+        onMounted(() => {
+            document.addEventListener("pointerdown", this.onDocumentPointerDown, true);
+        });
         onWillUnmount(() => {
             this.unmounted = true;
+            document.removeEventListener("pointerdown", this.onDocumentPointerDown, true);
             this.stopSyncPolling();
             for (const timer of Object.values(this.sectionSearchTimers)) {
                 clearTimeout(timer);
@@ -256,13 +267,22 @@ class SalesDashboardAction extends Component {
         }
     }
 
+    openChart(chart) {
+        if (!this.state.data || !chart) return;
+        this.state.expandedChart = chart;
+    }
+
+    closeChart() {
+        this.state.expandedChart = null;
+    }
+
     // -- Dashboard loading --
     async loadDashboard(refresh) {
         this.state.loading = !this.state.data;
         this.state.storeMenuOpen = false;
         if (refresh) { this.state.refreshing = true; }
         try {
-            const data = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_data", [this.state.filters]);
+            const data = await this.orm.call("ab_sales_dashboard_snapshot", "get_dashboard_data", [this.state.filters]);
             this.state.data = data;
             this.state.filters.date_from = data.date_from;
             this.state.filters.date_to = data.date_to;
@@ -277,8 +297,22 @@ class SalesDashboardAction extends Component {
         }
     }
 
+    async reloadDashboardScope() {
+        await this.loadDashboard(false);
+        await this.refreshSyncProgress();
+    }
+
     updateFilter(name, value) {
         this.state.filters[name] = name === "store_id" ? Number(value || 0) : value;
+    }
+
+    onDocumentPointerDown(event) {
+        if (!this.state.storeMenuOpen) return;
+        const root = this.rootRef.el;
+        const target = event.target;
+        if (!root || !target || !root.contains(target)) return;
+        if (target.closest(".ab_sales_dashboard__store_search")) return;
+        this.state.storeMenuOpen = false;
     }
 
     toggleStoreMenu() { this.state.storeMenuOpen = !this.state.storeMenuOpen; }
@@ -294,7 +328,7 @@ class SalesDashboardAction extends Component {
         this.state.storeSearch = storeName || _t("All Stores");
         this.state.storeMenuOpen = false;
         this.persistFilters();
-        return this.loadDashboard(false);
+        return this.reloadDashboardScope();
     }
 
     // -- Date presets --
@@ -310,7 +344,7 @@ class SalesDashboardAction extends Component {
         this.state.activeDateFilter = preset;
         this.state.dateFilterMode = (preset === "yesterday") ? "single" : "range";
         this.persistFilters();
-        return this.loadDashboard(false);
+        return this.reloadDashboardScope();
     }
 
     inputValue(valueOrEvent) {
@@ -336,7 +370,7 @@ class SalesDashboardAction extends Component {
         this.state.activeDateFilter = "day";
         this.state.dateFilterMode = "single";
         this.persistFilters();
-        return this.loadDashboard(false);
+        return this.reloadDashboardScope();
     }
 
     applyYearSelection(valueOrEvent) {
@@ -353,7 +387,7 @@ class SalesDashboardAction extends Component {
         this.state.filters.date_from = this.toIsoDate(dateFrom);
         this.state.filters.date_to = this.toIsoDate(dateTo);
         this.persistFilters();
-        return this.loadDashboard(false);
+        return this.reloadDashboardScope();
     }
 
     updateCustomDate(name, value) {
@@ -362,7 +396,7 @@ class SalesDashboardAction extends Component {
         this.state.activeDateFilter = "custom";
         this.persistFilters();
         if (this.state.filters.date_from && this.state.filters.date_to) {
-            return this.loadDashboard(false);
+            return this.reloadDashboardScope();
         }
     }
 
@@ -374,7 +408,7 @@ class SalesDashboardAction extends Component {
         this.state.syncing = true;
         this.persistFilters();
         try {
-            const progress = await this.orm.call("ab.sales.dashboard.snapshot", "start_dashboard_sync", [this.state.filters]);
+            const progress = await this.orm.call("ab_sales_dashboard_snapshot", "start_dashboard_sync", [this.state.filters]);
             this.state.syncProgress = progress;
             this.notification.add(_t("Dashboard sync started."), { type: "info" });
             this.scheduleSyncPoll(0);
@@ -383,6 +417,22 @@ class SalesDashboardAction extends Component {
             this.state.syncing = false;
             throw error;
         }
+    }
+
+    openReconciliationJobs() {
+        const storeId = Number(this.state.filters.store_id || 0);
+        return this.action.doAction({
+            type: "ir.actions.act_window",
+            name: _t("Reconciliation Jobs"),
+            res_model: "ab_sales_dashboard_reconciliation_job",
+            views: [[false, "form"]],
+            target: "current",
+            context: {
+                default_date_from: this.state.filters.date_from,
+                default_date_to: this.state.filters.date_to,
+                default_store_ids: storeId ? [[6, 0, [storeId]]] : false,
+            },
+        });
     }
 
     // -- Section pagination --
@@ -420,7 +470,7 @@ class SalesDashboardAction extends Component {
         s.error = false;
         const filters = { ...this.state.filters };
         try {
-            const result = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_section_page", [filters, section, page, s.search]);
+            const result = await this.orm.call("ab_sales_dashboard_snapshot", "get_dashboard_section_page", [filters, section, page, s.search]);
             if (this.unmounted || this.sectionRequestVersions[section] !== ver) return;
             let rows = result.rows || [];
             if (section === "top_items") {
@@ -464,7 +514,7 @@ class SalesDashboardAction extends Component {
     // -- Sync progress --
     async refreshSyncProgress() {
         if (!this.state.filters.date_from || !this.state.filters.date_to) { this.state.syncProgress = null; return null; }
-        const progress = await this.orm.call("ab.sales.dashboard.snapshot", "get_dashboard_sync_progress", [this.state.filters]);
+        const progress = await this.orm.call("ab_sales_dashboard_snapshot", "get_dashboard_sync_progress", [this.state.filters]);
         this.state.syncProgress = progress && progress.has_sync_state ? progress : null;
         return this.state.syncProgress;
     }
@@ -485,7 +535,7 @@ class SalesDashboardAction extends Component {
     async pollDashboardSync() {
         if (this.unmounted) return;
         try {
-            const progress = await this.orm.call("ab.sales.dashboard.snapshot", "process_dashboard_sync_day", [this.state.filters]);
+            const progress = await this.orm.call("ab_sales_dashboard_snapshot", "process_dashboard_sync_day", [this.state.filters]);
             this.state.syncProgress = progress;
             if (progress.is_active) { this.scheduleSyncPoll(); return; }
             this.state.refreshing = false;
@@ -565,7 +615,7 @@ class SalesDashboardAction extends Component {
             this.state.filters.date_to = this.state.filters.date_from;
             this.state.activeDateFilter = "day";
             this.persistFilters();
-            this.loadDashboard(false);
+            this.reloadDashboardScope();
         }
     }
 
@@ -654,6 +704,53 @@ class SalesDashboardAction extends Component {
         return "";
     }
 
+    get reportStatusBanner() {
+        const m = this.reportMeta;
+        if (!m.mode) return null;
+        const covered = Number(m.covered_store_days || 0);
+        const expected = Number(m.expected_store_days || 0);
+        const pctValue = expected ? Math.max(0, Math.min(100, Number(m.coverage_pct || (100 * covered) / expected))) : 0;
+        const ratio = `${this.number(covered)} / ${this.number(expected)}`;
+        const pctLabel = this.pct(pctValue);
+        if (m.coverage_state === "complete") {
+            return {
+                tone: "success",
+                icon: "fa-check-circle",
+                title: _t("Dashboard Fully Synchronized"),
+                summary: _t("All required branch-days are synchronized."),
+                detail: _t("The displayed KPIs and charts represent the complete available dataset."),
+                ratio,
+                pctLabel,
+                showActions: false,
+            };
+        }
+        if (m.coverage_state === "partial") {
+            return {
+                tone: "warning",
+                icon: "fa-exclamation-triangle",
+                title: _t("Incomplete Dashboard Data"),
+                summary: `${_t("Only")} ${ratio} ${_t("required branch-days are synchronized")} (${pctLabel}).`,
+                detail: _t("The current dashboard is built from partially synchronized data. Sales totals, charts, rankings and KPIs may be incomplete until synchronization finishes."),
+                ratio,
+                pctLabel,
+                showActions: true,
+            };
+        }
+        if (m.coverage_state === "unavailable") {
+            return {
+                tone: "danger",
+                icon: "fa-exclamation-circle",
+                title: _t("Dashboard Data Unavailable"),
+                summary: _t("No synchronized branch-days are available for this range."),
+                detail: _t("Refresh from E-Plus or run reconciliation before trusting this dashboard range."),
+                ratio,
+                pctLabel,
+                showActions: true,
+            };
+        }
+        return null;
+    }
+
     get cacheProgressVisible() { return Boolean(this.progressTotalDays); }
     get activeSyncProgress() { const p = this.state.syncProgress; return p && p.has_sync_state ? p : null; }
     get progressDoneDays() { const p = this.activeSyncProgress; return p ? Number(p.done_days || 0) : Number(this.reportMeta.fully_covered_days || 0); }
@@ -675,6 +772,16 @@ class SalesDashboardAction extends Component {
     get medicineTotal() { const d = this.state.data || {}; return Number(d.medicine_sales || 0) + Number(d.non_medicine_sales || 0); }
     get medicinePct() { return this.medicineTotal ? (100 * Number((this.state.data || {}).medicine_sales || 0)) / this.medicineTotal : 0; }
     get nonMedicinePct() { return this.medicineTotal ? (100 * Number((this.state.data || {}).non_medicine_sales || 0)) / this.medicineTotal : 0; }
+    get expandedChartTitle() {
+        if (this.state.expandedChart === "medicine") return _t("Medicine vs Non-Medicine");
+        if (this.state.expandedChart === "collection") return _t("Sales by Collection Method");
+        return _t("Expanded chart");
+    }
+    get expandedChartMeta() {
+        if (this.state.expandedChart === "medicine") return `${decimal(this.medicinePct)} / ${decimal(this.nonMedicinePct)}`;
+        if (this.state.expandedChart === "collection") return `${((this.state.data && this.state.data.collection_lines) || []).length} ${_t("categories")}`;
+        return "";
+    }
 
     userRowKey(row, index) { return row.row_key || row.employee_eplus_id || index; }
     itemRowKey(row, index) { return row.row_key || row.eplus_item_id || index; }
@@ -912,10 +1019,35 @@ SalesDashboardAction.template = xml`
                 </div>
             </div>
 
-            <!-- Status Notice -->
-            <div t-if="reportStatusMessage"
-                 t-att-class="'ab_sales_dashboard__notice ab_sales_dashboard__notice--' + reportStatusTone + ' sd-animate-in'">
-                <t t-esc="reportStatusMessage"/>
+            <!-- Coverage Status -->
+            <div t-if="reportStatusBanner"
+                 t-att-class="'ab_sales_dashboard__coverage_banner ab_sales_dashboard__coverage_banner--' + reportStatusBanner.tone + ' sd-animate-in'">
+                <div class="ab_sales_dashboard__coverage_icon">
+                    <i t-att-class="'fa ' + reportStatusBanner.icon" aria-hidden="true"/>
+                </div>
+                <div class="ab_sales_dashboard__coverage_content">
+                    <div class="ab_sales_dashboard__coverage_heading">
+                        <h3 t-esc="reportStatusBanner.title"/>
+                        <span class="ab_sales_dashboard__coverage_badge" t-esc="reportStatusBanner.pctLabel"/>
+                    </div>
+                    <p class="ab_sales_dashboard__coverage_summary" t-esc="reportStatusBanner.summary"/>
+                    <p class="ab_sales_dashboard__coverage_detail" t-esc="reportStatusBanner.detail"/>
+                    <div t-if="reportStatusBanner.showActions" class="ab_sales_dashboard__coverage_actions">
+                        <button type="button"
+                                class="ab_sales_dashboard__coverage_btn ab_sales_dashboard__coverage_btn--primary"
+                                t-on-click="onRefresh"
+                                t-att-disabled="state.refreshing || state.syncing">
+                            <i class="fa fa-refresh" aria-hidden="true"/>
+                            <span t-esc="_t('Refresh from E-Plus')"/>
+                        </button>
+                        <button type="button"
+                                class="ab_sales_dashboard__coverage_btn ab_sales_dashboard__coverage_btn--secondary"
+                                t-on-click="openReconciliationJobs">
+                            <i class="fa fa-random" aria-hidden="true"/>
+                            <span t-esc="_t('Run Reconciliation')"/>
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <!-- KPI Cards -->
@@ -949,10 +1081,19 @@ SalesDashboardAction.template = xml`
 
             <!-- Medicine Split + Collection Methods -->
             <section class="ab_sales_dashboard__split">
-                <article class="ab_sales_dashboard__panel">
+                <article class="ab_sales_dashboard__panel ab_sales_dashboard__panel--chart">
                     <div class="ab_sales_dashboard__panel_header">
                         <h2 t-esc="_t('Medicine vs Non-Medicine')"/>
-                        <span t-esc="decimal(medicinePct) + ' / ' + decimal(nonMedicinePct)"/>
+                        <div class="ab_sales_dashboard__panel_actions">
+                            <span t-esc="decimal(medicinePct) + ' / ' + decimal(nonMedicinePct)"/>
+                            <button type="button"
+                                    class="ab_sales_dashboard__chart_expand"
+                                    t-att-title="_t('Enlarge chart')"
+                                    t-att-aria-label="_t('Enlarge chart')"
+                                    t-on-click.stop="() => this.openChart('medicine')">
+                                <i class="fa fa-expand"/>
+                            </button>
+                        </div>
                     </div>
                     <DonutChart valueA="toN(state.data.medicine_sales)"
                                 valueB="toN(state.data.non_medicine_sales)"
@@ -962,10 +1103,19 @@ SalesDashboardAction.template = xml`
                                 colorB="'#475569'"
                                 delay="250"/>
                 </article>
-                <article class="ab_sales_dashboard__panel">
+                <article class="ab_sales_dashboard__panel ab_sales_dashboard__panel--chart">
                     <div class="ab_sales_dashboard__panel_header">
                         <h2 t-esc="_t('Sales by Collection Method')"/>
-                        <span t-esc="state.data.collection_lines.length + ' ' + _t('categories')"/>
+                        <div class="ab_sales_dashboard__panel_actions">
+                            <span t-esc="state.data.collection_lines.length + ' ' + _t('categories')"/>
+                            <button type="button"
+                                    class="ab_sales_dashboard__chart_expand"
+                                    t-att-title="_t('Enlarge chart')"
+                                    t-att-aria-label="_t('Enlarge chart')"
+                                    t-on-click.stop="() => this.openChart('collection')">
+                                <i class="fa fa-expand"/>
+                            </button>
+                        </div>
                     </div>
                     <BarChart items="state.data.collection_lines"
                               labelFormatter="(cat) => this.collectionLabel(cat)"
@@ -1047,10 +1197,15 @@ SalesDashboardAction.template = xml`
                     </div>
                     <RankingTable rows="state.sectionPages.top_items.rows"
                                   nameLabel="_t('Item')"
-                                  valueLabel="_t('Total Sales')"
-                                  pctLabel="_t('Sale Times')"
+                                  valueLabel="_t('Sale Times')"
+                                  pctLabel="_t('Current Balance')"
                                   nameField="'product_name'"
                                   subNameField="'eplus_item_code'"
+                                  valueField="'sale_times'"
+                                  valueFormatter="number"
+                                  pctField="'current_balance'"
+                                  pctFormatter="number"
+                                  showPctBar="false"
                                   loading="state.sectionPages.top_items.loading"
                                   delay="440"/>
                     <div t-if="state.sectionPages.top_items.available" class="ab_sales_dashboard__pagination">
@@ -1114,6 +1269,46 @@ SalesDashboardAction.template = xml`
             </section>
 
         </t>
+    </div>
+
+    <div t-if="state.expandedChart"
+         class="ab_sales_dashboard__chart_modal"
+         role="dialog"
+         aria-modal="true"
+         t-att-aria-label="expandedChartTitle"
+         t-on-click="closeChart">
+        <div class="ab_sales_dashboard__chart_modal_panel" t-on-click.stop="() => {}">
+            <div class="ab_sales_dashboard__chart_modal_header">
+                <div>
+                    <span class="ab_sales_dashboard__chart_modal_eyebrow" t-esc="_t('Expanded chart')"/>
+                    <h3 t-esc="expandedChartTitle"/>
+                    <span t-if="expandedChartMeta" t-esc="expandedChartMeta"/>
+                </div>
+                <button type="button"
+                        class="ab_sales_dashboard__chart_modal_close"
+                        t-att-title="_t('Close')"
+                        t-att-aria-label="_t('Close')"
+                        t-on-click="closeChart">
+                    <i class="fa fa-times"/>
+                </button>
+            </div>
+            <div class="ab_sales_dashboard__chart_modal_body">
+                <t t-if="state.expandedChart === 'medicine'">
+                    <DonutChart valueA="toN(state.data.medicine_sales)"
+                                valueB="toN(state.data.non_medicine_sales)"
+                                labelA="_t('Medicine Sales')"
+                                labelB="_t('Non-Medicine Sales')"
+                                colorA="'#10b981'"
+                                colorB="'#475569'"
+                                delay="0"/>
+                </t>
+                <t t-if="state.expandedChart === 'collection'">
+                    <BarChart items="state.data.collection_lines"
+                              labelFormatter="(cat) => this.collectionLabel(cat)"
+                              delay="0"/>
+                </t>
+            </div>
+        </div>
     </div>
 </div>
 `;

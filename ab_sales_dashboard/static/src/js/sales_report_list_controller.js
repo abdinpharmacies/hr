@@ -7,25 +7,38 @@ import { onMounted, onWillUnmount } from "@odoo/owl";
 
 const THEME_KEY = "ab_sales_dashboard.theme";
 
-const SNAPSHOT_MODEL = "ab.sales.dashboard.snapshot";
-const TELEMETRY_MODEL = "ab.sales.dashboard.report.telemetry";
-const PRODUCT_SALES_MODEL = "ab.sales.dashboard.product.sales.report";
+const SNAPSHOT_MODEL = "ab_sales_dashboard_snapshot";
+const TELEMETRY_MODEL = "ab_sales_dashboard_report_telemetry";
+const PRODUCT_SALES_MODEL = "ab_sales_dashboard_product_sales_report";
 
-const RL_SVG = {
-    report: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
-    calendar: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
-    arrowRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>',
-    revenue: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>',
-    invoices: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>',
-    units: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>',
-    branch: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>',
-    clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
-    archive: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>',
-    checkCircle: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>',
-    history: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+const RL_ICON = {
+    report: "fa-line-chart",
+    calendar: "fa-calendar",
+    revenue: "fa-money",
+    invoices: "fa-file-text-o",
+    units: "fa-cubes",
+    branch: "fa-hospital-o",
+    clock: "fa-clock-o",
+    archive: "fa-archive",
+    checkCircle: "fa-check-circle",
+    products: "fa-medkit",
+    stores: "fa-building-o",
 };
 
+function faIcon(key) {
+    return `<i class="fa ${RL_ICON[key] || "fa-circle"}" aria-hidden="true"></i>`;
+}
+
 function esc(v) { return String(v || "").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+function parseNumber(value) {
+    const normalized = String(value || "0")
+        .replace(/[٠-٩]/g, digit => String("٠١٢٣٤٥٦٧٨٩".indexOf(digit)))
+        .replace(/[۰-۹]/g, digit => String("۰۱۲۳۴۵۶۷۸۹".indexOf(digit)));
+    const clean = normalized.replace(/[^\d.-]/g, "");
+    const parsed = Number(clean);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
 
 function formatDate(v) {
     if (!v) return "";
@@ -34,45 +47,133 @@ function formatDate(v) {
     return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
+function rangeDays(dateFrom, dateTo) {
+    const from = new Date(dateFrom);
+    const to = new Date(dateTo);
+    if (isNaN(from.getTime()) || isNaN(to.getTime())) return 0;
+    return Math.max(1, Math.round((to - from) / 86400000) + 1);
+}
+
+function reportRangeMeta(dateFrom, dateTo) {
+    const days = rangeDays(dateFrom, dateTo);
+    const range = dateFrom && dateTo ? `${formatDate(dateFrom)} → ${formatDate(dateTo)}` : _t("Date range unavailable");
+    if (days <= 1) return { label: _t("Daily Report"), detail: range, cls: "daily" };
+    if (days > 30) return { label: _t("Long Range"), detail: range, cls: "long" };
+    return { label: _t("Range Report"), detail: range, cls: "range" };
+}
+
+function revenueMeta(value) {
+    if (value >= 1000000) return { label: _t("High Revenue"), cls: "high" };
+    if (value >= 250000) return { label: _t("Strong Sales"), cls: "strong" };
+    if (value >= 50000) return { label: _t("Moderate Revenue"), cls: "moderate" };
+    return { label: _t("Low Revenue"), cls: "low" };
+}
+
+function activityMeta(value) {
+    if (value >= 500) return { label: _t("High Activity"), cls: "high" };
+    if (value <= 25) return { label: _t("Low Activity"), cls: "low" };
+    return { label: _t("Active"), cls: "active" };
+}
+
+function unitsMeta(value) {
+    if (value >= 10000) return { label: _t("Heavy Movement"), cls: "heavy" };
+    if (value >= 1000) return { label: _t("Good Movement"), cls: "good" };
+    return { label: _t("Light Movement"), cls: "light" };
+}
+
+function productMixMeta(value) {
+    if (value >= 250) return { label: _t("Wide Product Mix"), cls: "wide" };
+    if (value <= 25) return { label: _t("Limited Product Mix"), cls: "limited" };
+    return { label: _t("Product Mix"), cls: "normal" };
+}
+
+function branchScopeMeta(label, storesWithSales) {
+    const raw = String(label || "").trim();
+    const lower = raw.toLowerCase();
+    if (!raw || lower.includes("all") || raw.includes("كل")) {
+        return { label: _t("All Branches"), detail: storesWithSales ? _t("%s Active Stores").replace("%s", fmt(storesWithSales)) : "", cls: "all" };
+    }
+    const parts = raw.split(/[,،]/).map(part => part.trim()).filter(Boolean);
+    if (parts.length > 1) {
+        return { label: _t("Multi Branches"), detail: _t("%s Branches").replace("%s", fmt(storesWithSales || parts.length)), cls: "multi" };
+    }
+    if (storesWithSales > 1) {
+        return { label: _t("Multi Branches"), detail: _t("%s Branches").replace("%s", fmt(storesWithSales)), cls: "multi" };
+    }
+    return { label: _t("Single Branch"), detail: raw, cls: "single" };
+}
+
+function archiveMeta(count) {
+    if (count > 3) return { label: _t("%s Archives").replace("%s", fmt(count)), cls: "vaulted" };
+    if (count > 1) return { label: _t("%s Archives").replace("%s", fmt(count)), cls: "archived" };
+    if (count === 1) return { label: _t("Archived"), cls: "archived" };
+    return { label: _t("No Archive"), cls: "none" };
+}
+
+function generatedDetail(dateStr) {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    const date = d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const time = d.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true });
+    return _t("Generated %s").replace("%s", `${date} · ${time}`);
+}
+
 function buildReportCardHTML(data) {
     const {
         name, date_from, date_to, total_sales, invoice_count, total_units_sold,
-        store_filter_label, refresh_date, archive_count, isLatest,
+        unique_products_sold, stores_with_sales, store_filter_label, refresh_date, archive_count, isLatest,
         freshnessLabel, freshnessCls,
     } = data;
 
-    const dateRange = date_from && date_to
-        ? `${formatDate(date_from)} — ${formatDate(date_to)}`
-        : "";
-
+    const range = reportRangeMeta(date_from, date_to);
+    const revenue = revenueMeta(total_sales);
+    const activity = activityMeta(invoice_count);
+    const units = unitsMeta(total_units_sold);
+    const productMix = productMixMeta(unique_products_sold);
+    const branch = branchScopeMeta(store_filter_label, stores_with_sales);
+    const archive = archiveMeta(archive_count);
+    const generated = generatedDetail(refresh_date);
     const fSales = fmtCurrency(total_sales);
     const fInvoices = fmt(invoice_count);
     const fUnits = fmt(total_units_sold);
+    const fProducts = fmt(unique_products_sold);
+    const fStores = fmt(stores_with_sales);
 
     const statusBadges = [];
-    if (isLatest) statusBadges.push(`<span class="rl-badge rl-badge--latest">${RL_SVG.checkCircle} ${_t("Latest")}</span>`);
-    if (archive_count > 0) statusBadges.push(`<span class="rl-badge rl-badge--archived">${RL_SVG.archive} ${archive_count} ${_t("Archived")}</span>`);
+    if (isLatest) statusBadges.push(`<span class="rl-badge rl-badge--latest">${faIcon("checkCircle")} ${_t("Latest")}</span>`);
+    statusBadges.push(`<span class="rl-badge rl-badge--${archive.cls}">${faIcon("archive")} ${archive.label}</span>`);
+    statusBadges.push(`<span class="rl-badge ${freshnessCls}">${faIcon("clock")} ${freshnessLabel}</span>`);
 
     return `
         <div class="rl-card">
             <div class="rl-card__top">
                 <div class="rl-card__head">
-                    <div class="rl-card__icon">${RL_SVG.report}</div>
-                    <div class="rl-card__name">${esc(name)}</div>
+                    <div class="rl-card__icon">${faIcon("report")}</div>
+                    <div class="rl-card__identity">
+                        <div class="rl-card__name">${esc(name || _t("Sales Dashboard Report"))}</div>
+                        <div class="rl-card__subtitle">${_t("Generated Snapshot")}</div>
+                    </div>
                 </div>
                 <div class="rl-card__badges">${statusBadges.join("")}</div>
             </div>
-            <div class="rl-card__dates">
-                <span class="rl-card__date-chip">${RL_SVG.calendar} ${esc(dateRange)}</span>
+            <div class="rl-card__body">
+                <div class="rl-card__revenue">
+                    <span class="rl-card__revenue-label">${_t("Revenue")}</span>
+                    <span class="rl-card__revenue-value">${_t("EGP")} ${fSales}</span>
+                    <span class="rl-smart-badge rl-smart-badge--revenue-${revenue.cls}">${faIcon("revenue")} ${revenue.label}</span>
+                </div>
+                <div class="rl-card__meta-grid">
+                    <span class="rl-card__date-chip rl-card__date-chip--${range.cls}">${faIcon("calendar")}<strong>${range.label}</strong><em>${esc(range.detail)}</em></span>
+                    <span class="rl-card__scope rl-card__scope--${branch.cls}">${faIcon("branch")}<strong>${branch.label}</strong><em>${esc(branch.detail || "")}</em></span>
+                    <span class="rl-card__generated">${faIcon("clock")}<strong>${freshnessLabel}</strong><em>${esc(generated)}</em></span>
+                </div>
             </div>
             <div class="rl-card__kpis">
-                <span class="rl-kpi-badge rl-kpi-badge--revenue">${RL_SVG.revenue} <strong>${fSales}</strong></span>
-                <span class="rl-kpi-badge rl-kpi-badge--invoices">${RL_SVG.invoices} <strong>${fInvoices}</strong> ${_t("Invoices")}</span>
-                <span class="rl-kpi-badge rl-kpi-badge--units">${RL_SVG.units} <strong>${fUnits}</strong> ${_t("Units")}</span>
-            </div>
-            <div class="rl-card__foot">
-                <span class="rl-card__meta-chip">${RL_SVG.branch} ${esc(store_filter_label || _t("All Branches"))}</span>
-                <span class="rl-card__meta-chip rl-card__meta-chip--time">${RL_SVG.clock} ${freshnessLabel}</span>
+                <span class="rl-kpi-badge rl-kpi-badge--invoices">${faIcon("invoices")}<strong>${fInvoices}</strong><small>${_t("Invoices")}</small><em>${activity.label}</em></span>
+                <span class="rl-kpi-badge rl-kpi-badge--units">${faIcon("units")}<strong>${fUnits}</strong><small>${_t("Units")}</small><em>${units.label}</em></span>
+                <span class="rl-kpi-badge rl-kpi-badge--products">${faIcon("products")}<strong>${fProducts}</strong><small>${_t("Products")}</small><em>${productMix.label}</em></span>
+                <span class="rl-kpi-badge rl-kpi-badge--stores">${faIcon("stores")}<strong>${fStores}</strong><small>${_t("Active Stores")}</small></span>
             </div>
         </div>
     `;
@@ -90,6 +191,11 @@ function fmtMoney(v) {
     return "$" + fmt(v);
 }
 
+function fmtEgp(v) {
+    if (!v && v !== 0) return _t("EGP") + " 0";
+    return _t("EGP") + " " + fmt(v);
+}
+
 function fmtCurrency(v) {
     if (!v && v !== 0) return "0";
     return new Intl.NumberFormat("en-US", {
@@ -105,25 +211,23 @@ function relativeTime(dateStr) {
     const diffMs = now - d;
     const diffH = diffMs / 3600000;
     if (diffH < 1) return { label: _t("Just now"), cls: "rl-status--fresh", freshness: "fresh" };
-    if (diffH < 24) return { label: Math.floor(diffH) + " " + _t("hours ago"), cls: "rl-status--fresh", freshness: "fresh" };
+    if (diffH < 24) return { label: _t("%s hours ago").replace("%s", Math.floor(diffH)), cls: "rl-status--fresh", freshness: "fresh" };
     const diffD = diffH / 24;
     if (diffD < 1) return { label: _t("Today"), cls: "rl-status--today", freshness: "today" };
     if (diffD < 2) return { label: _t("Yesterday"), cls: "rl-status--ok", freshness: "recent" };
-    if (diffD < 7) return { label: Math.floor(diffD) + " " + _t("days ago"), cls: "rl-status--ok", freshness: "recent" };
-    if (diffD < 30) return { label: Math.floor(diffD) + " " + _t("days ago"), cls: "rl-status--stale", freshness: "stale" };
-    return { label: Math.floor(diffD) + " " + _t("days old"), cls: "rl-status--muted", freshness: "old" };
+    if (diffD < 7) return { label: _t("%s days ago").replace("%s", Math.floor(diffD)), cls: "rl-status--ok", freshness: "recent" };
+    if (diffD < 30) return { label: _t("%s days ago").replace("%s", Math.floor(diffD)), cls: "rl-status--stale", freshness: "stale" };
+    return { label: _t("Old Report"), cls: "rl-status--muted", freshness: "old" };
 }
 
 // ─── Snapshot — Hero HTML builders ─────────────────────────
 
 function buildSnapshotHeroHTML(summary) {
     const kpis = [
-        { icon: "fa-file-text-o", label: _t("Total Reports"), value: fmt(summary.total_reports), accent: "rl-accent--cyan" },
-        { icon: "fa-clock-o", label: _t("Latest"), value: summary.latest_date ? summary.latest_date.split(" ")[1] || summary.latest_date : _t("N/A"), accent: "rl-accent--emerald", sm: true },
-        { icon: "fa-usd", label: _t("Total Sales"), value: fmtMoney(summary.total_sales), accent: "rl-accent--emerald" },
-        { icon: "fa-receipt", label: _t("Invoices"), value: fmt(summary.total_invoices), accent: "rl-accent--blue" },
-        { icon: "fa-building-o", label: _t("Branches"), value: fmt(summary.unique_stores), accent: "rl-accent--violet" },
-        { icon: "fa-line-chart", label: _t("Avg Daily"), value: fmtMoney(summary.avg_daily_sales), accent: "rl-accent--amber" },
+        { icon: "fa-file-text-o", label: _t("Saved Reports"), value: fmt(summary.total_reports), accent: "rl-accent--cyan" },
+        { icon: "fa-clock-o", label: _t("Latest Snapshot"), value: summary.latest_date ? formatDate(summary.latest_date) : _t("N/A"), accent: "rl-accent--blue", sm: true },
+        { icon: "fa-money", label: _t("Total Revenue"), value: fmtEgp(summary.total_sales || 0), accent: "rl-accent--emerald" },
+        { icon: "fa-line-chart", label: _t("Average Revenue"), value: fmtEgp(summary.average_revenue || 0), accent: "rl-accent--emerald" },
     ];
 
     return `
@@ -132,10 +236,10 @@ function buildSnapshotHeroHTML(summary) {
                 <div class="rl-hero__text">
                     <h1 class="rl-hero__title">
                         <span class="rl-hero__icon"><i class="fa fa-line-chart"/></span>
-                        ${_t("Sales Reports Library")}
+                        ${_t("Reports Library")}
                     </h1>
-                    <p class="rl-hero__subtitle">${_t("Sales reports archive")}</p>
-                    <p class="rl-hero__desc">${_t("Browse, compare, and manage historical sales report snapshots.")}</p>
+                    <p class="rl-hero__subtitle">${_t("Business Snapshot Library")}</p>
+                    <p class="rl-hero__desc">${_t("Browse historical Sales Dashboard snapshots and compare previous business performance.")}</p>
                 </div>
             </div>
             <div class="rl-kpi-row">${kpis.map(k => `
@@ -158,46 +262,46 @@ function buildTelemetryHeroHTML(summary) {
                 <div class="ac-hero__text">
                     <h1 class="ac-hero__title">
                         <span class="ac-hero__icon"><i class="fa fa-bolt"/></span>
-                        ${_t("Report Activity")}
+                        ${_t("Reporting Analytics")}
                     </h1>
-                    <p class="ac-hero__subtitle">${_t("Activity Center")}</p>
-                    <p class="ac-hero__desc">${_t("Audit history of dashboard executions and analytics jobs.")}</p>
+                    <p class="ac-hero__subtitle">${_t("Monitoring Console")}</p>
+                    <p class="ac-hero__desc">${_t("Audit trail of dashboard reads, refreshes, report modes, coverage, performance, and data-source usage.")}</p>
                 </div>
             </div>
             <div class="ac-kpi-row">
-                <div class="ac-kpi ac-accent--violet">
-                    <div class="ac-kpi__icon"><i class="fa fa-bolt"/></div>
-                    <div class="ac-kpi__body">
-                        <div class="ac-kpi__label">${_t("Total Events")}</div>
-                        <div class="ac-kpi__value">${fmt(summary.total_events || 0)}</div>
-                    </div>
-                </div>
                 <div class="ac-kpi ac-accent--cyan">
                     <div class="ac-kpi__icon"><i class="fa fa-clock-o"/></div>
                     <div class="ac-kpi__body">
-                        <div class="ac-kpi__label">${_t("Today")}</div>
-                        <div class="ac-kpi__value ac-kpi__value--sm">${fmt(summary.today_events || 0)}</div>
+                        <div class="ac-kpi__label">${_t("Today Events")}</div>
+                        <div class="ac-kpi__value">${fmt(summary.today_events || 0)}</div>
                     </div>
                 </div>
-                <div class="ac-kpi ac-accent--emerald">
-                    <div class="ac-kpi__icon"><i class="fa fa-check-circle"/></div>
+                <div class="ac-kpi ac-accent--blue">
+                    <div class="ac-kpi__icon"><i class="fa fa-tachometer"/></div>
                     <div class="ac-kpi__body">
-                        <div class="ac-kpi__label">${_t("Complete")}</div>
-                        <div class="ac-kpi__value">${fmt(summary.complete_count || 0)}</div>
+                        <div class="ac-kpi__label">${_t("Average Duration")}</div>
+                        <div class="ac-kpi__value ac-kpi__value--sm">${summary.avg_duration ? fmt(summary.avg_duration) + " ms" : "—"}</div>
+                    </div>
+                </div>
+                <div class="ac-kpi ac-accent--rose">
+                    <div class="ac-kpi__icon"><i class="fa fa-times-circle"/></div>
+                    <div class="ac-kpi__body">
+                        <div class="ac-kpi__label">${_t("Failed Operations")}</div>
+                        <div class="ac-kpi__value">${fmt(summary.failed_count || 0)}</div>
                     </div>
                 </div>
                 <div class="ac-kpi ac-accent--amber">
                     <div class="ac-kpi__icon"><i class="fa fa-exclamation-triangle"/></div>
                     <div class="ac-kpi__body">
-                        <div class="ac-kpi__label">${_t("Issues")}</div>
+                        <div class="ac-kpi__label">${_t("Coverage Issues")}</div>
                         <div class="ac-kpi__value">${fmt(summary.issue_count || 0)}</div>
                     </div>
                 </div>
-                <div class="ac-kpi ac-accent--rose">
-                    <div class="ac-kpi__icon"><i class="fa fa-tachometer"/></div>
+                <div class="ac-kpi ac-accent--violet">
+                    <div class="ac-kpi__icon"><i class="fa fa-bolt"/></div>
                     <div class="ac-kpi__body">
-                        <div class="ac-kpi__label">${_t("Avg Duration")}</div>
-                        <div class="ac-kpi__value ac-kpi__value--sm">${summary.avg_duration ? fmt(summary.avg_duration) + " ms" : "—"}</div>
+                        <div class="ac-kpi__label">${_t("Total Events")}</div>
+                        <div class="ac-kpi__value">${fmt(summary.total_events || 0)}</div>
                     </div>
                 </div>
             </div>
@@ -357,11 +461,15 @@ patch(ListController.prototype, {
         let summary;
         try {
             summary = await this.model.orm.call(SNAPSHOT_MODEL, "get_library_summary", []);
+            summary.average_revenue = summary.total_reports
+                ? parseNumber(summary.total_sales) / parseNumber(summary.total_reports)
+                : 0;
         } catch {
             summary = {
                 total_reports: 0, latest_date: false,
                 total_sales: 0, total_invoices: 0,
                 unique_stores: 0, avg_daily_sales: 0,
+                today_reports: 0, archived_reports: 0, average_revenue: 0,
             };
         }
 
@@ -405,12 +513,14 @@ patch(ListController.prototype, {
                 name: data.name || "",
                 date_from: data.date_from || "",
                 date_to: data.date_to || "",
-                total_sales: parseFloat(data.total_sales) || 0,
-                invoice_count: parseInt(data.invoice_count) || 0,
-                total_units_sold: parseFloat(data.total_units_sold) || 0,
+                total_sales: parseNumber(data.total_sales),
+                invoice_count: parseNumber(data.invoice_count),
+                total_units_sold: parseNumber(data.total_units_sold),
+                unique_products_sold: parseNumber(data.unique_products_sold),
+                stores_with_sales: parseNumber(data.stores_with_sales),
                 store_filter_label: data.store_filter_label || "",
                 refresh_date: rawDate,
-                archive_count: parseInt(data.archive_count) || 0,
+                archive_count: parseNumber(data.archive_count),
                 isLatest,
                 freshnessLabel: rt.label,
                 freshnessCls: rt.cls,
@@ -528,6 +638,7 @@ patch(ListController.prototype, {
                 r.event_date && String(r.event_date).slice(0, 10) === today
             ).length;
             const complete = data.filter(r => r.coverage_state === "complete").length;
+            const failed = data.filter(r => r.coverage_state === "unavailable").length;
             const issues = data.filter(r =>
                 r.coverage_state === "partial" || r.coverage_state === "unavailable"
             ).length;
@@ -539,11 +650,12 @@ patch(ListController.prototype, {
                 total_events: total,
                 today_events: todayEvents,
                 complete_count: complete,
+                failed_count: failed,
                 issue_count: issues,
                 avg_duration: avgDuration,
             };
         } catch {
-            summary = { total_events: 0, today_events: 0, complete_count: 0, issue_count: 0, avg_duration: 0 };
+            summary = { total_events: 0, today_events: 0, complete_count: 0, failed_count: 0, issue_count: 0, avg_duration: 0 };
         }
 
         const tmp = document.createElement("div");
