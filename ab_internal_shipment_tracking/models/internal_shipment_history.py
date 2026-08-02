@@ -4,7 +4,7 @@ from odoo.exceptions import UserError
 
 class InternalShipmentHistory(models.Model):
     _name = "ab_internal_shipment.history"
-    _description = "Internal Shipment History"
+    _description = "Shipment History"
     _order = "action_date desc, id desc"
 
     shipment_id = fields.Many2one(

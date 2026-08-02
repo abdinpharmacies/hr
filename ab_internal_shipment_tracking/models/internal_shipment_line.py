@@ -3,7 +3,7 @@ from odoo import fields, models
 
 class InternalShipmentLine(models.Model):
     _name = "ab_internal_shipment.line"
-    _description = "Internal Shipment Line"
+    _description = "Shipment Line"
     _order = "id"
 
     shipment_id = fields.Many2one(

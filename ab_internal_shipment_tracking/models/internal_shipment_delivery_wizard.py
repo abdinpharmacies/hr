@@ -4,7 +4,7 @@ from odoo.exceptions import UserError
 
 class InternalShipmentDeliveryWizard(models.TransientModel):
     _name = "ab_internal_shipment.delivery_wizard"
-    _description = "Internal Shipment Evidence"
+    _description = "Shipment Evidence"
 
     operation = fields.Selection(
         [

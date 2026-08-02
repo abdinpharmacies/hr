@@ -1,4 +1,4 @@
-// UI-only design system for Internal Shipment Tracking.
+// UI-only design system for shipments.
 // All selectors are scoped to o_ais_* classes added by this module's XML views.
 
 $ais-primary: #2563eb;
@@ -765,7 +765,7 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
 
     .o_ais_route_header {
         display: grid;
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        grid-template-columns: minmax(180px, 1fr) minmax(0, auto) minmax(180px, 1fr);
         gap: 16px;
         align-items: center;
         margin-bottom: 14px;
@@ -774,28 +774,37 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
 
         strong {
             display: block;
+            min-width: 0;
             color: $ais-ink;
             font-size: 1.05rem;
             font-weight: 780;
             line-height: 1.25;
+            overflow-wrap: anywhere;
+            white-space: normal;
         }
     }
 
     .o_ais_route_line {
         display: inline-grid;
         grid-column: 2;
-        grid-template-columns: auto minmax(78px, 138px) auto;
+        max-width: 100%;
+        grid-template-columns: minmax(0, max-content) minmax(48px, 1fr) minmax(0, max-content);
         gap: 10px;
         align-items: center;
         justify-self: center;
         color: $ais-muted;
         font-size: 0.76rem;
         font-weight: 760;
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+        text-align: center;
         text-transform: uppercase;
+        white-space: normal;
 
         i {
             position: relative;
             display: block;
+            min-width: 48px;
             height: 2px;
             border-radius: 999px;
             background: linear-gradient(90deg, rgba($ais-cyan, 0.72), rgba($ais-success, 0.72));
@@ -905,8 +914,8 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
         }
 
         .o_td_label {
-            width: 34%;
-            min-width: 118px;
+            width: auto;
+            min-width: 0;
             padding-inline-end: 14px;
         }
 
@@ -915,18 +924,22 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
             color: rgba($ais-muted, 0.9);
             font-size: 0.86rem;
             font-weight: 620;
-            white-space: nowrap;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+            white-space: normal;
         }
 
         .o_field_widget,
         .o_field_widget *,
         .o_form_uri {
+            max-width: 100%;
             color: #567b99;
             font-size: 0.88rem;
             font-weight: 680;
             line-height: 1.35;
-            overflow-wrap: break-word;
-            white-space: nowrap;
+            overflow-wrap: anywhere;
+            white-space: normal;
+            word-break: normal;
         }
 
         .o_field_many2many_tags,
@@ -2519,7 +2532,7 @@ html[dir="ltr"] .o_ais_form {
         .o_ais_route_line {
             margin-top: 12px;
             width: 100%;
-            grid-template-columns: auto minmax(56px, 1fr) auto;
+            grid-template-columns: minmax(0, max-content) minmax(56px, 1fr) minmax(0, max-content);
         }
 
         .o_ais_route_arrow {

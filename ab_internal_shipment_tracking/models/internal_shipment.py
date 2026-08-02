@@ -6,7 +6,7 @@ from odoo.exceptions import UserError, ValidationError
 
 class InternalShipment(models.Model):
     _name = "ab_internal_shipment"
-    _description = "Internal Shipment"
+    _description = "Shipment Record"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "shipment_date desc, id desc"
 
@@ -65,8 +65,8 @@ class InternalShipment(models.Model):
     delivery_method = fields.Selection(
         [
             ("company_vehicle", "Internal Company Vehicle"),
+            ("hand_delivery", "Bank Representative Delivery"),
             ("external_company", "External Shipping Company"),
-            ("hand_delivery", "Hand Delivery"),
             ("other", "Other"),
         ],
         required=True,
@@ -838,7 +838,7 @@ class InternalShipment(models.Model):
             form_view = self.env.ref("ab_internal_shipment_tracking.ab_internal_shipment_view_form")
             return {
                 "type": "ir.actions.act_window",
-                "name": _("Internal Shipments"),
+                "name": _("Shipments"),
                 "res_model": "ab_internal_shipment",
                 "view_mode": "list,form",
                 "views": [(list_view.id, "list"), (form_view.id, "form")],
