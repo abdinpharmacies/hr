@@ -127,7 +127,7 @@ export class ReconciliationChunkDialog extends Component {
     async _loadChunk() {
         try {
             const [chunk] = await this.orm.read(
-                "ab.sales.dashboard.reconciliation.chunk",
+                "ab_sales_dashboard_reconciliation_chunk",
                 [this.props.chunkId],
                 [
                     "sequence", "date_from", "date_to", "store_filter_key",

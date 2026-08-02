@@ -32,13 +32,13 @@ Frontend files:
 
 ```text
 Dashboard open
-  -> ab.sales.dashboard.snapshot.get_dashboard_data(filters)
+  -> ab_sales_dashboard_snapshot_get_dashboard_data(filters)
   -> latest matching Odoo snapshot or synchronized daily facts
   -> OWL dashboard payload
 
 Refresh from E-Plus
-  -> ab.sales.dashboard.snapshot.refresh_dashboard_data(filters)
-  -> ab.sales.dashboard.service.fetch_refresh_data(...)
+  -> ab_sales_dashboard_snapshot_refresh_dashboard_data(filters)
+  -> ab_sales_dashboard_service_fetch_refresh_data(...)
   -> read-only aggregated SQL Server queries
   -> Odoo snapshot, daily facts, coverage rows, telemetry
   -> OWL dashboard payload
@@ -46,33 +46,33 @@ Refresh from E-Plus
 
 ## Main Models
 
-- `ab.sales.dashboard.snapshot`: saved dashboard report header and serialized
+- `ab_sales_dashboard_snapshot`: saved dashboard report header and serialized
   dashboard payload source.
-- `ab.sales.dashboard.collection.line`: collection-method rows attached to a
+- `ab_sales_dashboard_collection_line`: collection-method rows attached to a
   snapshot.
-- `ab.sales.dashboard.user.line`: employee/user sales rows attached to a
+- `ab_sales_dashboard_user_line`: employee/user sales rows attached to a
   snapshot.
-- `ab.sales.dashboard.item.line`: top item rows attached to a snapshot.
-- `ab.sales.dashboard.invoice.line`: recent/customer invoice rows attached to a
+- `ab_sales_dashboard_item_line`: top item rows attached to a snapshot.
+- `ab_sales_dashboard_invoice_line`: recent/customer invoice rows attached to a
   snapshot.
-- `ab.sales.dashboard.daily.store.fact`: daily store-level aggregate facts used
+- `ab_sales_dashboard_daily_store_fact`: daily store-level aggregate facts used
   for longer summary ranges.
-- `ab.sales.dashboard.daily.collection.fact`: daily collection-category facts.
-- `ab.sales.dashboard.daily.item.fact`: daily item/product facts.
-- `ab.sales.dashboard.sync.coverage`: daily synchronization coverage by store
+- `ab_sales_dashboard_daily_collection_fact`: daily collection-category facts.
+- `ab_sales_dashboard_daily_item_fact`: daily item/product facts.
+- `ab_sales_dashboard_sync_coverage`: daily synchronization coverage by store
   and fact type.
-- `ab.sales.dashboard.fact.coverage`: coverage state used by reporting and
+- `ab_sales_dashboard_fact_coverage`: coverage state used by reporting and
   reconciliation.
-- `ab.sales.dashboard.product.sales.report`: SQL-backed/reporting model for
+- `ab_sales_dashboard_product_sales_report`: SQL-backed/reporting model for
   product sales analysis.
-- `ab.sales.dashboard.report.archive`: archived dashboard report history.
-- `ab.sales.dashboard.reconciliation.job`: manager-triggered coverage analysis
+- `ab_sales_dashboard_report_archive`: archived dashboard report history.
+- `ab_sales_dashboard_reconciliation_job`: manager-triggered coverage analysis
   and reconciliation job.
-- `ab.sales.dashboard.reconciliation.chunk`: bounded reconciliation work chunks.
-- `ab.sales.dashboard.report.telemetry`: performance and usage telemetry.
-- `ab.sales.dashboard.fact.decision`: transient helper for fact-grain decisions.
-- `ab.sales.dashboard.service`: abstract E-Plus/B-Connect query service.
-- `ab.sales.dashboard.config.mixin`: shared configuration limits.
+- `ab_sales_dashboard_reconciliation_chunk`: bounded reconciliation work chunks.
+- `ab_sales_dashboard_report_telemetry`: performance and usage telemetry.
+- `ab_sales_dashboard_fact_decision`: transient helper for fact-grain decisions.
+- `ab_sales_dashboard_service`: abstract E-Plus/B-Connect query service.
+- `ab_sales_dashboard_config_mixin`: shared configuration limits.
 
 ## Menus
 
@@ -138,7 +138,7 @@ Known column corrections already handled:
 
 ## Configuration Direction
 
-The module uses config parameters through `ab.sales.dashboard.config.mixin` for
+The module uses config parameters through `ab_sales_dashboard_config_mixin` for
 limits such as dashboard maximum refresh days, summary range, reconciliation
 branch-days, chunk size, and top-row limits.
 

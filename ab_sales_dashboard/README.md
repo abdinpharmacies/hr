@@ -131,12 +131,12 @@ and joins on `(sth_id, sto_id/std_stock_id)`.
 
 ```text
 OWL dashboard action
-  -> ab.sales.dashboard.snapshot.get_dashboard_data()
+  -> ab_sales_dashboard_snapshot_get_dashboard_data()
   -> latest Odoo snapshot for the selected filters
 
 Refresh from E-Plus
-  -> ab.sales.dashboard.snapshot.refresh_dashboard_data()
-  -> ab.sales.dashboard.service.fetch_dashboard_data()
+  -> ab_sales_dashboard_snapshot_refresh_dashboard_data()
+  -> ab_sales_dashboard_service_fetch_dashboard_data()
   -> aggregated BConnect SQL queries
   -> Odoo snapshot + child lines
   -> OWL dashboard renders snapshot payload
@@ -144,11 +144,11 @@ Refresh from E-Plus
 
 Current Odoo snapshot models:
 
-- `ab.sales.dashboard.snapshot`
-- `ab.sales.dashboard.collection.line`
-- `ab.sales.dashboard.user.line`
-- `ab.sales.dashboard.item.line`
-- `ab.sales.dashboard.invoice.line`
+- `ab_sales_dashboard_snapshot`
+- `ab_sales_dashboard_collection_line`
+- `ab_sales_dashboard_user_line`
+- `ab_sales_dashboard_item_line`
+- `ab_sales_dashboard_invoice_line`
 
 ## Accuracy Rules
 

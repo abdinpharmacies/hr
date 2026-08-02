@@ -18,8 +18,8 @@ class SalesDashboardSourceUnavailableError(UserError):
 
 
 class SalesDashboardService(models.AbstractModel):
-    _name = "ab.sales.dashboard.service"
-    _inherit = ["ab_eplus_connect", "ab.sales.dashboard.config.mixin"]
+    _name = "ab_sales_dashboard_service"
+    _inherit = ["ab_eplus_connect", "ab_sales_dashboard_config_mixin"]
     _description = "Sales Dashboard E-Plus Service"
     _dashboard_preferred_server = False
 
@@ -96,7 +96,9 @@ class SalesDashboardService(models.AbstractModel):
         try:
             with self._dashboard_query_session(where_sql, base_params, start_dt, end_dt, len(store_eplus_ids)) as cursor:
                 dashboard_started = pytime.monotonic()
-                dashboard = self._fetch_dashboard_from_cursor(cursor, start_dt, end_dt, store_eplus_ids)
+                dashboard = self._fetch_dashboard_from_cursor(
+                    cursor, start_dt, end_dt, store_eplus_ids, full_details=True
+                )
                 dashboard_duration_ms = int((pytime.monotonic() - dashboard_started) * 1000)
                 _logger.info(
                     "event=sales_dashboard_sections_completed duration_ms=%s date_from=%s date_to=%s store_count=%s",
@@ -315,7 +317,7 @@ class SalesDashboardService(models.AbstractModel):
         return start_dt, end_dt, store_eplus_ids, where_sql, base_params
 
     @api.model
-    def _fetch_dashboard_from_cursor(self, cursor, start_dt, end_dt, store_eplus_ids):
+    def _fetch_dashboard_from_cursor(self, cursor, start_dt, end_dt, store_eplus_ids, full_details=False):
         store_count = len(store_eplus_ids)
         totals = self._fetch_one(cursor, self._dashboard_totals_sql(), [], "totals", start_dt, end_dt, store_count)
         prev_start, prev_end = self._previous_period(start_dt, end_dt)
@@ -325,9 +327,9 @@ class SalesDashboardService(models.AbstractModel):
         bearing = self._fetch_one(cursor, self._dashboard_contract_bearing_sql(), [], "contract_bearing", start_dt, end_dt, store_count)
         medicine = self._fetch_all(cursor, self._dashboard_medicine_sql(), [], "medicine_split", start_dt, end_dt, store_count)
         product_kpis = self._fetch_one(cursor, self._dashboard_product_kpis_sql(), [], "product_kpis", start_dt, end_dt, store_count)
-        users = self._fetch_all(cursor, self._dashboard_sales_by_user_sql(), [], "users", start_dt, end_dt, store_count)
-        items = self._fetch_top_items_from_cursor(cursor, start_dt, end_dt, store_eplus_ids)
-        invoices = self._fetch_recent_invoices_from_cursor(cursor, start_dt, end_dt, store_count)
+        users = self._fetch_all(cursor, self._dashboard_sales_by_user_sql(full_details=full_details), [], "users", start_dt, end_dt, store_count)
+        items = self._fetch_top_items_from_cursor(cursor, start_dt, end_dt, store_eplus_ids, full_details=full_details)
+        invoices = self._fetch_recent_invoices_from_cursor(cursor, start_dt, end_dt, store_count, full_details=full_details)
         normalization_started = pytime.monotonic()
         payload = self._normalize_dashboard_payload(
             totals=totals,
@@ -381,11 +383,11 @@ class SalesDashboardService(models.AbstractModel):
         return payload
 
     @api.model
-    def _fetch_top_items_from_cursor(self, cursor, start_dt, end_dt, store_eplus_ids):
+    def _fetch_top_items_from_cursor(self, cursor, start_dt, end_dt, store_eplus_ids, full_details=False):
         store_count = len(store_eplus_ids)
         started = pytime.monotonic()
         self._drop_top_items(cursor, start_dt, end_dt, store_count)
-        self._create_top_items(cursor, start_dt, end_dt, store_count)
+        self._create_top_items(cursor, start_dt, end_dt, store_count, full_details=full_details)
         rows = self._fetch_all(cursor, self._dashboard_top_items_sql(store_count), store_eplus_ids, "top_items", start_dt, end_dt, store_count)
         _logger.info(
             "event=sales_dashboard_top_items_completed duration_ms=%s row_count=%s date_from=%s date_to=%s store_count=%s",
@@ -398,10 +400,10 @@ class SalesDashboardService(models.AbstractModel):
         return rows
 
     @api.model
-    def _fetch_recent_invoices_from_cursor(self, cursor, start_dt, end_dt, store_count):
+    def _fetch_recent_invoices_from_cursor(self, cursor, start_dt, end_dt, store_count, full_details=False):
         started = pytime.monotonic()
         self._drop_recent_headers(cursor, start_dt, end_dt, store_count)
-        self._create_recent_headers(cursor, start_dt, end_dt, store_count)
+        self._create_recent_headers(cursor, start_dt, end_dt, store_count, full_details=full_details)
         rows = self._fetch_all(cursor, self._dashboard_recent_invoices_sql(), [], "recent_invoices", start_dt, end_dt, store_count)
         _logger.info(
             "event=sales_dashboard_recent_invoices_completed duration_ms=%s row_count=%s date_from=%s date_to=%s store_count=%s",
@@ -535,10 +537,9 @@ class SalesDashboardService(models.AbstractModel):
     @api.model
     def _dashboard_source_candidates(self):
         configured = []
-        for key in ("bconnect_ip1", "bconnect_ip2"):
-            server = config.get(key)
-            if server and server not in configured:
-                configured.append(server)
+        server = config.get("bconnect_ip1")
+        if server:
+            configured.append(server)
         preferred = type(self)._dashboard_preferred_server
         if preferred in configured:
             configured.remove(preferred)
@@ -847,9 +848,10 @@ class SalesDashboardService(models.AbstractModel):
         return "IF OBJECT_ID('tempdb..#top_items') IS NOT NULL DROP TABLE #top_items"
 
     @api.model
-    def _top_items_create_sql(self):
-        return """
-            SELECT TOP (20)
+    def _top_items_create_sql(self, full_details=False):
+        top_clause = "" if full_details else "TOP (20)"
+        return f"""
+            SELECT {top_clause}
                 item_eplus_id AS itm_id,
                 MAX(item_code) AS itm_code,
                 ISNULL(SUM(sale_times), 0) AS sale_times,
@@ -874,10 +876,10 @@ class SalesDashboardService(models.AbstractModel):
         )
 
     @api.model
-    def _create_top_items(self, cursor, date_from, date_to, store_count):
+    def _create_top_items(self, cursor, date_from, date_to, store_count, full_details=False):
         self._execute_statement(
             cursor,
-            self._top_items_create_sql(),
+            self._top_items_create_sql(full_details=full_details),
             [],
             "top_items_created",
             date_from,
@@ -890,9 +892,10 @@ class SalesDashboardService(models.AbstractModel):
         return "IF OBJECT_ID('tempdb..#recent_headers') IS NOT NULL DROP TABLE #recent_headers"
 
     @api.model
-    def _recent_headers_create_sql(self):
-        return """
-            SELECT TOP (20)
+    def _recent_headers_create_sql(self, full_details=False):
+        top_clause = "" if full_details else "TOP (20)"
+        return f"""
+            SELECT {top_clause}
                 sth_id,
                 sto_id,
                 cust_id,
@@ -916,10 +919,10 @@ class SalesDashboardService(models.AbstractModel):
         )
 
     @api.model
-    def _create_recent_headers(self, cursor, date_from, date_to, store_count):
+    def _create_recent_headers(self, cursor, date_from, date_to, store_count, full_details=False):
         self._execute_statement(
             cursor,
-            self._recent_headers_create_sql(),
+            self._recent_headers_create_sql(full_details=full_details),
             [],
             "recent_headers_created",
             date_from,
@@ -1085,9 +1088,10 @@ class SalesDashboardService(models.AbstractModel):
         """
 
     @api.model
-    def _dashboard_sales_by_user_sql(self):
-        return """
-            SELECT TOP (20)
+    def _dashboard_sales_by_user_sql(self, full_details=False):
+        top_clause = "" if full_details else "TOP (20)"
+        return f"""
+            SELECT {top_clause}
                 h.emp_id,
                 COALESCE(e.e_name, CONVERT(VARCHAR(20), h.emp_id)) AS employee_name,
                 COUNT(*) AS invoice_count,

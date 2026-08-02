@@ -36,8 +36,9 @@ export class RankingTable extends Component {
                             </td>
                             <td t-esc="formatValue(row)"/>
                             <td>
-                                <span t-esc="pct(row[props.pctField || 'pct_of_total'])"/>
-                                <span class="sd-mini-bar"
+                                <span t-esc="formatPctValue(row)"/>
+                                <span t-if="props.showPctBar"
+                                      class="sd-mini-bar"
                                       t-att-style="'width:' + miniBarWidth(row) + '%'"/>
                             </td>
                         </tr>
@@ -85,6 +86,14 @@ export class RankingTable extends Component {
         return Number(row[this.props.pctField || "pct_of_total"] || 0);
     }
 
+    formatPctValue(row) {
+        const val = row[this.props.pctField || "pct_of_total"];
+        if (this.props.pctFormatter) {
+            return this.props.pctFormatter(val);
+        }
+        return pct(val);
+    }
+
     miniBarWidth(row) {
         return Math.min(this.pctValue(row), 100);
     }
@@ -106,8 +115,14 @@ RankingTable.props = {
     valueField: { type: String, optional: true },
     valueFormatter: { type: Function, optional: true },
     pctField: { type: String, optional: true },
+    pctFormatter: { type: Function, optional: true },
+    showPctBar: { type: Boolean, optional: true },
     page: { type: Number, optional: true },
     pageSize: { type: Number, optional: true },
     loading: { type: Boolean, optional: true },
     delay: { type: Number, optional: true },
+};
+
+RankingTable.defaultProps = {
+    showPctBar: true,
 };

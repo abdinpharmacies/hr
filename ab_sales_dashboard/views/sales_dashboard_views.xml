@@ -2,28 +2,28 @@
 <odoo>
     <data>
         <record id="view_ab_sales_dashboard_snapshot_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.snapshot.list</field>
-            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="name">ab_sales_dashboard_snapshot_list</field>
+            <field name="model">ab_sales_dashboard_snapshot</field>
             <field name="arch" type="xml">
                 <list string="Sales Dashboard Reports" class="ab_rl_list" multi_edit="0" sample="1">
                     <field name="name" string="Report" optional="show"/>
-                    <field name="date_from" widget="date" string="From" optional="hide"/>
-                    <field name="date_to" widget="date" string="To" optional="hide"/>
-                    <field name="total_sales" widget="monetary" string="Total Sales" sum="Sum" optional="hide"/>
-                    <field name="invoice_count" string="Invoices" sum="Sum" optional="hide"/>
-                    <field name="total_units_sold" string="Units" optional="hide"/>
-                    <field name="store_filter_label" string="Branch" optional="hide"/>
-                    <field name="refresh_date" widget="datetime" string="Generated" optional="hide"/>
-                    <field name="archive_count" string="Archives" optional="hide"/>
-                    <field name="unique_products_sold" string="Products" optional="hide"/>
-                    <field name="stores_with_sales" string="Stores" optional="hide"/>
+                    <field name="date_from" widget="date" string="From" optional="show"/>
+                    <field name="date_to" widget="date" string="To" optional="show"/>
+                    <field name="total_sales" widget="monetary" string="Total Sales" sum="Sum" optional="show"/>
+                    <field name="invoice_count" string="Invoices" sum="Sum" optional="show"/>
+                    <field name="total_units_sold" string="Units" optional="show"/>
+                    <field name="store_filter_label" string="Branch" optional="show"/>
+                    <field name="refresh_date" widget="datetime" string="Generated" optional="show"/>
+                    <field name="archive_count" string="Archives" optional="show"/>
+                    <field name="unique_products_sold" string="Products" optional="show"/>
+                    <field name="stores_with_sales" string="Stores" optional="show"/>
                 </list>
             </field>
         </record>
 
         <record id="view_ab_sales_dashboard_snapshot_search" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.snapshot.search</field>
-            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="name">ab_sales_dashboard_snapshot_search</field>
+            <field name="model">ab_sales_dashboard_snapshot</field>
             <field name="arch" type="xml">
                 <search string="Sales Dashboard Reports">
                     <field name="name"/>
@@ -36,8 +36,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_snapshot_form" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.snapshot.form</field>
-            <field name="model">ab.sales.dashboard.snapshot</field>
+            <field name="name">ab_sales_dashboard_snapshot_form</field>
+            <field name="model">ab_sales_dashboard_snapshot</field>
             <field name="arch" type="xml">
                 <form string="Sales Dashboard Report" create="0" edit="0">
                     <header>
@@ -132,8 +132,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_report_archive_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.report.archive.list</field>
-            <field name="model">ab.sales.dashboard.report.archive</field>
+            <field name="name">ab_sales_dashboard_report_archive_list</field>
+            <field name="model">ab_sales_dashboard_report_archive</field>
             <field name="arch" type="xml">
                 <list string="Archived Sales Reports" create="0" edit="0" delete="0">
                     <field name="archive_number"/>
@@ -149,8 +149,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_report_archive_form" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.report.archive.form</field>
-            <field name="model">ab.sales.dashboard.report.archive</field>
+            <field name="name">ab_sales_dashboard_report_archive_form</field>
+            <field name="model">ab_sales_dashboard_report_archive</field>
             <field name="arch" type="xml">
                 <form string="Archived Sales Report" create="0" edit="0" delete="0">
                     <header>
@@ -185,8 +185,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_report_archive_search" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.report.archive.search</field>
-            <field name="model">ab.sales.dashboard.report.archive</field>
+            <field name="name">ab_sales_dashboard_report_archive_search</field>
+            <field name="model">ab_sales_dashboard_report_archive</field>
             <field name="arch" type="xml">
                 <search string="Archived Sales Reports">
                     <field name="archive_number"/>
@@ -203,8 +203,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_daily_store_fact_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.daily.store.fact.list</field>
-            <field name="model">ab.sales.dashboard.daily.store.fact</field>
+            <field name="name">ab_sales_dashboard_daily_store_fact_list</field>
+            <field name="model">ab_sales_dashboard_daily_store_fact</field>
             <field name="arch" type="xml">
                 <list string="Daily Store Facts" create="0" edit="0" delete="0">
                     <field name="report_date"/>
@@ -222,8 +222,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_daily_collection_fact_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.daily.collection.fact.list</field>
-            <field name="model">ab.sales.dashboard.daily.collection.fact</field>
+            <field name="name">ab_sales_dashboard_daily_collection_fact_list</field>
+            <field name="model">ab_sales_dashboard_daily_collection_fact</field>
             <field name="arch" type="xml">
                 <list string="Daily Collection Facts" create="0" edit="0" delete="0">
                     <field name="report_date"/>
@@ -237,7 +237,7 @@
         </record>
 
         <record id="view_ab_sales_dashboard_daily_user_fact_list" model="ir.ui.view">
-            <field name="name">ab_sales_dashboard_daily_user_fact.list</field>
+            <field name="name">ab_sales_dashboard_daily_user_fact_list</field>
             <field name="model">ab_sales_dashboard_daily_user_fact</field>
             <field name="arch" type="xml">
                 <list string="Daily User Facts" create="0" edit="0" delete="0">
@@ -254,7 +254,7 @@
         </record>
 
         <record id="view_ab_sales_dashboard_daily_user_fact_pivot" model="ir.ui.view">
-            <field name="name">ab_sales_dashboard_daily_user_fact.pivot</field>
+            <field name="name">ab_sales_dashboard_daily_user_fact_pivot</field>
             <field name="model">ab_sales_dashboard_daily_user_fact</field>
             <field name="arch" type="xml">
                 <pivot string="Daily User Facts">
@@ -267,8 +267,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_daily_item_fact_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.daily.item.fact.list</field>
-            <field name="model">ab.sales.dashboard.daily.item.fact</field>
+            <field name="name">ab_sales_dashboard_daily_item_fact_list</field>
+            <field name="model">ab_sales_dashboard_daily_item_fact</field>
             <field name="arch" type="xml">
                 <list string="Daily Item Facts" create="0" edit="0" delete="0">
                     <field name="report_date"/>
@@ -288,8 +288,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_daily_item_fact_pivot" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.daily.item.fact.pivot</field>
-            <field name="model">ab.sales.dashboard.daily.item.fact</field>
+            <field name="name">ab_sales_dashboard_daily_item_fact_pivot</field>
+            <field name="model">ab_sales_dashboard_daily_item_fact</field>
             <field name="arch" type="xml">
                 <pivot string="Daily Item Facts">
                     <field name="item_name" type="row"/>
@@ -303,8 +303,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_daily_item_fact_graph" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.daily.item.fact.graph</field>
-            <field name="model">ab.sales.dashboard.daily.item.fact</field>
+            <field name="name">ab_sales_dashboard_daily_item_fact_graph</field>
+            <field name="model">ab_sales_dashboard_daily_item_fact</field>
             <field name="arch" type="xml">
                 <graph string="Daily Item Facts" type="bar">
                     <field name="report_date" type="row"/>
@@ -315,8 +315,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_product_sales_report_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.product.sales.report.list</field>
-            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="name">ab_sales_dashboard_product_sales_report_list</field>
+            <field name="model">ab_sales_dashboard_product_sales_report</field>
             <field name="arch" type="xml">
                 <list string="Product Intelligence" class="psi-list" create="0" edit="0" delete="0">
                     <field name="product_name" widget="list.ps_identity" optional="show"/>
@@ -337,8 +337,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_product_sales_report_pivot" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.product.sales.report.pivot</field>
-            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="name">ab_sales_dashboard_product_sales_report_pivot</field>
+            <field name="model">ab_sales_dashboard_product_sales_report</field>
             <field name="arch" type="xml">
                 <pivot string="Product Sales Report">
                     <field name="report_date" interval="month" type="col"/>
@@ -351,8 +351,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_product_sales_report_graph" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.product.sales.report.graph</field>
-            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="name">ab_sales_dashboard_product_sales_report_graph</field>
+            <field name="model">ab_sales_dashboard_product_sales_report</field>
             <field name="arch" type="xml">
                 <graph string="Product Sales Report" type="bar">
                     <field name="report_date" interval="month" type="row"/>
@@ -363,8 +363,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_product_sales_report_search" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.product.sales.report.search</field>
-            <field name="model">ab.sales.dashboard.product.sales.report</field>
+            <field name="name">ab_sales_dashboard_product_sales_report_search</field>
+            <field name="model">ab_sales_dashboard_product_sales_report</field>
             <field name="arch" type="xml">
                 <search string="Product Sales Report">
                     <field name="report_date"/>
@@ -385,32 +385,32 @@
         </record>
 
         <record id="view_ab_sales_dashboard_reconciliation_job_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.reconciliation.job.list</field>
-            <field name="model">ab.sales.dashboard.reconciliation.job</field>
+            <field name="name">ab_sales_dashboard_reconciliation_job_list</field>
+            <field name="model">ab_sales_dashboard_reconciliation_job</field>
             <field name="arch" type="xml">
                 <list string="Reconciliation Jobs" class="ab-recon-list" decoration-danger="state == 'failed'" decoration-warning="state == 'partial'" decoration-success="state == 'done'" decoration-info="state == 'running'" decoration-muted="state == 'cancelled'">
-                    <field name="display_name" string="Job" optional="show"/>
-                    <field name="state" optional="show"/>
-                    <field name="store_filter_key" optional="show"/>
-                    <field name="date_from" optional="show"/>
-                    <field name="date_to" optional="show"/>
-                    <field name="total_branch_days" sum="Total"/>
-                    <field name="missing_branch_days" sum="Total"/>
-                    <field name="processed_branch_days" sum="Total"/>
-                    <field name="failed_branch_days" sum="Total"/>
-                    <field name="chunk_count" sum="Total"/>
-                    <field name="completed_chunk_count" sum="Total"/>
-                    <field name="failed_chunk_count" sum="Total"/>
+                    <field name="display_name" string="Job" widget="list.rcon_job" optional="show"/>
+                    <field name="state" widget="list.rcon_state" optional="show"/>
+                    <field name="store_filter_key" string="Branch Scope" widget="list.rcon_scope" optional="show"/>
+                    <field name="date_from" string="Date Range" widget="list.rcon_date_range" optional="show"/>
+                    <field name="date_to" optional="hide"/>
+                    <field name="total_branch_days" widget="list.rcon_metric" sum="Total"/>
+                    <field name="missing_branch_days" widget="list.rcon_metric" sum="Total"/>
+                    <field name="processed_branch_days" widget="list.rcon_metric" sum="Total"/>
+                    <field name="failed_branch_days" widget="list.rcon_metric" sum="Total"/>
+                    <field name="chunk_count" widget="list.rcon_chunks" sum="Total"/>
+                    <field name="completed_chunk_count" optional="hide" sum="Total"/>
+                    <field name="failed_chunk_count" widget="list.rcon_metric" optional="hide" sum="Total"/>
                     <field name="started_at"/>
                     <field name="completed_at"/>
-                    <field name="created_by" optional="hide"/>
+                    <field name="created_by" widget="list.rcon_creator" optional="show"/>
                 </list>
             </field>
         </record>
 
         <record id="view_ab_sales_dashboard_reconciliation_job_form" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.reconciliation.job.form</field>
-            <field name="model">ab.sales.dashboard.reconciliation.job</field>
+            <field name="name">ab_sales_dashboard_reconciliation_job_form</field>
+            <field name="model">ab_sales_dashboard_reconciliation_job</field>
             <field name="arch" type="xml">
                 <form string="Reconciliation Job" class="ab-recon-form">
                     <header>
@@ -566,8 +566,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_reconciliation_job_search" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.reconciliation.job.search</field>
-            <field name="model">ab.sales.dashboard.reconciliation.job</field>
+            <field name="name">ab_sales_dashboard_reconciliation_job_search</field>
+            <field name="model">ab_sales_dashboard_reconciliation_job</field>
             <field name="arch" type="xml">
                 <search string="Reconciliation Jobs">
                     <field name="name"/>
@@ -585,33 +585,37 @@
         </record>
 
         <record id="view_ab_sales_dashboard_report_telemetry_list" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.report.telemetry.list</field>
-            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="name">ab_sales_dashboard_report_telemetry_list</field>
+            <field name="model">ab_sales_dashboard_report_telemetry</field>
             <field name="arch" type="xml">
                 <list string="Reporting Analytics" class="ab_activity_list" create="0" edit="0" delete="0">
-                    <field name="event_type" optional="show"/>
-                    <field name="report_mode" optional="show"/>
-                    <field name="event_date" optional="show"/>
-                    <field name="coverage_state" optional="show"/>
-                    <field name="duration_ms" optional="show"/>
-                    <field name="result_size_bytes" optional="show"/>
-                    <field name="store_scope_bucket" optional="show"/>
-                    <field name="range_bucket" optional="show"/>
-                    <field name="requested_days" optional="hide"/>
-                    <field name="selected_store_count" optional="hide"/>
-                    <field name="created_at" optional="hide"/>
-                    <field name="snapshot_used" optional="hide"/>
+                    <field name="event_type" widget="list.activity_event_type" optional="show"/>
+                    <field name="coverage_state" widget="list.activity_status" optional="show"/>
+                    <field name="duration_ms" widget="list.activity_performance" optional="show"/>
+                    <field name="report_mode" widget="list.activity_report_mode" optional="show"/>
+                    <field name="store_scope_bucket" widget="list.activity_scope" optional="show"/>
+                    <field name="range_bucket" widget="list.activity_range" optional="show"/>
+                    <field name="result_size_bytes" widget="list.activity_result_size" optional="show"/>
+                    <field name="snapshot_used" string="Sources" widget="list.activity_sources" optional="show"/>
+                    <field name="unsupported_user_section" string="Warnings" widget="list.activity_warnings" optional="show"/>
+                    <field name="event_date" widget="list.activity_time" optional="show"/>
+                    <field name="create_uid" string="Created By" optional="show"/>
+                    <field name="requested_days" widget="list.activity_metric" optional="hide"/>
+                    <field name="selected_store_count" widget="list.activity_metric" optional="hide"/>
+                    <field name="created_at" string="Created At" widget="list.activity_time" optional="hide"/>
                     <field name="daily_fact_used" optional="hide"/>
                     <field name="item_fact_used" optional="hide"/>
                     <field name="archive_used" optional="hide"/>
                     <field name="product_report_used" optional="hide"/>
+                    <field name="unsupported_item_section" optional="hide"/>
+                    <field name="unsupported_customer_section" optional="hide"/>
                 </list>
             </field>
         </record>
 
         <record id="view_ab_sales_dashboard_report_telemetry_pivot" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.report.telemetry.pivot</field>
-            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="name">ab_sales_dashboard_report_telemetry_pivot</field>
+            <field name="model">ab_sales_dashboard_report_telemetry</field>
             <field name="arch" type="xml">
                 <pivot string="Reporting Analytics">
                     <field name="event_date" type="row" interval="month"/>
@@ -626,8 +630,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_report_telemetry_graph" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.report.telemetry.graph</field>
-            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="name">ab_sales_dashboard_report_telemetry_graph</field>
+            <field name="model">ab_sales_dashboard_report_telemetry</field>
             <field name="arch" type="xml">
                 <graph string="Reporting Analytics" type="bar">
                     <field name="event_date" interval="day"/>
@@ -638,8 +642,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_report_telemetry_search" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.report.telemetry.search</field>
-            <field name="model">ab.sales.dashboard.report.telemetry</field>
+            <field name="name">ab_sales_dashboard_report_telemetry_search</field>
+            <field name="model">ab_sales_dashboard_report_telemetry</field>
             <field name="arch" type="xml">
                 <search string="Reporting Analytics">
                     <field name="event_date"/>
@@ -662,8 +666,8 @@
         </record>
 
         <record id="view_ab_sales_dashboard_fact_decision_form" model="ir.ui.view">
-            <field name="name">ab.sales.dashboard.fact.decision.form</field>
-            <field name="model">ab.sales.dashboard.fact.decision</field>
+            <field name="name">ab_sales_dashboard_fact_decision_form</field>
+            <field name="model">ab_sales_dashboard_fact_decision</field>
             <field name="arch" type="xml">
                 <form string="Fact-Grain Decision" create="0" edit="0" delete="0">
                     <sheet>

@@ -213,11 +213,11 @@ class TestSalesDashboard(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.Snapshot = cls.env["ab.sales.dashboard.snapshot"]
-        cls.Service = cls.env["ab.sales.dashboard.service"]
-        cls.Archive = cls.env["ab.sales.dashboard.report.archive"]
-        cls.ReconciliationJob = cls.env["ab.sales.dashboard.reconciliation.job"]
-        cls.Telemetry = cls.env["ab.sales.dashboard.report.telemetry"]
+        cls.Snapshot = cls.env["ab_sales_dashboard_snapshot"]
+        cls.Service = cls.env["ab_sales_dashboard_service"]
+        cls.Archive = cls.env["ab_sales_dashboard_report_archive"]
+        cls.ReconciliationJob = cls.env["ab_sales_dashboard_reconciliation_job"]
+        cls.Telemetry = cls.env["ab_sales_dashboard_report_telemetry"]
         cls.SyncState = cls.env["ab_sales_dashboard_sync_state"]
 
     def _patch_dashboard_connection(self, connection):
@@ -328,7 +328,7 @@ class TestSalesDashboard(TransactionCase):
         }
 
     def _create_coverage(self, store, *dates):
-        return self.env["ab.sales.dashboard.sync.coverage"].sudo().create([
+        return self.env["ab_sales_dashboard_sync_coverage"].sudo().create([
             {
                 "report_date": report_date,
                 "store_id": store.id,
@@ -340,7 +340,7 @@ class TestSalesDashboard(TransactionCase):
         ])
 
     def _create_fact_coverage(self, store, *dates, fact_type="item"):
-        return self.env["ab.sales.dashboard.fact.coverage"].sudo().create([
+        return self.env["ab_sales_dashboard_fact_coverage"].sudo().create([
             {
                 "report_date": report_date,
                 "store_id": store.id,
@@ -386,9 +386,9 @@ class TestSalesDashboard(TransactionCase):
                 "invoice_count": invoice_count,
                 "total_sales": total_sales,
             })
-        self.env["ab.sales.dashboard.sync.coverage"].sudo().create(coverage_rows)
-        self.env["ab.sales.dashboard.daily.store.fact"].sudo().create(store_rows)
-        self.env["ab.sales.dashboard.daily.collection.fact"].sudo().create(collection_rows)
+        self.env["ab_sales_dashboard_sync_coverage"].sudo().create(coverage_rows)
+        self.env["ab_sales_dashboard_daily_store_fact"].sudo().create(store_rows)
+        self.env["ab_sales_dashboard_daily_collection_fact"].sudo().create(collection_rows)
 
     def _seed_daily_item_facts(self, store, date_from, days, item_count=3, sales_amount=10.0):
         start = fields.Date.to_date(date_from)
@@ -420,8 +420,8 @@ class TestSalesDashboard(TransactionCase):
                     "sale_times": item_offset + 1,
                     "synced_at": fields.Datetime.now(),
                 })
-        self.env["ab.sales.dashboard.fact.coverage"].sudo().create(coverage_rows)
-        self.env["ab.sales.dashboard.daily.item.fact"].sudo().create(item_rows)
+        self.env["ab_sales_dashboard_fact_coverage"].sudo().create(coverage_rows)
+        self.env["ab_sales_dashboard_daily_item_fact"].sudo().create(item_rows)
 
     def _seed_daily_user_facts(self, store, date_from, days, total_sales=10.0, invoice_count=1):
         start = fields.Date.to_date(date_from)
@@ -447,7 +447,7 @@ class TestSalesDashboard(TransactionCase):
                 "total_sales": total_sales,
                 "synced_at": fields.Datetime.now(),
             })
-        self.env["ab.sales.dashboard.fact.coverage"].sudo().create(coverage_rows)
+        self.env["ab_sales_dashboard_fact_coverage"].sudo().create(coverage_rows)
         self.env["ab_sales_dashboard_daily_user_fact"].sudo().create(user_rows)
 
     def _store(self, code="TEST-DASH-STORE", eplus_serial=99001):
@@ -634,13 +634,13 @@ class TestSalesDashboard(TransactionCase):
             "items": "ITM501, ITM502",
         }]
 
-        values = self.Snapshot._invoice_line_values(rows)
+        values = self.Snapshot.with_context(lang="en_US")._invoice_line_values(rows)
 
         self.assertEqual(values[0]["customer_name"], "Cash Customer")
         self.assertNotEqual(values[0]["customer_name"], "0")
 
     def test_cash_customer_sentinel_is_normalized_in_service_payload(self):
-        payload = self.Service._normalize_dashboard_payload(
+        payload = self.Service.with_context(lang="en_US")._normalize_dashboard_payload(
             totals={},
             previous={},
             collections=[],
@@ -901,7 +901,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(payload["non_medicine_sales"], 200.0)
 
     def test_refresh_dashboard_creates_snapshot_from_mocked_eplus_payload(self):
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         store = self._store()
         with patch.object(type(service), "fetch_refresh_data", return_value={
             "dashboard": self._payload(),
@@ -924,13 +924,13 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(len(data["collection_lines"]), 2)
         self.assertEqual(data["item_lines"][0]["eplus_item_code"], "ITM501")
         self.assertEqual(data["invoice_lines"][0]["invoice_no"], "9001")
-        fact = self.env["ab.sales.dashboard.daily.store.fact"].search([
+        fact = self.env["ab_sales_dashboard_daily_store_fact"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
         self.assertEqual(len(fact), 1)
         self.assertEqual(fact.total_sales, 1000.0)
-        coverage = self.env["ab.sales.dashboard.sync.coverage"].search([
+        coverage = self.env["ab_sales_dashboard_sync_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
@@ -938,7 +938,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(coverage.sync_state, "synced")
         self.assertNotIn("category", coverage._fields)
 
-        collection_facts = self.env["ab.sales.dashboard.daily.collection.fact"].search([
+        collection_facts = self.env["ab_sales_dashboard_daily_collection_fact"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
@@ -949,7 +949,7 @@ class TestSalesDashboard(TransactionCase):
         ])
         self.assertEqual(len(user_facts), 1)
         self.assertEqual(user_facts.employee_eplus_id, 15)
-        user_coverage = self.env["ab.sales.dashboard.fact.coverage"].search([
+        user_coverage = self.env["ab_sales_dashboard_fact_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("fact_type", "=", "user"),
@@ -1131,7 +1131,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertIn("has_snapshot", data)
 
     def test_dashboard_payload_contract_keys_are_preserved(self):
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         store = self._store(code="TEST-DASH-PAYLOAD", eplus_serial=99005)
         expected_keys = {
             "date_from",
@@ -1170,7 +1170,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertTrue(data["invoice_lines"][0]["row_key"])
 
     def test_refresh_dashboard_updates_existing_snapshot_for_same_period_and_store(self):
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         store = self._store(code="TEST-DASH-UPSERT", eplus_serial=99004)
         payload_1 = self._payload(total_sales=1000.0, emp_id=15, employee_name="Ahmed", itm_id=501, itm_code="ITM501", invoice_no="9001")
         payload_2 = self._payload(total_sales=2200.0, emp_id=16, employee_name="Mona", itm_id=502, itm_code="ITM502", invoice_no="9002")
@@ -1199,6 +1199,52 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(second["user_lines"][0]["employee_eplus_id"], 16)
         self.assertEqual(second["item_lines"][0]["eplus_item_code"], "ITM502")
         self.assertEqual(second["invoice_lines"][0]["invoice_no"], "9002")
+
+    def test_report_data_returns_all_stored_rows_while_dashboard_preview_is_bounded(self):
+        store = self._store(code="TEST-DASH-FULL-REPORT", eplus_serial=99006)
+        payload = self._payload()
+        payload["user_lines"] = [
+            {"emp_id": idx, "employee_name": "User %s" % idx, "invoice_count": 1, "total_sales": float(idx), "pct_of_total": 1.0}
+            for idx in range(1, 26)
+        ]
+        payload["item_lines"] = [
+            {"itm_id": idx, "itm_code": "ITM%s" % idx, "sale_times": idx, "sold_qty": float(idx), "total_sales": float(idx), "current_balance": float(idx)}
+            for idx in range(1, 26)
+        ]
+        payload["invoice_lines"] = [
+            {
+                "invoice_no": "INV%s" % idx,
+                "sec_insert_date": "2026-07-02 10:00:00",
+                "customer_name": "Customer %s" % idx,
+                "invoice_total": float(idx),
+                "item_count": 1,
+                "items": "ITM%s" % idx,
+            }
+            for idx in range(1, 26)
+        ]
+        filters = {
+            "date_from": fields.Date.to_date("2026-07-01"),
+            "date_to": fields.Date.to_date("2026-07-01"),
+            "store_id": store.id,
+        }
+        snapshot = self.Snapshot._create_snapshot_from_payload(filters, payload)
+
+        dashboard_data = self.Snapshot.get_dashboard_data({
+            "date_from": "2026-07-01",
+            "date_to": "2026-07-01",
+            "store_id": store.id,
+        })
+        report_data = self.Snapshot.get_report_data(snapshot.id)
+
+        self.assertEqual(len(snapshot.user_line_ids), 25)
+        self.assertEqual(len(snapshot.item_line_ids), 25)
+        self.assertEqual(len(snapshot.invoice_line_ids), 25)
+        self.assertEqual(len(dashboard_data["user_lines"]), 20)
+        self.assertEqual(len(dashboard_data["item_lines"]), 20)
+        self.assertEqual(len(dashboard_data["invoice_lines"]), 20)
+        self.assertEqual(len(report_data["user_lines"]), 25)
+        self.assertEqual(len(report_data["item_lines"]), 25)
+        self.assertEqual(len(report_data["invoice_lines"]), 25)
 
     def test_phase6_snapshot_parent_lookup_is_not_duplicated(self):
         store = self._store(code="TEST-DASH-PARENT-LOOKUP", eplus_serial=99014)
@@ -1249,10 +1295,10 @@ class TestSalesDashboard(TransactionCase):
             "store_id": store.id,
         }
         child_models = [
-            self.env["ab.sales.dashboard.collection.line"],
-            self.env["ab.sales.dashboard.user.line"],
-            self.env["ab.sales.dashboard.item.line"],
-            self.env["ab.sales.dashboard.invoice.line"],
+            self.env["ab_sales_dashboard_collection_line"],
+            self.env["ab_sales_dashboard_user_line"],
+            self.env["ab_sales_dashboard_item_line"],
+            self.env["ab_sales_dashboard_invoice_line"],
         ]
         patches = []
         for model in child_models:
@@ -1385,11 +1431,11 @@ class TestSalesDashboard(TransactionCase):
 
     def test_phase6_max_snapshot_child_rows_config_is_bounded_safely(self):
         self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_snapshot_child_rows", "invalid")
-        self.assertEqual(self.Snapshot._max_snapshot_child_rows(), 100)
+        self.assertEqual(self.Snapshot._max_snapshot_child_rows(), 200000)
         self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_snapshot_child_rows", "-1")
-        self.assertEqual(self.Snapshot._max_snapshot_child_rows(), 100)
-        self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_snapshot_child_rows", "999999")
-        self.assertEqual(self.Snapshot._max_snapshot_child_rows(), 1000)
+        self.assertEqual(self.Snapshot._max_snapshot_child_rows(), 200000)
+        self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_snapshot_child_rows", "9999999")
+        self.assertEqual(self.Snapshot._max_snapshot_child_rows(), 1000000)
 
     def test_phase6_snapshot_persistence_introduces_no_manual_commit(self):
         source = self.Snapshot._persist_snapshot_children.__func__.__code__.co_names
@@ -1430,7 +1476,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertNotIn(other_snapshot, self.Snapshot.search([("archive_ids", "!=", False)]))
 
         action = snapshot.action_view_archives()
-        self.assertEqual(action["res_model"], "ab.sales.dashboard.report.archive")
+        self.assertEqual(action["res_model"], "ab_sales_dashboard_report_archive")
         self.assertEqual(action["domain"], [("snapshot_id", "=", snapshot.id)])
         self.assertEqual(action["context"], {"create": False})
 
@@ -1526,11 +1572,11 @@ class TestSalesDashboard(TransactionCase):
             snapshot.action_archive_report()
 
         self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_archive_payload_bytes", "invalid")
-        self.assertEqual(self.Archive._max_archive_payload_bytes(), 1048576)
+        self.assertEqual(self.Archive._max_archive_payload_bytes(), 52428800)
         self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_archive_payload_bytes", "-1")
-        self.assertEqual(self.Archive._max_archive_payload_bytes(), 1048576)
+        self.assertEqual(self.Archive._max_archive_payload_bytes(), 52428800)
         self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_archive_payload_bytes", "999999999")
-        self.assertEqual(self.Archive._max_archive_payload_bytes(), 10485760)
+        self.assertEqual(self.Archive._max_archive_payload_bytes(), 104857600)
 
     def test_phase7_archive_is_immutable_except_cancellation(self):
         snapshot = self.Snapshot._create_snapshot_from_payload({
@@ -1610,7 +1656,7 @@ class TestSalesDashboard(TransactionCase):
         archived_payload = self.Archive.get_archived_dashboard_data(archive.id)
 
         updated = self.Snapshot._create_snapshot_from_payload(filters, self._payload(total_sales=2200.0, invoice_no="UPDATED"))
-        self.env["ab.sales.dashboard.daily.store.fact"].sudo().create({
+        self.env["ab_sales_dashboard_daily_store_fact"].sudo().create({
             "report_date": "2026-07-01",
             "store_id": store.id,
             "store_eplus_id": store.eplus_serial,
@@ -1637,7 +1683,7 @@ class TestSalesDashboard(TransactionCase):
             data = self.Snapshot.get_dashboard_data(filters)
         self.assertEqual(data["snapshot_id"], snapshot.id)
 
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(self.Archive), "write", side_effect=AssertionError("refresh must not update archives")), \
              patch.object(type(service), "fetch_refresh_data", return_value={
                  "dashboard": self._payload(total_sales=3300.0),
@@ -1671,7 +1717,7 @@ class TestSalesDashboard(TransactionCase):
     def test_get_dashboard_can_calculate_from_daily_facts_without_eplus(self):
         store = self._store(code="TEST-DASH-FACTS", eplus_serial=99002)
         self._create_coverage(store, "2026-07-01", "2026-07-02")
-        self.env["ab.sales.dashboard.daily.store.fact"].sudo().create([
+        self.env["ab_sales_dashboard_daily_store_fact"].sudo().create([
             {
                 "report_date": "2026-07-01",
                 "store_id": store.id,
@@ -1697,7 +1743,7 @@ class TestSalesDashboard(TransactionCase):
                 "contract_net_amount": 20.0,
             },
         ])
-        self.env["ab.sales.dashboard.daily.collection.fact"].sudo().create([
+        self.env["ab_sales_dashboard_daily_collection_fact"].sudo().create([
             {
                 "report_date": "2026-07-01",
                 "store_id": store.id,
@@ -1741,9 +1787,27 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(set(zero_categories), {"delivery", "contract", "offer"})
         self.assertTrue(all(row["total_sales"] == 0.0 for row in zero_categories.values()))
 
+    def test_get_dashboard_uses_partial_daily_facts_for_short_range_without_snapshot(self):
+        store = self._store(code="TEST-DASH-SHORT-PARTIAL", eplus_serial=99037)
+        self._seed_daily_summary_facts(store, "2026-07-26", 4, total_sales=25.0, invoice_count=2)
+
+        data = self.Snapshot.get_dashboard_data({
+            "date_from": "2026-07-26",
+            "date_to": "2026-08-01",
+            "store_id": store.id,
+        })
+
+        self.assertTrue(data["has_snapshot"])
+        self.assertEqual(data["data_source"], "odoo_daily_facts")
+        self.assertEqual(data["report_meta"]["coverage_state"], "partial")
+        self.assertEqual(data["report_meta"]["expected_store_days"], 7)
+        self.assertEqual(data["report_meta"]["covered_store_days"], 4)
+        self.assertEqual(data["total_sales"], 100.0)
+        self.assertEqual(data["invoice_count"], 8)
+
     def test_daily_fallback_requires_sync_coverage(self):
         store = self._store(code="TEST-DASH-NO-COVERAGE", eplus_serial=99008)
-        self.env["ab.sales.dashboard.daily.store.fact"].sudo().create({
+        self.env["ab_sales_dashboard_daily_store_fact"].sudo().create({
             "report_date": "2026-07-01",
             "store_id": store.id,
             "store_eplus_id": store.eplus_serial,
@@ -1769,7 +1833,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(self.Snapshot._summary_max_days(), 365)
 
     def test_phase8_refresh_over_90_days_uses_dashboard_sync(self):
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         payload = {"report_meta": {"mode": "summary"}}
         with patch.object(type(service), "fetch_refresh_data", side_effect=AssertionError("refresh must use dashboard sync")) as mocked_fetch, \
              patch.object(type(self.SyncState), "sync_dashboard_date_range", return_value={
@@ -1795,7 +1859,7 @@ class TestSalesDashboard(TransactionCase):
     def test_phase8_ninety_day_get_uses_daily_facts_without_bconnect(self):
         store = self._store(code="TEST-DASH-90D", eplus_serial=99030)
         self._seed_daily_summary_facts(store, "2026-04-03", 90, total_sales=10.0, invoice_count=1)
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "connect_eplus", side_effect=AssertionError("summary must not connect to B-Connect")), \
              patch.object(type(service), "fetch_refresh_data", side_effect=AssertionError("summary must not refresh from B-Connect")):
             data = self.Snapshot.get_dashboard_data({
@@ -1841,7 +1905,7 @@ class TestSalesDashboard(TransactionCase):
 
     def test_phase8_summary_unavailable_coverage_returns_safe_empty_payload(self):
         store = self._store(code="TEST-DASH-UNAVAILABLE", eplus_serial=99032)
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "fetch_refresh_data", side_effect=AssertionError("unavailable summary must not refresh")):
             data = self.Snapshot.get_dashboard_data({
                 "date_from": "2026-06-01",
@@ -1857,7 +1921,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertFalse(data["invoice_lines"])
 
     def test_phase8_summary_range_above_legacy_limit_uses_postgresql(self):
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "connect_eplus", side_effect=AssertionError("summary read must remain PostgreSQL-only")):
             data = self.Snapshot.get_dashboard_data({
                 "date_from": "2026-04-01",
@@ -1870,7 +1934,7 @@ class TestSalesDashboard(TransactionCase):
         store = self._store(code="TEST-DASH-PREV", eplus_serial=99033)
         self._seed_daily_summary_facts(store, "2026-05-01", 32, total_sales=50.0, invoice_count=1)
         self._seed_daily_summary_facts(store, "2026-06-02", 32, total_sales=100.0, invoice_count=2)
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "connect_eplus", side_effect=AssertionError("previous summary must not use B-Connect")):
             data = self.Snapshot.get_dashboard_data({
                 "date_from": "2026-06-02",
@@ -1993,7 +2057,7 @@ class TestSalesDashboard(TransactionCase):
         store = self._store(code="TEST-DASH-RECON-SUCCESS", eplus_serial=99041)
         job = self._reconciliation_job("2026-07-01", "2026-07-01", store)
         job.action_analyze_coverage()
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(self.ReconciliationJob), "_try_sales_dashboard_refresh_lock", return_value=True), \
              patch.object(type(service), "fetch_daily_fact_data", return_value=self._daily_payload(store.eplus_serial)) as mocked_fetch:
             job.action_start_reconciliation()
@@ -2001,26 +2065,26 @@ class TestSalesDashboard(TransactionCase):
         mocked_fetch.assert_called_once()
         self.assertEqual(job.state, "done")
         self.assertEqual(job.completed_chunk_count, 1)
-        fact = self.env["ab.sales.dashboard.daily.store.fact"].search([
+        fact = self.env["ab_sales_dashboard_daily_store_fact"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
         self.assertEqual(len(fact), 1)
         self.assertEqual(fact.total_sales, 1000.0)
-        coverage = self.env["ab.sales.dashboard.sync.coverage"].search([
+        coverage = self.env["ab_sales_dashboard_sync_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
         self.assertEqual(len(coverage), 1)
         self.assertEqual(coverage.sync_state, "synced")
-        item_fact = self.env["ab.sales.dashboard.daily.item.fact"].search([
+        item_fact = self.env["ab_sales_dashboard_daily_item_fact"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("item_eplus_id", "=", 501),
         ])
         self.assertEqual(len(item_fact), 1)
         self.assertEqual(item_fact.sales_amount, 450.0)
-        item_coverage = self.env["ab.sales.dashboard.fact.coverage"].search([
+        item_coverage = self.env["ab_sales_dashboard_fact_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("fact_type", "=", "item"),
@@ -2032,7 +2096,7 @@ class TestSalesDashboard(TransactionCase):
         store = self._store(code="TEST-DASH-RECON-FAIL", eplus_serial=99042)
         job = self._reconciliation_job("2026-07-01", "2026-07-01", store)
         job.action_analyze_coverage()
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(self.ReconciliationJob), "_try_sales_dashboard_refresh_lock", return_value=True), \
              patch.object(type(service), "fetch_daily_fact_data", return_value=self._daily_payload(store.eplus_serial)), \
              patch.object(type(self.Snapshot), "_upsert_daily_facts", side_effect=RuntimeError("persistence failed")):
@@ -2040,12 +2104,12 @@ class TestSalesDashboard(TransactionCase):
 
         self.assertEqual(job.state, "failed")
         self.assertEqual(job.failed_chunk_count, 1)
-        coverage = self.env["ab.sales.dashboard.sync.coverage"].search([
+        coverage = self.env["ab_sales_dashboard_sync_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
         self.assertFalse(coverage)
-        item_coverage = self.env["ab.sales.dashboard.fact.coverage"].search([
+        item_coverage = self.env["ab_sales_dashboard_fact_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("fact_type", "=", "item"),
@@ -2061,7 +2125,7 @@ class TestSalesDashboard(TransactionCase):
         job.write({"state": "failed"})
         self._create_coverage(store, "2026-07-01")
         self._create_fact_coverage(store, "2026-07-01")
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(self.ReconciliationJob), "_try_sales_dashboard_refresh_lock", return_value=True), \
              patch.object(type(service), "fetch_daily_fact_data", side_effect=AssertionError("covered retry should skip source")):
             job.action_retry_failed_chunks()
@@ -2076,7 +2140,7 @@ class TestSalesDashboard(TransactionCase):
         self._create_fact_coverage(store_1, "2026-07-02")
         job = self._reconciliation_job("2026-07-01", "2026-07-02", store_1 | store_2)
         job.action_analyze_coverage()
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(self.ReconciliationJob), "_try_sales_dashboard_refresh_lock", return_value=True), \
              patch.object(type(service), "fetch_daily_fact_data", side_effect=[
                  self._daily_payload(store_2.eplus_serial),
@@ -2104,7 +2168,7 @@ class TestSalesDashboard(TransactionCase):
 
     def test_phase9_reconciliation_path_introduces_no_manual_commit(self):
         self.assertNotIn("commit", self.ReconciliationJob._run_reconciliation_chunks.__code__.co_names)
-        self.assertNotIn("commit", self.env["ab.sales.dashboard.reconciliation.chunk"]._execute_reconciliation_chunk.__code__.co_names)
+        self.assertNotIn("commit", self.env["ab_sales_dashboard_reconciliation_chunk"]._execute_reconciliation_chunk.__code__.co_names)
 
     def test_phase10_item_fact_config_bounds_and_coverage_is_separate(self):
         self.env["ir.config_parameter"].sudo().set_param("ab_reports.max_daily_item_fact_rows", "invalid")
@@ -2130,19 +2194,19 @@ class TestSalesDashboard(TransactionCase):
         payload = self._daily_payload(store.eplus_serial)
         self.Snapshot._upsert_daily_facts(filters, payload)
 
-        facts = self.env["ab.sales.dashboard.daily.item.fact"].search([
+        facts = self.env["ab_sales_dashboard_daily_item_fact"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
         self.assertEqual(len(facts), 1)
         self.assertEqual(facts.item_eplus_id, 501)
         self.assertEqual(facts.sales_amount, 450.0)
-        self.assertFalse(self.env["ab.sales.dashboard.daily.item.fact"].search([
+        self.assertFalse(self.env["ab_sales_dashboard_daily_item_fact"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("item_eplus_id", "=", 999999),
         ]))
-        item_coverage = self.env["ab.sales.dashboard.fact.coverage"].search([
+        item_coverage = self.env["ab_sales_dashboard_fact_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("fact_type", "=", "item"),
@@ -2160,7 +2224,7 @@ class TestSalesDashboard(TransactionCase):
                 "date_to": fields.Date.to_date("2026-07-01"),
                 "store_id": store.id,
             }, payload)
-        self.assertFalse(self.env["ab.sales.dashboard.fact.coverage"].search([
+        self.assertFalse(self.env["ab_sales_dashboard_fact_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("fact_type", "=", "item"),
@@ -2170,7 +2234,7 @@ class TestSalesDashboard(TransactionCase):
         store = self._store(code="TEST-DASH-ITEM-SUMMARY", eplus_serial=99103)
         self._seed_daily_summary_facts(store, "2026-04-03", 90, total_sales=100.0, invoice_count=2)
         self._seed_daily_item_facts(store, "2026-04-03", 90, item_count=3, sales_amount=10.0)
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "connect_eplus", side_effect=AssertionError("summary must not use B-Connect")), \
              patch.object(type(service), "fetch_refresh_data", side_effect=AssertionError("summary must not refresh")), \
              patch.object(type(service), "fetch_daily_fact_data", side_effect=AssertionError("summary must not reconcile")):
@@ -2191,7 +2255,7 @@ class TestSalesDashboard(TransactionCase):
         store = self._store(code="TEST-DASH-USER-SUMMARY", eplus_serial=99109)
         self._seed_daily_summary_facts(store, "2026-04-03", 90, total_sales=100.0, invoice_count=2)
         self._seed_daily_user_facts(store, "2026-04-03", 90, total_sales=80.0, invoice_count=1)
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "connect_eplus", side_effect=AssertionError("summary must not use B-Connect")):
             data = self.Snapshot.get_dashboard_data({
                 "date_from": "2026-04-03",
@@ -2235,7 +2299,7 @@ class TestSalesDashboard(TransactionCase):
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ]))
-        user_coverage = self.env["ab.sales.dashboard.fact.coverage"].search([
+        user_coverage = self.env["ab_sales_dashboard_fact_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("fact_type", "=", "user"),
@@ -2604,7 +2668,7 @@ class TestSalesDashboard(TransactionCase):
     def test_phase10_product_sales_report_is_not_top20_limited(self):
         store = self._store(code="TEST-DASH-PRODUCT-REPORT", eplus_serial=99105)
         self._seed_daily_item_facts(store, "2026-07-01", 1, item_count=25, sales_amount=5.0)
-        rows = self.env["ab.sales.dashboard.product.sales.report"].search([
+        rows = self.env["ab_sales_dashboard_product_sales_report"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ], limit=80)
@@ -2654,13 +2718,13 @@ class TestSalesDashboard(TransactionCase):
         self.Snapshot._upsert_daily_facts(filters, first_payload)
         self.Snapshot._upsert_daily_facts(filters, second_payload)
 
-        collections = self.env["ab.sales.dashboard.daily.collection.fact"].search([
+        collections = self.env["ab_sales_dashboard_daily_collection_fact"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
         self.assertEqual(collections.mapped("category"), ["cash"])
         self.assertEqual(collections.total_sales, 300.0)
-        coverage = self.env["ab.sales.dashboard.sync.coverage"].search([
+        coverage = self.env["ab_sales_dashboard_sync_coverage"].search([
             ("report_date", "=", "2026-07-01"),
             ("store_eplus_id", "=", store.eplus_serial),
         ])
@@ -2668,7 +2732,7 @@ class TestSalesDashboard(TransactionCase):
 
     def test_sparse_daily_fact_persistence_preserves_rows_outside_scope(self):
         store = self._store(code="TEST-DASH-SCOPE", eplus_serial=99010)
-        self.env["ab.sales.dashboard.daily.collection.fact"].sudo().create({
+        self.env["ab_sales_dashboard_daily_collection_fact"].sudo().create({
             "report_date": "2026-07-02",
             "store_id": store.id,
             "store_eplus_id": store.eplus_serial,
@@ -2682,7 +2746,7 @@ class TestSalesDashboard(TransactionCase):
             "store_id": store.id,
         }, self._daily_payload(store.eplus_serial))
 
-        outside = self.env["ab.sales.dashboard.daily.collection.fact"].search([
+        outside = self.env["ab_sales_dashboard_daily_collection_fact"].search([
             ("report_date", "=", "2026-07-02"),
             ("store_eplus_id", "=", store.eplus_serial),
             ("category", "=", "offer"),
@@ -2692,8 +2756,8 @@ class TestSalesDashboard(TransactionCase):
 
     def test_daily_fact_persistence_avoids_orm_search_and_write_loops(self):
         store = self._store(code="TEST-DASH-SQL-PERSIST", eplus_serial=99011)
-        StoreFact = self.env["ab.sales.dashboard.daily.store.fact"]
-        CollectionFact = self.env["ab.sales.dashboard.daily.collection.fact"]
+        StoreFact = self.env["ab_sales_dashboard_daily_store_fact"]
+        CollectionFact = self.env["ab_sales_dashboard_daily_collection_fact"]
         filters = {
             "date_from": fields.Date.to_date("2026-07-01"),
             "date_to": fields.Date.to_date("2026-07-01"),
@@ -2736,7 +2800,7 @@ class TestSalesDashboard(TransactionCase):
 
     def test_refresh_dashboard_fetches_full_report_when_only_daily_facts_exist(self):
         store = self._store(code="TEST-DASH-FULL-REFRESH", eplus_serial=99003)
-        self.env["ab.sales.dashboard.daily.store.fact"].sudo().create({
+        self.env["ab_sales_dashboard_daily_store_fact"].sudo().create({
             "report_date": "2026-07-01",
             "store_id": store.id,
             "store_eplus_id": store.eplus_serial,
@@ -2748,7 +2812,7 @@ class TestSalesDashboard(TransactionCase):
             "company_part_amount": 0.0,
             "contract_net_amount": 0.0,
         })
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "fetch_refresh_data", return_value={
             "dashboard": self._payload(),
             "daily_store_facts": self._daily_payload(store.eplus_serial),
@@ -2894,7 +2958,7 @@ class TestSalesDashboard(TransactionCase):
             data = self.Snapshot.get_dashboard_data({"date_from": "2026-07-01", "date_to": "2026-07-01", "store_id": 0})
         self.assertIn("total_sales", data)
 
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         store = self._store(code="TEST-DASH-P12-FAIL", eplus_serial=99121)
         with patch.object(type(service), "fetch_refresh_data", side_effect=RuntimeError("source failed")), \
              patch.object(type(self.Telemetry), "create", side_effect=RuntimeError("telemetry failed")):
@@ -2914,7 +2978,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertEqual(self.Telemetry.search_count([]), before - 1)
 
     def test_phase12_fact_volume_analysis_uses_aggregate_sql_without_fact_loading(self):
-        ItemFact = self.env["ab.sales.dashboard.daily.item.fact"]
+        ItemFact = self.env["ab_sales_dashboard_daily_item_fact"]
         with patch.object(type(ItemFact), "search", side_effect=AssertionError("analysis must not ORM-load item facts")):
             result = self.Telemetry.get_fact_volume_analysis()
         self.assertIn("daily_store_facts", result)
@@ -2996,7 +3060,7 @@ class TestSalesDashboard(TransactionCase):
             "sale_times": 1,
         }]
         self.Snapshot._upsert_daily_facts({"date_from": fields.Date.to_date("2026-07-01"), "date_to": fields.Date.to_date("2026-07-01"), "store_id": store.id}, payload)
-        facts = self.env["ab.sales.dashboard.daily.item.fact"].search([("store_eplus_id", "=", store.eplus_serial)])
+        facts = self.env["ab_sales_dashboard_daily_item_fact"].search([("store_eplus_id", "=", store.eplus_serial)])
         self.assertEqual(len(facts), 2)
         self.assertFalse(facts.mapped("product_id"))
         logger = self.Telemetry.get_fact_volume_analysis.__func__.__globals__["_logger"]
@@ -3005,7 +3069,7 @@ class TestSalesDashboard(TransactionCase):
         self.assertTrue(any("sales_dashboard_fact_volume_warning" in call.args[0] for call in warning.call_args_list))
 
     def test_phase12_preserves_long_range_postgresql_and_read_reconciliation_isolation(self):
-        service = self.env["ab.sales.dashboard.service"]
+        service = self.env["ab_sales_dashboard_service"]
         with patch.object(type(service), "connect_eplus", side_effect=AssertionError("90-day read must remain PostgreSQL-only")), \
              patch.object(type(self.ReconciliationJob), "search", side_effect=AssertionError("dashboard read must not inspect reconciliation")):
             data = self.Snapshot.get_dashboard_data({"date_from": "2026-04-16", "date_to": "2026-07-14", "store_id": 0})

@@ -33,8 +33,8 @@ MAX_INTEGER_METADATA = 2147483647
 
 
 class SalesDashboardReportTelemetry(models.Model):
-    _name = "ab.sales.dashboard.report.telemetry"
-    _inherit = ["ab.sales.dashboard.config.mixin"]
+    _name = "ab_sales_dashboard_report_telemetry"
+    _inherit = ["ab_sales_dashboard_config_mixin"]
     _description = "Sales Dashboard Reporting Telemetry"
     _order = "event_date desc, id desc"
 
@@ -306,7 +306,7 @@ class SalesDashboardReportTelemetry(models.Model):
 
 
 class SalesDashboardFactDecision(models.TransientModel):
-    _name = "ab.sales.dashboard.fact.decision"
+    _name = "ab_sales_dashboard_fact_decision"
     _description = "Sales Dashboard Fact Grain Decision"
 
     measurement_period = fields.Char(readonly=True)
@@ -332,7 +332,7 @@ class SalesDashboardFactDecision(models.TransientModel):
     @api.model
     def default_get(self, field_names):
         values = super().default_get(field_names)
-        recommendation = self.env["ab.sales.dashboard.report.telemetry"].get_fact_grain_recommendation()
+        recommendation = self.env["ab_sales_dashboard_report_telemetry"].get_fact_grain_recommendation()
         period = recommendation["measurement_period"]
         values.update({
             "measurement_period": "%s - %s" % (period["date_from"] or _("No data"), period["date_to"] or _("No data")),

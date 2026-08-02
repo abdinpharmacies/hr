@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <record id="view_ab_sales_dashboard_sync_state_search" model="ir.ui.view">
-            <field name="name">ab_sales_dashboard_sync_state.search</field>
+            <field name="name">ab_sales_dashboard_sync_state_search</field>
             <field name="model">ab_sales_dashboard_sync_state</field>
             <field name="arch" type="xml">
                 <search string="Sales Dashboard Sync">
@@ -19,7 +19,7 @@
         </record>
 
         <record id="view_ab_sales_dashboard_sync_state_list" model="ir.ui.view">
-            <field name="name">ab_sales_dashboard_sync_state.list</field>
+            <field name="name">ab_sales_dashboard_sync_state_list</field>
             <field name="model">ab_sales_dashboard_sync_state</field>
             <field name="arch" type="xml">
                 <list string="Sales Dashboard Sync" create="0" edit="0" delete="0">
@@ -34,7 +34,7 @@
         </record>
 
         <record id="view_ab_sales_dashboard_sync_state_form" model="ir.ui.view">
-            <field name="name">ab_sales_dashboard_sync_state.form</field>
+            <field name="name">ab_sales_dashboard_sync_state_form</field>
             <field name="model">ab_sales_dashboard_sync_state</field>
             <field name="arch" type="xml">
                 <form string="Sales Dashboard Sync" create="0" edit="0" delete="0">
@@ -69,7 +69,7 @@
         </record>
 
         <record id="view_ab_sales_dashboard_sync_wizard_form" model="ir.ui.view">
-            <field name="name">ab_sales_dashboard_sync_wizard.form</field>
+            <field name="name">ab_sales_dashboard_sync_wizard_form</field>
             <field name="model">ab_sales_dashboard_sync_wizard</field>
             <field name="arch" type="xml">
                 <form string="Sync Sales Dashboard Data">
