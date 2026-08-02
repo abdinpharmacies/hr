@@ -43,6 +43,8 @@ class AbTransferLine(models.Model):
         required=True,
     )
 
+    product_code = fields.Char(related='product_id.code')
+
     class_id = fields.Integer(
         string="Class ID",
         required=True,

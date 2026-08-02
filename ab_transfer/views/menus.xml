@@ -11,6 +11,6 @@
                   action="ab_transfer_dashboard_action"
                   web_icon="ab_transfer,static/description/icon.png"
                   sequence="100"
-                  groups="base.group_system"/>
+                  groups="base.group_user"/>
     </data>
 </odoo>
