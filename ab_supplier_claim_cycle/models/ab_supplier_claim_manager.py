@@ -1,8 +1,33 @@
-from odoo import api, models
+from odoo import _, api, models
 
 
-class ResGroups(models.Model):
-    _inherit = 'res.groups'
+class SupplierClaimManagerService(models.AbstractModel):
+    _name = 'ab_supplier_claim_manager_service'
+    _description = 'Supplier Claim Manager Service'
+
+    @api.model
+    def _get_claim_group_xmlid_prefix(self):
+        return 'ab_supplier_claim_cycle'
+
+    @api.model
+    def _get_claim_group_rows(self):
+        return [
+            ('supplier_claim_group_inventory', 28, 'Supplier Claim Inventory', 'inventory'),
+            ('supplier_claim_group_purchase', 29, 'Supplier Claim Purchase', 'purchase'),
+            ('supplier_claim_group_suppliers', 527, 'Supplier Claim Suppliers', 'suppliers'),
+            ('supplier_claim_group_bank_acc', 528, 'Supplier Claim Bank Acc', 'bank_accounts'),
+            ('supplier_claim_group_tax_accounts', 530, 'Supplier Claim Tax Accounts', 'tax_accounts'),
+        ]
+
+    @api.model
+    def _get_claim_group_xmlid(self, xml_id):
+        return '%s.%s' % (self._get_claim_group_xmlid_prefix(), xml_id)
+
+    @api.model
+    def _employee_field_value(self, employee, field_name):
+        if employee and field_name in employee._fields:
+            return employee[field_name]
+        return False
 
     @api.model
     def _dept_param(self, dept_code):
@@ -27,13 +52,6 @@ class ResGroups(models.Model):
 
     @api.model
     def get_supplier_claim_dept_managers(self):
-        CLAIM_GROUPS = [
-            ('supplier_claim_group_inventory', 28, 'Supplier Claim Inventory', 'inventory'),
-            ('supplier_claim_group_purchase', 29, 'Supplier Claim Purchase', 'purchase'),
-            ('supplier_claim_group_suppliers', 527, 'Supplier Claim Suppliers', 'suppliers'),
-            ('supplier_claim_group_bank_acc', 528, 'Supplier Claim Bank Acc', 'bank_accounts'),
-            ('supplier_claim_group_tax_accounts', 530, 'Supplier Claim Tax Accounts', 'tax_accounts'),
-        ]
         try:
             Department = self.env['ab_hr_department'].sudo()
         except KeyError:
@@ -43,9 +61,9 @@ class ResGroups(models.Model):
         except KeyError:
             Employee = None
         results = []
-        for xml_id, hr_dept_id, display_name, dept_code in CLAIM_GROUPS:
+        for xml_id, hr_dept_id, display_name, dept_code in self._get_claim_group_rows():
             group = self.env.ref(
-                'ab_supplier_claim_cycle.%s' % xml_id, raise_if_not_found=False)
+                self._get_claim_group_xmlid(xml_id), raise_if_not_found=False)
             manager = self._get_stored_manager(dept_code)
             if not manager and Department is not None:
                 dept = Department.browse(hr_dept_id).exists()
@@ -60,57 +78,43 @@ class ResGroups(models.Model):
                 'group_id': group.id if group else False,
                 'manager_id': manager.id if manager else False,
                 'manager_name': manager.name if manager else False,
-                'telegram_username': manager.telegram_username if manager else '',
-                'has_telegram': bool(manager and manager.telegram_chat_id),
+                'telegram_username': self._employee_field_value(manager, 'telegram_username') or '',
+                'has_telegram': bool(self._employee_field_value(manager, 'telegram_chat_id')),
                 'user_id': manager.user_id.id if manager and manager.user_id else False,
             })
         return results
 
     @api.model
     def assign_supplier_claim_manager(self, dept_code, employee_id):
-        CLAIM_GROUP_MAP = {
-            'inventory': 'supplier_claim_group_inventory',
-            'purchase': 'supplier_claim_group_purchase',
-            'suppliers': 'supplier_claim_group_suppliers',
-            'bank_accounts': 'supplier_claim_group_bank_acc',
-            'tax_accounts': 'supplier_claim_group_tax_accounts',
-        }
+        CLAIM_GROUP_MAP = {row[3]: row[0] for row in self._get_claim_group_rows()}
         xml_id = CLAIM_GROUP_MAP.get(dept_code)
         if not xml_id:
-            return {'error': 'Unknown department code: %s' % dept_code}
+            return {'error': _('Unknown department code: %s') % dept_code}
         group = self.env.ref(
-            'ab_supplier_claim_cycle.%s' % xml_id, raise_if_not_found=False)
+            self._get_claim_group_xmlid(xml_id), raise_if_not_found=False)
         if not group:
-            return {'error': 'Security group not found: %s' % xml_id}
+            return {'error': _('Security group not found: %s') % xml_id}
         try:
             Employee = self.env['ab_hr_employee'].sudo()
         except KeyError:
-            return {'error': 'HR module not available'}
+            return {'error': _('HR module not available')}
         employee = Employee.browse(employee_id).exists()
         if not employee:
-            return {'error': 'Employee not found'}
-        if not employee.telegram_chat_id:
-            return {'error': 'Employee has no Telegram connection'}
+            return {'error': _('Employee not found')}
+        if not self._employee_field_value(employee, 'telegram_chat_id'):
+            return {'error': _('Employee has no Telegram connection')}
         self._store_manager(dept_code, employee)
-        if employee.user_id:
-            group.sudo().write({'users': [(4, employee.user_id.id)]})
         return {
             'success': True,
             'manager_name': employee.name,
-            'telegram_username': employee.telegram_username or '',
-            'has_telegram': bool(employee.telegram_chat_id),
+            'telegram_username': self._employee_field_value(employee, 'telegram_username') or '',
+            'has_telegram': bool(self._employee_field_value(employee, 'telegram_chat_id')),
             'user_id': employee.user_id.id if employee.user_id else False,
         }
 
     @api.model
     def get_eligible_manager_candidates(self, exclude_dept_code=None):
-        CLAIM_GROUP_MAP = {
-            'inventory': 'supplier_claim_group_inventory',
-            'purchase': 'supplier_claim_group_purchase',
-            'suppliers': 'supplier_claim_group_suppliers',
-            'bank_accounts': 'supplier_claim_group_bank_acc',
-            'tax_accounts': 'supplier_claim_group_tax_accounts',
-        }
+        CLAIM_GROUP_MAP = {row[3]: row[0] for row in self._get_claim_group_rows()}
         try:
             Employee = self.env['ab_hr_employee'].sudo()
         except KeyError:
@@ -122,6 +126,8 @@ class ResGroups(models.Model):
             mgr = self._get_stored_manager(dept_code)
             if mgr:
                 already_assigned_ids.add(mgr.id)
+        if 'telegram_chat_id' not in Employee._fields:
+            return []
         candidates = Employee.search([
             ('telegram_chat_id', '!=', False),
             ('telegram_chat_id', '!=', ''),
@@ -130,7 +136,7 @@ class ResGroups(models.Model):
         return [{
             'id': e.id,
             'name': e.name,
-            'telegram_username': e.telegram_username or '',
+            'telegram_username': self._employee_field_value(e, 'telegram_username') or '',
         } for e in candidates]
 
     @api.model
@@ -139,21 +145,23 @@ class ResGroups(models.Model):
             Employee = self.env['ab_hr_employee'].sudo()
         except KeyError:
             return []
+        if 'telegram_chat_id' not in Employee._fields:
+            return []
         employees = Employee.search([
             ('telegram_chat_id', '!=', False),
             ('telegram_chat_id', '!=', ''),
         ], order='name')
         results = []
         for e in employees:
-            linked_at = e.telegram_linked_at
+            linked_at = self._employee_field_value(e, 'telegram_linked_at')
             results.append({
                 'id': e.id,
                 'name': e.name,
                 'department_name': e.department_id.name if e.department_id else '',
                 'department_id': e.department_id.id if e.department_id else False,
-                'telegram_username': e.telegram_username or '',
-                'telegram_chat_id': e.telegram_chat_id or '',
-                'telegram_user_id': e.telegram_user_id or '',
+                'telegram_username': self._employee_field_value(e, 'telegram_username') or '',
+                'telegram_chat_id': self._employee_field_value(e, 'telegram_chat_id') or '',
+                'telegram_user_id': self._employee_field_value(e, 'telegram_user_id') or '',
                 'linked_at': linked_at.isoformat() if linked_at else False,
                 'user_id': e.user_id.id if e.user_id else False,
                 'user_name': e.user_id.name if e.user_id else '',

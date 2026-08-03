@@ -72,37 +72,10 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         for rec in self:
             rec.is_working = rec.employee_id.job_status == 'active'
 
-    @api.onchange('manager_department')
-    def _onchange_manager_department(self):
-        DEPT_GROUP_MAP = {
-            'inventory': 'ab_supplier_claim_cycle.supplier_claim_group_inventory',
-            'purchase': 'ab_supplier_claim_cycle.supplier_claim_group_purchase',
-            'suppliers': 'ab_supplier_claim_cycle.supplier_claim_group_suppliers',
-            'bank_accounts': 'ab_supplier_claim_cycle.supplier_claim_group_bank_acc',
-            'tax_accounts': 'ab_supplier_claim_cycle.supplier_claim_group_tax_accounts',
-        }
-        for rec in self:
-            if not rec.manager_department or not rec.user_id:
-                continue
-            xml_id = DEPT_GROUP_MAP.get(rec.manager_department)
-            if not xml_id:
-                continue
-            group = self.env.ref(xml_id, raise_if_not_found=False)
-            if group and rec.user_id.id not in group.user_ids.ids:
-                group.sudo().write({'user_ids': [(4, rec.user_id.id)]})
-
     def write(self, vals):
-        old_depts = {}
-        if 'manager_department' in vals:
-            for rec in self:
-                old_depts[rec.id] = rec.manager_department
         if 'telegram_chat_id' in vals and not vals['telegram_chat_id']:
             vals['telegram_chat_id'] = None
-        result = super().write(vals)
-        for rec in self:
-            if rec.id in old_depts and old_depts[rec.id] != rec.manager_department:
-                rec._onchange_manager_department()
-        return result
+        return super().write(vals)
 
     @api.model
     def register_from_telegram(self, eplus_code, chat_id, username=None):
@@ -152,42 +125,34 @@ class AbSupplierClaimTelegramRegistration(models.Model):
             Job = self.env['ab_hr_job'].sudo()
         except KeyError:
             return {'error': 'HR module not available'}
-        JOB_GROUP_MAP = {
-            'نائب مدير المخازن': 'ab_supplier_claim_cycle.supplier_claim_group_inventory',
-            'مدير قسم حسابات الضرائب': 'ab_supplier_claim_cycle.supplier_claim_group_tax_accounts',
-            'مدير قسم حسابات الموردين': 'ab_supplier_claim_cycle.supplier_claim_group_suppliers',
-            'مدير قسم حسابات البنوك': 'ab_supplier_claim_cycle.supplier_claim_group_bank_acc',
-            'نائب مدير قطاع المشتريات والتجارية': 'ab_supplier_claim_cycle.supplier_claim_group_purchase',
+        JOB_DEPT_MAP = {
+            'نائب مدير المخازن': 'inventory',
+            'مدير قسم حسابات الضرائب': 'tax_accounts',
+            'مدير قسم حسابات الموردين': 'suppliers',
+            'مدير قسم حسابات البنوك': 'bank_accounts',
+            'نائب مدير قطاع المشتريات والتجارية': 'purchase',
         }
         created = 0
-        for job_name, group_xml_id in JOB_GROUP_MAP.items():
+        for job_name, dept_code in JOB_DEPT_MAP.items():
             jobs = Job.search([('name', '=', job_name)])
             if not jobs:
                 continue
             employees = Employee.search([('job_id', 'in', jobs.ids)])
-            group = self.env.ref(group_xml_id, raise_if_not_found=False)
             for emp in employees:
                 existing = self.sudo().search([('employee_id', '=', emp.id)], limit=1)
                 if existing:
+                    if not existing.manager_department:
+                        existing.write({'manager_department': dept_code})
                     continue
                 rec = self.sudo().create({
                     'employee_id': emp.id,
                     'telegram_chat_id': str(emp.id),
                     'telegram_connected': False,
                     'linked_at': fields.Datetime.now(),
+                    'manager_department': dept_code,
                 })
-                if group:
-                    GROUP_TO_DEPT = {
-                        'ab_supplier_claim_cycle.supplier_claim_group_inventory': 'inventory',
-                        'ab_supplier_claim_cycle.supplier_claim_group_tax_accounts': 'tax_accounts',
-                        'ab_supplier_claim_cycle.supplier_claim_group_suppliers': 'suppliers',
-                        'ab_supplier_claim_cycle.supplier_claim_group_bank_acc': 'bank_accounts',
-                        'ab_supplier_claim_cycle.supplier_claim_group_purchase': 'purchase',
-                    }
-                    rec.write({'manager_department': GROUP_TO_DEPT.get(group_xml_id)})
-                    if emp.user_id and emp.user_id.id not in group.user_ids.ids:
-                        group.sudo().write({'user_ids': [(4, emp.user_id.id)]})
-                created += 1
+                if rec:
+                    created += 1
         return {'created': created}
 
     @api.model
