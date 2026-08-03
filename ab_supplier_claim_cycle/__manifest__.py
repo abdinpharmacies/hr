@@ -12,7 +12,6 @@
         'views/menus.xml',
         'views/ab_supplier_claim_cycle.xml',
         'views/ab_supplier_claim_escalation.xml',
-        'data/install_extensions.xml',
 
     ],
     'installable': True,
