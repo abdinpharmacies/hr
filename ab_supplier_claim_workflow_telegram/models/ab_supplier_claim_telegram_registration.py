@@ -169,6 +169,31 @@ class AbSupplierClaimTelegramRegistration(models.Model):
             return existing
         return self.sudo().create({'employee_id': employee.id})
 
+    @api.model
+    def _sync_telegram_bot_users(self):
+        links = self.env['ab_hr_bot'].sudo().search([
+            ('employee_id', '!=', False),
+            ('chat_id', '!=', False),
+            ('chat_id', '!=', ''),
+        ])
+        employee_ids = [link.employee_id for link in links]
+        employees = self.env['ab_hr_employee'].sudo().browse(employee_ids).exists()
+        existing_employee_ids = set(self.sudo().search([
+            ('employee_id', 'in', employees.ids or [0]),
+        ]).mapped('employee_id').ids)
+        created = 0
+        for employee in employees:
+            if employee.id in existing_employee_ids:
+                continue
+            self.sudo().create({'employee_id': employee.id})
+            created += 1
+        return created
+
+    @api.model
+    def web_search_read(self, domain, specification, offset=0, limit=None, order=None, count_limit=None):
+        self._sync_telegram_bot_users()
+        return super().web_search_read(domain, specification, offset=offset, limit=limit, order=order, count_limit=count_limit)
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -180,10 +205,7 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         return records
 
     def write(self, vals):
-        result = super().write(vals)
-        if 'manager_department' in vals:
-            self._onchange_manager_department()
-        return result
+        return super().write(vals)
 
     @api.depends('employee_id')
     def _compute_eplus_code(self):
@@ -250,25 +272,6 @@ class AbSupplierClaimTelegramRegistration(models.Model):
     @api.model
     def _employee_has_real_telegram_identity(self, employee):
         return bool(employee and self._get_employee_telegram_link(employee))
-
-    @api.onchange('manager_department')
-    def _onchange_manager_department(self):
-        dept_group_map = {
-            'inventory': 'ab_supplier_claim_cycle.supplier_claim_group_inventory',
-            'purchase': 'ab_supplier_claim_cycle.supplier_claim_group_purchase',
-            'suppliers': 'ab_supplier_claim_cycle.supplier_claim_group_suppliers',
-            'bank_accounts': 'ab_supplier_claim_cycle.supplier_claim_group_bank_acc',
-            'tax_accounts': 'ab_supplier_claim_cycle.supplier_claim_group_tax_accounts',
-        }
-        for rec in self:
-            if not rec.manager_department or not rec.user_id:
-                continue
-            xml_id = dept_group_map.get(rec.manager_department)
-            if not xml_id:
-                continue
-            group = self.env.ref(xml_id, raise_if_not_found=False)
-            if group and rec.user_id.id not in group.user_ids.ids:
-                group.sudo().write({'user_ids': [(4, rec.user_id.id)]})
 
     @api.model
     def register_from_telegram(self, eplus_code, chat_id, username=None):

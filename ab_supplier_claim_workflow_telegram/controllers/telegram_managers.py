@@ -6,5 +6,4 @@ class TelegramManagersController(http.Controller):
 
     @http.route('/scc/telegram-managers', type='jsonrpc', auth='user')
     def get_telegram_managers(self):
-        Groups = request.env['res.groups']
-        return Groups.get_telegram_connected_employees()
+        return request.env['ab_supplier_claim_manager_service'].sudo().get_telegram_connected_employees()
