@@ -5,7 +5,7 @@
     </record>
 
     <record id="privilege_manpower_need" model="res.groups.privilege">
-        <field name="name">Access</field>
+        <field name="name">Manpower Need Access</field>
         <field name="category_id" ref="module_category_manpower_need"/>
     </record>
 
