@@ -11,8 +11,8 @@ class AbPromoProgramCompensation(models.Model):
     )
     compensation_timing = fields.Selection(
         [
-            ('advance', 'مسبق'),
-            ('subsequent', 'لاحق'),
+            ('advance', 'Advance'),
+            ('subsequent', 'Subsequent'),
         ],
         string="Compensation Timing",
     )
@@ -25,7 +25,6 @@ class AbPromoProgramCompensation(models.Model):
     )
     approval_email_attachment = fields.Binary(
         string="Approval Email Attachment",
-        required=True,
         attachment=True,
         help="Upload the approval email from the compensation company. It must confirm activation of this promotion and show the approved promotion duration.",
     )
