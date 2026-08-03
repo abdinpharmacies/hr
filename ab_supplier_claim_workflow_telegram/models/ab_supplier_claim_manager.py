@@ -1,8 +1,8 @@
 from odoo import _, api, models
 
 
-class ResGroups(models.Model):
-    _inherit = 'res.groups'
+class SupplierClaimManagerService(models.AbstractModel):
+    _inherit = 'ab_supplier_claim_manager_service'
 
     @api.model
     def _employee_has_real_telegram_identity(self, employee):
