@@ -1,3 +1,5 @@
+import base64
+
 from odoo.exceptions import ValidationError
 from odoo.tests.common import TransactionCase
 
@@ -41,6 +43,8 @@ class TestAbSalesSpecificPromo(TransactionCase):
             "disc_percent": 50.0,
             "product_ids": [(6, 0, [self.trigger_product.id])],
             "disc_specific_product_ids": [(6, 0, [self.discount_product.id])],
+            "approval_email_attachment": base64.b64encode(b"approval email"),
+            "approval_email_attachment_filename": "approval_email.eml",
         })
 
     def _new_header(self, products):

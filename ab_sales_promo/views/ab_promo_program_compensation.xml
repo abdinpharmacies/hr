@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_promo_program_view_form_compensation_inherit" model="ir.ui.view">
+            <field name="name">ab_promo_program_view_form_compensation_inherit</field>
+            <field name="model">ab_promo_program</field>
+            <field name="inherit_id" ref="ab_promo_program.ab_promo_program_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='supplier_id']" position="attributes">
+                    <attribute name="domain">[('code', '=like', '1-%')]</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='budget']/.." position="after">
+                    <group string="Compensation Details">
+                        <field name="compensation_company_id"/>
+                        <field name="compensation_timing"/>
+                        <field name="compensation_type"/>
+                        <field name="approval_email_attachment"
+                               filename="approval_email_attachment_filename"/>
+                        <field name="approval_email_attachment_filename" invisible="1"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
