@@ -42,6 +42,23 @@ class TestPosPriceBadges(TransactionCase):
             "status": "pending",
         })
 
+    def _create_uom_pair(self):
+        suffix = self.env["ab_product_uom_category"].sudo().search_count([]) + 1
+        category = self.env["ab_product_uom_category"].sudo().create({
+            "name": f"POS UoM Category {suffix}",
+        })
+        default_uom = self.env["ab_product_uom"].sudo().create({
+            "name": f"Unit {suffix}",
+            "category_id": category.id,
+            "factor": 1.0,
+        })
+        alternate_uom = self.env["ab_product_uom"].sudo().create({
+            "name": f"Box {suffix}",
+            "category_id": category.id,
+            "factor": 10.0,
+        })
+        return category, default_uom, alternate_uom
+
     def _create_sales_line(self, product, sell_price):
         return self.env["ab_sales_line"].sudo().create({
             "header_id": self._create_header().id,
@@ -84,6 +101,19 @@ class TestPosPriceBadges(TransactionCase):
         self._create_sales_line(product, 15.0)
         with self.assertRaises(ValidationError):
             self._create_sales_line(product, 7.0)
+
+    def test_pos_line_uom_uses_default_when_product_is_restricted(self):
+        category, default_uom, alternate_uom = self._create_uom_pair()
+        product = self._create_product("POS-DEFAULT-UOM-ONLY", 10.0, True)
+        product.write({
+            "uom_category_id": category.id,
+            "uom_id": default_uom.id,
+            "only_default_sales_uom": True,
+        })
+
+        selected_uom = self.env["ab_sales_pos_api"].sudo()._pos_line_uom_id(product, alternate_uom.id)
+
+        self.assertEqual(selected_uom, default_uom.id)
 
     def test_is_priced_search_uses_stored_product_field(self):
         unpriced = self._create_product("POS-SEARCH-UNPRICED", 10.0, False)

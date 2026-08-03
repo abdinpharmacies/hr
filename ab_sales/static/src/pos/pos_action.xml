@@ -427,7 +427,7 @@
                                                             relation="'ab_product_uom'"
                                                             value="lineUomValue(line)"
                                                             update="(value) => onLineUomUpdate(line, value)"
-                                                            domain="() => line.uom_category_id ? [['category_id', '=', line.uom_category_id]] : [['id', '=', false]]"
+                                                            domain="() => lineUomDomain(line)"
                                                             canCreate="false"
                                                             canCreateEdit="false"
                                                             canQuickCreate="false"

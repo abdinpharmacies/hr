@@ -1077,6 +1077,7 @@ class AbSalesPosAction extends Component {
         this.formatQty = this.formatQty.bind(this);
         this.formatMoney2 = this.formatMoney2.bind(this);
         this.lineUomValue = this.lineUomValue.bind(this);
+        this.lineUomDomain = this.lineUomDomain.bind(this);
         this.onLineUomUpdate = this.onLineUomUpdate.bind(this);
         this._extractUomInfo = this._extractUomInfo.bind(this);
         this._getUomFactor = this._getUomFactor.bind(this);
@@ -1984,11 +1985,18 @@ class AbSalesPosAction extends Component {
             line.uom_category_id = line.uom_category_id || null;
             line.uom_factor = Number.isFinite(line.uom_factor) ? line.uom_factor : parseFloat(line.uom_factor || 0) || 0;
             line.default_uom_id = line.default_uom_id || line.uom_id || null;
+            line.default_uom_name = line.default_uom_name || (line.default_uom_id === line.uom_id ? line.uom_name : "");
             line.default_uom_factor = Number.isFinite(line.default_uom_factor)
                 ? line.default_uom_factor
                 : parseFloat(line.default_uom_factor || 0) || line.uom_factor || 1;
             if (line.default_uom_id && line.default_uom_factor > 0) {
                 this._uomFactorCache.set(line.default_uom_id, line.default_uom_factor);
+            }
+            line.only_default_sales_uom = !!line.only_default_sales_uom;
+            if (line.only_default_sales_uom && line.default_uom_id) {
+                line.uom_id = line.default_uom_id;
+                line.uom_name = line.default_uom_name || line.uom_name;
+                line.uom_factor = line.default_uom_factor || line.uom_factor;
             }
             line.default_sell_price = Number.isFinite(line.default_sell_price)
                 ? line.default_sell_price
@@ -2222,6 +2230,13 @@ class AbSalesPosAction extends Component {
         };
     }
 
+    lineUomDomain(line) {
+        if (line?.only_default_sales_uom) {
+            return line.default_uom_id ? [["id", "=", line.default_uom_id]] : [["id", "=", false]];
+        }
+        return line?.uom_category_id ? [["category_id", "=", line.uom_category_id]] : [["id", "=", false]];
+    }
+
     async _getUomFactor(uomId) {
         const id = parseInt(uomId, 10);
         if (!Number.isFinite(id) || id <= 0) {
@@ -2246,6 +2261,12 @@ class AbSalesPosAction extends Component {
         const bill = this.currentBill;
         if (!bill || !line) {
             return;
+        }
+        if (line.only_default_sales_uom && line.default_uom_id) {
+            value = {
+                id: line.default_uom_id,
+                display_name: line.default_uom_name || line.uom_name || "",
+            };
         }
         if (!value || !value.id) {
             line.uom_id = null;
@@ -2831,6 +2852,20 @@ class AbSalesPosAction extends Component {
                 existing.product_is_priced = product.is_priced !== false;
                 this._syncAvailablePricesForUom(existing);
             }
+            const {uomId, uomName, uomFactor} = this._extractUomInfo(product);
+            if (uomId) {
+                existing.default_uom_id = uomId;
+                existing.default_uom_name = uomName;
+                existing.default_uom_factor = uomFactor || 1;
+            }
+            if ("only_default_sales_uom" in product) {
+                existing.only_default_sales_uom = !!product.only_default_sales_uom;
+            }
+            if (existing.only_default_sales_uom && existing.default_uom_id) {
+                existing.uom_id = existing.default_uom_id;
+                existing.uom_name = existing.default_uom_name || existing.uom_name || "";
+                existing.uom_factor = existing.default_uom_factor || existing.uom_factor || 0;
+            }
             const currentQty = parseQtyExpression(existing.qty_str);
             existing.qty_str = String((currentQty || 0) + qty);
             this._recomputeLine(existing);
@@ -2867,7 +2902,9 @@ class AbSalesPosAction extends Component {
                 uom_category_id: uomCategoryId,
                 uom_factor: uomFactor || 0,
                 default_uom_id: uomId,
+                default_uom_name: uomName,
                 default_uom_factor: uomFactor || 1,
+                only_default_sales_uom: !!product.only_default_sales_uom,
                 default_sell_price: defaultPrice,
                 base_sell_price: defaultPrice,
             };
@@ -3707,7 +3744,11 @@ class AbSalesPosAction extends Component {
             if (defaultUomId && defaultUomFactor > 0) {
                 this._uomFactorCache.set(defaultUomId, defaultUomFactor);
             }
-            line.default_uom_id = line.default_uom_id || defaultUomId;
+            line.only_default_sales_uom = !!details.only_default_sales_uom;
+            line.default_uom_id = line.only_default_sales_uom ? defaultUomId : (line.default_uom_id || defaultUomId);
+            line.default_uom_name = line.only_default_sales_uom
+                ? (details.uom_name || "")
+                : (line.default_uom_name || details.uom_name || "");
             if (defaultUomFactor > 0) {
                 line.default_uom_factor = defaultUomFactor;
             } else if (!line.default_uom_factor) {
@@ -3730,6 +3771,11 @@ class AbSalesPosAction extends Component {
             line.available_prices_base = Array.isArray(details.available_prices) ? details.available_prices : [];
             line.inventory_table_html = details.inventory_table_html || "";
             if (details.uom_id) {
+                if (line.only_default_sales_uom) {
+                    line.uom_id = details.uom_id;
+                    line.uom_name = details.uom_name || line.uom_name || "";
+                    line.uom_factor = parseFloat(details.uom_factor || 0) || line.uom_factor || 0;
+                }
                 if (!line.uom_id || line.uom_id === details.uom_id) {
                     line.uom_id = details.uom_id;
                     line.uom_name = details.uom_name || line.uom_name || "";

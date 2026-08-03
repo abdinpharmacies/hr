@@ -148,8 +148,28 @@ class AbSalesPosApi(models.TransientModel):
         if not product_ids:
             return bills
 
-        products = self.env["ab_product"].sudo().browse(list(product_ids)).exists().read(["is_priced"])
-        is_priced_by_product = {row["id"]: bool(row.get("is_priced")) for row in products}
+        products = self.env["ab_product"].sudo().browse(list(product_ids)).exists().read([
+            "is_priced",
+            "only_default_sales_uom",
+            "uom_id",
+        ])
+        uom_ids = []
+        product_flags = {}
+        for row in products:
+            uom_val = row.get("uom_id") or False
+            uom_id = uom_val[0] if isinstance(uom_val, (list, tuple)) and uom_val else False
+            if uom_id:
+                uom_ids.append(uom_id)
+            product_flags[row["id"]] = {
+                "is_priced": bool(row.get("is_priced")),
+                "only_default_sales_uom": bool(row.get("only_default_sales_uom")),
+                "uom_id": uom_id,
+                "uom_name": uom_val[1] if isinstance(uom_val, (list, tuple)) and len(uom_val) > 1 else "",
+            }
+        uom_factor_by_id = {}
+        if uom_ids:
+            uoms = self.env["ab_product_uom"].sudo().browse(list(set(uom_ids))).read(["factor"])
+            uom_factor_by_id = {int(uom["id"]): float(uom.get("factor") or 1.0) for uom in uoms}
         for bill in bills:
             if not isinstance(bill, dict):
                 continue
@@ -160,8 +180,19 @@ class AbSalesPosApi(models.TransientModel):
                     product_id = int(line.get("product_id") or 0)
                 except Exception:
                     product_id = 0
-                if product_id in is_priced_by_product:
-                    line["product_is_priced"] = is_priced_by_product[product_id]
+                flags = product_flags.get(product_id)
+                if flags:
+                    uom_id = flags["uom_id"]
+                    uom_factor = uom_factor_by_id.get(uom_id, 1.0) if uom_id else 1.0
+                    line["product_is_priced"] = flags["is_priced"]
+                    line["only_default_sales_uom"] = flags["only_default_sales_uom"]
+                    line["default_uom_id"] = uom_id or line.get("default_uom_id") or False
+                    line["default_uom_name"] = flags["uom_name"] or line.get("default_uom_name") or ""
+                    line["default_uom_factor"] = uom_factor
+                    if flags["only_default_sales_uom"] and uom_id:
+                        line["uom_id"] = uom_id
+                        line["uom_name"] = flags["uom_name"]
+                        line["uom_factor"] = uom_factor
         return bills
 
     @api.model
@@ -368,6 +399,7 @@ class AbSalesPosApi(models.TransientModel):
                 "uom_factor": line.product_id.uom_id.factor if line.product_id.uom_id else 1.0,
                 "default_uom_id": line.product_id.uom_id.id if line.product_id.uom_id else False,
                 "default_uom_factor": line.product_id.uom_id.factor if line.product_id.uom_id else 1.0,
+                "only_default_sales_uom": bool(line.product_id.only_default_sales_uom),
                 "default_price": store_default_price,
             }
         except Exception:
@@ -399,6 +431,7 @@ class AbSalesPosApi(models.TransientModel):
                 "uom_factor": line.product_id.uom_id.factor if line.product_id.uom_id else 1.0,
                 "default_uom_id": line.product_id.uom_id.id if line.product_id.uom_id else False,
                 "default_uom_factor": line.product_id.uom_id.factor if line.product_id.uom_id else 1.0,
+                "only_default_sales_uom": bool(line.product_id.only_default_sales_uom),
                 "default_price": self._store_default_price(store_id, line.product_id),
             }
 
@@ -433,6 +466,7 @@ class AbSalesPosApi(models.TransientModel):
             "eplus_serial",
             "uom_id",
             "uom_category_id",
+            "only_default_sales_uom",
         ]
         products = self.env["ab_product"].browse(product_ids).read(fields_list)
         serials = [int(p.get("eplus_serial") or 0) for p in products if p.get("eplus_serial")]
@@ -740,6 +774,23 @@ class AbSalesPosApi(models.TransientModel):
         }
 
     @api.model
+    def _pos_line_uom_id(self, product, uom_val=False):
+        if not product:
+            return False
+
+        default_uom_id = product.uom_id.id if product.uom_id else False
+        if product.only_default_sales_uom:
+            return default_uom_id
+
+        if isinstance(uom_val, (list, tuple)):
+            uom_val = uom_val[0] if uom_val else False
+        try:
+            uom_id = int(uom_val) if uom_val else 0
+        except Exception:
+            uom_id = 0
+        return uom_id or default_uom_id
+
+    @api.model
     def pos_submit(self, payload=None, **kwargs):
         """
         Create and submit a sales header from a POS payload.
@@ -801,7 +852,7 @@ class AbSalesPosApi(models.TransientModel):
                 product_ids.append(pid)
         products = self.env["ab_product"].browse(list(set(product_ids))).exists() if product_ids else self.env[
             "ab_product"]
-        default_uom_by_product = {p.id: (p.uom_id.id if p.uom_id else False) for p in products}
+        product_by_id = {product.id: product for product in products}
 
         lines_to_create = []
         for line in line_vals:
@@ -809,17 +860,7 @@ class AbSalesPosApi(models.TransientModel):
             if not vals.get("product_id"):
                 continue
             product_id = int(vals.get("product_id"))
-            uom_val = vals.get("uom_id")
-            if isinstance(uom_val, (list, tuple)):
-                uom_val = uom_val[0] if uom_val else False
-            try:
-                uom_val = int(uom_val) if uom_val else 0
-            except Exception:
-                uom_val = 0
-            if not uom_val:
-                vals["uom_id"] = default_uom_by_product.get(product_id) or False
-            else:
-                vals["uom_id"] = uom_val
+            vals["uom_id"] = self._pos_line_uom_id(product_by_id.get(product_id), vals.get("uom_id"))
             vals["header_id"] = header.id
             vals["qty_str"] = vals.get("qty_str") or "1"
             self._pos_fill_inventory_json_for_price_validation(header, vals)

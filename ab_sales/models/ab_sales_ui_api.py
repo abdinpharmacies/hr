@@ -1522,6 +1522,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 "eplus_serial",
                 "uom_id",
                 "uom_category_id",
+                "only_default_sales_uom",
             ],
         )
         limit = max(1, min(120, int(limit or 60)))
@@ -1654,6 +1655,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 "eplus_serial",
                 "uom_id",
                 "uom_category_id",
+                "only_default_sales_uom",
             ],
         )
         limit = max(1, min(120, int(limit or 60)))

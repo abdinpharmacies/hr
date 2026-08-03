@@ -46,6 +46,9 @@
                         <button name="btn_get_stores_balance" type="object" string="Show Balance" class="btn-info btn-block"/>
                     </div>
                 </xpath>
+                <xpath expr="//field[@name='uom_id']" position="after">
+                    <field name="only_default_sales_uom"/>
+                </xpath>
             </field>
         </record>
 
