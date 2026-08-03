@@ -1699,8 +1699,7 @@ class SupplierClaimCycle(models.Model):
             Employee = self.env['ab_hr_employee'].sudo()
         except KeyError:
             return result
-        Groups = self.env['res.groups'].sudo()
-        manager_employee = Groups._get_stored_manager(dept_code)
+        manager_employee = self.env['ab_supplier_claim_manager_service'].sudo()._get_stored_manager(dept_code)
 
         if manager_employee and manager_employee.user_id:
             result['managers'].append(manager_employee)
