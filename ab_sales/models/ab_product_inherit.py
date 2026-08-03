@@ -142,6 +142,7 @@ class Product(models.Model):
     balance = fields.Float(compute='_compute_balance')
     has_balance = fields.Boolean(compute='_compute_has_balance', search='_search_has_balance')
     has_pos_balance = fields.Boolean(compute='_compute_has_pos_balance', search='_search_has_pos_balance')
+    only_default_sales_uom = fields.Boolean(default=False)
 
     @api.model
     def _search_display_name(self, operator, value):
@@ -201,7 +202,7 @@ class Product(models.Model):
             self.env.cr.execute("""
                                 select product_eplus_serial, sum(balance) as balance
                                 from ab_sales_inventory
-                                where product_eplus_serial = any(%s)
+                                where product_eplus_serial = any (%s)
                                   and store_id is not null
                                   and balance != 0
                                 group by product_eplus_serial
