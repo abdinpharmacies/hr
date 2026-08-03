@@ -22,7 +22,13 @@ Module creation rules:
 - Do not edit shared frontend components in a way that can affect other modules.
 - If frontend work is required, create new module-scoped classes, components, or templates and connect them only to the working module.
 - Keep the module self-contained and limit changes to the module being developed.
-- Use module technical names with underscores `_`, not dots `.`.
+- Use underscores `_`, not dots `.`, in module technical names and every custom model technical name.
+- Put all security configuration in the module `security/` folder. Security groups, ACLs, record rules, privileges, and implied groups belong in XML/CSV security files, not Python.
+- Do not create, update, or configure `res.groups` or group membership from Python code.
+- Do not add hooks. Do not add `pre_init_hook`, `post_init_hook`, `uninstall_hook`, empty hook files, or manifest hook declarations unless the user explicitly asks for a bounded deployed-production migration.
+- When a module uses `ab_hr` models or fields, add `ab_hr` in `depends`.
+- When a module needs another module installed or upgraded, use manifest dependencies or manifest `auto_install` only. Do not auto-install modules from Python code.
+- For work on Telegram bot messages, keep changes inside `ab_telegram_bot` unless the user explicitly names another module.
 - Keep `author` for company/team ownership.
 - All new modules include `developer = "'<current git user>',"` in `__manifest__.py`.
 - Before finishing any newly created module, verify its `__manifest__.py` includes `developer = "'<current git user>',"` without replacing the team/company `author`.
@@ -507,6 +513,8 @@ For translation files such as `ar.po` and `ar_001.po`, agents must:
   language is Arabic.
 - Do not hardcode Arabic in Python labels, XML views, actions, menus, JS
   strings, or OWL templates.
+- For every user-facing text changed or added, maintain the Arabic and English
+  pair: English source in code/XML/JS and Arabic in both translation files.
 - Wrap frontend JavaScript user-facing strings with `_t(...)`.
 - For XML and template text, keep English source strings and translate them
   through `.po` files.
