@@ -20,6 +20,13 @@
                     <field name="is_odoo"/>
                     <field name="invoice_date"/>
                     <field name="promo_id"/>
+                    <field name="supplier_id"/>
+                    <field name="compensation_company_id"/>
+                    <field name="compensation_timing"/>
+                    <field name="compensation_type"/>
+                    <field name="approval_email_attachment"
+                           filename="approval_email_attachment_filename"/>
+                    <field name="approval_email_attachment_filename" optional="hide"/>
                     <field name="promo_date_status"/>
                     <field name="promo_start"/>
                     <field name="promo_end"/>
@@ -39,6 +46,10 @@
                     <field name="store_id"/>
                     <field name="product_id"/>
                     <field name="promo_id"/>
+                    <field name="supplier_id" domain="[('code', '=like', '1-%')]"/>
+                    <field name="compensation_company_id"/>
+                    <field name="compensation_timing"/>
+                    <field name="compensation_type"/>
                     <field name="promo_date_status"/>
                     <field name="is_odoo"/>
                     <field name="invoice_date"/>
@@ -52,6 +63,10 @@
                     <filter name="group_invoice" string="Invoice" context="{'group_by': 'invoice_eplus_serial'}"/>
                     <filter name="group_product" string="Product" context="{'group_by': 'product_id'}"/>
                     <filter name="group_promo" string="Promo" context="{'group_by': 'promo_id'}"/>
+                    <filter name="group_supplier" string="Supplier" context="{'group_by': 'supplier_id'}"/>
+                    <filter name="group_compensation_company" string="Compensation Company" context="{'group_by': 'compensation_company_id'}"/>
+                    <filter name="group_compensation_timing" string="Compensation Timing" context="{'group_by': 'compensation_timing'}"/>
+                    <filter name="group_compensation_type" string="Compensation Type" context="{'group_by': 'compensation_type'}"/>
                     <filter name="group_is_odoo" string="Odoo Invoice" context="{'group_by': 'is_odoo'}"/>
                     <filter name="group_promo_date_status" string="Promo Date Status" context="{'group_by': 'promo_date_status'}"/>
                     <filter name="group_invoice_date" string="Invoice Date" context="{'group_by': 'invoice_date'}"/>

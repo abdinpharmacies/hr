@@ -55,6 +55,46 @@ class AbSalesPromoReportLine(models.Model):
     is_odoo = fields.Boolean(string="Odoo Invoice", index=True, readonly=True)
     invoice_date = fields.Date(string="Invoice Date", index=True, readonly=True)
     promo_id = fields.Many2one("ab_promo_program", string="Promo", index=True, readonly=True)
+    supplier_id = fields.Many2one(
+        related="promo_id.supplier_id",
+        string="Supplier",
+        store=True,
+        readonly=True,
+        index=True,
+        domain=[("code", "=like", "1-%")],
+    )
+    compensation_company_id = fields.Many2one(
+        related="promo_id.compensation_company_id",
+        string="Compensation Company",
+        store=True,
+        readonly=True,
+        index=True,
+    )
+    compensation_timing = fields.Selection(
+        related="promo_id.compensation_timing",
+        string="Compensation Timing",
+        store=True,
+        readonly=True,
+        index=True,
+    )
+    compensation_type = fields.Selection(
+        related="promo_id.compensation_type",
+        string="Compensation Type",
+        store=True,
+        readonly=True,
+        index=True,
+    )
+    approval_email_attachment = fields.Binary(
+        related="promo_id.approval_email_attachment",
+        string="Approval Email Attachment",
+        readonly=True,
+    )
+    approval_email_attachment_filename = fields.Char(
+        related="promo_id.approval_email_attachment_filename",
+        string="Approval Email Filename",
+        store=True,
+        readonly=True,
+    )
     promo_start = fields.Datetime(related="promo_id.rule_date_from", string="Promo Start", store=True, readonly=True)
     promo_end = fields.Datetime(related="promo_id.rule_date_to", string="Promo End", store=True, readonly=True)
     promo_date_status = fields.Selection(

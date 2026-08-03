@@ -1,3 +1,5 @@
+import base64
+
 from odoo.tests.common import TransactionCase
 
 
@@ -26,6 +28,8 @@ class TestSalesPromoReport(TransactionCase):
             "rule_date_to": "2026-05-31 23:59:59",
             "disc_percent": 50.0,
             "product_ids": [(6, 0, [self.product.id])],
+            "approval_email_attachment": base64.b64encode(b"approval email"),
+            "approval_email_attachment_filename": "approval_email.eml",
         })
 
     def test_build_report_vals_matches_discount_to_compensation(self):
@@ -142,6 +146,8 @@ class TestSalesPromoReport(TransactionCase):
             "rule_date_to": "2026-05-31 23:59:59",
             "disc_percent": 50.0,
             "product_ids": [(6, 0, [self.product.id])],
+            "approval_email_attachment": base64.b64encode(b"approval email"),
+            "approval_email_attachment_filename": "approval_email.eml",
         })
         wizard = self.env["ab_sales_promo_report_wizard"].new({
             "date_from": "2026-05-01",

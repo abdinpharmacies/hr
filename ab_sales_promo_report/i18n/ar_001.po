@@ -1,0 +1,61 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_promo_report
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-27 00:00+0000\n"
+"PO-Revision-Date: 2026-07-27 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__approval_email_attachment
+msgid "Approval Email Attachment"
+msgstr "مرفق إيميل الموافقة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__approval_email_attachment_filename
+msgid "Approval Email Filename"
+msgstr "اسم ملف إيميل الموافقة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields.selection,name:ab_sales_promo_report.selection__ab_sales_promo_report_line__compensation_type__cash
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__compensation_company_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_search
+msgid "Compensation Company"
+msgstr "الشركة الواجب عليها التعويض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__compensation_timing
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_search
+msgid "Compensation Timing"
+msgstr "طبيعة التعويض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__compensation_type
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_search
+msgid "Compensation Type"
+msgstr "نوع التعويض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields.selection,name:ab_sales_promo_report.selection__ab_sales_promo_report_line__compensation_type__goods
+msgid "Goods"
+msgstr "بضاعة"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__supplier_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_search
+msgid "Supplier"
+msgstr "المورد"
