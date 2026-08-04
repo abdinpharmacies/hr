@@ -10,6 +10,7 @@ msgstr ""
 "PO-Revision-Date: 2026-07-19 15:40+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
@@ -340,6 +341,18 @@ msgstr "آخر تحديث في"
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_product_location
 msgid "Location"
 msgstr "الموقع"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_product_card_view_form_smart_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_product_view_form_smart_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_product_view_list_smart_transfer
+msgid "Min Sale/Purchase Qty"
+msgstr "الحد الأدنى لكمية البيع/الشراء"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_product__min_sale_purchase_qty
+msgid "Minimum Sale/Purchase Qty"
+msgstr "الحد الأدنى لكمية البيع/الشراء"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_smart_wizard__items_per_header
@@ -1196,6 +1209,63 @@ msgstr "رأس التحويل"
 #: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
 msgid "id"
 msgstr "المعرف"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Add Product"
+msgstr "إضافة صنف"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Bulk Entry"
+msgstr "إدخال جماعي"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__product_import_file
+msgid "Excel File"
+msgstr "ملف إكسل"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__product_import_filename
+msgid "Excel Filename"
+msgstr "اسم ملف إكسل"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Import Products"
+msgstr "استيراد الأصناف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__product_import_text
+msgid "Paste Products"
+msgstr "لصق الأصناف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_smart_wizard__product_import_text
+msgid "Paste product code and quantity from Excel, one product per line."
+msgstr "الصق كود الصنف والكمية من إكسل، صنف واحد في كل سطر."
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Paste from Excel: product code and quantity, one product per line"
+msgstr "الصق من إكسل: كود الصنف والكمية، صنف واحد في كل سطر"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Product Selection"
+msgstr "اختيار الأصناف"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_product_ids
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__product_line_ids
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Requested Products"
+msgstr "الأصناف المطلوبة"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.BinaryFieldUploadLabel
+msgid "Upload your Excel File"
+msgstr "ارفع ملف إكسل"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_header__smart_stock_method__normal

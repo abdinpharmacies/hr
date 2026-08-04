@@ -5,7 +5,7 @@
        t-inherit-mode="extension">
         <xpath expr="//t[@t-set-slot='toggler'][text()[contains(., 'Upload your file')]]" position="replace">
             <t t-set-slot="toggler">
-                <t t-if="props.name === 'product_import_file'">Upload your Excel File</t>
+                <t t-if="props.name === 'product_import_file'">ارفع ملف إكسل</t>
                 <t t-else="">Upload your file</t>
             </t>
         </xpath>
