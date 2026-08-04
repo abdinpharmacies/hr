@@ -527,6 +527,8 @@ class TestSmartTransfer(TransactionCase):
 
         self.assertNotIn('name="class_id"', view_xml)
         self.assertIn('name="smart_expected_source_stock_qty"', view_xml)
+        self.assertIn('name="smart_over_need_qty"', view_xml)
+        self.assertIn('decoration-danger="smart_qty_exceeds_over_need"', view_xml)
 
     def test_header_view_keeps_smart_stage_buttons(self):
         view_xml = (
@@ -1717,6 +1719,8 @@ class TestSmartTransfer(TransactionCase):
         line.write({"qty": 19})
 
         self.assertEqual(line.qty, 19)
+        self.assertEqual(line.smart_over_need_qty, 8)
+        self.assertTrue(line.smart_qty_exceeds_over_need)
 
     def test_smart_line_qty_increase_uses_original_qty_after_decrease(self):
         header = self._create_smart_header_from_existing_records_or_skip()
@@ -1733,8 +1737,10 @@ class TestSmartTransfer(TransactionCase):
 
         line.write({"qty": 1})
         line.write({"qty": 18})
+        self.assertFalse(line.smart_qty_exceeds_over_need)
 
         line.write({"qty": 19})
+        self.assertTrue(line.smart_qty_exceeds_over_need)
 
         with self.assertRaisesRegex(ValidationError, "cannot exceed 18.000"):
             header.action_smart_to_store_preparation()

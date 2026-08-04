@@ -116,6 +116,7 @@
                     <field name="smart_need_destination_store" readonly="1" optional="hide"/>
                     <field name="smart_need_other_store" readonly="1" optional="hide"/>
                     <field name="smart_total_need" readonly="1" optional="hide"/>
+                    <field name="smart_over_need_qty" readonly="1" optional="show"/>
                     <field name="smart_distribution_ratio" readonly="1" optional="hide"/>
                 </xpath>
                 <xpath expr="//field[@name='line_ids']/form//field[@name='qty']" position="after">
@@ -133,6 +134,7 @@
                     <field name="smart_need_destination_store" readonly="1"/>
                     <field name="smart_need_other_store" readonly="1"/>
                     <field name="smart_total_need" readonly="1"/>
+                    <field name="smart_over_need_qty" readonly="1"/>
                     <field name="smart_distribution_ratio" readonly="1"/>
                 </xpath>
                 <xpath expr="//sheet/notebook" position="inside">
@@ -154,9 +156,11 @@
                         <field name="smart_line_ids"
                                readonly="is_submitted or smart_stage in ('pre_submit', 'submit')">
                             <list editable="bottom" create="0" delete="0"
-                                  default_order="smart_product_location, product_id">
+                                  default_order="smart_product_location, product_id"
+                                  decoration-danger="smart_qty_exceeds_over_need">
                                 <field name="is_submitted" column_invisible="1"/>
                                 <field name="smart_stage" column_invisible="1"/>
+                                <field name="smart_qty_exceeds_over_need" column_invisible="1"/>
                                 <field name="product_code" readonly="1"/>
                                 <field name="product_id" readonly="1"/>
                                 <field name="smart_product_location" readonly="1" optional="show"/>
@@ -180,6 +184,7 @@
                                 <field name="smart_need_destination_store" readonly="1" optional="hide"/>
                                 <field name="smart_need_other_store" readonly="1" optional="hide"/>
                                 <field name="smart_total_need" readonly="1" optional="hide"/>
+                                <field name="smart_over_need_qty" readonly="1" optional="show"/>
                                 <field name="smart_distribution_ratio" readonly="1" optional="hide"/>
                             </list>
                             <form string="Smart Transfer Line">
@@ -198,6 +203,7 @@
                                             <field name="uom_id" readonly="1"/>
                                             <field name="exclusion_reason"
                                                    readonly="parent.is_submitted or parent.smart_stage in ('pre_submit', 'submit')"/>
+                                            <field name="smart_over_need_qty" readonly="1"/>
                                         </group>
                                     </group>
                                 </sheet>
@@ -261,6 +267,7 @@
                     <field name="smart_need_destination_store" readonly="1" optional="hide"/>
                     <field name="smart_need_other_store" readonly="1" optional="hide"/>
                     <field name="smart_total_need" readonly="1" optional="hide"/>
+                    <field name="smart_over_need_qty" readonly="1" optional="show"/>
                     <field name="smart_distribution_ratio" readonly="1" optional="hide"/>
                 </xpath>
             </field>
@@ -286,6 +293,7 @@
                     <field name="smart_need_destination_store" readonly="1"/>
                     <field name="smart_need_other_store" readonly="1"/>
                     <field name="smart_total_need" readonly="1"/>
+                    <field name="smart_over_need_qty" readonly="1"/>
                     <field name="smart_distribution_ratio" readonly="1"/>
                 </xpath>
             </field>
@@ -333,9 +341,11 @@
             <field name="name">ab_transfer_smart_line_view_list</field>
             <field name="model">ab_transfer_smart_line</field>
             <field name="arch" type="xml">
-                <list string="Smart Transfer Data" editable="bottom" create="0" delete="0">
+                <list string="Smart Transfer Data" editable="bottom" create="0" delete="0"
+                      decoration-danger="smart_qty_exceeds_over_need">
                     <field name="is_submitted" column_invisible="1"/>
                     <field name="smart_stage" column_invisible="1"/>
+                    <field name="smart_qty_exceeds_over_need" column_invisible="1"/>
                     <field name="header_id" readonly="1"/>
                     <field name="from_store_id" readonly="1"/>
                     <field name="to_store_id" readonly="1"/>
@@ -360,6 +370,7 @@
                     <field name="smart_need_destination_store" readonly="1"/>
                     <field name="smart_need_other_store" readonly="1"/>
                     <field name="smart_total_need" readonly="1"/>
+                    <field name="smart_over_need_qty" readonly="1"/>
                     <field name="smart_distribution_ratio" readonly="1"/>
                 </list>
             </field>
@@ -387,6 +398,7 @@
                                 <field name="uom_id" readonly="1"/>
                                 <field name="exclusion_reason"
                                        readonly="is_submitted or smart_stage in ('pre_submit', 'submit')"/>
+                                <field name="smart_over_need_qty" readonly="1"/>
                             </group>
                         </group>
                         <group>
@@ -404,6 +416,7 @@
                             <field name="smart_need_destination_store" readonly="1"/>
                             <field name="smart_need_other_store" readonly="1"/>
                             <field name="smart_total_need" readonly="1"/>
+                            <field name="smart_over_need_qty" readonly="1"/>
                             <field name="smart_distribution_ratio" readonly="1"/>
                         </group>
                     </sheet>
@@ -415,9 +428,11 @@
             <field name="name">ab_transfer_smart_line_report_view_list</field>
             <field name="model">ab_transfer_smart_line</field>
             <field name="arch" type="xml">
-                <list string="Smart Transfer Lines" create="0" edit="0" delete="0" duplicate="0">
+                <list string="Smart Transfer Lines" create="0" edit="0" delete="0" duplicate="0"
+                      decoration-danger="smart_qty_exceeds_over_need">
                     <field name="is_submitted" column_invisible="1"/>
                     <field name="smart_stage" column_invisible="1"/>
+                    <field name="smart_qty_exceeds_over_need" column_invisible="1"/>
                     <field name="header_id"/>
                     <field name="from_store_id"/>
                     <field name="to_store_id"/>
@@ -442,6 +457,7 @@
                     <field name="smart_need_destination_store"/>
                     <field name="smart_need_other_store" optional="hide"/>
                     <field name="smart_total_need"/>
+                    <field name="smart_over_need_qty"/>
                     <field name="smart_distribution_ratio"/>
                     <field name="sell_price" optional="hide"/>
                     <field name="cost" optional="hide"/>
@@ -495,6 +511,7 @@
                             <field name="smart_need_destination_store" readonly="1"/>
                             <field name="smart_need_other_store" readonly="1"/>
                             <field name="smart_total_need" readonly="1"/>
+                            <field name="smart_over_need_qty" readonly="1"/>
                             <field name="smart_distribution_ratio" readonly="1"/>
                         </group>
                         <group>

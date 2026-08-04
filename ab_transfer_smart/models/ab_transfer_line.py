@@ -96,12 +96,26 @@ class AbTransferLine(models.Model):
         readonly=True,
         copy=False,
     )
+    smart_over_need_qty = fields.Float(
+        string="Over Need",
+        digits=(16, 3),
+        compute="_compute_smart_over_need_qty",
+        readonly=True,
+    )
     smart_distribution_ratio = fields.Float(
         string="Distribution Ratio",
         digits=(16, 6),
         readonly=True,
         copy=False,
     )
+
+    @api.depends("smart_source_stock_qty", "smart_total_need")
+    def _compute_smart_over_need_qty(self):
+        for line in self:
+            line.smart_over_need_qty = (
+                float(line.smart_source_stock_qty or 0.0)
+                - float(line.smart_total_need or 0.0)
+            )
 
     @api.depends("smart_source_stock_qty", "product_id", "from_store_id")
     def _compute_smart_expected_source_stock_qty(self):
