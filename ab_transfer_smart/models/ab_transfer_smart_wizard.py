@@ -231,6 +231,24 @@ class AbTransferSmartWizard(models.Model):
             if len(rec.product_line_ids) > 1000:
                 raise ValidationError(_("Smart product lines are limited to 1000 products."))
 
+    @api.constrains("product_line_ids", "product_line_ids.product_id")
+    def _check_unique_product_lines(self):
+        for rec in self:
+            rec._ensure_unique_product_lines()
+
+    @api.onchange("product_line_ids", "product_line_ids.product_id")
+    def _onchange_unique_product_lines(self):
+        for rec in self:
+            rec._ensure_unique_product_lines()
+
+    def _ensure_unique_product_lines(self):
+        self.ensure_one()
+        product_ids = self.product_line_ids.mapped("product_id").ids
+        if len(product_ids) != len(set(product_ids)):
+            raise ValidationError(
+                _("Each product can be added once only. Update the existing line quantity instead.")
+            )
+
     @api.constrains("from_store_id", "to_stores_id")
     def _check_to_stores(self):
         for rec in self:

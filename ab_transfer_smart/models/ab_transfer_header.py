@@ -180,6 +180,15 @@ class AbTransferHeader(models.Model):
                     % SMART_TARGET_PRODUCT_LIMIT
                 )
 
+    @api.constrains("smart_product_line_ids", "smart_product_line_ids.product_id")
+    def _check_unique_smart_product_lines(self):
+        for rec in self:
+            product_ids = rec.smart_product_line_ids.mapped("product_id").ids
+            if len(product_ids) != len(set(product_ids)):
+                raise ValidationError(
+                    _("Each product can be added once only. Update the existing line quantity instead.")
+                )
+
     @api.depends("smart_line_ids")
     def _compute_smart_items_count(self):
         for rec in self:

@@ -59,6 +59,24 @@ class AbTransferSmartProductLine(models.Model):
             if float_compare(rec.qty or 0.0, 0.0, precision_digits=3) <= 0:
                 raise ValidationError(_("Smart product quantity must be greater than zero."))
 
+    @api.constrains("product_id", "wizard_id", "header_id")
+    def _check_unique_product_per_parent(self):
+        for rec in self:
+            if not rec.product_id:
+                continue
+            domain = [("product_id", "=", rec.product_id.id), ("id", "!=", rec.id)]
+            if rec.wizard_id:
+                domain.append(("wizard_id", "=", rec.wizard_id.id))
+            elif rec.header_id:
+                domain.append(("header_id", "=", rec.header_id.id))
+            else:
+                continue
+            if self.search_count(domain):
+                raise ValidationError(
+                    _("Product %s is already added. Update the existing line quantity instead.")
+                    % rec.product_id.display_name
+                )
+
     @api.onchange("product_id")
     def _onchange_product_id(self):
         for rec in self:

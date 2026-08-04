@@ -139,13 +139,15 @@
                                             invisible="state == 'done'"/>
                                     <field name="product_import_file"
                                            filename="product_import_filename"
+                                           nolabel="1"
+                                           options="{'accepted_file_extensions': '.xlsx,.csv,.txt'}"
                                            readonly="state == 'done'"/>
                                     <field name="product_import_filename" invisible="1"/>
                                     <button name="action_import_product_file"
                                             type="object"
                                             string="Import Products"
                                             class="btn-secondary"
-                                            invisible="state == 'done'"/>
+                                            invisible="state == 'done' or not product_import_file"/>
                                 </group>
                                 <field name="product_line_ids" readonly="state == 'done'">
                                     <list editable="bottom" limit="1000">

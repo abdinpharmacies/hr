@@ -759,6 +759,28 @@ class TestSmartTransfer(TransactionCase):
         self.assertFalse(wizard.product_import_file)
         self.assertFalse(wizard.product_import_filename)
 
+    def test_wizard_product_lines_reject_duplicate_manual_product(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-DUPLICATE-LINE", 99023, uom)
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "product_line_ids": [(0, 0, {
+                "product_id": product.id,
+                "qty": 5,
+            })],
+        })
+
+        with self.assertRaises(ValidationError):
+            wizard.write({
+                "product_line_ids": [(0, 0, {
+                    "product_id": product.id,
+                    "qty": 3,
+                })],
+            })
+
     @staticmethod
     def _minimal_xlsx(rows):
         shared_strings = []
