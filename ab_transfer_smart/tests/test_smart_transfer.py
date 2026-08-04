@@ -1701,10 +1701,10 @@ class TestSmartTransfer(TransactionCase):
 
         self.assertEqual(line.qty, 18)
 
-    def test_purchase_cannot_increase_smart_line_qty_above_source_surplus(self):
-        header = self._create_smart_header()
-        uom = self._create_smart_uom()
-        product = self._create_smart_product("SMART-QTY-OVER", 99103, uom)
+    def test_purchase_can_increase_smart_line_qty_above_source_surplus_before_store_preparation(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_products_or_skip(1)[0]
+        uom = product.uom_id
         line = self._create_smart_line(
             header,
             product,
@@ -1714,13 +1714,14 @@ class TestSmartTransfer(TransactionCase):
             smart_total_need=42,
         )
 
-        with self.assertRaisesRegex(ValidationError, "cannot exceed 18.000"):
-            line.write({"qty": 19})
+        line.write({"qty": 19})
+
+        self.assertEqual(line.qty, 19)
 
     def test_smart_line_qty_increase_uses_original_qty_after_decrease(self):
-        header = self._create_smart_header()
-        uom = self._create_smart_uom()
-        product = self._create_smart_product("SMART-QTY-ORIGINAL", 99104, uom)
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_products_or_skip(1)[0]
+        uom = product.uom_id
         line = self._create_smart_line(
             header,
             product,
@@ -1730,11 +1731,31 @@ class TestSmartTransfer(TransactionCase):
             smart_total_need=42,
         )
 
-        line.write({"qty": 0})
+        line.write({"qty": 1})
         line.write({"qty": 18})
 
+        line.write({"qty": 19})
+
         with self.assertRaisesRegex(ValidationError, "cannot exceed 18.000"):
-            line.write({"qty": 19})
+            header.action_smart_to_store_preparation()
+        self.assertEqual(header.smart_stage, SMART_STAGE_PURCHASE_PREPARATION)
+
+    def test_store_preparation_blocks_smart_line_qty_above_source_surplus(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_products_or_skip(1)[0]
+        uom = product.uom_id
+        self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=10,
+            smart_source_stock_qty=50,
+            smart_total_need=42,
+        ).write({"qty": 19})
+
+        with self.assertRaisesRegex(ValidationError, "Allowed over quantity is 8.000"):
+            header.action_smart_to_store_preparation()
+        self.assertEqual(header.smart_stage, SMART_STAGE_PURCHASE_PREPARATION)
 
     def test_smart_line_qty_cannot_be_negative(self):
         header = self._create_smart_header()

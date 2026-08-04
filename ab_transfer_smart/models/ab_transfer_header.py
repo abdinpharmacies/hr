@@ -379,9 +379,11 @@ class AbTransferHeader(models.Model):
         self._check_smart_group(SMART_GROUP_PURCHASE)
         self._check_smart_stage(SMART_STAGE_PURCHASE_PREPARATION)
         self._check_smart_not_submitted()
-        self._validate_smart_source_stock_available(
-            self.smart_line_ids.filtered(lambda line: not line.exclusion_reason)
+        eligible_lines = self.smart_line_ids.filtered(
+            lambda line: not line.exclusion_reason
         )
+        eligible_lines._check_smart_qty_allowed_over()
+        self._validate_smart_source_stock_available(eligible_lines)
         self.write({"smart_stage": SMART_STAGE_STORE_PREPARATION})
         return self._smart_notification(
             _("Smart Transfer Stage"),

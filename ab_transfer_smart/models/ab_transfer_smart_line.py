@@ -75,16 +75,15 @@ class AbTransferSmartLine(models.Model):
         new_qty = vals["qty"] or 0.0
         self._check_smart_qty_value(new_qty)
         self._check_smart_qty_editable()
-        for rec in self:
-            if float_compare(new_qty, rec.qty or 0.0, precision_digits=3) <= 0:
-                continue
 
+    def _check_smart_qty_allowed_over(self):
+        for rec in self:
             original_qty = rec.smart_original_qty or rec.qty or 0.0
             allowed_over_qty = (rec.smart_source_stock_qty or 0.0) - (
                     rec.smart_total_need or 0.0
             )
             max_qty = original_qty + max(allowed_over_qty, 0.0)
-            if float_compare(new_qty, max_qty, precision_digits=3) > 0:
+            if float_compare(rec.qty or 0.0, max_qty, precision_digits=3) > 0:
                 raise ValidationError(
                     _(
                         "Smart transfer quantity cannot exceed %(max_qty).3f. "
