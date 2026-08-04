@@ -48,6 +48,11 @@ class AbTransferSmartLine(models.Model):
         compute="_compute_smart_qty_exceeds_over_need",
         readonly=True,
     )
+    smart_qty_exceeds_expected_stock = fields.Boolean(
+        string="Quantity Exceeds Expected Stock",
+        compute="_compute_smart_qty_exceeds_expected_stock",
+        readonly=True,
+    )
 
     @api.depends(
         "qty",
@@ -73,6 +78,22 @@ class AbTransferSmartLine(models.Model):
         if self.smart_qty_before_int:
             return self.qty or 0.0
         return self.smart_original_qty or 0.0
+
+    @api.depends(
+        "qty",
+        "smart_expected_source_stock_qty",
+        "exclusion_reason",
+    )
+    def _compute_smart_qty_exceeds_expected_stock(self):
+        for rec in self:
+            rec.smart_qty_exceeds_expected_stock = (
+                not rec.exclusion_reason
+                and float_compare(
+                    rec.qty or 0.0,
+                    rec.smart_expected_source_stock_qty or 0.0,
+                    precision_digits=3,
+                ) > 0
+            )
 
     def _check_smart_line_editable(self):
         locked = self.filtered(
@@ -110,21 +131,30 @@ class AbTransferSmartLine(models.Model):
         self._check_smart_qty_editable()
 
     def _check_smart_qty_allowed_over(self):
-        for rec in self:
+        errors = []
+        for rec in self.filtered(lambda line: not line.exclusion_reason):
             original_qty = rec._get_smart_allowed_base_qty()
-            allowed_over_qty = rec.smart_over_need_qty or 0.0
-            max_qty = original_qty + max(allowed_over_qty, 0.0)
+            allowed_over_qty = max(rec.smart_over_need_qty or 0.0, 0.0)
+            max_qty = original_qty + allowed_over_qty
             if float_compare(rec.qty or 0.0, max_qty, precision_digits=3) > 0:
-                raise ValidationError(
-                    _(
-                        "Smart transfer quantity cannot exceed %(max_qty).3f. "
-                        "Allowed over quantity is %(allowed_over_qty).3f."
+                errors.append(
+                    "%s | %s | %.3f | %.3f"
+                    % (
+                        rec.product_code or rec.product_id.code or "",
+                        rec.product_id.name or rec.product_id.display_name or "",
+                        rec.qty or 0.0,
+                        allowed_over_qty,
                     )
-                    % {
-                        "max_qty": max_qty,
-                        "allowed_over_qty": max(allowed_over_qty, 0.0),
-                    }
                 )
+
+        if errors:
+            raise ValidationError(
+                _(
+                    "Smart transfer quantity cannot exceed the allowed over for these lines:\n"
+                    "code | name | qty | allowed_over_qty\n%s"
+                )
+                % "\n".join(errors)
+            )
 
     @api.model_create_multi
     def create(self, vals_list):

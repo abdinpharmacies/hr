@@ -537,7 +537,11 @@ class TestSmartTransfer(TransactionCase):
         self.assertNotIn('name="class_id"', view_xml)
         self.assertIn('name="smart_expected_source_stock_qty"', view_xml)
         self.assertIn('name="smart_over_need_qty"', view_xml)
-        self.assertIn('decoration-danger="smart_qty_exceeds_over_need"', view_xml)
+        self.assertIn('name="smart_qty_exceeds_expected_stock"', view_xml)
+        self.assertIn(
+            'decoration-danger="smart_qty_exceeds_over_need or smart_qty_exceeds_expected_stock"',
+            view_xml,
+        )
 
     def test_header_view_keeps_smart_stage_buttons(self):
         view_xml = (
@@ -1785,7 +1789,7 @@ class TestSmartTransfer(TransactionCase):
         line.write({"qty": 19})
         self.assertTrue(line.smart_qty_exceeds_over_need)
 
-        with self.assertRaisesRegex(ValidationError, "cannot exceed 18.000"):
+        with self.assertRaisesRegex(ValidationError, "allowed over for these lines"):
             header.action_smart_to_store_preparation()
         self.assertEqual(header.smart_stage, SMART_STAGE_PURCHASE_PREPARATION)
 
@@ -1802,9 +1806,70 @@ class TestSmartTransfer(TransactionCase):
             smart_total_need=42,
         ).write({"qty": 19})
 
-        with self.assertRaisesRegex(ValidationError, "Allowed over quantity is 8.000"):
+        with self.assertRaisesRegex(ValidationError, "allowed_over_qty"):
             header.action_smart_to_store_preparation()
         self.assertEqual(header.smart_stage, SMART_STAGE_PURCHASE_PREPARATION)
+
+    def test_smart_qty_allowed_over_message_lists_all_non_excluded_lines(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_products_or_skip(1)[0]
+        uom = product.uom_id
+        line_1 = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=6,
+            smart_original_qty=0,
+            smart_source_stock_qty=0,
+            smart_total_need=0,
+        )
+        line_2 = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=8,
+            smart_original_qty=0,
+            smart_source_stock_qty=0,
+            smart_total_need=0,
+        )
+        excluded_line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=9,
+            smart_original_qty=0,
+            smart_source_stock_qty=0,
+            smart_total_need=0,
+            exclusion_reason="expired",
+        )
+
+        with self.assertRaises(ValidationError) as error:
+            (line_1 | line_2 | excluded_line)._check_smart_qty_allowed_over()
+
+        message = str(error.exception)
+        self.assertIn("Smart transfer quantity cannot exceed the allowed over", message)
+        self.assertIn("code | name | qty | allowed_over_qty", message)
+        self.assertIn("6.000", message)
+        self.assertIn("8.000", message)
+        self.assertNotIn("9.000", message)
+
+    def test_smart_line_expected_stock_shortage_highlight_ignores_excluded_lines(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_products_or_skip(1)[0]
+        uom = product.uom_id
+        line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=10,
+            smart_source_stock_qty=5,
+        )
+
+        self.assertTrue(line.smart_qty_exceeds_expected_stock)
+
+        line.write({"exclusion_reason": "expired"})
+
+        self.assertFalse(line.smart_qty_exceeds_expected_stock)
 
     def test_smart_line_qty_cannot_be_negative(self):
         header = self._create_smart_header()

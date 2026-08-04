@@ -157,10 +157,11 @@
                                readonly="is_submitted or smart_stage in ('pre_submit', 'submit')">
                             <list editable="bottom" create="0" delete="0"
                                   default_order="smart_product_location, product_id"
-                                  decoration-danger="smart_qty_exceeds_over_need">
+                                  decoration-danger="smart_qty_exceeds_over_need or smart_qty_exceeds_expected_stock">
                                 <field name="is_submitted" column_invisible="1"/>
                                 <field name="smart_stage" column_invisible="1"/>
                                 <field name="smart_qty_exceeds_over_need" column_invisible="1"/>
+                                <field name="smart_qty_exceeds_expected_stock" column_invisible="1"/>
                                 <field name="product_code" readonly="1"/>
                                 <field name="product_id" readonly="1"/>
                                 <field name="smart_product_location" readonly="1" optional="show"/>
@@ -342,10 +343,11 @@
             <field name="model">ab_transfer_smart_line</field>
             <field name="arch" type="xml">
                 <list string="Smart Transfer Data" editable="bottom" create="0" delete="0"
-                      decoration-danger="smart_qty_exceeds_over_need">
+                      decoration-danger="smart_qty_exceeds_over_need or smart_qty_exceeds_expected_stock">
                     <field name="is_submitted" column_invisible="1"/>
                     <field name="smart_stage" column_invisible="1"/>
                     <field name="smart_qty_exceeds_over_need" column_invisible="1"/>
+                    <field name="smart_qty_exceeds_expected_stock" column_invisible="1"/>
                     <field name="header_id" readonly="1"/>
                     <field name="from_store_id" readonly="1"/>
                     <field name="to_store_id" readonly="1"/>
@@ -429,10 +431,11 @@
             <field name="model">ab_transfer_smart_line</field>
             <field name="arch" type="xml">
                 <list string="Smart Transfer Lines" create="0" edit="0" delete="0" duplicate="0"
-                      decoration-danger="smart_qty_exceeds_over_need">
+                      decoration-danger="smart_qty_exceeds_over_need or smart_qty_exceeds_expected_stock">
                     <field name="is_submitted" column_invisible="1"/>
                     <field name="smart_stage" column_invisible="1"/>
                     <field name="smart_qty_exceeds_over_need" column_invisible="1"/>
+                    <field name="smart_qty_exceeds_expected_stock" column_invisible="1"/>
                     <field name="header_id"/>
                     <field name="from_store_id"/>
                     <field name="to_store_id"/>
