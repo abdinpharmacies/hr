@@ -152,6 +152,15 @@ class TestSmartTransfer(TransactionCase):
             self.skipTest("Not enough existing products are available for smart transfer tests.")
         return products
 
+    def _get_existing_smart_product_with_serial_or_skip(self):
+        product = self.env["ab_product"].sudo().search([
+            ("uom_id", "!=", False),
+            ("eplus_serial", "not in", [False, 0]),
+        ], limit=1)
+        if not product:
+            self.skipTest("No existing product with UOM and EPlus serial is available.")
+        return product
+
     def _create_smart_line(self, header, product, uom, **extra_vals):
         extra_vals.pop("class_id", None)
         vals = {
@@ -840,68 +849,102 @@ class TestSmartTransfer(TransactionCase):
             )
         return buffer.getvalue()
 
-    def test_smart_product_line_requested_qty_uses_fair_distribution(self):
-        header = self._create_smart_header()
-        uom = self._create_smart_uom()
-        product = self._create_smart_product("SMART-REQUESTED-FAIR", 99020, uom)
+    def test_smart_product_line_requested_qty_sets_transfer_qty_without_changing_need(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        header.write({
+            "smart_days": 30,
+            "smart_stock_method": SMART_STOCK_METHOD_NORMAL,
+        })
         header.smart_product_line_ids = [(0, 0, {
             "product_id": product.id,
             "qty": 30,
         })]
-        prepare_calls = []
-
-        def prepare_line_vals(
-                product,
-                required_qty,
-                source_stock_qty,
-                destination_stock_qty,
-                month1_sales,
-                month2_sales,
-                month3_sales,
-                destination_required_qty,
-                other_required_qty,
-                total_required_qty,
-                other_branches_context=None,
-        ):
-            prepare_calls.append({
-                "required_qty": required_qty,
-                "source_stock_qty": source_stock_qty,
-                "destination_required_qty": destination_required_qty,
-                "other_required_qty": other_required_qty,
-                "total_required_qty": total_required_qty,
-            })
-            return {
-                "qty": required_qty,
-                "expiry_date": fields.Date.today(),
-                "uom_id": uom.id,
-                "smart_source_stock_qty": source_stock_qty,
-                "smart_need_destination_store": destination_required_qty,
-                "smart_need_other_store": other_required_qty,
-                "smart_total_need": total_required_qty,
-            }
 
         with patch.object(
                 type(header),
                 "_get_smart_source_stock_by_product_serial",
-                return_value={99020: 30},
+                return_value={product_serial: 10},
         ), patch.object(
                 type(header),
                 "_get_smart_other_branches_context_by_serial",
-                return_value={99020: {"required_qty": 30}},
+                return_value={product_serial: {"required_qty": 5}},
         ), patch.object(
                 type(header),
-                "_prepare_smart_line_vals",
-                side_effect=prepare_line_vals,
+                "_get_source_inventory_rows",
+                return_value=[self._smart_source_row(701, 10)],
         ):
             result = header._apply_smart_transfer_rows([
-                (99020, "P020", "Requested", 8102, 100, 300, 300, 300, 900),
+                (product_serial, "P020", "Requested", 8102, 10, 30, 30, 30, 90),
             ])
 
         self.assertEqual(result["created"], 1)
-        self.assertEqual(prepare_calls[0]["destination_required_qty"], 30)
-        self.assertEqual(prepare_calls[0]["other_required_qty"], 30)
-        self.assertEqual(prepare_calls[0]["total_required_qty"], 60)
-        self.assertEqual(prepare_calls[0]["required_qty"], 15)
+        line = header.smart_line_ids
+        self.assertEqual(line.qty, 30)
+        self.assertEqual(line.smart_original_qty, 8)
+        self.assertEqual(line.smart_need_destination_store, 20)
+        self.assertEqual(line.smart_need_other_store, 5)
+        self.assertEqual(line.smart_total_need, 25)
+        self.assertTrue(line.smart_qty_exceeds_over_need)
+
+    def test_smart_product_line_creates_requested_qty_without_source_stock_or_need(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        header.write({
+            "smart_days": 30,
+            "smart_stock_method": SMART_STOCK_METHOD_NORMAL,
+        })
+        header.smart_product_line_ids = [(0, 0, {
+            "product_id": product.id,
+            "qty": 6,
+        })]
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={product_serial: 0},
+        ), patch.object(
+                type(header),
+                "_get_smart_other_branches_context_by_serial",
+                return_value={},
+        ), patch.object(
+                type(header),
+                "_get_source_inventory_rows",
+                return_value=[],
+        ):
+            result = header._apply_smart_transfer_rows([
+                (product_serial, "P021", "Manual", 8102, 100, 0, 0, 0, 0),
+            ])
+
+        self.assertEqual(result["created"], 1)
+        self.assertEqual(result["no_stock"], 0)
+        line = header.smart_line_ids
+        self.assertEqual(line.qty, 6)
+        self.assertEqual(line.smart_original_qty, 0)
+        self.assertEqual(line.smart_source_stock_qty, 0)
+        self.assertEqual(line.smart_need_destination_store, 0)
+        self.assertEqual(line.smart_total_need, 0)
+        self.assertTrue(line.smart_qty_exceeds_over_need)
+
+    def test_smart_product_line_source_stock_filter_keeps_requested_product_without_stock(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        header.smart_product_line_ids = [(0, 0, {
+            "product_id": product.id,
+            "qty": 6,
+        })]
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={},
+        ):
+            serials = header._get_smart_target_product_serials_with_source_stock()
+
+        self.assertIn(product_serial, serials)
 
     def test_target_product_still_requires_source_stock_filter(self):
         header = self._create_smart_header()

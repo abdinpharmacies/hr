@@ -811,11 +811,13 @@ class AbTransferHeader(models.Model):
         if not product_serials:
             raise UserError(_("Target products must have EPlus serials."))
 
+        explicit_product_serials = set(self._get_smart_explicit_product_qty_by_serial())
         source_stock_by_serial = self._get_smart_source_stock_by_product_serial(target_products_by_serial)
         return [
             serial
             for serial in product_serials
-            if source_stock_by_serial.get(serial, 0.0) > 0.0
+            if serial in explicit_product_serials
+            or source_stock_by_serial.get(serial, 0.0) > 0.0
         ]
 
     @api.model
@@ -918,22 +920,30 @@ class AbTransferHeader(models.Model):
             destination_required_qty = required_context["required_qty"]
             other_required_qty = other_branches_context.get("required_qty", 0.0)
             total_required_qty = destination_required_qty + other_required_qty
+            manual_requested_qty = required_context.get("manual_requested_qty")
             is_target_default_qty = bool(required_context.get("target_default_qty"))
             if is_target_default_qty:
-                transfer_required_qty = destination_required_qty
+                computed_transfer_qty = destination_required_qty
             else:
-                transfer_required_qty = self._calculate_smart_distributed_qty(
+                computed_transfer_qty = self._calculate_smart_distributed_qty(
                     destination_required_qty,
                     other_required_qty,
                     source_stock_qty,
                 )
+            if manual_requested_qty is not None:
+                transfer_required_qty = manual_requested_qty
+            else:
+                transfer_required_qty = computed_transfer_qty
             if transfer_required_qty <= 0:
                 result["no_stock"] += 1
                 continue
 
+            prepare_kwargs = {}
+            if manual_requested_qty is not None:
+                prepare_kwargs["manual_qty"] = manual_requested_qty
             line_vals = self._prepare_smart_line_vals(
                 product,
-                transfer_required_qty,
+                computed_transfer_qty,
                 source_stock_qty,
                 required_context["destination_stock_qty"],
                 required_context["month1_sales"],
@@ -943,6 +953,7 @@ class AbTransferHeader(models.Model):
                 other_required_qty,
                 total_required_qty,
                 other_branches_context,
+                **prepare_kwargs,
             )
             if not line_vals:
                 result["no_stock"] += 1
@@ -959,7 +970,9 @@ class AbTransferHeader(models.Model):
                 line_vals["exclusion_reason"] = False
 
             if existing_line:
-                existing_line.write(line_vals)
+                existing_line.with_context(
+                    allow_smart_original_qty_write=True
+                ).write(line_vals)
                 result["updated"] += 1
             else:
                 new_line = self.env["ab_transfer_smart_line"].create({
@@ -1022,6 +1035,35 @@ class AbTransferHeader(models.Model):
             ):
                 continue
             requested_qty = explicit_qty_by_serial.get(product_serial)
+            if requested_qty is not None:
+                context = existing_context_by_serial.get(product_serial)
+                if context:
+                    result[product_serial] = {
+                        **context,
+                        "manual_requested_qty": requested_qty,
+                    }
+                    continue
+
+                row = rows_by_serial.get(product_serial)
+                context = self._get_smart_required_context_from_row(
+                    row,
+                    products_by_serial,
+                    include_non_positive=True,
+                )
+                if not context:
+                    context = {
+                        "planned_qty": 0.0,
+                        "required_qty": 0.0,
+                        "destination_stock_qty": 0.0,
+                        "destination_coverage": 0.0,
+                        "month1_sales": 0.0,
+                        "month2_sales": 0.0,
+                        "month3_sales": 0.0,
+                    }
+                context["manual_requested_qty"] = requested_qty
+                result[product_serial] = context
+                continue
+
             if requested_qty is None:
                 if product_serial in existing_context_by_serial:
                     continue
@@ -1043,6 +1085,48 @@ class AbTransferHeader(models.Model):
                 "target_default_qty": True,
             }
         return result
+
+    def _get_smart_required_context_from_row(
+            self,
+            row,
+            products_by_serial,
+            include_non_positive=False,
+    ):
+        product_serial = self._smart_row_int(row, SMART_ROW_PRODUCT_SERIAL)
+        if not product_serial or product_serial not in products_by_serial:
+            return {}
+
+        destination_stock_qty = self._smart_row_float(row, SMART_ROW_BRANCH_STOCK_QTY)
+        last_month_sales = self._smart_row_float(row, SMART_ROW_LAST_MONTH_SALES)
+        previous_month_sales = self._smart_row_float(row, SMART_ROW_PREVIOUS_MONTH_SALES)
+        third_month_sales = self._smart_row_float(row, SMART_ROW_THIRD_MONTH_SALES)
+        total_3_months_sales = self._smart_row_float(row, SMART_ROW_TOTAL_3_MONTHS_SALES)
+        planned_qty = self._calculate_smart_planned_qty(
+            total_3_months_sales,
+            self.smart_days,
+            method=self.smart_stock_method,
+            last_month_sales=last_month_sales,
+            previous_month_sales=previous_month_sales,
+            third_month_sales=third_month_sales,
+        )
+        required_qty = planned_qty - destination_stock_qty
+        if required_qty <= 0:
+            if not include_non_positive:
+                return {}
+            required_qty = 0.0
+
+        return {
+            "planned_qty": planned_qty,
+            "required_qty": required_qty,
+            "destination_stock_qty": destination_stock_qty,
+            "destination_coverage": self._calculate_smart_destination_coverage(
+                planned_qty,
+                destination_stock_qty,
+            ),
+            "month1_sales": last_month_sales,
+            "month2_sales": previous_month_sales,
+            "month3_sales": third_month_sales,
+        }
 
     def _get_smart_products_by_eplus_serial(self, rows):
         product_serials = {
@@ -1108,39 +1192,11 @@ class AbTransferHeader(models.Model):
     def _get_smart_required_context_by_serial(self, rows, products_by_serial):
         required_context_by_serial = {}
         for row in rows:
+            context = self._get_smart_required_context_from_row(row, products_by_serial)
+            if not context:
+                continue
             product_serial = self._smart_row_int(row, SMART_ROW_PRODUCT_SERIAL)
-            if not product_serial or product_serial not in products_by_serial:
-                continue
-
-            destination_stock_qty = self._smart_row_float(row, SMART_ROW_BRANCH_STOCK_QTY)
-            last_month_sales = self._smart_row_float(row, SMART_ROW_LAST_MONTH_SALES)
-            previous_month_sales = self._smart_row_float(row, SMART_ROW_PREVIOUS_MONTH_SALES)
-            third_month_sales = self._smart_row_float(row, SMART_ROW_THIRD_MONTH_SALES)
-            total_3_months_sales = self._smart_row_float(row, SMART_ROW_TOTAL_3_MONTHS_SALES)
-            planned_qty = self._calculate_smart_planned_qty(
-                total_3_months_sales,
-                self.smart_days,
-                method=self.smart_stock_method,
-                last_month_sales=last_month_sales,
-                previous_month_sales=previous_month_sales,
-                third_month_sales=third_month_sales,
-            )
-            required_qty = planned_qty - destination_stock_qty
-            if required_qty <= 0:
-                continue
-
-            required_context_by_serial[product_serial] = {
-                "planned_qty": planned_qty,
-                "required_qty": required_qty,
-                "destination_stock_qty": destination_stock_qty,
-                "destination_coverage": self._calculate_smart_destination_coverage(
-                    planned_qty,
-                    destination_stock_qty,
-                ),
-                "month1_sales": last_month_sales,
-                "month2_sales": previous_month_sales,
-                "month3_sales": third_month_sales,
-            }
+            required_context_by_serial[product_serial] = context
         return required_context_by_serial
 
     def _get_smart_other_branches_context_by_serial(self, products_by_serial):
@@ -1431,6 +1487,7 @@ class AbTransferHeader(models.Model):
             other_required_qty,
             total_required_qty,
             other_branches_context=None,
+            manual_qty=None,
     ):
         self.ensure_one()
         if not product.uom_id:
@@ -1438,23 +1495,30 @@ class AbTransferHeader(models.Model):
             return {}
 
         source_rows = self._get_source_inventory_rows(product)
-        selected = self._select_smart_source_row(source_rows, required_qty)
-        if not selected:
+        requested_qty = manual_qty if manual_qty is not None else required_qty
+        selected = self._select_smart_source_row(source_rows, requested_qty)
+        if not selected and manual_qty is None:
             _logger.warning("Smart transfer skipped product without source stock: %s", product.display_name)
             return {}
 
         available_qty = float(source_stock_qty or 0.0)
-        qty_before_int = min(required_qty, available_qty)
-        if qty_before_int <= 0:
-            return {}
-
-        final_qty = self._calculate_smart_integer_qty(qty_before_int)
+        original_qty_before_int = min(required_qty, available_qty)
+        if manual_qty is None:
+            qty_before_int = original_qty_before_int
+            if qty_before_int <= 0:
+                return {}
+            final_qty = self._calculate_smart_integer_qty(qty_before_int)
+        else:
+            final_qty = float(manual_qty or 0.0)
+            qty_before_int = original_qty_before_int
         if final_qty <= 0:
             return {}
 
-        source_id = int(selected.get("source_id") or 0)
-        expiry_date = str(selected.get("exp_date") or "").split(" ")[0]
-        if not source_id or not expiry_date:
+        source_id = int(selected.get("source_id") or 0) if selected else 0
+        expiry_date = str(selected.get("exp_date") or "").split(" ")[0] if selected else ""
+        if not expiry_date and manual_qty is not None:
+            expiry_date = fields.Date.context_today(self)
+        if (not source_id or not expiry_date) and manual_qty is None:
             _logger.warning(
                 "Smart transfer skipped product with incomplete source row: product=%s source=%s expiry=%s",
                 product.display_name,
@@ -1468,7 +1532,7 @@ class AbTransferHeader(models.Model):
             final_qty,
             source_stock_qty,
         )
-        return {
+        vals = {
             "qty": final_qty,
             "expiry_date": expiry_date,
             "uom_id": product.uom_id.id,
@@ -1487,6 +1551,13 @@ class AbTransferHeader(models.Model):
             "smart_total_need": total_required_qty,
             "smart_distribution_ratio": distribution_ratio,
         }
+        if manual_qty is not None:
+            vals["smart_original_qty"] = (
+                self._calculate_smart_integer_qty(original_qty_before_int)
+                if original_qty_before_int > 0
+                else 0.0
+            )
+        return vals
 
     def _get_source_inventory_rows(self, product):
         self.ensure_one()

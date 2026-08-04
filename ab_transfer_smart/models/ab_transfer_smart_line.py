@@ -52,6 +52,7 @@ class AbTransferSmartLine(models.Model):
     @api.depends(
         "qty",
         "smart_original_qty",
+        "smart_qty_before_int",
         "smart_source_stock_qty",
         "smart_total_need",
         "exclusion_reason",
@@ -59,11 +60,19 @@ class AbTransferSmartLine(models.Model):
     def _compute_smart_qty_exceeds_over_need(self):
         for rec in self:
             allowed_over_qty = max(rec.smart_over_need_qty or 0.0, 0.0)
-            max_qty = (rec.smart_original_qty or rec.qty or 0.0) + allowed_over_qty
+            max_qty = rec._get_smart_allowed_base_qty() + allowed_over_qty
             rec.smart_qty_exceeds_over_need = (
                 not rec.exclusion_reason
                 and float_compare(rec.qty or 0.0, max_qty, precision_digits=3) > 0
             )
+
+    def _get_smart_allowed_base_qty(self):
+        self.ensure_one()
+        if self.smart_original_qty:
+            return self.smart_original_qty
+        if self.smart_qty_before_int:
+            return self.qty or 0.0
+        return self.smart_original_qty or 0.0
 
     def _check_smart_line_editable(self):
         locked = self.filtered(
@@ -88,7 +97,10 @@ class AbTransferSmartLine(models.Model):
             raise ValidationError(_("Smart transfer quantity cannot be negative."))
 
     def _check_smart_qty_write(self, vals):
-        if "smart_original_qty" in vals:
+        if (
+                "smart_original_qty" in vals
+                and not self.env.context.get("allow_smart_original_qty_write")
+        ):
             raise ValidationError(_("Original smart quantity cannot be edited."))
         if "qty" not in vals:
             return
@@ -99,7 +111,7 @@ class AbTransferSmartLine(models.Model):
 
     def _check_smart_qty_allowed_over(self):
         for rec in self:
-            original_qty = rec.smart_original_qty or rec.qty or 0.0
+            original_qty = rec._get_smart_allowed_base_qty()
             allowed_over_qty = rec.smart_over_need_qty or 0.0
             max_qty = original_qty + max(allowed_over_qty, 0.0)
             if float_compare(rec.qty or 0.0, max_qty, precision_digits=3) > 0:
