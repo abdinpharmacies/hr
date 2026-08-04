@@ -103,6 +103,13 @@ class AbTransferHeader(models.Model):
         column2='product_id',
         string='Target Products')
 
+    smart_product_line_ids = fields.One2many(
+        "ab_transfer_smart_product_line",
+        "header_id",
+        string="Requested Products",
+        copy=False,
+    )
+
     fair_store_ids = fields.Many2many(
         comodel_name='ab_store',
         relation='ab_transfer_header_fair_store_rel',
@@ -164,6 +171,15 @@ class AbTransferHeader(models.Model):
                     % SMART_TARGET_PRODUCT_LIMIT
                 )
 
+    @api.constrains("smart_product_line_ids")
+    def _check_smart_product_line_limit(self):
+        for rec in self:
+            if len(rec.smart_product_line_ids) > SMART_TARGET_PRODUCT_LIMIT:
+                raise ValidationError(
+                    _("Smart product lines are limited to %s products.")
+                    % SMART_TARGET_PRODUCT_LIMIT
+                )
+
     @api.depends("smart_line_ids")
     def _compute_smart_items_count(self):
         for rec in self:
@@ -183,6 +199,7 @@ class AbTransferHeader(models.Model):
             if rec.is_submitted:
                 raise UserError(_("Submitted transfers cannot be edited."))
             rec.target_product_ids = [(5, 0, 0)]
+            rec.smart_product_line_ids.unlink()
         return self._smart_notification(
             _("Target Products"),
             _("Target products have been removed."),
@@ -258,6 +275,13 @@ class AbTransferHeader(models.Model):
             "notes": self.notes,
             "company_id": self.company_id.id,
             "target_product_ids": [(6, 0, self.target_product_ids.ids)],
+            "product_line_ids": [
+                (0, 0, {
+                    "product_id": line.product_id.id,
+                    "qty": line.qty or line.product_id.min_sale_purchase_qty or 1.0,
+                })
+                for line in self.smart_product_line_ids
+            ],
             "fair_store_ids": [(6, 0, self.fair_store_ids.ids)],
             "smart_product_domain": self.smart_product_domain or "[]",
             "smart_days": self.smart_days,
@@ -666,7 +690,7 @@ class AbTransferHeader(models.Model):
             except Exception:
                 raise UserError(_("Invalid product filter. Please review the filter conditions."))
 
-        products = domain_products | self.target_product_ids
+        products = domain_products | self.target_product_ids | self.smart_product_line_ids.mapped("product_id")
         if not products:
             raise UserError(_("Please add target products or set a product filter."))
         return products
@@ -937,6 +961,28 @@ class AbTransferHeader(models.Model):
 
         return result
 
+    def _get_smart_explicit_product_qty_by_serial(self):
+        self.ensure_one()
+        qty_by_serial = {}
+        for line in self.smart_product_line_ids:
+            product_serial = self._get_smart_product_serial(line.product_id)
+            if product_serial:
+                qty_by_serial[product_serial] = (
+                    qty_by_serial.get(product_serial, 0.0)
+                    + float(line.qty or 0.0)
+                )
+        return qty_by_serial
+
+    def _get_smart_target_product_min_qty_by_serial(self):
+        self.ensure_one()
+        qty_by_serial = {}
+
+        for product in self.target_product_ids:
+            product_serial = self._get_smart_product_serial(product)
+            if product_serial:
+                qty_by_serial[product_serial] = float(product.min_sale_purchase_qty or 1.0)
+        return qty_by_serial
+
     def _get_smart_target_default_context_by_serial(
             self,
             rows,
@@ -944,8 +990,11 @@ class AbTransferHeader(models.Model):
             existing_context_by_serial,
     ):
         self.ensure_one()
-        target_serials = self._get_smart_product_serials(self.target_product_ids)
-        if not target_serials:
+        explicit_qty_by_serial = self._get_smart_explicit_product_qty_by_serial()
+        if not explicit_qty_by_serial:
+            explicit_qty_by_serial = {}
+        target_min_qty_by_serial = self._get_smart_target_product_min_qty_by_serial()
+        if not explicit_qty_by_serial and not target_min_qty_by_serial:
             return {}
 
         rows_by_serial = {
@@ -954,13 +1003,18 @@ class AbTransferHeader(models.Model):
             if self._smart_row_int(row, SMART_ROW_PRODUCT_SERIAL)
         }
         result = {}
-        for product_serial in target_serials:
+        requested_serials = set(explicit_qty_by_serial) | set(target_min_qty_by_serial)
+        for product_serial in requested_serials:
             if (
                     not product_serial
-                    or product_serial in existing_context_by_serial
                     or product_serial not in products_by_serial
             ):
                 continue
+            requested_qty = explicit_qty_by_serial.get(product_serial)
+            if requested_qty is None:
+                if product_serial in existing_context_by_serial:
+                    continue
+                requested_qty = target_min_qty_by_serial[product_serial]
 
             row = rows_by_serial.get(product_serial)
             month1_sales = self._smart_row_float(row, SMART_ROW_LAST_MONTH_SALES)
@@ -968,8 +1022,8 @@ class AbTransferHeader(models.Model):
             month3_sales = self._smart_row_float(row, SMART_ROW_THIRD_MONTH_SALES)
 
             result[product_serial] = {
-                "planned_qty": 0.0,
-                "required_qty": 1.0,
+                "planned_qty": requested_qty,
+                "required_qty": requested_qty,
                 "destination_stock_qty": self._smart_row_float(row, SMART_ROW_BRANCH_STOCK_QTY),
                 "destination_coverage": 0.0,
                 "month1_sales": month1_sales,
@@ -985,7 +1039,8 @@ class AbTransferHeader(models.Model):
             for row in rows
             if self._smart_row_int(row, SMART_ROW_PRODUCT_SERIAL)
         }
-        product_serials.update(self._get_smart_product_serials(self.target_product_ids))
+        product_serials.update(self._get_smart_explicit_product_qty_by_serial())
+        product_serials.update(self._get_smart_target_product_min_qty_by_serial())
         if not product_serials:
             return {}
 

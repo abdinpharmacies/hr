@@ -14,6 +14,7 @@
         "security/ir.model.access.csv",
         "security/record_rules.xml",
         "data/ir_cron.xml",
+        "views/ab_product_views.xml",
         "views/ab_transfer_header_views.xml",
         "views/ab_transfer_smart_wizard_views.xml",
         "views/ab_transfer_smart_cache_views.xml",

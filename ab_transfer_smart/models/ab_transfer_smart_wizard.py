@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import base64
+import io
+import re
+import zipfile
+import xml.etree.ElementTree as ET
+
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
@@ -82,6 +88,26 @@ class AbTransferSmartWizard(models.Model):
         "wizard_id",
         "product_id",
         string="Target Products",
+    )
+    product_line_ids = fields.One2many(
+        "ab_transfer_smart_product_line",
+        "wizard_id",
+        string="Products",
+        copy=False,
+    )
+    product_import_text = fields.Text(
+        string="Paste Products",
+        copy=False,
+        help="Paste product code and quantity from Excel, one product per line.",
+    )
+    product_import_file = fields.Binary(
+        string="Excel File",
+        copy=False,
+        attachment=False,
+    )
+    product_import_filename = fields.Char(
+        string="Excel Filename",
+        copy=False,
     )
     fair_store_ids = fields.Many2many(
         "ab_store",
@@ -199,6 +225,12 @@ class AbTransferSmartWizard(models.Model):
             if rec.items_per_header < 1:
                 raise ValidationError(_("Items per header must be at least 1."))
 
+    @api.constrains("product_line_ids")
+    def _check_product_line_limit(self):
+        for rec in self:
+            if len(rec.product_line_ids) > 1000:
+                raise ValidationError(_("Smart product lines are limited to 1000 products."))
+
     @api.constrains("from_store_id", "to_stores_id")
     def _check_to_stores(self):
         for rec in self:
@@ -239,6 +271,68 @@ class AbTransferSmartWizard(models.Model):
             "domain": [("id", "in", self.generated_header_ids.ids)],
             "context": {"create": False},
         }
+
+    def action_import_product_lines(self):
+        self.ensure_one()
+        if self.state == "done":
+            raise UserError(_("Done wizards cannot import products."))
+        imported = self._parse_product_import_text()
+        if not imported:
+            raise UserError(_("Paste product code and quantity before adding products."))
+
+        created, updated = self._add_imported_product_lines(imported)
+
+        self.product_import_text = False
+        return self._smart_notification(
+            _("Smart Products"),
+            _("Product lines added. Created: %(created)s, Updated: %(updated)s.")
+            % {"created": created, "updated": updated},
+            "success",
+            next_action=self._smart_soft_reload_action(),
+        )
+
+    def action_import_product_file(self):
+        self.ensure_one()
+        if self.state == "done":
+            raise UserError(_("Done wizards cannot import products."))
+        imported = self._parse_product_import_file()
+        if not imported:
+            raise UserError(_("Import file must contain product code and quantity."))
+
+        created, updated = self._add_imported_product_lines(imported)
+        self.write({
+            "product_import_file": False,
+            "product_import_filename": False,
+        })
+        return self._smart_notification(
+            _("Smart Products"),
+            _("Product lines imported. Created: %(created)s, Updated: %(updated)s.")
+            % {"created": created, "updated": updated},
+            "success",
+            next_action=self._smart_soft_reload_action(),
+        )
+
+    def _add_imported_product_lines(self, imported):
+        self.ensure_one()
+        existing_by_product = {
+            line.product_id.id: line
+            for line in self.product_line_ids
+            if line.product_id
+        }
+        created = updated = 0
+        for product, qty in imported:
+            existing = existing_by_product.get(product.id)
+            if existing:
+                existing.write({"qty": qty})
+                updated += 1
+            else:
+                self.env["ab_transfer_smart_product_line"].create({
+                    "wizard_id": self.id,
+                    "product_id": product.id,
+                    "qty": qty,
+                })
+                created += 1
+        return created, updated
 
     def action_archive(self):
         self._check_archive_allowed()
@@ -391,6 +485,10 @@ class AbTransferSmartWizard(models.Model):
             "smart_product_domain": self.smart_product_domain or "[]",
             "fair_store_ids": [(6, 0, self.fair_store_ids.ids)],
             "target_product_ids": [(6, 0, self.target_product_ids.ids)],
+            "smart_product_line_ids": [
+                (0, 0, self._prepare_header_product_line_vals(line))
+                for line in self.product_line_ids
+            ],
         }
 
     def _prepare_header_create_vals(self, destination):
@@ -408,6 +506,10 @@ class AbTransferSmartWizard(models.Model):
             "smart_wizard_id": self.id,
             "target_product_ids": [(6, 0, self.target_product_ids.ids)],
             "fair_store_ids": [(6, 0, self.fair_store_ids.ids)],
+            "smart_product_line_ids": [
+                (0, 0, self._prepare_header_product_line_vals(line))
+                for line in self.product_line_ids
+            ],
         }
 
     def _get_calculation_context(self):
@@ -423,6 +525,7 @@ class AbTransferSmartWizard(models.Model):
         self.ensure_one()
         if not self.source_header_id:
             raise UserError(_("Source transfer is required for single transfer calculation."))
+        self._sync_source_header_from_wizard()
         calculation_action = self.source_header_id.with_context(
             **self._get_calculation_context()
         ).action_smart_transfer_calculation()
@@ -436,6 +539,29 @@ class AbTransferSmartWizard(models.Model):
             "res_id": self.source_header_id.id,
             "view_mode": "form",
         }
+
+    def _sync_source_header_from_wizard(self):
+        self.ensure_one()
+        self.source_header_id.write({
+            "from_store_id": self.from_store_id.id,
+            "to_store_id": self.to_stores_id[:1].id,
+            "user_id": self.user_id.id,
+            "notes": self.notes,
+            "company_id": self.company_id.id,
+            "smart_days": self.smart_days,
+            "smart_stock_method": self.smart_stock_method,
+            "smart_product_domain": self.smart_product_domain or "[]",
+            "smart_dropout_coverage": self.dropout_coverage,
+            "target_product_ids": [(6, 0, self.target_product_ids.ids)],
+            "fair_store_ids": [(6, 0, self.fair_store_ids.ids)],
+            "smart_product_line_ids": [
+                (5, 0, 0),
+                *[
+                    (0, 0, self._prepare_header_product_line_vals(line))
+                    for line in self.product_line_ids
+                ],
+            ],
+        })
 
     def _action_generate_batch_transfers(self):
         self.ensure_one()
@@ -497,7 +623,202 @@ class AbTransferSmartWizard(models.Model):
         return {
             "smart_product_domain": "[]",
             "target_product_ids": [(6, 0, smart_lines.mapped("product_id").ids)],
+            "smart_product_line_ids": [
+                (5, 0, 0),
+                *[
+                    (0, 0, {
+                        "product_id": line.product_id.id,
+                        "qty": line.qty or line.product_id.min_sale_purchase_qty or 1.0,
+                    })
+                    for line in smart_lines
+                    if line.product_id
+                ],
+            ],
         }
+
+    @staticmethod
+    def _prepare_header_product_line_vals(line):
+        return {
+            "product_id": line.product_id.id,
+            "qty": line.qty or line.product_id.min_sale_purchase_qty or 1.0,
+        }
+
+    def _parse_product_import_text(self):
+        self.ensure_one()
+        lines = self.product_import_text.splitlines() if self.product_import_text else []
+        parsed_rows = []
+        for index, raw_line in enumerate(lines, start=1):
+            line = (raw_line or "").strip()
+            if not line:
+                continue
+            code, qty = self._parse_product_import_line(line, index)
+            parsed_rows.append((code, qty))
+
+        return self._products_from_code_qty_rows(parsed_rows)
+
+    def _parse_product_import_file(self):
+        self.ensure_one()
+        if not self.product_import_file:
+            raise UserError(_("Please upload an Excel file."))
+
+        filename = (self.product_import_filename or "").strip().lower()
+        content = base64.b64decode(self.product_import_file)
+        if filename.endswith(".xlsx"):
+            rows = self._read_xlsx_product_rows(content)
+        elif filename.endswith(".csv") or filename.endswith(".txt"):
+            rows = self._read_text_product_rows(content)
+        else:
+            raise UserError(_("Only .xlsx, .csv, or .txt product import files are supported."))
+        return self._products_from_import_rows(rows)
+
+    def _products_from_import_rows(self, rows):
+        parsed_rows = []
+        for index, row in enumerate(rows or [], start=1):
+            code = str((row[0] if len(row) > 0 else "") or "").strip()
+            qty_value = row[1] if len(row) > 1 else ""
+            if not code and qty_value in ("", None):
+                continue
+            if not code:
+                raise UserError(_("Line %(line)s must contain a product code.") % {"line": index})
+            try:
+                qty = float(str(qty_value or "").strip().replace(",", "."))
+            except (TypeError, ValueError):
+                raise UserError(_("Line %(line)s has an invalid quantity: %(qty)s") % {
+                    "line": index,
+                    "qty": qty_value,
+                })
+            if qty <= 0.0:
+                raise UserError(_("Line %(line)s quantity must be greater than zero.") % {"line": index})
+            parsed_rows.append((code, qty))
+        return self._products_from_code_qty_rows(parsed_rows)
+
+    def _products_from_code_qty_rows(self, parsed_rows):
+        codes = [code for code, _qty in parsed_rows]
+        products = self.env["ab_product"].with_context(active_test=False).search([
+            ("code", "in", codes),
+        ])
+        products_by_code = {}
+        for product in products:
+            code = (product.code or "").strip()
+            if code and code not in products_by_code:
+                products_by_code[code] = product
+
+        missing = [code for code in codes if code not in products_by_code]
+        if missing:
+            raise UserError(
+                _("Product code(s) were not found: %s")
+                % ", ".join(missing[:20])
+            )
+
+        qty_by_product_id = {}
+        for code, qty in parsed_rows:
+            product = products_by_code[code]
+            qty_by_product_id[product.id] = qty_by_product_id.get(product.id, 0.0) + qty
+        return [
+            (self.env["ab_product"].browse(product_id), qty)
+            for product_id, qty in qty_by_product_id.items()
+        ]
+
+    def _read_text_product_rows(self, content):
+        text = content.decode("utf-8-sig")
+        rows = []
+        for line in text.splitlines():
+            line = line.strip()
+            if not line:
+                continue
+            rows.append([part.strip() for part in re.split(r"[\t,;]+", line)])
+        return rows
+
+    def _read_xlsx_product_rows(self, content):
+        try:
+            workbook = zipfile.ZipFile(io.BytesIO(content))
+        except zipfile.BadZipFile:
+            raise UserError(_("Invalid .xlsx file."))
+
+        shared_strings = self._read_xlsx_shared_strings(workbook)
+        sheet_name = self._get_xlsx_first_sheet_name(workbook)
+        namespaces = {"main": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+        root = ET.fromstring(workbook.read(sheet_name))
+        rows = []
+        for row in root.findall(".//main:sheetData/main:row", namespaces):
+            values_by_col = {}
+            for cell in row.findall("main:c", namespaces):
+                col_index = self._xlsx_col_index(cell.attrib.get("r", ""))
+                if col_index > 2:
+                    continue
+                values_by_col[col_index] = self._xlsx_cell_value(cell, shared_strings, namespaces)
+            values = [values_by_col.get(1, ""), values_by_col.get(2, "")]
+            if any(str(value or "").strip() for value in values):
+                rows.append(values)
+        return rows
+
+    @staticmethod
+    def _read_xlsx_shared_strings(workbook):
+        try:
+            root = ET.fromstring(workbook.read("xl/sharedStrings.xml"))
+        except KeyError:
+            return []
+        namespaces = {"main": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
+        strings = []
+        for item in root.findall("main:si", namespaces):
+            texts = [node.text or "" for node in item.findall(".//main:t", namespaces)]
+            strings.append("".join(texts))
+        return strings
+
+    @staticmethod
+    def _get_xlsx_first_sheet_name(workbook):
+        sheet_names = sorted(
+            name for name in workbook.namelist()
+            if name.startswith("xl/worksheets/sheet") and name.endswith(".xml")
+        )
+        if not sheet_names:
+            raise UserError(_("Excel file does not contain any worksheet."))
+        return sheet_names[0]
+
+    @staticmethod
+    def _xlsx_col_index(cell_ref):
+        letters = "".join(char for char in cell_ref if char.isalpha()).upper()
+        value = 0
+        for char in letters:
+            value = value * 26 + (ord(char) - ord("A") + 1)
+        return value
+
+    @staticmethod
+    def _xlsx_cell_value(cell, shared_strings, namespaces):
+        inline_node = cell.find("main:is/main:t", namespaces)
+        if inline_node is not None:
+            return inline_node.text or ""
+        value_node = cell.find("main:v", namespaces)
+        if value_node is None:
+            return ""
+        value = value_node.text or ""
+        if cell.attrib.get("t") == "s":
+            try:
+                return shared_strings[int(value)]
+            except (IndexError, TypeError, ValueError):
+                return ""
+        return value
+
+    @api.model
+    def _parse_product_import_line(self, line, index):
+        parts = [part.strip() for part in re.split(r"[\t,;]+", line) if part.strip()]
+        if len(parts) < 2:
+            parts = line.rsplit(None, 1)
+        if len(parts) < 2:
+            raise UserError(_("Line %(line)s must contain product code and quantity.") % {"line": index})
+
+        code = parts[0].strip()
+        qty_text = parts[1].strip().replace(",", ".")
+        try:
+            qty = float(qty_text)
+        except (TypeError, ValueError):
+            raise UserError(_("Line %(line)s has an invalid quantity: %(qty)s") % {
+                "line": index,
+                "qty": qty_text,
+            })
+        if qty <= 0.0:
+            raise UserError(_("Line %(line)s quantity must be greater than zero.") % {"line": index})
+        return code, qty
 
     @api.model
     def _smart_location_line_chunks(self, lines, size):

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_product_view_list_smart_transfer" model="ir.ui.view">
+            <field name="name">ab_product_view_list_smart_transfer</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='uom_id']" position="after">
+                    <field name="min_sale_purchase_qty" string="Min Sale/Purchase Qty"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_product_view_form_smart_transfer" model="ir.ui.view">
+            <field name="name">ab_product_view_form_smart_transfer</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='uom_id']" position="after">
+                    <field name="min_sale_purchase_qty" string="Min Sale/Purchase Qty"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_product_card_view_form_smart_transfer" model="ir.ui.view">
+            <field name="name">ab_product_card_view_form_smart_transfer</field>
+            <field name="model">ab_product_card</field>
+            <field name="inherit_id" ref="ab_product.ab_product_card_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_ids']/list/field[@name='code']" position="after">
+                    <field name="min_sale_purchase_qty" string="Min Sale/Purchase Qty"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

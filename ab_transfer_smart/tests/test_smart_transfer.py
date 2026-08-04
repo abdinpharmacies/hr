@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+import base64
+import io
+import zipfile
+
 from datetime import timedelta
 from pathlib import Path
 from types import SimpleNamespace
@@ -700,6 +704,180 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(prepare_calls[0]["destination_required_qty"], 1)
         self.assertEqual(prepare_calls[0]["total_required_qty"], 1)
         self.assertEqual(prepare_calls[0]["month_sales"], 10)
+
+    def test_wizard_import_product_lines_from_excel_text(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product_1 = self._create_smart_product("SMART-IMPORT-1", 99018, uom)
+        product_2 = self._create_smart_product("SMART-IMPORT-2", 99019, uom)
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "product_import_text": "%s\t5\n%s,7\n%s\t3" % (
+                product_1.code,
+                product_2.code,
+                product_1.code,
+            ),
+        })
+
+        wizard.action_import_product_lines()
+
+        qty_by_product = {
+            line.product_id.id: line.qty
+            for line in wizard.product_line_ids
+        }
+        self.assertEqual(qty_by_product[product_1.id], 8)
+        self.assertEqual(qty_by_product[product_2.id], 7)
+        self.assertFalse(wizard.product_import_text)
+
+    def test_wizard_import_product_lines_from_xlsx_file(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product_1 = self._create_smart_product("SMART-XLSX-1", 99021, uom)
+        product_2 = self._create_smart_product("SMART-XLSX-2", 99022, uom)
+        xlsx_content = self._minimal_xlsx([
+            [product_1.code, "3000"],
+            [product_2.code, "1000"],
+        ])
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "product_import_file": base64.b64encode(xlsx_content),
+            "product_import_filename": "smart_products.xlsx",
+        })
+
+        wizard.action_import_product_file()
+
+        qty_by_product = {
+            line.product_id.id: line.qty
+            for line in wizard.product_line_ids
+        }
+        self.assertEqual(qty_by_product[product_1.id], 3000)
+        self.assertEqual(qty_by_product[product_2.id], 1000)
+        self.assertFalse(wizard.product_import_file)
+        self.assertFalse(wizard.product_import_filename)
+
+    @staticmethod
+    def _minimal_xlsx(rows):
+        shared_strings = []
+        shared_index = {}
+
+        def shared(value):
+            value = str(value)
+            if value not in shared_index:
+                shared_index[value] = len(shared_strings)
+                shared_strings.append(value)
+            return shared_index[value]
+
+        sheet_rows = []
+        for row_index, values in enumerate(rows, start=1):
+            cells = []
+            for col_name, value in zip(("A", "B"), values):
+                cells.append(
+                    '<c r="%s%s" t="s"><v>%s</v></c>'
+                    % (col_name, row_index, shared(value))
+                )
+            sheet_rows.append('<row r="%s">%s</row>' % (row_index, "".join(cells)))
+
+        buffer = io.BytesIO()
+        with zipfile.ZipFile(buffer, "w") as workbook:
+            workbook.writestr(
+                "[Content_Types].xml",
+                '<?xml version="1.0" encoding="UTF-8"?>'
+                '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+                '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+                '<Default Extension="xml" ContentType="application/xml"/>'
+                '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
+                '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
+                '<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>'
+                '</Types>',
+            )
+            workbook.writestr(
+                "xl/workbook.xml",
+                '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+                '<sheets><sheet name="Sheet1" sheetId="1" r:id="rId1" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/></sheets>'
+                '</workbook>',
+            )
+            workbook.writestr(
+                "xl/worksheets/sheet1.xml",
+                '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
+                '<sheetData>%s</sheetData></worksheet>' % "".join(sheet_rows),
+            )
+            workbook.writestr(
+                "xl/sharedStrings.xml",
+                '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="%s" uniqueCount="%s">%s</sst>'
+                % (
+                    len(shared_strings),
+                    len(shared_strings),
+                    "".join("<si><t>%s</t></si>" % value for value in shared_strings),
+                ),
+            )
+        return buffer.getvalue()
+
+    def test_smart_product_line_requested_qty_uses_fair_distribution(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-REQUESTED-FAIR", 99020, uom)
+        header.smart_product_line_ids = [(0, 0, {
+            "product_id": product.id,
+            "qty": 30,
+        })]
+        prepare_calls = []
+
+        def prepare_line_vals(
+                product,
+                required_qty,
+                source_stock_qty,
+                destination_stock_qty,
+                month1_sales,
+                month2_sales,
+                month3_sales,
+                destination_required_qty,
+                other_required_qty,
+                total_required_qty,
+                other_branches_context=None,
+        ):
+            prepare_calls.append({
+                "required_qty": required_qty,
+                "source_stock_qty": source_stock_qty,
+                "destination_required_qty": destination_required_qty,
+                "other_required_qty": other_required_qty,
+                "total_required_qty": total_required_qty,
+            })
+            return {
+                "qty": required_qty,
+                "expiry_date": fields.Date.today(),
+                "uom_id": uom.id,
+                "smart_source_stock_qty": source_stock_qty,
+                "smart_need_destination_store": destination_required_qty,
+                "smart_need_other_store": other_required_qty,
+                "smart_total_need": total_required_qty,
+            }
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={99020: 30},
+        ), patch.object(
+                type(header),
+                "_get_smart_other_branches_context_by_serial",
+                return_value={99020: {"required_qty": 30}},
+        ), patch.object(
+                type(header),
+                "_prepare_smart_line_vals",
+                side_effect=prepare_line_vals,
+        ):
+            result = header._apply_smart_transfer_rows([
+                (99020, "P020", "Requested", 8102, 100, 300, 300, 300, 900),
+            ])
+
+        self.assertEqual(result["created"], 1)
+        self.assertEqual(prepare_calls[0]["destination_required_qty"], 30)
+        self.assertEqual(prepare_calls[0]["other_required_qty"], 30)
+        self.assertEqual(prepare_calls[0]["total_required_qty"], 60)
+        self.assertEqual(prepare_calls[0]["required_qty"], 15)
 
     def test_target_product_still_requires_source_stock_filter(self):
         header = self._create_smart_header()

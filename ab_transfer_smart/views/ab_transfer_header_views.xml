@@ -216,14 +216,17 @@
                                 string="Remove All Products"
                                 class="btn-secondary"
                                 invisible="is_submitted or smart_stage != 'purchase_preparation'"/>
-                        <field name="target_product_ids"
+                        <field name="smart_product_line_ids"
                                readonly="is_submitted or smart_stage != 'purchase_preparation'">
-                            <list limit="1000">
-                                <field name="code"/>
-                                <field name="name"/>
-                                <field name="company_id"/>
+                            <list editable="bottom" limit="1000">
+                                <field name="sequence" widget="handle"/>
+                                <field name="product_code"/>
+                                <field name="product_id"/>
+                                <field name="product_name" optional="hide"/>
+                                <field name="qty"/>
                             </list>
                         </field>
+                        <field name="target_product_ids" invisible="1"/>
                     </page>
                     <page string="Fair Stores">
                         <field name="fair_store_ids"

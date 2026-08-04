@@ -129,14 +129,34 @@
                                            widget="domain"
                                            options="{'model': 'ab_product', 'count_limit': 1000, 'in_dialog': True}"
                                            readonly="state == 'done'"/>
+                                    <field name="product_import_text"
+                                           placeholder="Paste from Excel: product code and quantity, one product per line"
+                                           readonly="state == 'done'"/>
+                                    <button name="action_import_product_lines"
+                                            type="object"
+                                            string="Add Product"
+                                            class="btn-secondary"
+                                            invisible="state == 'done'"/>
+                                    <field name="product_import_file"
+                                           filename="product_import_filename"
+                                           readonly="state == 'done'"/>
+                                    <field name="product_import_filename" invisible="1"/>
+                                    <button name="action_import_product_file"
+                                            type="object"
+                                            string="Import Products"
+                                            class="btn-secondary"
+                                            invisible="state == 'done'"/>
                                 </group>
-                                <field name="target_product_ids" readonly="state == 'done'">
-                                    <list limit="1000">
-                                        <field name="code"/>
-                                        <field name="name"/>
-                                        <field name="company_id"/>
+                                <field name="product_line_ids" readonly="state == 'done'">
+                                    <list editable="bottom" limit="1000">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="product_code"/>
+                                        <field name="product_id"/>
+                                        <field name="product_name" optional="hide"/>
+                                        <field name="qty"/>
                                     </list>
                                 </field>
+                                <field name="target_product_ids" invisible="1"/>
                             </page>
                             <page string="Fair Stores">
                                 <field name="fair_store_ids" readonly="state == 'done'">
