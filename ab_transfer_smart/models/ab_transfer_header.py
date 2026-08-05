@@ -28,6 +28,8 @@ SMART_STAGE_STORE_PREPARATION = "store_preparation"
 SMART_STAGE_STORE_REVISION = "store_revision"
 SMART_STAGE_PRE_SUBMIT = "pre_submit"
 SMART_STAGE_SUBMIT = "submit"
+SMART_LINE_SOURCE_DOMAIN = "domain"
+SMART_LINE_SOURCE_WIZARD = "wizard"
 SMART_EXPECTED_BALANCE_STAGES = (
     SMART_STAGE_STORE_PREPARATION,
     SMART_STAGE_STORE_REVISION,
@@ -202,6 +204,42 @@ class AbTransferHeader(models.Model):
                 action["action"] = "ab_transfer_smart.ab_transfer_smart_wizard_action"
                 break
         return payload
+
+    def write(self, vals):
+        vals = dict(vals or {})
+        duplicate_check_fields = {"smart_stage", "from_store_id", "to_store_id"}
+        previous_stage_by_id = {}
+        if duplicate_check_fields.intersection(vals):
+            previous_stage_by_id = {
+                header.id: header.smart_stage
+                for header in self
+            }
+
+        with self.env.cr.savepoint():
+            result = super().write(vals)
+
+            headers_to_check = self.browse()
+            target_stages = {
+                SMART_STAGE_STORE_PREPARATION,
+                SMART_STAGE_STORE_REVISION,
+                SMART_STAGE_PRE_SUBMIT,
+                SMART_STAGE_SUBMIT,
+            }
+            if "smart_stage" in vals:
+                headers_to_check |= self.filtered(
+                    lambda header: (
+                            previous_stage_by_id.get(header.id) == SMART_STAGE_PURCHASE_PREPARATION
+                            and header.smart_stage in target_stages
+                    )
+                )
+            if {"from_store_id", "to_store_id"}.intersection(vals):
+                headers_to_check |= self.filtered(
+                    lambda header: header.smart_stage != SMART_STAGE_PURCHASE_PREPARATION
+                )
+            if headers_to_check:
+                headers_to_check.mapped("smart_line_ids")._check_duplicate_transfer_lines()
+
+        return result
 
     def action_clear_target_products(self):
         for rec in self:
@@ -886,6 +924,7 @@ class AbTransferHeader(models.Model):
             for line in self.smart_line_ids
             if line.product_id
         }
+        explicit_product_serials = set(self._get_smart_explicit_product_qty_by_serial())
 
         result = {
             "created": 0,
@@ -959,6 +998,11 @@ class AbTransferHeader(models.Model):
                 result["no_stock"] += 1
                 continue
 
+            line_vals["source_type"] = (
+                SMART_LINE_SOURCE_WIZARD
+                if product_serial in explicit_product_serials
+                else SMART_LINE_SOURCE_DOMAIN
+            )
             existing_line = existing_lines_by_product.get(product.id)
             if self._is_smart_dropout_coverage_excluded(
                     required_context["planned_qty"],

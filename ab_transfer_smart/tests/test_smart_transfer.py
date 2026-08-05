@@ -18,6 +18,8 @@ from odoo.addons.ab_transfer_smart.models.ab_transfer_header import (
     SMART_STAGE_SUBMIT,
     SMART_STAGE_STORE_PREPARATION,
     SMART_STAGE_STORE_REVISION,
+    SMART_LINE_SOURCE_DOMAIN,
+    SMART_LINE_SOURCE_WIZARD,
     SMART_ROW_BRANCH_STOCK_QTY,
     SMART_ROW_LAST_MONTH_SALES,
     SMART_ROW_PREVIOUS_MONTH_SALES,
@@ -1135,6 +1137,139 @@ class TestSmartTransfer(TransactionCase):
 
         self.assertEqual(reserved_qty[(product.id, header.from_store_id.id)], 9)
         self.assertEqual(reference_line.smart_expected_source_stock_qty, 41)
+
+    def test_smart_line_duplicate_stage_transition_blocks_same_source_day(self):
+        header = self._create_smart_header()
+        duplicate_header = self.env["ab_transfer_header"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_store_id": header.to_store_id.id,
+            "user_id": header.user_id.id,
+        })
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-DUP-STAGE", 99181, uom)
+        self._create_smart_line(header, product, uom, qty=10)
+        self._create_smart_line(duplicate_header, product, uom, qty=5)
+
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+        with self.assertRaisesRegex(ValidationError, "Duplicated transfer products found"):
+            duplicate_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        duplicate_header.invalidate_recordset(["smart_stage"])
+        self.assertEqual(duplicate_header.smart_stage, SMART_STAGE_PURCHASE_PREPARATION)
+
+    def test_smart_line_duplicate_constraint_skips_module_schema_check_context(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-DUP-UPGRADE", 99186, uom)
+        line = self._create_smart_line(header, product, uom, qty=10)
+
+        with patch.object(
+                type(line),
+                "_check_duplicate_transfer_lines",
+                side_effect=AssertionError("Duplicate helper should not run during schema checks."),
+        ):
+            line.with_context(models_to_check=True)._constrains_duplicate_transfer_lines()
+            line.with_context(module="ab_transfer_smart")._constrains_duplicate_transfer_lines()
+
+    def test_smart_line_duplicate_allows_different_source_type(self):
+        header = self._create_smart_header()
+        duplicate_header = self.env["ab_transfer_header"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_store_id": header.to_store_id.id,
+            "user_id": header.user_id.id,
+        })
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-DUP-SOURCE", 99182, uom)
+        self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=10,
+            source_type=SMART_LINE_SOURCE_DOMAIN,
+        )
+        self._create_smart_line(
+            duplicate_header,
+            product,
+            uom,
+            qty=5,
+            source_type=SMART_LINE_SOURCE_WIZARD,
+        )
+
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+        duplicate_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        self.assertEqual(duplicate_header.smart_stage, SMART_STAGE_STORE_REVISION)
+
+    def test_smart_line_duplicate_ignores_exclusion_reason(self):
+        header = self._create_smart_header()
+        duplicate_header = self.env["ab_transfer_header"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_store_id": header.to_store_id.id,
+            "user_id": header.user_id.id,
+        })
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-DUP-EXCLUDED", 99183, uom)
+        excluded_line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=10,
+            exclusion_reason="expired",
+        )
+        self._create_smart_line(duplicate_header, product, uom, qty=5)
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+        duplicate_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        with self.assertRaisesRegex(ValidationError, "Duplicated transfer products found"):
+            excluded_line.write({"exclusion_reason": False})
+
+        excluded_line.invalidate_recordset(["exclusion_reason"])
+        self.assertEqual(excluded_line.exclusion_reason, "expired")
+
+    def test_apply_smart_transfer_rows_sets_line_source_type(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        explicit_product = self._create_smart_product("SMART-SOURCE-WIZARD", 99184, uom)
+        domain_product = self._create_smart_product("SMART-SOURCE-DOMAIN", 99185, uom)
+        header.write({
+            "smart_stock_method": SMART_STOCK_METHOD_NORMAL,
+            "smart_product_line_ids": [(0, 0, {
+                "product_id": explicit_product.id,
+                "qty": 6,
+            })],
+            "target_product_ids": [(6, 0, domain_product.ids)],
+        })
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={99184: 20, 99185: 20},
+        ), patch.object(
+                type(header),
+                "_get_smart_other_branches_context_by_serial",
+                return_value={},
+        ), patch.object(
+                type(header),
+                "_prepare_smart_line_vals",
+                return_value={
+                    "qty": 5,
+                    "expiry_date": fields.Date.today(),
+                    "uom_id": uom.id,
+                    "smart_source_stock_qty": 20,
+                },
+        ):
+            result = header._apply_smart_transfer_rows([
+                (99184, "P184", "Explicit", 8102, 0, 90, 0, 0, 90),
+                (99185, "P185", "Domain", 8102, 0, 90, 0, 0, 90),
+            ])
+
+        self.assertEqual(result["created"], 2)
+        source_type_by_product = {
+            line.product_id.id: line.source_type
+            for line in header.smart_line_ids
+        }
+        self.assertEqual(source_type_by_product[explicit_product.id], SMART_LINE_SOURCE_WIZARD)
+        self.assertEqual(source_type_by_product[domain_product.id], SMART_LINE_SOURCE_DOMAIN)
 
     def test_fetch_destination_smart_rows_reads_today_cache(self):
         header = self._create_smart_header()

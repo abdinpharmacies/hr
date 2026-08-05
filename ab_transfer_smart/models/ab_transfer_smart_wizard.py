@@ -11,6 +11,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 
 SMART_GROUP_PURCHASE = "ab_transfer_smart.group_transfer_smart_purchase"
 SMART_STAGE_PURCHASE_PREPARATION = "purchase_preparation"
+SMART_LINE_SOURCE_WIZARD = "wizard"
 
 
 class AbTransferSmartWizard(models.Model):
@@ -638,6 +639,9 @@ class AbTransferSmartWizard(models.Model):
 
     @staticmethod
     def _chunk_product_filter_vals(smart_lines):
+        explicit_lines = smart_lines.filtered(
+            lambda line: line.source_type == SMART_LINE_SOURCE_WIZARD
+        )
         return {
             "smart_product_domain": "[]",
             "target_product_ids": [(6, 0, smart_lines.mapped("product_id").ids)],
@@ -648,7 +652,7 @@ class AbTransferSmartWizard(models.Model):
                         "product_id": line.product_id.id,
                         "qty": line.qty or line.product_id.min_sale_purchase_qty or 1.0,
                     })
-                    for line in smart_lines
+                    for line in explicit_lines
                     if line.product_id
                 ],
             ],

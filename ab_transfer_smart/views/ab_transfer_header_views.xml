@@ -164,6 +164,8 @@
                                 <field name="smart_qty_exceeds_expected_stock" column_invisible="1"/>
                                 <field name="product_code" readonly="1"/>
                                 <field name="product_id" readonly="1"/>
+                                <field name="source_type" readonly="1" optional="show"/>
+                                <field name="create_day" readonly="1" optional="show"/>
                                 <field name="smart_product_location" readonly="1" optional="show"/>
                                 <field name="qty"
                                        readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
@@ -196,6 +198,8 @@
                                             <field name="from_store_id" readonly="1"/>
                                             <field name="to_store_id" readonly="1"/>
                                             <field name="product_id" readonly="1"/>
+                                            <field name="source_type" readonly="1"/>
+                                            <field name="create_day" readonly="1"/>
                                         </group>
                                         <group>
                                             <field name="qty"
@@ -321,6 +325,8 @@
                     <field name="product_id"/>
                     <field name="from_store_id"/>
                     <field name="to_store_id"/>
+                    <field name="source_type"/>
+                    <field name="create_day"/>
                     <field name="exclusion_reason"/>
                     <filter name="filter_included"
                             string="Included"
@@ -331,6 +337,8 @@
                     <separator/>
                     <filter name="group_by_header" string="Transfer" context="{'group_by': 'header_id'}"/>
                     <filter name="group_by_product" string="Product" context="{'group_by': 'product_id'}"/>
+                    <filter name="group_by_source_type" string="Source Type" context="{'group_by': 'source_type'}"/>
+                    <filter name="group_by_create_day" string="Create Day" context="{'group_by': 'create_day'}"/>
                     <filter name="group_by_exclusion_reason"
                             string="Exclusion Reason"
                             context="{'group_by': 'exclusion_reason'}"/>
@@ -352,6 +360,8 @@
                     <field name="from_store_id" readonly="1"/>
                     <field name="to_store_id" readonly="1"/>
                     <field name="product_id" readonly="1"/>
+                    <field name="source_type" readonly="1"/>
+                    <field name="create_day" readonly="1"/>
                     <field name="qty"
                            readonly="is_submitted or smart_stage != 'purchase_preparation'"/>
                     <field name="expiry_date" readonly="1"/>
@@ -392,6 +402,8 @@
                                 <field name="from_store_id" readonly="1"/>
                                 <field name="to_store_id" readonly="1"/>
                                 <field name="product_id" readonly="1"/>
+                                <field name="source_type" readonly="1"/>
+                                <field name="create_day" readonly="1"/>
                             </group>
                             <group>
                                 <field name="qty"
@@ -439,6 +451,8 @@
                     <field name="header_id"/>
                     <field name="from_store_id"/>
                     <field name="to_store_id"/>
+                    <field name="source_type"/>
+                    <field name="create_day"/>
                     <field name="product_code"/>
                     <field name="product_id"/>
                     <field name="qty"/>

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from datetime import timezone
+from zoneinfo import ZoneInfo
 
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
@@ -6,6 +8,9 @@ from odoo.tools import float_compare
 
 SMART_STAGE_PURCHASE_PREPARATION = "purchase_preparation"
 SMART_LINE_LOCKED_STAGES = ("pre_submit", "submit")
+SMART_LINE_SOURCE_DOMAIN = "domain"
+SMART_LINE_SOURCE_WIZARD = "wizard"
+EGYPT_TZ = ZoneInfo("Africa/Cairo")
 
 
 class AbTransferSmartLine(models.Model):
@@ -24,6 +29,27 @@ class AbTransferSmartLine(models.Model):
         related="header_id.smart_stage",
         string="Smart Stage",
         readonly=True,
+    )
+
+    source_type = fields.Selection(
+        selection=[
+            (SMART_LINE_SOURCE_WIZARD, "Wizard"),
+            (SMART_LINE_SOURCE_DOMAIN, "Domain"),
+        ],
+        string="Source Type",
+        default=SMART_LINE_SOURCE_DOMAIN,
+        required=True,
+        copy=False,
+        index=True,
+    )
+
+    create_day = fields.Date(
+        string="Create Day",
+        compute="_compute_create_day",
+        store=True,
+        readonly=True,
+        copy=False,
+        index=True,
     )
 
     exclusion_reason = fields.Selection(
@@ -53,6 +79,20 @@ class AbTransferSmartLine(models.Model):
         compute="_compute_smart_qty_exceeds_expected_stock",
         readonly=True,
     )
+
+    @api.depends("create_date")
+    def _compute_create_day(self):
+        for rec in self:
+            rec.create_day = rec._get_egypt_day_from_datetime(rec.create_date)
+
+    @api.model
+    def _get_egypt_day_from_datetime(self, value):
+        dt_value = fields.Datetime.to_datetime(value) if value else fields.Datetime.now()
+        if not dt_value:
+            return False
+        if dt_value.tzinfo is None:
+            dt_value = dt_value.replace(tzinfo=timezone.utc)
+        return dt_value.astimezone(EGYPT_TZ).date()
 
     @api.depends(
         "qty",
@@ -156,6 +196,124 @@ class AbTransferSmartLine(models.Model):
                 % "\n".join(errors)
             )
 
+    @api.constrains(
+        "header_id",
+        "from_store_id",
+        "to_store_id",
+        "product_id",
+        "source_type",
+        "create_day",
+        "exclusion_reason",
+    )
+    def _constrains_duplicate_transfer_lines(self):
+        if (
+                self.env.context.get("models_to_check")
+                or self.env.context.get("module") == "ab_transfer_smart"
+        ):
+            return
+        self._check_duplicate_transfer_lines()
+
+    def _get_duplicate_transfer_line_key(self):
+        self.ensure_one()
+        if (
+                not self.from_store_id
+                or not self.to_store_id
+                or not self.product_id
+                or not self.source_type
+                or not self.create_day
+        ):
+            return False
+        return (
+            self.from_store_id.id,
+            self.to_store_id.id,
+            self.product_id.id,
+            self.source_type,
+            self.create_day,
+        )
+
+    def _get_duplicate_check_lines(self):
+        return self.filtered(
+            lambda line: (
+                    not line.exclusion_reason
+                    and line.header_id.smart_stage != SMART_STAGE_PURCHASE_PREPARATION
+                    and line._get_duplicate_transfer_line_key()
+            )
+        )
+
+    def _check_duplicate_transfer_lines(self):
+        check_lines = self._get_duplicate_check_lines()
+        if not check_lines:
+            return
+
+        keys = set(check_lines.mapped(lambda line: line._get_duplicate_transfer_line_key()))
+        from_store_ids = {key[0] for key in keys}
+        to_store_ids = {key[1] for key in keys}
+        product_ids = {key[2] for key in keys}
+        source_types = {key[3] for key in keys}
+        create_days = {key[4] for key in keys}
+
+        candidates = self.search([
+            ("from_store_id", "in", list(from_store_ids)),
+            ("to_store_id", "in", list(to_store_ids)),
+            ("product_id", "in", list(product_ids)),
+            ("source_type", "in", list(source_types)),
+            ("create_day", "in", list(create_days)),
+            ("header_id.smart_stage", "!=", SMART_STAGE_PURCHASE_PREPARATION),
+            ("exclusion_reason", "=", False),
+        ])
+        candidates_by_key = {}
+        for line in candidates:
+            key = line._get_duplicate_transfer_line_key()
+            if key not in keys:
+                continue
+            candidates_by_key.setdefault(key, self.browse())
+            candidates_by_key[key] |= line
+
+        errors = []
+        reported = set()
+        for line in check_lines:
+            key = line._get_duplicate_transfer_line_key()
+            duplicate_lines = candidates_by_key.get(key, self.browse()) - line
+            for duplicate in duplicate_lines:
+                report_key = tuple(sorted((line.id, duplicate.id)))
+                if report_key in reported:
+                    continue
+                reported.add(report_key)
+                errors.append(line._format_duplicate_transfer_line_error(duplicate))
+
+        if errors:
+            raise ValidationError(
+                _("Duplicated transfer products found:\n\n%s")
+                % "\n\n".join(errors)
+            )
+
+    def _format_duplicate_transfer_line_error(self, duplicate):
+        self.ensure_one()
+        source_label = dict(self._fields["source_type"].selection).get(
+            self.source_type,
+            self.source_type,
+        )
+        create_day = (
+            self.create_day.strftime("%d/%m/%Y")
+            if self.create_day
+            else ""
+        )
+        return _(
+            "Code: %(code)s\n"
+            "Product: %(product)s\n"
+            "Qty: %(qty).3f\n"
+            "Source: %(source)s\n"
+            "Create Day: %(create_day)s\n"
+            "Existing Transfer: %(transfer)s"
+        ) % {
+            "code": self.product_code or self.product_id.code or "",
+            "product": self.product_id.name or self.product_id.display_name or "",
+            "qty": self.qty or 0.0,
+            "source": source_label,
+            "create_day": create_day,
+            "transfer": duplicate.header_id.display_name or duplicate.header_id.name or duplicate.header_id.id,
+        }
+
     @api.model_create_multi
     def create(self, vals_list):
         header_ids = [vals.get("header_id") for vals in vals_list if vals.get("header_id")]
@@ -171,8 +329,12 @@ class AbTransferSmartLine(models.Model):
             vals.pop("class_id", None)
             qty = vals.get("qty", default_qty) or 0.0
             self._check_smart_qty_value(qty)
+            vals.setdefault("source_type", SMART_LINE_SOURCE_DOMAIN)
             vals.setdefault("smart_original_qty", qty)
-        return super().create(vals_list)
+        with self.env.cr.savepoint():
+            lines = super().create(vals_list)
+            lines._check_duplicate_transfer_lines()
+        return lines
 
     def write(self, vals):
         vals = dict(vals or {})
@@ -183,7 +345,17 @@ class AbTransferSmartLine(models.Model):
         if vals and set(vals) - allowed_system_fields:
             self._check_smart_line_editable()
             self._check_smart_qty_write(vals)
-        return super().write(vals)
+        with self.env.cr.savepoint():
+            result = super().write(vals)
+            duplicate_fields = {
+                "product_id",
+                "header_id",
+                "source_type",
+                "exclusion_reason",
+            }
+            if duplicate_fields.intersection(vals):
+                self._check_duplicate_transfer_lines()
+        return result
 
     def unlink(self):
         self._check_smart_line_editable()
