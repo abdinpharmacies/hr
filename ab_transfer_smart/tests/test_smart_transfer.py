@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-import base64
-import io
-import zipfile
-
 from datetime import timedelta
 from pathlib import Path
 from types import SimpleNamespace
@@ -748,34 +744,6 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(qty_by_product[product_2.id], 7)
         self.assertFalse(wizard.product_import_text)
 
-    def test_wizard_import_product_lines_from_xlsx_file(self):
-        header = self._create_smart_header()
-        uom = self._create_smart_uom()
-        product_1 = self._create_smart_product("SMART-XLSX-1", 99021, uom)
-        product_2 = self._create_smart_product("SMART-XLSX-2", 99022, uom)
-        xlsx_content = self._minimal_xlsx([
-            [product_1.code, "3000"],
-            [product_2.code, "1000"],
-        ])
-        wizard = self.env["ab_transfer_smart_wizard"].create({
-            "from_store_id": header.from_store_id.id,
-            "to_stores_id": [(6, 0, header.to_store_id.ids)],
-            "user_id": header.user_id.id,
-            "product_import_file": base64.b64encode(xlsx_content),
-            "product_import_filename": "smart_products.xlsx",
-        })
-
-        wizard.action_import_product_file()
-
-        qty_by_product = {
-            line.product_id.id: line.qty
-            for line in wizard.product_line_ids
-        }
-        self.assertEqual(qty_by_product[product_1.id], 3000)
-        self.assertEqual(qty_by_product[product_2.id], 1000)
-        self.assertFalse(wizard.product_import_file)
-        self.assertFalse(wizard.product_import_filename)
-
     def test_wizard_product_lines_reject_duplicate_manual_product(self):
         header = self._create_smart_header()
         uom = self._create_smart_uom()
@@ -797,63 +765,6 @@ class TestSmartTransfer(TransactionCase):
                     "qty": 3,
                 })],
             })
-
-    @staticmethod
-    def _minimal_xlsx(rows):
-        shared_strings = []
-        shared_index = {}
-
-        def shared(value):
-            value = str(value)
-            if value not in shared_index:
-                shared_index[value] = len(shared_strings)
-                shared_strings.append(value)
-            return shared_index[value]
-
-        sheet_rows = []
-        for row_index, values in enumerate(rows, start=1):
-            cells = []
-            for col_name, value in zip(("A", "B"), values):
-                cells.append(
-                    '<c r="%s%s" t="s"><v>%s</v></c>'
-                    % (col_name, row_index, shared(value))
-                )
-            sheet_rows.append('<row r="%s">%s</row>' % (row_index, "".join(cells)))
-
-        buffer = io.BytesIO()
-        with zipfile.ZipFile(buffer, "w") as workbook:
-            workbook.writestr(
-                "[Content_Types].xml",
-                '<?xml version="1.0" encoding="UTF-8"?>'
-                '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
-                '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
-                '<Default Extension="xml" ContentType="application/xml"/>'
-                '<Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>'
-                '<Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'
-                '<Override PartName="/xl/sharedStrings.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sharedStrings+xml"/>'
-                '</Types>',
-            )
-            workbook.writestr(
-                "xl/workbook.xml",
-                '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-                '<sheets><sheet name="Sheet1" sheetId="1" r:id="rId1" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/></sheets>'
-                '</workbook>',
-            )
-            workbook.writestr(
-                "xl/worksheets/sheet1.xml",
-                '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-                '<sheetData>%s</sheetData></worksheet>' % "".join(sheet_rows),
-            )
-            workbook.writestr(
-                "xl/sharedStrings.xml",
-                '<sst xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" count="%s" uniqueCount="%s">%s</sst>'
-                % (
-                    len(shared_strings),
-                    len(shared_strings),
-                    "".join("<si><t>%s</t></si>" % value for value in shared_strings),
-                ),
-            )
-        return buffer.getvalue()
 
     def test_smart_product_line_requested_qty_sets_transfer_qty_without_changing_need(self):
         header = self._create_smart_header_from_existing_records_or_skip()

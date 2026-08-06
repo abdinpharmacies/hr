@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import base64
-import io
 import re
-import zipfile
-import xml.etree.ElementTree as ET
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -101,15 +97,6 @@ class AbTransferSmartWizard(models.Model):
         copy=False,
         help="Paste product code and quantity from Excel, one product per line.",
     )
-    product_import_file = fields.Binary(
-        string="Excel File",
-        copy=False,
-        attachment=False,
-    )
-    product_import_filename = fields.Char(
-        string="Excel Filename",
-        copy=False,
-    )
     fair_store_ids = fields.Many2many(
         "ab_store",
         "ab_transfer_smart_wizard_fair_store_rel",
@@ -128,8 +115,8 @@ class AbTransferSmartWizard(models.Model):
     )
     smart_stock_method = fields.Selection(
         selection=[
-            ("weighted", "طريقة الوزن"),
-            ("normal", "الطريقة العادية"),
+            ("weighted", "Weighted Method"),
+            ("normal", "Normal Method"),
         ],
         string="Stock Calculation Method",
         default="weighted",
@@ -305,27 +292,6 @@ class AbTransferSmartWizard(models.Model):
         return self._smart_notification(
             _("Smart Products"),
             _("Product lines added. Created: %(created)s, Updated: %(updated)s.")
-            % {"created": created, "updated": updated},
-            "success",
-            next_action=self._smart_soft_reload_action(),
-        )
-
-    def action_import_product_file(self):
-        self.ensure_one()
-        if self.state == "done":
-            raise UserError(_("Done wizards cannot import products."))
-        imported = self._parse_product_import_file()
-        if not imported:
-            raise UserError(_("Import file must contain product code and quantity."))
-
-        created, updated = self._add_imported_product_lines(imported)
-        self.write({
-            "product_import_file": False,
-            "product_import_filename": False,
-        })
-        return self._smart_notification(
-            _("Smart Products"),
-            _("Product lines imported. Created: %(created)s, Updated: %(updated)s.")
             % {"created": created, "updated": updated},
             "success",
             next_action=self._smart_soft_reload_action(),
@@ -678,42 +644,6 @@ class AbTransferSmartWizard(models.Model):
 
         return self._products_from_code_qty_rows(parsed_rows)
 
-    def _parse_product_import_file(self):
-        self.ensure_one()
-        if not self.product_import_file:
-            raise UserError(_("Please upload an Excel file."))
-
-        filename = (self.product_import_filename or "").strip().lower()
-        content = base64.b64decode(self.product_import_file)
-        if filename.endswith(".xlsx"):
-            rows = self._read_xlsx_product_rows(content)
-        elif filename.endswith(".csv") or filename.endswith(".txt"):
-            rows = self._read_text_product_rows(content)
-        else:
-            raise UserError(_("Only .xlsx, .csv, or .txt product import files are supported."))
-        return self._products_from_import_rows(rows)
-
-    def _products_from_import_rows(self, rows):
-        parsed_rows = []
-        for index, row in enumerate(rows or [], start=1):
-            code = str((row[0] if len(row) > 0 else "") or "").strip()
-            qty_value = row[1] if len(row) > 1 else ""
-            if not code and qty_value in ("", None):
-                continue
-            if not code:
-                raise UserError(_("Line %(line)s must contain a product code.") % {"line": index})
-            try:
-                qty = float(str(qty_value or "").strip().replace(",", "."))
-            except (TypeError, ValueError):
-                raise UserError(_("Line %(line)s has an invalid quantity: %(qty)s") % {
-                    "line": index,
-                    "qty": qty_value,
-                })
-            if qty <= 0.0:
-                raise UserError(_("Line %(line)s quantity must be greater than zero.") % {"line": index})
-            parsed_rows.append((code, qty))
-        return self._products_from_code_qty_rows(parsed_rows)
-
     def _products_from_code_qty_rows(self, parsed_rows):
         codes = [code for code, _qty in parsed_rows]
         products = self.env["ab_product"].with_context(active_test=False).search([
@@ -740,86 +670,6 @@ class AbTransferSmartWizard(models.Model):
             (self.env["ab_product"].browse(product_id), qty)
             for product_id, qty in qty_by_product_id.items()
         ]
-
-    def _read_text_product_rows(self, content):
-        text = content.decode("utf-8-sig")
-        rows = []
-        for line in text.splitlines():
-            line = line.strip()
-            if not line:
-                continue
-            rows.append([part.strip() for part in re.split(r"[\t,;]+", line)])
-        return rows
-
-    def _read_xlsx_product_rows(self, content):
-        try:
-            workbook = zipfile.ZipFile(io.BytesIO(content))
-        except zipfile.BadZipFile:
-            raise UserError(_("Invalid .xlsx file."))
-
-        shared_strings = self._read_xlsx_shared_strings(workbook)
-        sheet_name = self._get_xlsx_first_sheet_name(workbook)
-        namespaces = {"main": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
-        root = ET.fromstring(workbook.read(sheet_name))
-        rows = []
-        for row in root.findall(".//main:sheetData/main:row", namespaces):
-            values_by_col = {}
-            for cell in row.findall("main:c", namespaces):
-                col_index = self._xlsx_col_index(cell.attrib.get("r", ""))
-                if col_index > 2:
-                    continue
-                values_by_col[col_index] = self._xlsx_cell_value(cell, shared_strings, namespaces)
-            values = [values_by_col.get(1, ""), values_by_col.get(2, "")]
-            if any(str(value or "").strip() for value in values):
-                rows.append(values)
-        return rows
-
-    @staticmethod
-    def _read_xlsx_shared_strings(workbook):
-        try:
-            root = ET.fromstring(workbook.read("xl/sharedStrings.xml"))
-        except KeyError:
-            return []
-        namespaces = {"main": "http://schemas.openxmlformats.org/spreadsheetml/2006/main"}
-        strings = []
-        for item in root.findall("main:si", namespaces):
-            texts = [node.text or "" for node in item.findall(".//main:t", namespaces)]
-            strings.append("".join(texts))
-        return strings
-
-    @staticmethod
-    def _get_xlsx_first_sheet_name(workbook):
-        sheet_names = sorted(
-            name for name in workbook.namelist()
-            if name.startswith("xl/worksheets/sheet") and name.endswith(".xml")
-        )
-        if not sheet_names:
-            raise UserError(_("Excel file does not contain any worksheet."))
-        return sheet_names[0]
-
-    @staticmethod
-    def _xlsx_col_index(cell_ref):
-        letters = "".join(char for char in cell_ref if char.isalpha()).upper()
-        value = 0
-        for char in letters:
-            value = value * 26 + (ord(char) - ord("A") + 1)
-        return value
-
-    @staticmethod
-    def _xlsx_cell_value(cell, shared_strings, namespaces):
-        inline_node = cell.find("main:is/main:t", namespaces)
-        if inline_node is not None:
-            return inline_node.text or ""
-        value_node = cell.find("main:v", namespaces)
-        if value_node is None:
-            return ""
-        value = value_node.text or ""
-        if cell.attrib.get("t") == "s":
-            try:
-                return shared_strings[int(value)]
-            except (IndexError, TypeError, ValueError):
-                return ""
-        return value
 
     @api.model
     def _parse_product_import_line(self, line, index):

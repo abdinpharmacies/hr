@@ -23,7 +23,6 @@
     "assets": {
         "web.assets_backend": [
             "ab_transfer_smart/static/src/scss/smart_header.scss",
-            "ab_transfer_smart/static/src/xml/binary_upload.xml",
         ],
     },
     "installable": True,

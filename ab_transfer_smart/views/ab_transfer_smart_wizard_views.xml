@@ -123,49 +123,33 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="الأصناف">
+                            <page string="Products">
                                 <group>
-                                    <group string="اختيار الأصناف">
+                                    <group string="Product Selection">
                                         <field name="smart_product_domain"
-                                               string="فلتر الأصناف"
+                                               string="Product Filter"
                                                widget="domain"
                                                options="{'model': 'ab_product', 'count_limit': 1000, 'in_dialog': True}"
                                                readonly="state == 'done'"/>
                                     </group>
-                                    <group string="إدخال جماعي">
+                                    <group string="Bulk Entry">
                                         <label for="product_import_text"/>
                                         <div class="d-flex align-items-start gap-2">
                                             <field name="product_import_text"
-                                                   string="لصق الأصناف"
+                                                   string="Paste Products"
                                                    nolabel="1"
                                                    class="flex-grow-1"
-                                                   placeholder="الصق من إكسل: كود الصنف والكمية، صنف واحد في كل سطر"
+                                                   placeholder="Paste from Excel: product code and quantity, one product per line"
                                                    readonly="state == 'done'"/>
                                             <button name="action_import_product_lines"
                                                     type="object"
-                                                    string="إضافة صنف"
+                                                    string="Add Product"
                                                     class="btn-secondary text-nowrap"
                                                     invisible="state == 'done'"/>
                                         </div>
-                                        <label for="product_import_file"/>
-                                        <div class="d-flex align-items-center gap-2">
-                                            <field name="product_import_file"
-                                                   string="ملف إكسل"
-                                                   filename="product_import_filename"
-                                                   nolabel="1"
-                                                   class="flex-grow-1"
-                                                   options="{'accepted_file_extensions': '.xlsx,.csv,.txt'}"
-                                                   readonly="state == 'done'"/>
-                                            <button name="action_import_product_file"
-                                                    type="object"
-                                                    string="استيراد الأصناف"
-                                                    class="btn-secondary text-nowrap"
-                                                    invisible="state == 'done' or not product_import_file"/>
-                                        </div>
-                                        <field name="product_import_filename" invisible="1"/>
                                     </group>
                                 </group>
-                                <separator string="الأصناف المطلوبة"/>
+                                <separator string="Requested Products"/>
                                 <field name="product_line_ids" readonly="state == 'done'">
                                     <list editable="bottom" limit="1000">
                                         <field name="sequence" widget="handle"/>
