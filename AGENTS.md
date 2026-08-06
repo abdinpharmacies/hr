@@ -738,6 +738,7 @@ Python:
 
 - Python 3.10 or newer.
 - Use virtual environments.
+- Every Python file in a module `models/` folder must be imported from that module's `models/__init__.py`.
 - Always use recordsets.
 - Avoid per-record queries.
 - Use `mapped()`, `filtered()`, and `sorted()` on recordsets.
