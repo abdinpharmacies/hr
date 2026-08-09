@@ -440,6 +440,7 @@ class AbTransferHeader(models.Model):
                     total_sell_price = self.total_sell_price or 0.0
                     items_count = self.items_count or len(lines)
                     notes = self.notes or ""
+                    store_trans_h_notes = self._build_submit_store_trans_h_notes()
                     delivery_emp_sql_id = self._get_ref_id(
                         self.employee_delivery_id, "موظف التسليم", allow_empty=True
                     )
@@ -476,7 +477,7 @@ class AbTransferHeader(models.Model):
                             total_sell_price,
                             0,
                             items_count,
-                            notes,
+                            store_trans_h_notes,
                             sql_flag,
                             insert_user_sql_id,
                             0,
@@ -747,6 +748,14 @@ class AbTransferHeader(models.Model):
         # =========================
         # Odoo Validations
         # =========================
+
+    def _build_submit_store_trans_h_notes(self):
+        self.ensure_one()
+        transfer_reference = "Odoo Transfer: %s" % self.display_name
+        notes = self.notes or ""
+        if notes:
+            return "%s\n%s" % (notes, transfer_reference)
+        return transfer_reference
 
     def _validate_odoo_data(self, lines):
         self.ensure_one()
