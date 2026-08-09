@@ -32,6 +32,12 @@ Module creation rules:
 - Keep `author` for company/team ownership.
 - All new modules include `developer = "'<current git user>',"` in `__manifest__.py`.
 - Before finishing any newly created module, verify its `__manifest__.py` includes `developer = "'<current git user>',"` without replacing the team/company `author`.
+- For every module you work on, create `<module_name>/changelog.d` if it does not already exist.
+- Keep `<module_name>/changelog.d` as a concise reference for recent commits and current uncommitted changes in that module.
+- Before updating a module changelog, inspect `git show` for recent relevant commits and `git diff` for current working-tree changes.
+- Use the same changelog pattern: commit hash, author, date, original commit subject, user-facing change bullets, and a `Files changed:` list.
+- For current uncommitted work, add a `Current changes before commit:` section with accurate bullets and files from `git diff`; do not copy stale bullets from older commits.
+- Do not include unrelated module files in a module changelog.
 
 ## Trello Workflow Rules
 
