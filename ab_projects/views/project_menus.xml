@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="ab_project_dashboard_menu"
+              name="Workspace"
+              parent="project.menu_main_pm"
+              action="ab_project_dashboard_action"
+              sequence="0"
+              groups="project.group_project_user,ab_projects.group_ab_project_user"/>
+
+    <menuitem id="ab_project_my_work_menu"
+              name="My Work"
+              parent="project.menu_project_management"
+              action="ab_project_my_work_action"
+              sequence="1"
+              groups="project.group_project_user,ab_projects.group_ab_project_user"/>
+
+    <menuitem id="ab_project_sprint_menu"
+              name="Sprints"
+              parent="project.menu_project_management"
+              action="ab_project_sprint_action"
+              sequence="2"
+              groups="project.group_project_user,ab_projects.group_ab_project_user"/>
+
+    <menuitem id="ab_project_release_menu"
+              name="Releases"
+              parent="project.menu_project_management"
+              action="ab_project_release_action"
+              sequence="3"
+              groups="project.group_project_user,ab_projects.group_ab_project_user"/>
+
+    <menuitem id="ab_project_report_development_tasks_menu"
+              name="Development Tasks"
+              parent="project.menu_project_report"
+              action="ab_project_task_report_action"
+              sequence="5"
+              groups="project.group_project_user,ab_projects.group_ab_project_user"/>
+
+    <menuitem id="ab_project_report_sprints_menu"
+              name="Sprints"
+              parent="project.menu_project_report"
+              action="ab_project_sprint_report_action"
+              sequence="6"
+              groups="project.group_project_user,ab_projects.group_ab_project_user"/>
+
+    <menuitem id="ab_project_report_bugs_menu"
+              name="Bugs"
+              parent="project.menu_project_report"
+              action="ab_project_bug_report_action"
+              sequence="7"
+              groups="project.group_project_user,ab_projects.group_ab_project_user"/>
+
+    <menuitem id="ab_project_type_menu"
+              name="Project Types"
+              parent="project.menu_project_config"
+              action="ab_project_type_action"
+              sequence="8"
+              groups="project.group_project_manager,ab_projects.group_ab_project_admin"/>
+</odoo>

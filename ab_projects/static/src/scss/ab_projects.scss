@@ -1,0 +1,666 @@
+:root {
+    --abp-bg: #f7f8fa;
+    --abp-surface: #ffffff;
+    --abp-surface-soft: #f3f5f8;
+    --abp-border: #dfe3ea;
+    --abp-border-strong: #c8ced8;
+    --abp-text: #1f2328;
+    --abp-muted: #667085;
+    --abp-blue: #2563eb;
+    --abp-green: #16835b;
+    --abp-yellow: #a15c07;
+    --abp-red: #c24135;
+    --abp-purple: #7759c2;
+    --abp-cyan: #087b91;
+    --abp-shadow: 0 8px 24px rgba(31, 35, 40, .08);
+    --abp-shadow-soft: 0 2px 10px rgba(31, 35, 40, .06);
+}
+
+.ab_project_kanban_view,
+.ab_task_kanban_view,
+.ab_sprint_kanban_view,
+.ab_release_kanban_view {
+    background: var(--abp-bg);
+}
+
+.ab_project_kanban_view .o_kanban_record,
+.ab_sprint_kanban_view .o_kanban_record,
+.ab_release_kanban_view .o_kanban_record {
+    border: 1px solid var(--abp-border);
+    border-radius: 8px;
+    box-shadow: var(--abp-shadow-soft);
+    transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.ab_project_kanban_view .o_kanban_record:hover,
+.ab_sprint_kanban_view .o_kanban_record:hover,
+.ab_release_kanban_view .o_kanban_record:hover {
+    border-color: var(--abp-border-strong);
+    box-shadow: var(--abp-shadow);
+    transform: translateY(-1px);
+}
+
+.ab_project_kanban_view .o_project_kanban_body {
+    padding-block-end: 8px !important;
+}
+
+.ab_project_kanban_view .ab_project_progress_block {
+    margin-block: 2px 8px;
+}
+
+.ab_project_card,
+.ab_sprint_card,
+.ab_release_card {
+    display: flex;
+    min-block-size: 100%;
+    flex-direction: column;
+    gap: 14px;
+    color: var(--abp-text);
+}
+
+.ab_project_card_main,
+.ab_sprint_card_main {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.ab_project_card_header,
+.ab_project_title_row,
+.ab_project_meta_row,
+.ab_project_progress_labels,
+.ab_project_card_footer,
+.ab_task_card_badges,
+.ab_task_card_meta,
+.ab_review_footer,
+.ab_workspace_actions,
+.ab_context_item {
+    display: flex;
+    align-items: center;
+}
+
+.ab_project_card_header,
+.ab_project_progress_labels,
+.ab_project_card_footer {
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.ab_project_title_block {
+    min-inline-size: 0;
+}
+
+.ab_project_title_row {
+    gap: 8px;
+    min-inline-size: 0;
+}
+
+.ab_project_card_title {
+    display: block;
+    color: var(--abp-text);
+    font-size: 1.02rem;
+    font-weight: 700;
+    line-height: 1.25;
+}
+
+.ab_project_meta_row {
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-block-start: 8px;
+}
+
+.ab_status_pill,
+.ab_meta_chip,
+.ab_type_chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-inline-size: 100%;
+    border: 1px solid var(--abp-border);
+    border-radius: 999px;
+    background: var(--abp-surface-soft);
+    color: var(--abp-muted);
+    font-size: .76rem;
+    font-weight: 650;
+    line-height: 1;
+    padding-block: 5px;
+    padding-inline: 8px;
+    white-space: nowrap;
+}
+
+.ab_status_dot {
+    inline-size: 7px;
+    block-size: 7px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.ab_health_healthy,
+.ab_sprint_status_completed,
+.ab_release_status_released {
+    border-color: rgba(22, 131, 91, .24);
+    background: rgba(22, 131, 91, .1);
+    color: var(--abp-green);
+}
+
+.ab_health_at_risk,
+.ab_sprint_status_active,
+.ab_release_status_testing,
+.ab_release_status_development,
+.ab_blocked_chip,
+.ab_severity_high {
+    border-color: rgba(161, 92, 7, .24);
+    background: rgba(161, 92, 7, .1);
+    color: var(--abp-yellow);
+}
+
+.ab_health_critical,
+.ab_signal_danger,
+.ab_metric_danger,
+.ab_severity_critical {
+    border-color: rgba(194, 65, 53, .24);
+    background: rgba(194, 65, 53, .08);
+    color: var(--abp-red);
+}
+
+.ab_sprint_status_planning,
+.ab_release_status_planned {
+    color: var(--abp-muted);
+}
+
+.ab_type_task {
+    color: var(--abp-blue);
+    background: rgba(37, 99, 235, .09);
+    border-color: rgba(37, 99, 235, .2);
+}
+
+.ab_type_feature {
+    color: var(--abp-green);
+    background: rgba(22, 131, 91, .1);
+    border-color: rgba(22, 131, 91, .22);
+}
+
+.ab_type_bug {
+    color: var(--abp-red);
+    background: rgba(194, 65, 53, .08);
+    border-color: rgba(194, 65, 53, .2);
+}
+
+.ab_type_improvement {
+    color: var(--abp-cyan);
+    background: rgba(8, 123, 145, .09);
+    border-color: rgba(8, 123, 145, .22);
+}
+
+.ab_type_technical_debt {
+    color: var(--abp-purple);
+    background: rgba(119, 89, 194, .1);
+    border-color: rgba(119, 89, 194, .22);
+}
+
+.ab_points_chip,
+.ab_severity_low,
+.ab_severity_medium {
+    color: var(--abp-muted);
+}
+
+.ab_project_progress_block {
+    display: grid;
+    gap: 7px;
+}
+
+.ab_project_progress_labels {
+    color: var(--abp-muted);
+    font-size: .78rem;
+}
+
+.ab_project_progress_labels strong {
+    color: var(--abp-text);
+}
+
+.ab_progress_track {
+    overflow: hidden;
+    block-size: 7px;
+    border-radius: 999px;
+    background: #e9edf3;
+}
+
+.ab_progress_fill {
+    display: block;
+    block-size: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--abp-blue), var(--abp-green));
+}
+
+.ab_project_signal_grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.ab_signal_card {
+    display: grid;
+    gap: 3px;
+    min-inline-size: 0;
+    border: 1px solid var(--abp-border);
+    border-radius: 8px;
+    background: var(--abp-surface-soft);
+    color: var(--abp-text);
+    padding-block: 8px;
+    padding-inline: 8px;
+    text-align: start;
+    text-decoration: none;
+}
+
+.ab_signal_card:hover {
+    border-color: var(--abp-border-strong);
+    color: var(--abp-text);
+    text-decoration: none;
+}
+
+.ab_signal_card strong {
+    font-size: 1.05rem;
+    line-height: 1;
+}
+
+.ab_signal_card span {
+    overflow: hidden;
+    color: var(--abp-muted);
+    font-size: .72rem;
+    text-overflow: ellipsis;
+}
+
+.ab_signal_warning,
+.ab_metric_warning {
+    border-color: rgba(161, 92, 7, .24);
+    background: rgba(161, 92, 7, .08);
+    color: var(--abp-yellow);
+}
+
+.ab_project_context_list {
+    display: grid;
+    gap: 6px;
+}
+
+.ab_context_item {
+    gap: 7px;
+    min-inline-size: 0;
+    color: var(--abp-muted);
+    font-size: .82rem;
+}
+
+.ab_context_item .fa {
+    inline-size: 14px;
+    color: #8b949e;
+    text-align: center;
+}
+
+.ab_project_card_footer {
+    border-block-start: 1px solid var(--abp-border);
+    padding-block-start: 10px;
+}
+
+.ab_project_quick_actions,
+.ab_workspace_actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.ab_project_quick_actions a,
+.ab_project_quick_link {
+    border: 1px solid var(--abp-border);
+    border-radius: 7px;
+    background: var(--abp-surface);
+    color: var(--abp-muted);
+    font-size: .78rem;
+    font-weight: 650;
+    padding-block: 6px;
+    padding-inline: 9px;
+    text-decoration: none;
+}
+
+.ab_project_quick_actions a:hover,
+.ab_project_quick_link:hover {
+    border-color: var(--abp-blue);
+    color: var(--abp-blue);
+}
+
+.ab_task_kanban_view .o_kanban_group {
+    background: var(--abp-bg);
+}
+
+.ab_task_kanban_view .o_kanban_record {
+    border: 1px solid var(--abp-border);
+    border-radius: 8px;
+    margin-block-end: 16px !important;
+    box-shadow: none;
+    padding-block: 10px;
+    padding-inline: 10px;
+    transition: border-color .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.ab_task_kanban_view .o_kanban_record:hover {
+    border-color: var(--abp-border-strong);
+    box-shadow: var(--abp-shadow-soft);
+    transform: translateY(-1px);
+}
+
+.ab_task_kanban_view .o_kanban_record main {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-block-size: auto;
+}
+
+.ab_task_card_title {
+    display: block;
+    color: var(--abp-text);
+    font-size: .96rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-align: start;
+    overflow-wrap: anywhere;
+}
+
+.ab_task_kanban_view main > .text-muted {
+    gap: 3px;
+    margin-block-start: 2px;
+    color: var(--abp-muted) !important;
+    font-size: .78rem;
+    line-height: 1.3;
+}
+
+.ab_task_kanban_view main > .text-muted .o_field_widget {
+    max-inline-size: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ab_task_card_badges,
+.ab_task_card_meta {
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-block-start: 2px;
+}
+
+.ab_task_card_meta {
+    margin-block: 8px 2px;
+}
+
+.ab_task_kanban_view footer {
+    gap: 6px;
+    margin-block-start: 8px;
+    border-block-start: 1px solid var(--abp-border);
+    padding-block-start: 8px !important;
+}
+
+.ab_task_kanban_view footer > .d-flex {
+    min-inline-size: 0;
+}
+
+.ab_task_kanban_view footer > .d-flex:first-child {
+    flex-wrap: wrap;
+    gap: 4px !important;
+}
+
+.ab_task_kanban_view footer .d-flex.ms-auto {
+    gap: 4px;
+}
+
+.ab_pr_link {
+    color: var(--abp-blue);
+    text-decoration: none;
+}
+
+.ab_review_footer {
+    gap: 4px;
+    margin-inline-start: auto;
+}
+
+.ab_project_workspace_form .o_form_sheet_bg,
+.ab_task_workspace_form .o_form_sheet_bg,
+.ab_sprint_workspace_form .o_form_sheet_bg,
+.ab_release_workspace_form .o_form_sheet_bg {
+    background: var(--abp-bg);
+}
+
+.ab_workspace_panel {
+    margin-block: 12px 16px;
+    padding-block: 18px;
+    padding-inline: 18px;
+    border: 1px solid var(--abp-border);
+    border-radius: 8px;
+    background: var(--abp-surface);
+}
+
+.ab_workspace_panel_header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-block-end: 16px;
+}
+
+.ab_workspace_panel_header h2,
+.ab_workspace_subpanel h3 {
+    margin: 0;
+    color: var(--abp-text);
+    font-weight: 750;
+    line-height: 1.2;
+}
+
+.ab_workspace_panel_header h2 {
+    font-size: 1.15rem;
+}
+
+.ab_workspace_panel_header p {
+    margin-block: 5px 0;
+    color: var(--abp-muted);
+    font-size: .88rem;
+}
+
+.ab_project_metric_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+    margin-block: 8px 16px;
+}
+
+.ab_project_metric_grid_large {
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.ab_project_metric {
+    display: grid;
+    min-block-size: 92px;
+    align-content: center;
+    justify-items: start;
+    gap: 5px;
+    inline-size: 100%;
+    border: 1px solid var(--abp-border);
+    border-radius: 8px;
+    background: var(--abp-surface-soft);
+    color: inherit;
+    padding-block: 14px;
+    padding-inline: 14px;
+    text-align: start;
+}
+
+.ab_project_metric_button:hover {
+    border-color: var(--abp-blue);
+    box-shadow: var(--abp-shadow-soft);
+}
+
+.ab_project_metric_icon {
+    color: var(--abp-muted);
+    font-size: .9rem;
+}
+
+.ab_project_metric_value {
+    color: var(--abp-text);
+    font-size: 1.55rem;
+    font-weight: 750;
+    line-height: 1.05;
+}
+
+.ab_project_metric_label {
+    color: var(--abp-muted);
+    font-size: .8rem;
+}
+
+.ab_metric_success {
+    border-color: rgba(22, 131, 91, .2);
+    background: rgba(22, 131, 91, .08);
+}
+
+.ab_metric_success .ab_project_metric_icon,
+.ab_metric_success .ab_project_metric_value {
+    color: var(--abp-green);
+}
+
+.ab_metric_warning .ab_project_metric_icon,
+.ab_metric_warning .ab_project_metric_value {
+    color: var(--abp-yellow);
+}
+
+.ab_metric_danger .ab_project_metric_icon,
+.ab_metric_danger .ab_project_metric_value {
+    color: var(--abp-red);
+}
+
+.ab_project_dashboard_grid,
+.ab_task_detail_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 14px;
+}
+
+.ab_workspace_subpanel {
+    border-inline-start: 3px solid var(--abp-border-strong);
+    background: #fafbfc;
+    padding-block: 14px;
+    padding-inline: 14px;
+}
+
+.ab_workspace_subpanel h3 {
+    margin-block-end: 12px;
+    font-size: .92rem;
+}
+
+.ab_fact_list {
+    display: grid;
+    gap: 9px;
+    margin-block-start: 14px;
+}
+
+.ab_fact_list > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-block-end: 1px solid var(--abp-border);
+    padding-block-end: 7px;
+}
+
+.ab_fact_list span,
+.ab_team_summary {
+    color: var(--abp-muted);
+}
+
+.ab_fact_list strong {
+    color: var(--abp-text);
+    text-align: end;
+}
+
+.ab_big_percentage {
+    font-size: 1.35rem;
+    font-weight: 750;
+}
+
+.ab_team_summary {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-block-end: 12px;
+}
+
+.ab_team_count {
+    color: var(--abp-text);
+    font-size: 1.8rem;
+    font-weight: 750;
+    line-height: 1;
+}
+
+.ab_modern_group,
+.ab_embedded_list {
+    margin-block-start: 12px;
+}
+
+.ab_task_list_view .o_data_cell,
+.ab_task_list_view .o_list_record_selector,
+.ab_embedded_list .o_data_cell,
+.ab_embedded_list .o_list_record_selector {
+    padding-block: 10px !important;
+}
+
+.ab_task_list_view .o_data_row,
+.ab_embedded_list .o_data_row {
+    border-block-end: 6px solid transparent;
+}
+
+.ab_task_list_view .o_list_table,
+.ab_embedded_list .o_list_table {
+    border-collapse: separate;
+    border-spacing: 0 3px;
+}
+
+.ab_embedded_task_list .o_data_cell,
+.ab_embedded_task_list .o_list_record_selector {
+    padding-block: 9px !important;
+}
+
+.ab_link_panel,
+.ab_notes_panel {
+    margin-block-start: 14px;
+}
+
+.ab_notes_panel {
+    border-block-start: 1px solid var(--abp-border);
+    padding-block-start: 14px;
+}
+
+.ab_project_list_view .o_data_row,
+.ab_sprint_list_view .o_data_row,
+.ab_release_list_view .o_data_row,
+.ab_task_list_view .o_data_row {
+    transition: background-color .12s ease;
+}
+
+.ab_project_list_view .o_data_row:hover,
+.ab_sprint_list_view .o_data_row:hover,
+.ab_release_list_view .o_data_row:hover,
+.ab_task_list_view .o_data_row:hover {
+    background: #f8fafc;
+}
+
+@media (max-width: 768px) {
+    .ab_project_signal_grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .ab_workspace_panel_header {
+        flex-direction: column;
+    }
+
+    .ab_workspace_actions {
+        justify-content: flex-start;
+    }
+}
+
+:dir(rtl) .ab_project_owner_avatar,
+:dir(rtl) .ab_review_footer {
+    margin-inline-start: 0;
+}

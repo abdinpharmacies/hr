@@ -1,0 +1,30 @@
+{
+    'name': 'Abdin Development Projects',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'Services/Project',
+    'summary': 'Development-team layer for native Odoo Projects',
+    'author': 'Abdin Pharmacies',
+    'developer': 'hossam elsheikh',
+    'application': False,
+    'depends': ['project', 'hr_timesheet'],
+    'data': [
+        'security/security_groups.xml',
+        'security/ir.model.access.csv',
+        'security/record_rules.xml',
+        'data/project_type_data.xml',
+        'views/project_type_views.xml',
+        'views/project_sprint_views.xml',
+        'views/project_release_views.xml',
+        'views/project_task_views.xml',
+        'views/project_project_views.xml',
+        'views/project_report_views.xml',
+        'views/project_menus.xml',
+    ],
+    'assets': {
+        'web.assets_backend': [
+            'ab_projects/static/src/scss/ab_projects.scss',
+        ],
+    },
+    'installable': True,
+}

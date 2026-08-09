@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_project_project_view_kanban" model="ir.ui.view">
+        <field name="name">project.project.kanban.ab.projects.modern</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="class" add="ab_project_kanban_view" separator=" "/>
+            </xpath>
+            <xpath expr="//kanban/templates" position="before">
+                <field name="ab_project_type_id"/>
+                <field name="ab_health"/>
+                <field name="ab_progress"/>
+            </xpath>
+            <xpath expr="//main[hasclass('o_project_kanban_main')]/div[1]" position="after">
+                <div class="ab_project_meta_row">
+                    <span t-attf-class="ab_status_pill ab_health_#{record.ab_health.raw_value || 'healthy'}">
+                        <span class="ab_status_dot"/>
+                        <field name="ab_health"/>
+                    </span>
+                    <span t-if="record.ab_project_type_id.raw_value" class="ab_meta_chip">
+                        <field name="ab_project_type_id"/>
+                    </span>
+                </div>
+            </xpath>
+            <xpath expr="//div[hasclass('o_project_kanban_body')]" position="after">
+                <div class="ab_project_progress_block">
+                    <div class="ab_project_progress_labels">
+                        <span>Progress</span>
+                        <strong><t t-esc="Math.round((record.ab_progress.raw_value || 0) * 100)"/>%</strong>
+                    </div>
+                    <div class="ab_progress_track">
+                        <span class="ab_progress_fill" t-attf-style="inline-size: #{Math.round((record.ab_progress.raw_value || 0) * 100)}%;"/>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_project_view_list" model="ir.ui.view">
+        <field name="name">project.project.list.ab.projects.modern</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="class" add="ab_project_list_view" separator=" "/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="ab_project_type_id" widget="badge" optional="show"/>
+                <field name="ab_health" widget="badge" optional="show"
+                       decoration-success="ab_health == 'healthy'"
+                       decoration-warning="ab_health == 'at_risk'"
+                       decoration-danger="ab_health == 'critical'"/>
+                <field name="ab_progress" widget="progressbar" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="ab_technical_lead_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="ab_current_sprint_id" optional="hide"/>
+                <field name="ab_blocked_task_count" optional="hide" decoration-warning="ab_blocked_task_count &gt; 0"/>
+                <field name="ab_overdue_task_count" optional="hide" decoration-danger="ab_overdue_task_count &gt; 0"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_project_view_form" model="ir.ui.view">
+        <field name="name">project.project.form.ab.projects</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.edit_project"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="ab_project_workspace_form" separator=" "/>
+            </xpath>
+            <xpath expr="//field[@name='label_tasks']" position="after">
+                <field name="ab_project_type_id"/>
+            </xpath>
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="ab_technical_lead_id" widget="many2one_avatar_user"/>
+                <field name="ab_health" widget="badge"
+                       decoration-success="ab_health == 'healthy'"
+                       decoration-warning="ab_health == 'at_risk'"
+                       decoration-danger="ab_health == 'critical'"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button class="oe_stat_button" type="object" name="action_ab_open_blocked_tasks" icon="fa-ban" invisible="ab_blocked_task_count == 0">
+                    <field name="ab_blocked_task_count" widget="statinfo" string="Blocked"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="action_ab_open_overdue_tasks" icon="fa-calendar-times-o" invisible="ab_overdue_task_count == 0">
+                    <field name="ab_overdue_task_count" widget="statinfo" string="Overdue"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="action_ab_open_sprints" icon="fa-refresh">
+                    <field name="ab_sprint_count" widget="statinfo" string="Sprints"/>
+                </button>
+                <button class="oe_stat_button" type="object" name="action_ab_open_releases" icon="fa-rocket">
+                    <field name="ab_release_count" widget="statinfo" string="Releases"/>
+                </button>
+            </xpath>
+            <xpath expr="//notebook/page[@name='description']" position="after">
+                <page name="ab_dashboard" string="Development Dashboard">
+                    <div class="ab_workspace_panel ab_project_overview_panel">
+                        <div class="ab_workspace_panel_header">
+                            <div>
+                                <h2>Project Overview</h2>
+                                <p>Delivery health, team ownership, and workflow signals.</p>
+                            </div>
+                            <div class="ab_workspace_actions">
+                                <button name="action_ab_open_all_tasks" type="object" class="btn btn-primary">
+                                    Open Tasks
+                                </button>
+                                <button name="action_ab_open_sprints" type="object" class="btn btn-secondary">
+                                    Sprints
+                                </button>
+                                <button name="action_ab_open_releases" type="object" class="btn btn-secondary">
+                                    Releases
+                                </button>
+                            </div>
+                        </div>
+                        <div class="ab_project_metric_grid ab_project_metric_grid_large">
+                            <button name="action_ab_open_all_tasks" type="object" class="ab_project_metric ab_project_metric_button">
+                                <span class="ab_project_metric_icon fa fa-check-square-o" title="Tasks"/>
+                                <span class="ab_project_metric_value"><field name="ab_total_task_count"/></span>
+                                <span class="ab_project_metric_label">Total Tasks</span>
+                            </button>
+                            <button name="action_ab_open_completed_tasks" type="object" class="ab_project_metric ab_project_metric_button ab_metric_success">
+                                <span class="ab_project_metric_icon fa fa-check" title="Completed"/>
+                                <span class="ab_project_metric_value"><field name="ab_completed_task_count"/></span>
+                                <span class="ab_project_metric_label">Completed</span>
+                            </button>
+                            <button name="action_ab_open_overdue_tasks" type="object" class="ab_project_metric ab_project_metric_button ab_metric_danger">
+                                <span class="ab_project_metric_icon fa fa-calendar-times-o" title="Overdue"/>
+                                <span class="ab_project_metric_value"><field name="ab_overdue_task_count"/></span>
+                                <span class="ab_project_metric_label">Overdue</span>
+                            </button>
+                            <button name="action_ab_open_blocked_tasks" type="object" class="ab_project_metric ab_project_metric_button ab_metric_warning">
+                                <span class="ab_project_metric_icon fa fa-ban" title="Blocked"/>
+                                <span class="ab_project_metric_value"><field name="ab_blocked_task_count"/></span>
+                                <span class="ab_project_metric_label">Blocked</span>
+                            </button>
+                        </div>
+                        <div class="ab_project_dashboard_grid">
+                            <div class="ab_workspace_subpanel">
+                                <h3>Progress</h3>
+                                <field name="ab_progress" widget="percentage" class="ab_big_percentage"/>
+                                <div class="ab_fact_list">
+                                    <div><span>Story Points</span><strong><field name="ab_story_points"/></strong></div>
+                                    <div><span>Estimated</span><strong><field name="ab_planned_hours" widget="float_time"/></strong></div>
+                                    <div><span>Logged</span><strong><field name="ab_logged_hours" widget="float_time"/></strong></div>
+                                    <div><span>Current Sprint</span><strong><field name="ab_current_sprint_id"/></strong></div>
+                                </div>
+                            </div>
+                            <div class="ab_workspace_subpanel">
+                                <h3>Team</h3>
+                                <div class="ab_team_summary">
+                                    <span class="ab_team_count"><field name="ab_team_member_count"/></span>
+                                    <span>people involved</span>
+                                </div>
+                                <field name="ab_team_member_ids" widget="many2many_avatar_user"/>
+                            </div>
+                        </div>
+                    </div>
+                    <group string="Upcoming Milestones" invisible="not allow_milestones" groups="project.group_project_milestone" class="ab_modern_group">
+                        <field name="milestone_ids" nolabel="1">
+                            <list decoration-success="is_reached" decoration-danger="is_deadline_exceeded" class="ab_embedded_list">
+                                <field name="name"/>
+                                <field name="deadline"/>
+                                <field name="task_count"/>
+                                <field name="done_task_count"/>
+                                <field name="is_reached"/>
+                            </list>
+                        </field>
+                    </group>
+                    <group string="Recent Activity" class="ab_modern_group">
+                        <field name="update_ids" nolabel="1">
+                            <list class="ab_embedded_list">
+                                <field name="create_date"/>
+                                <field name="user_id" widget="many2one_avatar_user"/>
+                                <field name="name"/>
+                                <field name="status" widget="badge"/>
+                            </list>
+                        </field>
+                    </group>
+                </page>
+                <page name="ab_information" string="Development Info">
+                    <div class="ab_workspace_panel">
+                        <div class="ab_workspace_panel_header">
+                            <div>
+                                <h2>Development Info</h2>
+                                <p>Ownership, delivery health, and developer links.</p>
+                            </div>
+                        </div>
+                        <group>
+                            <group string="Ownership">
+                                <field name="ab_project_type_id"/>
+                                <field name="user_id" string="Project Manager" widget="many2one_avatar_user"/>
+                                <field name="ab_technical_lead_id" widget="many2one_avatar_user"/>
+                                <field name="date_start" string="Start Date"/>
+                                <field name="date" string="Target Date"/>
+                                <field name="ab_health" widget="radio"/>
+                                <field name="ab_health_note" invisible="ab_health == 'healthy'"/>
+                            </group>
+                            <group string="Links">
+                                <field name="ab_repository_url" widget="url"/>
+                                <field name="ab_documentation_url" widget="url"/>
+                                <field name="ab_staging_url" widget="url"/>
+                                <field name="ab_production_url" widget="url"/>
+                            </group>
+                        </group>
+                    </div>
+                </page>
+                <page name="ab_team" string="Team">
+                    <div class="ab_workspace_panel">
+                        <div class="ab_workspace_panel_header">
+                            <div>
+                                <h2>Team Workload</h2>
+                                <p>People and open delivery items connected to this project.</p>
+                            </div>
+                            <field name="ab_team_member_ids" widget="many2many_avatar_user"/>
+                        </div>
+                        <field name="tasks" nolabel="1">
+                            <list decoration-muted="state in ['1_done', '1_canceled']" class="ab_embedded_list">
+                                <field name="name"/>
+                                <field name="user_ids" widget="many2many_avatar_user"/>
+                                <field name="ab_task_type" widget="badge"/>
+                                <field name="state" widget="badge"/>
+                                <field name="allocated_hours" widget="float_time"/>
+                                <field name="total_hours_spent" widget="float_time"/>
+                                <field name="date_deadline"/>
+                                <field name="ab_is_blocked" widget="boolean_toggle"/>
+                            </list>
+                        </field>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_project_view_search" model="ir.ui.view">
+        <field name="name">project.project.search.ab.projects</field>
+        <field name="model">project.project</field>
+        <field name="inherit_id" ref="project.view_project_project_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="ab_project_type_id"/>
+                <field name="ab_technical_lead_id"/>
+                <field name="ab_health"/>
+            </xpath>
+            <xpath expr="//filter[@name='unassigned_projects']" position="after">
+                <filter string="At Risk" name="ab_at_risk" domain="[('ab_health', '=', 'at_risk')]"/>
+                <filter string="Critical" name="ab_critical" domain="[('ab_health', '=', 'critical')]"/>
+            </xpath>
+            <xpath expr="//filter[@name='groupby_stage']" position="after">
+                <filter string="Project Type" name="ab_group_type" context="{'group_by': 'ab_project_type_id'}"/>
+                <filter string="Health" name="ab_group_health" context="{'group_by': 'ab_health'}"/>
+                <filter string="Technical Lead" name="ab_group_technical_lead" context="{'group_by': 'ab_technical_lead_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_dashboard_action" model="ir.actions.act_window">
+        <field name="name">Projects Workspace</field>
+        <field name="res_model">project.project</field>
+        <field name="view_mode">kanban,list,form,activity</field>
+        <field name="domain">[('is_template', '=', False)]</field>
+        <field name="context">{'search_default_my_projects': 1}</field>
+        <field name="search_view_id" ref="project.view_project_project_filter"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No projects in this workspace yet.</p>
+            <p>Create a project to organize tasks, sprints, releases, and developer ownership.</p>
+        </field>
+    </record>
+</odoo>

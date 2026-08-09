@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_project_task_view_form" model="ir.ui.view">
+        <field name="name">project.task.form.ab.projects</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="attributes">
+                <attribute name="class" add="ab_task_workspace_form" separator=" "/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_ab_toggle_blocked" type="object" string="Toggle Blocked" class="btn-secondary" invisible="not active or is_template"/>
+            </xpath>
+            <xpath expr="//widget[@name='web_ribbon'][2]" position="after">
+                <widget name="web_ribbon" title="Blocked" bg_color="text-bg-warning" invisible="not ab_is_blocked"/>
+            </xpath>
+            <xpath expr="//field[@name='milestone_id']" position="after">
+                <field name="ab_task_type"/>
+                <field name="ab_sprint_id" context="{'default_project_id': project_id}"/>
+                <field name="ab_release_id" context="{'default_project_id': project_id}"/>
+            </xpath>
+            <xpath expr="//field[@name='user_ids']" position="after">
+                <field name="ab_reviewer_id" widget="many2one_avatar_user"/>
+                <field name="ab_qa_user_id" widget="many2one_avatar_user"/>
+            </xpath>
+            <xpath expr="//div[@id='date_deadline_and_recurring_task']" position="after">
+                <field name="ab_story_points"/>
+                <field name="ab_is_blocked" widget="boolean_toggle"/>
+                <field name="ab_blocked_reason" invisible="not ab_is_blocked" placeholder="Why is this task blocked?"/>
+            </xpath>
+            <xpath expr="//notebook/page[@name='description_page']" position="after">
+                <page name="ab_development_page" string="Development">
+                    <div class="ab_workspace_panel">
+                        <div class="ab_workspace_panel_header">
+                            <div>
+                                <h2>Development Details</h2>
+                                <p>Workflow, review ownership, and engineering links.</p>
+                            </div>
+                            <button name="action_ab_toggle_blocked" type="object" class="btn btn-secondary">
+                                Toggle Blocked
+                            </button>
+                        </div>
+                        <div class="ab_task_detail_grid">
+                            <div class="ab_workspace_subpanel">
+                                <h3>Workflow</h3>
+                                <field name="ab_task_type"/>
+                                <field name="ab_story_points"/>
+                                <field name="allocated_hours" string="Estimated Hours" widget="float_time"/>
+                                <field name="total_hours_spent" string="Logged Hours" widget="float_time" readonly="1"/>
+                                <field name="ab_sprint_id" context="{'default_project_id': project_id}"/>
+                                <field name="ab_release_id" context="{'default_project_id': project_id}"/>
+                            </div>
+                            <div class="ab_workspace_subpanel">
+                                <h3>Review</h3>
+                                <field name="ab_reviewer_id" widget="many2one_avatar_user"/>
+                                <field name="ab_qa_user_id" widget="many2one_avatar_user"/>
+                                <field name="ab_is_blocked" widget="boolean_toggle"/>
+                                <field name="ab_blocked_reason" invisible="not ab_is_blocked"/>
+                            </div>
+                        </div>
+                        <div class="ab_workspace_subpanel ab_link_panel">
+                            <h3>Technical Links</h3>
+                            <field name="ab_branch_url" widget="url"/>
+                            <field name="ab_pull_request_url" widget="url"/>
+                        </div>
+                        <div class="ab_notes_panel">
+                            <field name="ab_technical_notes" options="{'resizable': false}" placeholder="Implementation notes..."/>
+                        </div>
+                    </div>
+                </page>
+                <page name="ab_bug_page" string="Bug Details" invisible="ab_task_type != 'bug'">
+                    <div class="ab_workspace_panel">
+                        <div class="ab_workspace_panel_header">
+                            <div>
+                                <h2>Bug Details</h2>
+                                <p>Severity, environment, and reproduction context.</p>
+                            </div>
+                        </div>
+                        <group>
+                            <field name="ab_bug_severity" required="ab_task_type == 'bug'"/>
+                            <field name="ab_bug_environment"/>
+                        </group>
+                        <div class="ab_task_detail_grid">
+                            <div class="ab_workspace_subpanel">
+                                <h3>Steps</h3>
+                                <field name="ab_reproduction_steps" options="{'resizable': false}" placeholder="Steps to reproduce..."/>
+                            </div>
+                            <div class="ab_workspace_subpanel">
+                                <h3>Expected</h3>
+                                <field name="ab_expected_result" options="{'resizable': false}" placeholder="Expected result..."/>
+                            </div>
+                            <div class="ab_workspace_subpanel">
+                                <h3>Actual</h3>
+                                <field name="ab_actual_result" options="{'resizable': false}" placeholder="Actual result..."/>
+                            </div>
+                        </div>
+                    </div>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_task_view_list" model="ir.ui.view">
+        <field name="name">project.task.list.ab.projects</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.project_task_view_tree_main_base"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list" position="attributes">
+                <attribute name="class" add="ab_task_list_view" separator=" "/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="ab_task_type" widget="badge" optional="show"/>
+                <field name="ab_is_blocked" widget="boolean_toggle" optional="show"/>
+            </xpath>
+            <xpath expr="//field[@name='date_deadline']" position="after">
+                <field name="ab_story_points" optional="show" sum="Story Points"/>
+                <field name="ab_sprint_id" optional="hide"/>
+                <field name="ab_release_id" optional="hide"/>
+                <field name="ab_reviewer_id" widget="many2one_avatar_user" optional="hide"/>
+                <field name="ab_qa_user_id" widget="many2one_avatar_user" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_task_view_search" model="ir.ui.view">
+        <field name="name">project.task.search.ab.projects</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_search_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="ab_task_type"/>
+                <field name="ab_sprint_id"/>
+                <field name="ab_release_id"/>
+                <field name="ab_reviewer_id"/>
+                <field name="ab_qa_user_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='deadline_past_due']" position="after">
+                <filter string="Blocked" name="ab_blocked" domain="[('ab_is_blocked', '=', True)]"/>
+                <filter string="Bugs" name="ab_bugs" domain="[('ab_task_type', '=', 'bug')]"/>
+                <filter string="Awaiting My Review" name="ab_my_review" domain="[('ab_reviewer_id', '=', uid), ('state', 'not in', ['1_done', '1_canceled'])]"/>
+                <filter string="Awaiting My QA" name="ab_my_qa" domain="[('ab_qa_user_id', '=', uid), ('state', 'not in', ['1_done', '1_canceled'])]"/>
+            </xpath>
+            <xpath expr="//filter[@name='deadline']" position="after">
+                <filter string="Task Type" name="ab_group_task_type" context="{'group_by': 'ab_task_type'}"/>
+                <filter string="Sprint" name="ab_group_sprint" context="{'group_by': 'ab_sprint_id'}"/>
+                <filter string="Release" name="ab_group_release" context="{'group_by': 'ab_release_id'}"/>
+                <filter string="Reviewer" name="ab_group_reviewer" context="{'group_by': 'ab_reviewer_id'}"/>
+                <filter string="QA" name="ab_group_qa" context="{'group_by': 'ab_qa_user_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_task_view_kanban" model="ir.ui.view">
+        <field name="name">project.task.kanban.ab.projects</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="class" add="ab_task_kanban_view" separator=" "/>
+            </xpath>
+            <xpath expr="//kanban/templates" position="before">
+                <field name="ab_task_type"/>
+                <field name="ab_story_points"/>
+                <field name="ab_is_blocked"/>
+                <field name="ab_bug_severity"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="attributes">
+                <attribute name="class">ab_task_card_title</attribute>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="after">
+                <div class="ab_task_card_badges">
+                    <span t-if="record.ab_story_points.raw_value" class="ab_type_chip ab_points_chip">
+                        <t t-esc="record.ab_story_points.raw_value"/> SP
+                    </span>
+                    <span t-attf-class="ab_type_chip ab_type_#{record.ab_task_type.raw_value || 'task'}">
+                        <field name="ab_task_type"/>
+                    </span>
+                    <span t-if="record.ab_task_type.raw_value == 'bug' and record.ab_bug_severity.raw_value" t-attf-class="ab_type_chip ab_severity_#{record.ab_bug_severity.raw_value}">
+                        <field name="ab_bug_severity"/>
+                    </span>
+                    <span t-if="record.ab_is_blocked.raw_value" class="ab_type_chip ab_blocked_chip">
+                        Blocked
+                    </span>
+                </div>
+            </xpath>
+            <xpath expr="//t[@t-name='menu']/a[@name='%(project.portal_share_action)d']" position="after">
+                <a role="menuitem" type="object" name="action_ab_toggle_blocked" class="dropdown-item">Toggle Blocked</a>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="ab_project_my_work_action" model="ir.actions.act_window">
+        <field name="name">My Work</field>
+        <field name="res_model">project.task</field>
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph,activity</field>
+        <field name="domain">[
+            ('is_template', '=', False),
+            ('state', 'not in', ['1_done', '1_canceled']),
+            '|', '|',
+                ('user_ids', 'in', uid),
+                ('ab_reviewer_id', '=', uid),
+                ('ab_qa_user_id', '=', uid)
+        ]</field>
+        <field name="context">{
+            'search_default_my_tasks': 1,
+            'search_default_open_tasks': 1,
+            'search_default_ab_group_sprint': 1,
+        }</field>
+        <field name="search_view_id" ref="project.view_task_search_form"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Your active work is clear.</p>
+            <p>Assigned tasks, reviews, and QA items will appear here when they need attention.</p>
+        </field>
+    </record>
+</odoo>

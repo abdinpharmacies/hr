@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_project_sprint_view_search" model="ir.ui.view">
+        <field name="name">ab.project.sprint.search</field>
+        <field name="model">ab.project.sprint</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="project_id"/>
+                <filter string="Planning" name="planning" domain="[('status', '=', 'planning')]"/>
+                <filter string="Active" name="active" domain="[('status', '=', 'active')]"/>
+                <filter string="Completed" name="completed" domain="[('status', '=', 'completed')]"/>
+                <separator/>
+                <filter string="Project" name="group_project" context="{'group_by': 'project_id'}"/>
+                <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="ab_project_sprint_view_list" model="ir.ui.view">
+        <field name="name">ab.project.sprint.list</field>
+        <field name="model">ab.project.sprint</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'completed'" decoration-info="status == 'active'" class="ab_sprint_list_view">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="status" widget="badge"
+                       decoration-muted="status == 'planning'"
+                       decoration-info="status == 'active'"
+                       decoration-success="status == 'completed'"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="progress" widget="percentage"/>
+                <field name="completed_task_count"/>
+                <field name="remaining_task_count"/>
+                <field name="planned_story_points"/>
+                <field name="completed_story_points"/>
+                <field name="blocked_task_count"/>
+                <field name="overdue_task_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ab_project_sprint_view_kanban" model="ir.ui.view">
+        <field name="name">ab.project.sprint.kanban</field>
+        <field name="model">ab.project.sprint</field>
+        <field name="arch" type="xml">
+            <kanban class="ab_sprint_kanban_view" default_group_by="status" sample="1">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="status"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="progress"/>
+                <field name="task_count"/>
+                <field name="completed_task_count"/>
+                <field name="remaining_task_count"/>
+                <field name="blocked_task_count"/>
+                <field name="overdue_task_count"/>
+                <field name="planned_story_points"/>
+                <field name="completed_story_points"/>
+                <templates>
+                    <t t-name="card" class="ab_sprint_card">
+                        <main class="ab_sprint_card_main">
+                            <div class="ab_project_card_header">
+                                <div class="ab_project_title_block">
+                                    <span class="ab_project_card_title text-truncate" t-att-title="record.name.value">
+                                        <field name="name"/>
+                                    </span>
+                                    <div class="ab_project_meta_row">
+                                        <span t-attf-class="ab_status_pill ab_sprint_status_#{record.status.raw_value}">
+                                            <span class="ab_status_dot"/>
+                                            <field name="status"/>
+                                        </span>
+                                        <span class="ab_meta_chip"><field name="project_id"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ab_project_progress_block">
+                                <div class="ab_project_progress_labels">
+                                    <span>Progress</span>
+                                    <strong><t t-esc="Math.round((record.progress.raw_value || 0) * 100)"/>%</strong>
+                                </div>
+                                <div class="ab_progress_track">
+                                    <span class="ab_progress_fill" t-attf-style="inline-size: #{Math.round((record.progress.raw_value || 0) * 100)}%;"/>
+                                </div>
+                            </div>
+                            <div class="ab_project_signal_grid">
+                                <span class="ab_signal_card"><strong><field name="task_count"/></strong><span>Tasks</span></span>
+                                <span class="ab_signal_card"><strong><field name="completed_task_count"/></strong><span>Done</span></span>
+                                <span class="ab_signal_card ab_signal_warning"><strong><field name="blocked_task_count"/></strong><span>Blocked</span></span>
+                                <span class="ab_signal_card ab_signal_danger"><strong><field name="overdue_task_count"/></strong><span>Overdue</span></span>
+                            </div>
+                            <div class="ab_project_context_list">
+                                <div class="ab_context_item">
+                                    <span class="fa fa-calendar-o" title="Sprint Dates"/>
+                                    <field name="date_start"/> - <field name="date_end"/>
+                                </div>
+                                <div class="ab_context_item">
+                                    <span class="fa fa-line-chart" title="Story Points"/>
+                                    <field name="completed_story_points"/>/<field name="planned_story_points"/> SP
+                                </div>
+                            </div>
+                        </main>
+                        <footer class="ab_project_card_footer">
+                            <a name="action_view_tasks" type="object" class="ab_project_quick_link">Open Tasks</a>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="ab_project_sprint_view_form" model="ir.ui.view">
+        <field name="name">ab.project.sprint.form</field>
+        <field name="model">ab.project.sprint</field>
+        <field name="arch" type="xml">
+            <form class="ab_sprint_workspace_form">
+                <header>
+                    <field name="status" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tasks" type="object" class="oe_stat_button" icon="fa-check">
+                            <field name="task_count" widget="statinfo" string="Tasks"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Sprint name"/></h1>
+                    </div>
+                    <div class="ab_workspace_panel">
+                        <div class="ab_workspace_panel_header">
+                            <div>
+                                <h2>Sprint Overview</h2>
+                                <p>Execution status and delivery scope.</p>
+                            </div>
+                            <button name="action_view_tasks" type="object" class="btn btn-primary">Open Tasks</button>
+                        </div>
+                        <group>
+                            <group string="Planning">
+                                <field name="project_id"/>
+                                <field name="date_start"/>
+                                <field name="date_end"/>
+                            </group>
+                            <group string="Progress">
+                                <field name="progress" widget="percentage"/>
+                                <field name="planned_story_points"/>
+                                <field name="completed_story_points"/>
+                            </group>
+                        </group>
+                        <field name="goal" placeholder="Sprint goal..."/>
+                        <div class="ab_project_metric_grid">
+                            <div class="ab_project_metric ab_metric_success">
+                                <span class="ab_project_metric_icon fa fa-check" title="Completed"/>
+                                <span class="ab_project_metric_value"><field name="completed_task_count"/></span>
+                                <span class="ab_project_metric_label">Completed</span>
+                            </div>
+                            <div class="ab_project_metric">
+                                <span class="ab_project_metric_icon fa fa-hourglass-half" title="Remaining"/>
+                                <span class="ab_project_metric_value"><field name="remaining_task_count"/></span>
+                                <span class="ab_project_metric_label">Remaining</span>
+                            </div>
+                            <div class="ab_project_metric ab_metric_danger">
+                                <span class="ab_project_metric_icon fa fa-calendar-times-o" title="Overdue"/>
+                                <span class="ab_project_metric_value"><field name="overdue_task_count"/></span>
+                                <span class="ab_project_metric_label">Overdue</span>
+                            </div>
+                            <div class="ab_project_metric ab_metric_warning">
+                                <span class="ab_project_metric_icon fa fa-ban" title="Blocked"/>
+                                <span class="ab_project_metric_value"><field name="blocked_task_count"/></span>
+                                <span class="ab_project_metric_label">Blocked</span>
+                            </div>
+                        </div>
+                    </div>
+                    <notebook>
+                        <page name="tasks" string="Tasks">
+                            <field name="task_ids" context="{'default_project_id': project_id, 'default_ab_sprint_id': id}">
+                                <list editable="bottom" decoration-muted="state in ['1_done', '1_canceled']" open_form_view="True" class="ab_task_list_view ab_embedded_task_list">
+                                    <field name="state" widget="project_task_state_selection" nolabel="1"/>
+                                    <field name="name"/>
+                                    <field name="ab_task_type" widget="badge"/>
+                                    <field name="user_ids" widget="many2many_avatar_user"/>
+                                    <field name="ab_story_points"/>
+                                    <field name="date_deadline"/>
+                                    <field name="ab_is_blocked" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="ab_project_sprint_view_graph" model="ir.ui.view">
+        <field name="name">ab.project.sprint.graph</field>
+        <field name="model">ab.project.sprint</field>
+        <field name="arch" type="xml">
+            <graph string="Sprint Progress" type="bar">
+                <field name="project_id"/>
+                <field name="planned_story_points" type="measure"/>
+                <field name="completed_story_points" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="ab_project_sprint_action" model="ir.actions.act_window">
+        <field name="name">Sprints</field>
+        <field name="res_model">ab.project.sprint</field>
+        <field name="view_mode">kanban,list,form,graph</field>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No sprints yet.</p>
+            <p>Create a sprint to group tasks into focused development cycles.</p>
+        </field>
+    </record>
+</odoo>

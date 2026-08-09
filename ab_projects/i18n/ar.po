@@ -1,0 +1,1364 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_projects
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-09 09:45+0000\n"
+"PO-Revision-Date: 2026-08-09 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_projects
+#. odoo-python
+#: code:addons/ab_projects/models/project_project.py:0
+msgid "%s Blocked Tasks"
+msgstr "المهام المحجوبة في %s"
+
+#. module: ab_projects
+#. odoo-python
+#: code:addons/ab_projects/models/project_project.py:0
+msgid "%s Completed Tasks"
+msgstr "المهام المكتملة في %s"
+
+#. module: ab_projects
+#. odoo-python
+#: code:addons/ab_projects/models/project_project.py:0
+msgid "%s Overdue Tasks"
+msgstr "المهام المتأخرة في %s"
+
+#. module: ab_projects
+#. odoo-python
+#: code:addons/ab_projects/models/project_project.py:0
+msgid "%s Releases"
+msgstr "إصدارات %s"
+
+#. module: ab_projects
+#. odoo-python
+#: code:addons/ab_projects/models/project_project.py:0
+msgid "%s Sprints"
+msgstr "سبرنتات %s"
+
+#. module: ab_projects
+#. odoo-python
+#: code:addons/ab_projects/models/project_project.py:0
+#: code:addons/ab_projects/models/project_release.py:0
+#: code:addons/ab_projects/models/project_sprint.py:0
+msgid "%s Tasks"
+msgstr "مهام %s"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "<span class=\"ab_project_metric_icon fa fa-ban\" title=\"Blocked\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "<span class=\"ab_project_metric_icon fa fa-bug\" title=\"Bugs\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid ""
+"<span class=\"ab_project_metric_icon fa fa-calendar-times-o\" "
+"title=\"Overdue\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "<span class=\"ab_project_metric_icon fa fa-check\" title=\"Completed\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "<span class=\"ab_project_metric_icon fa fa-check-square-o\" title=\"Scope\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "<span class=\"ab_project_metric_icon fa fa-check-square-o\" title=\"Tasks\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid ""
+"<span class=\"ab_project_metric_icon fa fa-exclamation-circle\" title=\"Open"
+" Bugs\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid ""
+"<span class=\"ab_project_metric_icon fa fa-hourglass-half\" "
+"title=\"Remaining\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "<span class=\"ab_project_metric_label\">Blocked</span>"
+msgstr "<span class=\"ab_project_metric_label\">محجوبة</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "<span class=\"ab_project_metric_label\">Bugs</span>"
+msgstr "<span class=\"ab_project_metric_label\">الأعطال</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "<span class=\"ab_project_metric_label\">Completed</span>"
+msgstr "<span class=\"ab_project_metric_label\">مكتملة</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "<span class=\"ab_project_metric_label\">Open Bugs</span>"
+msgstr "<span class=\"ab_project_metric_label\">الأعطال المفتوحة</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "<span class=\"ab_project_metric_label\">Overdue</span>"
+msgstr "<span class=\"ab_project_metric_label\">متأخرة</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "<span class=\"ab_project_metric_label\">Remaining</span>"
+msgstr "<span class=\"ab_project_metric_label\">المتبقي</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "<span class=\"ab_project_metric_label\">Scope</span>"
+msgstr "<span class=\"ab_project_metric_label\">النطاق</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "<span class=\"ab_project_metric_label\">Total Tasks</span>"
+msgstr "<span class=\"ab_project_metric_label\">إجمالي المهام</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_kanban
+msgid "<span class=\"fa fa-calendar-check-o\" title=\"Release Date\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "<span class=\"fa fa-calendar-o\" title=\"Sprint Dates\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "<span class=\"fa fa-line-chart\" title=\"Story Points\"/>"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "<span>Blocked</span>"
+msgstr "<span>محجوبة</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_kanban
+msgid "<span>Bugs</span>"
+msgstr "<span>الأعطال</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "<span>Current Sprint</span>"
+msgstr "<span>السبرنت الحالي</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "<span>Done</span>"
+msgstr "<span>منجز</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "<span>Estimated</span>"
+msgstr "<span>المقدر</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "<span>Logged</span>"
+msgstr "<span>المسجل</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_kanban
+msgid "<span>Open</span>"
+msgstr "<span>مفتوح</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "<span>Overdue</span>"
+msgstr "<span>متأخرة</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "<span>Progress</span>"
+msgstr "<span>التقدم</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_kanban
+msgid "<span>Readiness</span>"
+msgstr "<span>الجاهزية</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "<span>Story Points</span>"
+msgstr "<span>نقاط القصة</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "<span>Tasks</span>"
+msgstr "<span>المهام</span>"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "<span>people involved</span>"
+msgstr "<span>أعضاء مشاركون</span>"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_needaction
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_needaction
+msgid "Action Needed"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__ab_project_sprint__status__active
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_ids
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_ids
+msgid "Activities"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_exception_decoration
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_exception_decoration
+msgid "Activity Exception Decoration"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_state
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_state
+msgid "Activity State"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_type_icon
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_type_icon
+msgid "Activity Type Icon"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Actual"
+msgstr "الفعلي"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_actual_result
+msgid "Actual Result"
+msgstr "النتيجة الفعلية"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Actual result..."
+msgstr "النتيجة الفعلية..."
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_my_work_action
+msgid ""
+"Assigned tasks, reviews, and QA items will appear here when they need "
+"attention."
+msgstr ""
+"ستظهر هنا المهام والمراجعات وعناصر ضمان الجودة عندما تحتاج إلى متابعة."
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_project__ab_health__at_risk
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_search
+msgid "At Risk"
+msgstr "معرض للخطر"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_attachment_count
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_attachment_count
+msgid "Attachment Count"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Awaiting My QA"
+msgstr "بانتظار ضمان الجودة مني"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Awaiting My Review"
+msgstr "بانتظار مراجعتي"
+
+#. module: ab_projects
+#: model:ab.project.type,name:ab_projects.ab_project_type_backend_api
+msgid "Backend/API"
+msgstr "خلفية/API"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_is_blocked
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Blocked"
+msgstr "محجوبة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_blocked_reason
+msgid "Blocked Reason"
+msgstr "سبب الحجب"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__blocked_task_count
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_blocked_task_count
+msgid "Blocked Tasks"
+msgstr "المهام المحجوبة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_branch_url
+msgid "Branch URL"
+msgstr "رابط الفرع"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_task_type__bug
+msgid "Bug"
+msgstr "عطل"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Bug Details"
+msgstr "تفاصيل العطل"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_bug_report_action
+msgid "Bug Report"
+msgstr "تقرير الأعطال"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__bug_count
+#: model:ir.ui.menu,name:ab_projects.ab_project_report_bugs_menu
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Bugs"
+msgstr "الأعطال"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__ab_project_sprint__status__completed
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_search
+msgid "Completed"
+msgstr "مكتملة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__completed_story_points
+msgid "Completed Story Points"
+msgstr "نقاط القصة المكتملة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__completed_task_count
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__completed_task_count
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_completed_task_count
+msgid "Completed Tasks"
+msgstr "المهام المكتملة"
+
+#. module: ab_projects
+#: model:ir.model,website_form_label:ab_projects.model_project_task
+msgid "Create a Task"
+msgstr "إنشاء مهمة"
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_dashboard_action
+msgid ""
+"Create a project to organize tasks, sprints, releases, and developer "
+"ownership."
+msgstr "أنشئ مشروعاً لتنظيم المهام والسبرنتات والإصدارات ومسؤوليات المطورين."
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_sprint_action
+msgid "Create a sprint to group tasks into focused development cycles."
+msgstr "أنشئ سبرنت لتجميع المهام ضمن دورات تطوير مركزة."
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_release_action
+msgid ""
+"Create releases to track development scope, testing, and launch readiness."
+msgstr "أنشئ إصدارات لمتابعة نطاق التطوير والاختبار وجاهزية الإطلاق."
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__create_uid
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__create_uid
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_type__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__create_date
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__create_date
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_type__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_project__ab_health__critical
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_severity__critical
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_search
+msgid "Critical"
+msgstr "حرج"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_current_sprint_id
+msgid "Current Sprint"
+msgstr "السبرنت الحالي"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_environment__customer
+msgid "Customer Environment"
+msgstr "بيئة العميل"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Delivery health, team ownership, and workflow signals."
+msgstr "حالة التسليم، ومسؤولية الفريق، ومؤشرات سير العمل."
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__description
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Development"
+msgstr "التطوير"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Development Dashboard"
+msgstr "لوحة التطوير"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Development Details"
+msgstr "تفاصيل التطوير"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Development Info"
+msgstr "معلومات التطوير"
+
+#. module: ab_projects
+#: model:ir.model,name:ab_projects.model_ab_project_type
+msgid "Development Project Type"
+msgstr "نوع مشروع التطوير"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_report_view_graph
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_report_view_pivot
+msgid "Development Task Report"
+msgstr "تقرير مهام التطوير"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_task_report_action
+#: model:ir.ui.menu,name:ab_projects.ab_project_report_development_tasks_menu
+msgid "Development Tasks"
+msgstr "مهام التطوير"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__display_name
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__display_name
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_type__display_name
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__display_name
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_documentation_url
+msgid "Documentation URL"
+msgstr "رابط التوثيق"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__date_end
+msgid "End Date"
+msgstr "تاريخ النهاية"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_bug_environment
+msgid "Environment"
+msgstr "البيئة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_planned_hours
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Estimated Hours"
+msgstr "الساعات المقدرة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Execution status and delivery scope."
+msgstr "حالة التنفيذ ونطاق التسليم."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Expected"
+msgstr "المتوقع"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_expected_result
+msgid "Expected Result"
+msgstr "النتيجة المتوقعة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Expected result..."
+msgstr "النتيجة المتوقعة..."
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_task_type__feature
+msgid "Feature"
+msgstr "ميزة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_follower_ids
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_follower_ids
+msgid "Followers"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_partner_ids
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_partner_ids
+msgid "Followers (Partners)"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__activity_type_icon
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__activity_type_icon
+msgid "Font awesome icon e.g. fa-tasks"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__goal
+msgid "Goal"
+msgstr "الهدف"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__has_message
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__has_message
+msgid "Has Message"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_search
+msgid "Health"
+msgstr "الحالة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_health_note
+msgid "Health Note"
+msgstr "ملاحظة الحالة"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_project__ab_health__healthy
+msgid "Healthy"
+msgstr "سليم"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_severity__high
+msgid "High"
+msgstr "عالية"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__id
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__id
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_type__id
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__id
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__id
+msgid "ID"
+msgstr "المُعرف"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_exception_icon
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_exception_icon
+msgid "Icon"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__activity_exception_icon
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__activity_exception_icon
+msgid "Icon to indicate an exception activity."
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__message_needaction
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__message_needaction
+msgid "If checked, new messages require your attention."
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__message_has_error
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__message_has_sms_error
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__message_has_error
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__message_has_sms_error
+msgid "If checked, some messages have a delivery error."
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Implementation notes..."
+msgstr "ملاحظات التنفيذ..."
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_task_type__improvement
+msgid "Improvement"
+msgstr "تحسين"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__ab_project_release__status__development
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_search
+msgid "In Development"
+msgstr "قيد التطوير"
+
+#. module: ab_projects
+#: model:ab.project.type,name:ab_projects.ab_project_type_internal_tool
+msgid "Internal Tool"
+msgstr "أداة داخلية"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_is_follower
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_is_follower
+msgid "Is Follower"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__write_uid
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__write_uid
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_type__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__write_date
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__write_date
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_type__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Links"
+msgstr "الروابط"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_environment__local
+msgid "Local"
+msgstr "محلي"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_logged_hours
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Logged Hours"
+msgstr "الساعات المسجلة"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_severity__low
+msgid "Low"
+msgstr "منخفضة"
+
+#. module: ab_projects
+#: model:ab.project.type,name:ab_projects.ab_project_type_maintenance
+msgid "Maintenance"
+msgstr "صيانة"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_severity__medium
+msgid "Medium"
+msgstr "متوسطة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_has_error
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_has_error
+msgid "Message Delivery error"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_ids
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_ids
+msgid "Messages"
+msgstr ""
+
+#. module: ab_projects
+#: model:ab.project.type,name:ab_projects.ab_project_type_mobile
+msgid "Mobile"
+msgstr "موبايل"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__my_activity_date_deadline
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__my_activity_date_deadline
+msgid "My Activity Deadline"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_my_work_action
+#: model:ir.ui.menu,name:ab_projects.ab_project_my_work_menu
+msgid "My Work"
+msgstr "عملي"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__name
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_type__name
+msgid "Name"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__name
+msgid "Name / Version"
+msgstr "الاسم / الإصدار"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_calendar_event_id
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_calendar_event_id
+msgid "Next Activity Calendar Event"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_date_deadline
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_date_deadline
+msgid "Next Activity Deadline"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_summary
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_summary
+msgid "Next Activity Summary"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_type_id
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_type_id
+msgid "Next Activity Type"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_dashboard_action
+msgid "No projects in this workspace yet."
+msgstr "لا توجد مشاريع في مساحة العمل هذه بعد."
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_release_action
+msgid "No releases planned."
+msgstr "لا توجد إصدارات مخططة."
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_sprint_action
+msgid "No sprints yet."
+msgstr "لا توجد سبرنتات بعد."
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_needaction_counter
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_needaction_counter
+msgid "Number of Actions"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_has_error_counter
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_has_error_counter
+msgid "Number of errors"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__message_needaction_counter
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__message_needaction_counter
+msgid "Number of messages requiring action"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__message_has_error_counter
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__message_has_error_counter
+msgid "Number of messages with delivery error"
+msgstr ""
+
+#. module: ab_projects
+#: model:ab.project.type,name:ab_projects.ab_project_type_odoo
+msgid "Odoo"
+msgstr "أودو"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__open_bug_count
+msgid "Open Bugs"
+msgstr "الأعطال المفتوحة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_kanban
+msgid "Open Scope"
+msgstr "فتح النطاق"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+msgid "Open Tasks"
+msgstr "فتح المهام"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_environment__other
+msgid "Other"
+msgstr "أخرى"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Overdue"
+msgstr "متأخرة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__overdue_task_count
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_overdue_task_count
+msgid "Overdue Tasks"
+msgstr "المهام المتأخرة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Ownership"
+msgstr "المسؤولية"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Ownership, delivery health, and developer links."
+msgstr "المسؤولية، وحالة التسليم، وروابط المطورين."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "People and open delivery items connected to this project."
+msgstr "الأشخاص وعناصر التسليم المفتوحة المرتبطة بهذا المشروع."
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__ab_project_release__status__planned
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_search
+msgid "Planned"
+msgstr "مخطط"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__planned_story_points
+msgid "Planned Story Points"
+msgstr "نقاط القصة المخططة"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__ab_project_sprint__status__planning
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_search
+msgid "Planning"
+msgstr "التخطيط"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_environment__production
+msgid "Production"
+msgstr "الإنتاج"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_production_url
+msgid "Production URL"
+msgstr "رابط الإنتاج"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__progress
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__progress
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_progress
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Progress"
+msgstr "التقدم"
+
+#. module: ab_projects
+#: model:ir.model,name:ab_projects.model_project_project
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__project_id
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__project_id
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_search
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_search
+msgid "Project"
+msgstr "نظرة عامة على المشروع"
+
+#. module: ab_projects
+#: model:res.groups,name:ab_projects.group_ab_project_admin
+msgid "Project Administrator"
+msgstr "مدير المشاريع"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_health
+msgid "Project Health"
+msgstr "حالة المشروع"
+
+#. module: ab_projects
+#: model:res.groups,name:ab_projects.group_ab_project_lead
+msgid "Project Lead"
+msgstr "قائد المشروع"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Project Manager"
+msgstr "مدير المشروع"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Project Overview"
+msgstr "نظرة عامة على المشروع"
+
+#. module: ab_projects
+#: model:ir.model,name:ab_projects.model_ab_project_release
+msgid "Project Release"
+msgstr "إصدار المشروع"
+
+#. module: ab_projects
+#: model:ir.model,name:ab_projects.model_ab_project_sprint
+msgid "Project Sprint"
+msgstr "سبرنت المشروع"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_project_type_id
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_search
+msgid "Project Type"
+msgstr "نوع المشروع"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_type_action
+#: model:ir.ui.menu,name:ab_projects.ab_project_type_menu
+msgid "Project Types"
+msgstr "أنواع المشاريع"
+
+#. module: ab_projects
+#: model:res.groups,name:ab_projects.group_ab_project_user
+msgid "Project User"
+msgstr "مستخدم المشاريع"
+
+#. module: ab_projects
+#: model:ir.model.constraint,message:ab_projects.constraint_ab_project_type_uniq_name
+msgid "Project type name must be unique."
+msgstr "يجب أن يكون اسم نوع المشروع فريداً."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_dashboard_action
+msgid "Projects Workspace"
+msgstr "مساحة عمل المشاريع"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_pull_request_url
+msgid "Pull Request URL"
+msgstr "رابط طلب الدمج"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "QA"
+msgstr "ضمان الجودة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_qa_user_id
+msgid "QA Responsible"
+msgstr "مسؤول ضمان الجودة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__rating_ids
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__rating_ids
+msgid "Ratings"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Readiness"
+msgstr "الجاهزية"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Recent Activity"
+msgstr "النشاط الأخير"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_release_id
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Release"
+msgstr "الإصدار"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_release_count
+msgid "Release Count"
+msgstr "عدد الإصدارات"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__release_date
+msgid "Release Date"
+msgstr "تاريخ الإصدار"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Release Overview"
+msgstr "نظرة عامة على الإصدار"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Release notes or scope..."
+msgstr "ملاحظات الإصدار أو النطاق..."
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__ab_project_release__status__released
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_search
+msgid "Released"
+msgstr "تم الإصدار"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_release_action
+#: model:ir.ui.menu,name:ab_projects.ab_project_release_menu
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Releases"
+msgstr "الإصدارات"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__remaining_task_count
+msgid "Remaining Tasks"
+msgstr "المهام المتبقية"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_repository_url
+msgid "Repository URL"
+msgstr "رابط المستودع"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_reproduction_steps
+msgid "Reproduction Steps"
+msgstr "خطوات إعادة الإنتاج"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__activity_user_id
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__activity_user_id
+msgid "Responsible User"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Review"
+msgstr "المراجعة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_reviewer_id
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Reviewer"
+msgstr "المراجع"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__message_has_sms_error
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__message_has_sms_error
+msgid "SMS Delivery error"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_kanban
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_kanban
+msgid "SP"
+msgstr "SP"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Scope readiness, quality signals, and target timing."
+msgstr "جاهزية النطاق، ومؤشرات الجودة، وموعد التسليم المستهدف."
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_bug_severity
+msgid "Severity"
+msgstr "الخطورة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Severity, environment, and reproduction context."
+msgstr "الخطورة، والبيئة، وسياق إعادة الإنتاج."
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_sprint_id
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Sprint"
+msgstr "السبرنت"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_sprint_count
+msgid "Sprint Count"
+msgstr "عدد السبرنتات"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Sprint Overview"
+msgstr "نظرة عامة على السبرنت"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_graph
+msgid "Sprint Progress"
+msgstr "تقدم السبرنت"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_sprint_report_action
+msgid "Sprint Report"
+msgstr "تقرير السبرنت"
+
+#. module: ab_projects
+#: model:ir.model.constraint,message:ab_projects.constraint_ab_project_sprint_date_order
+msgid "Sprint end date must be on or after the start date."
+msgstr "يجب أن يكون تاريخ نهاية السبرنت في تاريخ البداية أو بعده."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Sprint goal..."
+msgstr "هدف السبرنت..."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Sprint name"
+msgstr "اسم السبرنت"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_sprint_action
+#: model:ir.ui.menu,name:ab_projects.ab_project_report_sprints_menu
+#: model:ir.ui.menu,name:ab_projects.ab_project_sprint_menu
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Sprints"
+msgstr "السبرنتات"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_bug_environment__staging
+msgid "Staging"
+msgstr "الاختبار"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_staging_url
+msgid "Staging URL"
+msgstr "رابط بيئة الاختبار"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__date_start
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Start Date"
+msgstr "تاريخ البداية"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__status
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__status
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_search
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_search
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__activity_state
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__activity_state
+msgid ""
+"Status based on activities\n"
+"Overdue: Due date is already passed\n"
+"Today: Activity date is today\n"
+"Planned: Future activities."
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Steps"
+msgstr "الخطوات"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Steps to reproduce..."
+msgstr "خطوات إعادة الإنتاج..."
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_story_points
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_story_points
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_list
+msgid "Story Points"
+msgstr "نقاط القصة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Target Date"
+msgstr "تاريخ الهدف"
+
+#. module: ab_projects
+#: model:ir.model,name:ab_projects.model_project_task
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_task_type__task
+msgid "Task"
+msgstr "مهمة"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__task_count
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__task_count
+msgid "Task Count"
+msgstr "عدد المهام"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_task_type
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_search
+msgid "Task Type"
+msgstr "نوع المهمة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Tasks"
+msgstr "المهام"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Team"
+msgstr "الفريق"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_team_member_ids
+msgid "Team Members"
+msgstr "أعضاء الفريق"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_team_member_count
+msgid "Team Size"
+msgstr "حجم الفريق"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Team Workload"
+msgstr "عبء عمل الفريق"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__project_task__ab_task_type__technical_debt
+msgid "Technical Debt"
+msgstr "دين تقني"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_technical_lead_id
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_search
+msgid "Technical Lead"
+msgstr "القائد التقني"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Technical Links"
+msgstr "الروابط التقنية"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_task__ab_technical_notes
+msgid "Technical Notes"
+msgstr "ملاحظات تقنية"
+
+#. module: ab_projects
+#: model:ir.model.fields.selection,name:ab_projects.selection__ab_project_release__status__testing
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_search
+msgid "Testing"
+msgstr "اختبار"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_kanban
+msgid "Toggle Blocked"
+msgstr "تبديل حالة الحجب"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_project_project__ab_total_task_count
+msgid "Total Tasks"
+msgstr "إجمالي المهام"
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__activity_exception_decoration
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__activity_exception_decoration
+msgid "Type of the exception activity on record."
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Upcoming Milestones"
+msgstr "المراحل القادمة"
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_project_task__display_name
+msgid ""
+"Use these keywords in the title to set new tasks:\n"
+"\n"
+"        30h Allocate 30 hours to the task\n"
+"        #tags Set tags on the task\n"
+"        @user Assign the task to a user\n"
+"        ! Set the task a medium priority\n"
+"        !! Set the task a high priority\n"
+"        !!! Set the task a urgent priority\n"
+"\n"
+"        Make sure to use the right format and order e.g. Improve the configuration screen 5h #feature #v16 @Mitchell !"
+msgstr ""
+"استخدم هذه الكلمات المفتاحية في العنوان لتعيين مهام جديدة:\n"
+"\n"
+"        30h لتخصيص 30 ساعة للمهمة\n"
+"        #tags لتعيين علامات تصنيف للمهمة\n"
+"        @user لإسناد المهمة إلى أحد المستخدمين\n"
+"        ! لتعيين أولوية متوسطة للمهمة\n"
+"        !! لتعيين أولوية عالية للمهمة\n"
+"        !!! لتعيين أولوية عاجلة للمهمة\n"
+" \n"
+"        تأكد من استخدام التنسيق والترتيب الصحيحين، على سبيل المثال: تحسين شاشة الإعدادات 5h #feature #v16 @Mitchell !"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Version or release name"
+msgstr "اسم الإصدار أو النسخة"
+
+#. module: ab_projects
+#: model:ab.project.type,name:ab_projects.ab_project_type_web
+msgid "Web"
+msgstr "ويب"
+
+#. module: ab_projects
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_release__website_message_ids
+#: model:ir.model.fields,field_description:ab_projects.field_ab_project_sprint__website_message_ids
+msgid "Website Messages"
+msgstr ""
+
+#. module: ab_projects
+#: model:ir.model.fields,help:ab_projects.field_ab_project_release__website_message_ids
+#: model:ir.model.fields,help:ab_projects.field_ab_project_sprint__website_message_ids
+msgid "Website communication history"
+msgstr ""
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Why is this task blocked?"
+msgstr "لماذا هذه المهمة محجوبة؟"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Workflow"
+msgstr "سير العمل"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Workflow, review ownership, and engineering links."
+msgstr "سير العمل، ومسؤولية المراجعة، وروابط الهندسة."
+
+#. module: ab_projects
+#: model:ir.ui.menu,name:ab_projects.ab_project_dashboard_menu
+msgid "Workspace"
+msgstr "مساحة العمل"
+
+#. module: ab_projects
+#: model_terms:ir.actions.act_window,help:ab_projects.ab_project_my_work_action
+msgid "Your active work is clear."
+msgstr "لا توجد أعمال نشطة حالياً."
+
+#~ msgid "Scope"
+#~ msgstr "النطاق"

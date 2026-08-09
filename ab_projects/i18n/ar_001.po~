@@ -1,0 +1,263 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_projects
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-09 00:00+0000\n"
+"PO-Revision-Date: 2026-08-09 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,name:ab_projects.ab_project_dashboard_action
+#: model:ir.ui.menu,name:ab_projects.ab_project_dashboard_menu
+msgid "Projects Workspace"
+msgstr "مساحة عمل المشاريع"
+
+#. module: ab_projects
+#: model:ir.ui.menu,name:ab_projects.ab_project_dashboard_menu
+msgid "Workspace"
+msgstr "مساحة العمل"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Project Overview"
+msgstr "نظرة عامة على المشروع"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Delivery health, team ownership, and workflow signals."
+msgstr "حالة التسليم، ومسؤولية الفريق، ومؤشرات سير العمل."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Open Tasks"
+msgstr "فتح المهام"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Total Tasks"
+msgstr "إجمالي المهام"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Completed"
+msgstr "مكتملة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Overdue"
+msgstr "متأخرة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Blocked"
+msgstr "محجوبة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Story Points"
+msgstr "نقاط القصة"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Estimated"
+msgstr "المقدر"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Logged"
+msgstr "المسجل"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Current Sprint"
+msgstr "السبرنت الحالي"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "people involved"
+msgstr "أعضاء مشاركون"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Development Info"
+msgstr "معلومات التطوير"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Ownership, delivery health, and developer links."
+msgstr "المسؤولية، وحالة التسليم، وروابط المطورين."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Ownership"
+msgstr "المسؤولية"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Links"
+msgstr "الروابط"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "Team Workload"
+msgstr "عبء عمل الفريق"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_project_view_form
+msgid "People and open delivery items connected to this project."
+msgstr "الأشخاص وعناصر التسليم المفتوحة المرتبطة بهذا المشروع."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Toggle Blocked"
+msgstr "تبديل حالة الحجب"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Development Details"
+msgstr "تفاصيل التطوير"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Workflow, review ownership, and engineering links."
+msgstr "سير العمل، ومسؤولية المراجعة، وروابط الهندسة."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Technical Links"
+msgstr "الروابط التقنية"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Bug Details"
+msgstr "تفاصيل العطل"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Severity, environment, and reproduction context."
+msgstr "الخطورة، والبيئة، وسياق إعادة الإنتاج."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Steps"
+msgstr "الخطوات"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Expected"
+msgstr "المتوقع"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_task_view_form
+msgid "Actual"
+msgstr "الفعلي"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Sprint Overview"
+msgstr "نظرة عامة على السبرنت"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Execution status and delivery scope."
+msgstr "حالة التنفيذ ونطاق التسليم."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Planning"
+msgstr "التخطيط"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_sprint_view_form
+msgid "Remaining"
+msgstr "المتبقي"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Release Overview"
+msgstr "نظرة عامة على الإصدار"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Scope readiness, quality signals, and target timing."
+msgstr "جاهزية النطاق، ومؤشرات الجودة، وموعد التسليم المستهدف."
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Open Scope"
+msgstr "فتح النطاق"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Readiness"
+msgstr "الجاهزية"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Scope"
+msgstr "النطاق"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Bugs"
+msgstr "الأعطال"
+
+#. module: ab_projects
+#: model_terms:ir.ui.view,arch_db:ab_projects.ab_project_release_view_form
+msgid "Open Bugs"
+msgstr "الأعطال المفتوحة"
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_dashboard_action
+msgid "No projects in this workspace yet."
+msgstr "لا توجد مشاريع في مساحة العمل هذه بعد."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_dashboard_action
+msgid "Create a project to organize tasks, sprints, releases, and developer ownership."
+msgstr "أنشئ مشروعاً لتنظيم المهام والسبرنتات والإصدارات ومسؤوليات المطورين."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_my_work_action
+msgid "Your active work is clear."
+msgstr "لا توجد أعمال نشطة حالياً."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_my_work_action
+msgid "Assigned tasks, reviews, and QA items will appear here when they need attention."
+msgstr "ستظهر هنا المهام والمراجعات وعناصر ضمان الجودة عندما تحتاج إلى متابعة."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_sprint_action
+msgid "No sprints yet."
+msgstr "لا توجد سبرنتات بعد."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_sprint_action
+msgid "Create a sprint to group tasks into focused development cycles."
+msgstr "أنشئ سبرنت لتجميع المهام ضمن دورات تطوير مركزة."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_release_action
+msgid "No releases planned."
+msgstr "لا توجد إصدارات مخططة."
+
+#. module: ab_projects
+#: model:ir.actions.act_window,help:ab_projects.ab_project_release_action
+msgid "Create releases to track development scope, testing, and launch readiness."
+msgstr "أنشئ إصدارات لمتابعة نطاق التطوير والاختبار وجاهزية الإطلاق."

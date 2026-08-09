@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ab_project_release_view_search" model="ir.ui.view">
+        <field name="name">ab.project.release.search</field>
+        <field name="model">ab.project.release</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="project_id"/>
+                <filter string="Planned" name="planned" domain="[('status', '=', 'planned')]"/>
+                <filter string="In Development" name="development" domain="[('status', '=', 'development')]"/>
+                <filter string="Testing" name="testing" domain="[('status', '=', 'testing')]"/>
+                <filter string="Released" name="released" domain="[('status', '=', 'released')]"/>
+                <separator/>
+                <filter string="Project" name="group_project" context="{'group_by': 'project_id'}"/>
+                <filter string="Status" name="group_status" context="{'group_by': 'status'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="ab_project_release_view_list" model="ir.ui.view">
+        <field name="name">ab.project.release.list</field>
+        <field name="model">ab.project.release</field>
+        <field name="arch" type="xml">
+            <list decoration-success="status == 'released'" decoration-info="status == 'testing'" class="ab_release_list_view">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="status" widget="badge"
+                       decoration-muted="status == 'planned'"
+                       decoration-info="status in ['development', 'testing']"
+                       decoration-success="status == 'released'"/>
+                <field name="release_date"/>
+                <field name="progress" widget="percentage"/>
+                <field name="task_count"/>
+                <field name="completed_task_count"/>
+                <field name="bug_count"/>
+                <field name="open_bug_count"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="ab_project_release_view_kanban" model="ir.ui.view">
+        <field name="name">ab.project.release.kanban</field>
+        <field name="model">ab.project.release</field>
+        <field name="arch" type="xml">
+            <kanban class="ab_release_kanban_view" default_group_by="status" sample="1">
+                <field name="name"/>
+                <field name="project_id"/>
+                <field name="status"/>
+                <field name="release_date"/>
+                <field name="progress"/>
+                <field name="task_count"/>
+                <field name="completed_task_count"/>
+                <field name="bug_count"/>
+                <field name="open_bug_count"/>
+                <templates>
+                    <t t-name="card" class="ab_release_card">
+                        <main class="ab_sprint_card_main">
+                            <div class="ab_project_card_header">
+                                <div class="ab_project_title_block">
+                                    <span class="ab_project_card_title text-truncate" t-att-title="record.name.value">
+                                        <field name="name"/>
+                                    </span>
+                                    <div class="ab_project_meta_row">
+                                        <span t-attf-class="ab_status_pill ab_release_status_#{record.status.raw_value}">
+                                            <span class="ab_status_dot"/>
+                                            <field name="status"/>
+                                        </span>
+                                        <span class="ab_meta_chip"><field name="project_id"/></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ab_project_progress_block">
+                                <div class="ab_project_progress_labels">
+                                    <span>Readiness</span>
+                                    <strong><t t-esc="Math.round((record.progress.raw_value || 0) * 100)"/>%</strong>
+                                </div>
+                                <div class="ab_progress_track">
+                                    <span class="ab_progress_fill" t-attf-style="inline-size: #{Math.round((record.progress.raw_value || 0) * 100)}%;"/>
+                                </div>
+                            </div>
+                            <div class="ab_project_signal_grid">
+                                <span class="ab_signal_card"><strong><field name="task_count"/></strong><span>Tasks</span></span>
+                                <span class="ab_signal_card"><strong><field name="completed_task_count"/></strong><span>Done</span></span>
+                                <span class="ab_signal_card ab_signal_warning"><strong><field name="bug_count"/></strong><span>Bugs</span></span>
+                                <span class="ab_signal_card ab_signal_danger"><strong><field name="open_bug_count"/></strong><span>Open</span></span>
+                            </div>
+                            <div class="ab_project_context_list">
+                                <div t-if="record.release_date.raw_value" class="ab_context_item">
+                                    <span class="fa fa-calendar-check-o" title="Release Date"/>
+                                    <field name="release_date"/>
+                                </div>
+                            </div>
+                        </main>
+                        <footer class="ab_project_card_footer">
+                            <a name="action_view_tasks" type="object" class="ab_project_quick_link">Open Scope</a>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="ab_project_release_view_form" model="ir.ui.view">
+        <field name="name">ab.project.release.form</field>
+        <field name="model">ab.project.release</field>
+        <field name="arch" type="xml">
+            <form class="ab_release_workspace_form">
+                <header>
+                    <field name="status" widget="statusbar" options="{'clickable': '1'}"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_tasks" type="object" class="oe_stat_button" icon="fa-check">
+                            <field name="task_count" widget="statinfo" string="Tasks"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="Version or release name"/></h1>
+                    </div>
+                    <div class="ab_workspace_panel">
+                        <div class="ab_workspace_panel_header">
+                            <div>
+                                <h2>Release Overview</h2>
+                                <p>Scope readiness, quality signals, and target timing.</p>
+                            </div>
+                            <button name="action_view_tasks" type="object" class="btn btn-primary">Open Scope</button>
+                        </div>
+                        <group>
+                            <group string="Planning">
+                                <field name="project_id"/>
+                                <field name="release_date"/>
+                            </group>
+                            <group string="Readiness">
+                                <field name="progress" widget="percentage"/>
+                                <field name="completed_task_count"/>
+                                <field name="open_bug_count"/>
+                            </group>
+                        </group>
+                        <div class="ab_project_metric_grid">
+                            <div class="ab_project_metric">
+                                <span class="ab_project_metric_icon fa fa-check-square-o" title="Scope"/>
+                                <span class="ab_project_metric_value"><field name="task_count"/></span>
+                                <span class="ab_project_metric_label">Scope</span>
+                            </div>
+                            <div class="ab_project_metric ab_metric_success">
+                                <span class="ab_project_metric_icon fa fa-check" title="Completed"/>
+                                <span class="ab_project_metric_value"><field name="completed_task_count"/></span>
+                                <span class="ab_project_metric_label">Completed</span>
+                            </div>
+                            <div class="ab_project_metric ab_metric_warning">
+                                <span class="ab_project_metric_icon fa fa-bug" title="Bugs"/>
+                                <span class="ab_project_metric_value"><field name="bug_count"/></span>
+                                <span class="ab_project_metric_label">Bugs</span>
+                            </div>
+                            <div class="ab_project_metric ab_metric_danger">
+                                <span class="ab_project_metric_icon fa fa-exclamation-circle" title="Open Bugs"/>
+                                <span class="ab_project_metric_value"><field name="open_bug_count"/></span>
+                                <span class="ab_project_metric_label">Open Bugs</span>
+                            </div>
+                        </div>
+                    </div>
+                    <notebook>
+                        <page name="description" string="Description">
+                            <field name="description" options="{'resizable': false}" placeholder="Release notes or scope..."/>
+                        </page>
+                        <page name="tasks" string="Tasks">
+                            <field name="task_ids" context="{'default_project_id': project_id, 'default_ab_release_id': id}">
+                                <list editable="bottom" decoration-muted="state in ['1_done', '1_canceled']" open_form_view="True" class="ab_task_list_view ab_embedded_task_list">
+                                    <field name="state" widget="project_task_state_selection" nolabel="1"/>
+                                    <field name="name"/>
+                                    <field name="ab_task_type" widget="badge"/>
+                                    <field name="user_ids" widget="many2many_avatar_user"/>
+                                    <field name="ab_story_points"/>
+                                    <field name="date_deadline"/>
+                                    <field name="ab_is_blocked" widget="boolean_toggle"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="ab_project_release_action" model="ir.actions.act_window">
+        <field name="name">Releases</field>
+        <field name="res_model">ab.project.release</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No releases planned.</p>
+            <p>Create releases to track development scope, testing, and launch readiness.</p>
+        </field>
+    </record>
+</odoo>

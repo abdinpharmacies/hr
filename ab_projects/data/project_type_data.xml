@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+    <record id="ab_project_type_web" model="ab.project.type">
+        <field name="sequence">10</field>
+        <field name="name">Web</field>
+    </record>
+    <record id="ab_project_type_mobile" model="ab.project.type">
+        <field name="sequence">20</field>
+        <field name="name">Mobile</field>
+    </record>
+    <record id="ab_project_type_odoo" model="ab.project.type">
+        <field name="sequence">30</field>
+        <field name="name">Odoo</field>
+    </record>
+    <record id="ab_project_type_backend_api" model="ab.project.type">
+        <field name="sequence">40</field>
+        <field name="name">Backend/API</field>
+    </record>
+    <record id="ab_project_type_internal_tool" model="ab.project.type">
+        <field name="sequence">50</field>
+        <field name="name">Internal Tool</field>
+    </record>
+    <record id="ab_project_type_maintenance" model="ab.project.type">
+        <field name="sequence">60</field>
+        <field name="name">Maintenance</field>
+    </record>
+</odoo>

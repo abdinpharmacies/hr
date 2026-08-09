@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_project_type_user,ab.project.type.user,model_ab_project_type,ab_projects.group_ab_project_user,1,0,0,0
+access_ab_project_type_project_user,ab.project.type.project.user,model_ab_project_type,project.group_project_user,1,0,0,0
+access_ab_project_type_admin,ab.project.type.admin,model_ab_project_type,ab_projects.group_ab_project_admin,1,1,1,0
+access_ab_project_type_project_manager,ab.project.type.project.manager,model_ab_project_type,project.group_project_manager,1,1,1,0
+access_ab_project_sprint_user,ab.project.sprint.user,model_ab_project_sprint,ab_projects.group_ab_project_user,1,0,0,0
+access_ab_project_sprint_project_user,ab.project.sprint.project.user,model_ab_project_sprint,project.group_project_user,1,0,0,0
+access_ab_project_sprint_lead,ab.project.sprint.lead,model_ab_project_sprint,ab_projects.group_ab_project_lead,1,1,1,0
+access_ab_project_sprint_admin,ab.project.sprint.admin,model_ab_project_sprint,ab_projects.group_ab_project_admin,1,1,1,1
+access_ab_project_sprint_project_manager,ab.project.sprint.project.manager,model_ab_project_sprint,project.group_project_manager,1,1,1,1
+access_ab_project_release_user,ab.project.release.user,model_ab_project_release,ab_projects.group_ab_project_user,1,0,0,0
+access_ab_project_release_project_user,ab.project.release.project.user,model_ab_project_release,project.group_project_user,1,0,0,0
+access_ab_project_release_lead,ab.project.release.lead,model_ab_project_release,ab_projects.group_ab_project_lead,1,1,1,0
+access_ab_project_release_admin,ab.project.release.admin,model_ab_project_release,ab_projects.group_ab_project_admin,1,1,1,1
+access_ab_project_release_project_manager,ab.project.release.project.manager,model_ab_project_release,project.group_project_manager,1,1,1,1
