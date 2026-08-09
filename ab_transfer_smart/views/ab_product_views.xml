@@ -6,6 +6,21 @@
             <field name="model">ab_product</field>
             <field name="inherit_id" ref="ab_product.ab_product_view_tree"/>
             <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='location']" position="attributes">
+                    <attribute name="string">Location</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='is_priced']" position="attributes">
+                    <attribute name="string">Is Priced</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='tag_ids']" position="attributes">
+                    <attribute name="string">Tag</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='barcode_ids']" position="attributes">
+                    <attribute name="string">Barcode</attribute>
+                </xpath>
+                <xpath expr="//list/field[@name='product_card_id']" position="attributes">
+                    <attribute name="string">Product Card</attribute>
+                </xpath>
                 <xpath expr="//list/field[@name='uom_id']" position="after">
                     <field name="min_sale_purchase_qty" string="Min Sale/Purchase Qty"/>
                 </xpath>
@@ -17,6 +32,18 @@
             <field name="model">ab_product</field>
             <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='location']" position="attributes">
+                    <attribute name="string">Location</attribute>
+                </xpath>
+                <xpath expr="//field[@name='is_priced']" position="attributes">
+                    <attribute name="string">Is Priced</attribute>
+                </xpath>
+                <xpath expr="//field[@name='tag_ids']" position="attributes">
+                    <attribute name="string">Tag</attribute>
+                </xpath>
+                <xpath expr="//field[@name='barcode_ids']" position="attributes">
+                    <attribute name="string">Barcode</attribute>
+                </xpath>
                 <xpath expr="//field[@name='uom_id']" position="after">
                     <field name="min_sale_purchase_qty" string="Min Sale/Purchase Qty"/>
                 </xpath>
@@ -50,6 +77,12 @@
             <field name="model">ab_product_card</field>
             <field name="inherit_id" ref="ab_product.ab_product_card_view_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_ids']/list/field[@name='tag_ids']" position="attributes">
+                    <attribute name="string">Tag</attribute>
+                </xpath>
+                <xpath expr="//field[@name='product_ids']/list/field[@name='barcode_ids']" position="attributes">
+                    <attribute name="string">Barcode</attribute>
+                </xpath>
                 <xpath expr="//field[@name='product_ids']/list/field[@name='code']" position="after">
                     <field name="min_sale_purchase_qty" string="Min Sale/Purchase Qty"/>
                 </xpath>

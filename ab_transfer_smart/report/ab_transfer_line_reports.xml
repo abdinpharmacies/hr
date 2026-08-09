@@ -220,7 +220,7 @@
                                             <span class="ab-smart-qty-text"
                                                   t-esc="('%.3f' % (line.qty or 0.0)).rstrip('0').rstrip('.')"/>
                                         </td>
-                                        <td class="text-nowrap"><span t-field="line.uom_id"/></td>
+                                        <td class="text-nowrap"><span t-esc="o.get_smart_report_uom_text(line)"/></td>
                                         <td class="text-nowrap">
                                             <span t-field="line.exclusion_reason"/>
                                         </td>
@@ -301,7 +301,7 @@
                                         <td class="col-5 text-uppercase text-break"><span
                                                 t-field="line.product_id.name"/></td>
                                         <td class="col-1 text-end text-nowrap"><span t-field="line.qty"/></td>
-                                        <td class="col-1 text-nowrap"><span t-field="line.uom_id"/></td>
+                                        <td class="col-1 text-nowrap"><span t-esc="o.get_smart_report_uom_text(line)"/></td>
                                         <td class="col-2 text-break"/>
                                         <td class="col-2 text-end text-nowrap">
                                             <span t-esc="'%.1f' % (line.smart_source_stock_qty or 0.0)"/>
