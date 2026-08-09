@@ -1027,13 +1027,17 @@ class TestSmartTransfer(TransactionCase):
         self._create_smart_line(active_pre_submit, product, uom, qty=2)
         active_pre_submit.write({"smart_stage": SMART_STAGE_PRE_SUBMIT})
 
+        active_submit = self._create_smart_header_for_source(header, "SMART-EXP-SUB-STAGE", 8307)
+        self._create_smart_line(active_submit, product, uom, qty=5)
+        active_submit.write({"smart_stage": SMART_STAGE_SUBMIT})
+
         purchase_preparation = self._create_smart_header_for_source(header, "SMART-EXP-PUR", 8304)
         self._create_smart_line(purchase_preparation, product, uom, qty=7)
 
         submitted = self._create_smart_header_for_source(header, "SMART-EXP-SUB", 8305)
         self._create_smart_line(submitted, product, uom, qty=11)
         submitted.write({
-            "smart_stage": SMART_STAGE_STORE_REVISION,
+            "smart_stage": SMART_STAGE_SUBMIT,
             "is_submitted": True,
         })
 
@@ -1046,8 +1050,47 @@ class TestSmartTransfer(TransactionCase):
             [header.from_store_id.id],
         )
 
-        self.assertEqual(reserved_qty[(product.id, header.from_store_id.id)], 9)
-        self.assertEqual(reference_line.smart_expected_source_stock_qty, 41)
+        self.assertEqual(reserved_qty[(product.id, header.from_store_id.id)], 25)
+        self.assertEqual(reference_line.smart_expected_source_stock_qty, 25)
+
+    def test_expected_source_stock_ignores_yesterday_smart_reservations(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-EXPECTED-YESTERDAY", 99019, uom)
+        reference_line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=6,
+            smart_source_stock_qty=50,
+        )
+        yesterday = fields.Date.context_today(header) - timedelta(days=1)
+
+        for index, stage in enumerate(
+                (
+                    SMART_STAGE_STORE_PREPARATION,
+                    SMART_STAGE_STORE_REVISION,
+                    SMART_STAGE_PRE_SUBMIT,
+                    SMART_STAGE_SUBMIT,
+                ),
+                start=1,
+        ):
+            yesterday_header = self._create_smart_header_for_source(
+                header,
+                "SMART-EXP-YEST-%s" % index,
+                8310 + index,
+            )
+            yesterday_line = self._create_smart_line(yesterday_header, product, uom, qty=index)
+            yesterday_line.write({"create_day": yesterday})
+            yesterday_header.write({"smart_stage": stage})
+
+        reserved_qty = self.env["ab_transfer_header"]._read_smart_active_reserved_qty_by_product_store(
+            [product.id],
+            [header.from_store_id.id],
+        )
+
+        self.assertNotIn((product.id, header.from_store_id.id), reserved_qty)
+        self.assertEqual(reference_line.smart_expected_source_stock_qty, 50)
 
     def test_smart_line_duplicate_stage_transition_blocks_same_source_day(self):
         header = self._create_smart_header()

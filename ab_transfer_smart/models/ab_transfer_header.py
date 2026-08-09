@@ -34,6 +34,7 @@ SMART_EXPECTED_BALANCE_STAGES = (
     SMART_STAGE_STORE_PREPARATION,
     SMART_STAGE_STORE_REVISION,
     SMART_STAGE_PRE_SUBMIT,
+    SMART_STAGE_SUBMIT,
 )
 SMART_GROUP_PURCHASE = "ab_transfer_smart.group_transfer_smart_purchase"
 SMART_GROUP_STORE_PREPARATION = "ab_transfer_smart.group_trnasfer_smart_store_preparation"
@@ -132,16 +133,16 @@ class AbTransferHeader(models.Model):
     )
     smart_stock_method = fields.Selection(
         selection=[
-            (SMART_STOCK_METHOD_WEIGHTED, "طريقة الوزن"),
-            (SMART_STOCK_METHOD_NORMAL, "الطريقة العادية"),
+            (SMART_STOCK_METHOD_WEIGHTED, "Weighted Method"),
+            (SMART_STOCK_METHOD_NORMAL, "Normal Method"),
         ],
         string="Stock Calculation Method",
         default=SMART_STOCK_METHOD_WEIGHTED,
         required=True,
         help=(
-            "طريقة الوزن: (آخر شهر × 50%) + (الشهر السابق × 30%) + "
-            "(الشهر الثالث × 20%) ثم القسمة على 30 وضرب Smart Days. "
-            "الطريقة العادية: إجمالي مبيعات آخر 3 شهور ÷ 90 × Smart Days. "
+            "Weighted method: last month x 50%, previous month x 30%, "
+            "third month x 20%, then divide by 30 and multiply by Smart Days. "
+            "Normal method: total sales for the last 3 months / 90 x Smart Days. "
             "After planning, destination stock is deducted and the result is capped by source stock."
         ),
     )
@@ -293,6 +294,13 @@ class AbTransferHeader(models.Model):
     def get_smart_report_printing_date_text(self):
         self.ensure_one()
         return self._format_smart_report_datetime(fields.Datetime.now())
+
+    def get_smart_report_uom_text(self, line):
+        self.ensure_one()
+        uom_name = line.uom_id.name or ""
+        if uom_name.upper() == "BOX":
+            return _("BOX")
+        return uom_name
 
     def _format_smart_report_datetime(self, value):
         return format_datetime(
@@ -873,7 +881,7 @@ class AbTransferHeader(models.Model):
         domain = [
             ("header_id.active", "=", True),
             ("header_id.smart_stage", "in", list(SMART_EXPECTED_BALANCE_STAGES)),
-            ("header_id.is_submitted", "=", False),
+            ("create_day", "=", fields.Date.context_today(self)),
             ("exclusion_reason", "=", False),
             ("product_id", "in", product_ids),
             ("from_store_id", "in", store_ids),
