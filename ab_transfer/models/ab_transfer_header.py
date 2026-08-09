@@ -754,6 +754,8 @@ class AbTransferHeader(models.Model):
         transfer_reference = "Odoo Transfer: %s" % self.display_name
         notes = self.notes or ""
         if notes:
+            if notes.strip() in {"1", "2", "3", "4"}:
+                return "%s %s" % (notes, transfer_reference)
             return "%s\n%s" % (notes, transfer_reference)
         return transfer_reference
 
