@@ -137,8 +137,10 @@
                                         <div class="d-flex align-items-start gap-2">
                                             <field name="product_import_text"
                                                    string="Paste Products"
+                                                   widget="ab_smart_product_import_text"
                                                    nolabel="1"
-                                                   class="flex-grow-1"
+                                                   rows="5"
+                                                   class="ab_smart_product_import_editor flex-grow-1"
                                                    placeholder="Paste from Excel: product code and quantity, one product per line"
                                                    readonly="state == 'done'"/>
                                             <button name="action_import_product_lines"

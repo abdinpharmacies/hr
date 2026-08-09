@@ -6,3 +6,42 @@
 .o_form_statusbar .o_smart_transfer_header_end_start {
     margin-inline-start: auto;
 }
+
+.o_field_widget.ab_smart_product_import_editor {
+    display: block;
+    width: 100%;
+    min-width: 0;
+}
+
+.o_field_widget.ab_smart_product_import_editor textarea.o_input,
+.o_field_widget.ab_smart_product_import_editor textarea.ab_smart_product_import_textarea,
+.ab_smart_product_import_editor textarea.o_input,
+.ab_smart_product_import_textarea {
+    box-sizing: border-box;
+    width: 100%;
+    height: 6rem !important;
+    min-height: 6rem !important;
+    max-height: 6rem !important;
+    overflow: scroll;
+    resize: none;
+    white-space: pre;
+    overflow-wrap: normal;
+    word-wrap: normal;
+    word-break: normal;
+    font-family: monospace;
+    line-height: 1.25;
+    border: 1px solid #9ca3af;
+    border-radius: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    background-color: #fff;
+    box-shadow: none;
+
+    &:hover {
+        border-color: #71639e;
+    }
+
+    &:focus {
+        border-color: #71639e;
+        box-shadow: 0 0 0 0.1rem rgba(113, 99, 158, 0.25);
+    }
+}

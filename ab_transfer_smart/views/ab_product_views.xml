@@ -23,6 +23,28 @@
             </field>
         </record>
 
+        <record id="ab_product_view_form_button_titles_smart_transfer" model="ir.ui.view">
+            <field name="name">ab_product_view_form_button_titles_smart_transfer</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='btn_edit_product_main_data']" position="attributes">
+                    <attribute name="title">Edit Product Main Data</attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_product_view_list_balance_button_titles_smart_transfer" model="ir.ui.view">
+            <field name="name">ab_product_view_list_balance_button_titles_smart_transfer</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_sales.ab_product_tree_view_inherit"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='btn_get_stores_balance']" position="attributes">
+                    <attribute name="title">Show Balance</attribute>
+                </xpath>
+            </field>
+        </record>
+
         <record id="ab_product_card_view_form_smart_transfer" model="ir.ui.view">
             <field name="name">ab_product_card_view_form_smart_transfer</field>
             <field name="model">ab_product_card</field>

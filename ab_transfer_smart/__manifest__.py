@@ -13,7 +13,6 @@
         "security/security_groups.xml",
         "security/ir.model.access.csv",
         "security/record_rules.xml",
-        "data/ir_cron.xml",
         "views/ab_product_views.xml",
         "views/ab_transfer_header_views.xml",
         "views/ab_transfer_smart_wizard_views.xml",
@@ -23,6 +22,7 @@
     "assets": {
         "web.assets_backend": [
             "ab_transfer_smart/static/src/scss/smart_header.scss",
+            "ab_transfer_smart/static/src/js/smart_product_import_text_field.js",
         ],
     },
     "installable": True,

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import re
-
+import io
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 SMART_GROUP_PURCHASE = "ab_transfer_smart.group_transfer_smart_purchase"
 SMART_STAGE_PURCHASE_PREPARATION = "purchase_preparation"
 SMART_LINE_SOURCE_WIZARD = "wizard"
+MAX_PRODUCT_IMPORT_LINES = 1000
 
 
 class AbTransferSmartWizard(models.Model):
@@ -282,18 +283,26 @@ class AbTransferSmartWizard(models.Model):
         self.ensure_one()
         if self.state == "done":
             raise UserError(_("Done wizards cannot import products."))
-        imported = self._parse_product_import_text()
+        imported, truncated = self._parse_product_import_text()
         if not imported:
             raise UserError(_("Paste product code and quantity before adding products."))
 
         created, updated = self._add_imported_product_lines(imported)
 
         self.product_import_text = False
+        message = _(
+            "Product lines added. Created: %(created)s, Updated: %(updated)s."
+        ) % {"created": created, "updated": updated}
+        notification_type = "success"
+        if truncated:
+            message = _(
+                "Only 1000 product lines are allowed. Extra lines have been ignored."
+            ) + "\n" + message
+            notification_type = "warning"
         return self._smart_notification(
             _("Smart Products"),
-            _("Product lines added. Created: %(created)s, Updated: %(updated)s.")
-            % {"created": created, "updated": updated},
-            "success",
+            message,
+            notification_type,
             next_action=self._smart_soft_reload_action(),
         )
 
@@ -633,16 +642,19 @@ class AbTransferSmartWizard(models.Model):
 
     def _parse_product_import_text(self):
         self.ensure_one()
-        lines = self.product_import_text.splitlines() if self.product_import_text else []
         parsed_rows = []
-        for index, raw_line in enumerate(lines, start=1):
+        truncated = False
+        for index, raw_line in enumerate(io.StringIO(self.product_import_text or ""), start=1):
             line = (raw_line or "").strip()
             if not line:
                 continue
+            if len(parsed_rows) >= MAX_PRODUCT_IMPORT_LINES:
+                truncated = True
+                break
             code, qty = self._parse_product_import_line(line, index)
             parsed_rows.append((code, qty))
 
-        return self._products_from_code_qty_rows(parsed_rows)
+        return self._products_from_code_qty_rows(parsed_rows), truncated
 
     def _products_from_code_qty_rows(self, parsed_rows):
         codes = [code for code, _qty in parsed_rows]
