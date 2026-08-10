@@ -1,0 +1,46 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* muk_web_refresh
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-10 00:00+0000\n"
+"PO-Revision-Date: 2026-08-10 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: muk_web_refresh
+#: model_terms:ir.ui.view,arch_db:muk_web_refresh.ControlPanel
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: muk_web_refresh
+#. odoo-javascript
+#: code:addons/muk_web_refresh/static/src/search/control_panel.js:0
+msgid "Refresh View"
+msgstr "تحديث العرض"
+
+#. module: muk_web_refresh
+#. odoo-javascript
+#: code:addons/muk_web_refresh/static/src/search/control_panel.js:0
+msgid "Refreshing will delete your unsaved changes. Save them before refreshing, or continue and lose the unsaved changes."
+msgstr "سيؤدي التحديث إلى حذف التغييرات غير المحفوظة. احفظها قبل التحديث أو تابع مع فقدان التغييرات غير المحفوظة."
+
+#. module: muk_web_refresh
+#. odoo-javascript
+#: code:addons/muk_web_refresh/static/src/search/control_panel.js:0
+msgid "Save Changes"
+msgstr "حفظ التغييرات"
+
+#. module: muk_web_refresh
+#. odoo-javascript
+#: code:addons/muk_web_refresh/static/src/search/control_panel.js:0
+msgid "Refresh Anyway"
+msgstr "التحديث على أي حال"

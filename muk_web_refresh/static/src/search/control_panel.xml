@@ -4,35 +4,18 @@
     <t t-inherit="web.ControlPanel" t-inherit-mode="extension">
         <xpath expr="//Pager/.." position="before">
             <div 
-                t-if="this.checkAutoLoadAvailability()"
+                t-if="this.checkRefreshAvailability()"
                 class="d-inline-flex align-items-center gap-1 align-self-center"
             >
-                <input
-                    type="number"
-                    min="1"
-                    step="1"
-                    class="form-control form-control-sm text-center"
-                    style="width: 4.5rem;"
-                    t-att-value="this.autoLoadState.interval"
-                    t-on-change="this.onIntervalInput"
-                />
-                <span class="small text-muted">s</span>
-                <span
-                    t-if="this.autoLoadState.active and this.autoLoadState.counter &gt; 0"
-                    class="small text-muted"
-                >
-                    <t t-out="this.autoLoadState.counter"/>s
-                </span>
                 <button
                     t-if="!env.isSmall"
-                    class="btn btn-link p-0 d-inline-flex align-items-center justify-content-center"
+                    class="btn btn-link p-0 d-inline-flex align-items-center justify-content-center o_muk_web_refresh_button"
                     type="button"
-                    t-on-click.stop="this.toggleAutoLoad"
+                    title="Refresh"
+                    aria-label="Refresh"
+                    t-on-click.stop="this.onRefreshClick"
                 >
-                    <i 
-                        class="fa fa-refresh fa-fw"
-                        t-att-class="this.autoLoadState.active ? 'text-info fa-spin' : 'text-muted'"
-                    />
+                    <i class="fa fa-refresh fa-fw"/>
                 </button>
             </div>
         </xpath>

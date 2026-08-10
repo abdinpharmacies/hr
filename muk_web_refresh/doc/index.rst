@@ -2,9 +2,10 @@
 MuK Web Refresh
 ===============
 
-Activate the auto-refresh button to reload the view every 30 seconds. 
-The refresh will reload and update the view’s data. The refresh button 
-is visible in every list and kanban view, on the left side of the pager.
+Adds a manual refresh button for list, kanban, and form views. Clicking the
+button reloads the current view once. Dirty views ask whether to save changes
+or refresh anyway. The refresh button is visible on larger screens, on the left
+side of the pager.
 
 Installation
 ============
@@ -17,7 +18,7 @@ list by clicking on the "Update Apps List" link. Now install the module by
 clicking on the install button.
 
 Upgrade
-============
+-------
 
 To upgrade this module, you need to:
 
@@ -31,9 +32,10 @@ Configuration
 No additional configuration is needed to use this module.
 
 Usage
-=============
+=====
 
-In any view, click the refresh button to enable auto-refresh.
+In a supported view, click the refresh button to reload the current data once.
+If there are unsaved changes, save them first or continue with the refresh.
 
 Credits
 =======
