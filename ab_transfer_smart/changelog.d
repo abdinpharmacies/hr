@@ -1,5 +1,6 @@
 Current changes before commit:
 
+- Keep Print Smart Lines available in Pre-Submit, Submit, and submitted transfers.
 - Redesign the Sent Lines report to match the compact Smart Lines report while keeping actual transfer lines as its data source.
 - Print the B-Connect transfer number from eplus_serial and keep the sent-line exclusion column empty.
 - Keep Smart report ordering for sent lines and use the same compact paper format.

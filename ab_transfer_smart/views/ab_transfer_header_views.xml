@@ -59,8 +59,7 @@
                     <button name="action_print_smart_transfer_lines"
                             type="object"
                             string="Print Smart Lines"
-                            class="btn-success o_smart_transfer_header_end_button"
-                            invisible="smart_stage in ('pre_submit', 'submit')"/>
+                            class="btn-success o_smart_transfer_header_end_button"/>
                     <button name="action_print_transfer_lines"
                             type="object"
                             string="Print Transfer Lines"

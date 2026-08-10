@@ -649,7 +649,7 @@ class TestSmartTransfer(TransactionCase):
             "ab_transfer_smart.report_ab_transfer_lines",
         )
 
-    def test_report_buttons_follow_pre_submit_and_header_has_no_excel_export(self):
+    def test_report_buttons_keep_smart_print_available_in_all_stages(self):
         view_path = (
             Path(__file__).resolve().parents[1]
             / "views"
@@ -662,10 +662,7 @@ class TestSmartTransfer(TransactionCase):
         transfer_button = view_tree.xpath(
             "//button[@name='action_print_transfer_lines']"
         )[0]
-        self.assertEqual(
-            smart_button.get("invisible"),
-            "smart_stage in ('pre_submit', 'submit')",
-        )
+        self.assertIsNone(smart_button.get("invisible"))
         self.assertEqual(
             transfer_button.get("invisible"),
             "smart_stage not in ('pre_submit', 'submit')",
