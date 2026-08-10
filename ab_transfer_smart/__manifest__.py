@@ -8,6 +8,7 @@
         "ab_transfer",
         "ab_sales",
         "ab_eplus_connect",
+        "report_xlsx",
     ],
     "data": [
         "security/security_groups.xml",
@@ -18,6 +19,7 @@
         "views/ab_transfer_smart_wizard_views.xml",
         "views/ab_transfer_smart_cache_views.xml",
         "report/ab_transfer_line_reports.xml",
+        "report/ab_transfer_smart_xlsx_report.xml",
     ],
     "assets": {
         "web.assets_backend": [

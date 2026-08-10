@@ -81,6 +81,11 @@ msgid "Archived"
 msgstr "مؤرشف"
 
 #. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+msgid "B-Connect Transfer No."
+msgstr "رقم تحويل بي كونكت"
+
+#. module: ab_transfer_smart
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
 msgid "Back to Purchase Preparation"
 msgstr "العودة إلى تحضير الشراء"
@@ -177,6 +182,11 @@ msgstr "الشركة"
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
 msgid "Continue Anyway"
 msgstr "المتابعة على أي حال"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Refresh Sales Cache & Resume"
+msgstr "تحديث كاش المبيعات واستكمال التحويل"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__allow_incomplete_sales_cache
@@ -341,6 +351,7 @@ msgid "Each product can be added once only. Update the existing line quantity in
 msgstr "يمكن إضافة كل صنف مرة واحدة فقط. عدّل كمية السطر الموجود بدلاً من ذلك."
 
 #. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Exc."
 msgstr "استبعاد"
@@ -359,11 +370,11 @@ msgstr "مستبعد"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__exclusion_reason
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Exclusion Reason"
 msgstr "سبب الاستبعاد"
 
 #. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Expected"
 msgstr "متوقع"
@@ -371,7 +382,6 @@ msgstr "متوقع"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_expected_source_stock_qty
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_expected_source_stock_qty
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Expected Stock"
 msgstr "الرصيد المتوقع"
 
@@ -863,6 +873,12 @@ msgid "Refresh Smart Cache"
 msgstr "تحديث الكاش الذكي"
 
 #. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Sales cache refresh did not complete all required days. Check EPlus connectivity or retry the refresh."
+msgstr "لم يكتمل تحديث كاش المبيعات لكل الأيام المطلوبة. تحقق من اتصال إي بلس أو أعد محاولة التحديث."
+
+#. module: ab_transfer_smart
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
 msgid "Remove All Products"
 msgstr "إزالة كل الأصناف"
@@ -950,7 +966,6 @@ msgstr "كاش المبيعات الذكي"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_stage
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_stage
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Smart Stage"
 msgstr "مرحلة التحويل الذكي"
 
@@ -1221,7 +1236,6 @@ msgstr "تمت أرشفة المعالج الذكي والتحويلات الم�
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_source_stock_qty
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_source_stock_qty
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Source Stock"
 msgstr "رصيد المصدر"
 
@@ -1285,6 +1299,7 @@ msgid "Status"
 msgstr "الحالة"
 
 #. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Stock"
 msgstr "المخزون"
@@ -1635,3 +1650,106 @@ msgstr "باركود"
 #: model:ir.model.fields,field_description:ab_product.field_ab_product__product_card_id
 msgid "Product Card"
 msgstr "كارت الصنف"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form
+msgid "Cancel Export"
+msgstr "إلغاء التصدير"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+msgid "Export Smart Transfer Excel"
+msgstr "تصدير إكسل التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_export_sales_cache_warning_message
+msgid "Export Sales Cache Warning"
+msgstr "تحذير كاش المبيعات للتصدير"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form
+msgid "Incomplete Sales Cache"
+msgstr "كاش المبيعات غير مكتمل"
+
+#. module: ab_transfer_smart
+#: model:ir.actions.report,name:ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx
+msgid "Smart Transfer Excel"
+msgstr "إكسل التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart Transfer Excel Export"
+msgstr "تصدير إكسل التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart Transfer Excel can only be exported before Pre-Submit."
+msgstr "لا يمكن تصدير إكسل التحويل الذكي إلا قبل مرحلة ما قبل الإرسال."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "code"
+msgstr "الكود"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "company"
+msgstr "الشركة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "purchase unit"
+msgstr "وحدة الشراء"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "sell_price"
+msgstr "سعر البيع"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "purchase_price"
+msgstr "سعر الشراء"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "source stock"
+msgstr "مخزون المصدر"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "destination stock"
+msgstr "مخزون الوجهة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "Sales 3 month"
+msgstr "مبيعات 3 أشهر"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "moving weighted avg"
+msgstr "المتوسط المرجح المتحرك"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "need"
+msgstr "الاحتياج"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid "Smart Transfer sales cache is incomplete. Missing synced sales days: %s. Choose Cancel Export to stop, or Continue Anyway to export with available cached sales data. Continuing does not record an acceptance or override."
+msgstr "كاش مبيعات التحويل الذكي غير مكتمل. أيام المبيعات المتزامنة المفقودة: %s. اختر إلغاء التصدير للتوقف، أو المتابعة على أي حال للتصدير باستخدام بيانات المبيعات المتاحة في الكاش. لن تسجل المتابعة أي قبول أو تجاوز."

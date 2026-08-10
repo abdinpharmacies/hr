@@ -268,6 +268,48 @@ class AbTransferSmartWizard(models.Model):
         })
         return self.action_generate_transfers()
 
+    def action_refresh_sales_cache_and_generate(self):
+        self.ensure_one()
+        if not self.env.user.has_group(SMART_GROUP_PURCHASE):
+            raise AccessError(_("You are not allowed to refresh smart transfer cache."))
+
+        self._validate_generation_values()
+        missing_dates = self._get_missing_sales_cache_dates_for_destinations()
+        SalesPerDay = self.env["ab_sales_per_day"].sudo()
+        for sale_date in missing_dates:
+            SalesPerDay.cron_sync_next_sales_day(
+                start_date=sale_date,
+                end_date=sale_date,
+                force_resync=False,
+            )
+
+        remaining_dates = self._get_missing_sales_cache_dates_for_destinations()
+        if remaining_dates:
+            message = self.env["ab_transfer_header"]._format_smart_sales_cache_warning_message(
+                remaining_dates
+            )
+            message += "\n\n" + _(
+                "Sales cache refresh did not complete all required days. "
+                "Check EPlus connectivity or retry the refresh."
+            )
+            self.write({
+                "allow_incomplete_sales_cache": False,
+                "sales_cache_warning_message": message,
+                "sales_cache_missing_days_count": len(remaining_dates),
+                "sales_cache_warning_accepted_by": False,
+                "sales_cache_warning_accepted_at": False,
+            })
+            return self._reopen_wizard_action()
+
+        self.write({
+            "allow_incomplete_sales_cache": False,
+            "sales_cache_warning_message": False,
+            "sales_cache_missing_days_count": 0,
+            "sales_cache_warning_accepted_by": False,
+            "sales_cache_warning_accepted_at": False,
+        })
+        return self.action_generate_transfers()
+
     def action_open_generated_transfers(self):
         self.ensure_one()
         return {

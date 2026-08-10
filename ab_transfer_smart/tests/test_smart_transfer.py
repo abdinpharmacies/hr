@@ -1,8 +1,13 @@
 # -*- coding: utf-8 -*-
+import io
+import zipfile
+
 from datetime import timedelta
 from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import patch
+
+from lxml import etree
 
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -500,22 +505,146 @@ class TestSmartTransfer(TransactionCase):
 
         self.assertEqual([row[SMART_ROW_PRODUCT_SERIAL] for row in rows], [99401, 99403, 99402])
 
-    def test_print_reports_use_sorted_lines_without_report_chunking(self):
-        report_xml = (
+    def _get_report_template_xml(self, template_id):
+        report_path = (
             Path(__file__).resolve().parents[1]
             / "report"
             / "ab_transfer_line_reports.xml"
-        ).read_text(encoding="utf-8")
+        )
+        report_tree = etree.parse(str(report_path))
+        template = report_tree.xpath("//template[@id='%s']" % template_id)[0]
+        return etree.tostring(template, encoding="unicode")
+
+    def test_smart_lines_report_keeps_smart_line_source_and_design(self):
+        report_xml = self._get_report_template_xml("report_ab_transfer_smart_lines")
 
         self.assertIn("get_smart_report_sorted_lines(o.smart_line_ids)", report_xml)
-        self.assertIn("get_smart_report_sorted_lines(o.line_ids)", report_xml)
-        self.assertEqual(report_xml.count("Transfer Date"), 2)
-        self.assertEqual(report_xml.count("Printing Date"), 2)
-        self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 2)
-        self.assertEqual(report_xml.count("get_smart_report_printing_date_text()"), 2)
+        self.assertNotIn("get_smart_report_sorted_lines(o.line_ids)", report_xml)
+        self.assertNotIn("o.eplus_serial", report_xml)
+        self.assertIn("ab-smart-lines-report", report_xml)
+        for header in ("Code", "Product", "Qty", "UoM", "Exc.", "Stock", "Expected"):
+            self.assertIn(">%s<" % header, report_xml)
+        self.assertEqual(report_xml.count("Transfer Date"), 1)
+        self.assertEqual(report_xml.count("Printing Date"), 1)
+        self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 1)
+        self.assertEqual(report_xml.count("get_smart_report_printing_date_text()"), 1)
         self.assertIn("smart_expected_source_stock_qty", report_xml)
         self.assertNotIn("get_smart_report_line_chunks", report_xml)
         self.assertNotIn("line_chunk", report_xml)
+
+    def test_sent_lines_report_uses_transfer_lines_eplus_serial_and_smart_design(self):
+        report_xml = self._get_report_template_xml("report_ab_transfer_lines")
+        sent_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_lines")
+        smart_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_smart_lines")
+
+        self.assertIn("get_smart_report_sorted_lines(o.line_ids)", report_xml)
+        self.assertNotIn("o.smart_line_ids", report_xml)
+        self.assertIn('t-field="o.eplus_serial"', report_xml)
+        self.assertIn("B-Connect Transfer No.", report_xml)
+        self.assertIn("ab-smart-lines-report", report_xml)
+        for header in ("Code", "Product", "Qty", "UoM", "Exc.", "Stock", "Expected"):
+            self.assertIn(">%s<" % header, report_xml)
+        self.assertNotIn("line.exclusion_reason", report_xml)
+        self.assertIn("smart_source_stock_qty", report_xml)
+        self.assertIn("smart_expected_source_stock_qty", report_xml)
+        self.assertEqual(report_xml.count("Transfer Date"), 1)
+        self.assertEqual(report_xml.count("Printing Date"), 1)
+        self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 1)
+        self.assertEqual(report_xml.count("get_smart_report_printing_date_text()"), 1)
+        self.assertNotIn("get_smart_report_line_chunks", report_xml)
+        self.assertNotIn("line_chunk", report_xml)
+        self.assertEqual(sent_action.paperformat_id, smart_action.paperformat_id)
+
+    def test_report_and_export_buttons_follow_pre_submit_stage(self):
+        view_path = (
+            Path(__file__).resolve().parents[1]
+            / "views"
+            / "ab_transfer_header_views.xml"
+        )
+        view_tree = etree.parse(str(view_path))
+        smart_button = view_tree.xpath(
+            "//button[@name='action_print_smart_transfer_lines']"
+        )[0]
+        transfer_button = view_tree.xpath(
+            "//button[@name='action_print_transfer_lines']"
+        )[0]
+        export_button = view_tree.xpath(
+            "//button[@name='action_export_smart_transfer_excel']"
+        )[0]
+
+        self.assertEqual(
+            smart_button.get("invisible"),
+            "smart_stage in ('pre_submit', 'submit')",
+        )
+        self.assertEqual(
+            export_button.get("invisible"),
+            "smart_stage in ('pre_submit', 'submit')",
+        )
+        self.assertEqual(
+            transfer_button.get("invisible"),
+            "smart_stage not in ('pre_submit', 'submit')",
+        )
+
+    def test_smart_transfer_xlsx_report_has_exact_columns(self):
+        report_model = self.env["report.ab_transfer_smart.smart_transfer_xlsx"]
+        report_action = self.env.ref(
+            "ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx"
+        )
+
+        self.assertEqual(report_action.model, "ab_transfer_header")
+        self.assertEqual(report_action.report_type, "xlsx")
+        self.assertEqual(
+            report_model._HEADERS,
+            (
+                "code",
+                "company",
+                "purchase unit",
+                "sell_price",
+                "purchase_price",
+                "source stock",
+                "destination stock",
+                "Sales 3 month",
+                "moving weighted avg",
+                "need",
+            ),
+        )
+
+    def test_smart_transfer_xlsx_report_renders_expected_headers(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        report_action = self.env.ref(
+            "ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx"
+        )
+        row = {
+            "code": "P001",
+            "company": "Company",
+            "purchase_unit": 3.0,
+            "sell_price": 14.0,
+            "purchase_price": 9.0,
+            "source_stock": 50.0,
+            "destination_stock": 8.0,
+            "sales_3_month": 60.0,
+            "moving_weighted_avg": 23.0,
+            "need": 7.0,
+        }
+
+        with patch.object(
+                type(header),
+                "_get_smart_transfer_excel_rows",
+                return_value=[row],
+        ):
+            content, file_type = self.env["ir.actions.report"]._render_xlsx(
+                report_action.report_name,
+                header.ids,
+                data={"allow_incomplete_sales_cache": False},
+            )
+
+        self.assertEqual(file_type, "xlsx")
+        with zipfile.ZipFile(io.BytesIO(content)) as workbook:
+            shared_strings = workbook.read("xl/sharedStrings.xml").decode("utf-8")
+        for label in self.env[
+                "report.ab_transfer_smart.smart_transfer_xlsx"
+        ]._get_translated_headers():
+            self.assertIn(str(label), shared_strings)
 
     def test_smart_lines_report_is_bound_to_transfer_list_multi_print(self):
         report_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_smart_lines")
@@ -636,6 +765,53 @@ class TestSmartTransfer(TransactionCase):
         self.assertFalse(header.line_ids)
         self.assertEqual(header.smart_line_ids.product_id, product)
         self.assertFalse(header.smart_line_ids.class_id)
+
+    def test_smart_transfer_preview_matches_apply_without_persisting_preview(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        uom = product.uom_id
+        product_serial = int(product.eplus_serial)
+        header.target_product_ids = [(6, 0, product.ids)]
+        destination_rows = [
+            (product_serial, "P501", "Preview Product", 8102, 0, 90, 0, 0, 90),
+        ]
+        prepared_vals = {
+            "qty": 7,
+            "expiry_date": fields.Date.today(),
+            "uom_id": uom.id,
+            "smart_source_stock_qty": 50,
+            "smart_destination_stock_qty": 0,
+            "smart_month1_sales": 90,
+            "smart_month2_sales": 0,
+            "smart_month3_sales": 0,
+        }
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                return_value={product_serial: 50},
+        ), patch.object(
+                type(header),
+                "_get_smart_other_branches_context_by_serial",
+                return_value={},
+        ), patch.object(
+                type(header),
+                "_prepare_smart_line_vals",
+                return_value=prepared_vals,
+        ):
+            preview_rows, preview_result = header._prepare_smart_transfer_preview_rows(
+                destination_rows
+            )
+
+            self.assertFalse(header.smart_line_ids)
+            self.assertFalse(header.line_ids)
+            self.assertEqual(preview_result["created"], 0)
+            self.assertEqual(preview_rows[0]["line_vals"]["qty"], 7)
+
+            apply_result = header._apply_smart_transfer_rows(destination_rows)
+
+        self.assertEqual(apply_result["created"], 1)
+        self.assertEqual(header.smart_line_ids.qty, preview_rows[0]["line_vals"]["qty"])
 
     def test_target_product_with_zero_destination_need_gets_default_smart_line_qty(self):
         header = self._create_smart_header()
@@ -1264,6 +1440,91 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(rows_by_serial[99062][SMART_ROW_BRANCH_STOCK_QTY], 0)
         self.assertEqual(rows_by_serial[99062][SMART_ROW_TOTAL_3_MONTHS_SALES], 0)
 
+    def test_readonly_destination_rows_match_today_cache_without_live_fetch(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        today = fields.Date.context_today(header)
+        serial = 99511
+        self.env["ab_transfer_smart_stock_cache"].create({
+            "store_id": header.to_store_id.id,
+            "product_eplus_serial": serial,
+            "stock_qty": 12,
+            "cache_date": today,
+        })
+        self.env["ab_transfer_smart_sales_cache"].create({
+            "store_id": header.to_store_id.id,
+            "product_eplus_serial": serial,
+            "month1_sales": 30,
+            "month2_sales": 20,
+            "month3_sales": 10,
+            "total_3_months_sales": 60,
+            "cache_date": today,
+        })
+        StockCache = self.env["ab_transfer_smart_stock_cache"]
+        SalesCache = self.env["ab_transfer_smart_sales_cache"]
+
+        with patch.object(
+                type(header),
+                "_get_smart_target_product_serials_with_source_stock",
+                return_value=[serial],
+        ), patch.object(
+                type(StockCache),
+                "_fetch_store_stock_rows",
+        ) as fetch_stock, patch.object(
+                type(SalesCache),
+                "_fetch_store_sales_rows",
+        ) as fetch_sales:
+            rows = header._fetch_destination_smart_rows_readonly()
+
+        fetch_stock.assert_not_called()
+        fetch_sales.assert_not_called()
+        self.assertEqual(
+            rows[0],
+            (serial, "", "", header.to_store_id.eplus_serial, 12.0, 30.0, 20.0, 10.0, 60.0),
+        )
+
+    def test_readonly_destination_rows_use_live_selects_when_today_cache_is_absent(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        serial = 99512
+        StockCache = self.env["ab_transfer_smart_stock_cache"]
+        SalesCache = self.env["ab_transfer_smart_sales_cache"]
+
+        with patch.object(
+                type(header),
+                "_get_smart_target_product_serials_with_source_stock",
+                return_value=[serial],
+        ), patch.object(
+                type(StockCache),
+                "search_count",
+                return_value=0,
+        ), patch.object(
+                type(SalesCache),
+                "search_count",
+                return_value=0,
+        ), patch.object(
+                type(StockCache),
+                "_fetch_store_stock_rows",
+                return_value={serial: 9.0},
+        ) as fetch_stock, patch.object(
+                type(SalesCache),
+                "_fetch_store_sales_rows",
+                return_value={
+                    serial: {
+                        "month1_sales": 6.0,
+                        "month2_sales": 5.0,
+                        "month3_sales": 4.0,
+                        "total_3_months_sales": 15.0,
+                    },
+                },
+        ) as fetch_sales:
+            rows = header._fetch_destination_smart_rows_readonly()
+
+        fetch_stock.assert_called_once_with(header.to_store_id)
+        fetch_sales.assert_called_once_with(header.to_store_id)
+        self.assertEqual(
+            rows[0],
+            (serial, "", "", header.to_store_id.eplus_serial, 9.0, 6.0, 5.0, 4.0, 15.0),
+        )
+
     def test_stock_cache_refresh_skips_zero_balance_rows(self):
         store = self._create_store_or_skip({
             "name": "Smart Nonzero Stock Cache Store",
@@ -1542,6 +1803,148 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(refresh.call_args.kwargs["force"], True)
         self.assertEqual(refresh.call_args.args[0], wizard.to_stores_id)
         self.assertEqual(action["params"]["type"], "success")
+
+    def test_wizard_refresh_sales_cache_syncs_missing_days_and_resumes_generation(self):
+        wizard = self.env["ab_transfer_smart_wizard"].new({
+            "target_mode": "batch",
+            "sales_cache_warning_message": "Missing sales cache days",
+            "sales_cache_missing_days_count": 2,
+        })
+        missing_days = [
+            fields.Date.today() - timedelta(days=2),
+            fields.Date.today() - timedelta(days=1),
+        ]
+        generated_action = {"type": "ir.actions.act_window", "name": "Generated"}
+        SalesPerDay = self.env["ab_sales_per_day"]
+
+        with patch.object(
+                type(wizard),
+                "_validate_generation_values",
+                return_value=None,
+        ), patch.object(
+                type(wizard),
+                "_get_missing_sales_cache_dates_for_destinations",
+                side_effect=[missing_days, []],
+        ), patch.object(
+                type(SalesPerDay),
+                "cron_sync_next_sales_day",
+                autospec=True,
+                return_value=True,
+        ) as sync_day, patch.object(
+                type(wizard),
+                "action_generate_transfers",
+                return_value=generated_action,
+        ) as generate:
+            action = wizard.action_refresh_sales_cache_and_generate()
+
+        self.assertEqual(sync_day.call_count, 2)
+        for call, sale_date in zip(sync_day.call_args_list, missing_days):
+            self.assertEqual(call.kwargs, {
+                "start_date": sale_date,
+                "end_date": sale_date,
+                "force_resync": False,
+            })
+        generate.assert_called_once_with()
+        self.assertEqual(action, generated_action)
+        self.assertFalse(wizard.allow_incomplete_sales_cache)
+        self.assertFalse(wizard.sales_cache_warning_message)
+        self.assertEqual(wizard.sales_cache_missing_days_count, 0)
+        self.assertFalse(wizard.sales_cache_warning_accepted_by)
+        self.assertFalse(wizard.sales_cache_warning_accepted_at)
+
+    def test_wizard_refresh_sales_cache_keeps_warning_when_days_remain(self):
+        wizard = self.env["ab_transfer_smart_wizard"].new({
+            "target_mode": "batch",
+            "allow_incomplete_sales_cache": True,
+            "sales_cache_warning_message": "Old warning",
+            "sales_cache_missing_days_count": 2,
+            "sales_cache_warning_accepted_by": self.env.user.id,
+            "sales_cache_warning_accepted_at": fields.Datetime.now(),
+        })
+        missing_day = fields.Date.today() - timedelta(days=1)
+        SalesPerDay = self.env["ab_sales_per_day"]
+        warning_action = {"type": "ir.actions.act_window", "name": "Warning"}
+
+        with patch.object(
+                type(wizard),
+                "_validate_generation_values",
+                return_value=None,
+        ), patch.object(
+                type(wizard),
+                "_get_missing_sales_cache_dates_for_destinations",
+                side_effect=[[missing_day], [missing_day]],
+        ), patch.object(
+                type(SalesPerDay),
+                "cron_sync_next_sales_day",
+                autospec=True,
+                return_value=False,
+        ) as sync_day, patch.object(
+                type(wizard),
+                "_reopen_wizard_action",
+                return_value=warning_action,
+        ) as reopen, patch.object(
+                type(wizard),
+                "action_generate_transfers",
+        ) as generate:
+            action = wizard.action_refresh_sales_cache_and_generate()
+
+        sync_day.assert_called_once()
+        reopen.assert_called_once_with()
+        generate.assert_not_called()
+        self.assertEqual(action, warning_action)
+        self.assertFalse(wizard.allow_incomplete_sales_cache)
+        self.assertIn(fields.Date.to_string(missing_day), wizard.sales_cache_warning_message)
+        self.assertIn("did not complete", wizard.sales_cache_warning_message)
+        self.assertEqual(wizard.sales_cache_missing_days_count, 1)
+        self.assertFalse(wizard.sales_cache_warning_accepted_by)
+        self.assertFalse(wizard.sales_cache_warning_accepted_at)
+
+    def test_wizard_refresh_sales_cache_resumes_without_resync_when_cache_is_ready(self):
+        wizard = self.env["ab_transfer_smart_wizard"].new({
+            "target_mode": "batch",
+            "sales_cache_warning_message": "Old warning",
+            "sales_cache_missing_days_count": 1,
+        })
+        generated_action = {"type": "ir.actions.act_window", "name": "Generated"}
+        SalesPerDay = self.env["ab_sales_per_day"]
+
+        with patch.object(
+                type(wizard),
+                "_validate_generation_values",
+                return_value=None,
+        ), patch.object(
+                type(wizard),
+                "_get_missing_sales_cache_dates_for_destinations",
+                side_effect=[[], []],
+        ), patch.object(
+                type(SalesPerDay),
+                "cron_sync_next_sales_day",
+                autospec=True,
+        ) as sync_day, patch.object(
+                type(wizard),
+                "action_generate_transfers",
+                return_value=generated_action,
+        ) as generate:
+            action = wizard.action_refresh_sales_cache_and_generate()
+
+        sync_day.assert_not_called()
+        generate.assert_called_once_with()
+        self.assertEqual(action, generated_action)
+        self.assertFalse(wizard.sales_cache_warning_message)
+
+    def test_wizard_view_places_refresh_sales_cache_resume_before_generated_transfers(self):
+        view = self.env.ref("ab_transfer_smart.ab_transfer_smart_wizard_view_form")
+        arch = etree.fromstring(view.arch_db.encode())
+        header_buttons = arch.xpath("//form/header/button")
+        button_names = [button.get("name") for button in header_buttons]
+
+        refresh_index = button_names.index("action_refresh_sales_cache_and_generate")
+        generated_index = button_names.index("action_open_generated_transfers")
+        refresh_button = header_buttons[refresh_index]
+
+        self.assertEqual(refresh_index + 1, generated_index)
+        self.assertEqual(refresh_button.get("string"), "Refresh Sales Cache & Resume")
+        self.assertIn("sales_cache_warning_message", refresh_button.get("invisible"))
 
     def test_wizard_generate_ensures_cache_before_warning_check(self):
         source = self._create_store_or_skip({
@@ -2373,3 +2776,196 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(wizard.target_mode, "single")
         self.assertEqual(wizard.source_header_id, header)
         self.assertIn(fields.Date.to_string(missing_day), wizard.sales_cache_warning_message)
+
+    def test_export_missing_sales_cache_opens_readonly_cancel_continue_view(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        missing_day = fields.Date.context_today(header) - timedelta(days=1)
+
+        with patch.object(
+                type(header),
+                "_get_smart_other_branch_store_sql_ids",
+                return_value=[999],
+        ), patch.object(
+                type(header),
+                "_get_smart_missing_sales_cache_dates_readonly",
+                return_value=[missing_day],
+        ), patch.object(type(header), "write") as header_write:
+            action = header.action_export_smart_transfer_excel()
+
+        header_write.assert_not_called()
+        self.assertEqual(action["res_model"], "ab_transfer_header")
+        self.assertEqual(action["res_id"], header.id)
+        self.assertEqual(action["target"], "new")
+
+        warning_view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form"
+        )
+        self.assertEqual(action["views"], [(warning_view.id, "form")])
+
+        report_action = header.action_export_smart_transfer_excel_continue()
+        self.assertEqual(report_action["report_type"], "xlsx")
+        self.assertTrue(report_action["data"]["allow_incomplete_sales_cache"])
+
+    def test_export_warning_view_does_not_replace_default_transfer_form(self):
+        base_view = self.env.ref("ab_transfer.ab_transfer_header_view_form")
+        warning_view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form"
+        )
+
+        self.assertGreater(warning_view.priority, base_view.priority)
+        default_view_id = self.env["ir.ui.view"].default_view(
+            "ab_transfer_header", "form"
+        )
+        self.assertEqual(default_view_id, base_view.id)
+
+        form_view = self.env["ab_transfer_header"].get_views(
+            [(False, "form")], {"toolbar": False}
+        )["views"]["form"]
+        self.assertEqual(form_view["id"], base_view.id)
+        self.assertIn("from_store_id", form_view["arch"])
+        self.assertNotIn(
+            "smart_export_sales_cache_warning_message", form_view["arch"]
+        )
+
+    def test_export_complete_sales_cache_returns_xlsx_without_warning(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+
+        with patch.object(
+                type(header),
+                "_get_smart_other_branch_store_sql_ids",
+                return_value=[999],
+        ), patch.object(
+                type(header),
+                "_get_smart_missing_sales_cache_dates_readonly",
+                return_value=[],
+        ):
+            action = header.action_export_smart_transfer_excel()
+
+        self.assertEqual(action["report_type"], "xlsx")
+        self.assertFalse(action["data"]["allow_incomplete_sales_cache"])
+
+    def test_readonly_missing_sales_cache_check_never_creates_sync_states(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        SalesPerDay = self.env["ab_sales_per_day"]
+
+        with patch.object(
+                type(SalesPerDay),
+                "_ensure_sync_states",
+        ) as ensure_sync_states:
+            missing_dates = header._get_smart_missing_sales_cache_dates_readonly()
+
+        ensure_sync_states.assert_not_called()
+        self.assertIsInstance(missing_dates, list)
+
+    def test_excel_preview_maps_prices_need_and_dropout_without_persistence(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        uom = product.uom_id
+        product_serial = int(product.eplus_serial)
+        missing_day = fields.Date.context_today(header) - timedelta(days=1)
+        header.target_product_ids = [(6, 0, product.ids)]
+        preview_line_vals = {
+            "qty": 7,
+            "expiry_date": fields.Date.today(),
+            "uom_id": uom.id,
+            "source_type": SMART_LINE_SOURCE_DOMAIN,
+            "exclusion_reason": "dropout_coverage",
+            "smart_source_stock_qty": 50,
+            "smart_destination_stock_qty": 8,
+            "smart_month1_sales": 30,
+            "smart_month2_sales": 20,
+            "smart_month3_sales": 10,
+        }
+        protected_models = (
+            "ab_transfer_header",
+            "ab_transfer_smart_line",
+            "ab_transfer_line",
+            "ab_transfer_smart_wizard",
+            "ab_transfer_smart_stock_cache",
+            "ab_transfer_smart_sales_cache",
+            "ab_sales_per_day_sync_state",
+        )
+        counts_before = {
+            model_name: self.env[model_name].with_context(active_test=False).search_count([])
+            for model_name in protected_models
+        }
+
+        with patch.object(
+                type(header),
+                "_validate_smart_transfer_header",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_get_smart_other_branch_store_sql_ids",
+                return_value=[999],
+        ), patch.object(
+                type(header),
+                "_get_smart_missing_sales_cache_dates_readonly",
+                return_value=[missing_day],
+        ), patch.object(
+                type(header),
+                "_fetch_destination_smart_rows_readonly",
+                return_value=[
+                    (
+                        product_serial,
+                        "",
+                        "",
+                        header.to_store_id.eplus_serial,
+                        8,
+                        30,
+                        20,
+                        10,
+                        60,
+                    ),
+                ],
+        ), patch.object(
+                type(header),
+                "_prepare_smart_transfer_preview_rows",
+                return_value=([{
+                    "product": product,
+                    "line_vals": preview_line_vals,
+                    "dropout_excluded": True,
+                }], {
+                    "created": 0,
+                    "updated": 0,
+                    "dropout_excluded": 1,
+                    "missing": 0,
+                    "no_stock": 0,
+                }),
+        ), patch.object(
+                type(header),
+                "_get_source_inventory_rows",
+                return_value=[{
+                    "price": 14,
+                    "pharm_price": 9,
+                }],
+        ):
+            rows = header._get_smart_transfer_excel_rows(
+                allow_incomplete_sales_cache=True
+            )
+
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0], {
+            "code": product.code,
+            "company": product.company_id.display_name or "",
+            "purchase_unit": float(product.min_sale_purchase_qty or 0.0),
+            "sell_price": 14.0,
+            "purchase_price": 9.0,
+            "source_stock": 50.0,
+            "destination_stock": 8.0,
+            "sales_3_month": 60.0,
+            "moving_weighted_avg": 23.0,
+            "need": 7.0,
+        })
+        counts_after = {
+            model_name: self.env[model_name].with_context(active_test=False).search_count([])
+            for model_name in protected_models
+        }
+        self.assertEqual(counts_after, counts_before)
+
+    def test_excel_export_is_blocked_from_pre_submit(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        header.smart_stage = SMART_STAGE_PRE_SUBMIT
+
+        with self.assertRaisesRegex(UserError, "before Pre-Submit"):
+            header.action_export_smart_transfer_excel()

@@ -246,73 +246,205 @@
         <template id="report_ab_transfer_lines">
             <t t-call="web.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="web.external_layout">
-                        <t t-set="sorted_transfer_lines"
-                           t-value="o.get_smart_report_sorted_lines(o.line_ids)"/>
-                        <div class="page">
-                            <h3 class="text-center mb-3">Transfer Lines</h3>
-                            <table class="table table-sm mb-3">
-                                <tbody>
-                                    <tr>
-                                        <th>Transfer</th>
-                                        <td><span t-field="o.display_name"/></td>
-                                        <th>Transfer Date</th>
-                                        <td><span t-esc="o.get_smart_report_transfer_date_text()"/></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Smart Stage</th>
-                                        <td><span t-field="o.smart_stage"/></td>
-                                        <th>Company</th>
-                                        <td><span t-field="o.company_id"/></td>
-                                    </tr>
-                                    <tr>
-                                        <th>From Store</th>
-                                        <td><span t-field="o.from_store_id"/></td>
-                                        <th>To Store</th>
-                                        <td><span t-field="o.to_store_id"/></td>
-                                    </tr>
-                                    <tr>
-                                        <th>User</th>
-                                        <td><span t-field="o.user_id"/></td>
-                                        <th>Notes</th>
-                                        <td><span t-field="o.notes"/></td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                    <t t-call="web.basic_layout">
+                        <div class="page ab-smart-report-page">
+                            <style>
+                                .ab-smart-report-page {
+                                    margin: 0;
+                                    padding: 0;
+                                }
 
-                            <table class="table table-sm table-bordered table-striped align-middle fs-5">
+                                .ab-smart-title {
+                                    margin: 0;
+                                    font-weight: 700;
+                                    line-height: 1.1;
+                                }
+
+                                .ab-smart-lines-report {
+                                    table-layout: fixed;
+                                    width: 98%;
+                                    margin-left: auto;
+                                    margin-right: auto;
+                                    font-size: 13px;
+                                    line-height: 1.15;
+                                    border-collapse: collapse;
+                                }
+
+                                .ab-smart-lines-report thead {
+                                    display: table-header-group;
+                                }
+
+                                .ab-smart-lines-report th,
+                                .ab-smart-lines-report td {
+                                    border: 1px solid #000;
+                                    padding: 2px 4px;
+                                    overflow: hidden;
+                                    text-overflow: clip;
+                                    white-space: nowrap;
+                                }
+
+                                .ab-smart-lines-report span {
+                                    display: block;
+                                    overflow: hidden;
+                                    text-overflow: clip;
+                                    white-space: nowrap;
+                                }
+
+                                .ab-smart-lines-report .ab-smart-spacer {
+                                    border: 0;
+                                    padding: 3px 0;
+                                }
+
+                                .ab-smart-lines-report .ab-smart-header-cell {
+                                    border: 0;
+                                    padding: 0;
+                                }
+
+                                .ab-smart-header-split {
+                                    width: 100%;
+                                    table-layout: fixed;
+                                    border-collapse: collapse;
+                                }
+
+                                .ab-smart-lines-report .ab-smart-info-row th,
+                                .ab-smart-lines-report .ab-smart-info-row td {
+                                    font-size: 125%;
+                                    line-height: 1.1;
+                                    padding-top: 4px;
+                                    padding-bottom: 4px;
+                                    text-align: left;
+                                }
+
+                                .ab-smart-lines-report .ab-smart-info-row span {
+                                    display: inline;
+                                }
+
+                                .ab-smart-lines-report .ab-smart-column-header th {
+                                    font-size: 125%;
+                                    line-height: 1.1;
+                                    padding-top: 4px;
+                                    padding-bottom: 4px;
+                                }
+
+                                .ab-smart-lines-report .ab-smart-code-text,
+                                .ab-smart-lines-report .ab-smart-qty-text {
+                                    font-size: 125%;
+                                    line-height: 1.1;
+                                }
+
+                                .ab-smart-lines-report td.ab-smart-product-cell,
+                                .ab-smart-lines-report td.ab-smart-product-cell span {
+                                    overflow: visible;
+                                    text-align: left;
+                                    direction: ltr;
+                                    white-space: normal;
+                                }
+
+                                .ab-smart-lines-report .ab-smart-product-text {
+                                    display: inline;
+                                    font-size: 150%;
+                                    line-height: 1.05;
+                                    overflow-wrap: break-word;
+                                    word-break: break-word;
+                                    word-wrap: break-word;
+                                }
+
+                                .ab-smart-report-footer {
+                                    width: 98%;
+                                    margin: 4px auto 0;
+                                    font-size: 12px;
+                                    line-height: 1.2;
+                                    text-align: right;
+                                }
+                            </style>
+                            <table class="table table-sm table-bordered table-striped align-middle ab-smart-lines-report">
+                                <colgroup>
+                                    <col style="width: 8%;"/>
+                                    <col style="width: 60%;"/>
+                                    <col style="width: 8%;"/>
+                                    <col style="width: 6%;"/>
+                                    <col style="width: 6%;"/>
+                                    <col style="width: 6%;"/>
+                                    <col style="width: 6%;"/>
+                                </colgroup>
                                 <thead class="table-light">
                                     <tr>
-                                        <th class="col-1 text-nowrap">Code</th>
-                                        <th class="col-5">Product</th>
-                                        <th class="col-1 text-end text-nowrap">Qty</th>
-                                        <th class="col-1 text-nowrap">UoM</th>
-                                        <th class="col-2">Exclusion Reason</th>
-                                        <th class="col-2 text-end text-nowrap">Source Stock</th>
-                                        <th class="col-2 text-end text-nowrap">Expected Stock</th>
+                                        <td colspan="7" class="ab-smart-header-cell">
+                                            <table class="ab-smart-header-split">
+                                                <colgroup>
+                                                    <col style="width: 12%;"/>
+                                                    <col style="width: 38%;"/>
+                                                    <col style="width: 12%;"/>
+                                                    <col style="width: 38%;"/>
+                                                </colgroup>
+                                                <tr class="ab-smart-info-row">
+                                                    <th>Transfer</th>
+                                                    <td><span class="ab-smart-title" t-field="o.display_name"/></td>
+                                                    <th>Transfer Date</th>
+                                                    <td><span t-esc="o.get_smart_report_transfer_date_text()"/></td>
+                                                </tr>
+                                                <tr class="ab-smart-info-row">
+                                                    <th>B-Connect Transfer No.</th>
+                                                    <td><span t-field="o.eplus_serial"/></td>
+                                                    <th>Company</th>
+                                                    <td><span t-field="o.company_id"/></td>
+                                                </tr>
+                                                <tr class="ab-smart-info-row">
+                                                    <th>From Store</th>
+                                                    <td><span t-field="o.from_store_id"/></td>
+                                                    <th>To Store</th>
+                                                    <td><span t-field="o.to_store_id"/></td>
+                                                </tr>
+                                                <tr class="ab-smart-info-row">
+                                                    <th>User</th>
+                                                    <td><span t-field="o.user_id"/></td>
+                                                    <th>Notes</th>
+                                                    <td><span t-field="o.notes"/></td>
+                                                </tr>
+                                            </table>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th colspan="7" class="ab-smart-spacer"></th>
+                                    </tr>
+                                    <tr class="ab-smart-column-header">
+                                        <th class="text-nowrap">Code</th>
+                                        <th class="text-nowrap">Product</th>
+                                        <th class="text-end text-nowrap">Qty</th>
+                                        <th class="text-nowrap">UoM</th>
+                                        <th class="text-nowrap">Exc.</th>
+                                        <th class="text-end text-nowrap">Stock</th>
+                                        <th class="text-end text-nowrap">Expected</th>
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    <t t-set="sorted_transfer_lines"
+                                       t-value="o.get_smart_report_sorted_lines(o.line_ids)"/>
                                     <tr t-if="not sorted_transfer_lines">
                                         <td colspan="7" class="text-center">No transfer lines found.</td>
                                     </tr>
                                     <tr t-foreach="sorted_transfer_lines" t-as="line">
-                                        <td class="col-1 text-nowrap"><span t-field="line.product_id.code"/></td>
-                                        <td class="col-5 text-uppercase text-break"><span
-                                                t-field="line.product_id.name"/></td>
-                                        <td class="col-1 text-end text-nowrap"><span t-field="line.qty"/></td>
-                                        <td class="col-1 text-nowrap"><span t-esc="o.get_smart_report_uom_text(line)"/></td>
-                                        <td class="col-2 text-break"/>
-                                        <td class="col-2 text-end text-nowrap">
-                                            <span t-esc="'%.1f' % (line.smart_source_stock_qty or 0.0)"/>
+                                        <td class="text-nowrap"><span class="ab-smart-code-text"
+                                                                      t-field="line.product_id.code"/></td>
+                                        <td class="text-uppercase ab-smart-product-cell">
+                                            <span class="ab-smart-product-text" t-field="line.product_id.name"/>
                                         </td>
-                                        <td class="col-2 text-end text-nowrap">
-                                            <span t-esc="'%.1f' % (line.smart_expected_source_stock_qty or 0.0)"/>
+                                        <td class="text-end text-nowrap">
+                                            <span class="ab-smart-qty-text"
+                                                  t-esc="('%.3f' % (line.qty or 0.0)).rstrip('0').rstrip('.')"/>
+                                        </td>
+                                        <td class="text-nowrap"><span t-esc="o.get_smart_report_uom_text(line)"/></td>
+                                        <td class="text-nowrap"></td>
+                                        <td class="text-end text-nowrap">
+                                            <span t-esc="('%.1f' % (line.smart_source_stock_qty or 0.0)).rstrip('0').rstrip('.')"/>
+                                        </td>
+                                        <td class="text-end text-nowrap">
+                                            <span t-esc="('%.1f' % (line.smart_expected_source_stock_qty or 0.0)).rstrip('0').rstrip('.')"/>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="text-end mt-2 small text-muted">
+                            <div class="ab-smart-report-footer">
                                 Printing Date:
                                 <span t-esc="o.get_smart_report_printing_date_text()"/>
                             </div>
@@ -342,7 +474,7 @@
             <field name="report_type">qweb-pdf</field>
             <field name="report_name">ab_transfer_smart.report_ab_transfer_lines</field>
             <field name="report_file">ab_transfer_smart.report_ab_transfer_lines</field>
-            <field name="paperformat_id" ref="ab_transfer_smart.paperformat_ab_transfer_line_reports"/>
+            <field name="paperformat_id" ref="ab_transfer_smart.paperformat_ab_transfer_smart_line_reports"/>
             <field name="print_report_name">'Transfer Lines - %s' % (object.display_name or '')</field>
         </record>
     </data>

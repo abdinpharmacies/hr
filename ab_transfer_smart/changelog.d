@@ -1,3 +1,36 @@
+Current changes before commit:
+
+- Redesign the Sent Lines report to match the compact Smart Lines report while keeping actual transfer lines as its data source.
+- Print the B-Connect transfer number from eplus_serial and keep the sent-line exclusion column empty.
+- Keep Smart report ordering for sent lines and use the same compact paper format.
+- Show Print Transfer Lines from Pre-Submit through Submit.
+- Update Arabic report translations and add independent Smart/Sent report assertions.
+- Add a read-only Smart Transfer XLSX preview on transfer headers before Pre-Submit.
+- Match Generate Transfers by reading today's destination cache and using live destination SELECTs only when today's cache is absent.
+- Export Smart calculation rows, including dropout exclusions, with code, company, minimum sale/purchase quantity, current Smart Line prices, stock, sales, weighted average, and final need.
+- Add a stateless incomplete-sales-cache confirmation that can cancel or continue without recording acceptance.
+- Show Smart Lines print/export actions before Pre-Submit and Transfer Lines printing at Pre-Submit and Submit.
+- Add Refresh Sales Cache & Resume beside Generated Transfers so missing daily sales cache is synced and generation resumes automatically.
+- Keep the wizard blocked with the remaining missing-day warning when EPlus sales-cache refresh is incomplete.
+- Keep the Excel warning popup from replacing the normal transfer form when opening generated transfers.
+
+Files changed:
+
+- ab_transfer_smart/i18n/ar.po
+- ab_transfer_smart/i18n/ar_001.po
+- ab_transfer_smart/__init__.py
+- ab_transfer_smart/__manifest__.py
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/models/ab_transfer_smart_wizard.py
+- ab_transfer_smart/report/__init__.py
+- ab_transfer_smart/report/ab_transfer_smart_xlsx.py
+- ab_transfer_smart/report/ab_transfer_smart_xlsx_report.xml
+- ab_transfer_smart/report/ab_transfer_line_reports.xml
+- ab_transfer_smart/tests/test_smart_transfer.py
+- ab_transfer_smart/views/ab_transfer_header_views.xml
+- ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
+
+
 commit 36794b0a8be6ac9af2608e2ba773415e23851a9b (HEAD -> pos19)
 Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
 Date:   Sun Aug 9 11:57:38 2026 +0300

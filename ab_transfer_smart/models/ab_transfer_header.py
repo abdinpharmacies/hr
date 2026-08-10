@@ -36,6 +36,11 @@ SMART_EXPECTED_BALANCE_STAGES = (
     SMART_STAGE_PRE_SUBMIT,
     SMART_STAGE_SUBMIT,
 )
+SMART_EXPORT_STAGES = (
+    SMART_STAGE_PURCHASE_PREPARATION,
+    SMART_STAGE_STORE_PREPARATION,
+    SMART_STAGE_STORE_REVISION,
+)
 SMART_GROUP_PURCHASE = "ab_transfer_smart.group_transfer_smart_purchase"
 SMART_GROUP_STORE_PREPARATION = "ab_transfer_smart.group_trnasfer_smart_store_preparation"
 SMART_GROUP_STORE_REVISION = "ab_transfer_smart.group_trnasfer_smart_store_revision"
@@ -152,6 +157,11 @@ class AbTransferHeader(models.Model):
         copy=False,
         help="Exclude smart lines when destination stock covers this percentage of the planned quantity.",
     )
+    smart_export_sales_cache_warning_message = fields.Text(
+        string="Export Sales Cache Warning",
+        compute="_compute_smart_export_sales_cache_warning_message",
+        readonly=True,
+    )
 
     @api.constrains("smart_days")
     def _check_smart_days(self):
@@ -196,6 +206,15 @@ class AbTransferHeader(models.Model):
     def _compute_smart_items_count(self):
         for rec in self:
             rec.smart_items_count = len(rec.smart_line_ids)
+
+    def _compute_smart_export_sales_cache_warning_message(self):
+        for rec in self:
+            missing_dates = rec._get_smart_missing_sales_cache_dates_readonly()
+            rec.smart_export_sales_cache_warning_message = (
+                rec._format_smart_export_sales_cache_warning_message(missing_dates)
+                if missing_dates
+                else False
+            )
 
     @api.model
     def get_transfer_dashboard_payload(self):
@@ -281,6 +300,139 @@ class AbTransferHeader(models.Model):
         return self.env.ref(
             "ab_transfer_smart.action_report_ab_transfer_lines"
         ).report_action(self)
+
+    def action_export_smart_transfer_excel(self):
+        self.ensure_one()
+        self._check_smart_export_allowed()
+        missing_dates = []
+        if self._get_smart_other_branch_store_sql_ids():
+            missing_dates = self._get_smart_missing_sales_cache_dates_readonly()
+        if missing_dates:
+            warning_view = self.env.ref(
+                "ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form"
+            )
+            return {
+                "type": "ir.actions.act_window",
+                "name": _("Smart Transfer Excel Export"),
+                "res_model": "ab_transfer_header",
+                "res_id": self.id,
+                "view_mode": "form",
+                "views": [(warning_view.id, "form")],
+                "target": "new",
+                "context": dict(self.env.context, smart_export_readonly=True),
+            }
+        return self._get_smart_transfer_excel_report_action(
+            allow_incomplete_sales_cache=False
+        )
+
+    def action_export_smart_transfer_excel_continue(self):
+        self.ensure_one()
+        self._check_smart_export_allowed()
+        return self._get_smart_transfer_excel_report_action(
+            allow_incomplete_sales_cache=True
+        )
+
+    def _get_smart_transfer_excel_report_action(self, allow_incomplete_sales_cache):
+        self.ensure_one()
+        report = self.env.ref(
+            "ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx"
+        )
+        return report.with_context(
+            smart_export_readonly=True,
+            skip_smart_sales_cache_coverage=bool(allow_incomplete_sales_cache),
+        ).report_action(
+            self,
+            data={
+                "allow_incomplete_sales_cache": bool(allow_incomplete_sales_cache),
+            },
+            config=False,
+        )
+
+    def _check_smart_export_allowed(self):
+        self.ensure_one()
+        if self.is_submitted or self.smart_stage not in SMART_EXPORT_STAGES:
+            raise UserError(
+                _("Smart Transfer Excel can only be exported before Pre-Submit.")
+            )
+
+    def _prepare_smart_export_probe_vals(self):
+        self.ensure_one()
+        return {
+            "from_store_id": self.from_store_id.id,
+            "to_store_id": self.to_store_id.id,
+            "user_id": self.user_id.id,
+            "company_id": self.company_id.id,
+            "smart_days": self.smart_days,
+            "smart_stock_method": self.smart_stock_method,
+            "smart_product_domain": self.smart_product_domain or "[]",
+            "smart_dropout_coverage": self.smart_dropout_coverage,
+            "fair_store_ids": [(6, 0, self.fair_store_ids.ids)],
+            "target_product_ids": [(6, 0, self.target_product_ids.ids)],
+            "smart_product_line_ids": [
+                (0, 0, {
+                    "product_id": line.product_id.id,
+                    "qty": line.qty or line.product_id.min_sale_purchase_qty or 1.0,
+                })
+                for line in self.smart_product_line_ids
+            ],
+        }
+
+    def _get_smart_transfer_excel_rows(self, allow_incomplete_sales_cache=False):
+        self.ensure_one()
+        self._check_smart_export_allowed()
+        source_rows_by_product = {}
+        probe = self.env["ab_transfer_header"].new(
+            self._prepare_smart_export_probe_vals()
+        ).with_context(
+            smart_export_readonly=True,
+            skip_smart_sales_cache_coverage=bool(allow_incomplete_sales_cache),
+            smart_export_source_rows_by_product=source_rows_by_product,
+        )
+        probe._validate_smart_transfer_header()
+
+        missing_dates = []
+        if probe._get_smart_other_branch_store_sql_ids():
+            missing_dates = probe._get_smart_missing_sales_cache_dates_readonly()
+        if missing_dates and not allow_incomplete_sales_cache:
+            raise UserError(
+                probe._format_smart_export_sales_cache_warning_message(missing_dates)
+            )
+
+        destination_rows = probe._fetch_destination_smart_rows_readonly()
+        preview_rows, _ = probe._prepare_smart_transfer_preview_rows(destination_rows)
+        if not preview_rows:
+            raise UserError(_("No items are needed for transfer."))
+
+        export_rows = []
+        for preview_row in preview_rows:
+            product = preview_row["product"]
+            line_vals = preview_row["line_vals"]
+            source_rows = source_rows_by_product.get(product.id)
+            if source_rows is None:
+                source_rows = probe._get_source_inventory_rows(product)
+            current_price_row = source_rows[0] if source_rows else {}
+            month1_sales = float(line_vals.get("smart_month1_sales", 0.0) or 0.0)
+            month2_sales = float(line_vals.get("smart_month2_sales", 0.0) or 0.0)
+            month3_sales = float(line_vals.get("smart_month3_sales", 0.0) or 0.0)
+            export_rows.append({
+                "code": product.code or "",
+                "company": product.company_id.display_name or "",
+                "purchase_unit": float(product.min_sale_purchase_qty or 0.0),
+                "sell_price": float(current_price_row.get("price", 0.0) or 0.0),
+                "purchase_price": float(current_price_row.get("pharm_price", 0.0) or 0.0),
+                "source_stock": float(line_vals.get("smart_source_stock_qty", 0.0) or 0.0),
+                "destination_stock": float(
+                    line_vals.get("smart_destination_stock_qty", 0.0) or 0.0
+                ),
+                "sales_3_month": month1_sales + month2_sales + month3_sales,
+                "moving_weighted_avg": probe._calculate_smart_weighted_monthly_sales(
+                    month1_sales,
+                    month2_sales,
+                    month3_sales,
+                ),
+                "need": float(line_vals.get("qty", 0.0) or 0.0),
+            })
+        return export_rows
 
     def get_smart_report_sorted_lines(self, lines):
         self.ensure_one()
@@ -783,6 +935,75 @@ class AbTransferHeader(models.Model):
             destination_store_sql_id,
         )
 
+    def _fetch_destination_smart_rows_readonly(self):
+        """Read today's cache when present and fall back to live SELECTs without caching."""
+        self.ensure_one()
+        destination_store_sql_id = self._get_smart_destination_store_sql_id()
+        product_serials = sorted({
+            int(serial)
+            for serial in self._get_smart_target_product_serials_with_source_stock()
+            if serial
+        })
+        if not product_serials:
+            return []
+
+        cache_date = fields.Date.context_today(self)
+        StockCache = self.env["ab_transfer_smart_stock_cache"].sudo()
+        SalesCache = self.env["ab_transfer_smart_sales_cache"].sudo()
+        stock_cache_domain = [
+            ("store_id", "=", self.to_store_id.id),
+            ("cache_date", "=", cache_date),
+        ]
+        sales_cache_domain = [
+            ("store_id", "=", self.to_store_id.id),
+            ("cache_date", "=", cache_date),
+        ]
+
+        if StockCache.search_count(stock_cache_domain):
+            stock_by_serial = {
+                int(line.product_eplus_serial): float(line.stock_qty or 0.0)
+                for line in StockCache.search([
+                    *stock_cache_domain,
+                    ("product_eplus_serial", "in", product_serials),
+                ])
+            }
+        else:
+            stock_by_serial = StockCache._fetch_store_stock_rows(self.to_store_id)
+
+        if SalesCache.search_count(sales_cache_domain):
+            sales_by_serial = {
+                int(line.product_eplus_serial): {
+                    "month1_sales": float(line.month1_sales or 0.0),
+                    "month2_sales": float(line.month2_sales or 0.0),
+                    "month3_sales": float(line.month3_sales or 0.0),
+                }
+                for line in SalesCache.search([
+                    *sales_cache_domain,
+                    ("product_eplus_serial", "in", product_serials),
+                ])
+            }
+        else:
+            sales_by_serial = SalesCache._fetch_store_sales_rows(self.to_store_id)
+
+        rows = []
+        for product_serial in product_serials:
+            sales = sales_by_serial.get(product_serial, {})
+            month1_sales = float(sales.get("month1_sales", 0.0) or 0.0)
+            month2_sales = float(sales.get("month2_sales", 0.0) or 0.0)
+            month3_sales = float(sales.get("month3_sales", 0.0) or 0.0)
+            rows.append((
+                product_serial,
+                "",
+                "",
+                destination_store_sql_id,
+                float(stock_by_serial.get(product_serial, 0.0) or 0.0),
+                month1_sales,
+                month2_sales,
+                month3_sales,
+                month1_sales + month2_sales + month3_sales,
+            ))
+        return rows
+
     def _ensure_smart_destination_cache(self):
         self.ensure_one()
         return self._refresh_smart_destination_cache(force=False)
@@ -908,6 +1129,43 @@ class AbTransferHeader(models.Model):
 
     def _apply_smart_transfer_rows(self, destination_rows):
         self.ensure_one()
+        preview_rows, result = self._prepare_smart_transfer_preview_rows(destination_rows)
+        existing_lines_by_product = {
+            line.product_id.id: line
+            for line in self.smart_line_ids
+            if line.product_id
+        }
+
+        for preview_row in preview_rows:
+            product = preview_row["product"]
+            line_vals = dict(preview_row["line_vals"])
+            existing_line = existing_lines_by_product.get(product.id)
+            if (
+                    not preview_row["dropout_excluded"]
+                    and existing_line
+                    and existing_line.exclusion_reason == "dropout_coverage"
+            ):
+                line_vals["exclusion_reason"] = False
+
+            if existing_line:
+                existing_line.with_context(
+                    allow_smart_original_qty_write=True
+                ).write(line_vals)
+                result["updated"] += 1
+            else:
+                new_line = self.env["ab_transfer_smart_line"].create({
+                    **line_vals,
+                    "header_id": self.id,
+                    "product_id": product.id,
+                })
+                existing_lines_by_product[product.id] = new_line
+                result["created"] += 1
+
+        return result
+
+    def _prepare_smart_transfer_preview_rows(self, destination_rows):
+        """Calculate Smart Lines without creating or updating business records."""
+        self.ensure_one()
         rows = destination_rows or []
         products_by_serial = self._get_smart_products_by_eplus_serial(rows)
         rows = self._sort_smart_rows_by_product_location(rows, products_by_serial)
@@ -927,11 +1185,6 @@ class AbTransferHeader(models.Model):
         other_branches_context_by_serial = self._get_smart_other_branches_context_by_serial(
             required_products_by_serial
         )
-        existing_lines_by_product = {
-            line.product_id.id: line
-            for line in self.smart_line_ids
-            if line.product_id
-        }
         explicit_product_serials = set(self._get_smart_explicit_product_qty_by_serial())
 
         result = {
@@ -941,6 +1194,7 @@ class AbTransferHeader(models.Model):
             "missing": 0,
             "no_stock": 0,
         }
+        preview_rows = []
 
         for row in rows:
             product_serial = self._smart_row_int(row, SMART_ROW_PRODUCT_SERIAL)
@@ -1011,31 +1265,21 @@ class AbTransferHeader(models.Model):
                 if product_serial in explicit_product_serials
                 else SMART_LINE_SOURCE_DOMAIN
             )
-            existing_line = existing_lines_by_product.get(product.id)
-            if self._is_smart_dropout_coverage_excluded(
+            dropout_excluded = self._is_smart_dropout_coverage_excluded(
                     required_context["planned_qty"],
                     required_context["destination_stock_qty"],
-            ):
+            )
+            if dropout_excluded:
                 line_vals["exclusion_reason"] = "dropout_coverage"
                 result["dropout_excluded"] += 1
-            elif existing_line and existing_line.exclusion_reason == "dropout_coverage":
-                line_vals["exclusion_reason"] = False
 
-            if existing_line:
-                existing_line.with_context(
-                    allow_smart_original_qty_write=True
-                ).write(line_vals)
-                result["updated"] += 1
-            else:
-                new_line = self.env["ab_transfer_smart_line"].create({
-                    **line_vals,
-                    "header_id": self.id,
-                    "product_id": product.id,
-                })
-                existing_lines_by_product[product.id] = new_line
-                result["created"] += 1
+            preview_rows.append({
+                "product": product,
+                "line_vals": line_vals,
+                "dropout_excluded": dropout_excluded,
+            })
 
-        return result
+        return preview_rows, result
 
     def _get_smart_explicit_product_qty_by_serial(self):
         self.ensure_one()
@@ -1366,6 +1610,13 @@ class AbTransferHeader(models.Model):
         start_date = periods["window_start"]
         end_date = periods["window_end"]
         self.env["ab_sales_per_day"].sudo()._ensure_sync_states(start_date, end_date)
+        return self._get_smart_missing_sales_cache_dates_readonly()
+
+    def _get_smart_missing_sales_cache_dates_readonly(self):
+        self.ensure_one()
+        periods = self._get_smart_sales_cache_periods()
+        start_date = periods["window_start"]
+        end_date = periods["window_end"]
         states = self.env["ab_sales_per_day_sync_state"].sudo().search([
             ("sale_date", ">=", start_date),
             ("sale_date", "<=", end_date),
@@ -1395,9 +1646,24 @@ class AbTransferHeader(models.Model):
             "but smart quantities may be inaccurate."
         ) % preview
 
+    @api.model
+    def _format_smart_export_sales_cache_warning_message(self, missing_dates):
+        missing_dates = missing_dates or []
+        preview = ", ".join(fields.Date.to_string(day) for day in missing_dates[:5])
+        if len(missing_dates) > 5:
+            preview = _("%s, and %s more") % (preview, len(missing_dates) - 5)
+        return _(
+            "Smart Transfer sales cache is incomplete. Missing synced sales days: %s. "
+            "Choose Cancel Export to stop, or Continue Anyway to export with available "
+            "cached sales data. Continuing does not record an acceptance or override."
+        ) % preview
+
     def _validate_smart_sales_cache_coverage(self):
         self.ensure_one()
-        missing_dates = self._get_smart_missing_sales_cache_dates()
+        if self.env.context.get("smart_export_readonly"):
+            missing_dates = self._get_smart_missing_sales_cache_dates_readonly()
+        else:
+            missing_dates = self._get_smart_missing_sales_cache_dates()
         if missing_dates:
             message = self._format_smart_sales_cache_warning_message(missing_dates)
             if self.env.context.get("skip_smart_sales_cache_coverage"):
@@ -1547,6 +1813,11 @@ class AbTransferHeader(models.Model):
             return {}
 
         source_rows = self._get_source_inventory_rows(product)
+        source_rows_by_product = self.env.context.get(
+            "smart_export_source_rows_by_product"
+        )
+        if isinstance(source_rows_by_product, dict):
+            source_rows_by_product[product.id] = source_rows
         requested_qty = manual_qty if manual_qty is not None else required_qty
         selected = self._select_smart_source_row(source_rows, requested_qty)
         if not selected and manual_qty is None:
@@ -1775,16 +2046,29 @@ class AbTransferHeader(models.Model):
     ):
         smart_days = float(smart_days or 0.0)
         if method == SMART_STOCK_METHOD_WEIGHTED:
-            weighted_monthly_sales = (
-                    (float(last_month_sales or 0.0) * SMART_WEIGHT_LAST_MONTH)
-                    + (float(previous_month_sales or 0.0) * SMART_WEIGHT_PREVIOUS_MONTH)
-                    + (float(third_month_sales or 0.0) * SMART_WEIGHT_THIRD_MONTH)
+            weighted_monthly_sales = self._calculate_smart_weighted_monthly_sales(
+                last_month_sales,
+                previous_month_sales,
+                third_month_sales,
             )
             avg_daily_sales = weighted_monthly_sales / SMART_WEIGHTED_PERIOD_DAYS
             return avg_daily_sales * smart_days
 
         avg_daily_sales = float(total_3_months_sales or 0.0) / SMART_NORMAL_PERIOD_DAYS
         return avg_daily_sales * smart_days
+
+    @api.model
+    def _calculate_smart_weighted_monthly_sales(
+            self,
+            last_month_sales,
+            previous_month_sales,
+            third_month_sales,
+    ):
+        return (
+                (float(last_month_sales or 0.0) * SMART_WEIGHT_LAST_MONTH)
+                + (float(previous_month_sales or 0.0) * SMART_WEIGHT_PREVIOUS_MONTH)
+                + (float(third_month_sales or 0.0) * SMART_WEIGHT_THIRD_MONTH)
+        )
 
     @api.model
     def _get_smart_stock_method_help(self, method):

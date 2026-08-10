@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_ab_transfer_smart_transfer_xlsx" model="ir.actions.report">
+        <field name="name">Smart Transfer Excel</field>
+        <field name="model">ab_transfer_header</field>
+        <field name="report_name">ab_transfer_smart.smart_transfer_xlsx</field>
+        <field name="report_type">xlsx</field>
+        <field name="binding_model_id" eval="False"/>
+        <field name="print_report_name">'Smart Transfer - %s' % (object.display_name or '')</field>
+    </record>
+</odoo>

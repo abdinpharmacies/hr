@@ -78,6 +78,12 @@
                                 class="btn-primary"
                                 groups="ab_transfer_smart.group_transfer_smart_purchase"
                                 invisible="state != 'draft' or not sales_cache_warning_message or allow_incomplete_sales_cache"/>
+                        <button name="action_refresh_sales_cache_and_generate"
+                                type="object"
+                                string="Refresh Sales Cache &amp; Resume"
+                                class="btn-secondary"
+                                groups="ab_transfer_smart.group_transfer_smart_purchase"
+                                invisible="state != 'draft' or not sales_cache_warning_message"/>
                         <button name="action_open_generated_transfers"
                                 type="object"
                                 string="Generated Transfers"
