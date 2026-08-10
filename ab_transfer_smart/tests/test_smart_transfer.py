@@ -574,7 +574,8 @@ class TestSmartTransfer(TransactionCase):
         sent_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_lines")
         smart_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_smart_lines")
 
-        self.assertIn("o.get_transfer_lines_for_report()", report_xml)
+        self.assertIn("o.get_smart_report_sorted_lines(o.line_ids)", report_xml)
+        self.assertNotIn("o.get_transfer_lines_for_report()", report_xml)
         self.assertNotIn("o.get_smart_lines_for_report()", report_xml)
         self.assertIn("o.get_smart_report_eplus_serial_text()", report_xml)
         self.assertNotIn('t-field="o.eplus_serial"', report_xml)
@@ -583,6 +584,23 @@ class TestSmartTransfer(TransactionCase):
         for header in (
             "Code",
             "Product",
+            "Qty",
+            "UoM",
+            "Exc.",
+            "Stock",
+            "Expected",
+        ):
+            self.assertIn(">%s<" % header, report_xml)
+        self.assertNotIn("line.exclusion_reason", report_xml)
+        for field_name in (
+            "line.product_id.code",
+            "line.product_id.name",
+            "line.qty",
+            "line.smart_source_stock_qty",
+            "line.smart_expected_source_stock_qty",
+        ):
+            self.assertIn(field_name, report_xml)
+        for removed_header in (
             "Location",
             "Quantity",
             "Over Need",
@@ -592,24 +610,13 @@ class TestSmartTransfer(TransactionCase):
             "Cost",
             "Purchase Price",
         ):
-            self.assertIn(">%s<" % header, report_xml)
-        self.assertNotIn("line.exclusion_reason", report_xml)
-        for field_name in (
-            "line.product_id.code",
-            "line.product_id.name",
-            "line.smart_product_location",
-            "line.qty",
-            "line.smart_over_need_qty",
-            "line.expiry_date",
-            "line.sell_price",
-            "line.cost",
-            "line.purchase_price",
-        ):
-            self.assertIn(field_name, report_xml)
-        for removed_header in ("Qty", "UoM", "Exc.", "Stock", "Expected"):
             self.assertNotIn(">%s<" % removed_header, report_xml)
-        self.assertNotIn("smart_source_stock_qty", report_xml)
-        self.assertNotIn("smart_expected_source_stock_qty", report_xml)
+        self.assertNotIn("line.smart_product_location", report_xml)
+        self.assertNotIn("line.smart_over_need_qty", report_xml)
+        self.assertNotIn("line.expiry_date", report_xml)
+        self.assertNotIn("line.sell_price", report_xml)
+        self.assertNotIn("line.cost", report_xml)
+        self.assertNotIn("line.purchase_price", report_xml)
         self.assertEqual(report_xml.count("Transfer Date"), 1)
         self.assertEqual(report_xml.count("Printing Date"), 1)
         self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 1)
@@ -619,6 +626,20 @@ class TestSmartTransfer(TransactionCase):
         self.assertNotEqual(sent_action.paperformat_id, smart_action.paperformat_id)
         self.assertEqual(sent_action.paperformat_id.orientation, "Landscape")
         self.assertEqual(smart_action.paperformat_id.orientation, "Landscape")
+
+    def test_smart_submit_flow_syncs_eplus_serial_from_sent_transfer(self):
+        smart_header_path = (
+            Path(__file__).resolve().parents[1]
+            / "models"
+            / "ab_transfer_header.py"
+        )
+        smart_header_source = smart_header_path.read_text(encoding="utf-8")
+
+        self.assertIn("eplus_serial = fields.Integer", smart_header_source)
+        self.assertIn("_sync_smart_eplus_serial_from_sent_transfer()", smart_header_source)
+        self.assertIn("_write_smart_eplus_serial_after_submit(eplus_serial)", smart_header_source)
+        self.assertIn('models.Model.write(self.sudo(), {"eplus_serial": eplus_serial})', smart_header_source)
+        self.assertIn("SELECT TOP (1) stnh_id", smart_header_source)
 
     def test_pdf_report_helpers_return_their_exact_line_models(self):
         header = self._create_smart_header_from_existing_records_or_skip()
@@ -665,7 +686,7 @@ class TestSmartTransfer(TransactionCase):
         self.assertIsNone(smart_button.get("invisible"))
         self.assertEqual(
             transfer_button.get("invisible"),
-            "smart_stage not in ('pre_submit', 'submit')",
+            "not is_submitted",
         )
         self.assertFalse(
             view_tree.xpath("//button[@name='action_export_smart_transfer_excel']")
@@ -839,7 +860,16 @@ class TestSmartTransfer(TransactionCase):
         self.assertIn('name="smart_expected_source_stock_qty"', view_xml)
         self.assertIn('name="smart_over_need_qty"', view_xml)
         self.assertIn('name="smart_qty_exceeds_expected_stock"', view_xml)
+        expected_decoration = (
+            'decoration-danger="smart_stage == \'purchase_preparation\' and '
+            '(smart_qty_exceeds_over_need or smart_qty_exceeds_expected_stock)"'
+        )
         self.assertIn(
+            expected_decoration,
+            view_xml,
+        )
+        self.assertEqual(view_xml.count(expected_decoration), 3)
+        self.assertNotIn(
             'decoration-danger="smart_qty_exceeds_over_need or smart_qty_exceeds_expected_stock"',
             view_xml,
         )
