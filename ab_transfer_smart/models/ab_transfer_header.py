@@ -72,6 +72,13 @@ class AbTransferHeader(models.Model):
         index=True,
     )
 
+    eplus_serial = fields.Integer(
+        string="EPlus Serial",
+        copy=False,
+        readonly=True,
+        index=True,
+    )
+
     smart_stage = fields.Selection(
         selection=[
             (SMART_STAGE_PURCHASE_PREPARATION, "Purchase Preparation"),
@@ -637,11 +644,59 @@ class AbTransferHeader(models.Model):
 
         try:
             result = super().action_submit()
+            if self.is_submitted:
+                self._sync_smart_eplus_serial_from_sent_transfer()
             return self._smart_soft_reload_action() if result is True else result
         except Exception:
             if not self.is_submitted and self.smart_stage != previous_stage:
                 self.write({"smart_stage": previous_stage})
             raise
+
+    def _sync_smart_eplus_serial_from_sent_transfer(self):
+        self.ensure_one()
+        if self.eplus_serial:
+            return
+
+        try:
+            eplus_serial = self._find_smart_submitted_eplus_serial()
+        except Exception:
+            _logger.exception("Failed to read EPlus serial for smart transfer ID %s", self.id)
+            return
+
+        if eplus_serial:
+            self._write_smart_eplus_serial_after_submit(eplus_serial)
+
+    def _write_smart_eplus_serial_after_submit(self, eplus_serial):
+        self.ensure_one()
+        models.Model.write(self.sudo(), {"eplus_serial": eplus_serial})
+
+    def _find_smart_submitted_eplus_serial(self):
+        self.ensure_one()
+        transfer_reference = "Odoo Transfer: %s" % self.display_name
+        from_store_sql_id = self._get_ref_id(self.from_store_id, _("Source Store"))
+        to_store_sql_id = self._get_ref_id(self.to_store_id, _("Destination Store"))
+        with self._get_sql_connection() as conn:
+            cursor = conn.cursor()
+            try:
+                cursor.execute(
+                    """
+                    SELECT TOP (1) stnh_id
+                    FROM Store_Trans_h
+                    WHERE stnh_f_Sto_id = ?
+                      AND stnh_t_Sto_id = ?
+                      AND stnh_notes LIKE ?
+                    ORDER BY stnh_id DESC
+                    """,
+                    (
+                        from_store_sql_id,
+                        to_store_sql_id,
+                        "%%%s%%" % transfer_reference,
+                    ),
+                )
+                row = cursor.fetchone()
+                return int(row[0]) if row and row[0] else 0
+            finally:
+                cursor.close()
 
     def _check_smart_group(self, group_xmlid):
         if not self.env.user.has_group(group_xmlid):

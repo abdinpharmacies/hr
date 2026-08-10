@@ -387,20 +387,17 @@
                             </style>
                             <table class="table table-sm table-bordered table-striped align-middle ab-smart-lines-report">
                                 <colgroup>
-                                    <col style="width: 7%;"/>
-                                    <col style="width: 28%;"/>
-                                    <col style="width: 9%;"/>
-                                    <col style="width: 7%;"/>
                                     <col style="width: 8%;"/>
-                                    <col style="width: 9%;"/>
+                                    <col style="width: 60%;"/>
+                                    <col style="width: 8%;"/>
                                     <col style="width: 6%;"/>
-                                    <col style="width: 7%;"/>
-                                    <col style="width: 7%;"/>
-                                    <col style="width: 12%;"/>
+                                    <col style="width: 6%;"/>
+                                    <col style="width: 6%;"/>
+                                    <col style="width: 6%;"/>
                                 </colgroup>
                                 <thead class="table-light">
                                     <tr>
-                                        <td colspan="10" class="ab-smart-header-cell">
+                                        <td colspan="7" class="ab-smart-header-cell">
                                             <table class="ab-smart-header-split">
                                                 <colgroup>
                                                     <col style="width: 12%;"/>
@@ -436,26 +433,23 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th colspan="10" class="ab-smart-spacer"></th>
+                                        <th colspan="7" class="ab-smart-spacer"></th>
                                     </tr>
                                     <tr class="ab-smart-column-header">
                                         <th class="text-nowrap">Code</th>
                                         <th class="text-nowrap">Product</th>
-                                        <th class="text-nowrap">Location</th>
-                                        <th class="text-end text-nowrap">Quantity</th>
-                                        <th class="text-end text-nowrap">Over Need</th>
-                                        <th class="text-nowrap">Expiry Date</th>
-                                        <th class="text-nowrap">UOM</th>
-                                        <th class="text-end text-nowrap">Sell Price</th>
-                                        <th class="text-end text-nowrap">Cost</th>
-                                        <th class="text-end text-nowrap">Purchase Price</th>
+                                        <th class="text-end text-nowrap">Qty</th>
+                                        <th class="text-nowrap">UoM</th>
+                                        <th class="text-nowrap">Exc.</th>
+                                        <th class="text-end text-nowrap">Stock</th>
+                                        <th class="text-end text-nowrap">Expected</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <t t-set="sorted_transfer_lines"
-                                       t-value="o.get_transfer_lines_for_report()"/>
+                                       t-value="o.get_smart_report_sorted_lines(o.line_ids)"/>
                                     <tr t-if="not sorted_transfer_lines">
-                                        <td colspan="10" class="text-center">No transfer lines found.</td>
+                                        <td colspan="7" class="text-center">No transfer lines found.</td>
                                     </tr>
                                     <tr t-foreach="sorted_transfer_lines" t-as="line">
                                         <td class="text-nowrap"><span class="ab-smart-code-text"
@@ -463,24 +457,17 @@
                                         <td class="text-uppercase ab-smart-product-cell">
                                             <span class="ab-smart-product-text" t-field="line.product_id.name"/>
                                         </td>
-                                        <td class="text-nowrap"><span t-field="line.smart_product_location"/></td>
                                         <td class="text-end text-nowrap">
                                             <span class="ab-smart-qty-text"
                                                   t-esc="('%.3f' % (line.qty or 0.0)).rstrip('0').rstrip('.')"/>
                                         </td>
-                                        <td class="text-end text-nowrap">
-                                            <span t-esc="('%.3f' % (line.smart_over_need_qty or 0.0)).rstrip('0').rstrip('.')"/>
-                                        </td>
-                                        <td class="text-nowrap"><span t-field="line.expiry_date"/></td>
                                         <td class="text-nowrap"><span t-esc="o.get_smart_report_uom_text(line)"/></td>
+                                        <td class="text-nowrap"></td>
                                         <td class="text-end text-nowrap">
-                                            <span t-esc="('%.3f' % (line.sell_price or 0.0)).rstrip('0').rstrip('.')"/>
+                                            <span t-esc="('%.3f' % (line.smart_source_stock_qty or 0.0)).rstrip('0').rstrip('.')"/>
                                         </td>
                                         <td class="text-end text-nowrap">
-                                            <span t-esc="('%.3f' % (line.cost or 0.0)).rstrip('0').rstrip('.')"/>
-                                        </td>
-                                        <td class="text-end text-nowrap">
-                                            <span t-esc="('%.3f' % (line.purchase_price or 0.0)).rstrip('0').rstrip('.')"/>
+                                            <span t-esc="('%.3f' % (line.smart_expected_source_stock_qty or 0.0)).rstrip('0').rstrip('.')"/>
                                         </td>
                                     </tr>
                                 </tbody>
