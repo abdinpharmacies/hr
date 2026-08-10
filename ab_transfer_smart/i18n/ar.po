@@ -195,12 +195,14 @@ msgstr "المتابعة بدون كاش مبيعات مكتمل"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__cost
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Cost"
 msgstr "التكلفة"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__create_day
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Create Day"
 msgstr "يوم الإنشاء"
 
@@ -241,6 +243,7 @@ msgstr "احتياج الوجهة"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_destination_stock_qty
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_destination_stock_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Destination Stock"
 msgstr "رصيد الوجهة"
 
@@ -351,7 +354,6 @@ msgid "Each product can be added once only. Update the existing line quantity in
 msgstr "يمكن إضافة كل صنف مرة واحدة فقط. عدّل كمية السطر الموجود بدلاً من ذلك."
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Exc."
 msgstr "استبعاد"
@@ -370,11 +372,11 @@ msgstr "مستبعد"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__exclusion_reason
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Exclusion Reason"
 msgstr "سبب الاستبعاد"
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Expected"
 msgstr "متوقع"
@@ -382,6 +384,7 @@ msgstr "متوقع"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_expected_source_stock_qty
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_expected_source_stock_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Expected Stock"
 msgstr "الرصيد المتوقع"
 
@@ -392,6 +395,8 @@ msgstr "منتهي الصلاحية"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__expiry_date
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Expiry Date"
 msgstr "تاريخ الصلاحية"
 
@@ -537,6 +542,8 @@ msgstr "كمية السطر %(line)s يجب أن تكون أكبر من صفر."
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_product_location
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_product_view_form_smart_transfer
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_product_view_list_smart_transfer
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Location"
 msgstr "الموقع"
 
@@ -687,6 +694,8 @@ msgstr "رصيد المخازن الأخرى"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_over_need_qty
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_over_need_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Over Need"
 msgstr "الزيادة عن الاحتياج"
 
@@ -836,11 +845,11 @@ msgstr "تحضير الشراء"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__purchase_price
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Purchase Price"
 msgstr "سعر الشراء"
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Qty"
 msgstr "الكمية"
@@ -854,6 +863,7 @@ msgstr "الكمية قبل التقريب"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__qty
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_product_line__qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Quantity"
 msgstr "الكمية"
 
@@ -912,6 +922,7 @@ msgstr "المبيعات اليومية"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__sell_price
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 msgid "Sell Price"
 msgstr "سعر البيع"
 
@@ -1236,6 +1247,7 @@ msgstr "تمت أرشفة المعالج الذكي والتحويلات الم�
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_source_stock_qty
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_source_stock_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Source Stock"
 msgstr "رصيد المصدر"
 
@@ -1254,6 +1266,7 @@ msgstr "التحويل المصدر"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__source_type
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_line_view_search
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Source Type"
 msgstr "نوع المصدر"
 
@@ -1299,7 +1312,6 @@ msgid "Status"
 msgstr "الحالة"
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Stock"
 msgstr "المخزون"
@@ -1492,6 +1504,7 @@ msgstr "إجمالي مبيعات 3 شهور"
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_line__smart_total_need
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__smart_total_need
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "Total Need"
 msgstr "إجمالي الاحتياج"
 
@@ -1527,11 +1540,12 @@ msgstr "سطور التحويل"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__uom_id
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "UOM"
 msgstr "وحدة القياس"
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_lines
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.report_ab_transfer_smart_lines
 msgid "UoM"
 msgstr "وحدة القياس"

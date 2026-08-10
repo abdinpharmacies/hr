@@ -18,6 +18,8 @@ Current changes before commit:
 - Render a blank B-Connect transfer number safely in the pre-submit Sent Lines report when no EPlus serial field is available.
 - Keep the Smart Lines and Transfer Lines PDF buttons bound to dedicated report sources: ab_transfer_smart_line and ab_transfer_line respectively.
 - Add the product name immediately after the product code in the Smart Transfer Excel export.
+- Print Product, Location, Quantity, Over Need, Expiry Date, UOM, Sell Price, Cost, and Purchase Price from ab_transfer_line in a landscape Transfer Lines PDF.
+- Add Product Code to Transfer Lines and expand Smart Lines into a matching landscape detail report sourced from ab_transfer_smart_line.
 
 Files changed:
 

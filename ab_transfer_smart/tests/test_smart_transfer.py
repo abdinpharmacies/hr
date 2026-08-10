@@ -518,24 +518,58 @@ class TestSmartTransfer(TransactionCase):
         template = report_tree.xpath("//template[@id='%s']" % template_id)[0]
         return etree.tostring(template, encoding="unicode")
 
-    def test_smart_lines_report_keeps_smart_line_source_and_design(self):
+    def test_smart_lines_report_uses_requested_smart_fields_and_landscape_layout(self):
         report_xml = self._get_report_template_xml("report_ab_transfer_smart_lines")
+        report_action = self.env.ref(
+            "ab_transfer_smart.action_report_ab_transfer_smart_lines"
+        )
 
         self.assertIn("o.get_smart_lines_for_report()", report_xml)
         self.assertNotIn("o.get_transfer_lines_for_report()", report_xml)
         self.assertNotIn("o.eplus_serial", report_xml)
         self.assertIn("ab-smart-lines-report", report_xml)
-        for header in ("Code", "Product", "Qty", "UoM", "Exc.", "Stock", "Expected"):
+        for header in (
+            "Code",
+            "Product",
+            "Source Type",
+            "Create Day",
+            "Location",
+            "Qty",
+            "Expiry Date",
+            "UOM",
+            "Exclusion Reason",
+            "Source Stock",
+            "Expected Stock",
+            "Destination Stock",
+            "Total Need",
+            "Over Need",
+        ):
             self.assertIn(">%s<" % header, report_xml)
+        for field_name in (
+            "line.product_id.code",
+            "line.product_id.name",
+            "line.source_type",
+            "line.create_day",
+            "line.smart_product_location",
+            "line.qty",
+            "line.expiry_date",
+            "line.exclusion_reason",
+            "line.smart_source_stock_qty",
+            "line.smart_expected_source_stock_qty",
+            "line.smart_destination_stock_qty",
+            "line.smart_total_need",
+            "line.smart_over_need_qty",
+        ):
+            self.assertIn(field_name, report_xml)
         self.assertEqual(report_xml.count("Transfer Date"), 1)
         self.assertEqual(report_xml.count("Printing Date"), 1)
         self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 1)
         self.assertEqual(report_xml.count("get_smart_report_printing_date_text()"), 1)
-        self.assertIn("smart_expected_source_stock_qty", report_xml)
         self.assertNotIn("get_smart_report_line_chunks", report_xml)
         self.assertNotIn("line_chunk", report_xml)
+        self.assertEqual(report_action.paperformat_id.orientation, "Landscape")
 
-    def test_sent_lines_report_uses_transfer_lines_eplus_serial_and_smart_design(self):
+    def test_sent_lines_report_uses_transfer_line_fields_and_landscape_layout(self):
         report_xml = self._get_report_template_xml("report_ab_transfer_lines")
         sent_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_lines")
         smart_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_smart_lines")
@@ -546,18 +580,45 @@ class TestSmartTransfer(TransactionCase):
         self.assertNotIn('t-field="o.eplus_serial"', report_xml)
         self.assertIn("B-Connect Transfer No.", report_xml)
         self.assertIn("ab-smart-lines-report", report_xml)
-        for header in ("Code", "Product", "Qty", "UoM", "Exc.", "Stock", "Expected"):
+        for header in (
+            "Code",
+            "Product",
+            "Location",
+            "Quantity",
+            "Over Need",
+            "Expiry Date",
+            "UOM",
+            "Sell Price",
+            "Cost",
+            "Purchase Price",
+        ):
             self.assertIn(">%s<" % header, report_xml)
         self.assertNotIn("line.exclusion_reason", report_xml)
-        self.assertIn("smart_source_stock_qty", report_xml)
-        self.assertIn("smart_expected_source_stock_qty", report_xml)
+        for field_name in (
+            "line.product_id.code",
+            "line.product_id.name",
+            "line.smart_product_location",
+            "line.qty",
+            "line.smart_over_need_qty",
+            "line.expiry_date",
+            "line.sell_price",
+            "line.cost",
+            "line.purchase_price",
+        ):
+            self.assertIn(field_name, report_xml)
+        for removed_header in ("Qty", "UoM", "Exc.", "Stock", "Expected"):
+            self.assertNotIn(">%s<" % removed_header, report_xml)
+        self.assertNotIn("smart_source_stock_qty", report_xml)
+        self.assertNotIn("smart_expected_source_stock_qty", report_xml)
         self.assertEqual(report_xml.count("Transfer Date"), 1)
         self.assertEqual(report_xml.count("Printing Date"), 1)
         self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 1)
         self.assertEqual(report_xml.count("get_smart_report_printing_date_text()"), 1)
         self.assertNotIn("get_smart_report_line_chunks", report_xml)
         self.assertNotIn("line_chunk", report_xml)
-        self.assertEqual(sent_action.paperformat_id, smart_action.paperformat_id)
+        self.assertNotEqual(sent_action.paperformat_id, smart_action.paperformat_id)
+        self.assertEqual(sent_action.paperformat_id.orientation, "Landscape")
+        self.assertEqual(smart_action.paperformat_id.orientation, "Landscape")
 
     def test_pdf_report_helpers_return_their_exact_line_models(self):
         header = self._create_smart_header_from_existing_records_or_skip()
