@@ -7,10 +7,10 @@
             <field name="arch" type="xml">
                 <list class="ab_self_inventory_list ab_self_inventory_line_list" editable="bottom" delete="0" create="0" default_group_by="branch_id" limit="80">
                     <header>
-                        <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary" display="always" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
-                        <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary" display="always" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
-                        <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" display="always" confirm="Delete all selected fetched products?" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
-                        <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" display="always" confirm="Delete all unselected fetched products?" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
+                        <button name="action_select_all_lines" type="object" string="Select All" class="btn-secondary" display="always"/>
+                        <button name="action_unselect_all_lines" type="object" string="Unselect All" class="btn-secondary" display="always"/>
+                        <button name="action_delete_selected_lines" type="object" string="Delete Selected" class="btn-secondary" display="always" confirm="Delete all selected fetched products?"/>
+                        <button name="action_delete_unselected_lines" type="object" string="Delete Unselected" class="btn-secondary" display="always" confirm="Delete all unselected fetched products?"/>
                     </header>
                     <field name="batch_state" column_invisible="True"/>
                     <field name="branch_id"/>
@@ -73,10 +73,10 @@
             <field name="arch" type="xml">
                 <form class="ab_self_inventory_form">
                     <header>
-                        <button name="action_fetch_branch_stocks" string="Fetch Branch Stocks" type="object" class="btn-secondary" invisible="state != 'draft'" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
-                        <button name="action_submit_batch" string="Submit All" type="object" class="btn-primary" invisible="state != 'draft'" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
-                        <button name="action_cancel" string="Cancel" type="object" invisible="state != 'draft'" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
-                        <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
+                        <button name="action_fetch_branch_stocks" string="Fetch Branch Stocks" type="object" class="btn-secondary" invisible="state != 'draft'"/>
+                        <button name="action_submit_batch" string="Submit All" type="object" class="btn-primary" invisible="state != 'draft'"/>
+                        <button name="action_cancel" string="Cancel" type="object" invisible="state != 'draft'"/>
+                        <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted"/>
                     </header>
                     <sheet>
@@ -103,7 +103,7 @@
                                         <div class="ab_form_row" invisible="branch_filter_mode != 'governorate_name'">
                                             <field name="branch_governorate_name"/>
                                             <field name="governorate_branch_count"/>
-                                            <button name="action_add_matching_branches" type="object" string="Add Matching Branches" class="btn-secondary" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
+                                            <button name="action_add_matching_branches" type="object" string="Add Matching Branches" class="btn-secondary"/>
                                         </div>
                                         <field name="branch_ids" widget="many2many_tags" readonly="branch_filter_mode == 'governorate_name'"/>
                                     </div>
@@ -122,7 +122,7 @@
                                     <div class="ab_form_section_title">Bulk Product Codes</div>
                                     <div class="ab_form_section_body">
                                         <field name="product_codes_text" nolabel="1" placeholder="Enter product codes separated by new lines, commas, semicolons, or spaces."/>
-                                        <button name="action_add_product_codes" type="object" string="Add Codes to Selected Branches" class="btn-secondary" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
+                                        <button name="action_add_product_codes" type="object" string="Add Codes to Selected Branches" class="btn-secondary"/>
                                     </div>
                                 </div>
                                 <div class="ab_form_section" invisible="state != 'draft'">
@@ -151,7 +151,7 @@
                                                     <field name="analysis_period_days"/>
                                                 </div>
                                                 <div class="col-lg-2 col-md-3 ab_analysis_action_filter">
-                                                    <button name="action_run_inventory_analysis" type="object" string="Run Analysis" class="btn-primary w-100" invisible="not branch_ids" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
+                                                    <button name="action_run_inventory_analysis" type="object" string="Run Analysis" class="btn-primary w-100" invisible="not branch_ids"/>
                                                 </div>
                                             </div>
                                             <div class="mt-2 text-muted small" invisible="branch_ids">
@@ -253,7 +253,7 @@
                   name="Batches"
                   parent="menu_ab_self_inventory_root"
                   action="action_ab_self_inventory_request_batch"
-                  groups="group_ab_self_inventory_readonly,group_ab_self_inventory_requester,group_ab_self_inventory_manager"
+                  groups="group_ab_self_inventory_requester,group_ab_self_inventory_manager"
                   sequence="5"/>
     </data>
 </odoo>

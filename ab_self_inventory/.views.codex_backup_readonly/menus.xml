@@ -4,7 +4,7 @@
         <menuitem id="menu_ab_self_inventory_root"
                   name="Self Inventory"
                   web_icon="ab_self_inventory,static/description/icon.png"
-                  groups="group_ab_self_inventory_readonly,group_ab_self_inventory_requester,group_ab_self_inventory_receiver,group_ab_self_inventory_manager"
+                  groups="group_ab_self_inventory_requester,group_ab_self_inventory_receiver,group_ab_self_inventory_manager"
                   sequence="102"/>
 
         <record id="seq_ab_self_inventory_request_batch" model="ir.sequence">

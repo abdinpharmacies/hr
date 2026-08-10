@@ -208,7 +208,7 @@
                   name="Requests"
                   parent="menu_ab_self_inventory_root"
                   action="action_ab_self_inventory_request"
-                  groups="group_ab_self_inventory_readonly,group_ab_self_inventory_requester,group_ab_self_inventory_receiver,group_ab_self_inventory_manager"
+                  groups="group_ab_self_inventory_requester,group_ab_self_inventory_receiver,group_ab_self_inventory_manager"
                   sequence="10"/>
     </data>
 </odoo>
