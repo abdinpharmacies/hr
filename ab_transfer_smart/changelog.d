@@ -1,41 +1,19 @@
 Current changes before commit:
 
-- Keep Print Smart Lines available in Pre-Submit, Submit, and submitted transfers.
-- Redesign the Sent Lines report to match the compact Smart Lines report while keeping actual transfer lines as its data source.
-- Print the B-Connect transfer number from eplus_serial and keep the sent-line exclusion column empty.
-- Keep Smart report ordering for sent lines and use the same compact paper format.
-- Show Print Transfer Lines from Pre-Submit through Submit.
-- Update Arabic report translations and add independent Smart/Sent report assertions.
-- Add a read-only Smart Transfer XLSX preview to the draft Smart Transfer wizard.
-- Match Generate Transfers by reading today's destination cache and using live destination SELECTs only when today's cache is absent.
-- Export Smart calculation rows, including dropout exclusions, with code, company, minimum sale/purchase quantity, current Smart Line prices, stock, sales, weighted average, and final need.
-- Add a stateless incomplete-sales-cache confirmation that can cancel or continue without recording acceptance.
-- Show Smart Lines printing before Pre-Submit and Transfer Lines printing at Pre-Submit and Submit.
-- Add Refresh Sales Cache & Resume beside Generated Transfers so missing daily sales cache is synced and generation resumes automatically.
-- Keep the wizard blocked with the remaining missing-day warning when EPlus sales-cache refresh is incomplete.
-- Keep the Excel warning popup from replacing the normal transfer form when opening generated transfers.
-- Add a read-only wizard Excel preview with one worksheet per destination store and the approved fixed company name.
-- Remove the duplicate transfer-header Excel action so the draft wizard is the single export entry point.
-- Render a blank B-Connect transfer number safely in the pre-submit Sent Lines report when no EPlus serial field is available.
-- Keep the Smart Lines and Transfer Lines PDF buttons bound to dedicated report sources: ab_transfer_smart_line and ab_transfer_line respectively.
-- Add the product name immediately after the product code in the Smart Transfer Excel export.
-- Print Product, Location, Quantity, Over Need, Expiry Date, UOM, Sell Price, Cost, and Purchase Price from ab_transfer_line in a landscape Transfer Lines PDF.
-- Add Product Code to Transfer Lines and expand Smart Lines into a matching landscape detail report sourced from ab_transfer_smart_line.
+- Detect duplicate pasted Smart Transfer product rows before Add Product aggregates quantities.
+- Show a one-line duplicate warning under the pasted product input while duplicates exist.
+- Add a two-step duplicate confirmation dialog so users can cancel before quantities are summed.
+- Keep duplicate pasted rows unchanged until the user confirms summing.
+- Add Arabic translations and test coverage for the duplicate import confirmation flow.
 
 Files changed:
 
 - ab_transfer_smart/i18n/ar.po
 - ab_transfer_smart/i18n/ar_001.po
-- ab_transfer_smart/__init__.py
-- ab_transfer_smart/__manifest__.py
-- ab_transfer_smart/models/ab_transfer_header.py
 - ab_transfer_smart/models/ab_transfer_smart_wizard.py
-- ab_transfer_smart/report/__init__.py
-- ab_transfer_smart/report/ab_transfer_smart_xlsx.py
-- ab_transfer_smart/report/ab_transfer_smart_xlsx_report.xml
-- ab_transfer_smart/report/ab_transfer_line_reports.xml
+- ab_transfer_smart/security/ir.model.access.csv
+- ab_transfer_smart/static/src/js/smart_product_import_text_field.js
 - ab_transfer_smart/tests/test_smart_transfer.py
-- ab_transfer_smart/views/ab_transfer_header_views.xml
 - ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
 
 

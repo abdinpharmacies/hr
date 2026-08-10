@@ -242,5 +242,33 @@
                   action="ab_transfer_smart_wizard_action"
                   sequence="11"
                   groups="ab_transfer_smart.group_transfer_smart_purchase,ab_transfer_smart.group_trnasfer_smart_store_preparation,ab_transfer_smart.group_trnasfer_smart_store_revision,base.group_system"/>
+        <record id="ab_transfer_smart_duplicate_import_confirmation_view_form" model="ir.ui.view">
+            <field name="name">ab.transfer.smart.duplicate.import.confirmation.form</field>
+            <field name="model">ab.transfer.smart.duplicate.import.confirmation</field>
+            <field name="arch" type="xml">
+                <form string="Duplicate Products">
+                    <sheet>
+                        <field name="step" invisible="1"/>
+                        <field name="message" readonly="1" nolabel="1"/>
+                    </sheet>
+                    <footer>
+                        <button name="action_continue_to_sum_confirmation"
+                                type="object"
+                                string="Continue"
+                                class="btn-primary"
+                                invisible="step != 'detect'"/>
+                        <button name="action_confirm_import"
+                                type="object"
+                                string="Confirm"
+                                class="btn-primary"
+                                invisible="step != 'sum'"/>
+                        <button name="action_cancel"
+                                type="object"
+                                string="Cancel"
+                                class="btn-secondary"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
     </data>
 </odoo>

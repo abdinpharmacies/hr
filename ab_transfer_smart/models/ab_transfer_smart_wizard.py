@@ -417,10 +417,18 @@ class AbTransferSmartWizard(models.Model):
         self.ensure_one()
         if self.state == "done":
             raise UserError(_("Done wizards cannot import products."))
-        imported, truncated = self._parse_product_import_text()
-        if not imported:
+        parsed_rows, truncated = self._parse_product_import_rows()
+        if not parsed_rows:
             raise UserError(_("Paste product code and quantity before adding products."))
 
+        duplicate_products = self._get_duplicate_product_import_rows(parsed_rows)
+        if (
+            duplicate_products
+            and not self.env.context.get("ab_transfer_smart_duplicate_import_confirmed")
+        ):
+            return self._open_duplicate_product_import_confirmation("detect")
+
+        imported = self._products_from_code_qty_rows(parsed_rows)
         created, updated = self._add_imported_product_lines(imported)
 
         self.product_import_text = False
@@ -439,6 +447,25 @@ class AbTransferSmartWizard(models.Model):
             notification_type,
             next_action=self._smart_soft_reload_action(),
         )
+
+    def _open_duplicate_product_import_confirmation(self, step):
+        self.ensure_one()
+        view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_smart_duplicate_import_confirmation_view_form"
+        )
+        confirmation = self.env["ab.transfer.smart.duplicate.import.confirmation"].create({
+            "smart_wizard_id": self.id,
+            "step": step,
+        })
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Duplicate Products"),
+            "res_model": "ab.transfer.smart.duplicate.import.confirmation",
+            "res_id": confirmation.id,
+            "view_mode": "form",
+            "views": [(view.id, "form")],
+            "target": "new",
+        }
 
     def _add_imported_product_lines(self, imported):
         self.ensure_one()
@@ -775,6 +802,10 @@ class AbTransferSmartWizard(models.Model):
         }
 
     def _parse_product_import_text(self):
+        parsed_rows, truncated = self._parse_product_import_rows()
+        return self._products_from_code_qty_rows(parsed_rows), truncated
+
+    def _parse_product_import_rows(self):
         self.ensure_one()
         parsed_rows = []
         truncated = False
@@ -788,9 +819,9 @@ class AbTransferSmartWizard(models.Model):
             code, qty = self._parse_product_import_line(line, index)
             parsed_rows.append((code, qty))
 
-        return self._products_from_code_qty_rows(parsed_rows), truncated
+        return parsed_rows, truncated
 
-    def _products_from_code_qty_rows(self, parsed_rows):
+    def _products_by_import_codes(self, parsed_rows):
         codes = [code for code, _qty in parsed_rows]
         products = self.env["ab_product"].with_context(active_test=False).search([
             ("code", "in", codes),
@@ -807,6 +838,22 @@ class AbTransferSmartWizard(models.Model):
                 _("Product code(s) were not found: %s")
                 % ", ".join(missing[:20])
             )
+        return products_by_code
+
+    def _get_duplicate_product_import_rows(self, parsed_rows):
+        products_by_code = self._products_by_import_codes(parsed_rows)
+        seen_product_ids = set()
+        duplicate_product_ids = set()
+        for code, _qty in parsed_rows:
+            product = products_by_code[code]
+            if product.id in seen_product_ids:
+                duplicate_product_ids.add(product.id)
+            else:
+                seen_product_ids.add(product.id)
+        return self.env["ab_product"].browse(sorted(duplicate_product_ids))
+
+    def _products_from_code_qty_rows(self, parsed_rows):
+        products_by_code = self._products_by_import_codes(parsed_rows)
 
         qty_by_product_id = {}
         for code, qty in parsed_rows:
@@ -905,3 +952,60 @@ class AbTransferSmartWizard(models.Model):
         if next_action:
             action["params"]["next"] = next_action
         return action
+
+
+class AbTransferSmartDuplicateImportConfirmation(models.TransientModel):
+    _name = "ab.transfer.smart.duplicate.import.confirmation"
+    _description = "Smart Transfer Duplicate Product Import Confirmation"
+
+    smart_wizard_id = fields.Many2one(
+        "ab_transfer_smart_wizard",
+        required=True,
+        readonly=True,
+        ondelete="cascade",
+    )
+    step = fields.Selection(
+        [
+            ("detect", "Duplicate Detected"),
+            ("sum", "Sum Quantities"),
+        ],
+        required=True,
+        default="detect",
+    )
+    message = fields.Char(compute="_compute_message")
+
+    def _compute_message(self):
+        for confirmation in self:
+            if confirmation.step == "sum":
+                confirmation.message = _(
+                    "Duplicate product quantities will be summed together. Do you want to continue?"
+                )
+            else:
+                confirmation.message = _(
+                    "Duplicate products were detected. Do you want to continue?"
+                )
+
+    def action_continue_to_sum_confirmation(self):
+        self.ensure_one()
+        self.step = "sum"
+        view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_smart_duplicate_import_confirmation_view_form"
+        )
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Duplicate Products"),
+            "res_model": self._name,
+            "res_id": self.id,
+            "view_mode": "form",
+            "views": [(view.id, "form")],
+            "target": "new",
+        }
+
+    def action_confirm_import(self):
+        self.ensure_one()
+        return self.smart_wizard_id.with_context(
+            ab_transfer_smart_duplicate_import_confirmed=True
+        ).action_import_product_lines()
+
+    def action_cancel(self):
+        return {"type": "ir.actions.act_window_close"}

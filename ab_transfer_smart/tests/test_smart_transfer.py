@@ -1123,7 +1123,29 @@ class TestSmartTransfer(TransactionCase):
             ),
         })
 
-        wizard.action_import_product_lines()
+        first_confirmation_action = wizard.action_import_product_lines()
+        self.assertEqual(
+            first_confirmation_action["res_model"],
+            "ab.transfer.smart.duplicate.import.confirmation",
+        )
+        first_confirmation = self.env[first_confirmation_action["res_model"]].browse(
+            first_confirmation_action["res_id"]
+        )
+        self.assertEqual(first_confirmation.step, "detect")
+
+        first_confirmation.action_cancel()
+        self.assertFalse(wizard.product_line_ids)
+        self.assertTrue(wizard.product_import_text)
+
+        second_confirmation_action = first_confirmation.action_continue_to_sum_confirmation()
+        self.assertEqual(second_confirmation_action["res_id"], first_confirmation.id)
+        self.assertEqual(first_confirmation.step, "sum")
+
+        first_confirmation.action_cancel()
+        self.assertFalse(wizard.product_line_ids)
+        self.assertTrue(wizard.product_import_text)
+
+        first_confirmation.action_confirm_import()
 
         qty_by_product = {
             line.product_id.id: line.qty

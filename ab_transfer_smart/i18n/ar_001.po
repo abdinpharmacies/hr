@@ -1778,3 +1778,58 @@ msgstr "كاش مبيعات التحويل الذكي غير مكتمل. أيا�
 #: model:ir.model,name:ab_transfer_smart.model_report_ab_transfer_smart_smart_transfer_wizard_xlsx
 msgid "Smart Transfer Wizard Excel Export"
 msgstr "تصدير إكسل معالج التحويل الذكي"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_duplicate_import_confirmation_view_form
+msgid "Duplicate Products"
+msgstr "أصناف مكررة"
+
+#. module: ab_transfer_smart
+#. odoo-javascript
+#: code:addons/ab_transfer_smart/static/src/js/smart_product_import_text_field.js:0
+msgid "Duplicate products detected in the entered list."
+msgstr "تم اكتشاف أصناف مكررة في القائمة المدخلة."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Duplicate products were detected. Do you want to continue?"
+msgstr "تم اكتشاف أصناف مكررة. هل تريد المتابعة؟"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Duplicate product quantities will be summed together. Do you want to continue?"
+msgstr "سيتم جمع كميات الأصناف المكررة معًا. هل تريد المتابعة؟"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_duplicate_import_confirmation_view_form
+msgid "Continue"
+msgstr "متابعة"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_duplicate_import_confirmation_view_form
+msgid "Confirm"
+msgstr "تأكيد"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_duplicate_import_confirmation_view_form
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_duplicate_import_confirmation
+msgid "Smart Transfer Duplicate Product Import Confirmation"
+msgstr "تأكيد استيراد الأصناف المكررة في التحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_duplicate_import_confirmation__step__detect
+msgid "Duplicate Detected"
+msgstr "تم اكتشاف تكرار"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_duplicate_import_confirmation__step__sum
+msgid "Sum Quantities"
+msgstr "جمع الكميات"
