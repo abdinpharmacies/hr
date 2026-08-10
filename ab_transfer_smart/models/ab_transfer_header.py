@@ -41,6 +41,7 @@ SMART_EXPORT_STAGES = (
     SMART_STAGE_STORE_PREPARATION,
     SMART_STAGE_STORE_REVISION,
 )
+SMART_EXPORT_COMPANY_NAME = "مخزن عابدين فارما جروب للتجارة والتوزيع"
 SMART_GROUP_PURCHASE = "ab_transfer_smart.group_transfer_smart_purchase"
 SMART_GROUP_STORE_PREPARATION = "ab_transfer_smart.group_trnasfer_smart_store_preparation"
 SMART_GROUP_STORE_REVISION = "ab_transfer_smart.group_trnasfer_smart_store_revision"
@@ -157,12 +158,6 @@ class AbTransferHeader(models.Model):
         copy=False,
         help="Exclude smart lines when destination stock covers this percentage of the planned quantity.",
     )
-    smart_export_sales_cache_warning_message = fields.Text(
-        string="Export Sales Cache Warning",
-        compute="_compute_smart_export_sales_cache_warning_message",
-        readonly=True,
-    )
-
     @api.constrains("smart_days")
     def _check_smart_days(self):
         for rec in self:
@@ -206,15 +201,6 @@ class AbTransferHeader(models.Model):
     def _compute_smart_items_count(self):
         for rec in self:
             rec.smart_items_count = len(rec.smart_line_ids)
-
-    def _compute_smart_export_sales_cache_warning_message(self):
-        for rec in self:
-            missing_dates = rec._get_smart_missing_sales_cache_dates_readonly()
-            rec.smart_export_sales_cache_warning_message = (
-                rec._format_smart_export_sales_cache_warning_message(missing_dates)
-                if missing_dates
-                else False
-            )
 
     @api.model
     def get_transfer_dashboard_payload(self):
@@ -301,53 +287,6 @@ class AbTransferHeader(models.Model):
             "ab_transfer_smart.action_report_ab_transfer_lines"
         ).report_action(self)
 
-    def action_export_smart_transfer_excel(self):
-        self.ensure_one()
-        self._check_smart_export_allowed()
-        missing_dates = []
-        if self._get_smart_other_branch_store_sql_ids():
-            missing_dates = self._get_smart_missing_sales_cache_dates_readonly()
-        if missing_dates:
-            warning_view = self.env.ref(
-                "ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form"
-            )
-            return {
-                "type": "ir.actions.act_window",
-                "name": _("Smart Transfer Excel Export"),
-                "res_model": "ab_transfer_header",
-                "res_id": self.id,
-                "view_mode": "form",
-                "views": [(warning_view.id, "form")],
-                "target": "new",
-                "context": dict(self.env.context, smart_export_readonly=True),
-            }
-        return self._get_smart_transfer_excel_report_action(
-            allow_incomplete_sales_cache=False
-        )
-
-    def action_export_smart_transfer_excel_continue(self):
-        self.ensure_one()
-        self._check_smart_export_allowed()
-        return self._get_smart_transfer_excel_report_action(
-            allow_incomplete_sales_cache=True
-        )
-
-    def _get_smart_transfer_excel_report_action(self, allow_incomplete_sales_cache):
-        self.ensure_one()
-        report = self.env.ref(
-            "ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx"
-        )
-        return report.with_context(
-            smart_export_readonly=True,
-            skip_smart_sales_cache_coverage=bool(allow_incomplete_sales_cache),
-        ).report_action(
-            self,
-            data={
-                "allow_incomplete_sales_cache": bool(allow_incomplete_sales_cache),
-            },
-            config=False,
-        )
-
     def _check_smart_export_allowed(self):
         self.ensure_one()
         if self.is_submitted or self.smart_stage not in SMART_EXPORT_STAGES:
@@ -377,7 +316,11 @@ class AbTransferHeader(models.Model):
             ],
         }
 
-    def _get_smart_transfer_excel_rows(self, allow_incomplete_sales_cache=False):
+    def _get_smart_transfer_excel_rows(
+            self,
+            allow_incomplete_sales_cache=False,
+            allow_empty=False,
+    ):
         self.ensure_one()
         self._check_smart_export_allowed()
         source_rows_by_product = {}
@@ -401,6 +344,8 @@ class AbTransferHeader(models.Model):
         destination_rows = probe._fetch_destination_smart_rows_readonly()
         preview_rows, _ = probe._prepare_smart_transfer_preview_rows(destination_rows)
         if not preview_rows:
+            if allow_empty:
+                return []
             raise UserError(_("No items are needed for transfer."))
 
         export_rows = []
@@ -416,7 +361,8 @@ class AbTransferHeader(models.Model):
             month3_sales = float(line_vals.get("smart_month3_sales", 0.0) or 0.0)
             export_rows.append({
                 "code": product.code or "",
-                "company": product.company_id.display_name or "",
+                "product_name": product.name or "",
+                "company": SMART_EXPORT_COMPANY_NAME,
                 "purchase_unit": float(product.min_sale_purchase_qty or 0.0),
                 "sell_price": float(current_price_row.get("price", 0.0) or 0.0),
                 "purchase_price": float(current_price_row.get("pharm_price", 0.0) or 0.0),
@@ -438,10 +384,24 @@ class AbTransferHeader(models.Model):
         self.ensure_one()
         return self._sort_smart_lines_by_product_location(lines)
 
+    def get_smart_lines_for_report(self):
+        self.ensure_one()
+        return self.get_smart_report_sorted_lines(self.smart_line_ids)
+
+    def get_transfer_lines_for_report(self):
+        self.ensure_one()
+        return self.get_smart_report_sorted_lines(self.line_ids)
+
     def get_smart_report_transfer_date_text(self):
         self.ensure_one()
         transfer_date = self.sent_at or self.create_date
         return self._format_smart_report_datetime(transfer_date)
+
+    def get_smart_report_eplus_serial_text(self):
+        self.ensure_one()
+        if "eplus_serial" not in self._fields:
+            return ""
+        return str(self.eplus_serial or "")
 
     def get_smart_report_printing_date_text(self):
         self.ensure_one()

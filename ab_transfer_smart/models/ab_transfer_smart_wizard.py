@@ -160,6 +160,11 @@ class AbTransferSmartWizard(models.Model):
         copy=False,
         readonly=True,
     )
+    smart_export_sales_cache_warning_message = fields.Text(
+        string="Export Sales Cache Warning",
+        compute="_compute_smart_export_sales_cache_warning_message",
+        readonly=True,
+    )
     generated_header_ids = fields.One2many(
         "ab_transfer_header",
         "smart_wizard_id",
@@ -185,6 +190,16 @@ class AbTransferSmartWizard(models.Model):
     def _compute_generated_header_count(self):
         for rec in self:
             rec.generated_header_count = len(rec.generated_header_ids)
+
+    def _compute_smart_export_sales_cache_warning_message(self):
+        Header = self.env["ab_transfer_header"]
+        for rec in self:
+            missing_dates = rec._get_smart_export_missing_sales_cache_dates_readonly()
+            rec.smart_export_sales_cache_warning_message = (
+                Header._format_smart_export_sales_cache_warning_message(missing_dates)
+                if missing_dates
+                else False
+            )
 
     @api.model
     def _get_allowed_source_store_ids(self):
@@ -258,6 +273,83 @@ class AbTransferSmartWizard(models.Model):
         if self.target_mode == "single":
             return self._action_run_single_header_calculation()
         return self._action_generate_batch_transfers()
+
+    def action_export_excel(self):
+        self.ensure_one()
+        self._validate_smart_export_values()
+        missing_dates = self._get_smart_export_missing_sales_cache_dates_readonly()
+        if missing_dates:
+            warning_view = self.env.ref(
+                "ab_transfer_smart.ab_transfer_smart_wizard_export_warning_view_form"
+            )
+            return {
+                "type": "ir.actions.act_window",
+                "name": _("Smart Transfer Excel Export"),
+                "res_model": "ab_transfer_smart_wizard",
+                "res_id": self.id,
+                "view_mode": "form",
+                "views": [(warning_view.id, "form")],
+                "target": "new",
+                "context": dict(self.env.context, smart_export_readonly=True),
+            }
+        return self._get_smart_export_excel_report_action(
+            allow_incomplete_sales_cache=False
+        )
+
+    def action_export_excel_continue(self):
+        self.ensure_one()
+        self._validate_smart_export_values()
+        return self._get_smart_export_excel_report_action(
+            allow_incomplete_sales_cache=True
+        )
+
+    def _get_smart_export_excel_report_action(self, allow_incomplete_sales_cache):
+        self.ensure_one()
+        report = self.env.ref(
+            "ab_transfer_smart.action_report_ab_transfer_smart_wizard_xlsx"
+        )
+        return report.with_context(
+            smart_export_readonly=True,
+            skip_smart_sales_cache_coverage=bool(allow_incomplete_sales_cache),
+        ).report_action(
+            self,
+            data={
+                "allow_incomplete_sales_cache": bool(allow_incomplete_sales_cache),
+            },
+            config=False,
+        )
+
+    def _validate_smart_export_values(self):
+        self.ensure_one()
+        self._validate_generation_values()
+        for probe in self._get_smart_export_probe_headers():
+            probe._validate_smart_transfer_header()
+
+    def _prepare_smart_export_header_probe_vals(self, destination):
+        self.ensure_one()
+        return {
+            **self._prepare_header_probe_vals(destination),
+            "smart_dropout_coverage": self.dropout_coverage,
+        }
+
+    def _get_smart_export_probe_headers(self):
+        self.ensure_one()
+        Header = self.env["ab_transfer_header"]
+        return [
+            Header.new(self._prepare_smart_export_header_probe_vals(destination))
+            for destination in self.to_stores_id
+        ]
+
+    def _get_smart_export_missing_sales_cache_dates_readonly(self):
+        self.ensure_one()
+        missing_dates = set()
+        for probe in self._get_smart_export_probe_headers():
+            if not probe._get_smart_other_branch_store_sql_ids():
+                continue
+            missing_dates.update(
+                probe._get_smart_missing_sales_cache_dates_readonly()
+            )
+        return sorted(missing_dates)
 
     def action_accept_sales_cache_warning_and_generate(self):
         self.ensure_one()

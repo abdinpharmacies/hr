@@ -1652,33 +1652,33 @@ msgid "Product Card"
 msgstr "كارت الصنف"
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_export_warning_view_form
 msgid "Cancel Export"
 msgstr "إلغاء التصدير"
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
 msgid "Export Smart Transfer Excel"
 msgstr "تصدير إكسل التحويل الذكي"
 
 #. module: ab_transfer_smart
-#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_export_sales_cache_warning_message
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__smart_export_sales_cache_warning_message
 msgid "Export Sales Cache Warning"
 msgstr "تحذير كاش المبيعات للتصدير"
 
 #. module: ab_transfer_smart
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_export_warning_view_form
 msgid "Incomplete Sales Cache"
 msgstr "كاش المبيعات غير مكتمل"
 
 #. module: ab_transfer_smart
-#: model:ir.actions.report,name:ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx
+#: model:ir.actions.report,name:ab_transfer_smart.action_report_ab_transfer_smart_wizard_xlsx
 msgid "Smart Transfer Excel"
 msgstr "إكسل التحويل الذكي"
 
 #. module: ab_transfer_smart
 #. odoo-python
-#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
 msgid "Smart Transfer Excel Export"
 msgstr "تصدير إكسل التحويل الذكي"
 
@@ -1693,6 +1693,12 @@ msgstr "لا يمكن تصدير إكسل التحويل الذكي إلا قب�
 #: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
 msgid "code"
 msgstr "الكود"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/report/ab_transfer_smart_xlsx.py:0
+msgid "product name"
+msgstr "اسم الصنف"
 
 #. module: ab_transfer_smart
 #. odoo-python
@@ -1753,3 +1759,8 @@ msgstr "الاحتياج"
 #: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
 msgid "Smart Transfer sales cache is incomplete. Missing synced sales days: %s. Choose Cancel Export to stop, or Continue Anyway to export with available cached sales data. Continuing does not record an acceptance or override."
 msgstr "كاش مبيعات التحويل الذكي غير مكتمل. أيام المبيعات المتزامنة المفقودة: %s. اختر إلغاء التصدير للتوقف، أو المتابعة على أي حال للتصدير باستخدام بيانات المبيعات المتاحة في الكاش. لن تسجل المتابعة أي قبول أو تجاوز."
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_report_ab_transfer_smart_smart_transfer_wizard_xlsx
+msgid "Smart Transfer Wizard Excel Export"
+msgstr "تصدير إكسل معالج التحويل الذكي"

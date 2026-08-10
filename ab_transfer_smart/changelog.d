@@ -5,14 +5,19 @@ Current changes before commit:
 - Keep Smart report ordering for sent lines and use the same compact paper format.
 - Show Print Transfer Lines from Pre-Submit through Submit.
 - Update Arabic report translations and add independent Smart/Sent report assertions.
-- Add a read-only Smart Transfer XLSX preview on transfer headers before Pre-Submit.
+- Add a read-only Smart Transfer XLSX preview to the draft Smart Transfer wizard.
 - Match Generate Transfers by reading today's destination cache and using live destination SELECTs only when today's cache is absent.
 - Export Smart calculation rows, including dropout exclusions, with code, company, minimum sale/purchase quantity, current Smart Line prices, stock, sales, weighted average, and final need.
 - Add a stateless incomplete-sales-cache confirmation that can cancel or continue without recording acceptance.
-- Show Smart Lines print/export actions before Pre-Submit and Transfer Lines printing at Pre-Submit and Submit.
+- Show Smart Lines printing before Pre-Submit and Transfer Lines printing at Pre-Submit and Submit.
 - Add Refresh Sales Cache & Resume beside Generated Transfers so missing daily sales cache is synced and generation resumes automatically.
 - Keep the wizard blocked with the remaining missing-day warning when EPlus sales-cache refresh is incomplete.
 - Keep the Excel warning popup from replacing the normal transfer form when opening generated transfers.
+- Add a read-only wizard Excel preview with one worksheet per destination store and the approved fixed company name.
+- Remove the duplicate transfer-header Excel action so the draft wizard is the single export entry point.
+- Render a blank B-Connect transfer number safely in the pre-submit Sent Lines report when no EPlus serial field is available.
+- Keep the Smart Lines and Transfer Lines PDF buttons bound to dedicated report sources: ab_transfer_smart_line and ab_transfer_line respectively.
+- Add the product name immediately after the product code in the Smart Transfer Excel export.
 
 Files changed:
 

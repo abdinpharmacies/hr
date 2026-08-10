@@ -2,6 +2,8 @@
 import io
 import zipfile
 
+import xlsxwriter
+
 from datetime import timedelta
 from pathlib import Path
 from types import SimpleNamespace
@@ -14,6 +16,7 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
 from odoo.addons.ab_transfer_smart.models.ab_transfer_header import (
+    SMART_EXPORT_COMPANY_NAME,
     SMART_STAGE_PURCHASE_PREPARATION,
     SMART_STAGE_PRE_SUBMIT,
     SMART_STAGE_SUBMIT,
@@ -518,8 +521,8 @@ class TestSmartTransfer(TransactionCase):
     def test_smart_lines_report_keeps_smart_line_source_and_design(self):
         report_xml = self._get_report_template_xml("report_ab_transfer_smart_lines")
 
-        self.assertIn("get_smart_report_sorted_lines(o.smart_line_ids)", report_xml)
-        self.assertNotIn("get_smart_report_sorted_lines(o.line_ids)", report_xml)
+        self.assertIn("o.get_smart_lines_for_report()", report_xml)
+        self.assertNotIn("o.get_transfer_lines_for_report()", report_xml)
         self.assertNotIn("o.eplus_serial", report_xml)
         self.assertIn("ab-smart-lines-report", report_xml)
         for header in ("Code", "Product", "Qty", "UoM", "Exc.", "Stock", "Expected"):
@@ -537,9 +540,10 @@ class TestSmartTransfer(TransactionCase):
         sent_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_lines")
         smart_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_smart_lines")
 
-        self.assertIn("get_smart_report_sorted_lines(o.line_ids)", report_xml)
-        self.assertNotIn("o.smart_line_ids", report_xml)
-        self.assertIn('t-field="o.eplus_serial"', report_xml)
+        self.assertIn("o.get_transfer_lines_for_report()", report_xml)
+        self.assertNotIn("o.get_smart_lines_for_report()", report_xml)
+        self.assertIn("o.get_smart_report_eplus_serial_text()", report_xml)
+        self.assertNotIn('t-field="o.eplus_serial"', report_xml)
         self.assertIn("B-Connect Transfer No.", report_xml)
         self.assertIn("ab-smart-lines-report", report_xml)
         for header in ("Code", "Product", "Qty", "UoM", "Exc.", "Stock", "Expected"):
@@ -555,7 +559,36 @@ class TestSmartTransfer(TransactionCase):
         self.assertNotIn("line_chunk", report_xml)
         self.assertEqual(sent_action.paperformat_id, smart_action.paperformat_id)
 
-    def test_report_and_export_buttons_follow_pre_submit_stage(self):
+    def test_pdf_report_helpers_return_their_exact_line_models(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+
+        self.assertEqual(
+            header.get_transfer_lines_for_report()._name,
+            "ab_transfer_line",
+        )
+        self.assertEqual(
+            header.get_smart_lines_for_report()._name,
+            "ab_transfer_smart_line",
+        )
+
+    def test_print_buttons_use_independent_pdf_report_actions(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+
+        smart_result = header.action_print_smart_transfer_lines()
+        transfer_result = header.action_print_transfer_lines()
+
+        self.assertEqual(smart_result["report_type"], "qweb-pdf")
+        self.assertEqual(
+            smart_result["report_name"],
+            "ab_transfer_smart.report_ab_transfer_smart_lines",
+        )
+        self.assertEqual(transfer_result["report_type"], "qweb-pdf")
+        self.assertEqual(
+            transfer_result["report_name"],
+            "ab_transfer_smart.report_ab_transfer_lines",
+        )
+
+    def test_report_buttons_follow_pre_submit_and_header_has_no_excel_export(self):
         view_path = (
             Path(__file__).resolve().parents[1]
             / "views"
@@ -568,35 +601,33 @@ class TestSmartTransfer(TransactionCase):
         transfer_button = view_tree.xpath(
             "//button[@name='action_print_transfer_lines']"
         )[0]
-        export_button = view_tree.xpath(
-            "//button[@name='action_export_smart_transfer_excel']"
-        )[0]
-
         self.assertEqual(
             smart_button.get("invisible"),
-            "smart_stage in ('pre_submit', 'submit')",
-        )
-        self.assertEqual(
-            export_button.get("invisible"),
             "smart_stage in ('pre_submit', 'submit')",
         )
         self.assertEqual(
             transfer_button.get("invisible"),
             "smart_stage not in ('pre_submit', 'submit')",
         )
-
-    def test_smart_transfer_xlsx_report_has_exact_columns(self):
-        report_model = self.env["report.ab_transfer_smart.smart_transfer_xlsx"]
-        report_action = self.env.ref(
-            "ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx"
+        self.assertFalse(
+            view_tree.xpath("//button[@name='action_export_smart_transfer_excel']")
         )
 
-        self.assertEqual(report_action.model, "ab_transfer_header")
+    def test_smart_transfer_xlsx_report_has_exact_columns(self):
+        report_model = self.env[
+            "report.ab_transfer_smart.smart_transfer_wizard_xlsx"
+        ]
+        report_action = self.env.ref(
+            "ab_transfer_smart.action_report_ab_transfer_smart_wizard_xlsx"
+        )
+
+        self.assertEqual(report_action.model, "ab_transfer_smart_wizard")
         self.assertEqual(report_action.report_type, "xlsx")
         self.assertEqual(
             report_model._HEADERS,
             (
                 "code",
+                "product name",
                 "company",
                 "purchase unit",
                 "sell_price",
@@ -611,12 +642,19 @@ class TestSmartTransfer(TransactionCase):
 
     def test_smart_transfer_xlsx_report_renders_expected_headers(self):
         header = self._create_smart_header_from_existing_records_or_skip()
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+        })
         report_action = self.env.ref(
-            "ab_transfer_smart.action_report_ab_transfer_smart_transfer_xlsx"
+            "ab_transfer_smart.action_report_ab_transfer_smart_wizard_xlsx"
         )
         row = {
             "code": "P001",
-            "company": "Company",
+            "product_name": "Product A",
+            "company": SMART_EXPORT_COMPANY_NAME,
             "purchase_unit": 3.0,
             "sell_price": 14.0,
             "purchase_price": 9.0,
@@ -627,14 +665,21 @@ class TestSmartTransfer(TransactionCase):
             "need": 7.0,
         }
 
+        probe = SimpleNamespace(to_store_id=header.to_store_id)
+        probe.with_context = lambda **kwargs: probe
+        probe._get_smart_transfer_excel_rows = lambda **kwargs: [row]
         with patch.object(
-                type(header),
-                "_get_smart_transfer_excel_rows",
-                return_value=[row],
+                type(wizard),
+                "_validate_smart_export_values",
+                return_value=None,
+        ), patch.object(
+                type(wizard),
+                "_get_smart_export_probe_headers",
+                return_value=[probe],
         ):
             content, file_type = self.env["ir.actions.report"]._render_xlsx(
                 report_action.report_name,
-                header.ids,
+                wizard.ids,
                 data={"allow_incomplete_sales_cache": False},
             )
 
@@ -642,9 +687,80 @@ class TestSmartTransfer(TransactionCase):
         with zipfile.ZipFile(io.BytesIO(content)) as workbook:
             shared_strings = workbook.read("xl/sharedStrings.xml").decode("utf-8")
         for label in self.env[
-                "report.ab_transfer_smart.smart_transfer_xlsx"
+                "report.ab_transfer_smart.smart_transfer_wizard_xlsx"
         ]._get_translated_headers():
             self.assertIn(str(label), shared_strings)
+        self.assertIn(SMART_EXPORT_COMPANY_NAME, shared_strings)
+        self.assertIn("Product A", shared_strings)
+
+    def test_pre_submit_sent_lines_report_renders_without_eplus_serial_field(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        header.smart_stage = SMART_STAGE_PRE_SUBMIT
+
+        self.assertEqual(header.get_smart_report_eplus_serial_text(), "")
+        html = self.env["ir.actions.report"]._render_qweb_html(
+            "ab_transfer_smart.report_ab_transfer_lines",
+            header.ids,
+        )[0]
+
+        self.assertTrue(html)
+
+    def test_smart_transfer_wizard_xlsx_creates_unique_sheet_per_destination(self):
+        report_model = self.env[
+            "report.ab_transfer_smart.smart_transfer_wizard_xlsx"
+        ]
+        store_1 = SimpleNamespace(
+            code="STORE-ONE",
+            display_name="A destination name long enough to collide after truncation",
+        )
+        store_2 = SimpleNamespace(
+            code="STORE-ONE",
+            display_name="A destination name long enough to collide after truncation",
+        )
+        row = {
+            "code": "P001",
+            "product_name": "Product A",
+            "company": SMART_EXPORT_COMPANY_NAME,
+            "purchase_unit": 2.0,
+            "sell_price": 12.0,
+            "purchase_price": 9.0,
+            "source_stock": 20.0,
+            "destination_stock": 4.0,
+            "sales_3_month": 30.0,
+            "moving_weighted_avg": 11.0,
+            "need": 6.0,
+        }
+
+        def make_probe(store, rows):
+            probe = SimpleNamespace(to_store_id=store)
+            probe.with_context = lambda **kwargs: probe
+            probe._get_smart_transfer_excel_rows = lambda **kwargs: rows
+            return probe
+
+        probes = [make_probe(store_1, [row]), make_probe(store_2, [])]
+        wizard = SimpleNamespace(
+            _validate_smart_export_values=lambda: None,
+            _get_smart_export_probe_headers=lambda: probes,
+        )
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output, {"in_memory": True})
+        report_model.generate_xlsx_report(
+            workbook,
+            {"allow_incomplete_sales_cache": False},
+            [wizard],
+        )
+        workbook.close()
+
+        with zipfile.ZipFile(io.BytesIO(output.getvalue())) as archive:
+            workbook_xml = etree.fromstring(archive.read("xl/workbook.xml"))
+            shared_strings = archive.read("xl/sharedStrings.xml").decode("utf-8")
+        sheet_names = workbook_xml.xpath(
+            "//*[local-name()='sheet']/@name"
+        )
+        self.assertEqual(len(sheet_names), 2)
+        self.assertEqual(len({name.casefold() for name in sheet_names}), 2)
+        self.assertTrue(all(len(name) <= 31 for name in sheet_names))
+        self.assertIn(SMART_EXPORT_COMPANY_NAME, shared_strings)
 
     def test_smart_lines_report_is_bound_to_transfer_list_multi_print(self):
         report_action = self.env.ref("ab_transfer_smart.action_report_ab_transfer_smart_lines")
@@ -2468,6 +2584,9 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(header.line_ids.qty, 8)
         self.assertEqual(header.line_ids.class_id, 601)
         self.assertEqual(header.line_ids.smart_source_stock_qty, 20)
+        self.assertEqual(header.get_transfer_lines_for_report(), header.line_ids)
+        self.assertEqual(header.get_smart_lines_for_report(), header.smart_line_ids)
+        self.assertEqual(len(header.get_smart_lines_for_report()), 2)
 
     def test_pre_submit_recreates_existing_transfer_line_for_product(self):
         header = self._create_smart_header_from_existing_records_or_skip()
@@ -2777,73 +2896,6 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(wizard.source_header_id, header)
         self.assertIn(fields.Date.to_string(missing_day), wizard.sales_cache_warning_message)
 
-    def test_export_missing_sales_cache_opens_readonly_cancel_continue_view(self):
-        header = self._create_smart_header_from_existing_records_or_skip()
-        missing_day = fields.Date.context_today(header) - timedelta(days=1)
-
-        with patch.object(
-                type(header),
-                "_get_smart_other_branch_store_sql_ids",
-                return_value=[999],
-        ), patch.object(
-                type(header),
-                "_get_smart_missing_sales_cache_dates_readonly",
-                return_value=[missing_day],
-        ), patch.object(type(header), "write") as header_write:
-            action = header.action_export_smart_transfer_excel()
-
-        header_write.assert_not_called()
-        self.assertEqual(action["res_model"], "ab_transfer_header")
-        self.assertEqual(action["res_id"], header.id)
-        self.assertEqual(action["target"], "new")
-
-        warning_view = self.env.ref(
-            "ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form"
-        )
-        self.assertEqual(action["views"], [(warning_view.id, "form")])
-
-        report_action = header.action_export_smart_transfer_excel_continue()
-        self.assertEqual(report_action["report_type"], "xlsx")
-        self.assertTrue(report_action["data"]["allow_incomplete_sales_cache"])
-
-    def test_export_warning_view_does_not_replace_default_transfer_form(self):
-        base_view = self.env.ref("ab_transfer.ab_transfer_header_view_form")
-        warning_view = self.env.ref(
-            "ab_transfer_smart.ab_transfer_header_smart_export_warning_view_form"
-        )
-
-        self.assertGreater(warning_view.priority, base_view.priority)
-        default_view_id = self.env["ir.ui.view"].default_view(
-            "ab_transfer_header", "form"
-        )
-        self.assertEqual(default_view_id, base_view.id)
-
-        form_view = self.env["ab_transfer_header"].get_views(
-            [(False, "form")], {"toolbar": False}
-        )["views"]["form"]
-        self.assertEqual(form_view["id"], base_view.id)
-        self.assertIn("from_store_id", form_view["arch"])
-        self.assertNotIn(
-            "smart_export_sales_cache_warning_message", form_view["arch"]
-        )
-
-    def test_export_complete_sales_cache_returns_xlsx_without_warning(self):
-        header = self._create_smart_header_from_existing_records_or_skip()
-
-        with patch.object(
-                type(header),
-                "_get_smart_other_branch_store_sql_ids",
-                return_value=[999],
-        ), patch.object(
-                type(header),
-                "_get_smart_missing_sales_cache_dates_readonly",
-                return_value=[],
-        ):
-            action = header.action_export_smart_transfer_excel()
-
-        self.assertEqual(action["report_type"], "xlsx")
-        self.assertFalse(action["data"]["allow_incomplete_sales_cache"])
-
     def test_readonly_missing_sales_cache_check_never_creates_sync_states(self):
         header = self._create_smart_header_from_existing_records_or_skip()
         SalesPerDay = self.env["ab_sales_per_day"]
@@ -2947,7 +2999,8 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(len(rows), 1)
         self.assertEqual(rows[0], {
             "code": product.code,
-            "company": product.company_id.display_name or "",
+            "product_name": product.name,
+            "company": SMART_EXPORT_COMPANY_NAME,
             "purchase_unit": float(product.min_sale_purchase_qty or 0.0),
             "sell_price": 14.0,
             "purchase_price": 9.0,
@@ -2963,9 +3016,91 @@ class TestSmartTransfer(TransactionCase):
         }
         self.assertEqual(counts_after, counts_before)
 
-    def test_excel_export_is_blocked_from_pre_submit(self):
+    def test_wizard_excel_export_action_is_readonly_and_uses_wizard_report(self):
         header = self._create_smart_header_from_existing_records_or_skip()
-        header.smart_stage = SMART_STAGE_PRE_SUBMIT
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+        })
+        Header = self.env["ab_transfer_header"]
+        StockCache = self.env["ab_transfer_smart_stock_cache"]
+        SalesPerDay = self.env["ab_sales_per_day"]
 
-        with self.assertRaisesRegex(UserError, "before Pre-Submit"):
-            header.action_export_smart_transfer_excel()
+        with patch.object(
+                type(wizard),
+                "_validate_smart_export_values",
+                return_value=None,
+        ), patch.object(
+                type(wizard),
+                "_get_smart_export_missing_sales_cache_dates_readonly",
+                return_value=[],
+        ), patch.object(type(wizard), "write") as wizard_write, patch.object(
+                type(Header),
+                "create",
+        ) as header_create, patch.object(
+                type(StockCache),
+                "refresh_stores_cache",
+        ) as refresh_cache, patch.object(
+                type(SalesPerDay),
+                "_ensure_sync_states",
+        ) as ensure_sync_states:
+            action = wizard.action_export_excel()
+
+        wizard_write.assert_not_called()
+        header_create.assert_not_called()
+        refresh_cache.assert_not_called()
+        ensure_sync_states.assert_not_called()
+        self.assertEqual(action["report_type"], "xlsx")
+        self.assertEqual(
+            action["report_name"],
+            "ab_transfer_smart.smart_transfer_wizard_xlsx",
+        )
+
+    def test_wizard_excel_export_warning_is_readonly(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+        })
+        missing_day = fields.Date.context_today(wizard) - timedelta(days=1)
+
+        with patch.object(
+                type(wizard),
+                "_validate_smart_export_values",
+                return_value=None,
+        ), patch.object(
+                type(wizard),
+                "_get_smart_export_missing_sales_cache_dates_readonly",
+                return_value=[missing_day],
+        ), patch.object(type(wizard), "write") as wizard_write:
+            action = wizard.action_export_excel()
+
+        wizard_write.assert_not_called()
+        warning_view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_smart_wizard_export_warning_view_form"
+        )
+        self.assertEqual(action["res_model"], "ab_transfer_smart_wizard")
+        self.assertEqual(action["res_id"], wizard.id)
+        self.assertEqual(action["views"], [(warning_view.id, "form")])
+        self.assertEqual(action["target"], "new")
+
+    def test_wizard_view_has_draft_excel_export_button(self):
+        view = self.env.ref("ab_transfer_smart.ab_transfer_smart_wizard_view_form")
+        arch = etree.fromstring(view.arch_db.encode())
+        export_button = arch.xpath("//button[@name='action_export_excel']")[0]
+
+        self.assertEqual(export_button.get("string"), "Export Smart Transfer Excel")
+        self.assertEqual(export_button.get("invisible"), "state != 'draft'")
+
+        warning_view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_smart_wizard_export_warning_view_form"
+        )
+        default_view_id = self.env["ir.ui.view"].default_view(
+            "ab_transfer_smart_wizard", "form"
+        )
+        self.assertGreater(warning_view.priority, view.priority)
+        self.assertEqual(default_view_id, view.id)

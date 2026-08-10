@@ -206,7 +206,7 @@
                                 </thead>
                                 <tbody>
                                     <t t-set="sorted_smart_lines"
-                                       t-value="o.get_smart_report_sorted_lines(o.smart_line_ids)"/>
+                                       t-value="o.get_smart_lines_for_report()"/>
                                     <tr t-if="not sorted_smart_lines">
                                         <td colspan="7" class="text-center">No smart transfer lines found.</td>
                                     </tr>
@@ -385,7 +385,7 @@
                                                 </tr>
                                                 <tr class="ab-smart-info-row">
                                                     <th>B-Connect Transfer No.</th>
-                                                    <td><span t-field="o.eplus_serial"/></td>
+                                                    <td><span t-esc="o.get_smart_report_eplus_serial_text()"/></td>
                                                     <th>Company</th>
                                                     <td><span t-field="o.company_id"/></td>
                                                 </tr>
@@ -419,7 +419,7 @@
                                 </thead>
                                 <tbody>
                                     <t t-set="sorted_transfer_lines"
-                                       t-value="o.get_smart_report_sorted_lines(o.line_ids)"/>
+                                       t-value="o.get_transfer_lines_for_report()"/>
                                     <tr t-if="not sorted_transfer_lines">
                                         <td colspan="7" class="text-center">No transfer lines found.</td>
                                     </tr>
