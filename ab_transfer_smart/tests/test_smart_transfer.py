@@ -531,10 +531,16 @@ class TestSmartTransfer(TransactionCase):
         for header in (
             "Code",
             "Product",
+            "Qty",
+            "UoM",
+            "Exc.",
+            "Stock",
+        ):
+            self.assertIn(">%s<" % header, report_xml)
+        for removed_header in (
             "Source Type",
             "Create Day",
             "Location",
-            "Qty",
             "Expiry Date",
             "UOM",
             "Exclusion Reason",
@@ -544,30 +550,33 @@ class TestSmartTransfer(TransactionCase):
             "Total Need",
             "Over Need",
         ):
-            self.assertIn(">%s<" % header, report_xml)
+            self.assertNotIn(">%s<" % removed_header, report_xml)
         for field_name in (
             "line.product_id.code",
             "line.product_id.name",
+            "line.qty",
+            "line.exclusion_reason",
+            "line.smart_source_stock_qty",
+        ):
+            self.assertIn(field_name, report_xml)
+        for removed_field_name in (
             "line.source_type",
             "line.create_day",
             "line.smart_product_location",
-            "line.qty",
             "line.expiry_date",
-            "line.exclusion_reason",
-            "line.smart_source_stock_qty",
             "line.smart_expected_source_stock_qty",
             "line.smart_destination_stock_qty",
             "line.smart_total_need",
             "line.smart_over_need_qty",
         ):
-            self.assertIn(field_name, report_xml)
+            self.assertNotIn(removed_field_name, report_xml)
         self.assertEqual(report_xml.count("Transfer Date"), 1)
         self.assertEqual(report_xml.count("Printing Date"), 1)
         self.assertEqual(report_xml.count("get_smart_report_transfer_date_text()"), 1)
         self.assertEqual(report_xml.count("get_smart_report_printing_date_text()"), 1)
         self.assertNotIn("get_smart_report_line_chunks", report_xml)
         self.assertNotIn("line_chunk", report_xml)
-        self.assertEqual(report_action.paperformat_id.orientation, "Landscape")
+        self.assertEqual(report_action.paperformat_id.orientation, "Portrait")
 
     def test_sent_lines_report_uses_transfer_line_fields_and_landscape_layout(self):
         report_xml = self._get_report_template_xml("report_ab_transfer_lines")
@@ -577,8 +586,8 @@ class TestSmartTransfer(TransactionCase):
         self.assertIn("o.get_smart_report_sorted_lines(o.line_ids)", report_xml)
         self.assertNotIn("o.get_transfer_lines_for_report()", report_xml)
         self.assertNotIn("o.get_smart_lines_for_report()", report_xml)
-        self.assertIn("o.get_smart_report_eplus_serial_text()", report_xml)
-        self.assertNotIn('t-field="o.eplus_serial"', report_xml)
+        self.assertNotIn("o.get_smart_report_eplus_serial_text()", report_xml)
+        self.assertIn('t-field="o.eplus_serial"', report_xml)
         self.assertIn("B-Connect Transfer No.", report_xml)
         self.assertIn("ab-smart-lines-report", report_xml)
         for header in (
@@ -586,7 +595,6 @@ class TestSmartTransfer(TransactionCase):
             "Product",
             "Qty",
             "UoM",
-            "Exc.",
             "Stock",
             "Expected",
         ):
@@ -606,6 +614,7 @@ class TestSmartTransfer(TransactionCase):
             "Over Need",
             "Expiry Date",
             "UOM",
+            "Exc.",
             "Sell Price",
             "Cost",
             "Purchase Price",
@@ -624,8 +633,8 @@ class TestSmartTransfer(TransactionCase):
         self.assertNotIn("get_smart_report_line_chunks", report_xml)
         self.assertNotIn("line_chunk", report_xml)
         self.assertNotEqual(sent_action.paperformat_id, smart_action.paperformat_id)
-        self.assertEqual(sent_action.paperformat_id.orientation, "Landscape")
-        self.assertEqual(smart_action.paperformat_id.orientation, "Landscape")
+        self.assertEqual(sent_action.paperformat_id.orientation, "Portrait")
+        self.assertEqual(smart_action.paperformat_id.orientation, "Portrait")
 
     def test_smart_submit_flow_syncs_eplus_serial_from_sent_transfer(self):
         smart_header_path = (
