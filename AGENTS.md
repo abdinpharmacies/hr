@@ -542,6 +542,9 @@ For translation files such as `ar.po` and `ar_001.po`, agents must:
   strings, or OWL templates.
 - For every user-facing text changed or added, maintain the Arabic and English
   pair: English source in code/XML/JS and Arabic in both translation files.
+- Before finishing any module change, explicitly check every new or updated
+  user-facing string and ensure its translation is added or updated in both
+  `i18n/ar.po` and `i18n/ar_001.po` for that module.
 - Wrap frontend JavaScript user-facing strings with `_t(...)`.
 - For XML and template text, keep English source strings and translate them
   through `.po` files.
