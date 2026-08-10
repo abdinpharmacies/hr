@@ -1068,6 +1068,11 @@ msgid "Request note..."
 msgstr "مطلوب"
 
 #. module: ab_self_inventory
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_readonly
+msgid "Read Only"
+msgstr "قراءة فقط"
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__requested
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
 msgid "Requested"

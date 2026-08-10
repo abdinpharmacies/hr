@@ -1699,6 +1699,11 @@ msgid "Request note..."
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:res.groups,name:ab_self_inventory.group_ab_self_inventory_readonly
+msgid "Read Only"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__requested
