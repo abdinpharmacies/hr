@@ -1,5 +1,4 @@
-from odoo import fields, models, _
-from odoo.exceptions import UserError
+from odoo import fields, models
 
 
 class AbSalesHeader(models.Model):
@@ -10,9 +9,3 @@ class AbSalesHeader(models.Model):
         string="Sales Channel",
         ondelete="restrict",
     )
-
-    def _validate_before_push(self):
-        super()._validate_before_push()
-        for header in self:
-            if not header.sales_channel_id:
-                raise UserError(_("Sales channel is required before submit."))

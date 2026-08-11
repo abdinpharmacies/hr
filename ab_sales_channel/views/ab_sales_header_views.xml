@@ -8,6 +8,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='store_id'][@readonly]" position="after">
                     <field name="sales_channel_id"
+                           required="status not in ('saved', 'pending')"
                            readonly="status in ('saved', 'pending')"
                            options="{'no_create': True, 'no_create_edit': True}"/>
                 </xpath>

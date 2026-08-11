@@ -13,11 +13,6 @@ class AbSalesChannel(models.Model):
     sequence = fields.Integer(default=10)
     active = fields.Boolean(default=True)
 
-    _uniq_code = models.Constraint(
-        "UNIQUE(code)",
-        "Sales channel code must be unique.",
-    )
-
     def unlink(self):
         if self.env.context.get(MODULE_UNINSTALL_FLAG):
             return super().unlink()

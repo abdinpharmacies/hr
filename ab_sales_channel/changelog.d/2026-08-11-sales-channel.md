@@ -3,7 +3,8 @@
 User-facing changes:
 
 - Added configurable sales channels for POS sales.
-- Added the Sales Channel field to sales bills and required it before submit.
+- Added the Sales Channel field to sales bills and made it required in the sales UI only.
+- Kept sales channel required behavior out of Python validation and database constraints.
 - Added the Sales Channels configuration menu for sales managers and system administrators.
 - Added default sales channel records and Arabic translations.
 
