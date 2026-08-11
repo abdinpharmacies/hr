@@ -1577,6 +1577,7 @@ class TestSmartTransfer(TransactionCase):
         product_b = self._create_smart_product("SMART-ZERO-B", 990161, uom)
         product_a = self._create_smart_product("SMART-ZERO-A", 990162, uom)
         in_stock_product = self._create_smart_product("SMART-IN-STOCK", 990163, uom)
+        header.target_product_ids = [(6, 0, (product_b | product_a | in_stock_product).ids)]
 
         zero_stock_products = header._get_smart_zero_source_stock_products({
             "products_by_serial": {
@@ -1592,6 +1593,22 @@ class TestSmartTransfer(TransactionCase):
         })
 
         self.assertEqual(zero_stock_products.ids, [product_b.id, product_a.id])
+
+    def test_domain_zero_source_stock_products_do_not_open_warning(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        domain_product = self._create_smart_product("SMART-DOMAIN-ZERO", 990166, uom)
+
+        zero_stock_products = header._get_smart_zero_source_stock_products({
+            "products_by_serial": {
+                990166: domain_product,
+            },
+            "source_stock_by_serial": {
+                990166: 0.0,
+            },
+        })
+
+        self.assertFalse(zero_stock_products)
 
     def test_continue_ignored_products_are_removed_before_source_stock_query(self):
         header = self._create_smart_header()
@@ -1708,6 +1725,51 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(warning.zero_product_count, 1)
         self.assertEqual(warning.header_id, header)
         self.assertFalse(warning.smart_wizard_id)
+
+    def test_header_calculation_skips_domain_zero_stock_warning(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        source_stock_context = {
+            "products_by_serial": {product_serial: product},
+            "source_stock_by_serial": {product_serial: 0.0},
+        }
+
+        with patch.object(
+                type(header),
+                "_ensure_smart_destination_cache",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_validate_smart_transfer_header",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_get_smart_sales_cache_warning_action_if_needed",
+                return_value=False,
+        ), patch.object(
+                type(header),
+                "_get_smart_candidate_source_stock_context",
+                return_value=source_stock_context,
+        ), patch.object(
+                type(header),
+                "_fetch_destination_smart_rows",
+                return_value=[],
+        ) as fetch_rows, patch.object(
+                type(header),
+                "_apply_smart_transfer_rows",
+                return_value={
+                    "created": 0,
+                    "updated": 0,
+                    "dropout_excluded": 0,
+                    "missing": 0,
+                    "no_stock": 0,
+                },
+        ):
+            action = header.action_smart_transfer_calculation()
+
+        fetch_rows.assert_called_once_with(source_stock_context=source_stock_context)
+        self.assertEqual(action["tag"], "display_notification")
 
     def test_header_zero_stock_continue_skips_repeated_warning(self):
         header = self._create_smart_header_from_existing_records_or_skip()
@@ -1872,6 +1934,35 @@ class TestSmartTransfer(TransactionCase):
             ],
             product.ids,
         )
+
+    def test_wizard_generation_validation_skips_domain_zero_stock_warning(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+            "smart_product_domain": repr([("id", "=", product.id)]),
+        })
+        source_stock_context = {
+            "products_by_serial": {product_serial: product},
+            "source_stock_by_serial": {product_serial: 0.0},
+        }
+
+        with patch.object(
+                type(header),
+                "_validate_smart_transfer_header",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_get_smart_candidate_source_stock_context",
+                return_value=source_stock_context,
+        ):
+            action = wizard._get_calculation_validation_error_action()
+
+        self.assertFalse(action)
 
     def test_wizard_zero_stock_continue_resumes_generation_with_skip_context(self):
         header = self._create_smart_header_from_existing_records_or_skip()

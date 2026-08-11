@@ -3,10 +3,11 @@ Current changes before commit:
 - Add a Smart Transfer source opening-stock cache with one positive-stock row per source store, product, and cache day.
 - Keep older source cache days available for analysis while forced refreshes replace only the current day.
 - Use the source opening cache for wizard/header zero-stock checks and smart planning instead of live per-product source inventory reads.
+- Show the zero-source-stock blocking popup only for explicitly selected/requested products; broad automatic generation now skips zero-stock products without the extra popup.
 - Defer live class, batch, and expiry source inventory reads until pre-submit/submit/export paths that actually need transfer-line source details.
 - Serialize source cache refreshes per source store and re-check after the refresh lock so concurrent users share one opening snapshot.
 - Expose the source stock cache report menu with read access for Smart Transfer roles and full system access.
-- Add Arabic translations and focused tests for source cache history, positive-row filtering, concurrency re-checks, product linking, planning without expiry/class, and wizard source-cache ordering.
+- Add Arabic translations and focused tests for source cache history, positive-row filtering, concurrency re-checks, product linking, planning without expiry/class, wizard source-cache ordering, and non-blocking broad zero-stock generation.
 
 Files changed:
 

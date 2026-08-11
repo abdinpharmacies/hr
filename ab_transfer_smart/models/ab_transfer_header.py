@@ -1128,21 +1128,31 @@ class AbTransferHeader(models.Model):
 
     def _get_smart_zero_source_stock_products(self, source_stock_context=None):
         self.ensure_one()
+        explicit_products = self._get_smart_explicit_zero_source_warning_products()
+        if not explicit_products:
+            return explicit_products
+
         source_stock_context = (
             source_stock_context
             or self._get_smart_candidate_source_stock_context()
         )
         products_by_serial = source_stock_context["products_by_serial"]
         source_stock_by_serial = source_stock_context["source_stock_by_serial"]
+        explicit_product_ids = set(explicit_products.ids)
         return self.env["ab_product"].browse([
             product.id
             for serial, product in products_by_serial.items()
-            if float_compare(
+            if product.id in explicit_product_ids
+            and float_compare(
                 source_stock_by_serial.get(serial, 0.0),
                 0.0,
                 precision_digits=3,
             ) <= 0
         ])
+
+    def _get_smart_explicit_zero_source_warning_products(self):
+        self.ensure_one()
+        return self.target_product_ids | self.smart_product_line_ids.mapped("product_id")
 
     def _get_smart_zero_source_stock_warning_action(
             self,
