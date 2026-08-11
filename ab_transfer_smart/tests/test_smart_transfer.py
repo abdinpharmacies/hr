@@ -270,6 +270,63 @@ class TestSmartTransfer(TransactionCase):
         self.assertTrue(user_fields)
         self.assertTrue(all(field.get("readonly") == "1" for field in user_fields))
 
+    def test_smart_wizard_form_makes_non_creator_fields_readonly(self):
+        view_xml = (
+            Path(__file__).resolve().parents[1]
+            / "views"
+            / "ab_transfer_smart_wizard_views.xml"
+        ).read_text(encoding="utf-8")
+        arch = etree.fromstring(view_xml.encode())
+        owner_expression = "create_uid and create_uid != uid"
+
+        self.assertTrue(
+            arch.xpath(
+                "//record[@id='ab_transfer_smart_wizard_view_form']"
+                "//field[@name='create_uid'][@invisible='1']"
+            )
+        )
+        for field_name in (
+            "from_store_id",
+            "to_stores_id",
+            "smart_days",
+            "smart_stock_method",
+            "dropout_coverage",
+            "items_per_header",
+            "company_id",
+            "notes",
+            "smart_product_domain",
+            "product_import_text",
+            "product_line_ids",
+            "fair_store_ids",
+        ):
+            fields = arch.xpath(
+                "//record[@id='ab_transfer_smart_wizard_view_form']//field[@name=$name]",
+                name=field_name,
+            )
+            self.assertTrue(fields, "Missing field %s in Smart Wizard form" % field_name)
+            self.assertTrue(
+                any(owner_expression in (field.get("readonly") or "") for field in fields),
+                "Field %s does not include non-creator readonly expression" % field_name,
+            )
+
+        for button_name in (
+            "action_archive",
+            "action_refresh_smart_cache",
+            "action_generate_transfers",
+            "action_accept_sales_cache_warning_and_generate",
+            "action_refresh_sales_cache_and_generate",
+            "action_import_product_lines",
+        ):
+            buttons = arch.xpath(
+                "//record[@id='ab_transfer_smart_wizard_view_form']//button[@name=$name]",
+                name=button_name,
+            )
+            self.assertTrue(buttons, "Missing button %s in Smart Wizard form" % button_name)
+            self.assertTrue(
+                any(owner_expression in (button.get("invisible") or "") for button in buttons),
+                "Button %s does not include non-creator invisible expression" % button_name,
+            )
+
     def test_smart_wizard_copy_resets_user_to_duplicating_users_default_costcenter(self):
         owner_user = self._create_smart_security_user(
             "smart_copy_owner",

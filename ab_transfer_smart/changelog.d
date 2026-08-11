@@ -1,54 +1,16 @@
 Current changes before commit:
 
-<<<<<<< Updated upstream
-- Remove the old Source Transfer link from Smart Transfer wizards.
-- Remove the obsolete target mode and single-transfer recalculation path.
-- Make Smart Wizard generation always validate destination probes and create new generated transfers.
-- Keep generated transfer tracking through `ab_transfer_header.smart_wizard_id`.
-- Keep header-level sales-cache warnings local to the header calculation flow instead of opening a single-mode wizard retry.
-- Remove Source Transfer and Target Mode fields from Smart Wizard search, list, and form views.
-- Update tests to stop passing target mode and to assert header cache warnings no longer create Smart Wizard records.
-- Remove obsolete Arabic translations for removed Source Transfer and Target Mode strings.
-
-Files changed:
-
-- ab_transfer_smart/i18n/ar.po
-- ab_transfer_smart/i18n/ar_001.po
-- ab_transfer_smart/models/ab_transfer_header.py
-- ab_transfer_smart/models/ab_transfer_smart_wizard.py
-- ab_transfer_smart/tests/test_smart_transfer.py
-- ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
-
-
-commit a3ede2f39a9c6f61c85fc2ad60a4e247f4da398a (HEAD -> pos19)
-Author: hager yasser <hageryasser2002@gmail.com>
-Date:   Mon Aug 10 15:27:42 2026 +0300
-
-    ab_transfer_smart/FEAT: Add duplicate product warnings and confirmation flow
-
-- Detect duplicate pasted Smart Transfer product rows before Add Product aggregates quantities.
-- Show a one-line duplicate warning under the pasted product input while duplicates exist.
-- Add a two-step duplicate confirmation dialog so users can cancel before quantities are summed.
-- Keep duplicate pasted rows unchanged until the user confirms summing.
-- Add Arabic translations and test coverage for the duplicate import confirmation flow.
-
-Files changed:
-
-- ab_transfer_smart/changelog.d
-- ab_transfer_smart/i18n/ar.po
-- ab_transfer_smart/i18n/ar_001.po
-=======
 - Restrict Purchase Preparation Smart Wizard Draft write access to records created by the current user.
 - Restrict requested-product line writes so Purchase users cannot edit lines on another user's Draft Smart Wizard.
 - Keep Purchase Preparation, Store Preparation, and Store Revision users able to read all Smart Wizard records.
 - Keep Store Preparation and Store Revision users read-only through existing wizard ACLs.
 - Make the Smart Wizard User field unconditionally read-only in the form view.
+- Make Smart Wizard form fields and mutating buttons read-only/hidden for users who did not create the wizard.
 - Reset duplicated Smart Wizard records to the duplicating user's default cost center, ignoring explicit copy defaults for User.
-- Add focused tests for owner Draft writes, cross-user Draft reads, blocked cross-user Draft writes, requested-product line ownership, a second purchase user's own Draft writes, read-only store roles, system access, User field readonly XML, and duplicate User reset.
+- Add focused tests for owner Draft writes, cross-user Draft reads, blocked cross-user Draft writes, requested-product line ownership, a second purchase user's own Draft writes, read-only store roles, system access, User field readonly XML, non-creator readonly UI, and duplicate User reset.
 
 Files changed:
 
->>>>>>> Stashed changes
 - ab_transfer_smart/models/ab_transfer_smart_wizard.py
 - ab_transfer_smart/security/ir.model.access.csv
 - ab_transfer_smart/security/record_rules.xml

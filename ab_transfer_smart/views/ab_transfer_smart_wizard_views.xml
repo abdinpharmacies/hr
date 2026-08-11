@@ -80,14 +80,14 @@
                                 string="Archive"
                                 class="btn-secondary"
                                 groups="ab_transfer_smart.group_transfer_smart_purchase"
-                                invisible="not active"
+                                invisible="not active or (create_uid and create_uid != uid)"
                                 confirm="Archive this wizard and all generated transfers?"/>
                         <button name="action_refresh_smart_cache"
                                 type="object"
                                 string="Refresh Smart Cache"
                                 class="btn-secondary"
                                 groups="ab_transfer_smart.group_transfer_smart_purchase"
-                                invisible="state != 'draft'"/>
+                                invisible="state != 'draft' or (create_uid and create_uid != uid)"/>
                         <button name="action_export_excel"
                                 type="object"
                                 string="Export Smart Transfer Excel"
@@ -99,19 +99,19 @@
                                 string="Generate Transfers"
                                 class="btn-primary"
                                 groups="ab_transfer_smart.group_transfer_smart_purchase"
-                                invisible="state != 'draft' or sales_cache_warning_message"/>
+                                invisible="state != 'draft' or sales_cache_warning_message or (create_uid and create_uid != uid)"/>
                         <button name="action_accept_sales_cache_warning_and_generate"
                                 type="object"
                                 string="Continue Anyway"
                                 class="btn-primary"
                                 groups="ab_transfer_smart.group_transfer_smart_purchase"
-                                invisible="state != 'draft' or not sales_cache_warning_message or allow_incomplete_sales_cache"/>
+                                invisible="state != 'draft' or not sales_cache_warning_message or allow_incomplete_sales_cache or (create_uid and create_uid != uid)"/>
                         <button name="action_refresh_sales_cache_and_generate"
                                 type="object"
                                 string="Refresh Sales Cache &amp; Resume"
                                 class="btn-secondary"
                                 groups="ab_transfer_smart.group_transfer_smart_purchase"
-                                invisible="state != 'draft' or not sales_cache_warning_message"/>
+                                invisible="state != 'draft' or not sales_cache_warning_message or (create_uid and create_uid != uid)"/>
                         <button name="action_open_generated_transfers"
                                 type="object"
                                 string="Generated Transfers"
@@ -121,6 +121,7 @@
                     </header>
                     <sheet>
                         <field name="active" invisible="1"/>
+                        <field name="create_uid" invisible="1"/>
                         <widget name="web_ribbon"
                                 title="Archived"
                                 bg_color="text-bg-danger"
@@ -139,19 +140,19 @@
                         </group>
                         <group>
                             <group>
-                                <field name="from_store_id" readonly="state == 'done'"/>
+                                <field name="from_store_id" readonly="state == 'done' or (create_uid and create_uid != uid)"/>
                                 <field name="to_stores_id"
                                        widget="many2many_tags"
-                                       readonly="state == 'done'"/>
+                                       readonly="state == 'done' or (create_uid and create_uid != uid)"/>
                                 <field name="user_id" readonly="1"/>
                             </group>
                             <group>
-                                <field name="smart_days" readonly="state == 'done'"/>
-                                <field name="smart_stock_method" readonly="state == 'done'"/>
-                                <field name="dropout_coverage" readonly="state == 'done'"/>
-                                <field name="items_per_header" readonly="state == 'done'"/>
-                                <field name="company_id" readonly="state == 'done'"/>
-                                <field name="notes" readonly="state == 'done'"/>
+                                <field name="smart_days" readonly="state == 'done' or (create_uid and create_uid != uid)"/>
+                                <field name="smart_stock_method" readonly="state == 'done' or (create_uid and create_uid != uid)"/>
+                                <field name="dropout_coverage" readonly="state == 'done' or (create_uid and create_uid != uid)"/>
+                                <field name="items_per_header" readonly="state == 'done' or (create_uid and create_uid != uid)"/>
+                                <field name="company_id" readonly="state == 'done' or (create_uid and create_uid != uid)"/>
+                                <field name="notes" readonly="state == 'done' or (create_uid and create_uid != uid)"/>
                             </group>
                         </group>
                         <notebook>
@@ -162,7 +163,7 @@
                                                string="Product Filter"
                                                widget="domain"
                                                options="{'model': 'ab_product', 'count_limit': 1000, 'in_dialog': True}"
-                                               readonly="state == 'done'"/>
+                                               readonly="state == 'done' or (create_uid and create_uid != uid)"/>
                                     </group>
                                     <group string="Bulk Entry">
                                         <label for="product_import_text"/>
@@ -174,17 +175,17 @@
                                                    rows="5"
                                                    class="ab_smart_product_import_editor flex-grow-1"
                                                    placeholder="Paste from Excel: product code and quantity, one product per line"
-                                                   readonly="state == 'done'"/>
+                                                   readonly="state == 'done' or (create_uid and create_uid != uid)"/>
                                             <button name="action_import_product_lines"
                                                     type="object"
                                                     string="Add Product"
                                                     class="btn-secondary text-nowrap"
-                                                    invisible="state == 'done'"/>
+                                                    invisible="state == 'done' or (create_uid and create_uid != uid)"/>
                                         </div>
                                     </group>
                                 </group>
                                 <separator string="Requested Products"/>
-                                <field name="product_line_ids" readonly="state == 'done'">
+                                <field name="product_line_ids" readonly="state == 'done' or (create_uid and create_uid != uid)">
                                     <list editable="bottom" limit="1000">
                                         <field name="sequence" widget="handle"/>
                                         <field name="product_code"/>
@@ -196,7 +197,7 @@
                                 <field name="target_product_ids" invisible="1"/>
                             </page>
                             <page string="Fair Stores">
-                                <field name="fair_store_ids" readonly="state == 'done'">
+                                <field name="fair_store_ids" readonly="state == 'done' or (create_uid and create_uid != uid)">
                                     <list limit="100">
                                         <field name="code"/>
                                         <field name="name"/>
