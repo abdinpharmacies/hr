@@ -142,8 +142,13 @@
                                 <field name="from_store_id" readonly="state == 'done'"/>
                                 <field name="to_stores_id"
                                        widget="many2many_tags"
+<<<<<<< Updated upstream
                                        readonly="state == 'done'"/>
                                 <field name="user_id" readonly="state == 'done'"/>
+=======
+                                       readonly="state == 'done' or target_mode == 'single'"/>
+                                <field name="user_id" readonly="1"/>
+>>>>>>> Stashed changes
                             </group>
                             <group>
                                 <field name="smart_days" readonly="state == 'done'"/>

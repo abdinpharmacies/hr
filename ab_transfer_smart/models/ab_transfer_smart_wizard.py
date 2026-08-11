@@ -208,6 +208,11 @@ class AbTransferSmartWizard(models.Model):
     def _default_user_id(self):
         return self.env["ab_transfer_header"]._default_user_id()
 
+    def copy(self, default=None):
+        default = dict(default or {})
+        default["user_id"] = self._default_user_id()
+        return super().copy(default)
+
     @api.constrains("dropout_coverage")
     def _check_dropout_coverage(self):
         for rec in self:

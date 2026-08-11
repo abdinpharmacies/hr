@@ -150,6 +150,28 @@ class TestSmartTransfer(TransactionCase):
             "user_id": user.id,
         })
 
+    def _create_smart_security_user(self, login, group_xmlids):
+        group_ids = [self.env.ref("base.group_user").id]
+        group_ids.extend(self.env.ref(xmlid).id for xmlid in group_xmlids)
+        return self.env["res.users"].sudo().with_context(no_reset_password=True).create({
+            "name": login.replace("_", " ").title(),
+            "login": login,
+            "email": "%s@example.com" % login,
+            "group_ids": [(6, 0, group_ids)],
+        })
+
+    def _create_smart_wizard_for_security(self, user=None):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        Wizard = self.env["ab_transfer_smart_wizard"]
+        if user:
+            Wizard = Wizard.with_user(user)
+        return Wizard.create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+        })
+
     def _get_existing_smart_products_or_skip(self, count):
         products = self.env["ab_product"].sudo().search([
             ("uom_id", "!=", False),
@@ -236,6 +258,48 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(wizard_defaults.get("user_id"), header_defaults.get("user_id"))
         self.assertEqual(wizard_defaults.get("company_id"), header_defaults.get("company_id"))
 
+    def test_smart_wizard_form_user_is_unconditionally_readonly(self):
+        view_xml = (
+            Path(__file__).resolve().parents[1]
+            / "views"
+            / "ab_transfer_smart_wizard_views.xml"
+        ).read_text(encoding="utf-8")
+        arch = etree.fromstring(view_xml.encode())
+        user_fields = arch.xpath("//record[@id='ab_transfer_smart_wizard_view_form']//field[@name='user_id']")
+
+        self.assertTrue(user_fields)
+        self.assertTrue(all(field.get("readonly") == "1" for field in user_fields))
+
+    def test_smart_wizard_copy_resets_user_to_duplicating_users_default_costcenter(self):
+        owner_user = self._create_smart_security_user(
+            "smart_copy_owner",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+        copy_user = self._create_smart_security_user(
+            "smart_copy_user",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+        costcenters = self.env["ab_costcenter"].sudo().search([], limit=2)
+        if len(costcenters) < 2:
+            self.skipTest("At least two existing costcenters are needed for smart wizard copy tests.")
+        original_costcenter, copy_costcenter = costcenters
+        try:
+            self.env["ab_hr_employee"].sudo().create({
+                "name": "SMARTCOPYUSR Employee",
+                "user_id": copy_user.id,
+                "costcenter_id": copy_costcenter.id,
+            })
+        except ValidationError as error:
+            if "Replication Database" in str(error):
+                self.skipTest("Replica database blocks creating employee test records.")
+            raise
+        wizard = self._create_smart_wizard_for_security(owner_user)
+        wizard.with_user(owner_user).write({"user_id": original_costcenter.id})
+
+        copied_wizard = wizard.with_user(copy_user).copy(default={"user_id": original_costcenter.id})
+
+        self.assertEqual(copied_wizard.user_id, copy_costcenter)
+
     def test_smart_wizard_items_per_header_defaults_to_40(self):
         defaults = self.env["ab_transfer_smart_wizard"].default_get(["items_per_header"])
 
@@ -248,6 +312,135 @@ class TestSmartTransfer(TransactionCase):
 
         with self.assertRaisesRegex(ValidationError, "at least 1"):
             wizard._check_items_per_header()
+
+    def test_purchase_user_can_create_and_write_own_draft_smart_wizard(self):
+        purchase_user = self._create_smart_security_user(
+            "smart_purchase_owner",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+
+        wizard = self._create_smart_wizard_for_security(purchase_user)
+        wizard.with_user(purchase_user).write({"notes": "Owner update"})
+
+        self.assertEqual(wizard.state, "draft")
+        self.assertEqual(wizard.notes, "Owner update")
+        self.assertEqual(wizard.create_uid, purchase_user)
+
+    def test_purchase_user_can_read_but_not_write_other_users_draft_smart_wizard(self):
+        owner_user = self._create_smart_security_user(
+            "smart_purchase_other_owner",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+        purchase_user = self._create_smart_security_user(
+            "smart_purchase_reader",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+        wizard = self._create_smart_wizard_for_security(owner_user)
+
+        self.assertEqual(wizard.state, "draft")
+        self.assertEqual(
+            wizard.with_user(purchase_user).read(["notes", "state"])[0]["id"],
+            wizard.id,
+        )
+        with self.assertRaises(AccessError):
+            wizard.with_user(purchase_user).write({"notes": "Blocked update"})
+
+        purchase_user_wizard = self._create_smart_wizard_for_security(purchase_user)
+        purchase_user_wizard.with_user(purchase_user).write({"notes": "Own draft update"})
+
+        self.assertEqual(purchase_user_wizard.state, "draft")
+        self.assertEqual(purchase_user_wizard.notes, "Own draft update")
+        self.assertEqual(purchase_user_wizard.create_uid, purchase_user)
+
+    def test_purchase_user_cannot_edit_other_users_draft_smart_wizard_product_lines(self):
+        owner_user = self._create_smart_security_user(
+            "smart_product_line_owner",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+        purchase_user = self._create_smart_security_user(
+            "smart_product_line_reader",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+        owner_product, purchase_product = self._get_existing_smart_products_or_skip(2)
+        owner_wizard = self._create_smart_wizard_for_security(owner_user)
+        owner_line = self.env["ab_transfer_smart_product_line"].with_user(owner_user).create({
+            "wizard_id": owner_wizard.id,
+            "product_id": owner_product.id,
+            "qty": 2,
+        })
+
+        self.assertEqual(
+            owner_line.with_user(purchase_user).read(["qty"])[0]["id"],
+            owner_line.id,
+        )
+        with self.assertRaises(AccessError):
+            owner_line.with_user(purchase_user).write({"qty": 3})
+        with self.assertRaises(AccessError):
+            self.env["ab_transfer_smart_product_line"].with_user(purchase_user).create({
+                "wizard_id": owner_wizard.id,
+                "product_id": purchase_product.id,
+                "qty": 1,
+            })
+
+        purchase_wizard = self._create_smart_wizard_for_security(purchase_user)
+        purchase_line = self.env["ab_transfer_smart_product_line"].with_user(purchase_user).create({
+            "wizard_id": purchase_wizard.id,
+            "product_id": purchase_product.id,
+            "qty": 1,
+        })
+        purchase_line.with_user(purchase_user).write({"qty": 4})
+
+        self.assertEqual(purchase_line.qty, 4)
+
+    def test_store_preparation_user_can_read_but_not_create_or_write_smart_wizards(self):
+        store_user = self._create_smart_security_user(
+            "smart_store_preparation_security",
+            ["ab_transfer_smart.group_trnasfer_smart_store_preparation"],
+        )
+        wizard = self._create_smart_wizard_for_security()
+
+        self.assertEqual(
+            wizard.with_user(store_user).read(["notes"])[0]["id"],
+            wizard.id,
+        )
+        with self.assertRaises(AccessError):
+            self._create_smart_wizard_for_security(store_user)
+        with self.assertRaises(AccessError):
+            wizard.with_user(store_user).write({"notes": "Blocked update"})
+
+    def test_store_revision_user_can_read_but_not_create_or_write_smart_wizards(self):
+        revision_user = self._create_smart_security_user(
+            "smart_store_revision_security",
+            ["ab_transfer_smart.group_trnasfer_smart_store_revision"],
+        )
+        wizard = self._create_smart_wizard_for_security()
+
+        self.assertEqual(
+            wizard.with_user(revision_user).read(["notes"])[0]["id"],
+            wizard.id,
+        )
+        with self.assertRaises(AccessError):
+            self._create_smart_wizard_for_security(revision_user)
+        with self.assertRaises(AccessError):
+            wizard.with_user(revision_user).write({"notes": "Blocked update"})
+
+    def test_system_user_has_full_smart_wizard_access(self):
+        owner_user = self._create_smart_security_user(
+            "smart_system_owner",
+            ["ab_transfer_smart.group_transfer_smart_purchase"],
+        )
+        system_user = self._create_smart_security_user(
+            "smart_system_access_user",
+            ["base.group_system"],
+        )
+        wizard = self._create_smart_wizard_for_security(owner_user)
+
+        wizard.with_user(system_user).write({"notes": "System update"})
+        system_wizard = self._create_smart_wizard_for_security(system_user)
+        wizard.with_user(system_user).unlink()
+
+        self.assertEqual(system_wizard.create_uid, system_user)
+        self.assertFalse(wizard.exists())
 
     def test_store_preparation_user_can_load_dashboard_payload_with_sudoed_reports(self):
         dashboard_user = self.env["res.users"].sudo().with_context(no_reset_password=True).create({
