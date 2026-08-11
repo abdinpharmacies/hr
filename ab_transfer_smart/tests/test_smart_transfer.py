@@ -2041,7 +2041,6 @@ class TestSmartTransfer(TransactionCase):
 
     def test_wizard_refresh_sales_cache_syncs_missing_days_and_resumes_generation(self):
         wizard = self.env["ab_transfer_smart_wizard"].new({
-            "target_mode": "batch",
             "sales_cache_warning_message": "Missing sales cache days",
             "sales_cache_missing_days_count": 2,
         })
@@ -2089,7 +2088,6 @@ class TestSmartTransfer(TransactionCase):
 
     def test_wizard_refresh_sales_cache_keeps_warning_when_days_remain(self):
         wizard = self.env["ab_transfer_smart_wizard"].new({
-            "target_mode": "batch",
             "allow_incomplete_sales_cache": True,
             "sales_cache_warning_message": "Old warning",
             "sales_cache_missing_days_count": 2,
@@ -2136,7 +2134,6 @@ class TestSmartTransfer(TransactionCase):
 
     def test_wizard_refresh_sales_cache_resumes_without_resync_when_cache_is_ready(self):
         wizard = self.env["ab_transfer_smart_wizard"].new({
-            "target_mode": "batch",
             "sales_cache_warning_message": "Old warning",
             "sales_cache_missing_days_count": 1,
         })
@@ -2229,9 +2226,7 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(action["name"], "Warning")
 
     def test_wizard_generate_returns_danger_after_cache_when_validation_fails(self):
-        wizard = self.env["ab_transfer_smart_wizard"].new({
-            "target_mode": "batch",
-        })
+        wizard = self.env["ab_transfer_smart_wizard"].new({})
         calls = []
 
         def validate_values():
@@ -2973,13 +2968,14 @@ class TestSmartTransfer(TransactionCase):
 
         self.assertIn(9903, context)
 
-    def test_smart_calculation_returns_persistent_warning_wizard_for_missing_cache(self):
+    def test_smart_calculation_returns_local_warning_for_missing_cache(self):
         header = self._create_smart_header()
         uom = self._create_smart_uom()
         product = self._create_smart_product("SMART-WARNING-P1", 99041, uom)
         header.target_product_ids = [(6, 0, product.ids)]
         missing_day = fields.Date.today() - timedelta(days=1)
         calls = []
+        wizard_count_before = self.env["ab_transfer_smart_wizard"].search_count([])
 
         def refresh_cache(force=False):
             calls.append("cache")
@@ -3008,12 +3004,15 @@ class TestSmartTransfer(TransactionCase):
         ):
             action = header.action_smart_transfer_calculation()
 
-        wizard = self.env["ab_transfer_smart_wizard"].browse(action["res_id"])
         self.assertEqual(calls, ["cache", "warning"])
-        self.assertEqual(action["res_model"], "ab_transfer_smart_wizard")
-        self.assertEqual(wizard.target_mode, "single")
-        self.assertEqual(wizard.source_header_id, header)
-        self.assertIn(fields.Date.to_string(missing_day), wizard.sales_cache_warning_message)
+        self.assertEqual(action["type"], "ir.actions.client")
+        self.assertEqual(action["tag"], "display_notification")
+        self.assertEqual(action["params"]["type"], "warning")
+        self.assertIn(fields.Date.to_string(missing_day), action["params"]["message"])
+        self.assertEqual(
+            self.env["ab_transfer_smart_wizard"].search_count([]),
+            wizard_count_before,
+        )
 
     def test_readonly_missing_sales_cache_check_never_creates_sync_states(self):
         header = self._create_smart_header_from_existing_records_or_skip()

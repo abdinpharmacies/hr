@@ -428,41 +428,6 @@ class AbTransferHeader(models.Model):
             dt_format="yyyy-MM-dd HH:mm",
         ) if value else ""
 
-    def action_open_smart_transfer_wizard(self):
-        self.ensure_one()
-        self._check_smart_group(SMART_GROUP_PURCHASE)
-        self._check_smart_stage(SMART_STAGE_PURCHASE_PREPARATION)
-        self._check_smart_not_submitted()
-        wizard = self.env["ab_transfer_smart_wizard"].create(
-            self._prepare_smart_transfer_wizard_vals()
-        )
-        return wizard._reopen_wizard_action()
-
-    def _prepare_smart_transfer_wizard_vals(self):
-        self.ensure_one()
-        return {
-            "target_mode": "batch",
-            "source_header_id": self.id,
-            "from_store_id": self.from_store_id.id,
-            "to_stores_id": [(6, 0, self.to_store_id.ids)],
-            "user_id": self.user_id.id,
-            "notes": self.notes,
-            "company_id": self.company_id.id,
-            "target_product_ids": [(6, 0, self.target_product_ids.ids)],
-            "product_line_ids": [
-                (0, 0, {
-                    "product_id": line.product_id.id,
-                    "qty": line.qty or line.product_id.min_sale_purchase_qty or 1.0,
-                })
-                for line in self.smart_product_line_ids
-            ],
-            "fair_store_ids": [(6, 0, self.fair_store_ids.ids)],
-            "smart_product_domain": self.smart_product_domain or "[]",
-            "smart_days": self.smart_days,
-            "smart_stock_method": self.smart_stock_method,
-            "dropout_coverage": self.smart_dropout_coverage,
-        }
-
     def action_smart_refresh_destination_cache(self):
         self.ensure_one()
         self._check_smart_group(SMART_GROUP_PURCHASE)
@@ -1589,15 +1554,11 @@ class AbTransferHeader(models.Model):
             return False
 
         message = self._format_smart_sales_cache_warning_message(missing_dates)
-        wizard = self.env["ab_transfer_smart_wizard"].create({
-            **self._prepare_smart_transfer_wizard_vals(),
-            "target_mode": "single",
-            "to_stores_id": [(6, 0, self.to_store_id.ids)],
-            "allow_incomplete_sales_cache": False,
-            "sales_cache_warning_message": message,
-            "sales_cache_missing_days_count": len(missing_dates),
-        })
-        return wizard._reopen_wizard_action()
+        return self._smart_notification(
+            _("Smart Transfer Calculation"),
+            message,
+            "warning",
+        )
 
     def _get_smart_sales_cache_periods(self):
         self.ensure_one()
