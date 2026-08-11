@@ -1,5 +1,30 @@
 Current changes before commit:
 
+- Remove the old Source Transfer link from Smart Transfer wizards.
+- Remove the obsolete target mode and single-transfer recalculation path.
+- Make Smart Wizard generation always validate destination probes and create new generated transfers.
+- Keep generated transfer tracking through `ab_transfer_header.smart_wizard_id`.
+- Keep header-level sales-cache warnings local to the header calculation flow instead of opening a single-mode wizard retry.
+- Remove Source Transfer and Target Mode fields from Smart Wizard search, list, and form views.
+- Update tests to stop passing target mode and to assert header cache warnings no longer create Smart Wizard records.
+- Remove obsolete Arabic translations for removed Source Transfer and Target Mode strings.
+
+Files changed:
+
+- ab_transfer_smart/i18n/ar.po
+- ab_transfer_smart/i18n/ar_001.po
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/models/ab_transfer_smart_wizard.py
+- ab_transfer_smart/tests/test_smart_transfer.py
+- ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
+
+
+commit a3ede2f39a9c6f61c85fc2ad60a4e247f4da398a (HEAD -> pos19)
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Mon Aug 10 15:27:42 2026 +0300
+
+    ab_transfer_smart/FEAT: Add duplicate product warnings and confirmation flow
+
 - Detect duplicate pasted Smart Transfer product rows before Add Product aggregates quantities.
 - Show a one-line duplicate warning under the pasted product input while duplicates exist.
 - Add a two-step duplicate confirmation dialog so users can cancel before quantities are summed.
@@ -8,6 +33,7 @@ Current changes before commit:
 
 Files changed:
 
+- ab_transfer_smart/changelog.d
 - ab_transfer_smart/i18n/ar.po
 - ab_transfer_smart/i18n/ar_001.po
 - ab_transfer_smart/models/ab_transfer_smart_wizard.py
@@ -17,7 +43,39 @@ Files changed:
 - ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
 
 
-commit 36794b0a8be6ac9af2608e2ba773415e23851a9b (HEAD -> pos19)
+commit b6899c66138c1be7dc21c4d35926b048943585d2
+Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
+Date:   Mon Aug 10 15:12:28 2026 +0300
+
+    ab_transfer_smart/fix: use last version of pdf and use Portrait in pdf
+
+- Align Smart Lines and Transfer Lines PDF reports with the requested compact portrait layout.
+- Print B-Connect transfer numbers through Odoo locale-aware field formatting.
+- Update report assertions for portrait orientation and compact printed columns.
+
+Files changed:
+
+- ab_transfer_smart/report/ab_transfer_line_reports.xml
+- ab_transfer_smart/tests/test_smart_transfer.py
+
+
+commit 0be5922230f594337903a1e90a15067eecc14f89
+Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
+Date:   Mon Aug 10 13:54:25 2026 +0300
+
+    ab_transfer_smart/feat: persist B-Connect serial in Sent Lines report
+
+- Add EPlus serial storage for Smart Transfer headers.
+- Sync the B-Connect transfer serial after smart submit.
+- Print the B-Connect transfer number in the Sent Lines report.
+
+Files changed:
+
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/report/ab_transfer_line_reports.xml
+
+
+commit 36794b0a8be6ac9af2608e2ba773415e23851a9b
 Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
 Date:   Sun Aug 9 11:57:38 2026 +0300
 

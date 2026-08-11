@@ -32,7 +32,6 @@
             <field name="model">ab_transfer_smart_wizard</field>
             <field name="arch" type="xml">
                 <search string="Smart Transfer Wizards">
-                    <field name="source_header_id"/>
                     <field name="from_store_id"/>
                     <field name="to_stores_id"/>
                     <field name="state"/>
@@ -45,7 +44,6 @@
                     <separator/>
                     <filter name="group_by_state" string="State" context="{'group_by': 'state'}"/>
                     <filter name="group_by_from_store" string="From Store" context="{'group_by': 'from_store_id'}"/>
-                    <filter name="group_by_source" string="Source Transfer" context="{'group_by': 'source_header_id'}"/>
                 </search>
             </field>
         </record>
@@ -57,8 +55,6 @@
                 <list string="Smart Transfer Wizards" create="1" edit="1" delete="0">
                     <field name="display_name"/>
                     <field name="state"/>
-                    <field name="target_mode" optional="hide"/>
-                    <field name="source_header_id"/>
                     <field name="from_store_id"/>
                     <field name="to_stores_id" widget="many2many_tags"/>
                     <field name="smart_days"/>
@@ -143,13 +139,11 @@
                         </group>
                         <group>
                             <group>
-                                <field name="target_mode" readonly="1"/>
-                                <field name="source_header_id" readonly="1"/>
-                                <field name="from_store_id" readonly="state == 'done' or target_mode == 'single'"/>
+                                <field name="from_store_id" readonly="state == 'done'"/>
                                 <field name="to_stores_id"
                                        widget="many2many_tags"
-                                       readonly="state == 'done' or target_mode == 'single'"/>
-                                <field name="user_id" readonly="state == 'done' or target_mode == 'single'"/>
+                                       readonly="state == 'done'"/>
+                                <field name="user_id" readonly="state == 'done'"/>
                             </group>
                             <group>
                                 <field name="smart_days" readonly="state == 'done'"/>

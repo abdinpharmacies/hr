@@ -101,11 +101,6 @@ msgid "Back to Store Revision"
 msgstr "العودة إلى مراجعة المخزن"
 
 #. module: ab_transfer_smart
-#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__target_mode__batch
-msgid "Batch"
-msgstr "دفعة"
-
-#. module: ab_transfer_smart
 #: model:ir.model.fields,help:ab_transfer_smart.field_ab_transfer_header__smart_product_domain
 msgid "Build a product filter to include matching products in Smart Transfer."
 msgstr "أنشئ فلترًا للأصناف لإدراج الأصناف المطابقة في التحويل الذكي."
@@ -938,11 +933,6 @@ msgid "Set Dropout Coverage % before applying dropout."
 msgstr "Set Dropout Coverage % before applying dropout."
 
 #. module: ab_transfer_smart
-#: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__target_mode__single
-msgid "Single Transfer"
-msgstr "تحويل واحد"
-
-#. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_header__smart_days
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__smart_days
 msgid "Smart Days"
@@ -1114,12 +1104,6 @@ msgstr "المعالج الذكي %s"
 
 #. module: ab_transfer_smart
 #. odoo-python
-#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
-msgid "Smart Wizard for %s"
-msgstr "معالج ذكي لـ %s"
-
-#. module: ab_transfer_smart
-#. odoo-python
 #: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
 #: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
 msgid "Smart cache refreshed. Stores: %(stores)s, Stock rows: %(stock_rows)s, Sales rows: %(sales_rows)s."
@@ -1256,12 +1240,6 @@ msgstr "رصيد المصدر"
 #: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
 msgid "Source Store"
 msgstr "المخزن المصدر"
-
-#. module: ab_transfer_smart
-#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__source_header_id
-#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
-msgid "Source Transfer"
-msgstr "التحويل المصدر"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__source_type
@@ -1411,11 +1389,6 @@ msgstr "لا يمكن إعادة حساب التحويلات المرسلة."
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_line__is_submitted
 msgid "Submitted?"
 msgstr "مرسل؟"
-
-#. module: ab_transfer_smart
-#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_wizard__target_mode
-msgid "Target Mode"
-msgstr "وضع الهدف"
 
 #. module: ab_transfer_smart
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_header_view_form_smart

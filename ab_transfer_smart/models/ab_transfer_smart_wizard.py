@@ -21,15 +21,6 @@ class AbTransferSmartWizard(models.Model):
         string="Name",
         compute="_compute_display_name",
     )
-    target_mode = fields.Selection(
-        selection=[
-            ("batch", "Batch"),
-            ("single", "Single Transfer"),
-        ],
-        default="batch",
-        required=True,
-        copy=False,
-    )
     state = fields.Selection(
         selection=[
             ("draft", "Draft"),
@@ -42,12 +33,6 @@ class AbTransferSmartWizard(models.Model):
     active = fields.Boolean(
         default=True,
         index=True,
-    )
-    source_header_id = fields.Many2one(
-        "ab_transfer_header",
-        string="Source Transfer",
-        copy=False,
-        ondelete="set null",
     )
     from_store_id = fields.Many2one(
         "ab_store",
@@ -176,12 +161,9 @@ class AbTransferSmartWizard(models.Model):
         compute="_compute_generated_header_count",
     )
 
-    @api.depends("source_header_id")
     def _compute_display_name(self):
         for rec in self:
-            if rec.source_header_id:
-                rec.display_name = _("Smart Wizard for %s") % rec.source_header_id.display_name
-            elif rec.id:
+            if rec.id:
                 rec.display_name = _("Smart Wizard %s") % rec.id
             else:
                 rec.display_name = _("New Smart Wizard")
@@ -270,8 +252,6 @@ class AbTransferSmartWizard(models.Model):
         if validation_error_action:
             return validation_error_action
 
-        if self.target_mode == "single":
-            return self._action_run_single_header_calculation()
         return self._action_generate_batch_transfers()
 
     def action_export_excel(self):
@@ -583,14 +563,9 @@ class AbTransferSmartWizard(models.Model):
     def _get_calculation_validation_error_action(self):
         self.ensure_one()
         try:
-            if self.target_mode == "single":
-                if not self.source_header_id:
-                    raise UserError(_("Source transfer is required for single transfer calculation."))
-                self.source_header_id._validate_smart_transfer_header()
-            else:
-                Header = self.env["ab_transfer_header"]
-                for destination in self.to_stores_id:
-                    Header.new(self._prepare_header_probe_vals(destination))._validate_smart_transfer_header()
+            Header = self.env["ab_transfer_header"]
+            for destination in self.to_stores_id:
+                Header.new(self._prepare_header_probe_vals(destination))._validate_smart_transfer_header()
         except UserError as error:
             return self._smart_notification(
                 _("Smart Transfer Calculation"),
@@ -675,48 +650,6 @@ class AbTransferSmartWizard(models.Model):
         if self.allow_incomplete_sales_cache:
             context["skip_smart_sales_cache_coverage"] = True
         return context
-
-    def _action_run_single_header_calculation(self):
-        self.ensure_one()
-        if not self.source_header_id:
-            raise UserError(_("Source transfer is required for single transfer calculation."))
-        self._sync_source_header_from_wizard()
-        calculation_action = self.source_header_id.with_context(
-            **self._get_calculation_context()
-        ).action_smart_transfer_calculation()
-        if self._is_danger_notification(calculation_action):
-            return calculation_action
-        self.write({"state": "done"})
-        return {
-            "type": "ir.actions.act_window",
-            "name": _("Smart Transfer"),
-            "res_model": "ab_transfer_header",
-            "res_id": self.source_header_id.id,
-            "view_mode": "form",
-        }
-
-    def _sync_source_header_from_wizard(self):
-        self.ensure_one()
-        self.source_header_id.write({
-            "from_store_id": self.from_store_id.id,
-            "to_store_id": self.to_stores_id[:1].id,
-            "user_id": self.user_id.id,
-            "notes": self.notes,
-            "company_id": self.company_id.id,
-            "smart_days": self.smart_days,
-            "smart_stock_method": self.smart_stock_method,
-            "smart_product_domain": self.smart_product_domain or "[]",
-            "smart_dropout_coverage": self.dropout_coverage,
-            "target_product_ids": [(6, 0, self.target_product_ids.ids)],
-            "fair_store_ids": [(6, 0, self.fair_store_ids.ids)],
-            "smart_product_line_ids": [
-                (5, 0, 0),
-                *[
-                    (0, 0, self._prepare_header_product_line_vals(line))
-                    for line in self.product_line_ids
-                ],
-            ],
-        })
 
     def _action_generate_batch_transfers(self):
         self.ensure_one()
