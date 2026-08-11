@@ -1,0 +1,186 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_channel
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-11 00:00+0000\n"
+"PO-Revision-Date: 2026-08-11 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_sales_channel
+#: code:addons/ab_sales_channel/models/ab_sales_channel.py:0
+msgid "Archive sales channels instead of deleting them."
+msgstr "قم بأرشفة قنوات البيع بدلا من حذفها."
+
+#. module: ab_sales_channel
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_channel_view_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_cosmo_care
+msgid "Cosmo Care"
+msgstr "كوزمو كير"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__create_uid
+msgid "Created by"
+msgstr "تم الإنشاء بواسطة"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__create_date
+msgid "Created on"
+msgstr "تاريخ الإنشاء"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__id
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_header__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_eva_psp
+msgid "Eva PSP"
+msgstr "ايفا PSP"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_hot_line
+msgid "Hot Line"
+msgstr "HOT LINE"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_instagram
+msgid "Instagram"
+msgstr "انستجرام"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_messenger
+msgid "Messenger"
+msgstr "ماسنجر"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_mobile_call
+msgid "Mobile Call"
+msgstr "مكالمة موبايل"
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_channel__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_sales_channel
+#. odoo-javascript
+#: code:addons/ab_sales_channel/static/src/pos/sales_channel_patch.js:0
+msgid "Please fill the required fields."
+msgstr "يرجى ملء الحقول المطلوبة."
+
+#. module: ab_sales_channel
+#: model:ir.model.fields,field_description:ab_sales_channel.field_ab_sales_header__sales_channel_id
+#: model:ir.model,name:ab_sales_channel.model_ab_sales_channel
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_header_view_form_sales_channel
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_header_view_list_sales_channel
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_header_view_search_sales_channel
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_channel_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_channel_view_list
+msgid "Sales Channel"
+msgstr "قناة البيع"
+
+#. module: ab_sales_channel
+#: model:ir.actions.act_window,name:ab_sales_channel.ab_sales_channel_action
+#: model:ir.ui.menu,name:ab_sales_channel.ab_sales_channel_menu
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_channel_view_search
+msgid "Sales Channels"
+msgstr "قنوات البيع"
+
+#. module: ab_sales_channel
+#: code:addons/ab_sales_channel/models/ab_sales_channel.py:0
+msgid "Sales channel code must be unique."
+msgstr "يجب أن يكون كود قناة البيع فريدا."
+
+#. module: ab_sales_channel
+#: code:addons/ab_sales_channel/models/ab_sales_header.py:0
+#. odoo-javascript
+#: code:addons/ab_sales_channel/static/src/pos/sales_channel_templates.xml:0
+msgid "Sales channel is required before submit."
+msgstr "قناة البيع مطلوبة قبل الإرسال."
+
+#. module: ab_sales_channel
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_channel_view_form
+#: model_terms:ir.ui.view,arch_db:ab_sales_channel.ab_sales_channel_view_list
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_sales_channel
+#. odoo-javascript
+#: code:addons/ab_sales_channel/static/src/pos/sales_channel_patch.js:0
+msgid "Select sales channel..."
+msgstr "اختر قناة البيع..."
+
+#. module: ab_sales_channel
+#: code:addons/ab_sales_channel/static/src/pos/sales_channel_templates.xml:0
+msgid "Sales channel is required."
+msgstr "قناة البيع مطلوبة."
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_telegram
+msgid "Telegram"
+msgstr "تليجرام"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_tiktok
+msgid "TikTok"
+msgstr "تيكتوك"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_website
+msgid "Website"
+msgstr "ويبسايت"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_whatsapp
+msgid "WhatsApp"
+msgstr "واتساب"
+
+#. module: ab_sales_channel
+#: model:ab_sales_channel,name:ab_sales_channel.ab_sales_channel_whatsapp_ad
+msgid "WhatsApp AD"
+msgstr "واتساب AD"
+
+#. module: ab_sales_channel
+#: model:ir.model,name:ab_sales_channel.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "رأس المبيعات"

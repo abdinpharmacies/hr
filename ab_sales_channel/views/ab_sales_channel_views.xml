@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_channel_view_list" model="ir.ui.view">
+            <field name="name">ab_sales_channel_view_list</field>
+            <field name="model">ab_sales_channel</field>
+            <field name="arch" type="xml">
+                <list string="Sales Channels">
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="code" optional="show"/>
+                    <field name="active" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_sales_channel_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_channel_view_form</field>
+            <field name="model">ab_sales_channel</field>
+            <field name="arch" type="xml">
+                <form string="Sales Channel">
+                    <sheet>
+                        <group>
+                            <field name="active" invisible="1"/>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="sequence"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_sales_channel_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_channel_view_search</field>
+            <field name="model">ab_sales_channel</field>
+            <field name="arch" type="xml">
+                <search string="Sales Channels">
+                    <field name="name"/>
+                    <field name="code"/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_sales_channel_action" model="ir.actions.act_window">
+            <field name="name">Sales Channels</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_sales_channel</field>
+            <field name="view_mode">list,form</field>
+            <field name="view_id" ref="ab_sales_channel_view_list"/>
+            <field name="context">{'search_default_active': 1}</field>
+        </record>
+
+        <menuitem id="ab_sales_channel_menu"
+                  name="Sales Channels"
+                  parent="ab_sales.config_sub_menu"
+                  action="ab_sales_channel_action"
+                  sequence="120"
+                  groups="ab_sales.group_ab_sales_manager,base.group_system"/>
+    </data>
+</odoo>

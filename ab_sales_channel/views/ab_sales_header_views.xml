@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_header_view_form_sales_channel" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_form_sales_channel</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='store_id'][@readonly]" position="after">
+                    <field name="sales_channel_id"
+                           readonly="status in ('saved', 'pending')"
+                           options="{'no_create': True, 'no_create_edit': True}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_sales_header_view_list_sales_channel" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_list_sales_channel</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//list/field[@name='store_id']" position="after">
+                    <field name="sales_channel_id" optional="show"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="ab_sales_header_view_search_sales_channel" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_search_sales_channel</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/field[@name='store_id']" position="after">
+                    <field name="sales_channel_id"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
