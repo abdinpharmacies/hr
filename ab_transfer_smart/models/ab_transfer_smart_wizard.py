@@ -9,6 +9,15 @@ SMART_GROUP_PURCHASE = "ab_transfer_smart.group_transfer_smart_purchase"
 SMART_STAGE_PURCHASE_PREPARATION = "purchase_preparation"
 SMART_LINE_SOURCE_WIZARD = "wizard"
 MAX_PRODUCT_IMPORT_LINES = 1000
+SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY = (
+    "skip_smart_zero_source_stock_warning"
+)
+SMART_IGNORED_ZERO_SOURCE_PRODUCT_IDS_CONTEXT_KEY = (
+    "smart_ignored_zero_source_product_ids"
+)
+SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY = (
+    "smart_prefetched_source_inventory_json_by_product"
+)
 
 
 class AbTransferSmartWizard(models.Model):
@@ -562,10 +571,23 @@ class AbTransferSmartWizard(models.Model):
 
     def _get_calculation_validation_error_action(self):
         self.ensure_one()
+        Header = self.env["ab_transfer_header"]
+        zero_stock_probe = self.env["ab_transfer_header"]
         try:
-            Header = self.env["ab_transfer_header"]
             for destination in self.to_stores_id:
-                Header.new(self._prepare_header_probe_vals(destination))._validate_smart_transfer_header()
+                probe = Header.new(self._prepare_header_probe_vals(destination))
+                probe._validate_smart_transfer_header()
+                if not zero_stock_probe:
+                    zero_stock_probe = probe
+            if (
+                    zero_stock_probe
+                    and not self.env.context.get(
+                        SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY
+                    )
+            ):
+                return zero_stock_probe._get_smart_zero_source_stock_warning_action(
+                    smart_wizard=self
+                )
         except UserError as error:
             return self._smart_notification(
                 _("Smart Transfer Calculation"),
@@ -649,6 +671,15 @@ class AbTransferSmartWizard(models.Model):
         }
         if self.allow_incomplete_sales_cache:
             context["skip_smart_sales_cache_coverage"] = True
+        if self.env.context.get(SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY):
+            context[SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY] = True
+        ignored_product_ids = self.env.context.get(
+            SMART_IGNORED_ZERO_SOURCE_PRODUCT_IDS_CONTEXT_KEY
+        )
+        if ignored_product_ids:
+            context[SMART_IGNORED_ZERO_SOURCE_PRODUCT_IDS_CONTEXT_KEY] = list(
+                ignored_product_ids
+            )
         return context
 
     def _action_generate_batch_transfers(self):
@@ -694,7 +725,18 @@ class AbTransferSmartWizard(models.Model):
             chunk_header = Header.create(
                 self._prepare_chunk_header_create_vals(header.to_store_id, chunk)
             )
-            chunk.write({"header_id": chunk_header.id})
+            prefetched_inventory_by_product = {
+                line.product_id.id: line.inventory_json or {"data": []}
+                for line in chunk
+                if line.product_id
+            }
+            chunk.with_context(
+                **{
+                    SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY: (
+                        prefetched_inventory_by_product
+                    )
+                }
+            ).write({"header_id": chunk_header.id})
             created_headers |= chunk_header
         return created_headers
 
@@ -942,3 +984,130 @@ class AbTransferSmartDuplicateImportConfirmation(models.TransientModel):
 
     def action_cancel(self):
         return {"type": "ir.actions.act_window_close"}
+
+
+class AbTransferSmartZeroStockWarning(models.TransientModel):
+    _name = "ab_transfer_smart_zero_stock_warning"
+    _description = "Smart Transfer Zero Source Stock Warning"
+
+    source_store_id = fields.Many2one(
+        "ab_store",
+        string="Source Store",
+        required=True,
+        readonly=True,
+    )
+    header_id = fields.Many2one(
+        "ab_transfer_header",
+        string="Transfer",
+        readonly=True,
+        ondelete="cascade",
+    )
+    smart_wizard_id = fields.Many2one(
+        "ab_transfer_smart_wizard",
+        string="Smart Transfer Wizard",
+        readonly=True,
+        ondelete="cascade",
+    )
+    zero_product_ids = fields.Json(
+        string="Zero-Stock Product IDs",
+        default=list,
+        copy=False,
+        readonly=True,
+    )
+    zero_product_count = fields.Integer(
+        string="Zero-Stock Product Count",
+        readonly=True,
+    )
+    message = fields.Text(
+        string="Warning Message",
+        compute="_compute_message",
+        readonly=True,
+    )
+
+    @api.depends("source_store_id", "zero_product_count")
+    def _compute_message(self):
+        for warning in self:
+            warning.message = _(
+                "%(count)s products have zero quantity in source store %(store)s "
+                "and will be skipped. Select View Products to review them, or "
+                "Continue Anyway to generate transfers for the remaining available "
+                "products."
+            ) % {
+                "count": warning.zero_product_count,
+                "store": warning.source_store_id.display_name or "-",
+            }
+
+    @api.model
+    def _open_warning(
+            self,
+            source_store,
+            products,
+            header=None,
+            smart_wizard=None,
+    ):
+        product_ids = products.ids
+        if not product_ids:
+            return False
+        if bool(header) == bool(smart_wizard):
+            raise UserError(_("A transfer or Smart Transfer Wizard is required."))
+        warning = self.create({
+            "source_store_id": source_store.id,
+            "zero_product_ids": product_ids,
+            "zero_product_count": len(product_ids),
+            "header_id": header.id if header else False,
+            "smart_wizard_id": smart_wizard.id if smart_wizard else False,
+        })
+        return warning._reopen_action()
+
+    def action_view_zero_stock_products(self):
+        self.ensure_one()
+        product_ids = [
+            int(product_id)
+            for product_id in self.zero_product_ids or []
+            if product_id
+        ]
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Products With Zero Source Stock"),
+            "res_model": "ab_product",
+            "view_mode": "list",
+            "domain": [("id", "in", product_ids)],
+            "target": "new",
+            "context": {
+                "create": False,
+                "edit": False,
+                "delete": False,
+            },
+        }
+
+    def action_continue_anyway(self):
+        self.ensure_one()
+        context = dict(
+            self.env.context,
+            **{
+                SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY: True,
+                SMART_IGNORED_ZERO_SOURCE_PRODUCT_IDS_CONTEXT_KEY: (
+                    list(self.zero_product_ids or [])
+                ),
+            },
+        )
+        if self.smart_wizard_id:
+            return self.smart_wizard_id.with_context(context).action_generate_transfers()
+        if self.header_id:
+            return self.header_id.with_context(context).action_smart_transfer_calculation()
+        raise UserError(_("The transfer generation record is no longer available."))
+
+    def _reopen_action(self):
+        self.ensure_one()
+        view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_smart_zero_stock_warning_view_form"
+        )
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Products With Zero Source Stock"),
+            "res_model": self._name,
+            "res_id": self.id,
+            "view_mode": "form",
+            "views": [(view.id, "form")],
+            "target": "new",
+        }

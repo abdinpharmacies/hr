@@ -10,6 +10,12 @@ SMART_STAGE_PURCHASE_PREPARATION = "purchase_preparation"
 SMART_LINE_LOCKED_STAGES = ("pre_submit", "submit")
 SMART_LINE_SOURCE_DOMAIN = "domain"
 SMART_LINE_SOURCE_WIZARD = "wizard"
+SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY = (
+    "smart_prefetched_source_inventory_json_by_product"
+)
+SMART_PREFETCHED_SOURCE_INVENTORY_CACHE_KEY = (
+    "ab_transfer_smart.prefetched_source_inventory_json_by_line"
+)
 EGYPT_TZ = ZoneInfo("Africa/Cairo")
 
 
@@ -79,6 +85,60 @@ class AbTransferSmartLine(models.Model):
         compute="_compute_smart_qty_exceeds_expected_stock",
         readonly=True,
     )
+
+    @api.depends("product_id", "header_id.from_store_id")
+    def _recompute_inventory_json(self):
+        prefetched_by_line = self.env.cr.cache.get(
+            SMART_PREFETCHED_SOURCE_INVENTORY_CACHE_KEY,
+            {},
+        )
+        if not prefetched_by_line:
+            return super()._recompute_inventory_json()
+
+        remaining_lines = self.browse()
+        for line in self:
+            if line.id not in prefetched_by_line:
+                remaining_lines |= line
+                continue
+            line.inventory_json = prefetched_by_line.pop(line.id)
+
+        if remaining_lines:
+            super(AbTransferSmartLine, remaining_lines)._recompute_inventory_json()
+
+    def _cache_prefetched_source_inventory_json(self, inventory_by_line):
+        prefetched_by_line = self.env.cr.cache.setdefault(
+            SMART_PREFETCHED_SOURCE_INVENTORY_CACHE_KEY,
+            {},
+        )
+        prefetched_by_line.update({
+            int(line_id): payload
+            for line_id, payload in (inventory_by_line or {}).items()
+            if line_id
+        })
+
+    def _cache_context_source_inventory_json(self):
+        prefetched_by_product = self.env.context.get(
+            SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY
+        )
+        if not isinstance(prefetched_by_product, dict):
+            return False
+        inventory_by_line = {
+            line.id: prefetched_by_product[line.product_id.id]
+            for line in self
+            if line.product_id.id in prefetched_by_product
+        }
+        if not inventory_by_line:
+            return False
+        self._cache_prefetched_source_inventory_json(inventory_by_line)
+        return True
+
+    def _clear_prefetched_source_inventory_json(self):
+        prefetched_by_line = self.env.cr.cache.get(
+            SMART_PREFETCHED_SOURCE_INVENTORY_CACHE_KEY,
+            {},
+        )
+        for line_id in self.ids:
+            prefetched_by_line.pop(line_id, None)
 
     @api.depends("create_date")
     def _compute_create_day(self):
@@ -331,9 +391,21 @@ class AbTransferSmartLine(models.Model):
             self._check_smart_qty_value(qty)
             vals.setdefault("source_type", SMART_LINE_SOURCE_DOMAIN)
             vals.setdefault("smart_original_qty", qty)
-        with self.env.cr.savepoint():
-            lines = super().create(vals_list)
-            lines._check_duplicate_transfer_lines()
+        lines = self.browse()
+        try:
+            with self.env.cr.savepoint():
+                lines = super().create(vals_list)
+                if lines._cache_context_source_inventory_json():
+                    lines.flush_recordset([
+                        "inventory_json",
+                        "sell_price",
+                        "cost",
+                        "purchase_price",
+                        "tax_value",
+                    ])
+                lines._check_duplicate_transfer_lines()
+        finally:
+            lines._clear_prefetched_source_inventory_json()
         return lines
 
     def write(self, vals):
@@ -345,16 +417,28 @@ class AbTransferSmartLine(models.Model):
         if vals and set(vals) - allowed_system_fields:
             self._check_smart_line_editable()
             self._check_smart_qty_write(vals)
-        with self.env.cr.savepoint():
-            result = super().write(vals)
-            duplicate_fields = {
-                "product_id",
-                "header_id",
-                "source_type",
-                "exclusion_reason",
-            }
-            if duplicate_fields.intersection(vals):
-                self._check_duplicate_transfer_lines()
+        has_prefetched_inventory = self._cache_context_source_inventory_json()
+        try:
+            with self.env.cr.savepoint():
+                result = super().write(vals)
+                if has_prefetched_inventory:
+                    self.flush_recordset([
+                        "inventory_json",
+                        "sell_price",
+                        "cost",
+                        "purchase_price",
+                        "tax_value",
+                    ])
+                duplicate_fields = {
+                    "product_id",
+                    "header_id",
+                    "source_type",
+                    "exclusion_reason",
+                }
+                if duplicate_fields.intersection(vals):
+                    self._check_duplicate_transfer_lines()
+        finally:
+            self._clear_prefetched_source_inventory_json()
         return result
 
     def unlink(self):

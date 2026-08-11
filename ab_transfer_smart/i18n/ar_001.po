@@ -174,6 +174,7 @@ msgid "Company"
 msgstr "الشركة"
 
 #. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_zero_stock_warning_view_form
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
 msgid "Continue Anyway"
 msgstr "المتابعة على أي حال"
@@ -1789,6 +1790,7 @@ msgstr "تأكيد"
 
 #. module: ab_transfer_smart
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_duplicate_import_confirmation_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_zero_stock_warning_view_form
 msgid "Cancel"
 msgstr "إلغاء"
 
@@ -1806,3 +1808,59 @@ msgstr "تم اكتشاف تكرار"
 #: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_duplicate_import_confirmation__step__sum
 msgid "Sum Quantities"
 msgstr "جمع الكميات"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_zero_stock_warning_view_form
+msgid "Products With Zero Source Stock"
+msgstr "أصناف برصيد صفري في المخزن المصدر"
+
+#. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_zero_stock_warning_view_form
+msgid "View Products"
+msgstr "عرض الأصناف"
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_zero_stock_warning
+msgid "Smart Transfer Zero Source Stock Warning"
+msgstr "تحذير التحويل الذكي للأصناف ذات الرصيد الصفري في المصدر"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid ""
+"%(count)s products have zero quantity in source store %(store)s and will be "
+"skipped. Select View Products to review them, or Continue Anyway to generate "
+"transfers for the remaining available products."
+msgstr ""
+"يوجد %(count)s صنفًا برصيد صفري في المخزن المصدر %(store)s وسيتم تخطيها. "
+"اختر عرض الأصناف لمراجعتها، أو المتابعة على أي حال لإنشاء التحويلات للأصناف "
+"المتبقية المتاحة."
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_zero_stock_warning__zero_product_count
+msgid "Zero-Stock Product Count"
+msgstr "عدد الأصناف ذات الرصيد الصفري"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_zero_stock_warning__zero_product_ids
+msgid "Zero-Stock Product IDs"
+msgstr "معرّفات الأصناف ذات الرصيد الصفري"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_zero_stock_warning__message
+msgid "Warning Message"
+msgstr "رسالة التحذير"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "A transfer or Smart Transfer Wizard is required."
+msgstr "يجب تحديد تحويل أو معالج تحويل ذكي."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "The transfer generation record is no longer available."
+msgstr "لم يعد سجل إنشاء التحويل متاحًا."

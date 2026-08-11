@@ -7,7 +7,7 @@ import xlsxwriter
 from datetime import timedelta
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from lxml import etree
 
@@ -351,6 +351,38 @@ class TestSmartTransfer(TransactionCase):
 
         self.assertLess(distributed_qty, 1)
         self.assertEqual(header._calculate_smart_integer_qty(distributed_qty), 1)
+
+    def test_automatic_qty_rounds_up_to_min_sale_purchase_qty_multiple(self):
+        header = self.env["ab_transfer_header"]
+        product = SimpleNamespace(min_sale_purchase_qty=24)
+
+        expected_by_qty = {
+            10: 24,
+            24: 24,
+            25: 48,
+            30: 48,
+            47: 48,
+            48: 48,
+            60: 72,
+            70: 72,
+            72: 72,
+        }
+
+        for qty, expected in expected_by_qty.items():
+            with self.subTest(qty=qty):
+                self.assertEqual(
+                    header._round_smart_qty_to_min_sale_purchase_qty(product, qty),
+                    expected,
+                )
+
+    def test_min_sale_purchase_qty_one_preserves_existing_integer_qty(self):
+        header = self.env["ab_transfer_header"]
+        product = SimpleNamespace(min_sale_purchase_qty=1)
+
+        self.assertEqual(
+            header._round_smart_qty_to_min_sale_purchase_qty(product, 30),
+            30,
+        )
 
     def test_distribution_ratio_recreates_integer_qty_from_source_stock(self):
         header = self.env["ab_transfer_header"]
@@ -1289,6 +1321,354 @@ class TestSmartTransfer(TransactionCase):
 
         self.assertNotIn(99016, serials)
 
+    def test_zero_source_stock_products_are_centralized_without_sorting(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product_b = self._create_smart_product("SMART-ZERO-B", 990161, uom)
+        product_a = self._create_smart_product("SMART-ZERO-A", 990162, uom)
+        in_stock_product = self._create_smart_product("SMART-IN-STOCK", 990163, uom)
+
+        zero_stock_products = header._get_smart_zero_source_stock_products({
+            "products_by_serial": {
+                990161: product_b,
+                990162: product_a,
+                990163: in_stock_product,
+            },
+            "source_stock_by_serial": {
+                990161: 0.0,
+                990162: -1.0,
+                990163: 5.0,
+            },
+        })
+
+        self.assertEqual(zero_stock_products.ids, [product_b.id, product_a.id])
+
+    def test_continue_ignored_products_are_removed_before_source_stock_query(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        ignored_product = self._create_smart_product(
+            "SMART-IGNORE-ZERO",
+            990164,
+            uom,
+        )
+        available_product = self._create_smart_product(
+            "SMART-KEEP-STOCK",
+            990165,
+            uom,
+        )
+        header.target_product_ids = [
+            (6, 0, (ignored_product | available_product).ids),
+        ]
+        captured_serials = []
+
+        def source_stock(products_by_serial):
+            captured_serials.append(set(products_by_serial))
+            return {990165: 9.0}
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+                side_effect=source_stock,
+        ):
+            context = header.with_context(
+                smart_ignored_zero_source_product_ids=ignored_product.ids
+            )._get_smart_candidate_source_stock_context()
+
+        self.assertEqual(captured_serials, [{990165}])
+        self.assertEqual(set(context["products_by_serial"]), {990165})
+        self.assertEqual(context["source_stock_by_serial"], {990165: 9.0})
+
+    def test_continue_ignored_products_are_excluded_from_candidate_domain(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        ignored_product, available_product = (
+            self._get_existing_smart_products_or_skip(2)
+        )
+        header.smart_product_domain = repr([
+            ("id", "in", (ignored_product | available_product).ids),
+        ])
+
+        candidates = header.with_context(
+            smart_ignored_zero_source_product_ids=ignored_product.ids
+        )._get_smart_candidate_products()
+
+        self.assertEqual(candidates, available_product)
+
+    def test_continue_all_ignored_products_skips_source_stock_query(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        header.smart_product_line_ids = [(0, 0, {
+            "product_id": product.id,
+            "qty": 5,
+        })]
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_stock_by_product_serial",
+        ) as source_stock:
+            context = header.with_context(
+                smart_ignored_zero_source_product_ids=product.ids
+            )._get_smart_candidate_source_stock_context()
+
+        source_stock.assert_not_called()
+        self.assertEqual(context, {
+            "products_by_serial": {},
+            "source_stock_by_serial": {},
+        })
+
+    def test_header_calculation_opens_zero_stock_warning_before_fetching_rows(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        header.target_product_ids = [(6, 0, product.ids)]
+        source_stock_context = {
+            "products_by_serial": {product_serial: product},
+            "source_stock_by_serial": {product_serial: 0.0},
+        }
+
+        with patch.object(
+                type(header),
+                "_ensure_smart_destination_cache",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_validate_smart_transfer_header",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_get_smart_sales_cache_warning_action_if_needed",
+                return_value=False,
+        ), patch.object(
+                type(header),
+                "_get_smart_candidate_source_stock_context",
+                return_value=source_stock_context,
+        ), patch.object(
+                type(header),
+                "_fetch_destination_smart_rows",
+        ) as fetch_rows:
+            action = header.action_smart_transfer_calculation()
+
+        fetch_rows.assert_not_called()
+        self.assertEqual(
+            action["res_model"],
+            "ab_transfer_smart_zero_stock_warning",
+        )
+        warning = self.env[action["res_model"]].browse(action["res_id"])
+        self.assertEqual(warning.source_store_id, header.from_store_id)
+        self.assertEqual(warning.zero_product_ids, product.ids)
+        self.assertEqual(warning.zero_product_count, 1)
+        self.assertEqual(warning.header_id, header)
+        self.assertFalse(warning.smart_wizard_id)
+
+    def test_header_zero_stock_continue_skips_repeated_warning(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        header.target_product_ids = [(6, 0, product.ids)]
+        source_stock_context = {
+            "products_by_serial": {product_serial: product},
+            "source_stock_by_serial": {product_serial: 0.0},
+        }
+        warning_action = self.env[
+            "ab_transfer_smart_zero_stock_warning"
+        ]._open_warning(
+            header.from_store_id,
+            product,
+            header=header,
+        )
+        warning = self.env[warning_action["res_model"]].browse(
+            warning_action["res_id"]
+        )
+
+        def resumed_source_context(resumed_header):
+            self.assertEqual(resumed_header, header)
+            self.assertEqual(
+                resumed_header.env.context.get(
+                    "smart_ignored_zero_source_product_ids"
+                ),
+                product.ids,
+            )
+            return source_stock_context
+
+        with patch.object(
+                type(header),
+                "_ensure_smart_destination_cache",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_validate_smart_transfer_header",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_get_smart_sales_cache_warning_action_if_needed",
+                return_value=False,
+        ), patch.object(
+                type(header),
+                "_get_smart_candidate_source_stock_context",
+                autospec=True,
+                side_effect=resumed_source_context,
+        ), patch.object(
+                type(header),
+                "_fetch_destination_smart_rows",
+                return_value=[],
+        ) as fetch_rows, patch.object(
+                type(header),
+                "_apply_smart_transfer_rows",
+                return_value={
+                    "created": 0,
+                    "updated": 0,
+                    "dropout_excluded": 0,
+                    "missing": 0,
+                    "no_stock": 0,
+                },
+        ):
+            action = warning.action_continue_anyway()
+
+        fetch_rows.assert_called_once_with(
+            source_stock_context=source_stock_context
+        )
+        self.assertEqual(action["tag"], "display_notification")
+        self.assertEqual(action["params"]["type"], "warning")
+
+    def test_zero_source_stock_warning_stores_only_ids_and_opens_list_on_demand(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        products = self._get_existing_smart_products_or_skip(11)
+
+        action = self.env["ab_transfer_smart_zero_stock_warning"]._open_warning(
+            header.from_store_id,
+            products,
+            header=header,
+        )
+        warning = self.env[action["res_model"]].browse(action["res_id"])
+
+        self.assertEqual(warning.zero_product_ids, products.ids)
+        self.assertEqual(warning.zero_product_count, 11)
+        self.assertNotIn("product_ids", warning._fields)
+        self.assertNotIn("page_product_ids", warning._fields)
+
+        warning_view = self.env.ref(
+            "ab_transfer_smart.ab_transfer_smart_zero_stock_warning_view_form"
+        )
+        warning_arch = etree.fromstring(warning_view.arch_db)
+        self.assertFalse(warning_arch.xpath("//field[@name='zero_product_ids']"))
+        self.assertFalse(warning_arch.xpath("//field[@name='page_product_ids']"))
+        self.assertTrue(
+            warning_arch.xpath(
+                "//button[@name='action_view_zero_stock_products']"
+            )
+        )
+
+        products_action = warning.action_view_zero_stock_products()
+        self.assertEqual(products_action["res_model"], "ab_product")
+        self.assertEqual(products_action["view_mode"], "list")
+        self.assertEqual(products_action["target"], "new")
+        self.assertEqual(products_action["domain"], [("id", "in", products.ids)])
+        self.assertFalse(products_action["context"]["create"])
+        self.assertFalse(products_action["context"]["edit"])
+        self.assertFalse(products_action["context"]["delete"])
+
+    def test_wizard_generation_validation_opens_zero_stock_warning(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+            "target_product_ids": [(6, 0, product.ids)],
+        })
+        source_stock_context = {
+            "products_by_serial": {product_serial: product},
+            "source_stock_by_serial": {product_serial: 0.0},
+        }
+
+        with patch.object(
+                type(header),
+                "_validate_smart_transfer_header",
+                return_value=None,
+        ), patch.object(
+                type(header),
+                "_get_smart_candidate_source_stock_context",
+                return_value=source_stock_context,
+        ):
+            action = wizard._get_calculation_validation_error_action()
+            skipped_action = wizard.with_context(
+                skip_smart_zero_source_stock_warning=True,
+                smart_ignored_zero_source_product_ids=product.ids,
+            )._get_calculation_validation_error_action()
+
+        self.assertEqual(
+            action["res_model"],
+            "ab_transfer_smart_zero_stock_warning",
+        )
+        warning = self.env[action["res_model"]].browse(action["res_id"])
+        self.assertEqual(warning.zero_product_ids, product.ids)
+        self.assertEqual(warning.zero_product_count, 1)
+        self.assertEqual(warning.smart_wizard_id, wizard)
+        self.assertFalse(warning.header_id)
+
+        self.assertFalse(skipped_action)
+        self.assertTrue(
+            wizard.with_context(
+                skip_smart_zero_source_stock_warning=True,
+                smart_ignored_zero_source_product_ids=product.ids,
+            )._get_calculation_context()["skip_smart_zero_source_stock_warning"]
+        )
+        self.assertEqual(
+            wizard.with_context(
+                smart_ignored_zero_source_product_ids=product.ids,
+            )._get_calculation_context()[
+                "smart_ignored_zero_source_product_ids"
+            ],
+            product.ids,
+        )
+
+    def test_wizard_zero_stock_continue_resumes_generation_with_skip_context(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+            "target_product_ids": [(6, 0, product.ids)],
+        })
+        warning_action = self.env[
+            "ab_transfer_smart_zero_stock_warning"
+        ]._open_warning(
+            header.from_store_id,
+            product,
+            smart_wizard=wizard,
+        )
+        warning = self.env[warning_action["res_model"]].browse(
+            warning_action["res_id"]
+        )
+
+        def resume_generation(resumed_wizard):
+            self.assertEqual(resumed_wizard, wizard)
+            self.assertTrue(
+                resumed_wizard.env.context.get(
+                    "skip_smart_zero_source_stock_warning"
+                )
+            )
+            self.assertEqual(
+                resumed_wizard.env.context.get(
+                    "smart_ignored_zero_source_product_ids"
+                ),
+                product.ids,
+            )
+            return {"resumed": True}
+
+        with patch.object(
+                type(wizard),
+                "action_generate_transfers",
+                autospec=True,
+                side_effect=resume_generation,
+        ):
+            action = warning.action_continue_anyway()
+
+        self.assertEqual(action, {"resumed": True})
+
     def test_target_product_with_no_source_stock_does_not_create_smart_line(self):
         header = self._create_smart_header()
         uom = self._create_smart_uom()
@@ -1413,6 +1793,274 @@ class TestSmartTransfer(TransactionCase):
         self.assertNotIn("class_id", vals)
         self.assertEqual(vals["qty"], 8)
         self.assertEqual(vals["smart_source_stock_qty"], 10)
+
+    def test_source_inventory_batch_cache_is_loaded_once_for_all_products(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product_a, product_b = self._get_existing_smart_products_or_skip(2)
+        products_by_serial = {
+            990171: product_a,
+            990172: product_b,
+        }
+        rows_a = [self._smart_source_row(741, 8)]
+        rows_b = [self._smart_source_row(742, 9)]
+        rows_cache = {}
+        cached_header = header.with_context(
+            smart_source_inventory_products_by_serial=products_by_serial,
+            smart_source_inventory_rows_cache=rows_cache,
+        )
+
+        with patch.object(
+                type(header),
+                "_get_smart_source_inventory_rows_by_product",
+                autospec=True,
+                return_value={
+                    product_a.id: rows_a,
+                    product_b.id: rows_b,
+                },
+        ) as batch_read:
+            self.assertEqual(
+                cached_header._get_source_inventory_rows(product_a),
+                rows_a,
+            )
+            self.assertEqual(
+                cached_header._get_source_inventory_rows(product_b),
+                rows_b,
+            )
+
+        batch_read.assert_called_once()
+
+    def test_smart_source_inventory_row_keeps_transfer_price_semantics(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        sql_row = (
+            741,
+            int(product.eplus_serial),
+            int(header.from_store_id.eplus_serial),
+            10.0,
+            240.0,
+            10.0,
+            3.0,
+            0.5,
+            fields.Date.today(),
+            3,
+            2,
+            24,
+        )
+
+        inventory_row = header._prepare_smart_source_inventory_row(
+            sql_row,
+            product,
+        )
+
+        self.assertEqual(inventory_row["source_id"], 741)
+        self.assertEqual(inventory_row["qty"], 10)
+        self.assertEqual(inventory_row["qty_in_small_unit"], 240)
+        self.assertEqual(inventory_row["price"], 240)
+        self.assertEqual(inventory_row["cost"], 72)
+        self.assertEqual(inventory_row["sell_tax"], 12)
+        self.assertEqual(inventory_row["pharm_price"], 72)
+
+    def test_source_inventory_batch_reads_all_products_in_one_query(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        product_serial = int(product.eplus_serial)
+        sql_row = (
+            744,
+            product_serial,
+            int(header.from_store_id.eplus_serial),
+            15.0,
+            12.0,
+            12.0,
+            9.0,
+            1.0,
+            fields.Date.today(),
+            1,
+            1,
+            1,
+        )
+        cursor = MagicMock()
+        cursor.fetchall.return_value = [sql_row]
+        connection = MagicMock()
+        connection.cursor.return_value.__enter__.return_value = cursor
+        connection_context = MagicMock()
+        connection_context.__enter__.return_value = connection
+
+        with patch.object(
+                type(header),
+                "_get_sql_connection",
+                return_value=connection_context,
+        ):
+            rows_by_product = (
+                header._get_smart_source_inventory_rows_by_product({
+                    product_serial: product,
+                })
+            )
+
+        cursor.execute.assert_called_once()
+        self.assertEqual(len(rows_by_product[product.id]), 1)
+        self.assertEqual(rows_by_product[product.id][0]["source_id"], 744)
+        self.assertEqual(rows_by_product[product.id][0]["qty"], 12)
+
+    def test_smart_line_prefetched_inventory_avoids_external_recompute(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        inventory_payload = {
+            "data": [{
+                **self._smart_source_row(743, 12),
+                "exp_date": str(fields.Date.today()),
+                "price": 15.0,
+                "cost": 9.0,
+                "sell_tax": 1.0,
+                "pharm_price": 9.0,
+            }],
+        }
+
+        with patch.object(
+                type(header),
+                "_get_sql_connection",
+        ) as sql_connection:
+            line = self.env["ab_transfer_smart_line"].with_context(
+                smart_prefetched_source_inventory_json_by_product={
+                    product.id: inventory_payload,
+                }
+            ).create({
+                "header_id": header.id,
+                "product_id": product.id,
+                "qty": 5,
+                "expiry_date": fields.Date.today(),
+                "uom_id": product.uom_id.id,
+            })
+
+        sql_connection.assert_not_called()
+        self.assertEqual(line.inventory_json, inventory_payload)
+        self.assertEqual(line.sell_price, 15)
+        self.assertEqual(line.cost, 9)
+        self.assertEqual(line.purchase_price, 9)
+
+        chunk_header = self.env["ab_transfer_header"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_store_id": header.to_store_id.id,
+            "user_id": header.user_id.id,
+        })
+        with patch.object(
+                type(header),
+                "_get_sql_connection",
+        ) as move_sql_connection:
+            line.with_context(
+                smart_prefetched_source_inventory_json_by_product={
+                    product.id: inventory_payload,
+                }
+            ).write({"header_id": chunk_header.id})
+
+        move_sql_connection.assert_not_called()
+        self.assertEqual(line.header_id, chunk_header)
+        self.assertEqual(line.inventory_json, inventory_payload)
+
+    def test_prepare_automatic_smart_qty_rounds_without_changing_need_context(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        uom = self._create_smart_uom()
+        product = SimpleNamespace(
+            id=99031,
+            display_name="SMART-MULTIPLE-AUTO",
+            uom_id=uom,
+            min_sale_purchase_qty=24,
+        )
+
+        with patch.object(
+                type(header),
+                "_get_source_inventory_rows",
+                return_value=[self._smart_source_row(731, 100)],
+        ):
+            vals = header._prepare_smart_line_vals(
+                product,
+                required_qty=30,
+                source_stock_qty=100,
+                destination_stock_qty=5,
+                month1_sales=30,
+                month2_sales=20,
+                month3_sales=10,
+                destination_required_qty=30,
+                other_required_qty=20,
+                total_required_qty=50,
+            )
+
+        self.assertEqual(vals["qty"], 48)
+        self.assertEqual(vals["smart_qty_before_int"], 30)
+        self.assertEqual(vals["smart_source_stock_qty"], 100)
+        self.assertEqual(vals["smart_destination_stock_qty"], 5)
+        self.assertEqual(vals["smart_month1_sales"], 30)
+        self.assertEqual(vals["smart_month2_sales"], 20)
+        self.assertEqual(vals["smart_month3_sales"], 10)
+        self.assertEqual(vals["smart_need_destination_store"], 30)
+        self.assertEqual(vals["smart_need_other_store"], 20)
+        self.assertEqual(vals["smart_total_need"], 50)
+
+    def test_prepare_automatic_multiple_can_exceed_source_stock(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        uom = self._create_smart_uom()
+        product = SimpleNamespace(
+            id=99032,
+            display_name="SMART-MULTIPLE-STOCK",
+            uom_id=uom,
+            min_sale_purchase_qty=24,
+        )
+
+        with patch.object(
+                type(header),
+                "_get_source_inventory_rows",
+                return_value=[self._smart_source_row(732, 10)],
+        ):
+            vals = header._prepare_smart_line_vals(
+                product,
+                required_qty=10,
+                source_stock_qty=10,
+                destination_stock_qty=0,
+                month1_sales=10,
+                month2_sales=10,
+                month3_sales=10,
+                destination_required_qty=10,
+                other_required_qty=0,
+                total_required_qty=10,
+            )
+
+        self.assertEqual(vals["smart_qty_before_int"], 10)
+        self.assertEqual(vals["smart_source_stock_qty"], 10)
+        self.assertEqual(vals["qty"], 24)
+
+    def test_prepare_manual_qty_is_not_rounded_to_product_multiple(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        uom = self._create_smart_uom()
+        product = SimpleNamespace(
+            id=99033,
+            display_name="SMART-MULTIPLE-MANUAL",
+            uom_id=uom,
+            min_sale_purchase_qty=24,
+        )
+
+        with patch.object(
+                type(header),
+                "_get_source_inventory_rows",
+                return_value=[self._smart_source_row(733, 10)],
+        ):
+            vals = header._prepare_smart_line_vals(
+                product,
+                required_qty=10,
+                source_stock_qty=10,
+                destination_stock_qty=4,
+                month1_sales=10,
+                month2_sales=10,
+                month3_sales=10,
+                destination_required_qty=10,
+                other_required_qty=5,
+                total_required_qty=15,
+                manual_qty=25,
+            )
+
+        self.assertEqual(vals["qty"], 25)
+        self.assertEqual(vals["smart_qty_before_int"], 10)
+        self.assertEqual(vals["smart_need_destination_store"], 10)
+        self.assertEqual(vals["smart_need_other_store"], 5)
+        self.assertEqual(vals["smart_total_need"], 15)
 
     def test_expected_source_stock_subtracts_active_smart_reservations(self):
         header = self._create_smart_header()
