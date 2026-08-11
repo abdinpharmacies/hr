@@ -30,6 +30,10 @@ class AbTransferSmartLine(models.Model):
         required=False,
         copy=False,
     )
+    expiry_date = fields.Date(
+        string="Expiry Date",
+        required=False,
+    )
 
     smart_stage = fields.Selection(
         related="header_id.smart_stage",
@@ -93,7 +97,11 @@ class AbTransferSmartLine(models.Model):
             {},
         )
         if not prefetched_by_line:
-            return super()._recompute_inventory_json()
+            if self.env.context.get("force_smart_source_inventory_recompute"):
+                return super()._recompute_inventory_json()
+            for line in self:
+                line.inventory_json = {"data": []}
+            return
 
         remaining_lines = self.browse()
         for line in self:
@@ -216,6 +224,10 @@ class AbTransferSmartLine(models.Model):
     def _check_smart_qty_value(self, new_qty):
         if float_compare(new_qty, 0.0, precision_digits=3) < 0:
             raise ValidationError(_("Smart transfer quantity cannot be negative."))
+
+    @api.constrains("expiry_date")
+    def _check_expiry_date(self):
+        return True
 
     def _check_smart_qty_write(self, vals):
         if (

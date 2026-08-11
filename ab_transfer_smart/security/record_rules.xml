@@ -67,6 +67,17 @@
             <field name="perm_unlink" eval="True"/>
         </record>
 
+        <record id="rule_ab_transfer_smart_source_stock_cache_system_all" model="ir.rule">
+            <field name="name">Smart Transfer: system access all source stock cache</field>
+            <field name="model_id" ref="model_ab_transfer_smart_source_stock_cache"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="True"/>
+        </record>
+
         <record id="rule_ab_transfer_smart_wizard_read_all" model="ir.rule">
             <field name="name">Smart Transfer: read smart wizards</field>
             <field name="model_id" ref="model_ab_transfer_smart_wizard"/>
@@ -86,6 +97,22 @@
         <record id="rule_ab_transfer_smart_cache_read_all" model="ir.rule">
             <field name="name">Smart Transfer: read smart cache</field>
             <field name="model_id" ref="model_ab_transfer_smart_stock_cache"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups"
+                   eval="[
+                       (4, ref('group_transfer_smart_purchase')),
+                       (4, ref('group_trnasfer_smart_store_preparation')),
+                       (4, ref('group_trnasfer_smart_store_revision'))
+                   ]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="False"/>
+            <field name="perm_create" eval="False"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+
+        <record id="rule_ab_transfer_smart_source_stock_cache_read_all" model="ir.rule">
+            <field name="name">Smart Transfer: read smart source stock cache</field>
+            <field name="model_id" ref="model_ab_transfer_smart_source_stock_cache"/>
             <field name="domain_force">[(1, '=', 1)]</field>
             <field name="groups"
                    eval="[

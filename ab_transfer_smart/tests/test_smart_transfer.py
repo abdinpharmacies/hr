@@ -1235,7 +1235,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={99011: 50},
         ), patch.object(
                 type(header),
@@ -1283,7 +1283,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={product_serial: 50},
         ), patch.object(
                 type(header),
@@ -1359,7 +1359,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={99014: 20, 99015: 20},
         ), patch.object(
                 type(header),
@@ -1474,7 +1474,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={product_serial: 10},
         ), patch.object(
                 type(header),
@@ -1513,7 +1513,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={product_serial: 0},
         ), patch.object(
                 type(header),
@@ -1549,7 +1549,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={},
         ):
             serials = header._get_smart_target_product_serials_with_source_stock()
@@ -1564,7 +1564,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={},
         ):
             serials = header._get_smart_target_product_serials_with_source_stock()
@@ -1617,7 +1617,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 side_effect=source_stock,
         ):
             context = header.with_context(
@@ -1653,7 +1653,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
         ) as source_stock:
             context = header.with_context(
                 smart_ignored_zero_source_product_ids=product.ids
@@ -1927,7 +1927,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={99017: 0},
         ), patch.object(
                 type(header),
@@ -1955,7 +1955,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={99201: 50, 99202: 50},
         ), patch.object(
                 type(header),
@@ -1991,7 +1991,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={99012: 50},
         ), patch.object(
                 type(header),
@@ -2022,10 +2022,7 @@ class TestSmartTransfer(TransactionCase):
         with patch.object(
                 type(header),
                 "_get_source_inventory_rows",
-                return_value=[
-                    self._smart_source_row(701, 4),
-                    self._smart_source_row(702, 6),
-                ],
+                side_effect=AssertionError("Planning must not read source batches."),
         ):
             vals = header._prepare_smart_line_vals(
                 product,
@@ -2041,43 +2038,114 @@ class TestSmartTransfer(TransactionCase):
             )
 
         self.assertNotIn("class_id", vals)
+        self.assertNotIn("expiry_date", vals)
         self.assertEqual(vals["qty"], 8)
         self.assertEqual(vals["smart_source_stock_qty"], 10)
 
-    def test_source_inventory_batch_cache_is_loaded_once_for_all_products(self):
-        header = self._create_smart_header_from_existing_records_or_skip()
-        product_a, product_b = self._get_existing_smart_products_or_skip(2)
-        products_by_serial = {
-            990171: product_a,
-            990172: product_b,
-        }
-        rows_a = [self._smart_source_row(741, 8)]
-        rows_b = [self._smart_source_row(742, 9)]
-        rows_cache = {}
-        cached_header = header.with_context(
-            smart_source_inventory_products_by_serial=products_by_serial,
-            smart_source_inventory_rows_cache=rows_cache,
-        )
+    def test_smart_line_planning_create_does_not_require_expiry_or_live_inventory(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-TOTAL-LINE", 990131, uom)
+
+        with patch.object(type(header), "_get_sql_connection") as sql_connection:
+            line = self.env["ab_transfer_smart_line"].create({
+                "header_id": header.id,
+                "product_id": product.id,
+                "qty": 5,
+                "uom_id": uom.id,
+            })
+
+        sql_connection.assert_not_called()
+        self.assertFalse(line.class_id)
+        self.assertFalse(line.expiry_date)
+        self.assertEqual(line.inventory_json, {"data": []})
+
+    def test_source_opening_stock_cache_keeps_history_and_positive_rows_only(self):
+        store = self._create_store_or_skip({
+            "name": "Smart Source Cache Store",
+            "code": "SMART-SRC-CACHE",
+            "eplus_serial": 8321,
+            "allow_sale": True,
+        })
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"].sudo()
+        today = fields.Date.context_today(SourceCache)
+        old_day = today - timedelta(days=1)
+        old_line = SourceCache.create({
+            "store_id": store.id,
+            "product_eplus_serial": 990170,
+            "stock_qty": 3,
+            "cache_date": old_day,
+        })
 
         with patch.object(
-                type(header),
-                "_get_smart_source_inventory_rows_by_product",
-                autospec=True,
-                return_value={
-                    product_a.id: rows_a,
-                    product_b.id: rows_b,
-                },
-        ) as batch_read:
-            self.assertEqual(
-                cached_header._get_source_inventory_rows(product_a),
-                rows_a,
-            )
-            self.assertEqual(
-                cached_header._get_source_inventory_rows(product_b),
-                rows_b,
-            )
+                type(SourceCache),
+                "_fetch_store_stock_rows",
+                return_value={990171: 8, 990172: 0, 990173: -2},
+        ):
+            created_count = SourceCache.refresh_store_cache(store, force=False)
 
-        batch_read.assert_called_once()
+        today_lines = SourceCache.search([
+            ("store_id", "=", store.id),
+            ("cache_date", "=", today),
+        ])
+        self.assertEqual(created_count, 1)
+        self.assertEqual(today_lines.mapped("product_eplus_serial"), [990171])
+        self.assertEqual(today_lines.stock_qty, 8)
+        self.assertTrue(old_line.exists())
+
+        with patch.object(
+                type(SourceCache),
+                "_fetch_store_stock_rows",
+                return_value={990174: 11},
+        ):
+            force_count = SourceCache.refresh_store_cache(store, force=True)
+
+        today_lines = SourceCache.search([
+            ("store_id", "=", store.id),
+            ("cache_date", "=", today),
+        ])
+        self.assertEqual(force_count, 1)
+        self.assertEqual(today_lines.mapped("product_eplus_serial"), [990174])
+        self.assertTrue(old_line.exists())
+
+        with patch.object(
+                type(SourceCache),
+                "_fetch_store_stock_rows",
+                side_effect=UserError("source unavailable"),
+        ):
+            with self.assertRaises(UserError):
+                SourceCache.refresh_store_cache(store, force=True)
+
+        self.assertTrue(old_line.exists())
+        self.assertEqual(today_lines.exists().mapped("product_eplus_serial"), [990174])
+
+    def test_source_opening_stock_cache_rechecks_after_refresh_lock(self):
+        store = self._create_store_or_skip({
+            "name": "Smart Source Cache Lock Store",
+            "code": "SMART-SRC-CACHE-LOCK",
+            "eplus_serial": 8322,
+            "allow_sale": True,
+        })
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"].sudo()
+
+        with patch.object(
+                type(SourceCache),
+                "_has_today_cache",
+                side_effect=[False, True],
+        ) as has_cache, patch.object(
+                type(SourceCache),
+                "_lock_source_stock_cache_refresh",
+        ) as refresh_lock, patch.object(
+                type(SourceCache),
+                "_fetch_store_stock_rows",
+                side_effect=AssertionError("cache was filled by another worker"),
+        ) as fetch_rows:
+            created_count = SourceCache.refresh_store_cache(store, force=False)
+
+        self.assertEqual(created_count, 0)
+        self.assertEqual(has_cache.call_count, 2)
+        refresh_lock.assert_called_once()
+        fetch_rows.assert_not_called()
 
     def test_smart_source_inventory_row_keeps_transfer_price_semantics(self):
         header = self._create_smart_header_from_existing_records_or_skip()
@@ -2505,7 +2573,7 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
+                "_get_smart_source_opening_stock_by_product_serial",
                 return_value={99184: 20, 99185: 20},
         ), patch.object(
                 type(header),
@@ -2714,6 +2782,12 @@ class TestSmartTransfer(TransactionCase):
             "total_3_months_sales": 6,
             "cache_date": today,
         })
+        source_cache = self.env["ab_transfer_smart_source_stock_cache"].create({
+            "store_id": store.id,
+            "product_eplus_serial": 99101,
+            "stock_qty": 12,
+            "cache_date": today,
+        })
         missing_product_cache = self.env["ab_transfer_smart_stock_cache"].create({
             "store_id": store.id,
             "product_eplus_serial": 99102,
@@ -2725,6 +2799,8 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(stock_cache.product_code, product.code)
         self.assertEqual(sales_cache.product_id, product)
         self.assertEqual(sales_cache.product_code, product.code)
+        self.assertEqual(source_cache.product_id, product)
+        self.assertEqual(source_cache.product_code, product.code)
         self.assertFalse(missing_product_cache.product_id)
         self.assertFalse(missing_product_cache.product_code)
 
@@ -3134,6 +3210,10 @@ class TestSmartTransfer(TransactionCase):
             calls.append("cache")
             return {"stores": 1, "stock_rows": 0, "sales_rows": 0}
 
+        def ensure_source_cache():
+            calls.append("source_cache")
+            return {"stores": 1, "stock_rows": 0}
+
         def warning_action():
             calls.append("warning")
             return False
@@ -3163,12 +3243,22 @@ class TestSmartTransfer(TransactionCase):
                 side_effect=warning_action,
         ), patch.object(
                 type(wizard),
+                "_ensure_smart_source_cache",
+                side_effect=ensure_source_cache,
+        ), patch.object(
+                type(wizard),
                 "_get_calculation_validation_error_action",
                 side_effect=validation_error_action,
         ):
             action = wizard.action_generate_transfers()
 
-        self.assertEqual(calls, ["validate_values", "cache", "warning", "calculation_validation"])
+        self.assertEqual(calls, [
+            "validate_values",
+            "cache",
+            "warning",
+            "source_cache",
+            "calculation_validation",
+        ])
         self.assertEqual(action["params"]["type"], "danger")
 
     def test_smart_line_chunks_uses_items_per_header_size(self):
@@ -3257,6 +3347,10 @@ class TestSmartTransfer(TransactionCase):
                 type(wizard),
                 "_get_sales_cache_warning_action",
                 return_value=False,
+        ), patch.object(
+                type(wizard),
+                "_ensure_smart_source_cache",
+                return_value={"stores": 1, "stock_rows": 0},
         ), patch.object(
                 type(wizard),
                 "_get_calculation_validation_error_action",

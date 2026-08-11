@@ -15,9 +15,6 @@ SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY = (
 SMART_IGNORED_ZERO_SOURCE_PRODUCT_IDS_CONTEXT_KEY = (
     "smart_ignored_zero_source_product_ids"
 )
-SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY = (
-    "smart_prefetched_source_inventory_json_by_product"
-)
 
 
 class AbTransferSmartWizard(models.Model):
@@ -262,6 +259,7 @@ class AbTransferSmartWizard(models.Model):
         warning_action = self._get_sales_cache_warning_action()
         if warning_action:
             return warning_action
+        self._ensure_smart_source_cache()
         validation_error_action = self._get_calculation_validation_error_action()
         if validation_error_action:
             return validation_error_action
@@ -574,6 +572,13 @@ class AbTransferSmartWizard(models.Model):
             force=False,
         )
 
+    def _ensure_smart_source_cache(self):
+        self.ensure_one()
+        return self.env["ab_transfer_smart_source_stock_cache"].sudo().refresh_stores_cache(
+            self.from_store_id,
+            force=False,
+        )
+
     def _get_calculation_validation_error_action(self):
         self.ensure_one()
         Header = self.env["ab_transfer_header"]
@@ -730,18 +735,7 @@ class AbTransferSmartWizard(models.Model):
             chunk_header = Header.create(
                 self._prepare_chunk_header_create_vals(header.to_store_id, chunk)
             )
-            prefetched_inventory_by_product = {
-                line.product_id.id: line.inventory_json or {"data": []}
-                for line in chunk
-                if line.product_id
-            }
-            chunk.with_context(
-                **{
-                    SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY: (
-                        prefetched_inventory_by_product
-                    )
-                }
-            ).write({"header_id": chunk_header.id})
+            chunk.write({"header_id": chunk_header.id})
             created_headers |= chunk_header
         return created_headers
 

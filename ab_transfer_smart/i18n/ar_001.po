@@ -1864,3 +1864,32 @@ msgstr "يجب تحديد تحويل أو معالج تحويل ذكي."
 #: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
 msgid "The transfer generation record is no longer available."
 msgstr "لم يعد سجل إنشاء التحويل متاحًا."
+
+#. module: ab_transfer_smart
+#: model:ir.actions.act_window,name:ab_transfer_smart.ab_transfer_smart_source_stock_cache_action
+#: model:ir.ui.menu,name:ab_transfer_smart.ab_transfer_smart_source_stock_cache_menu
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_source_stock_cache_view_form
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_source_stock_cache_view_list
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_source_stock_cache_view_search
+msgid "Smart Source Stock Cache"
+msgstr "كاش رصيد المصدر للتحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model,name:ab_transfer_smart.model_ab_transfer_smart_source_stock_cache
+msgid "Smart Transfer Source Opening Stock Cache"
+msgstr "كاش رصيد افتتاح المصدر للتحويل الذكي"
+
+#. module: ab_transfer_smart
+#: model:ir.model.constraint,message:ab_transfer_smart.constraint_ab_transfer_smart_source_stock_cache_uniq_smart_source_40760fcf
+msgid ""
+"Smart transfer source stock cache already exists for this store, product, "
+"and date."
+msgstr ""
+"كاش رصيد المصدر للتحويل الذكي موجود بالفعل لهذا المخزن والصنف والتاريخ."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid ""
+"Smart transfer source stock cache refresh failed for %(store)s: %(error)s"
+msgstr "فشل تحديث كاش رصيد المصدر للتحويل الذكي للمخزن %(store)s: %(error)s"

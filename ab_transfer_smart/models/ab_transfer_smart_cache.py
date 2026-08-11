@@ -18,6 +18,29 @@ SMART_DESTINATION_STOCK_SQL = """
     HAVING SUM(ISNULL(itm_qty, 0)) <> 0
 """
 
+SMART_SOURCE_STOCK_SQL = """
+    SELECT
+        ics.itm_id,
+        ics.sto_id,
+        SUM(
+            CASE
+                WHEN ISNULL(ic.itm_unit1_unit3, 0) = 0 THEN 0
+                ELSE ISNULL(ics.itm_qty, 0) / ic.itm_unit1_unit3
+            END
+        ) AS stock_qty
+    FROM Item_Class_Store ics
+    INNER JOIN item_catalog ic ON ic.itm_id = ics.itm_id
+    WHERE ics.sto_id = ?
+      AND ISNULL(ic.itm_active, 1) = 1
+    GROUP BY ics.itm_id, ics.sto_id
+    HAVING SUM(
+        CASE
+            WHEN ISNULL(ic.itm_unit1_unit3, 0) = 0 THEN 0
+            ELSE ISNULL(ics.itm_qty, 0) / ic.itm_unit1_unit3
+        END
+    ) > 0
+"""
+
 SMART_DESTINATION_SALES_QTY_EXPR = """
     CASE sd.itm_unit
         WHEN 1 THEN CAST(ISNULL(sd.qnty, 0) - ISNULL(sd.itm_back, 0) AS DECIMAL(18, 4))
@@ -115,6 +138,184 @@ class AbTransferSmartCacheTools:
             if product_serial and product_serial not in products_by_serial:
                 products_by_serial[product_serial] = product
         return products_by_serial
+
+
+class AbTransferSmartSourceStockCache(AbTransferSmartCacheTools, models.Model):
+    _name = "ab_transfer_smart_source_stock_cache"
+    _inherit = ["ab_eplus_connect"]
+    _description = "Smart Transfer Source Opening Stock Cache"
+    _order = "cache_date desc, store_id, product_eplus_serial"
+    _SOURCE_STOCK_CACHE_LOCK_NAMESPACE = 1907351901
+
+    store_id = fields.Many2one(
+        "ab_store",
+        string="Store",
+        required=True,
+        index=True,
+        ondelete="cascade",
+    )
+    product_eplus_serial = fields.Integer(
+        string="Product EPlus Serial",
+        required=True,
+        index=True,
+    )
+    product_id = fields.Many2one(
+        "ab_product",
+        string="Product",
+        compute="_compute_product_fields",
+        store=True,
+        readonly=True,
+        index=True,
+    )
+    product_code = fields.Char(
+        string="Product Code",
+        compute="_compute_product_fields",
+        store=True,
+        readonly=True,
+        index=True,
+    )
+    stock_qty = fields.Float(
+        string="Stock Quantity",
+        digits=(16, 4),
+        aggregator="sum",
+    )
+    cache_date = fields.Date(
+        string="Cache Date",
+        required=True,
+        index=True,
+        default=lambda self: self._get_cache_date(),
+    )
+
+    _uniq_smart_source_stock_store_product_cache_date = models.Constraint(
+        "UNIQUE(store_id, product_eplus_serial, cache_date)",
+        "Smart transfer source stock cache already exists for this store, product, and date.",
+    )
+
+    def init(self):
+        super().init()
+        self.env.cr.execute("""
+            CREATE INDEX IF NOT EXISTS ab_transfer_smart_source_stock_cache_store_date_idx
+                ON ab_transfer_smart_source_stock_cache (store_id, cache_date)
+        """)
+        self.env.cr.execute("""
+            CREATE INDEX IF NOT EXISTS ab_transfer_smart_source_stock_cache_store_product_date_idx
+                ON ab_transfer_smart_source_stock_cache (store_id, product_eplus_serial, cache_date)
+        """)
+
+    @api.model
+    def refresh_stores_cache(self, stores, force=False):
+        stores = self.env["ab_store"].browse(stores.ids if hasattr(stores, "ids") else stores).exists()
+        result = {
+            "stores": len(stores),
+            "stock_rows": 0,
+        }
+        for store in stores:
+            result["stock_rows"] += self.sudo().refresh_store_cache(store, force=force)
+        return result
+
+    @api.model
+    def refresh_store_cache(self, store, force=False):
+        store = self._ensure_store_record(store)
+        cache_date = self._get_cache_date()
+        if not force and self._has_today_cache(store, cache_date):
+            return 0
+
+        self._lock_source_stock_cache_refresh(store)
+        if not force and self._has_today_cache(store, cache_date):
+            return 0
+
+        rows = self._fetch_store_stock_rows(store)
+        vals_list = [
+            {
+                "store_id": store.id,
+                "product_eplus_serial": product_serial,
+                "stock_qty": stock_qty,
+                "cache_date": cache_date,
+            }
+            for product_serial, stock_qty in rows.items()
+            if product_serial and float(stock_qty or 0.0) > 0.0
+        ]
+        if force:
+            self._delete_cache_day(store, cache_date)
+        if vals_list:
+            self.create(vals_list)
+        return len(vals_list)
+
+    @api.model
+    def _lock_source_stock_cache_refresh(self, store):
+        self.env.cr.execute(
+            "SELECT pg_advisory_xact_lock(%s, %s)",
+            [self._SOURCE_STOCK_CACHE_LOCK_NAMESPACE, int(store.id)],
+        )
+
+    @api.model
+    def _delete_cache_day(self, store, cache_date):
+        self.search([
+            ("store_id", "=", store.id),
+            ("cache_date", "=", cache_date),
+        ]).unlink()
+
+    @api.model
+    def _has_today_cache(self, store, cache_date):
+        return bool(self.search_count([
+            ("store_id", "=", store.id),
+            ("cache_date", "=", cache_date),
+        ]))
+
+    @api.model
+    def read_store_cache_rows(self, store, product_serials=None, cache_date=None):
+        store = self._ensure_store_record(store)
+        cache_date = cache_date or self._get_cache_date()
+        domain = [
+            ("store_id", "=", store.id),
+            ("cache_date", "=", cache_date),
+        ]
+        serials = sorted({
+            self._safe_int(product_serial)
+            for product_serial in product_serials or []
+            if product_serial
+        })
+        if serials:
+            domain.append(("product_eplus_serial", "in", serials))
+
+        return {
+            int(line.product_eplus_serial): float(line.stock_qty or 0.0)
+            for line in self.search(domain)
+        }
+
+    @api.model
+    def _fetch_store_stock_rows(self, store):
+        store_sql_id = self._get_store_sql_id(store)
+        server = self._get_store_server(store)
+        try:
+            stock_by_product = {}
+            with self.connect_eplus(
+                    server=server,
+                    param_str="?",
+                    autocommit=True,
+                    propagate_error=True,
+            ) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(SMART_SOURCE_STOCK_SQL, (store_sql_id,))
+                    for product_serial, _store_sql_id, stock_qty in cursor.fetchall() or []:
+                        product_serial = self._safe_int(product_serial)
+                        stock_qty = float(stock_qty or 0.0)
+                        if product_serial and stock_qty > 0.0:
+                            stock_by_product[product_serial] = stock_qty
+            return stock_by_product
+        except Exception as error:
+            _logger.exception("Smart transfer source stock cache refresh failed: store=%s", store.display_name)
+            raise UserError(
+                _("Smart transfer source stock cache refresh failed for %(store)s: %(error)s")
+                % {"store": store.display_name, "error": error}
+            )
+
+    @staticmethod
+    def _safe_int(value):
+        try:
+            return int(value or 0)
+        except (TypeError, ValueError):
+            return 0
 
 
 class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):

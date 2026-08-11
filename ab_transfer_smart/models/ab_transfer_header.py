@@ -53,9 +53,6 @@ SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY = (
 SMART_IGNORED_ZERO_SOURCE_PRODUCT_IDS_CONTEXT_KEY = (
     "smart_ignored_zero_source_product_ids"
 )
-SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY = (
-    "smart_prefetched_source_inventory_json_by_product"
-)
 SMART_TRANSFER_LINE_COPY_FIELDS = (
     "uom_id",
     "smart_source_stock_qty",
@@ -372,6 +369,7 @@ class AbTransferHeader(models.Model):
             source_rows = source_rows_by_product.get(product.id)
             if source_rows is None:
                 source_rows = probe._get_source_inventory_rows(product)
+                source_rows_by_product[product.id] = source_rows
             current_price_row = source_rows[0] if source_rows else {}
             month1_sales = float(line_vals.get("smart_month1_sales", 0.0) or 0.0)
             month2_sales = float(line_vals.get("smart_month2_sales", 0.0) or 0.0)
@@ -465,6 +463,7 @@ class AbTransferHeader(models.Model):
             if warning_action:
                 return warning_action
 
+            self._ensure_smart_source_cache()
             source_stock_context = self._get_smart_candidate_source_stock_context()
             if not self.env.context.get(
                     SMART_SKIP_ZERO_SOURCE_STOCK_WARNING_CONTEXT_KEY
@@ -1040,6 +1039,19 @@ class AbTransferHeader(models.Model):
             force=force,
         )
 
+    def _ensure_smart_source_cache(self):
+        self.ensure_one()
+        return self._refresh_smart_source_cache(force=False)
+
+    def _refresh_smart_source_cache(self, force=False):
+        self.ensure_one()
+        if not self.from_store_id:
+            raise UserError(_("Source store is required."))
+        return self.env["ab_transfer_smart_source_stock_cache"].sudo().refresh_stores_cache(
+            self.from_store_id,
+            force=force,
+        )
+
     def _read_smart_destination_cache_rows(self, product_serials, destination_store_sql_id):
         self.ensure_one()
         cache_date = fields.Date.context_today(self)
@@ -1106,7 +1118,7 @@ class AbTransferHeader(models.Model):
         if not target_products_by_serial:
             raise UserError(_("Target products must have EPlus serials."))
 
-        source_stock_by_serial = self._get_smart_source_stock_by_product_serial(
+        source_stock_by_serial = self._get_smart_source_opening_stock_by_product_serial(
             target_products_by_serial
         )
         return {
@@ -1218,7 +1230,6 @@ class AbTransferHeader(models.Model):
             if line.product_id
         }
         create_vals_list = []
-        prefetched_inventory_by_product = {}
 
         for preview_row in preview_rows:
             product = preview_row["product"]
@@ -1242,18 +1253,9 @@ class AbTransferHeader(models.Model):
                     "header_id": self.id,
                     "product_id": product.id,
                 })
-                prefetched_inventory_by_product[product.id] = preview_row[
-                    "source_inventory_json"
-                ]
 
         if create_vals_list:
-            new_lines = self.env["ab_transfer_smart_line"].with_context(
-                **{
-                    SMART_PREFETCHED_SOURCE_INVENTORY_CONTEXT_KEY: (
-                        prefetched_inventory_by_product
-                    )
-                }
-            ).create(create_vals_list)
+            new_lines = self.env["ab_transfer_smart_line"].create(create_vals_list)
             result["created"] += len(new_lines)
 
         return result
@@ -1276,18 +1278,11 @@ class AbTransferHeader(models.Model):
             serial: products_by_serial[serial]
             for serial in required_context_by_serial
         }
-        source_stock_by_serial = self._get_smart_source_stock_by_product_serial(required_products_by_serial)
-        other_branches_context_by_serial = self._get_smart_other_branches_context_by_serial(
+        source_stock_by_serial = self._get_smart_source_opening_stock_by_product_serial(
             required_products_by_serial
         )
-        source_inventory_rows_by_product = {}
-        preview_header = self.with_context(
-            smart_source_inventory_products_by_serial=(
-                required_products_by_serial
-            ),
-            smart_source_inventory_rows_cache=(
-                source_inventory_rows_by_product
-            ),
+        other_branches_context_by_serial = self._get_smart_other_branches_context_by_serial(
+            required_products_by_serial
         )
         explicit_product_serials = set(self._get_smart_explicit_product_qty_by_serial())
 
@@ -1346,7 +1341,7 @@ class AbTransferHeader(models.Model):
             prepare_kwargs = {}
             if manual_requested_qty is not None:
                 prepare_kwargs["manual_qty"] = manual_requested_qty
-            line_vals = preview_header._prepare_smart_line_vals(
+            line_vals = self._prepare_smart_line_vals(
                 product,
                 computed_transfer_qty,
                 source_stock_qty,
@@ -1363,11 +1358,6 @@ class AbTransferHeader(models.Model):
             if not line_vals:
                 result["no_stock"] += 1
                 continue
-
-            source_inventory_rows = source_inventory_rows_by_product.get(
-                product.id,
-                [],
-            )
 
             line_vals["source_type"] = (
                 SMART_LINE_SOURCE_WIZARD
@@ -1386,9 +1376,6 @@ class AbTransferHeader(models.Model):
                 "product": product,
                 "line_vals": line_vals,
                 "dropout_excluded": dropout_excluded,
-                "source_inventory_json": {
-                    "data": source_inventory_rows,
-                },
             })
 
         return preview_rows, result
@@ -1866,6 +1853,22 @@ class AbTransferHeader(models.Model):
             raise UserError(_("Too many fair stores are selected for Smart Transfer."))
         return max(1, min(900, max_sql_parameters - branch_count))
 
+    def _get_smart_source_opening_stock_by_product_serial(self, products_by_serial):
+        self.ensure_one()
+        product_serials = [int(serial) for serial in products_by_serial if serial]
+        if not product_serials:
+            return {}
+
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"].sudo()
+        stock_by_serial = SourceCache.read_store_cache_rows(
+            self.from_store_id,
+            product_serials,
+        )
+        if stock_by_serial or not self.env.context.get("smart_export_readonly"):
+            return stock_by_serial
+
+        return self._get_smart_source_stock_by_product_serial(products_by_serial)
+
     def _get_smart_source_stock_by_product_serial(self, products_by_serial):
         self.ensure_one()
         product_serials = [serial for serial in products_by_serial if serial]
@@ -1892,6 +1895,7 @@ class AbTransferHeader(models.Model):
                         INNER JOIN item_catalog ic ON ic.itm_id = ics.itm_id
                         WHERE ics.sto_id = ?
                           AND ics.itm_id IN ({placeholders})
+                          AND ISNULL(ic.itm_active, 1) = 1
                         GROUP BY ics.itm_id
                         """,
                         (from_store_sql_id, *chunk),
@@ -1920,18 +1924,6 @@ class AbTransferHeader(models.Model):
             _logger.warning("Smart transfer skipped product without default UOM: %s", product.display_name)
             return {}
 
-        source_rows = self._get_source_inventory_rows(product)
-        source_rows_by_product = self.env.context.get(
-            "smart_export_source_rows_by_product"
-        )
-        if isinstance(source_rows_by_product, dict):
-            source_rows_by_product[product.id] = source_rows
-        requested_qty = manual_qty if manual_qty is not None else required_qty
-        selected = self._select_smart_source_row(source_rows, requested_qty)
-        if not selected and manual_qty is None:
-            _logger.warning("Smart transfer skipped product without source stock: %s", product.display_name)
-            return {}
-
         available_qty = float(source_stock_qty or 0.0)
         original_qty_before_int = min(required_qty, available_qty)
         if manual_qty is None:
@@ -1949,19 +1941,6 @@ class AbTransferHeader(models.Model):
         if final_qty <= 0:
             return {}
 
-        source_id = int(selected.get("source_id") or 0) if selected else 0
-        expiry_date = str(selected.get("exp_date") or "").split(" ")[0] if selected else ""
-        if not expiry_date and manual_qty is not None:
-            expiry_date = fields.Date.context_today(self)
-        if (not source_id or not expiry_date) and manual_qty is None:
-            _logger.warning(
-                "Smart transfer skipped product with incomplete source row: product=%s source=%s expiry=%s",
-                product.display_name,
-                source_id,
-                expiry_date,
-            )
-            return {}
-
         other_branches_context = other_branches_context or {}
         distribution_ratio = self._calculate_smart_distribution_ratio(
             final_qty,
@@ -1969,7 +1948,6 @@ class AbTransferHeader(models.Model):
         )
         vals = {
             "qty": final_qty,
-            "expiry_date": expiry_date,
             "uom_id": product.uom_id.id,
             "smart_source_stock_qty": source_stock_qty,
             "smart_qty_before_int": qty_before_int,
@@ -2117,17 +2095,13 @@ class AbTransferHeader(models.Model):
                 )
             return rows_cache.get(product.id, [])
 
-        line = self.env["ab_transfer_smart_line"].new({
-            "header_id": self.id,
-            "product_id": product.id,
-            "uom_id": product.uom_id.id if product.uom_id else False,
+        product_serial = self._get_smart_product_serial(product)
+        if not product_serial:
+            return []
+        rows_by_product = self._get_smart_source_inventory_rows_by_product({
+            product_serial: product,
         })
-        line._recompute_inventory_json()
-        return [
-            row
-            for row in line._get_inventory_rows()
-            if self._dict_float(row, "qty") > 0
-        ]
+        return rows_by_product.get(product.id, [])
 
     def _select_smart_source_row(self, source_rows, required_qty):
         rows = source_rows or []

@@ -1,21 +1,25 @@
 Current changes before commit:
 
-- Restrict Purchase Preparation Smart Wizard Draft write access to records created by the current user.
-- Restrict requested-product line writes so Purchase users cannot edit lines on another user's Draft Smart Wizard.
-- Keep Purchase Preparation, Store Preparation, and Store Revision users able to read all Smart Wizard records.
-- Keep Store Preparation and Store Revision users read-only through existing wizard ACLs.
-- Make the Smart Wizard User field unconditionally read-only in the form view.
-- Make Smart Wizard form fields and mutating buttons read-only/hidden for users who did not create the wizard.
-- Reset duplicated Smart Wizard records to the duplicating user's default cost center, ignoring explicit copy defaults for User.
-- Add focused tests for owner Draft writes, cross-user Draft reads, blocked cross-user Draft writes, requested-product line ownership, a second purchase user's own Draft writes, read-only store roles, system access, User field readonly XML, non-creator readonly UI, and duplicate User reset.
+- Add a Smart Transfer source opening-stock cache with one positive-stock row per source store, product, and cache day.
+- Keep older source cache days available for analysis while forced refreshes replace only the current day.
+- Use the source opening cache for wizard/header zero-stock checks and smart planning instead of live per-product source inventory reads.
+- Defer live class, batch, and expiry source inventory reads until pre-submit/submit/export paths that actually need transfer-line source details.
+- Serialize source cache refreshes per source store and re-check after the refresh lock so concurrent users share one opening snapshot.
+- Expose the source stock cache report menu with read access for Smart Transfer roles and full system access.
+- Add Arabic translations and focused tests for source cache history, positive-row filtering, concurrency re-checks, product linking, planning without expiry/class, and wizard source-cache ordering.
 
 Files changed:
 
+- ab_transfer_smart/i18n/ar.po
+- ab_transfer_smart/i18n/ar_001.po
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/models/ab_transfer_smart_cache.py
+- ab_transfer_smart/models/ab_transfer_smart_line.py
 - ab_transfer_smart/models/ab_transfer_smart_wizard.py
 - ab_transfer_smart/security/ir.model.access.csv
 - ab_transfer_smart/security/record_rules.xml
 - ab_transfer_smart/tests/test_smart_transfer.py
-- ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
+- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
 
 
 commit b6899c66138c1be7dc21c4d35926b048943585d2
