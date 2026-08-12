@@ -4,6 +4,8 @@ import urllib.error
 import urllib.request
 
 from odoo import api, fields, models
+from odoo.tools import config
+from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
@@ -31,8 +33,15 @@ class AbOdooSyncService(models.Model):
         return max(1, min(val, 10000))
 
     @api.model
-    def get_branch_code(self):
-        return (self._icp().get_param("ab_odoo_sync.branch_code") or "default_branch").strip()
+    def get_db_serial(self):
+        raw = config.get("db_serial", 0) or 0
+        try:
+            db_serial = int(raw)
+        except (TypeError, ValueError) as ex:
+            raise ValueError(_("Invalid db_serial config. Set db_serial to a positive integer.")) from ex
+        if db_serial <= 0:
+            raise ValueError(_("Missing db_serial config. Set db_serial to a positive integer."))
+        return db_serial
 
     @api.model
     def _normalize_payload_value(self, model, field_name, value):
@@ -45,13 +54,15 @@ class AbOdooSyncService(models.Model):
     def _prepare_vals_for_create_or_write(self, model, payload):
         payload = payload or {}
         clean_vals = {}
+        skipped_fields = []
         for key, val in payload.items():
             if key in {"id", "create_uid", "create_date", "write_uid", "write_date", "__last_update", "display_name"}:
                 continue
             if key not in model._fields:
+                skipped_fields.append(key)
                 continue
             clean_vals[key] = self._normalize_payload_value(model, key, val)
-        return clean_vals
+        return clean_vals, skipped_fields
 
     @api.model
     def _force_next_id(self, model, target_id):
@@ -66,6 +77,7 @@ class AbOdooSyncService(models.Model):
 
     @api.model
     def _apply_event(self, event):
+        event_id = int(event.get("id") or 0)
         model_name = event.get("model_name")
         record_id = int(event.get("record_id") or 0)
         operation = event.get("operation")
@@ -80,9 +92,16 @@ class AbOdooSyncService(models.Model):
         if operation == "unlink":
             if record.exists():
                 record.unlink()
-            return
+            return []
 
-        vals = self._prepare_vals_for_create_or_write(model, payload)
+        vals, skipped_fields = self._prepare_vals_for_create_or_write(model, payload)
+        if skipped_fields:
+            _logger.warning(
+                "ab_odoo_sync event %s skipped missing field(s) on model %s: %s",
+                event_id,
+                model_name,
+                ", ".join(skipped_fields),
+            )
 
         if operation == "write":
             if record.exists():
@@ -91,15 +110,16 @@ class AbOdooSyncService(models.Model):
                 # Optional behavior requested: create if missing.
                 self._force_next_id(model, record_id)
                 model.create(vals)
-            return
+            return skipped_fields
 
         # operation == "create"
         if record.exists():
             record.write(vals)
-            return
+            return skipped_fields
 
         self._force_next_id(model, record_id)
         model.create(vals)
+        return skipped_fields
 
     @api.model
     def _main_api_call(self, path, payload):
@@ -132,9 +152,9 @@ class AbOdooSyncService(models.Model):
 
     @api.model
     def _get_or_create_local_checkpoint(self):
-        branch_code = self.get_branch_code()
+        db_serial = self.get_db_serial()
         checkpoint = self.env["ab_odoo_sync_checkpoint"].sudo().search(
-            [("branch_code", "=", branch_code)],
+            [("db_serial", "=", db_serial)],
             limit=1,
         )
         if checkpoint:
@@ -142,11 +162,42 @@ class AbOdooSyncService(models.Model):
 
         return self.env["ab_odoo_sync_checkpoint"].sudo().create(
             {
-                "branch_code": branch_code,
+                "db_serial": db_serial,
                 "last_event_id": 0,
                 "active": True,
             }
         )
+
+    @api.model
+    def _get_or_create_event_state(self, event, db_serial):
+        event_id = int(event.get("id") or 0)
+        state_model = self.env["ab_odoo_sync_event_state"].sudo()
+        state = state_model.search(
+            [
+                ("source_event_id", "=", event_id),
+                ("db_serial", "=", db_serial),
+            ],
+            limit=1,
+        )
+        vals = {
+            "source_event_id": event_id,
+            "db_serial": db_serial,
+            "model_name": event.get("model_name"),
+            "record_id": int(event.get("record_id") or 0),
+            "operation": event.get("operation"),
+            "payload_json": event.get("payload_json") or {},
+        }
+        if state:
+            state.with_context(ab_odoo_sync_allow_event_state_write=True).write(vals)
+            return state
+        vals.update(
+            {
+                "status": "pending",
+                "skipped_fields_json": [],
+                "error_message": False,
+            }
+        )
+        return state_model.with_context(ab_odoo_sync_allow_event_state_write=True).create(vals)
 
     @api.model
     def run_branch_sync_batch(self):
@@ -155,9 +206,9 @@ class AbOdooSyncService(models.Model):
 
         checkpoint = self._get_or_create_local_checkpoint()
         batch_size = self.get_batch_size()
-        branch_code = checkpoint.branch_code
+        db_serial = checkpoint.db_serial
         payload = {
-            "branch_code": branch_code,
+            "db_serial": db_serial,
             "last_event_id": checkpoint.last_event_id,
             "limit": batch_size,
         }
@@ -169,9 +220,52 @@ class AbOdooSyncService(models.Model):
             return {"status": "ok", "processed": 0, "last_event_id": checkpoint.last_event_id}
 
         last_processed = checkpoint.last_event_id
+        processed_count = 0
         for event in events:
-            self._apply_event(event)
-            last_processed = int(event["id"])
+            event_id = int(event["id"])
+            state = self._get_or_create_event_state(event, db_serial)
+            if state.status in {"full_sync", "partially_sync", "not_sync"}:
+                last_processed = event_id
+                processed_count += 1
+                continue
+
+            try:
+                with self.env.cr.savepoint():
+                    state.with_context(ab_odoo_sync_allow_event_state_write=True).write(
+                        {
+                            "status": "pending",
+                            "skipped_fields_json": [],
+                            "error_message": False,
+                        }
+                    )
+                    skipped_fields = self._apply_event(event)
+            except Exception as ex:
+                state.with_context(ab_odoo_sync_allow_event_state_write=True).write(
+                    {
+                        "status": "failed",
+                        "error_message": str(ex),
+                        "applied_at": fields.Datetime.now(),
+                    }
+                )
+                return {
+                    "status": "failed",
+                    "processed": processed_count,
+                    "failed_event_id": event_id,
+                    "error": str(ex),
+                    "last_event_id": checkpoint.last_event_id,
+                }
+
+            status = "partially_sync" if skipped_fields else "full_sync"
+            state.with_context(ab_odoo_sync_allow_event_state_write=True).write(
+                {
+                    "status": status,
+                    "skipped_fields_json": skipped_fields,
+                    "error_message": False,
+                    "applied_at": fields.Datetime.now(),
+                }
+            )
+            last_processed = event_id
+            processed_count += 1
 
         now = fields.Datetime.now()
         checkpoint.sudo().write(
@@ -185,14 +279,14 @@ class AbOdooSyncService(models.Model):
         self._main_api_call(
             "/ab_odoo_sync/checkpoint/ack",
             {
-                "branch_code": branch_code,
+                "db_serial": db_serial,
                 "last_event_id": last_processed,
                 "last_sync_at": fields.Datetime.to_string(now),
                 "active": True,
             },
         )
 
-        return {"status": "ok", "processed": len(events), "last_event_id": last_processed}
+        return {"status": "ok", "processed": processed_count, "last_event_id": last_processed}
 
     @api.model
     def cron_run_branch_sync(self):
@@ -207,15 +301,15 @@ class AbOdooSyncService(models.Model):
     @api.model
     def cleanup_consumed_events(self):
         if self.get_server_role() != "main":
-            return {"status": "skipped", "reason": "server_role is not main"}
+            return {"status": "skipped", "reason": _("server_role is not main")}
 
         checkpoints = self.env["ab_odoo_sync_checkpoint"].sudo().search([("active", "=", True)])
         if not checkpoints:
-            return {"status": "ok", "deleted": 0, "reason": "no active checkpoints"}
+            return {"status": "ok", "deleted": 0, "reason": _("no active checkpoints")}
 
         min_last_event_id = min(checkpoints.mapped("last_event_id") or [0])
         if min_last_event_id <= 0:
-            return {"status": "ok", "deleted": 0, "reason": "watermark is zero"}
+            return {"status": "ok", "deleted": 0, "reason": _("watermark is zero")}
 
         events = self.env["ab_odoo_sync_event"].sudo().search(
             [("id", "<=", min_last_event_id)],
@@ -234,6 +328,9 @@ class AbOdooSyncService(models.Model):
 
     @api.model
     def cron_cleanup_consumed_events(self):
-        result = self.cleanup_consumed_events()
+        result = {
+            "status": "skipped",
+            "reason": _("automatic cleanup is disabled; run manual cleanup from Odoo Sync checkpoints"),
+        }
         _logger.info("ab_odoo_sync cleanup result: %s", result)
         return result

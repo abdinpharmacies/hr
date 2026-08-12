@@ -117,7 +117,12 @@
             <field name="model">ab_odoo_sync_checkpoint</field>
             <field name="arch" type="xml">
                 <list>
-                    <field name="branch_code"/>
+                    <header>
+                        <button name="action_cleanup_consumed_events" type="object"
+                                string="Cleanup Consumed Events" class="btn-secondary"
+                                display="always"/>
+                    </header>
+                    <field name="db_serial"/>
                     <field name="active"/>
                     <field name="last_event_id"/>
                     <field name="last_sync_at"/>
@@ -130,9 +135,13 @@
             <field name="model">ab_odoo_sync_checkpoint</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button name="action_cleanup_consumed_events" type="object"
+                                string="Cleanup Consumed Events" class="btn-secondary"/>
+                    </header>
                     <sheet>
                         <group>
-                            <field name="branch_code"/>
+                            <field name="db_serial"/>
                             <field name="active"/>
                             <field name="last_event_id"/>
                             <field name="last_sync_at"/>
@@ -147,7 +156,7 @@
             <field name="model">ab_odoo_sync_checkpoint</field>
             <field name="arch" type="xml">
                 <search>
-                    <field name="branch_code"/>
+                    <field name="db_serial"/>
                     <filter name="active" string="Active" domain="[('active', '=', True)]"/>
                     <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
                 </search>
@@ -161,13 +170,110 @@
             <field name="search_view_id" ref="view_ab_odoo_sync_checkpoint_search"/>
         </record>
 
+        <record id="action_ab_odoo_sync_manual_cleanup" model="ir.actions.server">
+            <field name="name">Cleanup Consumed Events</field>
+            <field name="model_id" ref="model_ab_odoo_sync_checkpoint"/>
+            <field name="state">code</field>
+            <field name="code">action = env["ab_odoo_sync_checkpoint"].action_cleanup_consumed_events()</field>
+        </record>
+
+        <record id="view_ab_odoo_sync_event_state_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_event_state.list</field>
+            <field name="model">ab_odoo_sync_event_state</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="source_event_id"/>
+                    <field name="db_serial"/>
+                    <field name="status" widget="badge" readonly="1"
+                           decoration-success="status == 'full_sync'"
+                           decoration-info="status == 'partially_sync'"
+                           decoration-danger="status == 'failed'"
+                           decoration-muted="status == 'not_sync'"/>
+                    <field name="model_name"/>
+                    <field name="record_id"/>
+                    <field name="operation"/>
+                    <field name="skipped_fields_json" optional="hide"/>
+                    <field name="error_message" optional="show"/>
+                    <field name="applied_at"/>
+                    <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
+                            invisible="status not in ('pending', 'failed')"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_event_state_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_event_state.form</field>
+            <field name="model">ab_odoo_sync_event_state</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <header>
+                        <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
+                                class="btn-secondary"
+                                invisible="status not in ('pending', 'failed')"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="source_event_id"/>
+                                <field name="db_serial"/>
+                                <field name="status" widget="badge" readonly="1"/>
+                                <field name="applied_at"/>
+                            </group>
+                            <group>
+                                <field name="model_name"/>
+                                <field name="record_id"/>
+                                <field name="operation"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="skipped_fields_json"/>
+                            <field name="error_message"/>
+                            <field name="payload_json"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_event_state_search" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_event_state.search</field>
+            <field name="model">ab_odoo_sync_event_state</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="source_event_id"/>
+                    <field name="db_serial"/>
+                    <field name="model_name"/>
+                    <field name="record_id"/>
+                    <field name="operation"/>
+                    <field name="status"/>
+                    <filter name="pending" string="Pending" domain="[('status', '=', 'pending')]"/>
+                    <filter name="full_sync" string="Full Sync" domain="[('status', '=', 'full_sync')]"/>
+                    <filter name="partially_sync" string="Partially Sync"
+                            domain="[('status', '=', 'partially_sync')]"/>
+                    <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]"/>
+                    <filter name="not_sync" string="Not Sync" domain="[('status', '=', 'not_sync')]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_event_state" model="ir.actions.act_window">
+            <field name="name">Sync Event States</field>
+            <field name="res_model">ab_odoo_sync_event_state</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_odoo_sync_event_state_search"/>
+        </record>
+
         <menuitem id="menu_ab_odoo_sync_root" name="Odoo Sync" parent="base.menu_custom" sequence="50"
                   groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_config" name="Sync Config" parent="menu_ab_odoo_sync_root"
                   action="action_ab_odoo_sync_config" sequence="10" groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_events" name="Events" parent="menu_ab_odoo_sync_root"
                   action="action_ab_odoo_sync_event" sequence="20" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_event_states" name="Event States" parent="menu_ab_odoo_sync_root"
+                  action="action_ab_odoo_sync_event_state" sequence="25" groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_checkpoints" name="Checkpoints" parent="menu_ab_odoo_sync_root"
                   action="action_ab_odoo_sync_checkpoint" sequence="30" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_manual_cleanup" name="Cleanup Consumed Events" parent="menu_ab_odoo_sync_root"
+                  action="action_ab_odoo_sync_manual_cleanup" sequence="40" groups="base.group_system"/>
     </data>
 </odoo>

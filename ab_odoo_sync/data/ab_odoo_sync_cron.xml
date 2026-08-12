@@ -15,7 +15,7 @@
 
         <record id="ir_cron_ab_odoo_sync_cleanup" model="ir.cron">
             <field name="name">AB Odoo Sync: Cleanup Consumed Events</field>
-            <field name="active">True</field>
+            <field name="active">False</field>
             <field name="interval_number">10</field>
             <field name="interval_type">minutes</field>
             <field name="numbercall">-1</field>

@@ -31,6 +31,30 @@ class AbOdooSyncController(http.Controller):
         request_key = (request.httprequest.headers.get("X-AB-Sync-Key") or "").strip()
         return bool(api_key) and request_key == api_key
 
+    def _parse_db_serial(self, payload):
+        try:
+            db_serial = int(payload.get("db_serial") or 0)
+        except (TypeError, ValueError):
+            return 0
+        return db_serial if db_serial > 0 else 0
+
+    def _register_checkpoint_request(self, db_serial, last_event_id):
+        checkpoint_model = request.env["ab_odoo_sync_checkpoint"].sudo()
+        checkpoint = checkpoint_model.search([("db_serial", "=", db_serial)], limit=1)
+        if not checkpoint:
+            checkpoint_model.create(
+                {
+                    "db_serial": db_serial,
+                    "last_event_id": max(0, int(last_event_id or 0)),
+                    "active": True,
+                }
+            )
+            return
+        vals = {"active": True}
+        if checkpoint.last_event_id > int(last_event_id or 0):
+            vals["last_event_id"] = max(0, int(last_event_id or 0))
+        checkpoint.write(vals)
+
     @http.route("/ab_odoo_sync/events", type="http", auth="public", methods=["POST"], csrf=False)
     def get_events_after(self, **kwargs):
         if not self._authorize():
@@ -41,8 +65,12 @@ class AbOdooSyncController(http.Controller):
             return _json_response({"ok": False, "error": "This server is not MAIN"}, status=400)
 
         payload = self._payload()
+        db_serial = self._parse_db_serial(payload)
+        if not db_serial:
+            return _json_response({"ok": False, "error": "db_serial is required"}, status=400)
         last_event_id = int(payload.get("last_event_id") or 0)
         limit = int(payload.get("limit") or service.get_batch_size())
+        self._register_checkpoint_request(db_serial, last_event_id)
 
         events = request.env["ab_odoo_sync_event"].sudo().get_events_after(last_event_id=last_event_id, limit=limit)
         return _json_response({"ok": True, "events": events})
@@ -57,16 +85,16 @@ class AbOdooSyncController(http.Controller):
             return _json_response({"ok": False, "error": "This server is not MAIN"}, status=400)
 
         payload = self._payload()
-        branch_code = (payload.get("branch_code") or "").strip()
-        if not branch_code:
-            return _json_response({"ok": False, "error": "branch_code is required"}, status=400)
+        db_serial = self._parse_db_serial(payload)
+        if not db_serial:
+            return _json_response({"ok": False, "error": "db_serial is required"}, status=400)
 
         last_event_id = int(payload.get("last_event_id") or 0)
         last_sync_at = payload.get("last_sync_at") or fields.Datetime.now()
         active = bool(payload.get("active", True))
 
         checkpoint_model = request.env["ab_odoo_sync_checkpoint"].sudo()
-        checkpoint = checkpoint_model.search([("branch_code", "=", branch_code)], limit=1)
+        checkpoint = checkpoint_model.search([("db_serial", "=", db_serial)], limit=1)
 
         vals = {
             "last_event_id": last_event_id,
@@ -76,7 +104,7 @@ class AbOdooSyncController(http.Controller):
         if checkpoint:
             checkpoint.write(vals)
         else:
-            vals["branch_code"] = branch_code
+            vals["db_serial"] = db_serial
             checkpoint_model.create(vals)
 
         return _json_response({"ok": True})

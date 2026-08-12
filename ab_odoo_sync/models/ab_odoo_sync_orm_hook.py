@@ -32,7 +32,7 @@ def _to_jsonable(value):
 def _should_capture(model):
     if model.env.context.get("skip_ab_odoo_sync_event"):
         return False
-    if model._name.startswith("ab.odoo.sync."):
+    if model._name.startswith("ab.odoo.sync.") or model._name.startswith("ab_odoo_sync"):
         return False
     if model._name in {
         "ir.model.data",

@@ -1,0 +1,230 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_odoo_sync
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-12 00:00+0000\n"
+"PO-Revision-Date: 2026-08-12 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
+
+#. module: ab_odoo_sync
+#: model:ir.model,name:ab_odoo_sync.model_ab_odoo_sync_event_state
+msgid "AB Odoo Sync Event State"
+msgstr "حالة حدث مزامنة أودو"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__applied_at
+msgid "Applied At"
+msgstr "تم التطبيق في"
+
+#. module: ab_odoo_sync
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_checkpoint_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_checkpoint_list
+#: model:ir.actions.server,name:ab_odoo_sync.action_ab_odoo_sync_manual_cleanup
+#: model:ir.ui.menu,name:ab_odoo_sync.menu_ab_odoo_sync_manual_cleanup
+msgid "Cleanup Consumed Events"
+msgstr "تنظيف أحداث المزامنة المستهلكة"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_checkpoint__db_serial
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__db_serial
+msgid "DB Serial"
+msgstr "رقم قاعدة البيانات"
+
+#. module: ab_odoo_sync
+#: model:ir.model.constraint,message:ab_odoo_sync.constraint_ab_odoo_sync_checkpoint_uniq_db_serial
+msgid "DB serial must be unique."
+msgstr "يجب أن يكون رقم قاعدة البيانات فريدا."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__operation__create
+msgid "Create"
+msgstr "إنشاء"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_checkpoint.py:0
+#, python-format
+msgid "Deleted %(deleted)s consumed sync event(s). Watermark: %(watermark)s."
+msgstr "تم حذف %(deleted)s حدث مزامنة مستهلك. علامة التنظيف: %(watermark)s."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__error_message
+msgid "Error Message"
+msgstr "رسالة الخطأ"
+
+#. module: ab_odoo_sync
+#: model:ir.ui.menu,name:ab_odoo_sync.menu_ab_odoo_sync_event_states
+msgid "Event States"
+msgstr "حالات الأحداث"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__status__failed
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_event_state_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__status__full_sync
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_event_state_search
+msgid "Full Sync"
+msgstr "مزامنة كاملة"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Invalid db_serial config. Set db_serial to a positive integer."
+msgstr "إعداد db_serial غير صحيح. اضبط db_serial على رقم موجب."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_event_state.py:0
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_event_state_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_event_state_list
+msgid "Mark Not Sync"
+msgstr "تعليم كغير متزامن"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_checkpoint.py:0
+msgid "Manual sync event cleanup did not run."
+msgstr "لم يتم تشغيل التنظيف اليدوي لأحداث المزامنة."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Missing db_serial config. Set db_serial to a positive integer."
+msgstr "إعداد db_serial مفقود. اضبط db_serial على رقم موجب."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__status__not_sync
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_event_state_search
+msgid "Not Sync"
+msgstr "غير متزامن"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_checkpoint.py:0
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_event_state.py:0
+msgid "Odoo Sync"
+msgstr "مزامنة أودو"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__operation
+msgid "Operation"
+msgstr "العملية"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_event_state.py:0
+msgid "Only Pending or Failed sync events can be marked as Not Sync."
+msgstr "يمكن تعليم أحداث المزامنة المعلقة أو الفاشلة فقط كغير متزامنة."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__payload_json
+msgid "Payload"
+msgstr "البيانات"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__status__partially_sync
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_event_state_search
+msgid "Partially Sync"
+msgstr "مزامنة جزئية"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_event_state_search
+msgid "Pending"
+msgstr "معلق"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_event_state.py:0
+msgid "Selected sync event(s) were marked as Not Sync."
+msgstr "تم تعليم أحداث المزامنة المحددة كغير متزامنة."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__skipped_fields_json
+msgid "Skipped Fields"
+msgstr "الحقول المتجاوزة"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__source_event_id
+msgid "Source Event ID"
+msgstr "معرف الحدث المصدر"
+
+#. module: ab_odoo_sync
+#: model:ir.model.constraint,message:ab_odoo_sync.constraint_ab_odoo_sync_event_state_uniq_source_event_db
+msgid "Source event must be unique per database serial."
+msgstr "يجب أن يكون الحدث المصدر فريدا لكل رقم قاعدة بيانات."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_event_state__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_odoo_sync
+#: model:ir.actions.act_window,name:ab_odoo_sync.action_ab_odoo_sync_event_state
+msgid "Sync Event States"
+msgstr "حالات أحداث المزامنة"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_event_state.py:0
+msgid "Sync event states are audit records and cannot be deleted."
+msgstr "حالات أحداث المزامنة سجلات تدقيق ولا يمكن حذفها."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_event_state.py:0
+msgid "Sync event states are created by the sync service only."
+msgstr "يتم إنشاء حالات أحداث المزامنة بواسطة خدمة المزامنة فقط."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_event_state.py:0
+msgid "Use Mark Not Sync to manually skip a sync event."
+msgstr "استخدم تعليم كغير متزامن لتجاوز حدث مزامنة يدويا."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "automatic cleanup is disabled; run manual cleanup from Odoo Sync checkpoints"
+msgstr "التنظيف التلقائي معطل؛ شغل التنظيف اليدوي من نقاط تحقق مزامنة أودو"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "no active checkpoints"
+msgstr "لا توجد نقاط تحقق نشطة"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "server_role is not main"
+msgstr "دور الخادم ليس main"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__operation__unlink
+msgid "Unlink"
+msgstr "حذف"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "watermark is zero"
+msgstr "علامة التنظيف تساوي صفرا"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_event_state__operation__write
+msgid "Write"
+msgstr "تعديل"
