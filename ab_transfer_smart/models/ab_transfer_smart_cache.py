@@ -26,6 +26,36 @@ SMART_DESTINATION_STOCK_SQL = """
     ) AS decimal(18,2)) <> 0
 """
 
+SMART_DESTINATION_PENDING_STOCK_SQL = """
+    SELECT
+        Item_Catalog.itm_id,
+        Item_Catalog.itm_code,
+        Store.sto_id,
+        CAST(
+            SUM(
+                CAST(Store_Trans.st_itm_quantity AS DECIMAL(18, 4))
+                / NULLIF(Item_Catalog.itm_unit1_unit3, 0)
+            )
+            AS DECIMAL(18, 2)
+        ) AS stock
+    FROM Store_Trans
+    INNER JOIN Item_Catalog
+        ON Item_Catalog.itm_id = Store_Trans.st_itm_id
+    INNER JOIN Store
+        ON Store.sto_id = Store_Trans.st_to_store
+    INNER JOIN Store_Trans_h
+        ON Store_Trans_h.stnh_id = Store_Trans.stnh_id
+        AND Store_Trans_h.stnh_f_Sto_id = Store_Trans.st_from_store
+        AND Store_Trans_h.stnh_t_Sto_id = Store_Trans.st_to_store
+    WHERE Store_Trans_h.stnh_flag = 'S'
+        AND Store.activated = 1
+        AND Store.sto_id = ?
+    GROUP BY
+        Item_Catalog.itm_id,
+        Item_Catalog.itm_code,
+        Store.sto_id
+"""
+
 SMART_SOURCE_STOCK_SQL = """
     SELECT
         ics.itm_id,
@@ -364,6 +394,11 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
         digits=(16, 4),
         aggregator="sum",
     )
+    stock_pending_qty = fields.Float(
+        string="Pending Stock Quantity",
+        digits=(16, 4),
+        aggregator="sum",
+    )
     cache_date = fields.Date(
         string="Cache Date",
         required=True,
@@ -418,16 +453,27 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
             return 0
 
         self.search([("store_id", "=", store.id)]).unlink()
-        rows = self._fetch_store_stock_rows(store)
+        onhand_by_product = self._fetch_store_stock_rows(store)
+        pending_by_product = self._fetch_store_pending_stock_rows(store)
+        product_serials = sorted(set(onhand_by_product) | set(pending_by_product))
         vals_list = [
             {
                 "store_id": store.id,
                 "product_eplus_serial": product_serial,
-                "stock_qty": stock_qty,
+                "stock_qty": (
+                    float(onhand_by_product.get(product_serial, 0.0) or 0.0)
+                    + float(pending_by_product.get(product_serial, 0.0) or 0.0)
+                ),
+                "stock_pending_qty": float(
+                    pending_by_product.get(product_serial, 0.0) or 0.0
+                ),
                 "cache_date": cache_date,
             }
-            for product_serial, stock_qty in rows.items()
-            if product_serial and float(stock_qty or 0.0) != 0.0
+            for product_serial in product_serials
+            if product_serial and (
+                float(onhand_by_product.get(product_serial, 0.0) or 0.0)
+                + float(pending_by_product.get(product_serial, 0.0) or 0.0)
+            ) != 0.0
         ]
         if vals_list:
             self.create(vals_list)
@@ -471,6 +517,36 @@ class AbTransferSmartStockCache(AbTransferSmartCacheTools, models.Model):
             _logger.exception("Smart transfer stock cache refresh failed: store=%s", store.display_name)
             raise UserError(
                 _("Smart transfer stock cache refresh failed for %(store)s: %(error)s")
+                % {"store": store.display_name, "error": error}
+            )
+
+    @api.model
+    def _fetch_store_pending_stock_rows(self, store):
+        store_sql_id = self._get_store_sql_id(store)
+        server = self._get_store_server(store)
+        try:
+            stock_by_product = {}
+            with self.connect_eplus(
+                    server=server,
+                    param_str="?",
+                    autocommit=True,
+                    propagate_error=True,
+            ) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(SMART_DESTINATION_PENDING_STOCK_SQL, (store_sql_id,))
+                    for product_serial, _product_code, _store_sql_id, stock_qty in cursor.fetchall() or []:
+                        product_serial = self._safe_int(product_serial)
+                        stock_qty = float(stock_qty or 0.0)
+                        if product_serial and stock_qty != 0.0:
+                            stock_by_product[product_serial] = stock_qty
+            return stock_by_product
+        except Exception as error:
+            _logger.exception(
+                "Smart transfer pending stock cache refresh failed: store=%s",
+                store.display_name,
+            )
+            raise UserError(
+                _("Smart transfer pending stock cache refresh failed for %(store)s: %(error)s")
                 % {"store": store.display_name, "error": error}
             )
 

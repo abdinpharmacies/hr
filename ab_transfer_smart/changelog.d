@@ -1,3 +1,21 @@
+commit b2499da5b6c02e12c39fe58d04e688d257df22e5 (HEAD -> pos19, origin/pos19)
+Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
+Date:   Wed Aug 12 12:03:12 2026 +0300
+
+    ab_transfer_smart/fix: convert destination stock cache quantities using E-Plus method not row
+
+- Convert Smart Transfer destination stock cache quantities from E-Plus small-unit stock to the same UoM basis used by source stock and sales.
+- Join destination stock cache SQL with item_catalog and divide Item_Class_Store.itm_qty by item_catalog.itm_unit1_unit3.
+- Keep source stock, sales queries, destination cache schema, and generation flow unchanged.
+- Add tests for converted destination cache output and required quantity calculation from converted destination stock.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/models/ab_transfer_smart_cache.py
+- ab_transfer_smart/tests/test_smart_transfer.py
+
+
 commit 4911fe7db01475969681ca138ba91f58d1a75e9a
 Author: emadco88 <emadco88@gmail.com>
 Date:   Tue Aug 11 18:29:03 2026 +0300
@@ -45,16 +63,22 @@ Files changed:
 
 Current changes before commit:
 
-- Convert Smart Transfer destination stock cache quantities from E-Plus small-unit stock to the same UoM basis used by source stock and sales.
-- Join destination stock cache SQL with item_catalog and divide Item_Class_Store.itm_qty by item_catalog.itm_unit1_unit3.
-- Keep source stock, sales queries, destination cache schema, and generation flow unchanged.
-- Add tests for converted destination cache output and required quantity calculation from converted destination stock.
+- Include suspended incoming E-Plus transfer quantities in Smart Transfer destination stock cache totals.
+- Add Pending Stock Quantity on destination stock cache rows to show the suspended incoming component separately.
+- Merge converted on-hand destination stock with converted pending incoming stock during destination cache refresh.
+- Keep generation logic unchanged so Smart Transfer need calculation continues subtracting stock_qty as the total destination stock.
+- Show Pending Stock Quantity in the Smart Stock Cache list and form views.
+- Add Arabic translations for Pending Stock Quantity.
+- Add tests for pending stock SQL, on-hand plus pending cache totals, pending-only cache rows, and required quantity calculation.
 
 Files changed:
 
 - ab_transfer_smart/changelog.d
+- ab_transfer_smart/i18n/ar.po
+- ab_transfer_smart/i18n/ar_001.po
 - ab_transfer_smart/models/ab_transfer_smart_cache.py
 - ab_transfer_smart/tests/test_smart_transfer.py
+- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
 
 
 commit b6899c66138c1be7dc21c4d35926b048943585d2

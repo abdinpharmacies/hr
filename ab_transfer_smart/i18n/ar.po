@@ -1308,6 +1308,12 @@ msgid "Stock Quantity"
 msgstr "كمية المخزون"
 
 #. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__stock_pending_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_list
+msgid "Pending Stock Quantity"
+msgstr "كمية المخزون المعلقة"
+
+#. module: ab_transfer_smart
 #. odoo-python
 #: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
 #: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0

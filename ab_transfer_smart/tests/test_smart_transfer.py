@@ -2834,6 +2834,10 @@ class TestSmartTransfer(TransactionCase):
                     99112: 0.0,
                     99113: -2.0,
                 },
+        ), patch.object(
+                type(StockCache),
+                "_fetch_store_pending_stock_rows",
+                return_value={},
         ):
             created_count = StockCache.refresh_store_cache(store, force=True)
 
@@ -2877,6 +2881,139 @@ class TestSmartTransfer(TransactionCase):
         self.assertIn("INNER JOIN item_catalog ic ON ic.itm_id = main.itm_id", query)
         self.assertIn("/ CAST(ic.itm_unit1_unit3 AS decimal(18,4))", query)
         self.assertEqual(stock_rows, {990181: 10.0})
+
+    def test_destination_pending_stock_cache_fetch_uses_suspended_incoming_transfers(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        store = header.to_store_id
+        StockCache = self.env["ab_transfer_smart_stock_cache"]
+        cursor = MagicMock()
+        cursor.fetchall.return_value = [(990183, "P990183", 8304, 5.0)]
+        connection = MagicMock()
+        connection.cursor.return_value.__enter__.return_value = cursor
+        connection_context = MagicMock()
+        connection_context.__enter__.return_value = connection
+
+        with patch.object(
+                type(StockCache),
+                "_get_store_sql_id",
+                return_value=8304,
+        ), patch.object(
+                type(StockCache),
+                "_get_store_server",
+                return_value="127.0.0.1",
+        ), patch.object(
+                type(StockCache),
+                "connect_eplus",
+                return_value=connection_context,
+        ):
+            pending_rows = StockCache._fetch_store_pending_stock_rows(store)
+
+        query = cursor.execute.call_args[0][0]
+        self.assertIn("FROM Store_Trans", query)
+        self.assertIn("Store_Trans_h.stnh_flag = 'S'", query)
+        self.assertIn("/ NULLIF(Item_Catalog.itm_unit1_unit3, 0)", query)
+        self.assertEqual(pending_rows, {990183: 5.0})
+
+    def test_destination_stock_cache_refresh_merges_onhand_and_pending_stock(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        store = header.to_store_id
+        StockCache = self.env["ab_transfer_smart_stock_cache"]
+
+        with patch.object(
+                type(StockCache),
+                "_fetch_store_stock_rows",
+                return_value={990184: 10.0},
+        ), patch.object(
+                type(StockCache),
+                "_fetch_store_pending_stock_rows",
+                return_value={990184: 5.0},
+        ):
+            created_count = StockCache.refresh_store_cache(store, force=True)
+
+        cache_line = StockCache.search([
+            ("store_id", "=", store.id),
+            ("product_eplus_serial", "=", 990184),
+        ])
+        self.assertEqual(created_count, 1)
+        self.assertEqual(cache_line.stock_qty, 15.0)
+        self.assertEqual(cache_line.stock_pending_qty, 5.0)
+
+    def test_destination_stock_cache_keeps_pending_only_products(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        header.smart_days = 45
+        header.smart_stock_method = SMART_STOCK_METHOD_NORMAL
+        store = header.to_store_id
+        store_sql_id = int(store.eplus_serial)
+        product = SimpleNamespace(eplus_serial=990185)
+        StockCache = self.env["ab_transfer_smart_stock_cache"]
+        SalesCache = self.env["ab_transfer_smart_sales_cache"]
+        today = fields.Date.context_today(StockCache)
+
+        with patch.object(
+                type(StockCache),
+                "_fetch_store_stock_rows",
+                return_value={},
+        ), patch.object(
+                type(StockCache),
+                "_fetch_store_pending_stock_rows",
+                return_value={int(product.eplus_serial): 5.0},
+        ):
+            created_count = StockCache.refresh_store_cache(store, force=True)
+
+        SalesCache.create({
+            "store_id": store.id,
+            "product_eplus_serial": int(product.eplus_serial),
+            "month1_sales": 20,
+            "month2_sales": 20,
+            "month3_sales": 20,
+            "total_3_months_sales": 60,
+            "cache_date": today,
+        })
+        rows = header._read_smart_destination_cache_rows(
+            [int(product.eplus_serial)],
+            store_sql_id,
+        )
+        context = header._get_smart_required_context_from_row(
+            rows[0],
+            {int(product.eplus_serial): product},
+        )
+        cache_line = StockCache.search([
+            ("store_id", "=", store.id),
+            ("product_eplus_serial", "=", int(product.eplus_serial)),
+        ])
+
+        self.assertEqual(created_count, 1)
+        self.assertEqual(cache_line.stock_qty, 5.0)
+        self.assertEqual(cache_line.stock_pending_qty, 5.0)
+        self.assertEqual(context["planned_qty"], 30.0)
+        self.assertEqual(context["destination_stock_qty"], 5.0)
+        self.assertEqual(context["required_qty"], 25.0)
+
+    def test_destination_required_qty_subtracts_onhand_plus_pending_stock(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        header.smart_days = 45
+        header.smart_stock_method = SMART_STOCK_METHOD_NORMAL
+        product = SimpleNamespace(eplus_serial=990186)
+        row = (
+            int(product.eplus_serial),
+            "",
+            "",
+            int(header.to_store_id.eplus_serial),
+            15.0,
+            20.0,
+            20.0,
+            20.0,
+            60.0,
+        )
+
+        context = header._get_smart_required_context_from_row(
+            row,
+            {int(product.eplus_serial): product},
+        )
+
+        self.assertEqual(context["planned_qty"], 30.0)
+        self.assertEqual(context["destination_stock_qty"], 15.0)
+        self.assertEqual(context["required_qty"], 15.0)
 
     def test_destination_required_qty_uses_converted_destination_stock(self):
         header = self._create_smart_header_from_existing_records_or_skip()
