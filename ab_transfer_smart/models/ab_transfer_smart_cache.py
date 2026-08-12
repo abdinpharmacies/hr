@@ -9,13 +9,21 @@ _logger = logging.getLogger(__name__)
 
 SMART_DESTINATION_STOCK_SQL = """
     SELECT
-        itm_id,
-        sto_id,
-        SUM(ISNULL(itm_qty, 0)) AS stock_qty
-    FROM Item_Class_Store
-    WHERE sto_id = ?
-    GROUP BY itm_id, sto_id
-    HAVING SUM(ISNULL(itm_qty, 0)) <> 0
+        main.itm_id,
+        main.sto_id,
+        CAST(SUM(
+            CAST(ISNULL(main.itm_qty, 0) AS decimal(18,4))
+            / CAST(ic.itm_unit1_unit3 AS decimal(18,4))
+        ) AS decimal(18,2)) AS stock_qty
+    FROM Item_Class_Store main
+    INNER JOIN item_catalog ic ON ic.itm_id = main.itm_id
+    WHERE main.sto_id = ?
+      AND ISNULL(ic.itm_active, 1) = 1
+    GROUP BY main.itm_id, main.sto_id
+    HAVING CAST(SUM(
+        CAST(ISNULL(main.itm_qty, 0) AS decimal(18,4))
+        / CAST(ic.itm_unit1_unit3 AS decimal(18,4))
+    ) AS decimal(18,2)) <> 0
 """
 
 SMART_SOURCE_STOCK_SQL = """

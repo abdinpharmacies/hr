@@ -1,4 +1,24 @@
-Current changes before commit:
+commit 4911fe7db01475969681ca138ba91f58d1a75e9a
+Author: emadco88 <emadco88@gmail.com>
+Date:   Tue Aug 11 18:29:03 2026 +0300
+
+    ab_transfer_smart/ UPD remove redundent message to continue
+
+- Remove the redundant Smart Transfer continuation message.
+- Keep the related Smart Transfer flow covered by focused tests.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/tests/test_smart_transfer.py
+
+
+commit 9a64e5800b5b28a5122394e7ece6b50f7d5055bb
+Author: emadco88 <emadco88@gmail.com>
+Date:   Tue Aug 11 18:07:45 2026 +0300
+
+    ab_transfer_smart/ FIX huge eplus connections
 
 - Add a Smart Transfer source opening-stock cache with one positive-stock row per source store, product, and cache day.
 - Keep older source cache days available for analysis while forced refreshes replace only the current day.
@@ -21,6 +41,20 @@ Files changed:
 - ab_transfer_smart/security/record_rules.xml
 - ab_transfer_smart/tests/test_smart_transfer.py
 - ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
+
+
+Current changes before commit:
+
+- Convert Smart Transfer destination stock cache quantities from E-Plus small-unit stock to the same UoM basis used by source stock and sales.
+- Join destination stock cache SQL with item_catalog and divide Item_Class_Store.itm_qty by item_catalog.itm_unit1_unit3.
+- Keep source stock, sales queries, destination cache schema, and generation flow unchanged.
+- Add tests for converted destination cache output and required quantity calculation from converted destination stock.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/models/ab_transfer_smart_cache.py
+- ab_transfer_smart/tests/test_smart_transfer.py
 
 
 commit b6899c66138c1be7dc21c4d35926b048943585d2

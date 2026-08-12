@@ -2847,6 +2847,63 @@ class TestSmartTransfer(TransactionCase):
             99113: -2.0,
         })
 
+    def test_destination_stock_cache_fetch_uses_converted_uom_quantity(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        store = header.to_store_id
+        StockCache = self.env["ab_transfer_smart_stock_cache"]
+        cursor = MagicMock()
+        cursor.fetchall.return_value = [(990181, 8303, 10.0)]
+        connection = MagicMock()
+        connection.cursor.return_value.__enter__.return_value = cursor
+        connection_context = MagicMock()
+        connection_context.__enter__.return_value = connection
+
+        with patch.object(
+                type(StockCache),
+                "_get_store_sql_id",
+                return_value=8303,
+        ), patch.object(
+                type(StockCache),
+                "_get_store_server",
+                return_value="127.0.0.1",
+        ), patch.object(
+                type(StockCache),
+                "connect_eplus",
+                return_value=connection_context,
+        ):
+            stock_rows = StockCache._fetch_store_stock_rows(store)
+
+        query = cursor.execute.call_args[0][0]
+        self.assertIn("INNER JOIN item_catalog ic ON ic.itm_id = main.itm_id", query)
+        self.assertIn("/ CAST(ic.itm_unit1_unit3 AS decimal(18,4))", query)
+        self.assertEqual(stock_rows, {990181: 10.0})
+
+    def test_destination_required_qty_uses_converted_destination_stock(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        header.smart_days = 45
+        header.smart_stock_method = SMART_STOCK_METHOD_NORMAL
+        product = SimpleNamespace(eplus_serial=990182)
+        row = (
+            int(product.eplus_serial),
+            "",
+            "",
+            int(header.to_store_id.eplus_serial),
+            10.0,
+            20.0,
+            20.0,
+            20.0,
+            60.0,
+        )
+
+        context = header._get_smart_required_context_from_row(
+            row,
+            {int(product.eplus_serial): product},
+        )
+
+        self.assertEqual(context["planned_qty"], 30.0)
+        self.assertEqual(context["destination_stock_qty"], 10.0)
+        self.assertEqual(context["required_qty"], 20.0)
+
     def test_smart_cache_product_fields_resolve_from_eplus_serial(self):
         store = self._create_store_or_skip({
             "name": "Smart Product Cache Store",
