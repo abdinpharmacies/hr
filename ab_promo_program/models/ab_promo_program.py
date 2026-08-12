@@ -9,7 +9,7 @@ class AbPromoProgram(models.Model):
     _name = 'ab_promo_program'
     _description = 'ab_promo_program'
 
-    _order = 'sequence, id'
+    _order = 'id desc'
 
     name = fields.Char(required=True, index=True)
     active = fields.Boolean(default=True)

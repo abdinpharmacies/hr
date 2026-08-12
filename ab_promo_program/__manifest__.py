@@ -3,6 +3,7 @@
     'version': '19.0.1.0.0',
     'license': 'LGPL-3',
     'category': 'AbdinSupplyChain',
+    'developer': "'Mohamed Fawzy'",
     'application': True,
     'depends': ['base', 'ab_customer', 'ab_product', 'ab_store'],
     'data': [

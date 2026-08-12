@@ -6,6 +6,7 @@
             <field name="model">ab_promo_program</field>
             <field name="arch" type="xml">
                 <list string="ab_promo_program_tree" multi_edit="1">
+                    <field name="id" class="text-muted" optional="show"/>
                     <field name="display_name" optional="show"/>
                     <field name="name" optional="show"/>
                     <field name="status" optional="show"/>
