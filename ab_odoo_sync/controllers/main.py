@@ -108,3 +108,18 @@ class AbOdooSyncController(http.Controller):
             checkpoint_model.create(vals)
 
         return _json_response({"ok": True})
+
+    @http.route("/ab_odoo_sync/upload", type="http", auth="public", methods=["POST"], csrf=False)
+    def upload_records(self, **kwargs):
+        if not self._authorize():
+            return _json_response({"ok": False, "error": "Unauthorized"}, status=401)
+
+        service = request.env["ab_odoo_sync_service"].sudo()
+        payload = self._payload()
+        try:
+            result = service.receive_upload_batch(payload)
+        except Exception as ex:
+            return _json_response({"ok": False, "error": str(ex)}, status=400)
+
+        result["ok"] = True
+        return _json_response(result)

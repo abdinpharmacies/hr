@@ -1,3 +1,33 @@
+## 614d18f551a72003422b9420a1eb0b1ff0c9f8b0
+
+- Author: emadco88 <emadco88@gmail.com>
+- Date: Wed Aug 12 15:31:16 2026 +0300
+- Subject: ab_odoo_sync/ REFACTORING
+
+User-facing changes:
+
+- Replaced free-text branch checkpoint identity with configured `db_serial`.
+- Added branch-side sync event states for pending, full sync, partial sync, failed, and manually skipped events.
+- Recorded missing branch fields as partial sync details instead of silently ignoring them.
+- Added admin actions to mark failed or pending events as Not Sync and to manually clean consumed events.
+- Disabled automatic event cleanup and kept cleanup bounded by active `db_serial` checkpoints.
+- Added Arabic translations for the new Odoo Sync labels and notifications.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/controllers/main.py`
+- `ab_odoo_sync/data/ab_odoo_sync_cron.xml`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/__init__.py`
+- `ab_odoo_sync/models/ab_odoo_sync_checkpoint.py`
+- `ab_odoo_sync/models/ab_odoo_sync_event_state.py`
+- `ab_odoo_sync/models/ab_odoo_sync_orm_hook.py`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/security/ir.model.access.csv`
+- `ab_odoo_sync/views/ab_odoo_sync_views.xml`
+
 ## 3db5d596c9429ff082c3fe9b0466692b945f788f
 
 - Author: emadco88 <emadco88@gmail.com>
@@ -29,24 +59,24 @@ Files changed:
 
 User-facing changes:
 
-- Replaced free-text branch checkpoint identity with configured `db_serial`.
-- Added branch-side sync event states for pending, full sync, partial sync, failed, and manually skipped events.
-- Recorded missing branch fields as partial sync details instead of silently ignoring them.
-- Added admin actions to mark failed or pending events as Not Sync and to manually clean consumed events.
-- Disabled automatic event cleanup and kept cleanup bounded by active `db_serial` checkpoints.
-- Added Arabic translations for the new Odoo Sync labels and notifications.
+- Added a branch-to-MAIN JSON upload endpoint that stores incoming rows before queueing target apply work.
+- Added upload record audit/status tracking with Queue Apply, Replay Failed, and Mark Not Sync admin actions.
+- Applied queued rows to `<source_model>__sync` target models by `(db_serial, rec_id)` while preserving failed payloads for replay.
+- Added `queue_job` registration for upload apply jobs and a hard manifest dependency on `queue_job`.
+- Fixed the module cron XML for Odoo 19 by removing invalid `ir.cron` fields.
+- Added Arabic translations for upload sync labels, validation messages, and notifications.
 
 Files changed:
 
 - `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/__manifest__.py`
 - `ab_odoo_sync/controllers/main.py`
 - `ab_odoo_sync/data/ab_odoo_sync_cron.xml`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
 - `ab_odoo_sync/i18n/ar.po`
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/__init__.py`
-- `ab_odoo_sync/models/ab_odoo_sync_checkpoint.py`
-- `ab_odoo_sync/models/ab_odoo_sync_event_state.py`
-- `ab_odoo_sync/models/ab_odoo_sync_orm_hook.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
 - `ab_odoo_sync/security/ir.model.access.csv`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`

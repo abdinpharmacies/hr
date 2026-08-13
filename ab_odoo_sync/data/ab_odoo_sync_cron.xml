@@ -6,8 +6,6 @@
             <field name="active">True</field>
             <field name="interval_number">1</field>
             <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
-            <field name="doall">False</field>
             <field name="model_id" ref="model_ab_odoo_sync_service"/>
             <field name="state">code</field>
             <field name="code">model.cron_run_branch_sync()</field>
@@ -18,8 +16,6 @@
             <field name="active">False</field>
             <field name="interval_number">10</field>
             <field name="interval_type">minutes</field>
-            <field name="numbercall">-1</field>
-            <field name="doall">False</field>
             <field name="model_id" ref="model_ab_odoo_sync_service"/>
             <field name="state">code</field>
             <field name="code">model.cron_cleanup_consumed_events()</field>

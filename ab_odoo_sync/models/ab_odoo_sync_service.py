@@ -44,6 +44,77 @@ class AbOdooSyncService(models.Model):
         return db_serial
 
     @api.model
+    def _parse_positive_int(self, value, field_name):
+        try:
+            parsed = int(value or 0)
+        except (TypeError, ValueError) as ex:
+            raise ValueError(_("%s must be a positive integer.") % field_name) from ex
+        if parsed <= 0:
+            raise ValueError(_("%s must be a positive integer.") % field_name)
+        return parsed
+
+    @api.model
+    def receive_upload_batch(self, payload):
+        if self.get_server_role() != "main":
+            raise ValueError(_("This server is not MAIN."))
+
+        payload = payload or {}
+        if not isinstance(payload, dict):
+            raise ValueError(_("Upload payload must be a JSON object."))
+
+        db_serial = self._parse_positive_int(payload.get("db_serial"), "db_serial")
+        records = payload.get("records")
+        if not isinstance(records, list):
+            raise ValueError(_("records must be a JSON array."))
+
+        upload_model = self.env["ab_odoo_sync_upload_record"].sudo()
+        result = {
+            "accepted": 0,
+            "queued": 0,
+            "failed": 0,
+            "errors": [],
+        }
+        for index, row in enumerate(records):
+            if not isinstance(row, dict):
+                result["failed"] += 1
+                result["errors"].append(
+                    {
+                        "index": index,
+                        "error": _("record must be a JSON object."),
+                    }
+                )
+                continue
+
+            try:
+                model_name = upload_model.validate_source_model_name(row.get("model_name"))
+                rec_id = self._parse_positive_int(row.get("rec_id"), "rec_id")
+                payload_json = row.get("payload")
+                if not isinstance(payload_json, dict):
+                    raise ValueError(_("payload must be a JSON object."))
+
+                upload_record = upload_model.upsert_from_upload(
+                    db_serial=db_serial,
+                    model_name=model_name,
+                    rec_id=rec_id,
+                    payload=payload_json,
+                )
+                queued_count = upload_record._queue_apply_records()
+                result["accepted"] += 1
+                result["queued"] += queued_count
+            except Exception as ex:
+                result["failed"] += 1
+                result["errors"].append(
+                    {
+                        "index": index,
+                        "model_name": row.get("model_name"),
+                        "rec_id": row.get("rec_id"),
+                        "error": str(ex),
+                    }
+                )
+
+        return result
+
+    @api.model
     def _normalize_payload_value(self, model, field_name, value):
         field = model._fields.get(field_name)
         if field and field.type == "many2one" and isinstance(value, (list, tuple)):

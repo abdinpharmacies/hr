@@ -263,6 +263,114 @@
             <field name="search_view_id" ref="view_ab_odoo_sync_event_state_search"/>
         </record>
 
+        <record id="view_ab_odoo_sync_upload_record_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_upload_record.list</field>
+            <field name="model">ab_odoo_sync_upload_record</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <header>
+                        <button name="action_queue_apply" type="object" string="Queue Apply"
+                                class="btn-secondary" display="always"/>
+                        <button name="action_replay_failed" type="object" string="Replay Failed"
+                                class="btn-secondary" display="always"/>
+                        <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
+                                class="btn-secondary" display="always"/>
+                    </header>
+                    <field name="received_at"/>
+                    <field name="status" widget="badge" readonly="1"
+                           decoration-warning="status == 'pending'"
+                           decoration-info="status == 'queued'"
+                           decoration-success="status == 'applied'"
+                           decoration-danger="status == 'failed'"
+                           decoration-muted="status == 'not_sync'"/>
+                    <field name="db_serial"/>
+                    <field name="model_name"/>
+                    <field name="rec_id"/>
+                    <field name="target_model_name"/>
+                    <field name="attempt_count"/>
+                    <field name="skipped_fields_json" optional="hide"/>
+                    <field name="error_message" optional="show"/>
+                    <field name="queued_at" optional="hide"/>
+                    <field name="applied_at"/>
+                    <button name="action_queue_apply" type="object" string="Queue Apply"
+                            invisible="status in ('applied', 'not_sync')"/>
+                    <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
+                            invisible="status not in ('pending', 'queued', 'failed')"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_upload_record_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_upload_record.form</field>
+            <field name="model">ab_odoo_sync_upload_record</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <header>
+                        <button name="action_queue_apply" type="object" string="Queue Apply"
+                                class="btn-secondary"
+                                invisible="status in ('applied', 'not_sync')"/>
+                        <button name="action_replay_failed" type="object" string="Replay Failed"
+                                class="btn-secondary"
+                                invisible="status != 'failed'"/>
+                        <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
+                                class="btn-secondary"
+                                invisible="status not in ('pending', 'queued', 'failed')"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="status" widget="badge" readonly="1"/>
+                                <field name="db_serial"/>
+                                <field name="model_name"/>
+                                <field name="rec_id"/>
+                            </group>
+                            <group>
+                                <field name="target_model_name"/>
+                                <field name="attempt_count"/>
+                                <field name="received_at"/>
+                                <field name="queued_at"/>
+                                <field name="applied_at"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="skipped_fields_json"/>
+                            <field name="error_message"/>
+                            <field name="payload_json"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_upload_record_search" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_upload_record.search</field>
+            <field name="model">ab_odoo_sync_upload_record</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="db_serial"/>
+                    <field name="model_name"/>
+                    <field name="rec_id"/>
+                    <field name="target_model_name"/>
+                    <field name="status"/>
+                    <filter name="pending" string="Pending" domain="[('status', '=', 'pending')]"/>
+                    <filter name="queued" string="Queued" domain="[('status', '=', 'queued')]"/>
+                    <filter name="applied" string="Applied" domain="[('status', '=', 'applied')]"/>
+                    <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]"/>
+                    <filter name="not_sync" string="Not Sync" domain="[('status', '=', 'not_sync')]"/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="inactive" string="Inactive" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_upload_record" model="ir.actions.act_window">
+            <field name="name">Upload Records</field>
+            <field name="res_model">ab_odoo_sync_upload_record</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_odoo_sync_upload_record_search"/>
+        </record>
+
         <menuitem id="menu_ab_odoo_sync_root" name="Odoo Sync" parent="base.menu_custom" sequence="50"
                   groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_config" name="Sync Config" parent="menu_ab_odoo_sync_root"
@@ -271,6 +379,8 @@
                   action="action_ab_odoo_sync_event" sequence="20" groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_event_states" name="Event States" parent="menu_ab_odoo_sync_root"
                   action="action_ab_odoo_sync_event_state" sequence="25" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_upload_records" name="Upload Records" parent="menu_ab_odoo_sync_root"
+                  action="action_ab_odoo_sync_upload_record" sequence="27" groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_checkpoints" name="Checkpoints" parent="menu_ab_odoo_sync_root"
                   action="action_ab_odoo_sync_checkpoint" sequence="30" groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_manual_cleanup" name="Cleanup Consumed Events" parent="menu_ab_odoo_sync_root"
