@@ -1108,7 +1108,7 @@ msgstr "نوع الشحنة"
 
 #. module: ab_internal_shipment_tracking
 #: model:res.groups,name:ab_internal_shipment_tracking.group_ab_internal_shipment_user
-msgid "Shipment User"
+msgid "User"
 msgstr "مستخدم الشحنات"
 
 
@@ -1549,12 +1549,6 @@ msgstr "اختر الموظفين..."
 
 
 #. module: ab_internal_shipment_tracking
-#: model:res.groups,name:ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt
-msgid "Warehouse Receipt Confirmation"
-msgstr "تأكيد استلام المخزن"
-
-
-#. module: ab_internal_shipment_tracking
 #: model:ir.actions.act_window,name:ab_internal_shipment_tracking.ab_internal_shipment_awaiting_warehouse_receipt_action
 #: model:ir.ui.menu,name:ab_internal_shipment_tracking.ab_internal_shipment_menu_awaiting_warehouse_receipt
 #: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_list_awaiting_warehouse_receipt
@@ -1743,3 +1737,22 @@ msgstr "تاريخ استلام المخزن"
 #: model:ir.model.fields,help:ab_internal_shipment_tracking.field_ab_internal_shipment__warehouse_department_id
 msgid "Keep unused warehouse departments archived instead of deleting them to preserve shipment history."
 msgstr "احتفظ بأقسام المخازن غير المستخدمة مؤرشفة بدلاً من حذفها للحفاظ على سجل الشحنات."
+
+
+#. module: ab_internal_shipment_tracking
+#: model:res.groups,name:ab_internal_shipment_tracking.group_ab_internal_shipment_admin
+msgid "System"
+msgstr "النظام"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,field_description:ab_internal_shipment_tracking.field_ab_internal_shipment__warehouse_employee_ids
+#: model_terms:ir.ui.view,arch_db:ab_internal_shipment_tracking.ab_internal_shipment_view_form
+msgid "Warehouse Receiving Employees"
+msgstr "موظفو استلام المخزن"
+
+
+#. module: ab_internal_shipment_tracking
+#: model:ir.model.fields,help:ab_internal_shipment_tracking.field_ab_internal_shipment__warehouse_employee_ids
+msgid "Employees linked to the selected warehouse and allowed to confirm warehouse receipt when they have an Odoo user."
+msgstr "الموظفون المرتبطون بالمخزن المحدد والمسموح لهم بتأكيد استلام المخزن عند وجود مستخدم أودو لهم."

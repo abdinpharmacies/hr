@@ -18,7 +18,7 @@
         <record id="rule_ab_internal_shipment_user" model="ir.rule">
             <field name="name">Internal shipments: creator read</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('created_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -29,7 +29,7 @@
         <record id="rule_ab_internal_shipment_recipient_receipt_read" model="ir.rule">
             <field name="name">Internal shipments: recipient receipt read</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('state', '=', 'awaiting_receipt'), ('receipt_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -40,7 +40,7 @@
         <record id="rule_ab_internal_shipment_recipient_in_transit_read" model="ir.rule">
             <field name="name">Internal shipments: recipient in transit tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('state', '=', 'in_transit'), ('recipient_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -51,7 +51,7 @@
         <record id="rule_ab_internal_shipment_received_by_read" model="ir.rule">
             <field name="name">Internal shipments: confirmed by user read</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('received_by_id', '=', user.id), ('state', 'in', ('received', 'closed'))]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -62,7 +62,7 @@
         <record id="rule_ab_internal_shipment_user_created_write" model="ir.rule">
             <field name="name">Internal shipments: creator workflow write</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('created_by_id', '=', user.id), ('state', 'in', ('draft', 'sent', 'in_transit'))]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
@@ -73,7 +73,7 @@
         <record id="rule_ab_internal_shipment_user_recipient_write" model="ir.rule">
             <field name="name">Internal shipments: recipient receipt write</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('receipt_route_user_ids', 'in', [user.id]), ('state', '=', 'awaiting_receipt')]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
@@ -84,7 +84,7 @@
         <record id="rule_ab_internal_shipment_recipient_received_close_write" model="ir.rule">
             <field name="name">Internal shipments: close confirmed shipments</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('state', 'in', ('received', 'closed')), '|', ('created_by_id', '=', user.id), ('received_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
@@ -95,7 +95,7 @@
         <record id="rule_ab_internal_shipment_warehouse_receipt_read" model="ir.rule">
             <field name="name">Internal shipments: assigned warehouse receipt read</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('state', '=', 'awaiting_warehouse_receipt'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -106,7 +106,7 @@
         <record id="rule_ab_internal_shipment_warehouse_in_transit_read" model="ir.rule">
             <field name="name">Internal shipments: warehouse in transit tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('state', '=', 'in_transit'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -117,7 +117,7 @@
         <record id="rule_ab_internal_shipment_warehouse_confirmed_tracking_read" model="ir.rule">
             <field name="name">Internal shipments: warehouse confirmed tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('warehouse_received_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -128,7 +128,7 @@
         <record id="rule_ab_internal_shipment_warehouse_receipt_write" model="ir.rule">
             <field name="name">Internal shipments: assigned warehouse receipt write</field>
             <field name="model_id" ref="model_ab_internal_shipment"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('state', '=', 'awaiting_warehouse_receipt'), ('warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
@@ -152,7 +152,7 @@
         <record id="rule_ab_internal_shipment_line_user" model="ir.rule">
             <field name="name">Internal shipment lines: creator read</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.created_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -163,7 +163,7 @@
         <record id="rule_ab_internal_shipment_line_recipient_receipt_read" model="ir.rule">
             <field name="name">Internal shipment lines: recipient receipt read</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'awaiting_receipt'), ('shipment_id.receipt_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -174,7 +174,7 @@
         <record id="rule_ab_internal_shipment_line_recipient_in_transit_read" model="ir.rule">
             <field name="name">Internal shipment lines: recipient in transit tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.recipient_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -185,7 +185,7 @@
         <record id="rule_ab_internal_shipment_line_received_by_read" model="ir.rule">
             <field name="name">Internal shipment lines: confirmed by user read</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.received_by_id', '=', user.id), ('shipment_id.state', 'in', ('received', 'closed'))]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -196,7 +196,7 @@
         <record id="rule_ab_internal_shipment_line_user_created_write" model="ir.rule">
             <field name="name">Internal shipment lines: creator draft write</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.created_by_id', '=', user.id), ('shipment_id.state', '=', 'draft')]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="1"/>
@@ -207,7 +207,7 @@
         <record id="rule_ab_internal_shipment_line_warehouse_receipt_read" model="ir.rule">
             <field name="name">Internal shipment lines: assigned warehouse receipt read</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'awaiting_warehouse_receipt'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -218,7 +218,7 @@
         <record id="rule_ab_internal_shipment_line_warehouse_in_transit_read" model="ir.rule">
             <field name="name">Internal shipment lines: warehouse in transit tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -229,7 +229,7 @@
         <record id="rule_ab_internal_shipment_line_warehouse_confirmed_tracking_read" model="ir.rule">
             <field name="name">Internal shipment lines: warehouse confirmed tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment_line"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.warehouse_received_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -253,7 +253,7 @@
         <record id="rule_ab_internal_shipment_history_user" model="ir.rule">
             <field name="name">Internal shipment history: creator read</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.created_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -264,7 +264,7 @@
         <record id="rule_ab_internal_shipment_history_recipient_receipt_read" model="ir.rule">
             <field name="name">Internal shipment history: recipient receipt read</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'awaiting_receipt'), ('shipment_id.receipt_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -275,7 +275,7 @@
         <record id="rule_ab_internal_shipment_history_recipient_in_transit_read" model="ir.rule">
             <field name="name">Internal shipment history: recipient in transit tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.recipient_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -286,7 +286,7 @@
         <record id="rule_ab_internal_shipment_history_received_by_read" model="ir.rule">
             <field name="name">Internal shipment history: confirmed by user read</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.received_by_id', '=', user.id), ('shipment_id.state', 'in', ('received', 'closed'))]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -297,7 +297,7 @@
         <record id="rule_ab_internal_shipment_history_user_create" model="ir.rule">
             <field name="name">Internal shipment history: workflow create</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('action', '=', 'note'), ('shipment_id.state', '!=', 'closed'), '|', '|', '|', '|', ('action_by_id', '=', user.id), ('shipment_id.created_by_id', '=', user.id), ('shipment_id.sender_route_user_ids', 'in', [user.id]), ('shipment_id.recipient_route_user_ids', 'in', [user.id]), ('shipment_id.receipt_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="0"/>
@@ -308,7 +308,7 @@
         <record id="rule_ab_internal_shipment_history_warehouse_receipt_read" model="ir.rule">
             <field name="name">Internal shipment history: assigned warehouse receipt read</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'awaiting_warehouse_receipt'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -319,7 +319,7 @@
         <record id="rule_ab_internal_shipment_history_warehouse_in_transit_read" model="ir.rule">
             <field name="name">Internal shipment history: warehouse in transit tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.state', '=', 'in_transit'), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -330,7 +330,7 @@
         <record id="rule_ab_internal_shipment_history_warehouse_confirmed_tracking_read" model="ir.rule">
             <field name="name">Internal shipment history: warehouse confirmed tracking read</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('shipment_id.warehouse_received_by_id', '=', user.id)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
@@ -341,7 +341,7 @@
         <record id="rule_ab_internal_shipment_history_warehouse_create" model="ir.rule">
             <field name="name">Internal shipment history: warehouse receipt create</field>
             <field name="model_id" ref="model_ab_internal_shipment_history"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_warehouse_receipt'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('action', '=', 'note'), ('shipment_id.state', 'in', ('awaiting_warehouse_receipt', 'awaiting_receipt', 'received')), ('shipment_id.warehouse_route_user_ids', 'in', [user.id])]</field>
             <field name="perm_read" eval="0"/>
             <field name="perm_write" eval="0"/>
@@ -354,7 +354,7 @@
         <record id="rule_ab_internal_shipment_activity_user" model="ir.rule">
             <field name="name">Internal shipment activities: user workflow access</field>
             <field name="model_id" ref="mail.model_mail_activity"/>
-            <field name="groups" eval="[(4, ref('group_ab_internal_shipment_user'))]"/>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
             <field name="domain_force">[('res_model', '=', 'ab_internal_shipment')]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>

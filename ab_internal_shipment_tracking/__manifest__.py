@@ -1,7 +1,7 @@
 {
     "name": "Shipments",
     "summary": "Track shipment movement of documents, files, and devices",
-    "version": "19.0.1.0.4",
+    "version": "19.0.1.0.5",
     "category": "AbdinSupplyChain",
     "license": "LGPL-3",
     "author": "Abdin Pharmacies",
