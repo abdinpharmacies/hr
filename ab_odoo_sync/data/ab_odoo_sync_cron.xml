@@ -3,7 +3,7 @@
     <data noupdate="1">
         <record id="ir_cron_ab_odoo_sync_branch_pull" model="ir.cron">
             <field name="name">AB Odoo Sync: Branch Pull</field>
-            <field name="active">True</field>
+            <field name="active">False</field>
             <field name="interval_number">1</field>
             <field name="interval_type">minutes</field>
             <field name="model_id" ref="model_ab_odoo_sync_service"/>

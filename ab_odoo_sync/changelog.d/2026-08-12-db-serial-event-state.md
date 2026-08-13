@@ -55,7 +55,11 @@ Files changed:
 - `ab_odoo_sync/security/ir.model.access.csv`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`
 
-## Current changes before commit
+## e148a306a03fb4f91e961bb06cac72adb6a6e62b
+
+- Author: emadco88 <emadco88@gmail.com>
+- Date: Thu Aug 13 08:52:48 2026 +0300
+- Subject: ab_odoo_sync/ UPD Two-way sync
 
 User-facing changes:
 
@@ -80,3 +84,24 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
 - `ab_odoo_sync/security/ir.model.access.csv`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Fixed installation on databases that already use Integration Queue Job by registering upload work with the existing queue provider instead of installing a conflicting second provider.
+- Made clean installations keep branch pulling disabled until synchronization settings are configured.
+- Made an active but unconfigured branch pull skip safely with a clear translated reason instead of failing every minute.
+- Added system-only access for the synchronization service model.
+- Updated developer metadata while preserving company ownership.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/data/ab_odoo_sync_cron.xml`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/security/ir.model.access.csv`

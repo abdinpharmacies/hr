@@ -44,6 +44,19 @@ class AbOdooSyncService(models.Model):
         return db_serial
 
     @api.model
+    def _get_branch_sync_configuration_error(self):
+        try:
+            self.get_db_serial()
+        except ValueError as ex:
+            return str(ex)
+
+        if not (self._icp().get_param("ab_odoo_sync.main_url") or "").strip():
+            return _("Missing MAIN URL config: ab_odoo_sync.main_url")
+        if not (self._icp().get_param("ab_odoo_sync.api_key") or "").strip():
+            return _("Missing API key config: ab_odoo_sync.api_key")
+        return False
+
+    @api.model
     def _parse_positive_int(self, value, field_name):
         try:
             parsed = int(value or 0)
@@ -197,9 +210,9 @@ class AbOdooSyncService(models.Model):
         main_url = (self._icp().get_param("ab_odoo_sync.main_url") or "").strip().rstrip("/")
         api_key = (self._icp().get_param("ab_odoo_sync.api_key") or "").strip()
         if not main_url:
-            raise ValueError("Missing MAIN URL config: ab_odoo_sync.main_url")
+            raise ValueError(_("Missing MAIN URL config: ab_odoo_sync.main_url"))
         if not api_key:
-            raise ValueError("Missing API key config: ab_odoo_sync.api_key")
+            raise ValueError(_("Missing API key config: ab_odoo_sync.api_key"))
 
         url = f"{main_url}{path}"
         raw = json.dumps(payload).encode("utf-8")
@@ -274,6 +287,10 @@ class AbOdooSyncService(models.Model):
     def run_branch_sync_batch(self):
         if self.get_server_role() != "branch":
             return {"status": "skipped", "reason": "server_role is not branch"}
+
+        configuration_error = self._get_branch_sync_configuration_error()
+        if configuration_error:
+            return {"status": "skipped", "reason": configuration_error}
 
         checkpoint = self._get_or_create_local_checkpoint()
         batch_size = self.get_batch_size()
