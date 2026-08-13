@@ -1,7 +1,37 @@
-from lxml import etree
-
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, ValidationError
+from odoo.exceptions import AccessError, UserError, ValidationError
+
+
+class ResUsers(models.Model):
+    _inherit = "res.users"
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        users = super().create(vals_list)
+        users._ensure_explicit_internal_shipment_user_group()
+        return users
+
+    def write(self, vals):
+        result = super().write(vals)
+        if "group_ids" in vals and not self.env.context.get("skip_internal_shipment_user_group_sync"):
+            self._ensure_explicit_internal_shipment_user_group()
+        return result
+
+    def _ensure_explicit_internal_shipment_user_group(self):
+        internal_group = self.env.ref("base.group_user", raise_if_not_found=False)
+        shipment_group = self.env.ref(
+            "ab_internal_shipment_tracking.group_ab_internal_shipment_user",
+            raise_if_not_found=False,
+        )
+        if not internal_group or not shipment_group:
+            return
+        users = self.sudo().filtered(
+            lambda user: internal_group in user.group_ids and shipment_group not in user.group_ids
+        )
+        if users:
+            users.with_context(skip_internal_shipment_user_group_sync=True).write({
+                "group_ids": [(4, shipment_group.id)],
+            })
 
 
 class InternalShipment(models.Model):
@@ -9,31 +39,6 @@ class InternalShipment(models.Model):
     _description = "Shipment Record"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "shipment_date desc, id desc"
-
-    @api.model
-    def get_view(self, view_id=None, view_type="form", **options):
-        result = super().get_view(view_id=view_id, view_type=view_type, **options)
-        if view_type != "form" or not self._should_hide_chatter_for_current_user():
-            return result
-
-        arch = result.get("arch")
-        if not arch:
-            return result
-
-        root = etree.fromstring(arch)
-        for chatter in root.xpath("//chatter"):
-            chatter.getparent().remove(chatter)
-        result["arch"] = etree.tostring(root, encoding="unicode")
-        return result
-
-    @api.model
-    def _should_hide_chatter_for_current_user(self):
-        admin_user = self.env.ref("base.user_admin", raise_if_not_found=False)
-        if admin_user and self.env.user == admin_user:
-            return False
-        return self.env.user.has_group(
-            "ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt"
-        )
 
     name = fields.Char(
         string="Shipment Reference",
@@ -302,6 +307,12 @@ class InternalShipment(models.Model):
         help="Keep unused warehouse departments archived instead of deleting them to preserve shipment history.",
         tracking=True,
     )
+    warehouse_employee_ids = fields.Many2many(
+        "ab_hr_employee",
+        compute="_compute_warehouse_employee_ids",
+        string="Warehouse Receiving Employees",
+        help="Employees linked to the selected warehouse and allowed to confirm warehouse receipt when they have an Odoo user.",
+    )
     warehouse_received_by_id = fields.Many2one(
         "res.users",
         string="Warehouse Receipt User",
@@ -398,6 +409,9 @@ class InternalShipment(models.Model):
             vals.update(self._get_current_user_sender_values())
         records = super().create(vals_list)
         records._set_current_holder_from_sender()
+        records._create_workflow_history("created", False, "draft", holder_to_by_record={
+            record.id: record.current_holder_display for record in records
+        })
         return records
 
     @api.model
@@ -463,6 +477,11 @@ class InternalShipment(models.Model):
         stores = self._get_valid_warehouse_stores()
         for record in self:
             record.available_warehouse_store_ids = stores
+
+    @api.depends("warehouse_department_id")
+    def _compute_warehouse_employee_ids(self):
+        for record in self:
+            record.warehouse_employee_ids = record._get_warehouse_department_employees()
 
     def write(self, vals):
         if set(vals) == {"note_history_ids"}:
@@ -701,17 +720,10 @@ class InternalShipment(models.Model):
     @api.depends("state", "warehouse_route_user_ids")
     @api.depends_context("uid")
     def _compute_can_current_user_receive_warehouse(self):
-        user = self.env.user
-        has_group = user.has_group(
-            "ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt"
-        )
-        is_system_admin = user.has_group("base.group_system")
         for record in self:
             record.can_current_user_receive_warehouse = (
-                has_group
-                and not is_system_admin
-                and record.state == "awaiting_warehouse_receipt"
-                and user in record.warehouse_route_user_ids
+                record.state == "awaiting_warehouse_receipt"
+                and record._current_user_has_write_access()
             )
 
     @api.depends(
@@ -726,36 +738,33 @@ class InternalShipment(models.Model):
     )
     @api.depends_context("uid")
     def _compute_can_current_user_receive(self):
-        user = self.env.user
-        employee_ids = set(user.ab_employee_ids.ids)
-        branch_account_store_ids = set(user.ab_department_ids.store_id.ids)
         for record in self:
-            can_receive = False
-            if record.state == "awaiting_receipt":
-                if record.recipient_type == "employee":
-                    can_receive = record.recipient_employee_id.id in employee_ids
-                elif record.recipient_type == "department":
-                    can_receive = record.recipient_department_id.manager_id.user_id == user
-                    if not can_receive:
-                        recipient_employees = record._get_party_employees("recipient")
-                        can_receive = bool(set(recipient_employees.ids) & employee_ids)
-                elif record.recipient_type == "branch":
-                    can_receive = record.recipient_store_id.id in branch_account_store_ids
-                    if not can_receive:
-                        recipient_employees = record._get_party_employees("recipient")
-                        can_receive = bool(set(recipient_employees.ids) & employee_ids)
-            record.can_current_user_receive = can_receive
+            record.can_current_user_receive = (
+                record.state == "awaiting_receipt"
+                and record._current_user_has_write_access()
+            )
 
     @api.depends("state", "created_by_id")
     @api.depends_context("uid")
     def _compute_current_user_action_permissions(self):
-        user = self.env.user
         for record in self:
-            record.can_current_user_manage_workflow = record.created_by_id == user
-            record.can_current_user_close = record.state == "received"
+            can_write = record._current_user_has_write_access()
+            record.can_current_user_manage_workflow = (
+                record.state in ("draft", "sent", "in_transit")
+                and can_write
+            )
+            record.can_current_user_close = record.state == "received" and can_write
+
+    def _current_user_has_write_access(self):
+        self.ensure_one()
+        try:
+            self.check_access("write")
+        except AccessError:
+            return False
+        return True
 
     def action_send(self):
-        self._check_current_user_can_manage_workflow()
+        self.check_access("write")
         if not self.env.context.get("skip_dispatch_evidence_wizard"):
             self.ensure_one()
             return self._open_shipment_attachment_wizard("dispatch")
@@ -807,7 +816,7 @@ class InternalShipment(models.Model):
         }
 
     def action_deliver(self):
-        self._check_current_user_can_manage_workflow()
+        self.check_access("write")
         redirect_after_delivery = self._should_redirect_after_branch_delivery()
         delivered_to_warehouse = False
         for record in self:
@@ -853,9 +862,7 @@ class InternalShipment(models.Model):
         return False
 
     def action_confirm_warehouse_receipt(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_receive_warehouse)
-        if unauthorized:
-            raise UserError(_("You are not allowed to confirm warehouse receipt for this shipment."))
+        self.check_access("write")
         if not self.env.context.get("skip_warehouse_receipt_evidence_wizard"):
             self.ensure_one()
             return self._open_shipment_attachment_wizard("warehouse_receipt")
@@ -875,6 +882,7 @@ class InternalShipment(models.Model):
                 if activity_type
                 else self.env["res.users"]
             )
+            holder_from = record.current_holder_display
             record.write(
                 {
                     "state": "awaiting_receipt",
@@ -882,6 +890,13 @@ class InternalShipment(models.Model):
                     "warehouse_received_date": now,
                     **record._holder_values_for_state("awaiting_receipt"),
                 }
+            )
+            record._create_workflow_history(
+                "warehouse_received",
+                "awaiting_warehouse_receipt",
+                "awaiting_receipt",
+                holder_from_by_record={record.id: holder_from},
+                holder_to_by_record={record.id: record.current_holder_display},
             )
             if activity_type and recipient_users:
                 record._schedule_receipt_activity_for_users(recipient_users, activity_type)
@@ -898,9 +913,7 @@ class InternalShipment(models.Model):
         }
 
     def action_receive(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_receive)
-        if unauthorized:
-            raise UserError(_("Only the designated recipient can confirm receipt for this shipment."))
+        self.check_access("write")
         if not self.env.context.get("skip_receipt_evidence_wizard"):
             self.ensure_one()
             return self._open_shipment_attachment_wizard("receipt")
@@ -920,12 +933,18 @@ class InternalShipment(models.Model):
                 "received_date": now,
             }
             vals.update(record._holder_values_for_state("received"))
+            holder_from = record.current_holder_display
             record.write(vals)
+            record._create_workflow_history(
+                "received",
+                "awaiting_receipt",
+                "received",
+                holder_from_by_record={record.id: holder_from},
+                holder_to_by_record={record.id: record.current_holder_display},
+            )
 
     def action_close(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_close)
-        if unauthorized:
-            raise UserError(_("Only confirmed shipments can be closed."))
+        self.check_access("write")
         now = fields.Datetime.now()
         action_uid = self.env.uid
         for record in self:
@@ -943,7 +962,15 @@ class InternalShipment(models.Model):
                 "closed_date": now,
             }
             vals.update(record._holder_values_for_state("closed"))
+            holder_from = record.current_holder_display
             record.write(vals)
+            record._create_workflow_history(
+                "closed",
+                "received",
+                "closed",
+                holder_from_by_record={record.id: holder_from},
+                holder_to_by_record={record.id: record.current_holder_display},
+            )
 
     def action_add_tracking_note(self):
         for record in self:
@@ -998,12 +1025,16 @@ class InternalShipment(models.Model):
             if date_field:
                 vals[date_field] = now
             vals.update(record._holder_values_for_state(target_state))
+            state_from = record.state
+            holder_from = record.current_holder_display
             record.write(vals)
-
-    def _check_current_user_can_manage_workflow(self):
-        unauthorized = self.filtered(lambda record: not record.can_current_user_manage_workflow)
-        if unauthorized:
-            raise UserError(_("Only the shipment creator can perform this action."))
+            record._create_workflow_history(
+                action,
+                state_from,
+                target_state,
+                holder_from_by_record={record.id: holder_from},
+                holder_to_by_record={record.id: record.current_holder_display},
+            )
 
     def _should_redirect_after_branch_delivery(self):
         user = self.env.user
@@ -1134,17 +1165,22 @@ class InternalShipment(models.Model):
         self.ensure_one()
         if not self.warehouse_department_id:
             return self.env["res.users"]
+        employees = self._get_warehouse_department_employees()
+        users = employees.mapped("user_id").filtered(lambda user: user)
+        if self.warehouse_department_id.user_id:
+            users |= self.warehouse_department_id.user_id
+        return users
+
+    def _get_warehouse_department_employees(self):
+        self.ensure_one()
+        if not self.warehouse_department_id:
+            return self.env["ab_hr_employee"]
         employees = self.env["ab_hr_employee"].search([
             ("active", "=", True),
+            ("is_working", "=", True),
             ("department_id", "=", self.warehouse_department_id.id),
         ])
-        users = employees.mapped("user_id").filtered(lambda user: user)
-        return users.filtered(
-            lambda user: user.has_group(
-                "ab_internal_shipment_tracking.group_ab_internal_shipment_warehouse_receipt"
-            )
-            and not user.has_group("base.group_system")
-        )
+        return employees
 
     def _validate_party(self, party):
         self.ensure_one()
@@ -1187,3 +1223,24 @@ class InternalShipment(models.Model):
                 summary=_("Shipment delivered, confirm receipt"),
                 note=_("Shipment %s has been delivered and is awaiting receipt confirmation.") % shipment.name,
             )
+
+    def _create_workflow_history(
+        self,
+        action,
+        state_from,
+        state_to,
+        holder_from_by_record=None,
+        holder_to_by_record=None,
+    ):
+        holder_from_by_record = holder_from_by_record or {}
+        holder_to_by_record = holder_to_by_record or {}
+        for record in self:
+            self.env["ab_internal_shipment.history"].sudo().create({
+                "shipment_id": record.id,
+                "action": action,
+                "action_by_id": self.env.uid,
+                "state_from": state_from,
+                "state_to": state_to,
+                "from_holder_display": holder_from_by_record.get(record.id),
+                "to_holder_display": holder_to_by_record.get(record.id, record.current_holder_display),
+            })
