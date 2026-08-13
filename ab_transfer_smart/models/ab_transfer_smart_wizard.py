@@ -102,7 +102,7 @@ class AbTransferSmartWizard(models.Model):
     )
     smart_days = fields.Integer(
         string="Smart Days",
-        default=60,
+        default=45,
         required=True,
     )
     smart_stock_method = fields.Selection(
