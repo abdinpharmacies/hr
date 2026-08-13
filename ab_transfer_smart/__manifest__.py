@@ -14,6 +14,7 @@
         "security/security_groups.xml",
         "security/ir.model.access.csv",
         "security/record_rules.xml",
+        "views/ab_store_views.xml",
         "views/ab_product_views.xml",
         "views/ab_transfer_header_views.xml",
         "views/ab_transfer_smart_wizard_views.xml",
