@@ -1,5 +1,34 @@
 Current changes before commit:
 
+- Require an exact full store-code match in Fair Store quick search while retaining partial Arabic/name matching.
+- Prevent a partial code such as 17 from matching store code 176.
+- Keep the scoped Fair Store selectors, popup columns, and Select workflow unchanged.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/views/ab_store_views.xml
+
+
+commit caabf8b3452c922f76ff223d94571b72c3d023e5
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date:   Thu Aug 13 14:19:41 2026 +0300
+
+    ab_transfer_smart/Refactor: Edit smart days to be 45
+
+- Change the default Smart Days value from 60 to 45.
+
+Files changed:
+
+- ab_transfer_smart/models/ab_transfer_smart_wizard.py
+
+
+commit 13fd68c0b9cae8aa8a90f642c12f878996118eb1
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date:   Thu Aug 13 14:00:50 2026 +0300
+
+    ab_transfer_smart/Feat: search Fair Stores by name or code
+
 - Add Fair Store quick search by store name or full/partial store code in the Smart Transfer wizard and header selectors.
 - Scope the dedicated search view to Fair Store selectors so other Store searches keep their existing behavior.
 - Keep the Fair Store popup columns and normal selection workflow unchanged.

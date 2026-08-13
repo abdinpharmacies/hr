@@ -7,7 +7,7 @@
         <field name="arch" type="xml">
             <search>
                 <field name="name"
-                       filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                       filter_domain="['|', ('name', 'ilike', self), ('code', '=', self)]"/>
             </search>
         </field>
     </record>
