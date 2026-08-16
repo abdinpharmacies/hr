@@ -1673,6 +1673,58 @@ msgid "Refreshing..."
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__can_refresh_system_stock
+msgid "Can Refresh System Stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Refresh System Stock"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "System stock updated"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "System quantity updated for %s product(s)."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "System stock is already up to date"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "No system quantity changes were found."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "There are no products to refresh."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "No product identifiers were available to refresh system stock quantities."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only administrators, managers, or branch receivers can refresh system stock quantities."
+msgstr ""
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_batch_add_line_wizard__request_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__request_id
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_request_batch__request_ids
