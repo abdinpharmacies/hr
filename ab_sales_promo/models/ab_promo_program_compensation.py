@@ -18,15 +18,15 @@ class AbPromoProgramCompensation(models.Model):
     )
     compensation_timing = fields.Selection(
         [
-            ('advance', 'Advance'),
-            ('subsequent', 'Subsequent'),
+            ('before', 'Before'),
+            ('later', 'Later'),
         ],
-        string="Compensation Timing",
+        string="Compensation Way",
     )
     compensation_type = fields.Selection(
         [
             ('cash', 'Cash'),
-            ('goods', 'Goods'),
+            ('products', 'Products'),
         ],
         string="Compensation Type",
     )

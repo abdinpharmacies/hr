@@ -22,9 +22,39 @@ msgid "Abdin Promotion"
 msgstr "عروض عابدين"
 
 #. module: ab_sales_promo
+#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_timing__before
+msgid "Before"
+msgstr "قبل"
+
+#. module: ab_sales_promo
 #: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__promotion_ownership__company_promotion
 msgid "Company Promotion"
 msgstr "عروض شركات"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_type__cash
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__compensation_timing
+msgid "Compensation Way"
+msgstr "طريقة التعويض"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__compensation_type
+msgid "Compensation Type"
+msgstr "نوع التعويض"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_timing__later
+msgid "Later"
+msgstr "لاحقًا"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_type__products
+msgid "Products"
+msgstr "منتجات"
 
 #. module: ab_sales_promo
 #: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__promotion_ownership
