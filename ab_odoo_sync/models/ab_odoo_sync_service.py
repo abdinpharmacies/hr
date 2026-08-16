@@ -1,3 +1,5 @@
+import base64
+import datetime
 import json
 import logging
 import urllib.error
@@ -44,6 +46,72 @@ class AbOdooSyncService(models.Model):
         return db_serial
 
     @api.model
+    def _jsonable_snapshot_value(self, value):
+        if value is None or isinstance(value, (str, int, float, bool)):
+            return value
+        if isinstance(value, (datetime.date, datetime.datetime)):
+            return fields.Datetime.to_string(value) if isinstance(value, datetime.datetime) else fields.Date.to_string(value)
+        if isinstance(value, bytes):
+            return base64.b64encode(value).decode("ascii")
+        if isinstance(value, dict):
+            return {str(key): self._jsonable_snapshot_value(item) for key, item in value.items()}
+        if isinstance(value, (list, tuple, set)):
+            return [self._jsonable_snapshot_value(item) for item in value]
+        if hasattr(value, "ids"):
+            return list(value.ids)
+        return str(value)
+
+    @api.model
+    def _serialize_relation_ref(self, record):
+        record.ensure_one()
+        identity = {}
+        for field_name in (
+            "eplus_serial",
+            "code",
+            "barcode",
+            "reference",
+            "external_id",
+            "name",
+        ):
+            field = record._fields.get(field_name)
+            if not field or not field.store or field.type in {"many2one", "one2many", "many2many"}:
+                continue
+            identity[field_name] = self._jsonable_snapshot_value(record[field_name])
+        return {
+            "model": record._name,
+            "id": record.id,
+            "display_name": record.display_name,
+            "values": identity,
+        }
+
+    @api.model
+    def serialize_stored_record(self, record):
+        record.ensure_one()
+        payload_fields = {}
+        field_types = {}
+        for field_name, field in sorted(record._fields.items()):
+            if not field.store:
+                continue
+            value = record[field_name]
+            field_types[field_name] = field.type
+            if field.type == "many2one":
+                payload_fields[field_name] = self._serialize_relation_ref(value) if value else False
+            elif field.type in {"one2many", "many2many"}:
+                payload_fields[field_name] = [
+                    self._serialize_relation_ref(related)
+                    for related in value
+                ]
+            else:
+                payload_fields[field_name] = self._jsonable_snapshot_value(value)
+        return {
+            "schema_version": 1,
+            "model": record._name,
+            "id": record.id,
+            "fields": payload_fields,
+            "field_types": field_types,
+        }
+
+    @api.model
     def _get_branch_sync_configuration_error(self):
         try:
             self.get_db_serial()
@@ -86,6 +154,7 @@ class AbOdooSyncService(models.Model):
         result = {
             "accepted": 0,
             "queued": 0,
+            "ignored": 0,
             "failed": 0,
             "errors": [],
         }
@@ -107,15 +176,23 @@ class AbOdooSyncService(models.Model):
                 if not isinstance(payload_json, dict):
                     raise ValueError(_("payload must be a JSON object."))
 
-                upload_record = upload_model.upsert_from_upload(
+                upload_record, changed = upload_model.upsert_from_upload(
                     db_serial=db_serial,
                     model_name=model_name,
                     rec_id=rec_id,
                     payload=payload_json,
+                    event_uuid=row.get("event_uuid"),
+                    source_revision=row.get("source_revision") or 1,
+                    source_operation=row.get("operation") or "upsert",
+                    source_write_date=row.get("source_write_date") or False,
                 )
-                queued_count = upload_record._queue_apply_records()
                 result["accepted"] += 1
-                result["queued"] += queued_count
+                if not changed:
+                    result["ignored"] += 1
+                    continue
+                profile = upload_record.apply_profile_id
+                if profile and profile.auto_apply:
+                    result["queued"] += upload_record._queue_apply_records()
             except Exception as ex:
                 result["failed"] += 1
                 result["errors"].append(
@@ -261,6 +338,102 @@ class AbOdooSyncService(models.Model):
                 "records": records,
             },
         )
+
+    @api.model
+    def send_branch_upload_batch(self, outbox_records=None):
+        if self.get_server_role() != "branch":
+            return {"status": "skipped", "sent": 0, "failed": 0, "reason": _("server_role is not branch")}
+
+        configuration_error = self._get_branch_sync_configuration_error()
+        if configuration_error:
+            return {"status": "skipped", "sent": 0, "failed": 0, "reason": configuration_error}
+
+        Outbox = self.env["ab_odoo_sync_outbox"].sudo()
+        if outbox_records is None:
+            outbox_records = Outbox.search(
+                [
+                    ("status", "in", ["pending", "failed"]),
+                    ("active", "=", True),
+                ],
+                order="id",
+                limit=self.get_batch_size(),
+            )
+        else:
+            outbox_records = outbox_records.sudo().filtered(
+                lambda record: record.status in {"pending", "failed"} and record.active
+            ).sorted("id")
+
+        if not outbox_records:
+            return {"status": "ok", "sent": 0, "failed": 0}
+
+        rows = [
+            {
+                "event_uuid": record.event_uuid,
+                "model_name": record.model_name,
+                "rec_id": record.rec_id,
+                "source_revision": record.source_revision,
+                "operation": record.operation,
+                "source_write_date": fields.Datetime.to_string(record.source_write_date)
+                if record.source_write_date
+                else False,
+                "payload": record.payload_json or {},
+            }
+            for record in outbox_records
+        ]
+
+        try:
+            response = self.push_upload_records(rows)
+        except Exception as ex:
+            for record in outbox_records:
+                record.write(
+                    {
+                        "status": "failed",
+                        "attempt_count": record.attempt_count + 1,
+                        "last_error": str(ex),
+                    }
+                )
+            return {
+                "status": "failed",
+                "sent": 0,
+                "failed": len(outbox_records),
+                "error": str(ex),
+            }
+
+        errors_by_index = {
+            int(error.get("index")): error.get("error") or _("Unknown upload error")
+            for error in response.get("errors", [])
+            if isinstance(error, dict) and str(error.get("index", "")).isdigit()
+        }
+        now = fields.Datetime.now()
+        sent = 0
+        failed = 0
+        for index, record in enumerate(outbox_records):
+            if index in errors_by_index:
+                record.write(
+                    {
+                        "status": "failed",
+                        "attempt_count": record.attempt_count + 1,
+                        "last_error": errors_by_index[index],
+                    }
+                )
+                failed += 1
+            else:
+                record.write(
+                    {
+                        "status": "sent",
+                        "attempt_count": record.attempt_count + 1,
+                        "last_error": False,
+                        "sent_at": now,
+                    }
+                )
+                sent += 1
+        return {"status": "ok" if not failed else "partial", "sent": sent, "failed": failed}
+
+    @api.model
+    def cron_send_branch_uploads(self):
+        result = self.send_branch_upload_batch()
+        _logger.info("ab_odoo_sync branch upload result: %s", result)
+        return result
 
     @api.model
     def test_branch_connection(self):

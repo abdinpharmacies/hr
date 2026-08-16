@@ -110,7 +110,11 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/security/ir.model.access.csv`
 
-## Current changes before commit
+## 7b027d7f419e525251e14a4eb8e4c478e9b1c64f
+
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Sun Aug 16 12:23:08 2026 +0300
+- Subject: ab_odoo_sync/Feat: Simulation the main server and branch sync and test connection, sending data
 
 User-facing changes:
 
@@ -130,4 +134,38 @@ Files changed:
 - `ab_odoo_sync/i18n/ar.po`
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/views/ab_odoo_sync_views.xml`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Fixed saving, editing, and deleting Sync Config records on Odoo 19 by using the supported registry cache invalidation API.
+- Ensured model tracking activation changes take effect immediately by flushing deferred Sync Config values before cached lookups.
+- Added configurable branch upload sources that capture every stored source field in a durable JSON outbox.
+- Added child-to-parent aggregate capture so line changes can refresh a complete parent payload.
+- Added retryable branch upload actions and an inactive-by-default upload cron for controlled rollout.
+- Preserved the latest complete payload on MAIN with event UUID and source-revision idempotency checks.
+- Added MAIN-owned apply profiles and disabled-by-default field mappings for direct values, synchronized relations, and stable-key relations.
+- Added controlled upsert and archive handling for typed `__sync` mirror models without writing to source business tables.
+- Added audit views for branch outbox events, MAIN upload records, upload sources, apply profiles, and field mappings.
+- Added complete English and Arabic UI and validation messages for both supported Arabic locales.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/data/ab_odoo_sync_cron.xml`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/__init__.py`
+- `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
+- `ab_odoo_sync/models/ab_odoo_sync_config.py`
+- `ab_odoo_sync/models/ab_odoo_sync_orm_hook.py`
+- `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_source.py`
+- `ab_odoo_sync/security/ir.model.access.csv`
+- `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`

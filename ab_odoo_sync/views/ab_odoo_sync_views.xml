@@ -291,9 +291,13 @@
                            decoration-danger="status == 'failed'"
                            decoration-muted="status == 'not_sync'"/>
                     <field name="db_serial"/>
+                    <field name="event_uuid" optional="hide"/>
                     <field name="model_name"/>
                     <field name="rec_id"/>
+                    <field name="source_revision"/>
+                    <field name="source_operation"/>
                     <field name="target_model_name"/>
+                    <field name="apply_profile_id" optional="show"/>
                     <field name="attempt_count"/>
                     <field name="skipped_fields_json" optional="hide"/>
                     <field name="error_message" optional="show"/>
@@ -328,11 +332,16 @@
                             <group>
                                 <field name="status" widget="badge" readonly="1"/>
                                 <field name="db_serial"/>
+                                <field name="event_uuid"/>
                                 <field name="model_name"/>
                                 <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="source_operation"/>
                             </group>
                             <group>
                                 <field name="target_model_name"/>
+                                <field name="apply_profile_id"/>
+                                <field name="source_write_date"/>
                                 <field name="attempt_count"/>
                                 <field name="received_at"/>
                                 <field name="queued_at"/>
@@ -358,7 +367,11 @@
                     <field name="db_serial"/>
                     <field name="model_name"/>
                     <field name="rec_id"/>
+                    <field name="event_uuid"/>
+                    <field name="source_revision"/>
+                    <field name="source_operation"/>
                     <field name="target_model_name"/>
+                    <field name="apply_profile_id"/>
                     <field name="status"/>
                     <filter name="pending" string="Pending" domain="[('status', '=', 'pending')]"/>
                     <filter name="queued" string="Queued" domain="[('status', '=', 'queued')]"/>

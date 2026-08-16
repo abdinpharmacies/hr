@@ -20,5 +20,15 @@
             <field name="state">code</field>
             <field name="code">model.cron_cleanup_consumed_events()</field>
         </record>
+
+        <record id="ir_cron_ab_odoo_sync_branch_upload" model="ir.cron">
+            <field name="name">AB Odoo Sync: Branch Upload</field>
+            <field name="active">False</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="model_id" ref="model_ab_odoo_sync_service"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_send_branch_uploads()</field>
+        </record>
     </data>
 </odoo>
