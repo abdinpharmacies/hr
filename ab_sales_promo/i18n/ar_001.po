@@ -49,6 +49,11 @@ msgid "Applied Programs"
 msgstr "البرامج المطبقة"
 
 #. module: ab_sales_promo
+#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__promotion_ownership__abdin_promotion
+msgid "Abdin Promotion"
+msgstr "عروض عابدين"
+
+#. module: ab_sales_promo
 #: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__available_program_ids
 msgid "Available Programs"
 msgstr "البرامج المتاحة"
@@ -64,6 +69,11 @@ msgstr "اختر يدويًا من العروض المتاحة."
 #: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
 msgid "Clear"
 msgstr "مسح"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__promotion_ownership__company_promotion
+msgid "Company Promotion"
+msgstr "عروض شركات"
 
 #. module: ab_sales_promo
 #: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__currency_id
@@ -139,6 +149,11 @@ msgstr "يتطلب العرض '%s' ما لا يقل عن %s وحدة ضمن نط
 #: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__promo_discount_amount
 msgid "Promotion Discount"
 msgstr "خصم العرض"
+
+#. module: ab_sales_promo
+#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__promotion_ownership
+msgid "Promotion Ownership"
+msgstr "ملكية العرض"
 
 #. module: ab_sales_promo
 #: model:ir.ui.menu,name:ab_sales_promo.ab_sales_promo_program_menu

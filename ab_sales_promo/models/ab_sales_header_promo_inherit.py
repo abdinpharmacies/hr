@@ -71,20 +71,21 @@ class AbSalesHeaderPromo(models.Model):
     def _get_sales_trans_h_notice(self):
         self.ensure_one()
         description = super()._get_sales_trans_h_notice()
-        if self.applied_program_ids.filtered(lambda p: self._program_is_effective(p)):
+        marker_programs = self.applied_program_ids.filtered(lambda p: self._program_marker_products(p))
+        if marker_programs:
             description += '§§§'
         return description
 
     def _insert_sales_trans_d(self, cur, sth_id, emp_code):
         lines_count = super()._insert_sales_trans_d(cur=cur, sth_id=sth_id, emp_code=emp_code)
-        program = self.applied_program_ids.filtered(lambda p: self._program_is_effective(p))[:1]
+        program = self.applied_program_ids.filtered(lambda p: self._program_marker_products(p))[:1]
         if not program:
             return lines_count
 
         product_serials = [
             int(product.eplus_serial)
-            for product in self.line_ids.mapped('product_id')
-            if product.eplus_serial and (self._discount_for_program_on_product(program, product) or 0.0) > 0.0
+            for product in self._program_marker_products(program)
+            if product.eplus_serial
         ]
         if product_serials:
             placeholders = ",".join([PARAM_STR] * len(product_serials))
@@ -645,6 +646,26 @@ class AbSalesHeaderPromo(models.Model):
         if scope:
             return scope
         return Product.browse()
+
+    def _program_marker_products(self, program):
+        self.ensure_one()
+        Product = self.env["ab_product"]
+        if not program:
+            return Product.browse()
+        if program.apply_disc_on == "incentives":
+            return Product.browse()
+        if not self._program_is_effective(program):
+            return Product.browse()
+
+        if program.apply_disc_on == "specific_products":
+            promo_products = (
+                self._specific_products_trigger_products(program)
+                | program.disc_specific_product_ids
+            )
+        else:
+            promo_products = self._program_discount_products(program)
+
+        return promo_products & self.line_ids.mapped("product_id")
 
     def _specific_products_trigger_products(self, program):
         Product = self.env['ab_product']

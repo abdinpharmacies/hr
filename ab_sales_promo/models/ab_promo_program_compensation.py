@@ -4,6 +4,13 @@ from odoo import fields, models
 class AbPromoProgramCompensation(models.Model):
     _inherit = 'ab_promo_program'
 
+    promotion_ownership = fields.Selection(
+        [
+            ("company_promotion", "Company Promotion"),
+            ("abdin_promotion", "Abdin Promotion"),
+        ],
+        string="Promotion Ownership",
+    )
     compensation_company_id = fields.Many2one(
         'ab_product_company',
         string="Compensation Company",
