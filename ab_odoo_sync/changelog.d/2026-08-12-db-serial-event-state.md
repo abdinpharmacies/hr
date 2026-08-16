@@ -85,7 +85,11 @@ Files changed:
 - `ab_odoo_sync/security/ir.model.access.csv`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`
 
-## Current changes before commit
+## 0a7437e39da4805df7cf50de1b00de5c66df2c02
+
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Thu Aug 13 13:53:32 2026 +0300
+- Subject: ab_odoo_sync/Fix: Replaces the conflicting queue_job dependancy with the already existing integration_queue_job provider in manifest
 
 User-facing changes:
 
@@ -105,3 +109,25 @@ Files changed:
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/security/ir.model.access.csv`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Fixed authenticated HTTP endpoints on Odoo 19 by using the supported JSON request API.
+- Added explicit MAIN database selection so a branch can connect to the correct database on a multi-database server.
+- Added an authenticated health endpoint and a branch-side connection test covering health, pull, and an empty push without touching business records.
+- Added an explicit branch upload method for approved callers while keeping automatic business export disabled.
+- Required MAIN-side active checkpoint registration for every connecting `db_serial`.
+- Prevented checkpoint acknowledgements from moving backward or beyond the latest known MAIN event.
+- Added English and Arabic connection messages, a Test Branch Connection menu action, and a module version bump.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/controllers/main.py`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/views/ab_odoo_sync_views.xml`

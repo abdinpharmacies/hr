@@ -177,6 +177,13 @@
             <field name="code">action = env["ab_odoo_sync_checkpoint"].action_cleanup_consumed_events()</field>
         </record>
 
+        <record id="action_ab_odoo_sync_test_branch_connection" model="ir.actions.server">
+            <field name="name">Test Branch Connection</field>
+            <field name="model_id" ref="model_ab_odoo_sync_service"/>
+            <field name="state">code</field>
+            <field name="code">action = model.action_test_branch_connection()</field>
+        </record>
+
         <record id="view_ab_odoo_sync_event_state_list" model="ir.ui.view">
             <field name="name">ab_odoo_sync_event_state.list</field>
             <field name="model">ab_odoo_sync_event_state</field>
@@ -383,6 +390,9 @@
                   action="action_ab_odoo_sync_upload_record" sequence="27" groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_checkpoints" name="Checkpoints" parent="menu_ab_odoo_sync_root"
                   action="action_ab_odoo_sync_checkpoint" sequence="30" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_test_branch_connection" name="Test Branch Connection"
+                  parent="menu_ab_odoo_sync_root" action="action_ab_odoo_sync_test_branch_connection"
+                  sequence="35" groups="base.group_system"/>
         <menuitem id="menu_ab_odoo_sync_manual_cleanup" name="Cleanup Consumed Events" parent="menu_ab_odoo_sync_root"
                   action="action_ab_odoo_sync_manual_cleanup" sequence="40" groups="base.group_system"/>
     </data>

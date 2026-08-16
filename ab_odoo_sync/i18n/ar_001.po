@@ -450,3 +450,104 @@ msgstr "يجب أن يكون السجل كائن JSON."
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
 msgid "records must be a JSON array."
 msgstr "يجب أن تكون records مصفوفة JSON."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "Checkpoint acknowledgement cannot move backward."
+msgstr "لا يمكن لإقرار نقطة المزامنة الرجوع إلى الخلف."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "Checkpoint acknowledgement exceeds the latest MAIN event."
+msgstr "يتجاوز إقرار نقطة المزامنة أحدث حدث في الخادم MAIN."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+#, python-format
+msgid ""
+"Connected to MAIN database %(database)s. Pull and push checks passed for DB "
+"serial %(db_serial)s."
+msgstr ""
+"تم الاتصال بقاعدة بيانات MAIN %(database)s. نجح فحصا السحب والدفع لرقم قاعدة "
+"البيانات %(db_serial)s."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Connection test was skipped."
+msgstr "تم تخطي اختبار الاتصال."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "MAIN API returned an invalid JSON response."
+msgstr "أعادت واجهة MAIN استجابة JSON غير صحيحة."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Missing MAIN database config: ab_odoo_sync.main_database"
+msgstr "إعداد قاعدة بيانات MAIN مفقود: ab_odoo_sync.main_database"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Odoo Sync Connection"
+msgstr "اتصال مزامنة أودو"
+
+#. module: ab_odoo_sync
+#: model:ir.actions.server,name:ab_odoo_sync.action_ab_odoo_sync_test_branch_connection
+#: model:ir.ui.menu,name:ab_odoo_sync.menu_ab_odoo_sync_test_branch_connection
+msgid "Test Branch Connection"
+msgstr "اختبار اتصال الفرع"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "This server is not BRANCH."
+msgstr "هذا الخادم ليس BRANCH."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "Unauthorized"
+msgstr "غير مصرح."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "Unknown or inactive db_serial."
+msgstr "رقم db_serial غير معروف أو غير نشط."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "db_serial is required"
+msgstr "حقل db_serial مطلوب"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "last_event_id and limit must be integers."
+msgstr "يجب أن يكون last_event_id و limit عددين صحيحين."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "last_event_id must be an integer."
+msgstr "يجب أن يكون last_event_id عددا صحيحا."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "last_event_id must be zero or greater and limit must be positive."
+msgstr "يجب أن يكون last_event_id صفرا أو أكبر وأن يكون limit موجبا."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/controllers/main.py:0
+msgid "last_event_id must be zero or greater."
+msgstr "يجب أن يكون last_event_id صفرا أو أكبر."

@@ -52,6 +52,8 @@ class AbOdooSyncService(models.Model):
 
         if not (self._icp().get_param("ab_odoo_sync.main_url") or "").strip():
             return _("Missing MAIN URL config: ab_odoo_sync.main_url")
+        if not (self._icp().get_param("ab_odoo_sync.main_database") or "").strip():
+            return _("Missing MAIN database config: ab_odoo_sync.main_database")
         if not (self._icp().get_param("ab_odoo_sync.api_key") or "").strip():
             return _("Missing API key config: ab_odoo_sync.api_key")
         return False
@@ -208,9 +210,12 @@ class AbOdooSyncService(models.Model):
     @api.model
     def _main_api_call(self, path, payload):
         main_url = (self._icp().get_param("ab_odoo_sync.main_url") or "").strip().rstrip("/")
+        main_database = (self._icp().get_param("ab_odoo_sync.main_database") or "").strip()
         api_key = (self._icp().get_param("ab_odoo_sync.api_key") or "").strip()
         if not main_url:
             raise ValueError(_("Missing MAIN URL config: ab_odoo_sync.main_url"))
+        if not main_database:
+            raise ValueError(_("Missing MAIN database config: ab_odoo_sync.main_database"))
         if not api_key:
             raise ValueError(_("Missing API key config: ab_odoo_sync.api_key"))
 
@@ -219,6 +224,7 @@ class AbOdooSyncService(models.Model):
         req = urllib.request.Request(url=url, data=raw, method="POST")
         req.add_header("Content-Type", "application/json")
         req.add_header("X-AB-Sync-Key", api_key)
+        req.add_header("X-Odoo-Database", main_database)
 
         try:
             with urllib.request.urlopen(req, timeout=60) as response:
@@ -229,10 +235,112 @@ class AbOdooSyncService(models.Model):
         except urllib.error.URLError as ex:
             raise ValueError(f"MAIN API connection error: {ex}") from ex
 
-        data = json.loads(body or "{}")
+        try:
+            data = json.loads(body or "{}")
+        except json.JSONDecodeError as ex:
+            raise ValueError(_("MAIN API returned an invalid JSON response.")) from ex
         if not data.get("ok"):
             raise ValueError(data.get("error") or "MAIN API returned failure")
         return data
+
+    @api.model
+    def push_upload_records(self, records):
+        if self.get_server_role() != "branch":
+            raise ValueError(_("This server is not BRANCH."))
+        if not isinstance(records, list):
+            raise ValueError(_("records must be a JSON array."))
+
+        configuration_error = self._get_branch_sync_configuration_error()
+        if configuration_error:
+            raise ValueError(configuration_error)
+
+        return self._main_api_call(
+            "/ab_odoo_sync/upload",
+            {
+                "db_serial": self.get_db_serial(),
+                "records": records,
+            },
+        )
+
+    @api.model
+    def test_branch_connection(self):
+        if self.get_server_role() != "branch":
+            return {"status": "skipped", "reason": _("server_role is not branch")}
+
+        configuration_error = self._get_branch_sync_configuration_error()
+        if configuration_error:
+            return {"status": "skipped", "reason": configuration_error}
+
+        checkpoint = self._get_or_create_local_checkpoint()
+        db_serial = checkpoint.db_serial
+        health = self._main_api_call(
+            "/ab_odoo_sync/health",
+            {"db_serial": db_serial},
+        )
+        pull = self._main_api_call(
+            "/ab_odoo_sync/events",
+            {
+                "db_serial": db_serial,
+                "last_event_id": checkpoint.last_event_id,
+                "limit": 1,
+            },
+        )
+        push = self.push_upload_records([])
+        return {
+            "status": "ok",
+            "db_serial": db_serial,
+            "main_database": health.get("database"),
+            "latest_event_id": health.get("latest_event_id", 0),
+            "pull_event_count": len(pull.get("events") or []),
+            "push_accepted": push.get("accepted", 0),
+            "capabilities": health.get("capabilities") or {},
+        }
+
+    @api.model
+    def action_test_branch_connection(self):
+        try:
+            result = self.test_branch_connection()
+        except Exception as ex:
+            _logger.exception("ab_odoo_sync branch connection test failed")
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Odoo Sync Connection"),
+                    "message": str(ex),
+                    "type": "danger",
+                    "sticky": True,
+                },
+            }
+
+        if result.get("status") != "ok":
+            return {
+                "type": "ir.actions.client",
+                "tag": "display_notification",
+                "params": {
+                    "title": _("Odoo Sync Connection"),
+                    "message": result.get("reason") or _("Connection test was skipped."),
+                    "type": "warning",
+                    "sticky": True,
+                },
+            }
+
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": _("Odoo Sync Connection"),
+                "message": _(
+                    "Connected to MAIN database %(database)s. Pull and push checks passed for DB serial %(db_serial)s."
+                )
+                % {
+                    "database": result["main_database"],
+                    "db_serial": result["db_serial"],
+                },
+                "type": "success",
+                "sticky": False,
+            },
+        }
 
     @api.model
     def _get_or_create_local_checkpoint(self):
