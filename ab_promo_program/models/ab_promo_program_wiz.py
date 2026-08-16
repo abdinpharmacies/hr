@@ -1,10 +1,10 @@
+import csv
 import re
 from io import StringIO
-import csv
 
 from odoo import api, fields, models
-from odoo.tools.translate import _
 from odoo.exceptions import UserError
+from odoo.tools.translate import _
 
 
 class AbPromoProgramWizard(models.TransientModel):
@@ -52,6 +52,43 @@ class AbPromoProgramWizard(models.TransientModel):
         if not res:
             raise UserError(_("Unknown value for 'apply_disc_on': %s") % value)
         return res
+
+    @staticmethod
+    def _selection_mapping(selection):
+        mapping = {}
+        for key, label in selection or []:
+            mapping[str(key).strip().lower()] = key
+            mapping[str(label).strip().lower()] = key
+        return mapping
+
+    def _normalize_optional_selection(self, model, field_name, value, label, aliases=None):
+        value = (value or "").strip()
+        if not value:
+            return False
+
+        field = model._fields.get(field_name)
+        if not field:
+            raise UserError(
+                _("Column '%(label)s' has a value, but field '%(field)s' is not defined on ab_promo_program.")
+                % {"label": label, "field": field_name}
+            )
+
+        selection = field.selection or []
+        mapping = self._selection_mapping(selection)
+        valid_keys = {key for key, _label in selection}
+        mapping.update({
+            k.strip().lower(): v
+            for k, v in (aliases or {}).items()
+            if v in valid_keys
+        })
+        normalized = mapping.get(value.lower())
+        if not normalized:
+            allowed = ", ".join(label for _, label in (field.selection or []))
+            raise UserError(
+                _("Invalid value for '%(label)s': %(value)s. Allowed values: %(allowed)s")
+                % {"label": label, "value": value, "allowed": allowed}
+            )
+        return normalized
 
     @staticmethod
     def _float_or_false(value):
@@ -220,6 +257,8 @@ class AbPromoProgramWizard(models.TransientModel):
         #   'disc_codes': set([...]),
         # }
 
+        Promo = self.env['ab_promo_program']
+
         # ---------------- DATA ROWS ----------------
         for line_no, row in enumerate(rows[1:], start=2):  # line 2 = first data row
             if not row or not any((c or "").strip() for c in row):
@@ -253,6 +292,34 @@ class AbPromoProgramWizard(models.TransientModel):
                 if 'fixed_price' in header_map else ''
             disc_codes_str = self._get_cell(row, header_map, 'disc_specific_product_ids') \
                 if 'disc_specific_product_ids' in header_map else ''
+            compensation_timing = self._normalize_optional_selection(
+                Promo,
+                'compensation_timing',
+                self._get_cell(row, header_map, 'Compensation way')
+                if 'compensation way' in header_map else '',
+                'Compensation way',
+                aliases={
+                    'advance': 'before',
+                    'subsequent': 'later',
+                },
+            )
+            compensation_type = self._normalize_optional_selection(
+                Promo,
+                'compensation_type',
+                self._get_cell(row, header_map, 'Compensation Type')
+                if 'compensation type' in header_map else '',
+                'Compensation Type',
+                aliases={
+                    'goods': 'products',
+                },
+            )
+            promotion_ownership = self._normalize_optional_selection(
+                Promo,
+                'promotion_ownership',
+                self._get_cell(row, header_map, 'promotion_ownership')
+                if 'promotion_ownership' in header_map else '',
+                'promotion_ownership',
+            )
 
             # --- اشتقاق القيم من promo_text ---
             derived = self._derive_promo_fields(promo_text)
@@ -296,6 +363,9 @@ class AbPromoProgramWizard(models.TransientModel):
                 apply_disc_on,
                 fixed_price,
                 max_repetition_per_invoice or 0,
+                compensation_timing or '',
+                compensation_type or '',
+                promotion_ownership or '',
             )
 
             if key not in promo_map:
@@ -314,6 +384,12 @@ class AbPromoProgramWizard(models.TransientModel):
                     'product_codes': set(),
                     'disc_codes': set(),
                 }
+                if compensation_timing:
+                    promo_map[key]['vals']['compensation_timing'] = compensation_timing
+                if compensation_type:
+                    promo_map[key]['vals']['compensation_type'] = compensation_type
+                if promotion_ownership:
+                    promo_map[key]['vals']['promotion_ownership'] = promotion_ownership
 
             promo_map[key]['product_codes'].add(product_code)
             for c in disc_codes:
@@ -323,7 +399,6 @@ class AbPromoProgramWizard(models.TransientModel):
             raise UserError(_("No valid lines found to create promotions."))
 
         Product = self.env['ab_product'].with_context(active_test=False)
-        Promo = self.env['ab_promo_program']
 
         created_promos = self.env['ab_promo_program']
 

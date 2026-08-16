@@ -29,10 +29,17 @@ Current changes before commit:
 - Show the technical ID as a muted first column in the Promotion Programs list.
 - Keep creation date available as an optional hidden list column.
 - Add missing manifest developer metadata.
+- Add optional Promotion Wizard Excel columns for Compensation way, Compensation Type, and promotion_ownership.
+- Validate optional compensation and ownership selection values before creating promotions.
+- Include non-empty optional compensation and ownership values in the wizard grouping key to avoid merging different promotion metadata.
+- Save optional compensation and ownership values on created promotions when the fields are available.
 
 Files changed:
 
 - ab_promo_program/changelog.d
 - ab_promo_program/__manifest__.py
+- ab_promo_program/i18n/ar.po
+- ab_promo_program/i18n/ar_001.po
 - ab_promo_program/models/ab_promo_program.py
+- ab_promo_program/models/ab_promo_program_wiz.py
 - ab_promo_program/views/ab_promo_program.xml
