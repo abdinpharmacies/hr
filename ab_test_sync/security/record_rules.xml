@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_test_category_sync_all" model="ir.rule">
+            <field name="name">AB Sync Test Category Mirror: all records</field>
+            <field name="model_id" ref="model_ab_test_category__sync"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_test_sync_manager'))]"/>
+        </record>
+        <record id="rule_ab_test_tag_sync_all" model="ir.rule">
+            <field name="name">AB Sync Test Tag Mirror: all records</field>
+            <field name="model_id" ref="model_ab_test_tag__sync"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_test_sync_manager'))]"/>
+        </record>
+        <record id="rule_ab_test_header_sync_all" model="ir.rule">
+            <field name="name">AB Sync Test Header Mirror: all records</field>
+            <field name="model_id" ref="model_ab_test_header__sync"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_test_sync_manager'))]"/>
+        </record>
+        <record id="rule_ab_test_line_sync_all" model="ir.rule">
+            <field name="name">AB Sync Test Line Mirror: all records</field>
+            <field name="model_id" ref="model_ab_test_line__sync"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_test_sync_manager'))]"/>
+        </record>
+    </data>
+</odoo>
