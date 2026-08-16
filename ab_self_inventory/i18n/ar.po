@@ -1758,6 +1758,58 @@ msgid "ReSync Products"
 msgstr "اعادة رصد"
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__can_refresh_system_stock
+msgid "Can Refresh System Stock"
+msgstr "يمكن تحديث رصيد السيستم"
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Refresh System Stock"
+msgstr "تحديث رصيد السيستم"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "System stock updated"
+msgstr "تم تحديث رصيد السيستم"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "System quantity updated for %s product(s)."
+msgstr "تم تحديث كمية السيستم لـ %s صنف."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "System stock is already up to date"
+msgstr "رصيد السيستم محدث بالفعل"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "No system quantity changes were found."
+msgstr "لا توجد تغييرات في كميات السيستم."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "There are no products to refresh."
+msgstr "لا توجد منتجات لتحديث رصيدها."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "No product identifiers were available to refresh system stock quantities."
+msgstr "لا توجد معرفات منتجات متاحة لتحديث كميات رصيد السيستم."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Only administrators, managers, or branch receivers can refresh system stock quantities."
+msgstr "يمكن للمسؤولين أو المديرين أو مستلمي الفروع فقط تحديث كميات رصيد السيستم."
+
+#. module: ab_self_inventory
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "Sync Complete"

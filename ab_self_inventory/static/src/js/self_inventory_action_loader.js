@@ -109,3 +109,37 @@ async function closeDialogAndReload(env, action) {
 }
 
 registry.category("actions").add("ab_self_inventory_close_dialog_reload", closeDialogAndReload);
+
+async function stockRefreshToast(env, action) {
+    const params = action.params || {};
+    const toast = document.createElement("div");
+    toast.className = `ab_self_inventory_stock_toast ab_self_inventory_stock_toast--${params.type || "success"}`;
+
+    const icon = document.createElement("span");
+    icon.className = "fa fa-refresh ab_self_inventory_stock_toast_icon";
+    icon.setAttribute("aria-hidden", "true");
+
+    const content = document.createElement("div");
+    content.className = "ab_self_inventory_stock_toast_content";
+
+    const title = document.createElement("div");
+    title.className = "ab_self_inventory_stock_toast_title";
+    title.textContent = params.title || _t("Done");
+
+    const message = document.createElement("div");
+    message.className = "ab_self_inventory_stock_toast_message";
+    message.textContent = params.message || "";
+
+    content.append(title, message);
+    toast.append(icon, content);
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => toast.classList.add("ab_self_inventory_stock_toast--visible"));
+    setTimeout(() => {
+        toast.classList.remove("ab_self_inventory_stock_toast--visible");
+        setTimeout(() => toast.remove(), 260);
+    }, 3200);
+    await env.services.action.doAction({ type: "ir.actions.client", tag: "soft_reload" });
+}
+
+registry.category("actions").add("ab_self_inventory_stock_refresh_toast", stockRefreshToast);

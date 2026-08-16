@@ -2,6 +2,7 @@ import logging
 
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
+from odoo.tools.float_utils import float_compare, float_round
 from odoo.tools.translate import _
 
 
@@ -58,6 +59,7 @@ class SelfInventoryProcess(models.Model):
     )
     submitted_date = fields.Datetime(readonly=True, copy=False)
     can_sync_requested_stock = fields.Boolean(compute='_compute_can_sync_requested_stock')
+    can_refresh_system_stock = fields.Boolean(compute='_compute_can_refresh_system_stock')
     shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_totals', digits=(12, 2))
     extra_qty = fields.Float(string='Extra Cost', compute='_compute_totals', digits=(12, 2))
     requested_total_cost = fields.Float(
@@ -145,6 +147,26 @@ class SelfInventoryProcess(models.Model):
                 and rec.branch_id in receiver_branches
             )
 
+    @api.depends('state', 'branch_id')
+    @api.depends_context('uid')
+    def _compute_can_refresh_system_stock(self):
+        user = self.env.user
+        is_receiver = user.has_group('ab_self_inventory.group_ab_self_inventory_receiver')
+        is_manager = user.has_group('ab_self_inventory.group_ab_self_inventory_manager')
+        is_admin = user.has_group('base.group_system')
+        receiver_branches = user.ab_self_inventory_branch_ids
+        for rec in self:
+            rec.can_refresh_system_stock = bool(
+                rec.state in ('draft', 'in_progress')
+                and rec.branch_id
+                and rec.branch_id.eplus_serial
+                and (
+                    is_admin
+                    or is_manager
+                    or (is_receiver and rec.branch_id in receiver_branches)
+                )
+            )
+
     def write(self, vals):
         auto_receiver = False
         if vals.get('branch_id') and 'receiver_id' not in vals:
@@ -212,66 +234,76 @@ class SelfInventoryProcess(models.Model):
 
     def action_sync_requested_product_quantities(self):
         total_updated = 0
-        total_unchanged = 0
-        total_missing_identifiers = 0
         for rec in self:
-            rec._check_can_sync_requested_product_quantities()
-            requested_lines = rec.line_ids.filtered('requested')
-            if not requested_lines:
-                raise ValidationError(_("There are no requested products to sync."))
+            sync_result = rec._refresh_system_stock_quantities()
+            total_updated += sync_result['updated']
 
-            quantities_by_line = {}
-            try:
-                for offset in range(0, len(requested_lines), REQUESTED_STOCK_SYNC_CHUNK_SIZE):
-                    line_chunk = requested_lines[offset:offset + REQUESTED_STOCK_SYNC_CHUNK_SIZE]
-                    quantities_by_line.update(rec._fetch_requested_line_stock_quantities(line_chunk))
-            except ValidationError:
-                raise
-            except Exception as error:
-                _logger.exception("Could not sync requested product quantities for self inventory process %s", rec.id)
-                raise ValidationError(_("E-plus Connection Error: %s") % error) from error
-
-            total_missing_identifiers += len(requested_lines) - len(quantities_by_line)
-            for line in requested_lines:
-                if line.id not in quantities_by_line:
-                    continue
-                new_qty = quantities_by_line[line.id]
-                if abs((line.system_qty or 0.0) - new_qty) <= 0.0001:
-                    total_unchanged += 1
-                    continue
-                line.sudo().with_context(ab_self_inventory_allow_system_qty_sync=True).write({
-                    'system_qty': new_qty,
-                })
-                total_updated += 1
+        if total_updated:
+            title = _('System stock updated')
+            message = _('System quantity updated for %s product(s).') % total_updated
+        else:
+            title = _('System stock is already up to date')
+            message = _('No system quantity changes were found.')
 
         return {
             'type': 'ir.actions.client',
-            'tag': 'display_notification',
+            'tag': 'ab_self_inventory_stock_refresh_toast',
             'params': {
-                'title': _('Sync Complete'),
-                'message': _(
-                    'Requested product quantities synced. Updated: %(updated)d. Unchanged: %(unchanged)d. Missing identifiers: %(missing)d.'
-                ) % {
-                    'updated': total_updated,
-                    'unchanged': total_unchanged,
-                    'missing': total_missing_identifiers,
-                },
+                'title': title,
+                'message': message,
                 'type': 'success',
-                'sticky': False,
-                'next': {'type': 'ir.actions.client', 'tag': 'reload'},
             },
         }
 
-    def _check_can_sync_requested_product_quantities(self):
+    def _refresh_system_stock_quantities(self):
+        self.ensure_one()
+        self._check_can_refresh_system_stock()
+        process_lines = self.line_ids
+        if not process_lines:
+            raise ValidationError(_("There are no products to refresh."))
+
+        quantities_by_line = {}
+        try:
+            for offset in range(0, len(process_lines), REQUESTED_STOCK_SYNC_CHUNK_SIZE):
+                line_chunk = process_lines[offset:offset + REQUESTED_STOCK_SYNC_CHUNK_SIZE]
+                quantities_by_line.update(self._fetch_requested_line_stock_quantities(line_chunk))
+        except ValidationError:
+            raise
+        except Exception as error:
+            _logger.exception("Could not refresh system stock quantities for self inventory process %s", self.id)
+            raise ValidationError(_("E-plus Connection Error: %s") % error) from error
+        if not quantities_by_line:
+            raise ValidationError(_("No product identifiers were available to refresh system stock quantities."))
+
+        result = {
+            'updated': 0,
+            'unchanged': 0,
+            'missing_identifiers': len(process_lines) - len(quantities_by_line),
+        }
+        for line in process_lines:
+            if line.id not in quantities_by_line:
+                continue
+            new_qty = float_round(quantities_by_line[line.id], precision_digits=3)
+            old_qty = float_round(line.system_qty or 0.0, precision_digits=3)
+            if float_compare(old_qty, new_qty, precision_digits=3) == 0:
+                result['unchanged'] += 1
+                continue
+            line.sudo().with_context(ab_self_inventory_allow_system_qty_sync=True).write({
+                'system_qty': new_qty,
+            })
+            result['updated'] += 1
+        return result
+
+    def _check_can_refresh_system_stock(self):
         self.ensure_one()
         if self.state not in ('draft', 'in_progress'):
             raise ValidationError(_("Submitted self inventory processes cannot sync E-stock quantities."))
         user = self.env.user
-        if user.has_group('ab_self_inventory.group_ab_self_inventory_manager'):
-            raise ValidationError(_("Managers cannot sync active branch self inventory quantities."))
-        if not user.has_group('ab_self_inventory.group_ab_self_inventory_receiver'):
-            raise ValidationError(_("Only the branch receiver can sync requested product quantities."))
-        if self.branch_id not in user.ab_self_inventory_branch_ids:
+        if user.has_group('base.group_system') or user.has_group('ab_self_inventory.group_ab_self_inventory_manager'):
+            pass
+        elif not user.has_group('ab_self_inventory.group_ab_self_inventory_receiver'):
+            raise ValidationError(_("Only administrators, managers, or branch receivers can refresh system stock quantities."))
+        elif self.branch_id not in user.ab_self_inventory_branch_ids:
             raise ValidationError(_("You can only sync self inventory quantities for your assigned branch."))
         if not self.branch_id.eplus_serial:
             raise ValidationError(_("Selected branch has no e-plus serial."))
