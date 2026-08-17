@@ -30,6 +30,7 @@
                     <field name="department_decision" widget="badge"
                            decoration-success="department_decision == 'accepted'"
                            decoration-warning="department_decision == 'pending'"
+                           decoration-info="department_decision == 'deferred'"
                            decoration-danger="department_decision == 'rejected'"/>
                     <field name="has_pending_escalation" invisible="1"/>
                     <field name="escalation_count" invisible="1"/>
@@ -87,6 +88,9 @@
                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
                         <button name="action_reject" type="object" string="Reject" class="btn-secondary"
                                 groups="ab_supplier_claim_workflow.supplier_claim_group_inventory,ab_supplier_claim_workflow.supplier_claim_group_purchase,ab_supplier_claim_workflow.supplier_claim_group_suppliers,ab_supplier_claim_workflow.supplier_claim_group_tax_accounts,ab_supplier_claim_workflow.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
+                        <button name="action_defer" type="object" string="Defer" class="btn-warning"
+                                groups="ab_supplier_claim_workflow.supplier_claim_group_inventory,ab_supplier_claim_workflow.supplier_claim_group_purchase,ab_supplier_claim_workflow.supplier_claim_group_suppliers,ab_supplier_claim_workflow.supplier_claim_group_tax_accounts,ab_supplier_claim_workflow.supplier_claim_group_bank_acc"
                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or not can_current_user_act"/>
                         <button name="action_finish" type="object" string="Finish" class="btn-success"
                                 groups="ab_supplier_claim_workflow.supplier_claim_group_inventory,ab_supplier_claim_workflow.supplier_claim_group_purchase,ab_supplier_claim_workflow.supplier_claim_group_suppliers,ab_supplier_claim_workflow.supplier_claim_group_tax_accounts,ab_supplier_claim_workflow.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -166,6 +170,16 @@
                         <field name="tax_amount" invisible="1"/>
                         <field name="net_payable" invisible="1"/>
                         <field name="tax_frozen" invisible="1"/>
+                        <field name="inv_decision" invisible="1"/>
+                        <field name="pur_decision" invisible="1"/>
+                        <field name="sup_decision" invisible="1"/>
+                        <field name="tax_decision" invisible="1"/>
+                        <field name="bank_decision" invisible="1"/>
+                        <field name="inv_deferred_overdue_days" invisible="1"/>
+                        <field name="pur_deferred_overdue_days" invisible="1"/>
+                        <field name="sup_deferred_overdue_days" invisible="1"/>
+                        <field name="tax_deferred_overdue_days" invisible="1"/>
+                        <field name="bank_deferred_overdue_days" invisible="1"/>
                         <field name="is_dev_override" invisible="1"/>
                         <field name="is_escalation_viewer" invisible="1"/>
                         <field name="show_dev_override_badge" invisible="1"/>
@@ -348,35 +362,140 @@
 
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_inventory"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="inv_deferred_expected_date" readonly="inv_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_inventory"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Deferral Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="inv_deferred_reason" readonly="inv_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="inv_deferred_overdue_days == 0">
+                                <span class="scc-stage-field-label o_translate_inline">Actual Overdue Days</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="inv_deferred_overdue_days" readonly="1"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_inventory"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="inv_reason" readonly="inv_decision == 'accepted'"/>
                                 </span>
                             </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_purchase"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="pur_deferred_expected_date" readonly="pur_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_purchase"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Deferral Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="pur_deferred_reason" readonly="pur_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="pur_deferred_overdue_days == 0">
+                                <span class="scc-stage-field-label o_translate_inline">Actual Overdue Days</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="pur_deferred_overdue_days" readonly="1"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_purchase"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="pur_reason" readonly="pur_decision == 'accepted'"/>
                                 </span>
                             </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_suppliers"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="sup_deferred_expected_date" readonly="sup_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_suppliers"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Deferral Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="sup_deferred_reason" readonly="sup_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="sup_deferred_overdue_days == 0">
+                                <span class="scc-stage-field-label o_translate_inline">Actual Overdue Days</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="sup_deferred_overdue_days" readonly="1"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_suppliers"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="sup_reason" readonly="sup_decision == 'accepted'"/>
                                 </span>
                             </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_tax_accounts"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or supplier_type != 'withholding_tax'">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="tax_deferred_expected_date" readonly="tax_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_tax_accounts"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or supplier_type != 'withholding_tax'">
+                                <span class="scc-stage-field-label o_translate_inline">Deferral Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="tax_deferred_reason" readonly="tax_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="tax_deferred_overdue_days == 0">
+                                <span class="scc-stage-field-label o_translate_inline">Actual Overdue Days</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="tax_deferred_overdue_days" readonly="1"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_tax_accounts"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or supplier_type != 'withholding_tax'">
+                                <span class="scc-stage-field-label o_translate_inline">Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="tax_reason" readonly="tax_decision == 'accepted'"/>
                                 </span>
                             </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_bank_acc"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
-                                <span class="scc-stage-field-label o_translate_inline">Delay / Rejection Reason</span>
+                                <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="bank_deferred_expected_date" readonly="bank_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_bank_acc"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Deferral Reason</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="bank_deferred_reason" readonly="bank_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="bank_deferred_overdue_days == 0">
+                                <span class="scc-stage-field-label o_translate_inline">Actual Overdue Days</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="bank_deferred_overdue_days" readonly="1"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_bank_acc"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="bank_reason" readonly="bank_decision == 'accepted'"/>
                                 </span>

@@ -382,11 +382,10 @@ msgstr ""
 #. module: ab_supplier_claim_workflow
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
 msgid ""
-"<span class=\"scc-stage-field-label o_translate_inline\">Delay / Rejection "
+"<span class=\"scc-stage-field-label o_translate_inline\">Rejection "
 "Reason</span>"
 msgstr ""
-"<span class=\"scc-stage-field-label o_translate_inline\">سبب التأخير / "
-"الرفض</span>"
+"<span class=\"scc-stage-field-label o_translate_inline\">سبب الرفض</span>"
 
 #. module: ab_supplier_claim_workflow
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
@@ -400,6 +399,32 @@ msgid ""
 "Decision</span>"
 msgstr ""
 "<span class=\"scc-stage-field-label o_translate_inline\">قرار القسم</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Expected "
+"Completion Date</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">التاريخ المتوقع "
+"للانتهاء</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Deferral "
+"Reason</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">سبب التأجيل</span>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid ""
+"<span class=\"scc-stage-field-label o_translate_inline\">Actual Overdue "
+"Days</span>"
+msgstr ""
+"<span class=\"scc-stage-field-label o_translate_inline\">أيام التأخير "
+"الفعلية</span>"
 
 #. module: ab_supplier_claim_workflow
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
@@ -720,6 +745,7 @@ msgstr "يمكن للسكرتارية التجاوز"
 
 #. module: ab_supplier_claim_workflow
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_check_delivery_wizard_form
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_type_setup_wizard_form
 msgid "Cancel"
 msgstr "إلغاء"
@@ -979,8 +1005,8 @@ msgstr "تأخير"
 
 #. module: ab_supplier_claim_workflow
 #: model:ir.model.fields,field_description:ab_supplier_claim_workflow.field_ab_supplier_claim_cycle__delay_reason
-msgid "Delay / Rejection Reason"
-msgstr "سبب التأخير / الرفض"
+msgid "Rejection Reason"
+msgstr "سبب الرفض"
 
 #. module: ab_supplier_claim_workflow
 #: model:ir.model,name:ab_supplier_claim_workflow.model_ab_delegate_phone
@@ -2259,15 +2285,15 @@ msgstr "اسم مستخدم تيليجرام"
 #. odoo-python
 #: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
 msgid ""
-"The Delay / Rejection Reason field is required when rejecting a department "
+"The Rejection Reason field is required when rejecting a department "
 "request."
-msgstr "حقل سبب التأخير / الرفض مطلوب عند رفض طلب الإدارة."
+msgstr "حقل سبب الرفض مطلوب عند رفض طلب القسم."
 
 #. module: ab_supplier_claim_workflow
 #. odoo-python
 #: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
-msgid "The Delay / Rejection Reason field is required when rejecting."
-msgstr "حقل سبب التأخير / الرفض مطلوب عند رفض طلب الإدارة."
+msgid "The Rejection Reason field is required when rejecting."
+msgstr "حقل سبب الرفض مطلوب عند رفض طلب القسم."
 
 #. module: ab_supplier_claim_workflow
 #. odoo-python
@@ -3260,3 +3286,211 @@ msgstr "مستورد ادوية"
 #. module: ab_supplier_claim_workflow
 msgid "Imported Cosmetics"
 msgstr "مستورد تجميل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.invoice_view_form
+msgid "Defer"
+msgstr "تأجيل"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid "Defer Supplier Claim"
+msgstr "تأجيل مطالبة المورد"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid "Set the expected completion date and deferral reason"
+msgstr "حدد التاريخ المتوقع للانتهاء وسبب التأجيل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid "Confirm Defer"
+msgstr "تأكيد التأجيل"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid "Write the reason for deferring this claim..."
+msgstr "اكتب سبب تأجيل هذه المطالبة..."
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid "<div class=\"scc-dialog-title o_translate_inline\">Defer Supplier Claim</div>"
+msgstr "<div class=\"scc-dialog-title o_translate_inline\">تأجيل مطالبة المورد</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid ""
+"<div class=\"scc-dialog-sub o_translate_inline\">Set the expected "
+"completion date and deferral reason</div>"
+msgstr ""
+"<div class=\"scc-dialog-sub o_translate_inline\">حدد التاريخ المتوقع "
+"للانتهاء وسبب التأجيل</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid ""
+"<div class=\"scc-dialog-title o_translate_inline\">Defer Supplier Claim</div>\n"
+"                            <div class=\"scc-dialog-sub o_translate_inline\">Set the expected completion date and deferral reason</div>"
+msgstr ""
+"<div class=\"scc-dialog-title o_translate_inline\">تأجيل مطالبة المورد</div>\n"
+"                            <div class=\"scc-dialog-sub o_translate_inline\">حدد التاريخ المتوقع للانتهاء وسبب التأجيل</div>"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Delay days after expected deferral date: %(days)s days"
+msgstr "أيام التأخير بعد نهاية الوقت المتوقع للتأجيل: %(days)s أيام"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid ""
+"<div class=\"scc-stage-field-label o_translate_inline\">Expected Completion "
+"Date</div>"
+msgstr ""
+"<div class=\"scc-stage-field-label o_translate_inline\">التاريخ المتوقع "
+"للانتهاء</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
+msgid "<div class=\"scc-stage-field-label o_translate_inline\">Deferral Reason</div>"
+msgstr "<div class=\"scc-stage-field-label o_translate_inline\">سبب التأجيل</div>"
+
+#. module: ab_supplier_claim_workflow
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__bank_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__department_decision_display__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__inv_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__pur_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__sup_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_cycle__tax_decision__deferred
+#: model:ir.model.fields.selection,name:ab_supplier_claim_workflow.selection__ab_supplier_claim_stage_history__decision__deferred
+msgid "Deferred"
+msgstr "مؤجلة"
+
+#. module: ab_supplier_claim_workflow
+msgid "Expected Completion Date"
+msgstr "التاريخ المتوقع للانتهاء"
+
+#. module: ab_supplier_claim_workflow
+msgid "Deferral Reason"
+msgstr "سبب التأجيل"
+
+#. module: ab_supplier_claim_workflow
+msgid "Actual Overdue Days"
+msgstr "أيام التأخير الفعلية"
+
+#. module: ab_supplier_claim_workflow
+msgid "Inventory Expected Completion Date"
+msgstr "التاريخ المتوقع لانتهاء المخازن"
+
+#. module: ab_supplier_claim_workflow
+msgid "Purchase Expected Completion Date"
+msgstr "التاريخ المتوقع لانتهاء المشتريات"
+
+#. module: ab_supplier_claim_workflow
+msgid "Suppliers Expected Completion Date"
+msgstr "التاريخ المتوقع لانتهاء الموردين"
+
+#. module: ab_supplier_claim_workflow
+msgid "Tax Accounts Expected Completion Date"
+msgstr "التاريخ المتوقع لانتهاء حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+msgid "Bank Account Expected Completion Date"
+msgstr "التاريخ المتوقع لانتهاء حسابات البنوك"
+
+#. module: ab_supplier_claim_workflow
+msgid "Inventory Deferral Reason"
+msgstr "سبب تأجيل المخازن"
+
+#. module: ab_supplier_claim_workflow
+msgid "Purchase Deferral Reason"
+msgstr "سبب تأجيل المشتريات"
+
+#. module: ab_supplier_claim_workflow
+msgid "Suppliers Deferral Reason"
+msgstr "سبب تأجيل الموردين"
+
+#. module: ab_supplier_claim_workflow
+msgid "Tax Accounts Deferral Reason"
+msgstr "سبب تأجيل حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+msgid "Bank Account Deferral Reason"
+msgstr "سبب تأجيل حسابات البنوك"
+
+#. module: ab_supplier_claim_workflow
+msgid "Inventory Actual Overdue Days"
+msgstr "أيام التأخير الفعلية للمخازن"
+
+#. module: ab_supplier_claim_workflow
+msgid "Purchase Actual Overdue Days"
+msgstr "أيام التأخير الفعلية للمشتريات"
+
+#. module: ab_supplier_claim_workflow
+msgid "Suppliers Actual Overdue Days"
+msgstr "أيام التأخير الفعلية للموردين"
+
+#. module: ab_supplier_claim_workflow
+msgid "Tax Accounts Actual Overdue Days"
+msgstr "أيام التأخير الفعلية لحسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+msgid "Bank Account Actual Overdue Days"
+msgstr "أيام التأخير الفعلية لحسابات البنوك"
+
+#. module: ab_supplier_claim_workflow
+msgid "Deferral is only available during department review stages."
+msgstr "التأجيل متاح فقط أثناء مراحل مراجعة الأقسام."
+
+#. module: ab_supplier_claim_workflow
+msgid "You are not authorized to defer this claim."
+msgstr "غير مصرح لك بتأجيل هذه المطالبة."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "The Expected Completion Date field is required when deferring a department request."
+msgstr "حقل التاريخ المتوقع للانتهاء مطلوب عند تأجيل طلب القسم."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "The Deferral Reason field is required when deferring a department request."
+msgstr "حقل سبب التأجيل مطلوب عند تأجيل طلب القسم."
+
+#. module: ab_supplier_claim_workflow
+msgid "Deferred requests cannot be finished until they are accepted or rejected."
+msgstr "لا يمكن إنهاء الطلبات المؤجلة حتى يتم قبولها أو رفضها."
+
+#. module: ab_supplier_claim_workflow
+msgid "%(days)s days overdue"
+msgstr "متأخرة %(days)s يوم"
+
+#. module: ab_supplier_claim_workflow
+msgid "Deferred until %s"
+msgstr "مؤجلة حتى %s"
+
+#. module: ab_supplier_claim_workflow
+msgid "New supplier claim %(claim)s was registered for %(supplier)s."
+msgstr "تم تسجيل مطالبة مورد جديدة %(claim)s للمورد %(supplier)s."
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "%(stage)s deferred this supplier claim until %(date)s. Reason: %(reason)s"
+msgstr "قام قسم %(stage)s بتأجيل مطالبة المورد حتى %(date)s. السبب: %(reason)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid ""
+"Expected completion date: %(date)s\n"
+"Reason: %(reason)s\n"
+"Actual overdue days: %(days)s"
+msgstr ""
+"التاريخ المتوقع للانتهاء: %(date)s\n"
+"السبب: %(reason)s\n"
+"أيام التأخير الفعلية: %(days)s"
