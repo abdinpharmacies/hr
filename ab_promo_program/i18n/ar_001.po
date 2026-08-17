@@ -191,6 +191,14 @@ msgid "Invalid integer value: %s"
 msgstr "قيمة عدد صحيح غير صالحة: %s"
 
 #. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid ""
+"Invalid value for '%(label)s': %(value)s. Allowed values: %(allowed)s"
+msgstr ""
+"قيمة غير صالحة للحقل '%(label)s': %(value)s. القيم المسموحة: %(allowed)s"
+
+#. module: ab_promo_program
 #: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__write_uid
 #: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program_wizard__write_uid
 msgid "Last Updated by"
@@ -421,6 +429,16 @@ msgstr "محاسبة المورد"
 #: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__disc_percent
 msgid "The discount in percentage (could be more than 100 e.g. 200 300 400)"
 msgstr "قيمة الخصم كنسبة مئوية (قد تتجاوز 100 مثل 200 300 400)"
+
+#. module: ab_promo_program
+#. odoo-python
+#: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
+msgid ""
+"Column '%(label)s' has a value, but field '%(field)s' is not defined on "
+"ab_promo_program."
+msgstr ""
+"العمود '%(label)s' يحتوي على قيمة، لكن الحقل '%(field)s' غير معرف في "
+"ab_promo_program."
 
 #. module: ab_promo_program
 #. odoo-python

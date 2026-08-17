@@ -1,0 +1,336 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_test
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-16 13:33+0000\n"
+"PO-Revision-Date: 2026-08-16 13:33+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_test
+#. odoo-python
+#: code:addons/ab_test/models/ab_test_models.py:0
+msgid "A category cannot be its own ancestor."
+msgstr "لا يمكن أن تكون الفئة أصلاً لنفسها."
+
+#. module: ab_test
+#: model:ir.module.category,name:ab_test.module_category_ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_root
+msgid "AB Sync Test"
+msgstr "اختبار مزامنة AB"
+
+#. module: ab_test
+#: model:res.groups.privilege,name:ab_test.privilege_ab_test_access
+msgid "AB Sync Test Access"
+msgstr "صلاحية اختبار مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_category
+msgid "AB Sync Test Category"
+msgstr "فئة اختبار مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_header
+msgid "AB Sync Test Header"
+msgstr "رأس اختبار مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_line
+msgid "AB Sync Test Line"
+msgstr "سطر اختبار مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_tag
+msgid "AB Sync Test Tag"
+msgstr "وسم اختبار مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__active
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__active
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__active
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_test
+#: model_terms:ir.ui.view,arch_db:ab_test.view_ab_test_header_form
+msgid "Additional Data"
+msgstr "بيانات إضافية"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__attributes_json
+msgid "Attributes JSON"
+msgstr "خصائص JSON"
+
+#. module: ab_test
+#: model:ir.model.fields.selection,name:ab_test.selection__ab_test_header__state__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_category
+msgid "Categories"
+msgstr "الفئات"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__category_id
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__category_id
+msgid "Category"
+msgstr "الفئة"
+
+#. module: ab_test
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_category_uniq_code
+msgid "Category code must be unique."
+msgstr "يجب أن يكون رمز الفئة فريداً."
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__child_ids
+msgid "Child Categories"
+msgstr "الفئات الفرعية"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__code
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__code
+msgid "Code"
+msgstr "الرمز"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__color
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__color
+msgid "Color"
+msgstr "اللون"
+
+#. module: ab_test
+#: model:ir.model.fields.selection,name:ab_test.selection__ab_test_header__state__confirmed
+msgid "Confirmed"
+msgstr "مؤكد"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__create_uid
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__create_uid
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__create_uid
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__create_date
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__create_date
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__create_date
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__description
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__display_name
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__display_name
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__display_name
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_test
+#: model:ir.model.fields.selection,name:ab_test.selection__ab_test_header__state__draft
+msgid "Draft"
+msgstr "مسودة"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__header_id
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_test
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_header_uniq_reference
+msgid "Header reference must be unique."
+msgstr "يجب أن يكون مرجع الرأس فريداً."
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_header
+msgid "Headers"
+msgstr "الرؤوس"
+
+#. module: ab_test
+#: model:ir.model.fields.selection,name:ab_test.selection__ab_test_header__priority__high
+msgid "High"
+msgstr "مرتفع"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__id
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__id
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__id
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__write_uid
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__write_uid
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__write_uid
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__write_date
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__write_date
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__write_date
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__line_count
+msgid "Line Count"
+msgstr "عدد السطور"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__line_ids
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_line
+#: model_terms:ir.ui.view,arch_db:ab_test.view_ab_test_header_form
+msgid "Lines"
+msgstr "السطور"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__name
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__name
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__name
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_tag__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_test
+#: model:ir.model.fields.selection,name:ab_test.selection__ab_test_header__priority__normal
+msgid "Normal"
+msgstr "عادي"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__notes
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_category__parent_id
+msgid "Parent Category"
+msgstr "الفئة الأصلية"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__planned_date
+msgid "Planned Date"
+msgstr "التاريخ المخطط"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__priority
+msgid "Priority"
+msgstr "الأولوية"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__quantity
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_test
+#. odoo-python
+#: code:addons/ab_test/models/ab_test_models.py:0
+msgid "Quantity cannot be negative."
+msgstr "لا يمكن أن تكون الكمية سالبة."
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__reference
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__settings_json
+msgid "Settings JSON"
+msgstr "إعدادات JSON"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__subtotal
+msgid "Subtotal"
+msgstr "الإجمالي الفرعي"
+
+#. module: ab_test
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_tag_uniq_code
+msgid "Tag code must be unique."
+msgstr "يجب أن يكون رمز الوسم فريداً."
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__tag_ids
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__tag_ids
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_tag
+msgid "Tags"
+msgstr "الوسوم"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_category
+msgid "Test Categories"
+msgstr "فئات الاختبار"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_header
+msgid "Test Headers"
+msgstr "رؤوس الاختبار"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_line
+msgid "Test Lines"
+msgstr "سطور الاختبار"
+
+#. module: ab_test
+#: model:res.groups,name:ab_test.group_ab_test_manager
+msgid "Test Manager"
+msgstr "مدير الاختبار"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_tag
+msgid "Test Tags"
+msgstr "وسوم الاختبار"
+
+#. module: ab_test
+#: model:res.groups,name:ab_test.group_ab_test_user
+msgid "Test User"
+msgstr "مستخدم الاختبار"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__total_amount
+msgid "Total Amount"
+msgstr "المبلغ الإجمالي"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__transaction_date
+msgid "Transaction Date"
+msgstr "تاريخ المعاملة"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_line__unit_price
+msgid "Unit Price"
+msgstr "سعر الوحدة"
+
+#. module: ab_test
+#: model:ir.model.fields.selection,name:ab_test.selection__ab_test_header__priority__urgent
+msgid "Urgent"
+msgstr "عاجل"

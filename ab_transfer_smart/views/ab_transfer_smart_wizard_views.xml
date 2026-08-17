@@ -197,7 +197,9 @@
                                 <field name="target_product_ids" invisible="1"/>
                             </page>
                             <page string="Fair Stores">
-                                <field name="fair_store_ids" readonly="state == 'done' or (create_uid and create_uid != uid)">
+                                <field name="fair_store_ids"
+                                       context="{'search_view_ref': 'ab_transfer_smart.ab_store_fair_store_view_search'}"
+                                       readonly="state == 'done' or (create_uid and create_uid != uid)">
                                     <list limit="100">
                                         <field name="code"/>
                                         <field name="name"/>

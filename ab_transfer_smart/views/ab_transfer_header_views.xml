@@ -242,6 +242,7 @@
                     </page>
                     <page string="Fair Stores">
                         <field name="fair_store_ids"
+                               context="{'search_view_ref': 'ab_transfer_smart.ab_store_fair_store_view_search'}"
                                readonly="is_submitted or smart_stage != 'purchase_preparation'">
                             <list limit="100">
                                 <field name="code"/>

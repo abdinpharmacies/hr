@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_odoo_sync_upload_source_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_upload_source.list</field>
+            <field name="model">ab_odoo_sync_upload_source</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="model_name"/>
+                    <field name="aggregate_parent_field" optional="show"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_upload_source_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_upload_source.form</field>
+            <field name="model">ab_odoo_sync_upload_source</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="model_name"/>
+                            <field name="aggregate_parent_field"/>
+                            <field name="active"/>
+                        </group>
+                        <div class="alert alert-info" role="alert">
+                            Every stored field is captured in the raw JSON payload. MAIN field mappings decide what is applied to the typed sync table.
+                        </div>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_upload_source" model="ir.actions.act_window">
+            <field name="name">Branch Upload Sources</field>
+            <field name="res_model">ab_odoo_sync_upload_source</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_odoo_sync_outbox_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_outbox.list</field>
+            <field name="model">ab_odoo_sync_outbox</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <header>
+                        <button name="action_send_now" type="object" string="Send Now"
+                                class="btn-primary" display="always"/>
+                        <button name="action_retry" type="object" string="Retry Failed"
+                                class="btn-secondary" display="always"/>
+                        <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
+                                class="btn-secondary" display="always"/>
+                    </header>
+                    <field name="id"/>
+                    <field name="status" widget="badge"
+                           decoration-warning="status == 'pending'"
+                           decoration-success="status == 'sent'"
+                           decoration-danger="status == 'failed'"
+                           decoration-muted="status == 'not_sync'"/>
+                    <field name="db_serial"/>
+                    <field name="model_name"/>
+                    <field name="rec_id"/>
+                    <field name="source_revision"/>
+                    <field name="operation"/>
+                    <field name="source_write_date" optional="show"/>
+                    <field name="attempt_count" optional="show"/>
+                    <field name="last_error" optional="show"/>
+                    <field name="sent_at" optional="show"/>
+                    <button name="action_send_now" type="object" string="Send"
+                            invisible="status not in ('pending', 'failed')"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_outbox_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_outbox.form</field>
+            <field name="model">ab_odoo_sync_outbox</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <header>
+                        <button name="action_send_now" type="object" string="Send Now"
+                                class="btn-primary" invisible="status not in ('pending', 'failed')"/>
+                        <button name="action_retry" type="object" string="Retry Failed"
+                                invisible="status != 'failed'"/>
+                        <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
+                                invisible="status not in ('pending', 'failed')"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="status" widget="badge"/>
+                                <field name="event_uuid"/>
+                                <field name="db_serial"/>
+                                <field name="model_name"/>
+                                <field name="rec_id"/>
+                            </group>
+                            <group>
+                                <field name="source_revision"/>
+                                <field name="operation"/>
+                                <field name="source_write_date"/>
+                                <field name="attempt_count"/>
+                                <field name="sent_at"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="last_error"/>
+                            <field name="payload_json"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_outbox_search" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_outbox.search</field>
+            <field name="model">ab_odoo_sync_outbox</field>
+            <field name="arch" type="xml">
+                <search>
+                    <field name="model_name"/>
+                    <field name="rec_id"/>
+                    <field name="event_uuid"/>
+                    <field name="status"/>
+                    <filter name="pending" string="Pending" domain="[('status', '=', 'pending')]"/>
+                    <filter name="sent" string="Sent" domain="[('status', '=', 'sent')]"/>
+                    <filter name="failed" string="Failed" domain="[('status', '=', 'failed')]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_outbox" model="ir.actions.act_window">
+            <field name="name">Upload Outbox</field>
+            <field name="res_model">ab_odoo_sync_outbox</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="view_ab_odoo_sync_outbox_search"/>
+        </record>
+
+        <record id="view_ab_odoo_sync_apply_profile_list" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_apply_profile.list</field>
+            <field name="model">ab_odoo_sync_apply_profile</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="source_model_name"/>
+                    <field name="target_model_name"/>
+                    <field name="auto_apply"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="view_ab_odoo_sync_apply_profile_form" model="ir.ui.view">
+            <field name="name">ab_odoo_sync_apply_profile.form</field>
+            <field name="model">ab_odoo_sync_apply_profile</field>
+            <field name="arch" type="xml">
+                <form>
+                    <header>
+                        <button name="action_load_matching_fields" type="object"
+                                string="Load Matching Fields" class="btn-secondary"/>
+                        <button name="action_apply_pending" type="object"
+                                string="Apply Pending Uploads" class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="sequence"/>
+                                <field name="active"/>
+                            </group>
+                            <group>
+                                <field name="source_model_name"/>
+                                <field name="target_model_name"/>
+                                <field name="auto_apply"/>
+                            </group>
+                        </group>
+                        <div class="alert alert-warning" role="alert">
+                            Raw JSON remains complete. Only active field mappings are written into the typed sync model.
+                        </div>
+                        <field name="mapping_ids">
+                            <list editable="bottom">
+                                <field name="sequence" widget="handle"/>
+                                <field name="sync_enabled"/>
+                                <field name="source_field_name"/>
+                                <field name="target_field_name"/>
+                                <field name="mapping_type"/>
+                                <field name="relation_source_key"
+                                       invisible="mapping_type not in ('stable_many2one', 'stable_many2many')"/>
+                                <field name="relation_target_key"
+                                       invisible="mapping_type not in ('stable_many2one', 'stable_many2many')"/>
+                                <field name="required"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_odoo_sync_apply_profile" model="ir.actions.act_window">
+            <field name="name">Apply Profiles</field>
+            <field name="res_model">ab_odoo_sync_apply_profile</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_ab_odoo_sync_upload_sources" name="Branch Upload Sources"
+                  parent="menu_ab_odoo_sync_root" action="action_ab_odoo_sync_upload_source"
+                  sequence="12" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_outbox" name="Upload Outbox"
+                  parent="menu_ab_odoo_sync_root" action="action_ab_odoo_sync_outbox"
+                  sequence="14" groups="base.group_system"/>
+        <menuitem id="menu_ab_odoo_sync_apply_profiles" name="Apply Profiles"
+                  parent="menu_ab_odoo_sync_root" action="action_ab_odoo_sync_apply_profile"
+                  sequence="26" groups="base.group_system"/>
+    </data>
+</odoo>

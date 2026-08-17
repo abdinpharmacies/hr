@@ -14,10 +14,11 @@ class AbOdooSyncConfig(models.Model):
         "Model name must be unique in sync config.",
     )
 
-    @ormcache("dbname", "model_name")
+    @ormcache("dbname", "model_name", cache="stable")
     def _is_model_tracked_cached(self, dbname, model_name):
         if not model_name:
             return False
+        self.flush_model(["model_name", "active"])
         self.env.cr.execute(
             """
             SELECT 1
@@ -43,15 +44,15 @@ class AbOdooSyncConfig(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         records = super().create(vals_list)
-        self.clear_caches()
+        self.env.registry.clear_cache("stable")
         return records
 
     def write(self, vals):
         res = super().write(vals)
-        self.clear_caches()
+        self.env.registry.clear_cache("stable")
         return res
 
     def unlink(self):
         res = super().unlink()
-        self.clear_caches()
+        self.env.registry.clear_cache("stable")
         return res

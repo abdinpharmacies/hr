@@ -1,5 +1,6 @@
 import logging
 import re
+import uuid
 
 from odoo import api, fields, models
 from odoo.exceptions import UserError
@@ -25,9 +26,26 @@ class AbOdooSyncUploadRecord(models.Model):
     _order = "received_at desc, id desc"
 
     db_serial = fields.Integer(string="DB Serial", required=True, index=True, readonly=True)
+    event_uuid = fields.Char(string="Event UUID", required=True, index=True, readonly=True)
     model_name = fields.Char(string="Source Model", required=True, index=True, readonly=True)
     rec_id = fields.Integer(string="Source Record ID", required=True, index=True, readonly=True)
+    source_revision = fields.Integer(string="Source Revision", required=True, index=True, readonly=True)
+    source_operation = fields.Selection(
+        string="Source Operation",
+        selection=[("upsert", "Upsert"), ("archive", "Archive")],
+        required=True,
+        readonly=True,
+        index=True,
+    )
+    source_write_date = fields.Datetime(string="Source Write Date", readonly=True, index=True)
     target_model_name = fields.Char(string="Target Model", required=True, index=True, readonly=True)
+    apply_profile_id = fields.Many2one(
+        "ab_odoo_sync_apply_profile",
+        string="Apply Profile",
+        readonly=True,
+        index=True,
+        ondelete="set null",
+    )
     payload_json = fields.Json(string="Payload", default=dict, readonly=True)
     status = fields.Selection(
         string="Status",
@@ -54,6 +72,10 @@ class AbOdooSyncUploadRecord(models.Model):
         "UNIQUE(db_serial, model_name, rec_id)",
         "Uploaded record must be unique per database serial, source model, and source record ID.",
     )
+    _uniq_upload_event_uuid = models.Constraint(
+        "UNIQUE(event_uuid)",
+        "Uploaded event UUID must be unique.",
+    )
 
     @api.model
     def target_model_from_source(self, model_name):
@@ -76,7 +98,17 @@ class AbOdooSyncUploadRecord(models.Model):
         return value
 
     @api.model
-    def upsert_from_upload(self, db_serial, model_name, rec_id, payload):
+    def upsert_from_upload(
+        self,
+        db_serial,
+        model_name,
+        rec_id,
+        payload,
+        event_uuid=None,
+        source_revision=1,
+        source_operation="upsert",
+        source_write_date=None,
+    ):
         model_name = self.validate_source_model_name(model_name)
         rec_id = int(rec_id or 0)
         if rec_id <= 0:
@@ -84,10 +116,27 @@ class AbOdooSyncUploadRecord(models.Model):
         if not isinstance(payload, dict):
             raise ValueError(_("payload must be a JSON object."))
 
-        target_model_name = self.target_model_from_source(model_name)
+        event_uuid = str(event_uuid or uuid.uuid4())
+        try:
+            uuid.UUID(event_uuid)
+        except (TypeError, ValueError, AttributeError) as ex:
+            raise ValueError(_("event_uuid must be a valid UUID.")) from ex
+        source_revision = int(source_revision or 0)
+        if source_revision <= 0:
+            raise ValueError(_("source_revision must be a positive integer."))
+        if source_operation not in {"upsert", "archive"}:
+            raise ValueError(_("source_operation must be upsert or archive."))
+
+        profile = self.env["ab_odoo_sync_apply_profile"].sudo().get_for_source(model_name)
+        target_model_name = profile.target_model_name if profile else self.target_model_from_source(model_name)
         vals = {
+            "event_uuid": event_uuid,
             "payload_json": payload,
+            "source_revision": source_revision,
+            "source_operation": source_operation,
+            "source_write_date": source_write_date or False,
             "target_model_name": target_model_name,
+            "apply_profile_id": profile.id if profile else False,
             "status": "pending",
             "skipped_fields_json": [],
             "error_message": False,
@@ -105,8 +154,10 @@ class AbOdooSyncUploadRecord(models.Model):
             limit=1,
         )
         if record:
+            if source_revision <= record.source_revision:
+                return record, False
             record.write(vals)
-            return record
+            return record, True
 
         vals.update(
             {
@@ -115,7 +166,7 @@ class AbOdooSyncUploadRecord(models.Model):
                 "rec_id": rec_id,
             }
         )
-        return self.sudo().create(vals)
+        return self.sudo().create(vals), True
 
     def _queue_identity_key(self):
         self.ensure_one()
@@ -182,6 +233,10 @@ class AbOdooSyncUploadRecord(models.Model):
                 "message": message,
                 "type": notification_type,
                 "sticky": False,
+                "next": {
+                    "type": "ir.actions.client",
+                    "tag": "reload",
+                },
             },
         }
 
@@ -195,6 +250,79 @@ class AbOdooSyncUploadRecord(models.Model):
         except KeyError as ex:
             raise ValueError(_("Target sync model %(model)s does not exist.") % {"model": self.target_model_name}) from ex
 
+    def _payload_fields(self):
+        self.ensure_one()
+        payload = self.payload_json or {}
+        if not isinstance(payload, dict):
+            raise ValueError(_("payload must be a JSON object."))
+        nested_fields = payload.get("fields")
+        if nested_fields is not None:
+            if not isinstance(nested_fields, dict):
+                raise ValueError(_("payload fields must be a JSON object."))
+            return nested_fields
+        return payload
+
+    def _resolve_relation_reference(self, target_field, reference, mapping):
+        self.ensure_one()
+        if not reference:
+            if mapping.required:
+                raise ValueError(
+                    _("Required relation %(field)s is empty.")
+                    % {"field": mapping.source_field_name}
+                )
+            return False
+        if not isinstance(reference, dict):
+            raise ValueError(
+                _("Relation payload for %(field)s must be an object.")
+                % {"field": mapping.source_field_name}
+            )
+
+        relation_model = self.env[target_field.comodel_name].with_context(active_test=False).sudo()
+        if mapping.mapping_type in {"sync_many2one", "sync_many2many"}:
+            source_rec_id = int(reference.get("id") or 0)
+            if source_rec_id <= 0:
+                raise ValueError(
+                    _("Relation %(field)s is missing its source record ID.")
+                    % {"field": mapping.source_field_name}
+                )
+            relation = relation_model.search(
+                [
+                    ("db_serial", "=", self.db_serial),
+                    ("rec_id", "=", source_rec_id),
+                ],
+                limit=1,
+            )
+        else:
+            identity_values = reference.get("values") or {}
+            source_key_value = identity_values.get(mapping.relation_source_key)
+            if source_key_value in (None, False, ""):
+                raise ValueError(
+                    _("Relation %(field)s is missing stable key %(key)s.")
+                    % {
+                        "field": mapping.source_field_name,
+                        "key": mapping.relation_source_key,
+                    }
+                )
+            relation = relation_model.search(
+                [(mapping.relation_target_key, "=", source_key_value)],
+                limit=2,
+            )
+            if len(relation) > 1:
+                raise ValueError(
+                    _("Stable relation %(field)s matched more than one MAIN record.")
+                    % {"field": mapping.source_field_name}
+                )
+
+        if not relation:
+            raise ValueError(
+                _("Could not resolve relation %(field)s for source record %(record)s.")
+                % {
+                    "field": mapping.source_field_name,
+                    "record": self.rec_id,
+                }
+            )
+        return relation.id
+
     def _prepare_target_vals(self, target_model):
         self.ensure_one()
         if "db_serial" not in target_model._fields or "rec_id" not in target_model._fields:
@@ -203,36 +331,89 @@ class AbOdooSyncUploadRecord(models.Model):
                 % {"model": self.target_model_name}
             )
 
-        payload = self.payload_json or {}
-        if not isinstance(payload, dict):
-            raise ValueError(_("payload must be a JSON object."))
+        profile = self.apply_profile_id
+        if not profile or not profile.active:
+            raise ValueError(
+                _("No active apply profile exists for source model %(model)s.")
+                % {"model": self.model_name}
+            )
+        if profile.target_model_name != self.target_model_name:
+            raise ValueError(_("Upload target does not match its active apply profile."))
+
+        payload_fields = self._payload_fields()
 
         vals = {
             "db_serial": self.db_serial,
             "rec_id": self.rec_id,
         }
-        skipped_fields = []
-        if "payload_json" in target_model._fields:
-            vals["payload_json"] = payload
+        meta_vals = {
+            "payload_json": self.payload_json or {},
+            "source_revision": self.source_revision,
+            "event_uuid": self.event_uuid,
+            "source_operation": self.source_operation,
+            "source_write_date": self.source_write_date,
+            "synced_at": fields.Datetime.now(),
+        }
+        for field_name, value in meta_vals.items():
+            if field_name in target_model._fields:
+                vals[field_name] = value
 
-        for field_name, value in payload.items():
-            if field_name in _SKIPPED_SYSTEM_FIELDS or field_name in {"db_serial", "rec_id"}:
+        active_mappings = profile.mapping_ids.filtered(
+            lambda mapping: mapping.sync_enabled and mapping.mapping_type != "ignore"
+        ).sorted("sequence")
+        if self.source_operation == "upsert" and not active_mappings:
+            raise ValueError(
+                _("Apply profile %(profile)s has no active field mappings.")
+                % {"profile": profile.name}
+            )
+
+        mapped_source_fields = set()
+        for mapping in active_mappings:
+            mapped_source_fields.add(mapping.source_field_name)
+            if mapping.source_field_name not in payload_fields:
+                if mapping.required:
+                    raise ValueError(
+                        _("Required source field %(field)s is missing from the payload.")
+                        % {"field": mapping.source_field_name}
+                    )
                 continue
 
-            field = target_model._fields.get(field_name)
-            if not field:
-                skipped_fields.append(field_name)
-                continue
-            if field.type in {"one2many", "many2many"}:
-                skipped_fields.append(field_name)
-                continue
-            if getattr(field, "compute", None) and not getattr(field, "inverse", None):
-                skipped_fields.append(field_name)
-                continue
-            if getattr(field, "related", None) and not getattr(field, "inverse", None):
-                skipped_fields.append(field_name)
-                continue
-            vals[field_name] = self._normalize_payload_value(target_model, field_name, value)
+            value = payload_fields[mapping.source_field_name]
+            target_field = target_model._fields[mapping.target_field_name]
+            if mapping.mapping_type == "direct":
+                if target_field.type in {"many2one", "one2many", "many2many"}:
+                    raise ValueError(
+                        _("Relational target field %(field)s requires a relation mapping type.")
+                        % {"field": mapping.target_field_name}
+                    )
+                vals[mapping.target_field_name] = value
+            elif mapping.mapping_type in {"sync_many2one", "stable_many2one"}:
+                vals[mapping.target_field_name] = self._resolve_relation_reference(
+                    target_field,
+                    value,
+                    mapping,
+                )
+            elif mapping.mapping_type in {"sync_many2many", "stable_many2many"}:
+                if not isinstance(value, list):
+                    raise ValueError(
+                        _("Relation payload for %(field)s must be a list.")
+                        % {"field": mapping.source_field_name}
+                    )
+                relation_ids = [
+                    self._resolve_relation_reference(target_field, reference, mapping)
+                    for reference in value
+                ]
+                vals[mapping.target_field_name] = [(6, 0, relation_ids)]
+
+        if self.source_operation == "archive":
+            if "active" not in target_model._fields:
+                raise ValueError(
+                    _("Target sync model %(model)s cannot archive records because it has no active field.")
+                    % {"model": self.target_model_name}
+                )
+            vals["active"] = False
+
+        skipped_fields = sorted(set(payload_fields) - mapped_source_fields)
 
         return vals, skipped_fields
 

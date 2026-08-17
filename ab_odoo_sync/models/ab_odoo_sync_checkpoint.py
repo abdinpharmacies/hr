@@ -42,5 +42,9 @@ class AbOdooSyncCheckpoint(models.Model):
                 "message": message,
                 "type": notification_type,
                 "sticky": False,
+                "next": {
+                    "type": "ir.actions.client",
+                    "tag": "reload",
+                },
             },
         }

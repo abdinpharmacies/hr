@@ -1,4 +1,72 @@
-commit b2499da5b6c02e12c39fe58d04e688d257df22e5 (HEAD -> pos19, origin/pos19)
+Current changes before commit:
+
+- Require an exact full store-code match in Fair Store quick search while retaining partial Arabic/name matching.
+- Prevent a partial code such as 17 from matching store code 176.
+- Keep the scoped Fair Store selectors, popup columns, and Select workflow unchanged.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/views/ab_store_views.xml
+
+
+commit caabf8b3452c922f76ff223d94571b72c3d023e5
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date:   Thu Aug 13 14:19:41 2026 +0300
+
+    ab_transfer_smart/Refactor: Edit smart days to be 45
+
+- Change the default Smart Days value from 60 to 45.
+
+Files changed:
+
+- ab_transfer_smart/models/ab_transfer_smart_wizard.py
+
+
+commit 13fd68c0b9cae8aa8a90f642c12f878996118eb1
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date:   Thu Aug 13 14:00:50 2026 +0300
+
+    ab_transfer_smart/Feat: search Fair Stores by name or code
+
+- Add Fair Store quick search by store name or full/partial store code in the Smart Transfer wizard and header selectors.
+- Scope the dedicated search view to Fair Store selectors so other Store searches keep their existing behavior.
+- Keep the Fair Store popup columns and normal selection workflow unchanged.
+
+Files changed:
+
+- ab_transfer_smart/__manifest__.py
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/views/ab_store_views.xml
+- ab_transfer_smart/views/ab_transfer_header_views.xml
+- ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
+
+
+commit 3cbd98ea89bdd74f46d1a3fa6dfaac01a233518e
+Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
+Date:   Wed Aug 12 13:45:21 2026 +0300
+
+    ab_transfer_smart/fix: add pending concept in stock_qty to be stock_qty = on-hand + pending
+
+- Include suspended incoming E-Plus transfer quantities in Smart Transfer destination stock cache totals.
+- Add Pending Stock Quantity on destination stock cache rows to show the suspended incoming component separately.
+- Merge converted on-hand destination stock with converted pending incoming stock during destination cache refresh.
+- Keep generation logic unchanged so Smart Transfer need calculation continues subtracting stock_qty as the total destination stock.
+- Show Pending Stock Quantity in the Smart Stock Cache list and form views.
+- Add Arabic translations for Pending Stock Quantity.
+- Add tests for pending stock SQL, on-hand plus pending cache totals, pending-only cache rows, and required quantity calculation.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/i18n/ar.po
+- ab_transfer_smart/i18n/ar_001.po
+- ab_transfer_smart/models/ab_transfer_smart_cache.py
+- ab_transfer_smart/tests/test_smart_transfer.py
+- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
+
+
+commit b2499da5b6c02e12c39fe58d04e688d257df22e5
 Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
 Date:   Wed Aug 12 12:03:12 2026 +0300
 
@@ -59,27 +127,6 @@ Files changed:
 - ab_transfer_smart/security/record_rules.xml
 - ab_transfer_smart/tests/test_smart_transfer.py
 - ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
-
-
-Current changes before commit:
-
-- Include suspended incoming E-Plus transfer quantities in Smart Transfer destination stock cache totals.
-- Add Pending Stock Quantity on destination stock cache rows to show the suspended incoming component separately.
-- Merge converted on-hand destination stock with converted pending incoming stock during destination cache refresh.
-- Keep generation logic unchanged so Smart Transfer need calculation continues subtracting stock_qty as the total destination stock.
-- Show Pending Stock Quantity in the Smart Stock Cache list and form views.
-- Add Arabic translations for Pending Stock Quantity.
-- Add tests for pending stock SQL, on-hand plus pending cache totals, pending-only cache rows, and required quantity calculation.
-
-Files changed:
-
-- ab_transfer_smart/changelog.d
-- ab_transfer_smart/i18n/ar.po
-- ab_transfer_smart/i18n/ar_001.po
-- ab_transfer_smart/models/ab_transfer_smart_cache.py
-- ab_transfer_smart/tests/test_smart_transfer.py
-- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
-
 
 commit b6899c66138c1be7dc21c4d35926b048943585d2
 Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>

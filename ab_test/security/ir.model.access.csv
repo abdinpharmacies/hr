@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_test_category_user,ab_test_category user,model_ab_test_category,group_ab_test_user,1,1,1,1
+access_ab_test_tag_user,ab_test_tag user,model_ab_test_tag,group_ab_test_user,1,1,1,1
+access_ab_test_header_user,ab_test_header user,model_ab_test_header,group_ab_test_user,1,1,1,1
+access_ab_test_line_user,ab_test_line user,model_ab_test_line,group_ab_test_user,1,1,1,1

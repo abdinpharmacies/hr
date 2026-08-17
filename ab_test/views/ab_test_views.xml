@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_test_category_list" model="ir.ui.view">
+            <field name="name">ab_test_category.list</field>
+            <field name="model">ab_test_category</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="parent_id"/>
+                    <field name="color"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_category_form" model="ir.ui.view">
+            <field name="name">ab_test_category.form</field>
+            <field name="model">ab_test_category</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="code"/>
+                                <field name="name"/>
+                                <field name="parent_id"/>
+                            </group>
+                            <group>
+                                <field name="color"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <field name="description"/>
+                        <field name="child_ids" readonly="1">
+                            <list>
+                                <field name="code"/>
+                                <field name="name"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_category" model="ir.actions.act_window">
+            <field name="name">Test Categories</field>
+            <field name="res_model">ab_test_category</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_tag_list" model="ir.ui.view">
+            <field name="name">ab_test_tag.list</field>
+            <field name="model">ab_test_tag</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="color"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_tag_form" model="ir.ui.view">
+            <field name="name">ab_test_tag.form</field>
+            <field name="model">ab_test_tag</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="color"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_tag" model="ir.actions.act_window">
+            <field name="name">Test Tags</field>
+            <field name="res_model">ab_test_tag</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_header_list" model="ir.ui.view">
+            <field name="name">ab_test_header.list</field>
+            <field name="model">ab_test_header</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="reference"/>
+                    <field name="name"/>
+                    <field name="transaction_date"/>
+                    <field name="category_id"/>
+                    <field name="state" widget="badge"/>
+                    <field name="priority"/>
+                    <field name="line_count"/>
+                    <field name="total_amount"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_header_form" model="ir.ui.view">
+            <field name="name">ab_test_header.form</field>
+            <field name="model">ab_test_header</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="reference"/>
+                                <field name="name"/>
+                                <field name="transaction_date"/>
+                                <field name="category_id"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="state"/>
+                                <field name="priority"/>
+                                <field name="line_count" readonly="1"/>
+                                <field name="total_amount" readonly="1"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Lines">
+                                <field name="line_ids">
+                                    <list editable="bottom">
+                                        <field name="sequence" widget="handle"/>
+                                        <field name="name"/>
+                                        <field name="category_id"/>
+                                        <field name="tag_ids" widget="many2many_tags"/>
+                                        <field name="quantity"/>
+                                        <field name="unit_price"/>
+                                        <field name="subtotal" readonly="1"/>
+                                        <field name="planned_date"/>
+                                        <field name="active"/>
+                                    </list>
+                                </field>
+                            </page>
+                            <page string="Additional Data">
+                                <field name="notes"/>
+                                <field name="settings_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_header" model="ir.actions.act_window">
+            <field name="name">Test Headers</field>
+            <field name="res_model">ab_test_header</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_line_list" model="ir.ui.view">
+            <field name="name">ab_test_line.list</field>
+            <field name="model">ab_test_line</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="header_id"/>
+                    <field name="sequence"/>
+                    <field name="name"/>
+                    <field name="category_id"/>
+                    <field name="tag_ids" widget="many2many_tags"/>
+                    <field name="quantity"/>
+                    <field name="unit_price"/>
+                    <field name="subtotal"/>
+                    <field name="planned_date"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="action_ab_test_line" model="ir.actions.act_window">
+            <field name="name">Test Lines</field>
+            <field name="res_model">ab_test_line</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_ab_test_root" name="AB Sync Test" parent="base.menu_custom"
+                  sequence="70" groups="group_ab_test_user"/>
+        <menuitem id="menu_ab_test_header" name="Headers" parent="menu_ab_test_root"
+                  action="action_ab_test_header" sequence="10"/>
+        <menuitem id="menu_ab_test_line" name="Lines" parent="menu_ab_test_root"
+                  action="action_ab_test_line" sequence="20"/>
+        <menuitem id="menu_ab_test_category" name="Categories" parent="menu_ab_test_root"
+                  action="action_ab_test_category" sequence="30"/>
+        <menuitem id="menu_ab_test_tag" name="Tags" parent="menu_ab_test_root"
+                  action="action_ab_test_tag" sequence="40"/>
+    </data>
+</odoo>
