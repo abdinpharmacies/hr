@@ -483,6 +483,10 @@ class AbOdooSyncService(models.Model):
                     "message": str(ex),
                     "type": "danger",
                     "sticky": True,
+                    "next": {
+                        "type": "ir.actions.client",
+                        "tag": "reload",
+                    },
                 },
             }
 
@@ -495,6 +499,10 @@ class AbOdooSyncService(models.Model):
                     "message": result.get("reason") or _("Connection test was skipped."),
                     "type": "warning",
                     "sticky": True,
+                    "next": {
+                        "type": "ir.actions.client",
+                        "tag": "reload",
+                    },
                 },
             }
 
@@ -512,6 +520,10 @@ class AbOdooSyncService(models.Model):
                 },
                 "type": "success",
                 "sticky": False,
+                "next": {
+                    "type": "ir.actions.client",
+                    "tag": "reload",
+                },
             },
         }
 
