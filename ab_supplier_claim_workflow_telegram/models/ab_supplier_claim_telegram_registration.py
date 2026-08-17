@@ -61,6 +61,13 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         ('bank_accounts', 'Bank Accounts'),
         ('tax_accounts', 'Tax Accounts'),
     ], string='Manager at')
+    workflow_department = fields.Selection([
+        ('inventory', 'Inventory'),
+        ('purchase', 'Purchase'),
+        ('suppliers', 'Suppliers'),
+        ('bank_accounts', 'Bank Accounts'),
+        ('tax_accounts', 'Tax Accounts'),
+    ], string='Employee at', copy=False)
     active = fields.Boolean(default=True)
 
     _uniq_employee = models.Constraint(
@@ -189,9 +196,53 @@ class AbSupplierClaimTelegramRegistration(models.Model):
             created += 1
         return created
 
+    @api.onchange('manager_department')
+    def _onchange_manager_department(self):
+        for rec in self:
+            if rec.manager_department:
+                rec.workflow_department = rec.manager_department
+
+    @api.model
+    def _get_workflow_department_group_xmlids(self):
+        return [
+            ('inventory', 'ab_supplier_claim_workflow.supplier_claim_group_inventory'),
+            ('purchase', 'ab_supplier_claim_workflow.supplier_claim_group_purchase'),
+            ('suppliers', 'ab_supplier_claim_workflow.supplier_claim_group_suppliers'),
+            ('tax_accounts', 'ab_supplier_claim_workflow.supplier_claim_group_tax_accounts'),
+            ('bank_accounts', 'ab_supplier_claim_workflow.supplier_claim_group_bank_acc'),
+        ]
+
+    @api.model
+    def _sync_workflow_group_employees(self):
+        Employee = self.env['ab_hr_employee'].sudo()
+        created = 0
+        for dept_code, group_xmlid in self._get_workflow_department_group_xmlids():
+            group = self.env.ref(group_xmlid, raise_if_not_found=False)
+            if not group:
+                continue
+            employees = Employee.search([
+                ('user_id', 'in', group.sudo().user_ids.ids or [0]),
+                ('active', '=', True),
+            ])
+            for employee in employees:
+                existing = self.sudo().search([('employee_id', '=', employee.id)], limit=1)
+                if existing:
+                    if existing.manager_department and existing.workflow_department != existing.manager_department:
+                        existing.write({'workflow_department': existing.manager_department})
+                    elif not existing.workflow_department:
+                        existing.write({'workflow_department': dept_code})
+                    continue
+                self.sudo().create({
+                    'employee_id': employee.id,
+                    'workflow_department': dept_code,
+                })
+                created += 1
+        return created
+
     @api.model
     def web_search_read(self, domain, specification, offset=0, limit=None, order=None, count_limit=None):
         self._sync_telegram_bot_users()
+        self._sync_workflow_group_employees()
         return super().web_search_read(domain, specification, offset=offset, limit=limit, order=order, count_limit=count_limit)
 
     @api.model_create_multi
@@ -201,11 +252,20 @@ class AbSupplierClaimTelegramRegistration(models.Model):
                 employee = self._find_employee_by_telegram_code(vals['eplus_code'])
                 if employee:
                     vals['employee_id'] = employee.id
+            if vals.get('manager_department'):
+                vals['workflow_department'] = vals['manager_department']
         records = super().create(vals_list)
         return records
 
     def write(self, vals):
+        vals = dict(vals)
+        if vals.get('manager_department'):
+            vals['workflow_department'] = vals['manager_department']
         return super().write(vals)
+
+    def action_clear_manager_department(self):
+        self.write({'manager_department': False})
+        return True
 
     @api.depends('employee_id')
     def _compute_eplus_code(self):

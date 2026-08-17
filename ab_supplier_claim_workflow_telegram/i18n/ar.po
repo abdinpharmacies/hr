@@ -528,3 +528,39 @@ msgstr "موظف/موظفون متصلون."
 #: code:addons/ab_supplier_claim_workflow_telegram/models/ab_supplier_claim_cycle.py:0
 msgid "🚨 <b>Claim Escalation Alert</b>"
 msgstr "🚨 <b>تنبيه تصعيد المطالبة</b>"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "Employees"
+msgstr "الموظفون"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "Employee at"
+msgstr "موظف في"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "Employees assigned to supplier claim workflow groups. Telegram details are read from Telegram Bot links."
+msgstr "الموظفون المسندون إلى جروبات دورة مطالبات الموردين. يتم قراءة بيانات تيليجرام من روابط موديول تيليجرام بوت."
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "Remove Manager Role"
+msgstr "إزالة دور المدير"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "🧾 <b>New Supplier Claim</b>"
+msgstr "🧾 <b>مطالبة مورد جديدة</b>"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "<b>Amount:</b> %(amount)s %(currency)s"
+msgstr "<b>المبلغ:</b> %(amount)s %(currency)s"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "A new supplier claim was registered. Please follow it in Odoo."
+msgstr "تم تسجيل مطالبة مورد جديدة. يرجى متابعتها في أودو."
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "📌 <b>Supplier Claim Turn Started</b>"
+msgstr "📌 <b>بدأ دور قسمك في مطالبة المورد</b>"
+
+#. module: ab_supplier_claim_workflow_telegram
+msgid "This claim is now waiting for your department action."
+msgstr "هذه المطالبة الآن في انتظار إجراء قسمك."
