@@ -641,6 +641,19 @@
   margin-top: 2px;
   word-break: break-word;
 }
+.scc-timeline-defer-overdue {
+  display: inline-flex;
+  align-items: center;
+  margin-top: 6px;
+  padding: 5px 10px;
+  border: 1px solid #fecaca;
+  border-radius: 999px;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+}
 .scc-timeline-divider {
   font-size: 12px;
   color: #333;
