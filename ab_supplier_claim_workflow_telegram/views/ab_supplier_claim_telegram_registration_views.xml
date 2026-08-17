@@ -19,6 +19,16 @@
         </field>
     </record>
 
+    <record id="action_ab_supplier_claim_telegram_employees" model="ir.actions.act_window">
+        <field name="name">Employees</field>
+        <field name="res_model">ab_supplier_claim_telegram_registration</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('workflow_department', '!=', False)]</field>
+        <field name="help" type="html">
+            <p>Employees assigned to supplier claim workflow groups. Telegram details are read from Telegram Bot links.</p>
+        </field>
+    </record>
+
     <record id="view_ab_supplier_claim_telegram_registration_list" model="ir.ui.view">
         <field name="name">ab_supplier_claim_telegram_registration.list</field>
         <field name="model">ab_supplier_claim_telegram_registration</field>
@@ -34,6 +44,7 @@
                 <field name="telegram_connected" optional="show"/>
                 <field name="telegram_username" optional="show"/>
                 <field name="telegram_chat_id" optional="hide"/>
+                <field name="workflow_department" optional="show"/>
                 <field name="manager_department" optional="show"/>
                 <field name="linked_at" optional="hide"/>
                 <field name="superior_department_id" optional="hide"/>
@@ -169,9 +180,19 @@
                         </div>
                         <div class="scc-stage-grid">
                             <div class="scc-stage-field">
-                                <div class="scc-stage-field-label o_translate_inline">Manager at</div>
+                                <div class="scc-stage-field-label o_translate_inline">Employee at</div>
                                 <div class="scc-stage-field-value">
+                                    <field name="workflow_department" options="{'no_create': True}" placeholder="Select department..." readonly="manager_department"/>
+                                </div>
+                            </div>
+                            <div class="scc-stage-field">
+                                <div class="scc-stage-field-label o_translate_inline">Manager at</div>
+                                <div class="scc-stage-field-value" style="display:flex;align-items:center;gap:8px;">
                                     <field name="manager_department" options="{'no_create': True}" placeholder="Select role..."/>
+                                    <button name="action_clear_manager_department" type="object" string="Remove Manager Role" class="btn btn-secondary btn-sm"
+                                            invisible="not manager_department" title="Remove Manager Role">
+                                        <i class="fa fa-times" aria-hidden="true"/>
+                                    </button>
                                 </div>
                             </div>
                             <div class="scc-stage-field">
@@ -212,5 +233,10 @@
     <menuitem id="menu_ab_supplier_claim_telegram_managers" name="Managers"
               parent="menu_ab_supplier_claim_telegram_registration" sequence="200"
               action="action_ab_supplier_claim_telegram_managers"
+              groups="ab_supplier_claim_cycle.supplier_claim_group_admin"/>
+
+    <menuitem id="menu_ab_supplier_claim_telegram_employees" name="Employees"
+              parent="menu_ab_supplier_claim_telegram_registration" sequence="300"
+              action="action_ab_supplier_claim_telegram_employees"
               groups="ab_supplier_claim_cycle.supplier_claim_group_admin"/>
 </odoo>

@@ -2,6 +2,7 @@ import logging
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
+from odoo.tools import config
 
 _logger = logging.getLogger(__name__)
 
@@ -80,6 +81,110 @@ class SupplierClaimCycle(models.Model):
             _('Open Odoo and check'),
         ])
 
+    def _build_claim_created_telegram_message(self):
+        self.ensure_one()
+        return '\n'.join([
+            _('🧾 <b>New Supplier Claim</b>'),
+            '',
+            _('<b>Claim Number:</b> %s') % self.display_name,
+            _('<b>Supplier:</b> %s') % (self.supplier_id.display_name if self.supplier_id else 'N/A'),
+            _('<b>Amount:</b> %(amount)s %(currency)s') % {
+                'amount': '{:,.2f}'.format(self.amount_of_check or 0.0),
+                'currency': self.currency_id.symbol or '',
+            },
+            '',
+            _('A new supplier claim was registered. Please follow it in Odoo.'),
+        ])
+
+    def _build_department_turn_telegram_message(self, stage_key):
+        self.ensure_one()
+        stage_label = self._get_stage_label(stage_key) if hasattr(self, '_get_stage_label') else stage_key
+        return '\n'.join([
+            _('📌 <b>Supplier Claim Turn Started</b>'),
+            '',
+            _('<b>Claim Number:</b> %s') % self.display_name,
+            _('<b>Supplier:</b> %s') % (self.supplier_id.display_name if self.supplier_id else 'N/A'),
+            _('<b>Department:</b> %s') % stage_label,
+            '',
+            _('This claim is now waiting for your department action.'),
+        ])
+
+    @api.model
+    def _get_secretarial_fallback_lang(self):
+        group = self.env.ref('ab_supplier_claim_cycle.supplier_claim_group_user', raise_if_not_found=False)
+        if not group:
+            return self.env.lang
+        secretarial_user = group.sudo().user_ids.filtered(lambda user: user.active and user.lang).sorted('id')[:1]
+        return secretarial_user.lang or self.env.lang
+
+    @api.model
+    def _get_telegram_recipient_lang(self, user=None):
+        return (user and user.lang) or self._get_secretarial_fallback_lang()
+
+    def _notify_claim_created_to_module_users(self):
+        result = super()._notify_claim_created_to_module_users()
+        self._send_claim_created_telegram_notifications()
+        return result
+
+    def _send_claim_created_telegram_notifications(self):
+        if config['test_enable']:
+            return False
+        Registration = self.env['ab_supplier_claim_telegram_registration'].sudo()
+        TelegramBot = self.env['ab_telegram_bot'].sudo()
+        for claim in self:
+            registrations = Registration.search([
+                ('active', '=', True),
+                ('workflow_department', '!=', False),
+                ('telegram_connected', '=', True),
+            ])
+            sent_chat_ids = set()
+            for registration in registrations:
+                chat_id = Registration._get_employee_telegram_chat_id(registration.employee_id)
+                if not chat_id or chat_id in sent_chat_ids:
+                    continue
+                lang = claim._get_telegram_recipient_lang(registration.employee_id.user_id)
+                text = claim.with_context(lang=lang)._build_claim_created_telegram_message()
+                TelegramBot.send_message(chat_id, text, parse_mode='HTML')
+                sent_chat_ids.add(chat_id)
+        return True
+
+    def _notify_department_turn_started(self, stage_key):
+        result = super()._notify_department_turn_started(stage_key)
+        self._send_department_turn_telegram_notifications(stage_key)
+        return result
+
+    def _send_department_turn_telegram_notifications(self, stage_key):
+        if config['test_enable']:
+            return False
+        dept_code = {
+            'inventory': 'inventory',
+            'purchase': 'purchase',
+            'suppliers': 'suppliers',
+            'tax_accounts': 'tax_accounts',
+            'bank_acc': 'bank_accounts',
+        }.get(stage_key)
+        if not dept_code:
+            return False
+
+        Registration = self.env['ab_supplier_claim_telegram_registration'].sudo()
+        TelegramBot = self.env['ab_telegram_bot'].sudo()
+        for claim in self:
+            registrations = Registration.search([
+                ('active', '=', True),
+                ('workflow_department', '=', dept_code),
+                ('telegram_connected', '=', True),
+            ])
+            sent_chat_ids = set()
+            for registration in registrations:
+                chat_id = Registration._get_employee_telegram_chat_id(registration.employee_id)
+                if not chat_id or chat_id in sent_chat_ids:
+                    continue
+                lang = claim._get_telegram_recipient_lang(registration.employee_id.user_id)
+                text = claim.with_context(lang=lang)._build_department_turn_telegram_message(stage_key)
+                TelegramBot.send_message(chat_id, text, parse_mode='HTML')
+                sent_chat_ids.add(chat_id)
+        return True
+
     def _send_external_escalation_notification(self, manager, stage_key=None):
         self.ensure_one()
         employee = self.env['ab_hr_employee'].sudo().search([
@@ -89,7 +194,7 @@ class SupplierClaimCycle(models.Model):
         if not chat_id:
             _logger.info('Telegram skipped: no verified Telegram identity for user %s', manager.display_name)
             return False
-        text = self._build_escalation_telegram_message(stage_key=stage_key)
+        text = self.with_context(lang=self._get_telegram_recipient_lang(manager))._build_escalation_telegram_message(stage_key=stage_key)
         return self.env['ab_telegram_bot'].sudo().send_message(chat_id, text, parse_mode='HTML')
 
     def _resolve_escalation_details(self, stage_key=None):
