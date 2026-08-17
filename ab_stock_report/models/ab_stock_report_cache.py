@@ -237,7 +237,16 @@ class AbStockReportCacheLine(models.Model):
         }
 
     @api.model
-    def _fetch_group_rows(self, product_serial, limit_value, movement_group):
+    def _fetch_group_rows(self, product_serial, limit_value, movement_group, from_date=None):
+        if movement_group == "sale":
+            with self.connect_eplus(param_str="?") as connection:
+                rows = self._fetch_sales_batch_rows_with_connection(
+                    product_serial,
+                    limit_value,
+                    from_date=from_date,
+                    connection=connection,
+                )
+            return self._sort_group_rows(rows)[:limit_value]
         fetchers = {
             "sale": (
                 self._fetch_sales_rows,
@@ -259,6 +268,18 @@ class AbStockReportCacheLine(models.Model):
             limit_value,
             movement_group=movement_group,
             fetchers=fetchers,
+            from_date=from_date,
+        )
+
+    def _sort_group_rows(self, rows):
+        return sorted(
+            rows,
+            key=lambda row: (
+                row["movement_datetime"] or dt.min,
+                row["movement_sort"],
+                self._sort_line_id(row["source_line_id"]),
+            ),
+            reverse=True,
         )
 
     @api.model
@@ -298,10 +319,10 @@ class AbStockReportCacheLine(models.Model):
         return rows
 
     @api.model
-    def _fetch_family_rows(self, product_serial, limit_value, movement_group, fetchers):
+    def _fetch_family_rows(self, product_serial, limit_value, movement_group, fetchers, from_date=None):
         rows = []
         for fetcher in fetchers:
-            rows.extend(fetcher(product_serial, limit_value))
+            rows.extend(fetcher(product_serial, limit_value, from_date=from_date))
         rows = sorted(
             rows,
             key=lambda row: (
@@ -325,18 +346,46 @@ class AbStockReportCacheLine(models.Model):
         return ", ".join("?" for _value in values)
 
     @api.model
-    def _run_raw_query(self, query, params):
+    def _run_raw_query(self, query, params, connection=None):
+        if connection is not None:
+            with connection.cursor() as cursor:
+                cursor.execute(query, tuple(params))
+                return cursor.fetchall() or []
         with self.connect_eplus(param_str="?") as conn:
             with conn.cursor() as cursor:
                 cursor.execute(query, tuple(params))
                 return cursor.fetchall() or []
 
     @api.model
-    def _fetch_sales_batch_rows(self, product_serial, limit_value, return_only=False):
+    def _fetch_sales_batch_rows(self, product_serial, limit_value, return_only=False, from_date=None):
+        with self.connect_eplus(param_str="?") as connection:
+            return self._fetch_sales_batch_rows_with_connection(
+                product_serial,
+                limit_value,
+                return_only=return_only,
+                from_date=from_date,
+                connection=connection,
+            )
+
+    @api.model
+    def _fetch_sales_batch_rows_with_connection(
+        self, product_serial, limit_value, return_only=False, from_date=None, connection=None
+    ):
         # Fetch detail rows first. Header and lookup tables are loaded in batches
         # below, avoiding repeated dimension-table joins for every detail row.
         candidate_limit = max(limit_value * 5, 50)
-        return_filter = "AND sd.sec_update_date IS NOT NULL AND ISNULL(sd.itm_back, 0) > 0" if return_only else ""
+        return_filter = "AND sd.sec_update_date IS NOT NULL AND ISNULL(sd.itm_back, 0) > 0" if return_only is True else ""
+        date_filter = """AND (
+                ? IS NULL
+                OR sd.sec_update_date >= ?
+                OR EXISTS (
+                    SELECT 1
+                    FROM r_sales_trans_h sh_date WITH (NOLOCK)
+                    WHERE sh_date.sth_id = sd.sth_id
+                      AND sh_date.sto_id = sd.std_stock_id
+                      AND sh_date.sec_insert_date >= ?
+                )
+            )""" if from_date else ""
         detail_query = f"""
             SELECT TOP (?)
                 sd.std_id, sd.sth_id, sd.std_stock_id, sd.itm_unit,
@@ -345,9 +394,17 @@ class AbStockReportCacheLine(models.Model):
             FROM r_sales_trans_d sd WITH (NOLOCK)
             WHERE sd.itm_id = ?
               {return_filter}
-            ORDER BY COALESCE(sd.sec_update_date, sd.sec_insert_date) DESC, sd.std_id DESC
+              {date_filter}
+            ORDER BY sd.std_id DESC
         """
-        detail_rows = self._run_raw_query(detail_query, (candidate_limit, product_serial))
+        detail_params = [candidate_limit, product_serial]
+        if from_date:
+            detail_params.extend([from_date, from_date, from_date])
+        detail_rows = self._run_raw_query(
+            detail_query,
+            detail_params,
+            connection=connection,
+        )
         if not detail_rows:
             return []
 
@@ -362,6 +419,7 @@ class AbStockReportCacheLine(models.Model):
         header_rows = self._run_raw_query(
             header_query,
             [value for key in header_keys for value in key],
+            connection=connection,
         )
         headers = {
             (row[0], row[1]): {
@@ -392,13 +450,13 @@ class AbStockReportCacheLine(models.Model):
         ))
 
         stores = self._fetch_sales_lookup(
-            "Store", "sto_id", "sto_name_ar, sto_name_en", store_ids,
+            "Store", "sto_id", "sto_name_ar, sto_name_en", store_ids, connection,
         )
         customers = self._fetch_sales_lookup(
-            "Customer", "cust_id", "cust_name_ar, cust_name_en", customer_ids,
+            "Customer", "cust_id", "cust_name_ar, cust_name_en", customer_ids, connection,
         )
         employees = self._fetch_sales_lookup(
-            "Employee", "e_id", "e_Name", employee_ids,
+            "Employee", "e_id", "e_Name", employee_ids, connection,
         )
         item_rows = self._run_raw_query(
             """
@@ -407,37 +465,43 @@ class AbStockReportCacheLine(models.Model):
                 WHERE itm_id = ?
             """,
             (product_serial,),
+            connection=connection,
         )
         item_units = {
             row[0]: (row[1], row[2])
             for row in item_rows
         }.get(product_serial, (None, None))
 
-        movement_type = "sale_return" if return_only else "sale"
-        movement_sort = 20 if return_only else 10
         result = []
-        for row in detail_rows:
-            header = headers[(row[1], row[2])]
-            quantity = row[7] if return_only else row[4]
-            if return_only and not quantity:
-                continue
-            result.append({
-                "movement_group": "sale",
-                "movement_type": movement_type,
-                "movement_datetime": row[8] if return_only else header["movement_datetime"],
-                "sale_price": float((row[6] if return_only else row[5]) or 0.0),
-                "qty_large": self._sales_quantity_in_large_unit(
-                    quantity, row[3], item_units[0], item_units[1], negate=not return_only,
-                ),
-                "store_name": self._lookup_name(stores.get(row[2]), row[2]),
-                "supplier_name": "",
-                "customer_name": self._lookup_name(customers.get(header["cust_id"]), header["cust_id"]),
-                "employee_name": self._lookup_name(employees.get(header["emp_id"]), header["emp_id"]),
-                "source_table": "r_sales_trans_d",
-                "source_line_id": str(row[0] or ""),
-                "source_updated_at": row[8] or row[9],
-                "movement_sort": movement_sort,
-            })
+        modes = [return_only] if return_only is not None else [False, True]
+        for return_mode in modes:
+            movement_type = "sale_return" if return_mode else "sale"
+            movement_sort = 20 if return_mode else 10
+            for row in detail_rows:
+                header = headers[(row[1], row[2])]
+                quantity = row[7] if return_mode else row[4]
+                if return_mode and not quantity:
+                    continue
+                movement_datetime = row[8] if return_mode else header["movement_datetime"]
+                if not self._date_matches(movement_datetime, from_date):
+                    continue
+                result.append({
+                    "movement_group": "sale",
+                    "movement_type": movement_type,
+                    "movement_datetime": movement_datetime,
+                    "sale_price": float((row[6] if return_mode else row[5]) or 0.0),
+                    "qty_large": self._sales_quantity_in_large_unit(
+                        quantity, row[3], item_units[0], item_units[1], negate=not return_mode,
+                    ),
+                    "store_name": self._lookup_name(stores.get(row[2]), row[2]),
+                    "supplier_name": "",
+                    "customer_name": self._lookup_name(customers.get(header["cust_id"]), header["cust_id"]),
+                    "employee_name": self._lookup_name(employees.get(header["emp_id"]), header["emp_id"]),
+                    "source_table": "r_sales_trans_d",
+                    "source_line_id": str(row[0] or ""),
+                    "source_updated_at": row[8] or row[9],
+                    "movement_sort": movement_sort,
+                })
         result.sort(
             key=lambda row: (
                 row["movement_datetime"] or dt.min,
@@ -448,13 +512,14 @@ class AbStockReportCacheLine(models.Model):
         return result[:limit_value]
 
     @api.model
-    def _fetch_sales_lookup(self, table, key_field, value_fields, values):
+    def _fetch_sales_lookup(self, table, key_field, value_fields, values, connection=None):
         if not values:
             return {}
         placeholders = self._sql_placeholders(values)
         rows = self._run_raw_query(
             f"SELECT {key_field}, {value_fields} FROM {table} WITH (NOLOCK) WHERE {key_field} IN ({placeholders})",
             values,
+            connection=connection,
         )
         return {row[0]: row[1:] for row in rows}
 
@@ -474,16 +539,35 @@ class AbStockReportCacheLine(models.Model):
             quantity /= float(divisor)
         return -quantity if negate else quantity
 
-    @api.model
-    def _fetch_sales_rows(self, product_serial, limit_value):
-        return self._fetch_sales_batch_rows(product_serial, limit_value)
+    @staticmethod
+    def _date_matches(value, from_date):
+        if not from_date:
+            return True
+        if not value:
+            return False
+        value_date = value.date() if hasattr(value, "date") else value
+        return value_date >= from_date
 
     @api.model
-    def _fetch_sale_return_rows(self, product_serial, limit_value):
-        return self._fetch_sales_batch_rows(product_serial, limit_value, return_only=True)
+    def _fetch_sales_rows(self, product_serial, limit_value, from_date=None, connection=None):
+        if connection is not None:
+            return self._fetch_sales_batch_rows_with_connection(
+                product_serial, limit_value, from_date=from_date, connection=connection,
+            )
+        return self._fetch_sales_batch_rows(product_serial, limit_value, from_date=from_date)
 
     @api.model
-    def _fetch_purchase_rows(self, product_serial, limit_value):
+    def _fetch_sale_return_rows(self, product_serial, limit_value, from_date=None, connection=None):
+        if connection is not None:
+            return self._fetch_sales_batch_rows_with_connection(
+                product_serial, limit_value, return_only=True, from_date=from_date, connection=connection,
+            )
+        return self._fetch_sales_batch_rows(
+            product_serial, limit_value, return_only=True, from_date=from_date,
+        )
+
+    @api.model
+    def _fetch_purchase_rows(self, product_serial, limit_value, from_date=None):
         query = """
             SELECT TOP (?)
                 CAST('purchase' AS NVARCHAR(20)) AS movement_type,
@@ -520,12 +604,17 @@ class AbStockReportCacheLine(models.Model):
             LEFT JOIN Employee e WITH (NOLOCK)
                 ON e.e_id = ph.emp_id
             WHERE pd.itm_id = ?
+              AND (? IS NULL OR ph.sec_insert_date >= ?)
             ORDER BY ph.sec_insert_date DESC, pd.ptd_id DESC
         """
-        return self._run_query(query, (limit_value, product_serial), "purchase")
+        return self._run_query(
+            query,
+            (limit_value, product_serial, from_date, from_date),
+            "purchase",
+        )
 
     @api.model
-    def _fetch_purchase_return_rows(self, product_serial, limit_value):
+    def _fetch_purchase_return_rows(self, product_serial, limit_value, from_date=None):
         query = """
             SELECT TOP (?)
                 CAST('purchase_return' AS NVARCHAR(20)) AS movement_type,
@@ -564,12 +653,17 @@ class AbStockReportCacheLine(models.Model):
             WHERE pd.itm_id = ?
               AND pd.sec_update_date IS NOT NULL
               AND ISNULL(COALESCE(pd.itm_back_qty, pd.itm_back), 0) > 0
+              AND (? IS NULL OR pd.sec_update_date >= ?)
             ORDER BY pd.sec_update_date DESC, pd.ptd_id DESC
         """
-        return self._run_query(query, (limit_value, product_serial), "purchase_return")
+        return self._run_query(
+            query,
+            (limit_value, product_serial, from_date, from_date),
+            "purchase_return",
+        )
 
     @api.model
-    def _fetch_transfer_out_rows(self, product_serial, limit_value):
+    def _fetch_transfer_out_rows(self, product_serial, limit_value, from_date=None):
         query = """
             SELECT TOP (?)
                 CAST('transfer_out' AS NVARCHAR(20)) AS movement_type,
@@ -604,12 +698,17 @@ class AbStockReportCacheLine(models.Model):
             LEFT JOIN Employee e WITH (NOLOCK)
                 ON e.e_id = sth.delivery_emp
             WHERE st.st_itm_id = ?
+              AND (? IS NULL OR sth.sec_insert_date >= ?)
             ORDER BY sth.sec_insert_date DESC, st.st_id DESC
         """
-        return self._run_query(query, (limit_value, product_serial), "transfer_out")
+        return self._run_query(
+            query,
+            (limit_value, product_serial, from_date, from_date),
+            "transfer_out",
+        )
 
     @api.model
-    def _fetch_transfer_in_rows(self, product_serial, limit_value):
+    def _fetch_transfer_in_rows(self, product_serial, limit_value, from_date=None):
         query = """
             SELECT TOP (?)
                 CAST('transfer_in' AS NVARCHAR(20)) AS movement_type,
@@ -644,9 +743,14 @@ class AbStockReportCacheLine(models.Model):
             LEFT JOIN Employee e WITH (NOLOCK)
                 ON e.e_id = sth.delivery_emp
             WHERE st.st_itm_id = ?
+              AND (? IS NULL OR sth.sec_insert_date >= ?)
             ORDER BY sth.sec_insert_date DESC, st.st_id DESC
         """
-        return self._run_query(query, (limit_value, product_serial), "transfer_in")
+        return self._run_query(
+            query,
+            (limit_value, product_serial, from_date, from_date),
+            "transfer_in",
+        )
 
     @api.model
     def _run_query(self, query, params, movement_type):

@@ -30,6 +30,37 @@ Files changed:
 
 User-facing changes:
 
+- Added a From Date filter to the stock movement wizard.
+- Applied the selected date to Sales, Purchase, and Transfer queries.
+- Included the From Date in the per-wizard JSON cache key so date changes refetch data.
+
+Files changed:
+
+- `ab_stock_report/models/ab_stock_report.py`
+- `ab_stock_report/models/ab_stock_report_cache.py`
+- `ab_stock_report/views/ab_stock_report_views.xml`
+- `ab_stock_report/i18n/ar.po`
+- `ab_stock_report/i18n/ar_001.po`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Each new stock movement wizard now starts with an empty private JSON cache.
+- Sales, Purchase, and Transfer data is fetched once per wizard tab and reused on subsequent clicks.
+- Changing the movement limit causes the selected tab to fetch a new snapshot for that wizard.
+- Shared product-level cache records are no longer read by the wizard workflow.
+
+Files changed:
+
+- `ab_stock_report/models/ab_stock_report.py`
+- `ab_stock_report/i18n/ar.po`
+- `ab_stock_report/i18n/ar_001.po`
+
+## Current changes before commit
+
+User-facing changes:
+
 - Changed the report to show three lazy-loading Sales, Purchase, and Transfer buttons as the movement tabs.
 - Opening the report no longer fetches or loads all movement families automatically.
 - Each tab loads only its own cached data and fetches from BConnect only when that JSON snapshot is missing or stale.

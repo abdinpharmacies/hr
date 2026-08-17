@@ -255,6 +255,11 @@ msgid "Cached rows are shown immediately. Use Refresh Cache to update in the bac
 msgstr "تظهر الصفوف المخزنة فوراً. استخدم تحديث الكاش للتحديث في الخلفية، وجلب الآن لجلب كل البيانات مباشرة من BConnect، أو أزرار الأصناف لتجربة مجموعة حركات واحدة في كل مرة."
 
 #. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_payload
+msgid "Wizard Cache"
+msgstr "ذاكرة wizard المؤقتة"
+
+#. module: ab_stock_report
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Sales"
 msgstr "المبيعات"
@@ -278,3 +283,8 @@ msgstr "التبويب النشط"
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Select Sales, Purchase, or Transfer to fetch only that movement group from BConnect and load its JSON cache."
 msgstr "اختر المبيعات أو المشتريات أو التحويلات لجلب مجموعة الحركة المحددة فقط من BConnect وتحميل ذاكرة JSON المؤقتة الخاصة بها."
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__from_date
+msgid "From Date"
+msgstr "من تاريخ"

@@ -7,6 +7,10 @@
             <field name="arch" type="xml">
                 <form string="Stock Movements">
                     <header>
+                        <div class="d-flex align-items-center flex-nowrap me-3">
+                            <label for="from_date" string="From Date" class="oe_inline text-nowrap me-2"/>
+                            <field name="from_date" nolabel="1" class="oe_inline" style="width: 145px; min-width: 145px;"/>
+                        </div>
                         <button name="action_fetch_sales"
                                 type="object"
                                 string="Sales"
