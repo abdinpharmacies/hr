@@ -18,6 +18,18 @@ _SKIPPED_SYSTEM_FIELDS = {
     "__last_update",
     "display_name",
 }
+_RELATIONAL_FIELD_TYPES = {"many2one", "one2many", "many2many"}
+_SYNC_PLACEHOLDER_META_FIELDS = {
+    "db_serial",
+    "rec_id",
+    "payload_json",
+    "source_revision",
+    "event_uuid",
+    "source_operation",
+    "source_write_date",
+    "synced_at",
+    "active",
+}
 
 
 class AbOdooSyncUploadRecord(models.Model):
@@ -277,7 +289,10 @@ class AbOdooSyncUploadRecord(models.Model):
                 % {"field": mapping.source_field_name}
             )
 
-        relation_model = self.env[target_field.comodel_name].with_context(active_test=False).sudo()
+        relation_model = self.env[target_field.comodel_name].with_context(
+            active_test=False,
+            skip_ab_odoo_sync_event=True,
+        ).sudo()
         if mapping.mapping_type in {"sync_many2one", "sync_many2many"}:
             source_rec_id = int(reference.get("id") or 0)
             if source_rec_id <= 0:
@@ -292,6 +307,13 @@ class AbOdooSyncUploadRecord(models.Model):
                 ],
                 limit=1,
             )
+            if not relation:
+                relation = self._create_missing_sync_relation(
+                    relation_model,
+                    source_rec_id,
+                    reference,
+                    mapping,
+                )
         else:
             identity_values = reference.get("values") or {}
             source_key_value = identity_values.get(mapping.relation_source_key)
@@ -322,6 +344,158 @@ class AbOdooSyncUploadRecord(models.Model):
                 }
             )
         return relation.id
+
+    def _create_missing_sync_relation(self, relation_model, source_rec_id, reference, mapping):
+        self.ensure_one()
+        if not {"db_serial", "rec_id"}.issubset(relation_model._fields):
+            raise ValueError(
+                _(
+                    "Sync relation %(field)s cannot create placeholder records "
+                    "because %(model)s has no sync identity fields."
+                )
+                % {
+                    "field": mapping.source_field_name,
+                    "model": relation_model._name,
+                }
+            )
+
+        vals = self._prepare_sync_relation_placeholder_vals(
+            relation_model,
+            source_rec_id,
+            reference,
+        )
+        try:
+            with self.env.cr.savepoint():
+                return relation_model.create(vals)
+        except Exception:
+            relation = relation_model.search(
+                [
+                    ("db_serial", "=", self.db_serial),
+                    ("rec_id", "=", source_rec_id),
+                ],
+                limit=1,
+            )
+            if relation:
+                return relation
+            raise
+
+    def _prepare_sync_relation_placeholder_vals(
+        self,
+        relation_model,
+        source_rec_id,
+        reference,
+    ):
+        self.ensure_one()
+        vals = {
+            "db_serial": self.db_serial,
+            "rec_id": source_rec_id,
+        }
+        if "payload_json" in relation_model._fields:
+            vals["payload_json"] = {
+                "placeholder": True,
+                "relation": reference,
+            }
+        if "source_revision" in relation_model._fields:
+            vals["source_revision"] = 0
+        source_operation_field = relation_model._fields.get("source_operation")
+        if source_operation_field and self._selection_field_has_value(
+            source_operation_field,
+            "upsert",
+        ):
+            vals["source_operation"] = "upsert"
+        if "synced_at" in relation_model._fields:
+            vals["synced_at"] = fields.Datetime.now()
+        if "active" in relation_model._fields:
+            vals["active"] = True
+
+        identity_values = reference.get("values") or {}
+        for field_name, value in identity_values.items():
+            field = relation_model._fields.get(field_name)
+            if (
+                field_name not in vals
+                and field
+                and self._can_write_placeholder_field(field)
+            ):
+                vals[field_name] = value
+
+        display_name = reference.get("display_name")
+        name_field = relation_model._fields.get("name")
+        if (
+            display_name
+            and "name" not in vals
+            and name_field
+            and self._can_write_placeholder_field(name_field)
+        ):
+            vals["name"] = display_name
+
+        required_fields = [
+            field_name
+            for field_name, field in relation_model._fields.items()
+            if (
+                field.required
+                and field_name not in vals
+                and field_name not in _SYNC_PLACEHOLDER_META_FIELDS
+            )
+        ]
+        defaults = relation_model.default_get(required_fields) if required_fields else {}
+        for field_name in required_fields:
+            if (
+                field_name in defaults
+                and defaults[field_name] not in (None, False, "")
+            ):
+                vals[field_name] = defaults[field_name]
+                continue
+
+            field = relation_model._fields[field_name]
+            fallback = self._placeholder_fallback_value(
+                field,
+                display_name,
+                source_rec_id,
+            )
+            if fallback is not None:
+                vals[field_name] = fallback
+
+        return vals
+
+    @api.model
+    def _can_write_placeholder_field(self, field):
+        return (
+            field.store
+            and field.type not in _RELATIONAL_FIELD_TYPES
+            and not (field.compute and not field.inverse)
+        )
+
+    @api.model
+    def _placeholder_fallback_value(self, field, display_name, source_rec_id):
+        if not self._can_write_placeholder_field(field):
+            return None
+        if field.type in {"char", "text", "html"}:
+            return display_name or "SYNC-%s" % source_rec_id
+        if field.type == "selection":
+            selection = field.selection
+            if isinstance(selection, (list, tuple)) and selection:
+                return selection[0][0]
+            return None
+        if field.type in {"integer", "float", "monetary"}:
+            return 0
+        if field.type == "boolean":
+            return False
+        if field.type == "json":
+            return {}
+        if field.type == "date":
+            return fields.Date.context_today(self)
+        if field.type == "datetime":
+            return fields.Datetime.now()
+        return None
+
+    @api.model
+    def _selection_field_has_value(self, field, value):
+        if field.type != "selection":
+            return False
+        selection = getattr(field, "selection", None)
+        if not isinstance(selection, (list, tuple)):
+            return False
+        return value in {item[0] for item in selection}
 
     def _prepare_target_vals(self, target_model):
         self.ensure_one()

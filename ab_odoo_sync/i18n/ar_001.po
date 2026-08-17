@@ -787,6 +787,12 @@ msgstr "حقل المصدر المطلوب %(field)s غير موجود في ال
 
 #. module: ab_odoo_sync
 #. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_upload_record.py:0
+msgid "Sync relation %(field)s cannot create placeholder records because %(model)s has no sync identity fields."
+msgstr "لا يمكن لعلاقة المزامنة %(field)s إنشاء سجلات مؤقتة لأن %(model)s لا يحتوي على حقول هوية المزامنة."
+
+#. module: ab_odoo_sync
+#. odoo-python
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_outbox.py:0
 #, fuzzy
 msgid "Reset %(count)s failed outbox event(s) to Pending."

@@ -136,7 +136,11 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`
 
-## Current changes before commit
+## 41f68f14cb76da0ebb01b04d341eca5f5f8265e5
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Mon Aug 17 09:46:11 2026 +0300
+- Subject: ab_odoo_sync/fix ui update
 
 User-facing changes:
 
@@ -151,4 +155,20 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_event_state.py`
 - `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Create missing `__sync` relation placeholders during upload apply using the same branch `db_serial` and source `rec_id`.
+- Allow records such as lines to apply before their category, header, or tag mirror record arrives; the later relation upload fills the placeholder through the normal update path.
+- Keep stable-key relations unchanged so partial sync payloads do not create real business master data from incomplete relation snapshots.
+- Added Arabic translations for the new placeholder validation message.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
