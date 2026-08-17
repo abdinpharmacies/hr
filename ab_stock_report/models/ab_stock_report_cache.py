@@ -369,7 +369,7 @@ class AbStockReportCacheLine(models.Model):
 
     @api.model
     def _fetch_sales_batch_rows_with_connection(
-        self, product_serial, limit_value, return_only=False, from_date=None, connection=None
+            self, product_serial, limit_value, return_only=False, from_date=None, connection=None
     ):
         # Fetch detail rows first. Header and lookup tables are loaded in batches
         # below, avoiding repeated dimension-table joins for every detail row.
@@ -395,7 +395,7 @@ class AbStockReportCacheLine(models.Model):
             WHERE sd.itm_id = ?
               {return_filter}
               {date_filter}
-            ORDER BY sd.std_id DESC
+            ORDER BY sd.sec_insert_date DESC
         """
         detail_params = [candidate_limit, product_serial]
         if from_date:
@@ -460,9 +460,9 @@ class AbStockReportCacheLine(models.Model):
         )
         item_rows = self._run_raw_query(
             """
-                SELECT itm_id, itm_unit1_unit2, itm_unit1_unit3
-                FROM Item_Catalog WITH (NOLOCK)
-                WHERE itm_id = ?
+            SELECT itm_id, itm_unit1_unit2, itm_unit1_unit3
+            FROM Item_Catalog WITH (NOLOCK)
+            WHERE itm_id = ?
             """,
             (product_serial,),
             connection=connection,
@@ -569,8 +569,7 @@ class AbStockReportCacheLine(models.Model):
     @api.model
     def _fetch_purchase_rows(self, product_serial, limit_value, from_date=None):
         query = """
-            SELECT TOP (?)
-                CAST('purchase' AS NVARCHAR(20)) AS movement_type,
+                SELECT TOP(?) CAST('purchase' AS NVARCHAR(20)) AS movement_type,
                 ph.sec_insert_date AS movement_datetime,
                 CAST(COALESCE(pd.itm_pur_price, pd.itm_cost, pd.itm_sell, 0) AS DECIMAL(18, 4)) AS sale_price,
                 CAST(
@@ -592,21 +591,28 @@ class AbStockReportCacheLine(models.Model):
                 CONVERT(NVARCHAR(50), pd.ptd_id) AS source_line_id,
                 COALESCE(pd.sec_update_date, pd.sec_insert_date) AS source_updated_at,
                 30 AS movement_sort
-            FROM pur_trans_h ph WITH (NOLOCK)
-            INNER JOIN pur_trans_d pd WITH (NOLOCK)
+                FROM pur_trans_h ph
+                WITH (NOLOCK)
+                    INNER JOIN pur_trans_d pd
+                WITH (NOLOCK)
                 ON pd.pth_id = ph.pth_id
-            INNER JOIN Item_Catalog ic WITH (NOLOCK)
+                    INNER JOIN Item_Catalog ic
+                WITH (NOLOCK)
                 ON ic.itm_id = pd.itm_id
-            LEFT JOIN Store st WITH (NOLOCK)
+                    LEFT JOIN Store st
+                WITH (NOLOCK)
                 ON st.sto_id = ph.sto_id
-            LEFT JOIN Vendor v WITH (NOLOCK)
+                    LEFT JOIN Vendor v
+                WITH (NOLOCK)
                 ON v.ven_id = ph.ven_id
-            LEFT JOIN Employee e WITH (NOLOCK)
+                    LEFT JOIN Employee e
+                WITH (NOLOCK)
                 ON e.e_id = ph.emp_id
-            WHERE pd.itm_id = ?
-              AND (? IS NULL OR ph.sec_insert_date >= ?)
-            ORDER BY ph.sec_insert_date DESC, pd.ptd_id DESC
-        """
+                WHERE pd.itm_id = ?
+                  AND (? IS NULL
+                   OR ph.sec_insert_date >= ?)
+                ORDER BY ph.sec_insert_date DESC, pd.ptd_id DESC \
+                """
         return self._run_query(
             query,
             (limit_value, product_serial, from_date, from_date),
@@ -616,8 +622,7 @@ class AbStockReportCacheLine(models.Model):
     @api.model
     def _fetch_purchase_return_rows(self, product_serial, limit_value, from_date=None):
         query = """
-            SELECT TOP (?)
-                CAST('purchase_return' AS NVARCHAR(20)) AS movement_type,
+                SELECT TOP(?) CAST('purchase_return' AS NVARCHAR(20)) AS movement_type,
                 pd.sec_update_date AS movement_datetime,
                 CAST(COALESCE(pd.itm_back_pharm, pd.itm_cost, pd.itm_pur_price, 0) AS DECIMAL(18, 4)) AS sale_price,
                 CAST(
@@ -639,23 +644,33 @@ class AbStockReportCacheLine(models.Model):
                 CONVERT(NVARCHAR(50), pd.ptd_id) AS source_line_id,
                 pd.sec_update_date AS source_updated_at,
                 40 AS movement_sort
-            FROM pur_trans_h ph WITH (NOLOCK)
-            INNER JOIN pur_trans_d pd WITH (NOLOCK)
+                FROM pur_trans_h ph
+                WITH (NOLOCK)
+                    INNER JOIN pur_trans_d pd
+                WITH (NOLOCK)
                 ON pd.pth_id = ph.pth_id
-            INNER JOIN Item_Catalog ic WITH (NOLOCK)
+                    INNER JOIN Item_Catalog ic
+                WITH (NOLOCK)
                 ON ic.itm_id = pd.itm_id
-            LEFT JOIN Store st WITH (NOLOCK)
+                    LEFT JOIN Store st
+                WITH (NOLOCK)
                 ON st.sto_id = ph.sto_id
-            LEFT JOIN Vendor v WITH (NOLOCK)
+                    LEFT JOIN Vendor v
+                WITH (NOLOCK)
                 ON v.ven_id = ph.ven_id
-            LEFT JOIN Employee e WITH (NOLOCK)
+                    LEFT JOIN Employee e
+                WITH (NOLOCK)
                 ON e.e_id = ph.emp_id
-            WHERE pd.itm_id = ?
-              AND pd.sec_update_date IS NOT NULL
-              AND ISNULL(COALESCE(pd.itm_back_qty, pd.itm_back), 0) > 0
-              AND (? IS NULL OR pd.sec_update_date >= ?)
-            ORDER BY pd.sec_update_date DESC, pd.ptd_id DESC
-        """
+                WHERE pd.itm_id = ?
+                  AND pd.sec_update_date IS NOT NULL
+                  AND ISNULL(COALESCE (pd.itm_back_qty
+                    , pd.itm_back)
+                    , 0)
+                    > 0
+                  AND (? IS NULL
+                   OR pd.sec_update_date >= ?)
+                ORDER BY pd.sec_update_date DESC, pd.ptd_id DESC \
+                """
         return self._run_query(
             query,
             (limit_value, product_serial, from_date, from_date),
@@ -665,8 +680,7 @@ class AbStockReportCacheLine(models.Model):
     @api.model
     def _fetch_transfer_out_rows(self, product_serial, limit_value, from_date=None):
         query = """
-            SELECT TOP (?)
-                CAST('transfer_out' AS NVARCHAR(20)) AS movement_type,
+                SELECT TOP(?) CAST('transfer_out' AS NVARCHAR(20)) AS movement_type,
                 sth.sec_insert_date AS movement_datetime,
                 CAST(COALESCE(st.st_itm_sell, 0) AS DECIMAL(18, 4)) AS sale_price,
                 CAST(
@@ -688,19 +702,24 @@ class AbStockReportCacheLine(models.Model):
                 CONVERT(NVARCHAR(50), st.st_id) AS source_line_id,
                 COALESCE(sth.sec_update_date, sth.sec_insert_date) AS source_updated_at,
                 50 AS movement_sort
-            FROM Store_Trans_h sth WITH (NOLOCK)
-            INNER JOIN Store_Trans st WITH (NOLOCK)
+                FROM Store_Trans_h sth
+                WITH (NOLOCK)
+                    INNER JOIN Store_Trans st
+                WITH (NOLOCK)
                 ON st.stnh_id = sth.stnh_id
-               AND st.st_from_store = sth.stnh_f_Sto_id
-               AND st.st_to_store = sth.stnh_t_Sto_id
-            LEFT JOIN Store src_store WITH (NOLOCK)
+                    AND st.st_from_store = sth.stnh_f_Sto_id
+                    AND st.st_to_store = sth.stnh_t_Sto_id
+                    LEFT JOIN Store src_store
+                WITH (NOLOCK)
                 ON src_store.sto_id = sth.stnh_f_Sto_id
-            LEFT JOIN Employee e WITH (NOLOCK)
+                    LEFT JOIN Employee e
+                WITH (NOLOCK)
                 ON e.e_id = sth.delivery_emp
-            WHERE st.st_itm_id = ?
-              AND (? IS NULL OR sth.sec_insert_date >= ?)
-            ORDER BY sth.sec_insert_date DESC, st.st_id DESC
-        """
+                WHERE st.st_itm_id = ?
+                  AND (? IS NULL
+                   OR sth.sec_insert_date >= ?)
+                ORDER BY sth.sec_insert_date DESC, st.st_id DESC \
+                """
         return self._run_query(
             query,
             (limit_value, product_serial, from_date, from_date),
@@ -710,8 +729,7 @@ class AbStockReportCacheLine(models.Model):
     @api.model
     def _fetch_transfer_in_rows(self, product_serial, limit_value, from_date=None):
         query = """
-            SELECT TOP (?)
-                CAST('transfer_in' AS NVARCHAR(20)) AS movement_type,
+                SELECT TOP(?) CAST('transfer_in' AS NVARCHAR(20)) AS movement_type,
                 sth.sec_insert_date AS movement_datetime,
                 CAST(COALESCE(st.st_itm_sell, 0) AS DECIMAL(18, 4)) AS sale_price,
                 CAST(
@@ -733,19 +751,24 @@ class AbStockReportCacheLine(models.Model):
                 CONVERT(NVARCHAR(50), st.st_id) AS source_line_id,
                 COALESCE(sth.sec_update_date, sth.sec_insert_date) AS source_updated_at,
                 60 AS movement_sort
-            FROM Store_Trans_h sth WITH (NOLOCK)
-            INNER JOIN Store_Trans st WITH (NOLOCK)
+                FROM Store_Trans_h sth
+                WITH (NOLOCK)
+                    INNER JOIN Store_Trans st
+                WITH (NOLOCK)
                 ON st.stnh_id = sth.stnh_id
-               AND st.st_from_store = sth.stnh_f_Sto_id
-               AND st.st_to_store = sth.stnh_t_Sto_id
-            LEFT JOIN Store dst_store WITH (NOLOCK)
+                    AND st.st_from_store = sth.stnh_f_Sto_id
+                    AND st.st_to_store = sth.stnh_t_Sto_id
+                    LEFT JOIN Store dst_store
+                WITH (NOLOCK)
                 ON dst_store.sto_id = sth.stnh_t_Sto_id
-            LEFT JOIN Employee e WITH (NOLOCK)
+                    LEFT JOIN Employee e
+                WITH (NOLOCK)
                 ON e.e_id = sth.delivery_emp
-            WHERE st.st_itm_id = ?
-              AND (? IS NULL OR sth.sec_insert_date >= ?)
-            ORDER BY sth.sec_insert_date DESC, st.st_id DESC
-        """
+                WHERE st.st_itm_id = ?
+                  AND (? IS NULL
+                   OR sth.sec_insert_date >= ?)
+                ORDER BY sth.sec_insert_date DESC, st.st_id DESC \
+                """
         return self._run_query(
             query,
             (limit_value, product_serial, from_date, from_date),
