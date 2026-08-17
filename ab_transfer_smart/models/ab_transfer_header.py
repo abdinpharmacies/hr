@@ -2,7 +2,7 @@
 import ast
 import logging
 import math
-from datetime import timedelta
+from datetime import timedelta, timezone
 
 from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -1204,13 +1204,9 @@ class AbTransferHeader(models.Model):
             return {}
 
         domain = [
-            ("header_id.active", "=", True),
-            ("header_id.smart_stage", "in", list(SMART_EXPECTED_BALANCE_STAGES)),
-            ("create_day", "=", fields.Date.context_today(self)),
-            ("exclusion_reason", "=", False),
             ("product_id", "in", product_ids),
             ("from_store_id", "in", store_ids),
-        ]
+        ] + self._get_smart_active_reservation_line_domain()
         if exclude_header_ids:
             domain.append(("header_id", "not in", exclude_header_ids))
 
@@ -1230,6 +1226,31 @@ class AbTransferHeader(models.Model):
 
             result[(product_id, store_id)] = float(group.get("qty", 0.0) or 0.0)
         return result
+
+    @api.model
+    def _get_smart_active_reservation_line_domain(self):
+        today_start, tomorrow_start = self._get_smart_submitted_today_bounds()
+        return [
+            ("header_id.active", "=", True),
+            ("header_id.smart_stage", "in", list(SMART_EXPECTED_BALANCE_STAGES)),
+            ("exclusion_reason", "=", False),
+            "|",
+            ("header_id.is_submitted", "=", False),
+            "&",
+            ("header_id.is_submitted", "=", True),
+            "&",
+            ("header_id.sent_at", ">=", today_start),
+            ("header_id.sent_at", "<", tomorrow_start),
+        ]
+
+    @api.model
+    def _get_smart_submitted_today_bounds(self):
+        local_now = fields.Datetime.context_timestamp(self, fields.Datetime.now())
+        local_today_start = local_now.replace(hour=0, minute=0, second=0, microsecond=0)
+        local_tomorrow_start = local_today_start + timedelta(days=1)
+        today_start = local_today_start.astimezone(timezone.utc).replace(tzinfo=None)
+        tomorrow_start = local_tomorrow_start.astimezone(timezone.utc).replace(tzinfo=None)
+        return fields.Datetime.to_string(today_start), fields.Datetime.to_string(tomorrow_start)
 
     def _apply_smart_transfer_rows(self, destination_rows):
         self.ensure_one()

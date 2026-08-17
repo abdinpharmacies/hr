@@ -1,5 +1,23 @@
 Current changes before commit:
 
+- Reserve active unsubmitted Smart Transfer lines across days when calculating Expected Stock.
+- Keep same-day submitted Smart Transfers reserved using `sent_at` in the context local business day.
+- Share the same active-reservation rule with duplicate prevention and remove `create_day` from duplicate eligibility.
+- Keep `create_day` available for audit and UI/report history only.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/models/ab_transfer_smart_line.py
+
+
+commit 23a16c734cfb82669aaab0fb1b93226c47f28600
+Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+Date:   Thu Aug 13 15:08:46 2026 +0300
+
+    ab_transfer_smart/Fix: Revert the Partial code search correctly returned exact store code or name
+
 - Require an exact full store-code match in Fair Store quick search while retaining partial Arabic/name matching.
 - Prevent a partial code such as 17 from matching store code 176.
 - Keep the scoped Fair Store selectors, popup columns, and Select workflow unchanged.

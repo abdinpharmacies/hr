@@ -274,7 +274,6 @@ class AbTransferSmartLine(models.Model):
         "to_store_id",
         "product_id",
         "source_type",
-        "create_day",
         "exclusion_reason",
     )
     def _constrains_duplicate_transfer_lines(self):
@@ -292,7 +291,6 @@ class AbTransferSmartLine(models.Model):
                 or not self.to_store_id
                 or not self.product_id
                 or not self.source_type
-                or not self.create_day
         ):
             return False
         return (
@@ -300,15 +298,15 @@ class AbTransferSmartLine(models.Model):
             self.to_store_id.id,
             self.product_id.id,
             self.source_type,
-            self.create_day,
         )
 
     def _get_duplicate_check_lines(self):
-        return self.filtered(
+        active_reservation_domain = (
+            self.env["ab_transfer_header"]._get_smart_active_reservation_line_domain()
+        )
+        return self.filtered_domain(active_reservation_domain).filtered(
             lambda line: (
-                    not line.exclusion_reason
-                    and line.header_id.smart_stage != SMART_STAGE_PURCHASE_PREPARATION
-                    and line._get_duplicate_transfer_line_key()
+                line._get_duplicate_transfer_line_key()
             )
         )
 
@@ -322,17 +320,13 @@ class AbTransferSmartLine(models.Model):
         to_store_ids = {key[1] for key in keys}
         product_ids = {key[2] for key in keys}
         source_types = {key[3] for key in keys}
-        create_days = {key[4] for key in keys}
 
         candidates = self.search([
             ("from_store_id", "in", list(from_store_ids)),
             ("to_store_id", "in", list(to_store_ids)),
             ("product_id", "in", list(product_ids)),
             ("source_type", "in", list(source_types)),
-            ("create_day", "in", list(create_days)),
-            ("header_id.smart_stage", "!=", SMART_STAGE_PURCHASE_PREPARATION),
-            ("exclusion_reason", "=", False),
-        ])
+        ] + self.env["ab_transfer_header"]._get_smart_active_reservation_line_domain())
         candidates_by_key = {}
         for line in candidates:
             key = line._get_duplicate_transfer_line_key()
