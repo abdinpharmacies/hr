@@ -7,5 +7,12 @@
             <field name="channel_id" ref="integration_queue_job.channel_root"/>
             <field name="retry_pattern" eval="{1: 10, 2: 30, 3: 60}"/>
         </record>
+
+        <record id="job_function_ab_odoo_sync_service_queue_main_upload_apply_records" model="queue.job.function">
+            <field name="model_id" ref="model_ab_odoo_sync_service"/>
+            <field name="method">job_queue_main_upload_apply_records</field>
+            <field name="channel_id" ref="integration_queue_job.channel_root"/>
+            <field name="retry_pattern" eval="{1: 10, 2: 30, 3: 60}"/>
+        </record>
     </data>
 </odoo>

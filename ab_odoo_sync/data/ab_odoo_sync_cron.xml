@@ -30,5 +30,15 @@
             <field name="state">code</field>
             <field name="code">model.cron_send_branch_uploads()</field>
         </record>
+
+        <record id="ir_cron_ab_odoo_sync_main_queue_upload_apply" model="ir.cron">
+            <field name="name">AB Odoo Sync: MAIN Queue Upload Apply</field>
+            <field name="active">True</field>
+            <field name="interval_number">1</field>
+            <field name="interval_type">minutes</field>
+            <field name="model_id" ref="model_ab_odoo_sync_service"/>
+            <field name="state">code</field>
+            <field name="code">model.cron_queue_main_upload_apply_records()</field>
+        </record>
     </data>
 </odoo>

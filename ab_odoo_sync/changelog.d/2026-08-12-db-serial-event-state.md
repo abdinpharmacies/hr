@@ -157,7 +157,11 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
 
-## Current changes before commit
+## 874085b2a4b03de4515d5bc8c23d45744580a749
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Mon Aug 17 10:06:46 2026 +0300
+- Subject: ab_odoo_sync/Now, when an upload record applies and a sync_many2one or sync_many2many relation is missing, it creates a placeholder record in the related __sync model using the same db_serial and source rec_id.
 
 User-facing changes:
 
@@ -172,3 +176,21 @@ Files changed:
 - `ab_odoo_sync/i18n/ar.po`
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Added a MAIN-side upload apply feeder job that queues pending and failed upload records only for active apply profiles with `auto_apply` enabled.
+- Added an active MAIN cron that enqueues the feeder with a stable identity key so overlapping feeder jobs are not created.
+- Reused the existing per-record upload apply worker for actual mirror writes, retry handling, and audit status updates.
+- Added Arabic translations for the new cron and queue job labels.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/data/ab_odoo_sync_cron.xml`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`

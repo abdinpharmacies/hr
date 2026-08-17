@@ -99,6 +99,11 @@ msgid "AB Odoo Sync: Branch Upload"
 msgstr "رفع مزامنة أودو"
 
 #. module: ab_odoo_sync
+#: model:ir.actions.server,name:ab_odoo_sync.ir_cron_ab_odoo_sync_main_queue_upload_apply_ir_actions_server
+msgid "AB Odoo Sync: MAIN Queue Upload Apply"
+msgstr "مزامنة أودو: إضافة تطبيق الرفع في MAIN إلى قائمة الانتظار"
+
+#. module: ab_odoo_sync
 #: model:ir.actions.server,name:ab_odoo_sync.ir_cron_ab_odoo_sync_cleanup_ir_actions_server
 #, fuzzy
 msgid "AB Odoo Sync: Cleanup Consumed Events"
@@ -675,6 +680,12 @@ msgstr "ملف التعريف"
 #: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_upload_record_list
 msgid "Queue Apply"
 msgstr "إضافة التطبيق إلى قائمة الانتظار"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Queue MAIN upload records for apply"
+msgstr "إضافة سجلات الرفع في MAIN للتطبيق إلى قائمة الانتظار"
 
 #. module: ab_odoo_sync
 #: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_upload_record__status__queued

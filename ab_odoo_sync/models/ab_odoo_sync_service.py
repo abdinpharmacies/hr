@@ -436,6 +436,60 @@ class AbOdooSyncService(models.Model):
         return result
 
     @api.model
+    def _main_upload_apply_feeder_identity_key(self):
+        return "ab_odoo_sync_main_upload_apply_feeder"
+
+    @api.model
+    def cron_queue_main_upload_apply_records(self):
+        if self.get_server_role() != "main":
+            return {"status": "skipped", "reason": _("server_role is not main")}
+
+        self.sudo().with_delay(
+            identity_key=self._main_upload_apply_feeder_identity_key(),
+            description=_("Queue MAIN upload records for apply"),
+        ).job_queue_main_upload_apply_records()
+        return {"status": "queued"}
+
+    @api.model
+    def job_queue_main_upload_apply_records(self):
+        if self.get_server_role() != "main":
+            return {"status": "skipped", "reason": _("server_role is not main")}
+
+        batch_size = self.get_batch_size()
+        queued_count = 0
+        Upload = self.env["ab_odoo_sync_upload_record"].sudo()
+        profiles = self.env["ab_odoo_sync_apply_profile"].sudo().search(
+            [
+                ("active", "=", True),
+                ("auto_apply", "=", True),
+            ],
+            order="sequence, id",
+        )
+        for profile in profiles:
+            remaining = batch_size - queued_count
+            if remaining <= 0:
+                break
+
+            records = Upload.search(
+                [
+                    ("apply_profile_id", "=", profile.id),
+                    ("status", "in", ["pending", "failed"]),
+                    ("active", "=", True),
+                ],
+                order="source_revision, id",
+                limit=remaining,
+            )
+            queued_count += records._queue_apply_records()
+
+        result = {
+            "status": "ok",
+            "queued": queued_count,
+            "batch_size": batch_size,
+        }
+        _logger.info("ab_odoo_sync MAIN upload apply feeder result: %s", result)
+        return result
+
+    @api.model
     def test_branch_connection(self):
         if self.get_server_role() != "branch":
             return {"status": "skipped", "reason": _("server_role is not branch")}
