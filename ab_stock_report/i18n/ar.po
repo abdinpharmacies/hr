@@ -1,0 +1,285 @@
+# -*- coding: utf-8 -*-
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"POT-Creation-Date: 2026-08-13 00:00+0000\n"
+"PO-Revision-Date: 2026-08-13 00:00+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#. module: ab_stock_report
+#: model:ir.actions.act_window,name:ab_stock_report.action_ab_stock_report_wizard
+msgid "Stock Movements"
+msgstr "حركات المخزون"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Last Movements"
+msgstr "آخر الحركات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Load Movements"
+msgstr "تحميل الحركات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Click Load Movements to fetch the latest rows from BConnect."
+msgstr "اضغط تحميل الحركات لجلب أحدث السجلات من BConnect."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_product_view_tree_inherit_stock_report
+msgid "Movements"
+msgstr "الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__product_id
+msgid "Product"
+msgstr "الصنف"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__product_eplus_serial
+msgid "EPlus Serial"
+msgstr "رقم إى بلس"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__limit
+msgid "Last Movements"
+msgstr "آخر الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__line_count
+msgid "Movement Count"
+msgstr "عدد الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__last_refresh
+msgid "Last Refresh"
+msgstr "آخر تحديث"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__movement_datetime
+msgid "Movement Date"
+msgstr "تاريخ الحركة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__movement_type
+msgid "Movement Type"
+msgstr "نوع الحركة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__movement_group
+msgid "Movement Group"
+msgstr "مجموعة الحركة"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Sales / Return"
+msgstr "المبيعات / المرتجعات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Purchase / Return"
+msgstr "الشراء / المرتجعات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Transfer / From / To"
+msgstr "التحويل / من / إلى"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__sale_price
+msgid "Sale Price"
+msgstr "سعر البيع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__qty_large
+msgid "Quantity in Large Unit"
+msgstr "الكمية بالكبرى"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__store_name
+msgid "Store"
+msgstr "المخزن"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__supplier_name
+msgid "Supplier"
+msgstr "المورد"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__customer_name
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard_line__employee_name
+msgid "Employee"
+msgstr "الموظف"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__purchase
+msgid "Purchase"
+msgstr "شراء"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__purchase_return
+msgid "Purchase Return"
+msgstr "مرتجع شراء"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__sale
+msgid "Sale"
+msgstr "بيع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__sale_return
+msgid "Sale Return"
+msgstr "مرتجع بيع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__transfer_out
+msgid "Transfer Out"
+msgstr "صرف"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard_line__movement_type__transfer_in
+msgid "Transfer In"
+msgstr "استلام"
+
+#. module: ab_stock_report
+#: model:ir.model,name:ab_stock_report.model_ab_stock_report_wizard
+msgid "Stock Movement Report Wizard"
+msgstr "معالج تقرير حركات المخزون"
+
+#. module: ab_stock_report
+#: model:ir.model,name:ab_stock_report.model_ab_stock_report_wizard_line
+msgid "Stock Movement Report Line"
+msgstr "سطر تقرير حركات المخزون"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "This product is not linked to an EPlus item serial."
+msgstr "هذا الصنف غير مرتبط برقم إى بلس."
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "Could not resolve a required BConnect column from: %s"
+msgstr "تعذر تحديد عمود مطلوب من BConnect من: %s"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,help:ab_stock_report.field_ab_stock_report_wizard__limit
+msgid "Last Movements"
+msgstr "آخر الحركات"
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_state
+msgid "Cache State"
+msgstr "حالة الكاش"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh Cache"
+msgstr "تحديث الكاش"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Now"
+msgstr "جلب الآن"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Cached rows are shown immediately. Use Refresh Cache to update in the background or Fetch Now for the first direct pull from BConnect."
+msgstr "تظهر الصفوف المخزنة فوراً. استخدم تحديث الكاش للتحديث في الخلفية أو جلب الآن لأول جلب مباشر من BConnect."
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__cache_limit
+msgid "Cache Limit"
+msgstr "حد الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__source_table
+msgid "Source Table"
+msgstr "جدول المصدر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__source_line_id
+msgid "Source Line ID"
+msgstr "معرف سطر المصدر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__source_updated_at
+msgid "Source Updated At"
+msgstr "آخر تحديث للمصدر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_cache_line__cache_generated_at
+msgid "Cache Generated At"
+msgstr "تاريخ إنشاء الكاش"
+
+#. module: ab_stock_report
+msgid "Refresh queued"
+msgstr "تمت جدولة التحديث"
+
+#. module: ab_stock_report
+msgid "Fetched from BConnect"
+msgstr "تم الجلب من BConnect"
+
+#. module: ab_stock_report
+msgid "Cached %s"
+msgstr "مخزن %s"
+
+#. module: ab_stock_report
+msgid "No %s cache"
+msgstr "لا توجد ذاكرة مؤقتة لـ%s"
+
+#. module: ab_stock_report
+msgid "No cached movements yet"
+msgstr "لا توجد حركات مخزنة بعد"
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Sales"
+msgstr "جلب المبيعات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Purchase"
+msgstr "جلب المشتريات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Fetch Transfers"
+msgstr "جلب التحويلات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Cached rows are shown immediately. Use Refresh Cache to update in the background, Fetch Now for a full direct pull from BConnect, or the family buttons to test one movement group at a time."
+msgstr "تظهر الصفوف المخزنة فوراً. استخدم تحديث الكاش للتحديث في الخلفية، وجلب الآن لجلب كل البيانات مباشرة من BConnect، أو أزرار الأصناف لتجربة مجموعة حركات واحدة في كل مرة."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Sales"
+msgstr "المبيعات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Purchase"
+msgstr "المشتريات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Transfer"
+msgstr "التحويلات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__active_tab
+msgid "Active Tab"
+msgstr "التبويب النشط"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Select Sales, Purchase, or Transfer to fetch only that movement group from BConnect and load its JSON cache."
+msgstr "اختر المبيعات أو المشتريات أو التحويلات لجلب مجموعة الحركة المحددة فقط من BConnect وتحميل ذاكرة JSON المؤقتة الخاصة بها."

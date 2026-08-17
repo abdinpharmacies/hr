@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_stock_report_wizard_view_form" model="ir.ui.view">
+            <field name="name">ab_stock_report_wizard_view_form</field>
+            <field name="model">ab_stock_report_wizard</field>
+            <field name="arch" type="xml">
+                <form string="Stock Movements">
+                    <header>
+                        <button name="action_fetch_sales"
+                                type="object"
+                                string="Sales"
+                                class="btn-primary"/>
+                        <button name="action_fetch_purchase"
+                                type="object"
+                                string="Purchase"
+                                class="btn-primary"/>
+                        <button name="action_fetch_transfers"
+                                type="object"
+                                string="Transfer"
+                                class="btn-primary"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="product_id" readonly="1"/>
+                                <field name="product_eplus_serial" readonly="1" invisible="1"/>
+                                <field name="limit"/>
+                            </group>
+                            <group>
+                                <field name="line_count" readonly="1"/>
+                                <field name="last_refresh" readonly="1"/>
+                                <field name="cache_state" readonly="1"/>
+                                <field name="active_tab" invisible="1"/>
+                            </group>
+                        </group>
+                        <div class="alert alert-info" role="alert">
+                            Select Sales, Purchase, or Transfer to fetch only that movement group from BConnect and load its JSON cache.
+                        </div>
+                        <field name="sale_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'sale'">
+                            <list string="Sales / Return">
+                                <field name="movement_datetime"/>
+                                <field name="movement_type"/>
+                                <field name="sale_price"/>
+                                <field name="qty_large"/>
+                                <field name="store_name"/>
+                                <field name="supplier_name"/>
+                                <field name="customer_name"/>
+                                <field name="employee_name"/>
+                            </list>
+                        </field>
+                        <field name="purchase_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'purchase'">
+                            <list string="Purchase / Return">
+                                <field name="movement_datetime"/>
+                                <field name="movement_type"/>
+                                <field name="sale_price"/>
+                                <field name="qty_large"/>
+                                <field name="store_name"/>
+                                <field name="supplier_name"/>
+                                <field name="customer_name"/>
+                                <field name="employee_name"/>
+                            </list>
+                        </field>
+                        <field name="transfer_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'transfer'">
+                            <list string="Transfer / From / To">
+                                <field name="movement_datetime"/>
+                                <field name="movement_type"/>
+                                <field name="sale_price"/>
+                                <field name="qty_large"/>
+                                <field name="store_name"/>
+                                <field name="supplier_name"/>
+                                <field name="customer_name"/>
+                                <field name="employee_name"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="action_ab_stock_report_wizard" model="ir.actions.act_window">
+            <field name="name">Stock Movements</field>
+            <field name="res_model">ab_stock_report_wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+            <field name="view_id" ref="ab_stock_report_wizard_view_form"/>
+        </record>
+
+        <record id="ab_product_view_tree_inherit_stock_report" model="ir.ui.view">
+            <field name="name">ab_product_view_tree_inherit_stock_report</field>
+            <field name="model">ab_product</field>
+            <field name="inherit_id" ref="ab_product.ab_product_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='code']" position="before">
+                    <button name="action_open_stock_movements_report"
+                            type="object"
+                            string="Movements"
+                            icon="fa-exchange"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
