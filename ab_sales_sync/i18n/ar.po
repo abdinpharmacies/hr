@@ -1,0 +1,509 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: ab_sales_sync 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-17 00:00+0000\n"
+"PO-Revision-Date: 2026-08-17 00:00+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
+
+#. module: ab_sales_sync
+msgid "Abdin Sales Sync"
+msgstr "مزامنة مبيعات عبدين"
+
+#. module: ab_sales_sync
+msgid "MAIN staging models for branch sales operations uploaded by AB Odoo Sync"
+msgstr "نماذج وسيطة في المركز لعمليات مبيعات الفروع المرفوعة عبر مزامنة أودو"
+
+#. module: ab_sales_sync
+msgid "AB Sales Sync Mirror Mixin"
+msgstr "خليط مرايا مزامنة المبيعات"
+
+#. module: ab_sales_sync
+msgid "Branch Sales Header Mirror"
+msgstr "مرآة رأس مبيعات الفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales Line Mirror"
+msgstr "مرآة سطر مبيعات الفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales Return Header Mirror"
+msgstr "مرآة رأس مرتجع مبيعات الفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales Return Line Mirror"
+msgstr "مرآة سطر مرتجع مبيعات الفرع"
+
+#. module: ab_sales_sync
+msgid "Sales Sync Access"
+msgstr "صلاحية مزامنة المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales Sync Manager"
+msgstr "مدير مزامنة المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales Sync"
+msgstr "مزامنة المبيعات"
+
+#. module: ab_sales_sync
+msgid "Synced Sales"
+msgstr "المبيعات المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Sales Lines"
+msgstr "سطور المبيعات المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Sales Returns"
+msgstr "مرتجعات المبيعات المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Sales Return Lines"
+msgstr "سطور مرتجعات المبيعات المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Sales Headers"
+msgstr "رؤوس المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales Lines"
+msgstr "سطور المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales Return Headers"
+msgstr "رؤوس مرتجعات المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales Return Lines"
+msgstr "سطور مرتجعات المبيعات"
+
+#. module: ab_sales_sync
+msgid "DB Serial"
+msgstr "مسلسل قاعدة البيانات"
+
+#. module: ab_sales_sync
+msgid "Source Record ID"
+msgstr "معرف سجل المصدر"
+
+#. module: ab_sales_sync
+msgid "Source Revision"
+msgstr "مراجعة المصدر"
+
+#. module: ab_sales_sync
+msgid "Event UUID"
+msgstr "معرف الحدث"
+
+#. module: ab_sales_sync
+msgid "Source Operation"
+msgstr "عملية المصدر"
+
+#. module: ab_sales_sync
+msgid "Upsert"
+msgstr "إضافة أو تحديث"
+
+#. module: ab_sales_sync
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: ab_sales_sync
+msgid "Source Write Date"
+msgstr "تاريخ كتابة المصدر"
+
+#. module: ab_sales_sync
+msgid "Synchronized At"
+msgstr "تمت المزامنة في"
+
+#. module: ab_sales_sync
+msgid "Full Source Payload"
+msgstr "حمولة المصدر الكاملة"
+
+#. module: ab_sales_sync
+msgid "Raw Payload"
+msgstr "الحمولة الخام"
+
+#. module: ab_sales_sync
+msgid "Store"
+msgstr "الفرع"
+
+#. module: ab_sales_sync
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_sales_sync
+msgid "Invoice Address"
+msgstr "عنوان الفاتورة"
+
+#. module: ab_sales_sync
+msgid "Delivery"
+msgstr "توصيل"
+
+#. module: ab_sales_sync
+msgid "Delivery Employee"
+msgstr "موظف التوصيل"
+
+#. module: ab_sales_sync
+msgid "Description"
+msgstr "الوصف"
+
+#. module: ab_sales_sync
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_sales_sync
+msgid "PrePending"
+msgstr "قبل الانتظار"
+
+#. module: ab_sales_sync
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_sales_sync
+msgid "Saved"
+msgstr "محفوظة"
+
+#. module: ab_sales_sync
+msgid "Closed"
+msgstr "مغلقة"
+
+#. module: ab_sales_sync
+msgid "Lines"
+msgstr "السطور"
+
+#. module: ab_sales_sync
+msgid "ePlus Serial"
+msgstr "مسلسل إي بلس"
+
+#. module: ab_sales_sync
+msgid "Push State"
+msgstr "حالة الإرسال"
+
+#. module: ab_sales_sync
+msgid "None"
+msgstr "لا يوجد"
+
+#. module: ab_sales_sync
+msgid "Success"
+msgstr "نجاح"
+
+#. module: ab_sales_sync
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_sales_sync
+msgid "Push Error"
+msgstr "خطأ الإرسال"
+
+#. module: ab_sales_sync
+msgid "Push Message"
+msgstr "رسالة الإرسال"
+
+#. module: ab_sales_sync
+msgid "New Customer Name"
+msgstr "اسم العميل الجديد"
+
+#. module: ab_sales_sync
+msgid "New Customer Phone"
+msgstr "هاتف العميل الجديد"
+
+#. module: ab_sales_sync
+msgid "New Customer Address"
+msgstr "عنوان العميل الجديد"
+
+#. module: ab_sales_sync
+msgid "Bill Customer Name"
+msgstr "اسم عميل الفاتورة"
+
+#. module: ab_sales_sync
+msgid "Bill Customer Phone"
+msgstr "هاتف عميل الفاتورة"
+
+#. module: ab_sales_sync
+msgid "Bill Customer Address"
+msgstr "عنوان عميل الفاتورة"
+
+#. module: ab_sales_sync
+msgid "Customer Insurance Name"
+msgstr "اسم تأمين العميل"
+
+#. module: ab_sales_sync
+msgid "Customer Insurance Number"
+msgstr "رقم تأمين العميل"
+
+#. module: ab_sales_sync
+msgid "Customer Snapshot"
+msgstr "لقطة العميل"
+
+#. module: ab_sales_sync
+msgid "POS Client Token"
+msgstr "رمز عميل نقطة البيع"
+
+#. module: ab_sales_sync
+msgid "Actual Salesperson"
+msgstr "مندوب البيع الفعلي"
+
+#. module: ab_sales_sync
+msgid "Line Count"
+msgstr "عدد السطور"
+
+#. module: ab_sales_sync
+msgid "Total Quantity"
+msgstr "إجمالي الكمية"
+
+#. module: ab_sales_sync
+msgid "Total Price"
+msgstr "إجمالي السعر"
+
+#. module: ab_sales_sync
+msgid "Total Net Amount"
+msgstr "إجمالي الصافي"
+
+#. module: ab_sales_sync
+msgid "Header"
+msgstr "الرأس"
+
+#. module: ab_sales_sync
+msgid "Product"
+msgstr "الصنف"
+
+#. module: ab_sales_sync
+msgid "Product Code"
+msgstr "كود الصنف"
+
+#. module: ab_sales_sync
+msgid "Inventory JSON"
+msgstr "بيانات المخزون JSON"
+
+#. module: ab_sales_sync
+msgid "Inventory Snapshot"
+msgstr "لقطة المخزون"
+
+#. module: ab_sales_sync
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_sales_sync
+msgid "Quantity"
+msgstr "الكمية"
+
+#. module: ab_sales_sync
+msgid "Total Balance"
+msgstr "إجمالي الرصيد"
+
+#. module: ab_sales_sync
+msgid "Price"
+msgstr "السعر"
+
+#. module: ab_sales_sync
+msgid "Available Prices"
+msgstr "الأسعار المتاحة"
+
+#. module: ab_sales_sync
+msgid "Sell Price"
+msgstr "سعر البيع"
+
+#. module: ab_sales_sync
+msgid "Target Sell Price"
+msgstr "سعر البيع المستهدف"
+
+#. module: ab_sales_sync
+msgid "Cost"
+msgstr "التكلفة"
+
+#. module: ab_sales_sync
+msgid "Net Amount"
+msgstr "صافي القيمة"
+
+#. module: ab_sales_sync
+msgid "Products Not Exist"
+msgstr "أصناف غير موجودة"
+
+#. module: ab_sales_sync
+msgid "UoM"
+msgstr "وحدة القياس"
+
+#. module: ab_sales_sync
+msgid "Subtotal"
+msgstr "الإجمالي الفرعي"
+
+#. module: ab_sales_sync
+msgid "Tax"
+msgstr "الضريبة"
+
+#. module: ab_sales_sync
+msgid "Unavailable Reason"
+msgstr "سبب عدم التوفر"
+
+#. module: ab_sales_sync
+msgid "Other Reason"
+msgstr "سبب آخر"
+
+#. module: ab_sales_sync
+msgid "Not transferred yet from main store"
+msgstr "لم يتم التحويل بعد من المخزن الرئيسي"
+
+#. module: ab_sales_sync
+msgid "Wrong price in system"
+msgstr "سعر غير صحيح في النظام"
+
+#. module: ab_sales_sync
+msgid "Stocktaking error"
+msgstr "خطأ جرد"
+
+#. module: ab_sales_sync
+msgid "Not entered by data entry yet"
+msgstr "لم يتم إدخاله بعد بواسطة مدخل البيانات"
+
+#. module: ab_sales_sync
+msgid "Already told customer we will deliver product"
+msgstr "تم إبلاغ العميل بالفعل أننا سنوفر الصنف"
+
+#. module: ab_sales_sync
+msgid "Other"
+msgstr "أخرى"
+
+#. module: ab_sales_sync
+msgid "Stock Availability"
+msgstr "توفر المخزون"
+
+#. module: ab_sales_sync
+msgid "Missing Stock"
+msgstr "مخزون غير متوفر"
+
+#. module: ab_sales_sync
+msgid "Invoice Number"
+msgstr "رقم الفاتورة"
+
+#. module: ab_sales_sync
+msgid "Store ePlus Serial"
+msgstr "مسلسل الفرع في إي بلس"
+
+#. module: ab_sales_sync
+msgid "Return Lines"
+msgstr "سطور المرتجع"
+
+#. module: ab_sales_sync
+msgid "Total Qty"
+msgstr "إجمالي الكمية"
+
+#. module: ab_sales_sync
+msgid "Total Value"
+msgstr "إجمالي القيمة"
+
+#. module: ab_sales_sync
+msgid "Sales Return ID"
+msgstr "معرف مرتجع المبيعات"
+
+#. module: ab_sales_sync
+msgid "F-Transaction ID"
+msgstr "معرف الحركة المالية"
+
+#. module: ab_sales_sync
+msgid "Total Sales Net"
+msgstr "صافي المبيعات"
+
+#. module: ab_sales_sync
+msgid "Notes"
+msgstr "ملاحظات"
+
+#. module: ab_sales_sync
+msgid "Return Header"
+msgstr "رأس المرتجع"
+
+#. module: ab_sales_sync
+msgid "Original Line"
+msgstr "السطر الأصلي"
+
+#. module: ab_sales_sync
+msgid "Source Unit"
+msgstr "وحدة المصدر"
+
+#. module: ab_sales_sync
+msgid "Source UoM Factor"
+msgstr "معامل وحدة قياس المصدر"
+
+#. module: ab_sales_sync
+msgid "Sold Qty"
+msgstr "الكمية المباعة"
+
+#. module: ab_sales_sync
+msgid "Sold Qty (Source)"
+msgstr "الكمية المباعة (المصدر)"
+
+#. module: ab_sales_sync
+msgid "Max Returnable"
+msgstr "أقصى كمية مرتجعة"
+
+#. module: ab_sales_sync
+msgid "Max Returnable (Source)"
+msgstr "أقصى كمية مرتجعة (المصدر)"
+
+#. module: ab_sales_sync
+msgid "Qty to Return"
+msgstr "الكمية المطلوب إرجاعها"
+
+#. module: ab_sales_sync
+msgid "Line Value"
+msgstr "قيمة السطر"
+
+#. module: ab_sales_sync
+msgid "E-Plus Item ID"
+msgstr "معرف الصنف في إي بلس"
+
+#. module: ab_sales_sync
+msgid "Item Does Not Exist"
+msgstr "الصنف غير موجود"
+
+#. module: ab_sales_sync
+msgid "Missing Item"
+msgstr "صنف غير موجود"
+
+#. module: ab_sales_sync
+msgid "Archived"
+msgstr "مؤرشفة"
+
+#. module: ab_sales_sync
+msgid "Group By"
+msgstr "تجميع حسب"
+
+#. module: ab_sales_sync
+msgid "Messages"
+msgstr "الرسائل"
+
+#. module: ab_sales_sync
+msgid "Sales Header Mirror: all records"
+msgstr "مرآة رأس المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales Line Mirror: all records"
+msgstr "مرآة سطر المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales Return Header Mirror: all records"
+msgstr "مرآة رأس مرتجع المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales Return Line Mirror: all records"
+msgstr "مرآة سطر مرتجع المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales header mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة رأس المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales line mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة سطر المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales return header mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة رأس مرتجع المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales return line mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة سطر مرتجع المبيعات فريدة لكل فرع وسجل مصدر."
