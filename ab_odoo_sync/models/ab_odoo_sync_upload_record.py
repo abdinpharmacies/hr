@@ -3,6 +3,7 @@ import re
 import uuid
 
 from odoo import api, fields, models
+from odoo.addons.integration_queue_job.exception import RetryableJobError
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
 
@@ -200,6 +201,7 @@ class AbOdooSyncUploadRecord(models.Model):
             record.with_delay(
                 identity_key=record._queue_identity_key(),
                 description=_("Apply uploaded sync record %(record_id)s") % {"record_id": record.id},
+                max_retries=0,
             ).job_apply_to_target()
             queued_count += 1
         return queued_count
@@ -630,6 +632,8 @@ class AbOdooSyncUploadRecord(models.Model):
                     "applied_at": fields.Datetime.now(),
                 }
             )
+            if self.env.context.get("job_uuid"):
+                raise RetryableJobError(str(ex)) from ex
             return
 
         self.write(

@@ -177,7 +177,11 @@ Files changed:
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
 
-## Current changes before commit
+## 08def18d07431a9ae72fb4d087ae53a4401f3696
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Mon Aug 17 10:52:08 2026 +0300
+- Subject: ab_odoo_sync/Implemented the MAIN auto-apply feeder in ab_odoo_sync.
 
 User-facing changes:
 
@@ -194,3 +198,18 @@ Files changed:
 - `ab_odoo_sync/i18n/ar.po`
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Made MAIN upload apply jobs and the MAIN feeder job use infinite queue retries.
+- Changed upload apply retry intervals to 10 seconds, 60 seconds, 5 minutes, then 1 day for later retries.
+- Kept upload record audit status updates when apply fails, while raising retryable queue errors for queued apply jobs so they continue retrying.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`

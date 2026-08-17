@@ -447,6 +447,7 @@ class AbOdooSyncService(models.Model):
         self.sudo().with_delay(
             identity_key=self._main_upload_apply_feeder_identity_key(),
             description=_("Queue MAIN upload records for apply"),
+            max_retries=0,
         ).job_queue_main_upload_apply_records()
         return {"status": "queued"}
 
