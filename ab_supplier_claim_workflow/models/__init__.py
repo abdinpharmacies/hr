@@ -5,6 +5,7 @@ from . import ab_supplier_claim_escalation
 from . import ab_supplier_claim_tracking_visit
 from . import ab_check_delivery_wizard
 from . import ab_claim_error_wizard
+from . import ab_supplier_claim_defer_wizard
 from . import ab_supplier_claim_issue
 from . import ab_costcenter_inherit
 from . import ab_delegate_phone

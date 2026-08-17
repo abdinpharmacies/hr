@@ -24,6 +24,7 @@ class SupplierClaimStageHistory(models.Model):
         ('pending', 'Pending'),
         ('accepted', 'Accepted'),
         ('rejected', 'Rejected'),
+        ('deferred', 'Deferred'),
         ('escalated', 'Escalated'),
         ('escalated_no_manager', 'Escalated No Manager'),
     ], default='pending', required=True)

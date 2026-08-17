@@ -18,6 +18,7 @@
         'views/ab_supplier_claim_escalation.xml',
         'views/ab_supplier_mapping.xml',
         'views/ab_supplier_claim_cycle.xml',
+        'views/ab_supplier_claim_defer_wizard.xml',
         'views/ab_claim_error_wizard.xml',
         'views/ab_check_delivery_wizard.xml',
         'views/ab_supplier_claim_issue.xml',

@@ -1,3 +1,4 @@
+from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
 
@@ -81,6 +82,18 @@ class TestSupplierClaimWorkflow(TransactionCase):
         groups.append(self.group_bank_acc)
         for group in groups:
             self._department_accept_and_finish(claim, group)
+
+    def test_create_claim_requires_positive_amount(self):
+        self._set_workflow_group(self.group_secretarial)
+        with self.assertRaises(ValidationError):
+            self.env['ab_supplier_claim_cycle'].with_user(self.workflow_user).create({
+                'supplier_id': self.supplier.id,
+                'supplier_type': 'non_taxable',
+                'num_of_invoice': 2,
+                'area': 'south',
+                'amount_of_check': 0.0,
+                'type_of_invoice': 'original',
+            })
 
     def test_secretarial_starts_cycle(self):
         claim = self._create_claim()
@@ -183,6 +196,93 @@ class TestSupplierClaimWorkflow(TransactionCase):
         claim.with_user(self.workflow_user).action_reject()
         self.assertEqual(claim.inv_decision, 'rejected')
         self.assertEqual(claim.pur_decision, 'pending')
+
+    def test_department_defer_requires_date_and_reason_then_blocks_finish(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        self._set_workflow_group(self.group_inventory)
+        localized_claim = claim.with_user(self.workflow_user).with_context(lang='ar_001')
+        action = localized_claim.action_defer()
+        self.assertEqual(action['res_model'], 'ab_supplier_claim_defer_wizard')
+        self.assertEqual(action['context']['default_claim_id'], claim.id)
+        self.assertEqual(action['context']['default_stage_key'], 'inventory')
+
+        yesterday = fields.Date.subtract(fields.Date.context_today(claim), days=1)
+        wizard = self.env['ab_supplier_claim_defer_wizard'].with_user(self.workflow_user).with_context(
+            lang='ar_001'
+        ).create({
+            'claim_id': claim.id,
+            'stage_key': 'inventory',
+            'expected_completion_date': yesterday,
+            'deferral_reason': 'Waiting for supplier documents.',
+        })
+        wizard.action_confirm()
+        self.assertEqual(claim.inv_decision, 'deferred')
+        self.assertEqual(claim.department_decision, 'deferred')
+        self.assertEqual(claim.inv_deferred_overdue_days, 1)
+        deferred_history = claim.stage_history_ids.filtered(
+            lambda history: history.stage == 'inventory' and history.decision == 'deferred'
+        )[-1]
+        self.assertNotIn('Expected completion date:', deferred_history.notes)
+        self.assertNotIn('Reason:', deferred_history.notes)
+        self.assertNotIn('Actual overdue days:', deferred_history.notes)
+        self.assertIn('أيام التأخير الفعلية: 1', deferred_history.notes)
+
+        tomorrow = fields.Date.add(fields.Date.context_today(claim), days=1)
+        claim.with_user(self.workflow_user).write({'inv_deferred_expected_date': tomorrow})
+        timeline = localized_claim.action_get_timeline_data()['timeline']
+        inventory_stage = next(
+            entry for entry in timeline
+            if entry.get('type') == 'stage' and entry.get('stage') == 'inventory'
+        )
+        self.assertTrue(inventory_stage['show_defer_overdue_days'])
+        self.assertEqual(inventory_stage['defer_overdue_days'], 0)
+        self.assertIn('أيام التأخير الفعلية: 0', inventory_stage['notes'])
+        timeline_html = localized_claim._render_timeline_html()
+        self.assertIn('أيام التأخير بعد نهاية الوقت المتوقع للتأجيل: 0 أيام', timeline_html)
+
+        with self.assertRaises(UserError):
+            claim.with_user(self.workflow_user).action_finish()
+
+    def test_deferred_department_escalation_counts_after_expected_date(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        old_pending_date = fields.Datetime.subtract(fields.Datetime.now(), days=3)
+        inventory_pending = self.env['ab_supplier_claim_stage_history'].search([
+            ('claim_id', '=', claim.id),
+            ('stage', '=', 'inventory'),
+            ('decision', '=', 'pending'),
+        ], limit=1)
+        inventory_pending.write({'action_date': old_pending_date})
+
+        self._set_workflow_group(self.group_inventory)
+        tomorrow = fields.Date.add(fields.Date.context_today(claim), days=1)
+        claim.with_user(self.workflow_user).write({
+            'inv_deferred_expected_date': tomorrow,
+            'inv_deferred_reason': 'Waiting for supplier documents.',
+        })
+        claim.with_user(self.workflow_user).action_defer()
+
+        self.env['ir.config_parameter'].sudo().set_param('supplier_claim.escalation_sla_seconds', '0')
+        self.env['ab_supplier_claim_cycle']._cron_escalate_overdue_stages()
+        inventory_escalations = self.env['ab_supplier_claim_stage_history'].search_count([
+            ('claim_id', '=', claim.id),
+            ('stage', '=', 'inventory'),
+            ('decision', '=', 'escalated'),
+        ])
+        self.assertEqual(inventory_escalations, 0)
+
+        yesterday = fields.Date.subtract(fields.Date.context_today(claim), days=1)
+        claim.with_user(self.workflow_user).write({'inv_deferred_expected_date': yesterday})
+        self.env['ab_supplier_claim_cycle']._cron_escalate_overdue_stages()
+        inventory_escalations = self.env['ab_supplier_claim_stage_history'].search_count([
+            ('claim_id', '=', claim.id),
+            ('stage', '=', 'inventory'),
+            ('decision', '=', 'escalated'),
+        ])
+        self.assertEqual(inventory_escalations, 1)
 
     def test_all_departments_can_act_simultaneously(self):
         claim = self._create_claim()

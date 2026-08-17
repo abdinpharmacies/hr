@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_supplier_claim_defer_wizard_form" model="ir.ui.view">
+        <field name="name">ab_supplier_claim_defer_wizard.form</field>
+        <field name="model">ab_supplier_claim_defer_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Defer Supplier Claim" class="scc-clean-dialog">
+                <div class="scc-dialog-body">
+                    <div class="scc-dialog-header">
+                        <div class="scc-dialog-icon">⏸</div>
+                        <div>
+                            <div class="scc-dialog-title o_translate_inline">Defer Supplier Claim</div>
+                            <div class="scc-dialog-sub o_translate_inline">Set the expected completion date and deferral reason</div>
+                        </div>
+                    </div>
+                    <div class="scc-dialog-field">
+                        <field name="claim_id" invisible="1"/>
+                        <field name="stage_key" invisible="1"/>
+                        <div class="scc-stage-field-label o_translate_inline">Expected Completion Date</div>
+                        <field name="expected_completion_date" required="1"/>
+                    </div>
+                    <div class="scc-dialog-field">
+                        <div class="scc-stage-field-label o_translate_inline">Deferral Reason</div>
+                        <field name="deferral_reason" required="1" placeholder="Write the reason for deferring this claim..."/>
+                    </div>
+                    <div class="scc-dialog-footer">
+                        <button special="cancel" string="Cancel" class="btn-secondary"/>
+                        <button name="action_confirm" type="object" string="Confirm Defer" class="btn-primary"/>
+                    </div>
+                </div>
+            </form>
+        </field>
+    </record>
+</odoo>

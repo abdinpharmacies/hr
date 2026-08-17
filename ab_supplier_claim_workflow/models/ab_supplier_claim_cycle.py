@@ -51,6 +51,27 @@ REASON_FIELD_MAP = {
     'tax_accounts': 'tax_reason',
     'bank_acc': 'bank_reason',
 }
+DEFER_REASON_FIELD_MAP = {
+    'inventory': 'inv_deferred_reason',
+    'purchase': 'pur_deferred_reason',
+    'suppliers': 'sup_deferred_reason',
+    'tax_accounts': 'tax_deferred_reason',
+    'bank_acc': 'bank_deferred_reason',
+}
+DEFER_EXPECTED_DATE_FIELD_MAP = {
+    'inventory': 'inv_deferred_expected_date',
+    'purchase': 'pur_deferred_expected_date',
+    'suppliers': 'sup_deferred_expected_date',
+    'tax_accounts': 'tax_deferred_expected_date',
+    'bank_acc': 'bank_deferred_expected_date',
+}
+DEFER_OVERDUE_DAYS_FIELD_MAP = {
+    'inventory': 'inv_deferred_overdue_days',
+    'purchase': 'pur_deferred_overdue_days',
+    'suppliers': 'sup_deferred_overdue_days',
+    'tax_accounts': 'tax_deferred_overdue_days',
+    'bank_acc': 'bank_deferred_overdue_days',
+}
 WITHHOLDING_TAX_SUPPLIER_TYPE = 'withholding_tax'
 
 
@@ -129,19 +150,19 @@ class SupplierClaimCycle(models.Model):
     )
 
     inv_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending', string='Inventory Decision')
     pur_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending', string='Purchase Decision')
     sup_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending', string='Suppliers Decision')
     tax_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending', string='Tax Accounts Decision')
     bank_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending', string='Bank Account Decision')
     inv_finished = fields.Boolean(default=False, string='Inventory Finished')
     pur_finished = fields.Boolean(default=False, string='Purchase Finished')
@@ -150,7 +171,7 @@ class SupplierClaimCycle(models.Model):
     bank_finished = fields.Boolean(default=False, string='Bank Account Finished')
 
     department_decision = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected')],
+        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending',
         required=True,
         tracking=True,
@@ -160,7 +181,27 @@ class SupplierClaimCycle(models.Model):
     sup_reason = fields.Text(string="Suppliers Reason", copy=False)
     tax_reason = fields.Text(string="Tax Accounts Reason", copy=False)
     bank_reason = fields.Text(string="Bank Account Reason", copy=False)
-    delay_reason = fields.Text(string="Delay / Rejection Reason", tracking=True)
+    inv_deferred_expected_date = fields.Date(string='Inventory Expected Completion Date', copy=False, tracking=True)
+    pur_deferred_expected_date = fields.Date(string='Purchase Expected Completion Date', copy=False, tracking=True)
+    sup_deferred_expected_date = fields.Date(string='Suppliers Expected Completion Date', copy=False, tracking=True)
+    tax_deferred_expected_date = fields.Date(string='Tax Accounts Expected Completion Date', copy=False, tracking=True)
+    bank_deferred_expected_date = fields.Date(string='Bank Account Expected Completion Date', copy=False, tracking=True)
+    inv_deferred_reason = fields.Text(string='Inventory Deferral Reason', copy=False, tracking=True)
+    pur_deferred_reason = fields.Text(string='Purchase Deferral Reason', copy=False, tracking=True)
+    sup_deferred_reason = fields.Text(string='Suppliers Deferral Reason', copy=False, tracking=True)
+    tax_deferred_reason = fields.Text(string='Tax Accounts Deferral Reason', copy=False, tracking=True)
+    bank_deferred_reason = fields.Text(string='Bank Account Deferral Reason', copy=False, tracking=True)
+    inv_deferred_overdue_days = fields.Integer(
+        string='Inventory Actual Overdue Days', compute='_compute_deferred_overdue_days')
+    pur_deferred_overdue_days = fields.Integer(
+        string='Purchase Actual Overdue Days', compute='_compute_deferred_overdue_days')
+    sup_deferred_overdue_days = fields.Integer(
+        string='Suppliers Actual Overdue Days', compute='_compute_deferred_overdue_days')
+    tax_deferred_overdue_days = fields.Integer(
+        string='Tax Accounts Actual Overdue Days', compute='_compute_deferred_overdue_days')
+    bank_deferred_overdue_days = fields.Integer(
+        string='Bank Account Actual Overdue Days', compute='_compute_deferred_overdue_days')
+    delay_reason = fields.Text(string="Rejection Reason", tracking=True)
     sub_delivery_status = fields.Selection(
         selection=[('ready', 'Delivered'), ('shipped', 'Shipped')],
         string="Delivery Sub Status",
@@ -200,7 +241,13 @@ class SupplierClaimCycle(models.Model):
         readonly=True,
     )
     department_decision_display = fields.Selection(
-        selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('in_progress', 'In Progress')],
+        selection=[
+            ('pending', 'Pending'),
+            ('accepted', 'Accepted'),
+            ('rejected', 'Rejected'),
+            ('deferred', 'Deferred'),
+            ('in_progress', 'In Progress'),
+        ],
         compute='_compute_department_decision_display',
         readonly=True,
     )
@@ -275,6 +322,25 @@ class SupplierClaimCycle(models.Model):
     def _compute_has_tax_accounts(self):
         for rec in self:
             rec.has_tax_accounts = rec.supplier_type == WITHHOLDING_TAX_SUPPLIER_TYPE
+
+    @api.depends(
+        'inv_decision', 'pur_decision', 'sup_decision', 'tax_decision', 'bank_decision',
+        'inv_deferred_expected_date', 'pur_deferred_expected_date',
+        'sup_deferred_expected_date', 'tax_deferred_expected_date',
+        'bank_deferred_expected_date',
+    )
+    def _compute_deferred_overdue_days(self):
+        today = fields.Date.context_today(self)
+        decision_fields = dict(PARALLEL_DECISION_FIELDS)
+        for rec in self:
+            for stage_key, date_field in DEFER_EXPECTED_DATE_FIELD_MAP.items():
+                overdue_field = DEFER_OVERDUE_DAYS_FIELD_MAP[stage_key]
+                decision_field = decision_fields[stage_key]
+                expected_date = rec[date_field]
+                if rec[decision_field] == 'deferred' and expected_date and today > expected_date:
+                    rec[overdue_field] = (today - expected_date).days
+                else:
+                    rec[overdue_field] = 0
 
     @api.model
     def _generate_tracking_token(self):
@@ -929,7 +995,11 @@ class SupplierClaimCycle(models.Model):
     def _compute_department_decision_display(self):
         for rec in self:
             decisions = [rec[df] for _, df in rec._get_parallel_decision_fields()]
-            if all(d == 'pending' for d in decisions):
+            if not decisions:
+                rec.department_decision_display = rec.department_decision or 'pending'
+            elif any(d == 'deferred' for d in decisions):
+                rec.department_decision_display = 'deferred'
+            elif all(d == 'pending' for d in decisions):
                 rec.department_decision_display = 'pending'
             elif all(d == 'accepted' for d in decisions):
                 rec.department_decision_display = 'accepted'
@@ -986,6 +1056,17 @@ class SupplierClaimCycle(models.Model):
                     icon = '✗'
                     status_text = _('Rejected')
                     css_class = 'scc-parallel-card is-rejected'
+                elif decision == 'deferred':
+                    icon = '⏸'
+                    overdue_days = rec[DEFER_OVERDUE_DAYS_FIELD_MAP[stage_key]]
+                    expected_date = rec[DEFER_EXPECTED_DATE_FIELD_MAP[stage_key]]
+                    if overdue_days:
+                        status_text = _('%(days)s days overdue') % {'days': overdue_days}
+                    elif expected_date:
+                        status_text = _('Deferred until %s') % expected_date
+                    else:
+                        status_text = _('Deferred')
+                    css_class = 'scc-parallel-card is-pending'
                 else:
                     has_pending = True
                     continue
@@ -1029,6 +1110,9 @@ class SupplierClaimCycle(models.Model):
             raise AccessError(_("Only Secretarial or Admin users can create supplier claims."))
         for vals in vals_list:
             self._normalize_check_delivery_status_vals(vals)
+            amount = vals.get('amount_of_check')
+            if not amount or float(amount) <= 0:
+                raise ValidationError(_("Please enter the cheque amount."))
             if vals.get('supplier_id') and not vals.get('contact_phone'):
                 supplier = self.env['ab_costcenter'].browse(vals['supplier_id'])
                 vals['contact_phone'] = self._get_valid_supplier_master_contact_phone(supplier)
@@ -1042,8 +1126,51 @@ class SupplierClaimCycle(models.Model):
         records = super().create(vals_list)
         for rec in records:
             rec._create_stage_history('secretarial', 'accepted', _('Created Request'))
+            rec._notify_claim_created_to_module_users()
         records._sync_supplier_mapping_contact_phone()
         return records
+
+    def _notify_claim_created_to_module_users(self):
+        self.ensure_one()
+        group_xmlids = [
+            'ab_supplier_claim_cycle.supplier_claim_group_user',
+            'ab_supplier_claim_cycle.supplier_claim_group_reviewer',
+            'ab_supplier_claim_workflow.supplier_claim_group_inventory',
+            'ab_supplier_claim_workflow.supplier_claim_group_purchase',
+            'ab_supplier_claim_workflow.supplier_claim_group_suppliers',
+            'ab_supplier_claim_workflow.supplier_claim_group_tax_accounts',
+            'ab_supplier_claim_workflow.supplier_claim_group_bank_acc',
+        ]
+        excluded_group_xmlids = [
+            'ab_supplier_claim_cycle.supplier_claim_group_admin',
+            'base.group_system',
+        ]
+        users = self.env['res.users']
+        for xmlid in group_xmlids:
+            group = self.env.ref(xmlid, raise_if_not_found=False)
+            if group:
+                users |= group.sudo().user_ids
+
+        excluded_users = self.env['res.users']
+        for xmlid in excluded_group_xmlids:
+            group = self.env.ref(xmlid, raise_if_not_found=False)
+            if group:
+                excluded_users |= group.sudo().user_ids
+
+        partner_ids = (users - excluded_users).mapped('partner_id').ids
+        if not partner_ids:
+            return False
+        self.message_post(
+            body=_("New supplier claim %(claim)s was registered for %(supplier)s.") % {
+                'claim': self.display_name,
+                'supplier': self.supplier_id.display_name or '',
+            },
+            partner_ids=partner_ids,
+        )
+        return True
+
+    def _notify_department_turn_started(self, stage_key):
+        return False
 
     @api.model
     def _normalize_check_delivery_status_vals(self, vals):
@@ -1124,7 +1251,7 @@ class SupplierClaimCycle(models.Model):
                         'target': 'new',
                         'context': {
                             'default_error_message': _(
-                                'The Delay / Rejection Reason field is required when rejecting a department request.'
+                                'The Rejection Reason field is required when rejecting a department request.'
                             ),
                         },
                     }
@@ -1141,7 +1268,7 @@ class SupplierClaimCycle(models.Model):
                         'target': 'new',
                         'context': {
                             'default_error_message': _(
-                                'The Delay / Rejection Reason field is required when rejecting.'
+                                'The Rejection Reason field is required when rejecting.'
                             ),
                         },
                     }
@@ -1155,6 +1282,66 @@ class SupplierClaimCycle(models.Model):
                     }
                 )
 
+    def action_defer(self):
+        for rec in self:
+            rec._check_can_act_current_stage()
+            if rec.status not in DEPARTMENT_STAGES:
+                raise UserError(_("Deferral is only available during department review stages."))
+            stage_key = rec._get_user_parallel_stage()
+            if not stage_key:
+                raise AccessError(_("You are not authorized to defer this claim."))
+            date_field = DEFER_EXPECTED_DATE_FIELD_MAP[stage_key]
+            reason_field = DEFER_REASON_FIELD_MAP[stage_key]
+            if not rec[date_field] or not rec[reason_field]:
+                return rec._defer_wizard_action(stage_key, date_field, reason_field)
+            rec._set_parallel_department_decision('deferred')
+
+    def _defer_wizard_action(self, stage_key, date_field, reason_field):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Defer Supplier Claim'),
+            'res_model': 'ab_supplier_claim_defer_wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_claim_id': self.id,
+                'default_stage_key': stage_key,
+                'default_expected_completion_date': self[date_field],
+                'default_deferral_reason': self[reason_field],
+            },
+        }
+
+    @api.model
+    def _get_defer_expected_date_field(self, stage_key):
+        return DEFER_EXPECTED_DATE_FIELD_MAP.get(stage_key)
+
+    @api.model
+    def _get_defer_reason_field(self, stage_key):
+        return DEFER_REASON_FIELD_MAP.get(stage_key)
+
+    def _get_deferred_actual_overdue_days(self, stage_key):
+        self.ensure_one()
+        date_field = self._get_defer_expected_date_field(stage_key)
+        expected_date = self[date_field] if date_field else False
+        if not expected_date:
+            return 0
+        return max((fields.Date.context_today(self) - expected_date).days, 0)
+
+    def _format_deferred_stage_history_note(self, stage_key):
+        self.ensure_one()
+        date_field = self._get_defer_expected_date_field(stage_key)
+        reason_field = self._get_defer_reason_field(stage_key)
+        return _(
+            'Expected completion date: %(date)s\n'
+            'Reason: %(reason)s\n'
+            'Actual overdue days: %(days)s'
+        ) % {
+            'date': self[date_field] if date_field else '',
+            'reason': self[reason_field] if reason_field else '',
+            'days': self._get_deferred_actual_overdue_days(stage_key),
+        }
+
     def action_finish(self):
         for rec in self:
             rec._check_can_act_current_stage()
@@ -1167,6 +1354,8 @@ class SupplierClaimCycle(models.Model):
                 if group_xmlid and self.env.user.has_group(group_xmlid):
                     if rec[decision_field] == 'pending':
                         raise UserError(_("You must Accept or Reject before finishing."))
+                    if rec[decision_field] == 'deferred':
+                        raise UserError(_("Deferred requests cannot be finished until they are accepted or rejected."))
                     rec.with_context(supplier_claim_internal_write=True).write({
                         FINISHED_FIELD_MAP[stage_key]: True,
                     })
@@ -1176,6 +1365,40 @@ class SupplierClaimCycle(models.Model):
                 raise AccessError(_("You are not authorized to finish this stage."))
             rec._try_advance_from_parallel()
 
+    def _missing_info_action(self, message):
+        return {
+            'type': 'ir.actions.act_window',
+            'name': _('Missing Required Information'),
+            'res_model': 'ab_claim_error_wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_error_message': message,
+            },
+        }
+
+    def _get_user_parallel_stage(self):
+        self.ensure_one()
+        stage_groups = self._get_stage_group_xmlids()
+        for stage_key, _decision_field in self._get_parallel_decision_fields():
+            group_xmlid = stage_groups.get(stage_key)
+            if group_xmlid and self.env.user.has_group(group_xmlid):
+                return stage_key
+        return False
+
+    def _get_parallel_overall_decision(self):
+        self.ensure_one()
+        decisions = [self[decision_field] for _stage_key, decision_field in self._get_parallel_decision_fields()]
+        if not decisions:
+            return self.department_decision or 'pending'
+        if any(decision == 'deferred' for decision in decisions):
+            return 'deferred'
+        if any(decision == 'rejected' for decision in decisions):
+            return 'rejected'
+        if all(decision == 'accepted' for decision in decisions):
+            return 'accepted'
+        return 'pending'
+
     def _set_parallel_department_decision(self, decision):
         self.ensure_one()
         stage_groups = self._get_stage_group_xmlids()
@@ -1184,17 +1407,43 @@ class SupplierClaimCycle(models.Model):
             if group_xmlid and self.env.user.has_group(group_xmlid):
                 vals = {decision_field: decision}
                 dept_reason = self[REASON_FIELD_MAP[stage_key]] or ''
+                if decision == 'deferred':
+                    dept_reason = self[DEFER_REASON_FIELD_MAP[stage_key]] or ''
                 if decision == 'rejected':
                     vals[REASON_FIELD_MAP[stage_key]] = dept_reason
                 self.with_context(supplier_claim_internal_write=True).write(vals)
-                self._create_stage_history(stage_key, decision, dept_reason if decision == 'rejected' else None)
                 if decision == 'accepted':
+                    self._create_stage_history(stage_key, decision)
+                    self.with_context(supplier_claim_internal_write=True).write({
+                        'department_decision': self._get_parallel_overall_decision(),
+                    })
                     self._notify_secretarial_department_accepted(stage_key)
                 elif decision == 'rejected':
+                    self._create_stage_history(stage_key, decision, dept_reason)
+                    self.with_context(supplier_claim_internal_write=True).write({
+                        'department_decision': self._get_parallel_overall_decision(),
+                    })
                     self._create_stage_history(stage_key, 'pending')
                     self.message_post(
                         body=_("%(stage)s rejected this supplier claim. Reason: %(reason)s") % {
                             'stage': self._get_stage_label(stage_key),
+                            'reason': dept_reason,
+                        }
+                    )
+                elif decision == 'deferred':
+                    expected_date = self[DEFER_EXPECTED_DATE_FIELD_MAP[stage_key]]
+                    self.with_context(supplier_claim_internal_write=True).write({
+                        'department_decision': self._get_parallel_overall_decision(),
+                    })
+                    self._create_stage_history(
+                        stage_key,
+                        decision,
+                        self._format_deferred_stage_history_note(stage_key),
+                    )
+                    self.message_post(
+                        body=_("%(stage)s deferred this supplier claim until %(date)s. Reason: %(reason)s") % {
+                            'stage': self._get_stage_label(stage_key),
+                            'date': expected_date,
                             'reason': dept_reason,
                         }
                     )
@@ -1230,6 +1479,7 @@ class SupplierClaimCycle(models.Model):
             'assigned_escalation_user': False,
         })
         self._create_stage_history(next_stage, 'pending')
+        self._notify_department_turn_started(next_stage)
 
     def action_toggle_chatter(self):
         self.ensure_one()
@@ -1307,6 +1557,8 @@ class SupplierClaimCycle(models.Model):
                 })
                 rec._create_stage_history('inventory', 'pending')
                 rec._create_stage_history('purchase', 'pending')
+                rec._notify_department_turn_started('inventory')
+                rec._notify_department_turn_started('purchase')
                 return
             if rec.status == 'sign_check':
                 return {
@@ -1355,6 +1607,16 @@ class SupplierClaimCycle(models.Model):
             'sup_reason': False,
             'tax_reason': False,
             'bank_reason': False,
+            'inv_deferred_expected_date': False,
+            'pur_deferred_expected_date': False,
+            'sup_deferred_expected_date': False,
+            'tax_deferred_expected_date': False,
+            'bank_deferred_expected_date': False,
+            'inv_deferred_reason': False,
+            'pur_deferred_reason': False,
+            'sup_deferred_reason': False,
+            'tax_deferred_reason': False,
+            'bank_deferred_reason': False,
         })
 
     def action_admin_force_next(self):
@@ -1585,6 +1847,14 @@ class SupplierClaimCycle(models.Model):
         return int(self.env['ir.config_parameter'].sudo().get_param(
             'supplier_claim.escalation_sla_seconds', '86400'))
 
+    def _get_department_escalation_start_datetime(self, dept_key, pending_datetime=False):
+        self.ensure_one()
+        decision_field = dict(PARALLEL_DECISION_FIELDS).get(dept_key)
+        date_field = DEFER_EXPECTED_DATE_FIELD_MAP.get(dept_key)
+        if decision_field and date_field and self[decision_field] == 'deferred' and self[date_field]:
+            return fields.Datetime.to_datetime(self[date_field]) + timedelta(days=1)
+        return pending_datetime
+
     @api.model
     def _cron_escalate_overdue_stages(self):
         claims = self.search([('status', 'in', DEPARTMENT_STAGES)])
@@ -1606,7 +1876,8 @@ class SupplierClaimCycle(models.Model):
                 ], order='action_date desc', limit=1)
                 if not dept_history or not dept_history.action_date:
                     continue
-                if now - dept_history.action_date <= timedelta(seconds=sla_seconds):
+                escalation_start = claim._get_department_escalation_start_datetime(dept_key, dept_history.action_date)
+                if not escalation_start or now - escalation_start <= timedelta(seconds=sla_seconds):
                     continue
 
                 details = claim._resolve_escalation_details(stage_key=dept_key)
@@ -1624,7 +1895,10 @@ class SupplierClaimCycle(models.Model):
                         ('stage', '=', dept_key),
                         ('decision', '=', 'rejected'),
                     ], order='action_date desc', limit=1)
-                    if not last_rejected or last_escalated.action_date > last_rejected.action_date:
+                    if (
+                        last_escalated.action_date >= escalation_start
+                        and (not last_rejected or last_escalated.action_date > last_rejected.action_date)
+                    ):
                         current_manager_lines = [
                             '\u2022 %s' % user.display_name
                             for user in manager_users
@@ -1641,7 +1915,7 @@ class SupplierClaimCycle(models.Model):
                     '  Elapsed seconds: %s',
                     claim.display_name, dept_key,
                     ', '.join(u.display_name for u in manager_users) if manager_users else 'NONE',
-                    round((now - dept_history.action_date).total_seconds(), 1),
+                    round((now - escalation_start).total_seconds(), 1),
                 )
 
                 if manager_users:
@@ -1667,6 +1941,7 @@ class SupplierClaimCycle(models.Model):
                         ('claim_id', '=', claim.id),
                         ('stage', '=', dept_key),
                         ('decision', '=', 'escalated'),
+                        ('action_date', '>=', escalation_start),
                         ('notes', 'not like', 'Escalation notification%'),
                     ], limit=1)
                     if not already_no_mgr:
@@ -1771,6 +2046,7 @@ class SupplierClaimCycle(models.Model):
             'assigned_escalation_user': False,
         })
         self._create_stage_history(next_stage, 'pending')
+        self._notify_department_turn_started(next_stage)
 
     def _get_next_stage(self):
         self.ensure_one()
@@ -1955,7 +2231,7 @@ class SupplierClaimCycle(models.Model):
                 dept_df = current_dept_decisions.get(stage)
                 if dept_df:
                     dept_decision = self[dept_df]
-                    is_current = dept_decision == 'pending' and self.status in DEPARTMENT_STAGES and not self.has_blocking_issue
+                    is_current = dept_decision in ('pending', 'deferred') and self.status in DEPARTMENT_STAGES and not self.has_blocking_issue
                     is_completed = dept_decision == 'accepted'
                 else:
                     is_current = False
@@ -1973,12 +2249,20 @@ class SupplierClaimCycle(models.Model):
                     )
                 )
 
-            stage_notes = self._get_display_history_notes(last.notes) if last else ''
+            if last and last.decision == 'deferred' and stage in DEPARTMENT_STAGES:
+                stage_notes = self._format_deferred_stage_history_note(stage)
+            else:
+                stage_notes = self._get_display_history_notes(last.notes) if last else ''
 
             is_overdue = False
             if is_current and stage != 'closed' and last and last.action_date:
                 can_see_overdue = self._is_supplier_claim_admin() or self._is_supplier_claim_secretarial()
-                is_overdue = can_see_overdue and fields.Datetime.now() - last.action_date > timedelta(hours=24)
+                overdue_start = self._get_department_escalation_start_datetime(stage, last.action_date)
+                is_overdue = (
+                    can_see_overdue
+                    and overdue_start
+                    and fields.Datetime.now() - overdue_start > timedelta(seconds=self._get_escalation_sla_seconds())
+                )
 
             parallel_decisions = {
                 sk: {
@@ -1987,6 +2271,20 @@ class SupplierClaimCycle(models.Model):
                 }
                 for sk, df in self._get_parallel_decision_fields()
             } if stage in DEPARTMENT_STAGES else None
+
+            show_defer_overdue_days = False
+            defer_overdue_days = 0
+            if stage in DEPARTMENT_STAGES:
+                decision_field = current_dept_decisions.get(stage)
+                expected_date_field = self._get_defer_expected_date_field(stage)
+                if (
+                    decision_field
+                    and expected_date_field
+                    and self[decision_field] == 'deferred'
+                    and self[expected_date_field]
+                ):
+                    show_defer_overdue_days = True
+                    defer_overdue_days = self._get_deferred_actual_overdue_days(stage)
 
             timeline.append({
                 'type': 'stage',
@@ -2000,6 +2298,8 @@ class SupplierClaimCycle(models.Model):
                 'display_date': display_datetime(last.action_date if last else False),
                 'notes': stage_notes,
                 'parallel_decisions': parallel_decisions,
+                'show_defer_overdue_days': show_defer_overdue_days,
+                'defer_overdue_days': defer_overdue_days,
             })
 
         for issue in self.issue_ids:
@@ -2126,6 +2426,11 @@ class SupplierClaimCycle(models.Model):
                 L.append('<div class="%s">%s</div>' % (label_class, entry['label']))
                 if entry['notes']:
                     L.append('<div class="scc-timeline-notes">%s</div>' % entry['notes'])
+                if entry.get('show_defer_overdue_days'):
+                    defer_overdue_label = _('Delay days after expected deferral date: %(days)s days') % {
+                        'days': entry.get('defer_overdue_days', 0),
+                    }
+                    L.append('<div class="scc-timeline-defer-overdue">%s</div>' % defer_overdue_label)
 
                 if entry['stage'] == 'tax_accounts' and is_comp and self._requires_tax_accounts_stage():
                     L.append('<div class="scc-timeline-tax-summary">')
