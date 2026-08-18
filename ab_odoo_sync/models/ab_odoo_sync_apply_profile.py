@@ -89,7 +89,7 @@ class AbOdooSyncApplyProfile(models.Model):
                 profile.apply_mode,
             )
 
-    @api.constrains("source_model_name", "target_model_name", "apply_mode")
+    @api.constrains("source_model_name", "target_model_name", "apply_mode", "auto_apply")
     def _check_models(self):
         for profile in self:
             if profile.apply_mode in {"raw_only", "ignore"}:
@@ -97,6 +97,12 @@ class AbOdooSyncApplyProfile(models.Model):
             if not profile.target_model_name:
                 raise ValidationError(_("Target model is required for this apply mode."))
             if profile.target_model_name not in self.env:
+                if (
+                    profile.apply_mode == "mirror_sync"
+                    and profile.target_model_name == profile.mirror_target_from_source(profile.source_model_name)
+                    and not profile.auto_apply
+                ):
+                    continue
                 raise ValidationError(
                     _("Target model %(model)s is not installed.")
                     % {"model": profile.target_model_name}
@@ -139,6 +145,24 @@ class AbOdooSyncApplyProfile(models.Model):
                 )
             super(AbOdooSyncApplyProfile, profile).write(write_vals)
         return True
+
+    def action_generate_mirror_scaffold(self):
+        self.ensure_one()
+        if self.apply_mode != "mirror_sync":
+            raise ValidationError(_("Mirror scaffold generation is available only for Mirror Sync Model profiles."))
+        target_model_name = self.mirror_target_from_source(self.source_model_name)
+        if self.target_model_name != target_model_name:
+            self.write({"target_model_name": target_model_name})
+        scaffold = self.env["ab_odoo_sync_mirror_scaffold"].sudo().create_from_profile(self)
+        scaffold.action_generate_files()
+        return {
+            "type": "ir.actions.act_window",
+            "name": _("Mirror Scaffold"),
+            "res_model": "ab_odoo_sync_mirror_scaffold",
+            "res_id": scaffold.id,
+            "view_mode": "form",
+            "target": "current",
+        }
 
     @api.model
     def get_for_source(self, source_model_name):
@@ -201,6 +225,11 @@ class AbOdooSyncApplyProfile(models.Model):
             profile._check_models()
             if profile.apply_mode not in {"mirror_sync", "business_model"}:
                 continue
+            if profile.target_model_name not in self.env:
+                raise ValidationError(
+                    _("Install or upgrade target model %(model)s before loading field mappings.")
+                    % {"model": profile.target_model_name}
+                )
             source_fields = profile._source_field_info()
             target_model = self.env[profile.target_model_name]
             existing_pairs = {

@@ -214,6 +214,8 @@ User-facing changes:
 - Marked incoming MAIN events for locally missing models as Not Sync instead of failing branch sync with a registry `KeyError`.
 - Allowed dotted Odoo model names such as `ab.sales.dashboard.snapshot` in branch upload payload validation.
 - Auto-filled apply profile targets by mode, including dotted source models converted to underscored `__sync` mirror names.
+- Added Mirror Scaffold requests so admins can generate a coded mirror addon from an apply profile, then install or upgrade it through the normal Odoo module flow.
+- Allowed mirror profiles to be saved with their generated target name before the mirror model is installed, while keeping automatic apply blocked until the model exists.
 - Added a test guide for raw-only, business-model, placeholder, and patching scenarios.
 
 Files changed:
@@ -224,6 +226,7 @@ Files changed:
 - `ab_odoo_sync/models/__init__.py`
 - `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
 - `ab_odoo_sync/models/ab_odoo_sync_identity.py`
+- `ab_odoo_sync/models/ab_odoo_sync_mirror_scaffold.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_source.py`
