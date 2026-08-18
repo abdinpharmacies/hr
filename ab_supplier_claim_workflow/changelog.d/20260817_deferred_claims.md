@@ -16,6 +16,8 @@ Files changed:
 - Added actual overdue days to deferred stage-history notes.
 - Made deferred timeline notes recalculate actual overdue days dynamically from the expected completion date.
 - Added a dedicated timeline line for delay days after the expected deferral date.
+- Changed the deferred timeline line to show remaining days before the expected deferral date and overdue days after it passes.
+- Added state-aware timeline colors for deferred remaining and overdue day badges.
 - Restricted actual overdue-day visibility to Secretarial and Admin users.
 - Renamed delay/rejection wording to rejection-only wording in the workflow form and validation messages.
 - Marked deferred workflow popup and history messages as Python translations for Arabic runtime rendering.
@@ -28,6 +30,7 @@ Files changed:
 - Added a department-turn notification hook for Telegram extensions.
 - Added focused workflow test coverage for department deferral behavior.
 - Added Arabic translations for new deferred workflow strings.
+- Granted reviewers read-only access to supplier claim blocking issues so claims open without access errors.
 
 Files changed:
 - `__manifest__.py`
