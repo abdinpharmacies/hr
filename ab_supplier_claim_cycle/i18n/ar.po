@@ -2075,7 +2075,7 @@ msgstr "مراجع مطالبات المورد"
 
 #. module: ab_supplier_claim_cycle
 #: model:res.groups,name:ab_supplier_claim_cycle.supplier_claim_group_user
-msgid "Supplier Claim Secretarial"
+msgid "Supplier Claim Secretary"
 msgstr "سكرتارية مطالبات المورد"
 
 #. module: ab_supplier_claim_cycle
