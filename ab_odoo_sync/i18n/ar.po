@@ -1260,8 +1260,12 @@ msgstr "حقل model_name مطلوب."
 #. module: ab_odoo_sync
 #. odoo-python
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_upload_record.py:0
-msgid "model_name must contain lowercase letters, numbers, and underscores only."
-msgstr "يجب أن يحتوي model_name على أحرف صغيرة وأرقام وشرطات سفلية فقط."
+msgid ""
+"model_name must contain lowercase letters, numbers, underscores, and dots "
+"between model name segments only."
+msgstr ""
+"يجب أن يحتوي model_name على أحرف صغيرة وأرقام وشرطات سفلية ونقاط بين أجزاء "
+"اسم النموذج فقط."
 
 #. module: ab_odoo_sync
 #. odoo-python
@@ -1389,6 +1393,18 @@ msgstr "المفاتيح الثابتة"
 #: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_identity__last_upload_record_id
 msgid "Last Upload Record"
 msgstr "آخر سجل رفع"
+
+#. module: ab_odoo_sync
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_upload_source_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_upload_source_list
+msgid "Load Installed Models"
+msgstr "تحميل النماذج المثبتة"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_upload_source.py:0
+msgid "Loaded %(count)s installed model(s) as inactive upload sources."
+msgstr "تم تحميل %(count)s نموذج مثبت كمصادر رفع غير نشطة."
 
 #. module: ab_odoo_sync
 #: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_identity__note

@@ -6,6 +6,11 @@
             <field name="model">ab_odoo_sync_upload_source</field>
             <field name="arch" type="xml">
                 <list>
+                    <header>
+                        <button name="action_load_installed_models" type="object"
+                                string="Load Installed Models" class="btn-secondary"
+                                display="always"/>
+                    </header>
                     <field name="model_name"/>
                     <field name="aggregate_parent_field" optional="show"/>
                     <field name="active"/>
@@ -18,6 +23,10 @@
             <field name="model">ab_odoo_sync_upload_source</field>
             <field name="arch" type="xml">
                 <form>
+                    <header>
+                        <button name="action_load_installed_models" type="object"
+                                string="Load Installed Models" class="btn-secondary"/>
+                    </header>
                     <sheet>
                         <group>
                             <field name="model_name"/>
@@ -36,6 +45,7 @@
             <field name="name">Branch Upload Sources</field>
             <field name="res_model">ab_odoo_sync_upload_source</field>
             <field name="view_mode">list,form</field>
+            <field name="context">{'active_test': False}</field>
         </record>
 
         <record id="view_ab_odoo_sync_outbox_list" model="ir.ui.view">

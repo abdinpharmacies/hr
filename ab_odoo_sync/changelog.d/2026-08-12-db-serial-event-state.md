@@ -210,6 +210,9 @@ User-facing changes:
 - Allowed apply profiles for branch-only source models by loading source fields from recent uploaded payloads when the model is not installed on MAIN.
 - Kept unknown or unmapped source models accepted as Pending Mapping instead of failing upload.
 - Added admin views for sync identity audit rows and updated Arabic translations.
+- Made branch upload source records inactive by default and added a loader that imports installed persistent models as inactive rows.
+- Marked incoming MAIN events for locally missing models as Not Sync instead of failing branch sync with a registry `KeyError`.
+- Allowed dotted Odoo model names such as `ab.sales.dashboard.snapshot` in branch upload payload validation.
 - Added a test guide for raw-only, business-model, placeholder, and patching scenarios.
 
 Files changed:
@@ -222,6 +225,7 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_identity.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_source.py`
 - `ab_odoo_sync/security/ir.model.access.csv`
 - `ab_odoo_sync/test-guide.md`
 - `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`

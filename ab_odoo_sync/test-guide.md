@@ -29,10 +29,11 @@ assigned upstream and must be preserved on MAIN.
 ## Test 1: Unknown Model Is Accepted As Pending Mapping
 
 1. On BRANCH, open `Odoo Sync > Branch Upload Sources`.
-2. Add a source model that exists on the branch, for example `ab_sales_header`.
-3. Create or update one record in that source model.
-4. Send the outbox row from `Odoo Sync > Upload Outbox`, or wait for the upload cron.
-5. On MAIN, open `Odoo Sync > Upload Records`.
+2. Click `Load Installed Models`.
+3. Activate a source model that exists on the branch, for example `ab_sales_header`.
+4. Create or update one record in that source model.
+5. Send the outbox row from `Odoo Sync > Upload Outbox`, or wait for the upload cron.
+6. On MAIN, open `Odoo Sync > Upload Records`.
 
 Expected result:
 

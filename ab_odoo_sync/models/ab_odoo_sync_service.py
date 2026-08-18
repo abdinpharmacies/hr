@@ -253,6 +253,12 @@ class AbOdooSyncService(models.Model):
         if not model_name or not record_id or operation not in {"create", "write", "unlink"}:
             raise ValueError(f"Malformed sync event: {event}")
 
+        if model_name not in self.env:
+            raise ValueError(
+                _("Source model %(model)s is not installed in this database.")
+                % {"model": model_name}
+            )
+
         model = self.env[model_name].with_context(skip_ab_odoo_sync_event=True).sudo()
         record = model.browse(record_id)
 
@@ -673,6 +679,23 @@ class AbOdooSyncService(models.Model):
             event_id = int(event["id"])
             state = self._get_or_create_event_state(event, db_serial)
             if state.status in {"full_sync", "partially_sync", "not_sync"}:
+                last_processed = event_id
+                processed_count += 1
+                continue
+
+            model_name = event.get("model_name")
+            if model_name not in self.env:
+                state.with_context(ab_odoo_sync_allow_event_state_write=True).write(
+                    {
+                        "status": "not_sync",
+                        "skipped_fields_json": [],
+                        "error_message": _(
+                            "Source model %(model)s is not installed in this database."
+                        )
+                        % {"model": model_name},
+                        "applied_at": fields.Datetime.now(),
+                    }
+                )
                 last_processed = event_id
                 processed_count += 1
                 continue

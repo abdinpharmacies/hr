@@ -14,7 +14,7 @@ class AbOdooSyncUploadSource(models.Model):
         string="Aggregate Parent Field",
         help="Optional Many2one field whose parent must be re-snapshotted after this model changes.",
     )
-    active = fields.Boolean(default=True, index=True)
+    active = fields.Boolean(default=False, index=True)
 
     _uniq_model_name = models.Constraint(
         "UNIQUE(model_name)",
@@ -81,6 +81,60 @@ class AbOdooSyncUploadSource(models.Model):
         if not source or not source.aggregate_parent_field:
             return False
         return records.mapped(source.aggregate_parent_field).exists()
+
+    @api.model
+    def _is_loadable_model(self, model_name):
+        if not model_name or model_name not in self.env:
+            return False
+        if model_name.startswith("ab_odoo_sync"):
+            return False
+        try:
+            model = self.env[model_name]
+        except KeyError:
+            return False
+        if getattr(model, "_abstract", False) or getattr(model, "_transient", False):
+            return False
+        return bool(getattr(model, "_auto", True))
+
+    def action_load_installed_models(self):
+        existing = set(
+            self.with_context(active_test=False).sudo().search([]).mapped("model_name")
+        )
+        vals_list = []
+        for model_record in self.env["ir.model"].sudo().search([], order="model"):
+            model_name = model_record.model
+            if model_name in existing or not self._is_loadable_model(model_name):
+                continue
+            vals_list.append(
+                {
+                    "model_name": model_name,
+                    "active": False,
+                }
+            )
+            existing.add(model_name)
+        created = len(self.sudo().create(vals_list)) if vals_list else 0
+        return self._notification(
+            _("Branch Upload Sources"),
+            _("Loaded %(count)s installed model(s) as inactive upload sources.") % {"count": created},
+            "success" if created else "warning",
+        )
+
+    @api.model
+    def _notification(self, title, message, notification_type):
+        return {
+            "type": "ir.actions.client",
+            "tag": "display_notification",
+            "params": {
+                "title": title,
+                "message": message,
+                "type": notification_type,
+                "sticky": False,
+                "next": {
+                    "type": "ir.actions.client",
+                    "tag": "reload",
+                },
+            },
+        }
 
     @api.model_create_multi
     def create(self, vals_list):

@@ -9,7 +9,7 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 
-_MODEL_NAME_RE = re.compile(r"^[a-z0-9_]+$")
+_MODEL_NAME_RE = re.compile(r"^[a-z0-9_]+(?:\.[a-z0-9_]+)*$")
 _SKIPPED_SYSTEM_FIELDS = {
     "id",
     "create_uid",
@@ -102,7 +102,12 @@ class AbOdooSyncUploadRecord(models.Model):
             raise ValueError(_("model_name is required."))
         model_name = model_name.strip()
         if not _MODEL_NAME_RE.match(model_name):
-            raise ValueError(_("model_name must contain lowercase letters, numbers, and underscores only."))
+            raise ValueError(
+                _(
+                    "model_name must contain lowercase letters, numbers, underscores, "
+                    "and dots between model name segments only."
+                )
+            )
         return model_name
 
     @api.model
