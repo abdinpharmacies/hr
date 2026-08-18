@@ -23,23 +23,28 @@
                                 type="object"
                                 string="Transfer"
                                 class="btn-primary"/>
+                        <button name="action_load_more"
+                                type="object"
+                                string="Load More"
+                                invisible="not can_load_more"/>
                     </header>
                     <sheet>
                         <group>
                             <group>
                                 <field name="product_id" readonly="1"/>
                                 <field name="product_eplus_serial" readonly="1" invisible="1"/>
-                                <field name="limit"/>
+                                <field name="limit" invisible="from_date"/>
                             </group>
                             <group>
                                 <field name="line_count" readonly="1"/>
                                 <field name="last_refresh" readonly="1"/>
                                 <field name="cache_state" readonly="1"/>
                                 <field name="active_tab" invisible="1"/>
+                                <field name="can_load_more" invisible="1"/>
                             </group>
                         </group>
                         <div class="alert alert-info" role="alert">
-                            Select Sales, Purchase, or Transfer to fetch only that movement group from BConnect and load its JSON cache.
+                            Select Sales, Purchase, or Transfer to fetch that movement group. Use From Date for batched loading and Load More.
                         </div>
                         <field name="sale_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'sale'">
                             <list string="Sales / Return">

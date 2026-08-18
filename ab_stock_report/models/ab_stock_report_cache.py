@@ -202,8 +202,8 @@ class AbStockReportCacheLine(models.Model):
             rows,
             key=lambda row: (
                 row["movement_datetime"] or dt.min,
-                row["movement_sort"],
                 self._sort_line_id(row["source_line_id"]),
+                row["movement_sort"],
             ),
             reverse=True,
         )
@@ -237,16 +237,19 @@ class AbStockReportCacheLine(models.Model):
         }
 
     @api.model
-    def _fetch_group_rows(self, product_serial, limit_value, movement_group, from_date=None):
+    def _fetch_group_rows(self, product_serial, limit_value, movement_group, from_date=None, offset=0):
+        offset = max(int(offset or 0), 0)
+        fetch_limit = limit_value + offset
         if movement_group == "sale":
             with self.connect_eplus(param_str="?") as connection:
                 rows = self._fetch_sales_batch_rows_with_connection(
                     product_serial,
-                    limit_value,
+                    fetch_limit,
+                    return_only=None,
                     from_date=from_date,
                     connection=connection,
                 )
-            return self._sort_group_rows(rows)[:limit_value]
+            return self._sort_group_rows(rows)[offset:offset + limit_value]
         fetchers = {
             "sale": (
                 self._fetch_sales_rows,
@@ -265,10 +268,12 @@ class AbStockReportCacheLine(models.Model):
             return []
         return self._fetch_family_rows(
             product_serial,
-            limit_value,
+            fetch_limit,
             movement_group=movement_group,
             fetchers=fetchers,
             from_date=from_date,
+            offset=offset,
+            page_limit=limit_value,
         )
 
     def _sort_group_rows(self, rows):
@@ -276,8 +281,8 @@ class AbStockReportCacheLine(models.Model):
             rows,
             key=lambda row: (
                 row["movement_datetime"] or dt.min,
-                row["movement_sort"],
                 self._sort_line_id(row["source_line_id"]),
+                row["movement_sort"],
             ),
             reverse=True,
         )
@@ -319,7 +324,9 @@ class AbStockReportCacheLine(models.Model):
         return rows
 
     @api.model
-    def _fetch_family_rows(self, product_serial, limit_value, movement_group, fetchers, from_date=None):
+    def _fetch_family_rows(
+            self, product_serial, limit_value, movement_group, fetchers, from_date=None, offset=0, page_limit=None
+    ):
         rows = []
         for fetcher in fetchers:
             rows.extend(fetcher(product_serial, limit_value, from_date=from_date))
@@ -327,12 +334,13 @@ class AbStockReportCacheLine(models.Model):
             rows,
             key=lambda row: (
                 row["movement_datetime"] or dt.min,
-                row["movement_sort"],
                 self._sort_line_id(row["source_line_id"]),
+                row["movement_sort"],
             ),
             reverse=True,
         )
-        return rows[:limit_value]
+        page_limit = page_limit or limit_value
+        return rows[offset:offset + page_limit]
 
     @staticmethod
     def _sort_line_id(value):
@@ -375,31 +383,22 @@ class AbStockReportCacheLine(models.Model):
         # below, avoiding repeated dimension-table joins for every detail row.
         candidate_limit = max(limit_value * 5, 50)
         return_filter = "AND sd.sec_update_date IS NOT NULL AND ISNULL(sd.itm_back, 0) > 0" if return_only is True else ""
-        date_filter = """AND (
-                ? IS NULL
-                OR sd.sec_update_date >= ?
-                OR EXISTS (
-                    SELECT 1
-                    FROM r_sales_trans_h sh_date WITH (NOLOCK)
-                    WHERE sh_date.sth_id = sd.sth_id
-                      AND sh_date.sto_id = sd.std_stock_id
-                      AND sh_date.sec_insert_date >= ?
-                )
-            )""" if from_date else ""
+        date_filter = "AND sd.sec_update_date >= ?" if from_date else ""
         detail_query = f"""
             SELECT TOP (?)
                 sd.std_id, sd.sth_id, sd.std_stock_id, sd.itm_unit,
                 sd.qnty, sd.itm_sell, sd.itm_back_price, sd.itm_back,
-                sd.sec_update_date, sd.sec_insert_date
+                sd.sec_update_date
             FROM r_sales_trans_d sd WITH (NOLOCK)
             WHERE sd.itm_id = ?
+              AND sd.sec_update_date IS NOT NULL
               {return_filter}
               {date_filter}
-            ORDER BY sd.sec_insert_date DESC
+            ORDER BY sd.sec_update_date DESC, sd.std_id DESC
         """
         detail_params = [candidate_limit, product_serial]
         if from_date:
-            detail_params.extend([from_date, from_date, from_date])
+            detail_params.append(from_date)
         detail_rows = self._run_raw_query(
             detail_query,
             detail_params,
@@ -411,8 +410,7 @@ class AbStockReportCacheLine(models.Model):
         header_keys = list(dict.fromkeys((row[1], row[2]) for row in detail_rows))
         pair_sql = " OR ".join("(sh.sth_id = ? AND sh.sto_id = ?)" for _key in header_keys)
         header_query = f"""
-            SELECT sh.sth_id, sh.sto_id, sh.sec_insert_date,
-                   sh.cust_id, sh.emp_id, sh.sth_flag
+            SELECT sh.sth_id, sh.sto_id, sh.cust_id, sh.emp_id, sh.sth_flag
             FROM r_sales_trans_h sh WITH (NOLOCK)
             WHERE {pair_sql}
         """
@@ -423,10 +421,9 @@ class AbStockReportCacheLine(models.Model):
         )
         headers = {
             (row[0], row[1]): {
-                "movement_datetime": row[2],
-                "cust_id": row[3],
-                "emp_id": row[4],
-                "valid": row[5] == "C",
+                "cust_id": row[2],
+                "emp_id": row[3],
+                "valid": row[4] == "C",
             }
             for row in header_rows
         }
@@ -482,7 +479,7 @@ class AbStockReportCacheLine(models.Model):
                 quantity = row[7] if return_mode else row[4]
                 if return_mode and not quantity:
                     continue
-                movement_datetime = row[8] if return_mode else header["movement_datetime"]
+                movement_datetime = row[8]
                 if not self._date_matches(movement_datetime, from_date):
                     continue
                 result.append({
@@ -499,7 +496,7 @@ class AbStockReportCacheLine(models.Model):
                     "employee_name": self._lookup_name(employees.get(header["emp_id"]), header["emp_id"]),
                     "source_table": "r_sales_trans_d",
                     "source_line_id": str(row[0] or ""),
-                    "source_updated_at": row[8] or row[9],
+                    "source_updated_at": row[8],
                     "movement_sort": movement_sort,
                 })
         result.sort(
@@ -570,7 +567,7 @@ class AbStockReportCacheLine(models.Model):
     def _fetch_purchase_rows(self, product_serial, limit_value, from_date=None):
         query = """
                 SELECT TOP(?) CAST('purchase' AS NVARCHAR(20)) AS movement_type,
-                ph.sec_insert_date AS movement_datetime,
+                pd.sec_update_date AS movement_datetime,
                 CAST(COALESCE(pd.itm_pur_price, pd.itm_cost, pd.itm_sell, 0) AS DECIMAL(18, 4)) AS sale_price,
                 CAST(
                     CASE pd.ptd_itm_purchase_unit
@@ -589,7 +586,7 @@ class AbStockReportCacheLine(models.Model):
                 COALESCE(e.e_Name, CONVERT(NVARCHAR(50), ph.emp_id)) AS employee_name,
                 CAST('pur_trans_d' AS NVARCHAR(50)) AS source_table,
                 CONVERT(NVARCHAR(50), pd.ptd_id) AS source_line_id,
-                COALESCE(pd.sec_update_date, pd.sec_insert_date) AS source_updated_at,
+                pd.sec_update_date AS source_updated_at,
                 30 AS movement_sort
                 FROM pur_trans_h ph
                 WITH (NOLOCK)
@@ -609,9 +606,10 @@ class AbStockReportCacheLine(models.Model):
                 WITH (NOLOCK)
                 ON e.e_id = ph.emp_id
                 WHERE pd.itm_id = ?
+                  AND pd.sec_update_date IS NOT NULL
                   AND (? IS NULL
-                   OR ph.sec_insert_date >= ?)
-                ORDER BY ph.sec_insert_date DESC, pd.ptd_id DESC \
+                   OR pd.sec_update_date >= ?)
+                ORDER BY pd.sec_update_date DESC, pd.ptd_id DESC \
                 """
         return self._run_query(
             query,
@@ -681,7 +679,7 @@ class AbStockReportCacheLine(models.Model):
     def _fetch_transfer_out_rows(self, product_serial, limit_value, from_date=None):
         query = """
                 SELECT TOP(?) CAST('transfer_out' AS NVARCHAR(20)) AS movement_type,
-                sth.sec_insert_date AS movement_datetime,
+                sth.sec_update_date AS movement_datetime,
                 CAST(COALESCE(st.st_itm_sell, 0) AS DECIMAL(18, 4)) AS sale_price,
                 CAST(
                     -1 * CASE st.st_itm_unit
@@ -700,7 +698,7 @@ class AbStockReportCacheLine(models.Model):
                 COALESCE(e.e_Name, CONVERT(NVARCHAR(50), sth.delivery_emp), CONVERT(NVARCHAR(50), sth.sec_insert_uid)) AS employee_name,
                 CAST('Store_Trans' AS NVARCHAR(50)) AS source_table,
                 CONVERT(NVARCHAR(50), st.st_id) AS source_line_id,
-                COALESCE(sth.sec_update_date, sth.sec_insert_date) AS source_updated_at,
+                sth.sec_update_date AS source_updated_at,
                 50 AS movement_sort
                 FROM Store_Trans_h sth
                 WITH (NOLOCK)
@@ -716,9 +714,10 @@ class AbStockReportCacheLine(models.Model):
                 WITH (NOLOCK)
                 ON e.e_id = sth.delivery_emp
                 WHERE st.st_itm_id = ?
+                  AND sth.sec_update_date IS NOT NULL
                   AND (? IS NULL
-                   OR sth.sec_insert_date >= ?)
-                ORDER BY sth.sec_insert_date DESC, st.st_id DESC \
+                   OR sth.sec_update_date >= ?)
+                ORDER BY sth.sec_update_date DESC, st.st_id DESC \
                 """
         return self._run_query(
             query,
@@ -730,7 +729,7 @@ class AbStockReportCacheLine(models.Model):
     def _fetch_transfer_in_rows(self, product_serial, limit_value, from_date=None):
         query = """
                 SELECT TOP(?) CAST('transfer_in' AS NVARCHAR(20)) AS movement_type,
-                sth.sec_insert_date AS movement_datetime,
+                sth.sec_update_date AS movement_datetime,
                 CAST(COALESCE(st.st_itm_sell, 0) AS DECIMAL(18, 4)) AS sale_price,
                 CAST(
                     CASE st.st_itm_unit
@@ -749,7 +748,7 @@ class AbStockReportCacheLine(models.Model):
                 COALESCE(e.e_Name, CONVERT(NVARCHAR(50), sth.delivery_emp), CONVERT(NVARCHAR(50), sth.sec_insert_uid)) AS employee_name,
                 CAST('Store_Trans' AS NVARCHAR(50)) AS source_table,
                 CONVERT(NVARCHAR(50), st.st_id) AS source_line_id,
-                COALESCE(sth.sec_update_date, sth.sec_insert_date) AS source_updated_at,
+                sth.sec_update_date AS source_updated_at,
                 60 AS movement_sort
                 FROM Store_Trans_h sth
                 WITH (NOLOCK)
@@ -765,9 +764,10 @@ class AbStockReportCacheLine(models.Model):
                 WITH (NOLOCK)
                 ON e.e_id = sth.delivery_emp
                 WHERE st.st_itm_id = ?
+                  AND sth.sec_update_date IS NOT NULL
                   AND (? IS NULL
-                   OR sth.sec_insert_date >= ?)
-                ORDER BY sth.sec_insert_date DESC, st.st_id DESC \
+                   OR sth.sec_update_date >= ?)
+                ORDER BY sth.sec_update_date DESC, st.st_id DESC \
                 """
         return self._run_query(
             query,

@@ -18,6 +18,10 @@ MOVEMENT_SELECTION = [
     ("transfer_in", "Transfer In"),
 ]
 
+DATE_RANGE_BATCH_SIZE = 100
+FETCH_MODE_LIMITED = "limited"
+FETCH_MODE_DATE_RANGE = "date-range"
+
 
 class AbStockReportProduct(models.Model):
     _inherit = "ab_product"
@@ -112,11 +116,25 @@ class AbStockReportWizard(models.TransientModel):
         readonly=True,
         default=dict,
     )
+    can_load_more = fields.Boolean(
+        string="Can Load More",
+        compute="_compute_can_load_more",
+    )
 
     @api.depends("line_ids")
     def _compute_line_count(self):
         for wizard in self:
             wizard.line_count = len(wizard.line_ids)
+
+    def _compute_can_load_more(self):
+        for wizard in self:
+            cache_entry = wizard._get_cache_entry(wizard.active_tab)
+            wizard.can_load_more = bool(
+                wizard.from_date
+                and cache_entry
+                and cache_entry.get("fetch_mode") == FETCH_MODE_DATE_RANGE
+                and cache_entry.get("has_more")
+            )
 
     @api.model
     def default_get(self, fields_list):
@@ -130,7 +148,7 @@ class AbStockReportWizard(models.TransientModel):
     def action_refresh_cache(self):
         self.ensure_one()
         self._force_fetch_from_bconnect(self.active_tab)
-        self._load_cached_lines(self.active_tab)
+        self._load_cached_lines(self.active_tab, loaded_from_cache=False)
         return self._open_action()
 
     def action_load_lines(self):
@@ -140,7 +158,7 @@ class AbStockReportWizard(models.TransientModel):
     def action_fetch_now(self):
         self.ensure_one()
         self._force_fetch_from_bconnect(self.active_tab)
-        self._load_cached_lines(self.active_tab)
+        self._load_cached_lines(self.active_tab, loaded_from_cache=False)
         return self._open_action()
 
     def action_fetch_sales(self):
@@ -161,27 +179,64 @@ class AbStockReportWizard(models.TransientModel):
         self._load_or_fetch_group("transfer")
         return self._open_action()
 
+    def action_load_more(self):
+        self.ensure_one()
+        if not self.from_date:
+            return self._open_action()
+        movement_group = self.active_tab
+        cache_entry = self._get_cache_entry(movement_group)
+        loaded_from_cache = True
+        if not cache_entry or cache_entry.get("fetch_mode") != FETCH_MODE_DATE_RANGE:
+            self._force_fetch_from_bconnect(movement_group)
+            loaded_from_cache = False
+        elif cache_entry.get("has_more"):
+            self._fetch_next_date_range_batch(movement_group)
+            loaded_from_cache = False
+        self._load_cached_lines(movement_group, loaded_from_cache=loaded_from_cache)
+        return self._open_action()
+
     def _load_or_fetch_group(self, movement_group):
         self.ensure_one()
-        payload = dict(self.cache_payload or {})
-        cache_entry = payload.get(movement_group)
-        limit_value = self._normalize_limit()
-        from_date_value = fields.Date.to_string(self.from_date) if self.from_date else False
-        if (
-            not cache_entry
-            or cache_entry.get("limit") != limit_value
-            or cache_entry.get("from_date") != from_date_value
-            or "rows" not in cache_entry
-        ):
+        cache_entry = self._get_cache_entry(movement_group)
+        loaded_from_cache = True
+        if not self._cache_entry_matches_current_request(cache_entry, movement_group):
             self._force_fetch_from_bconnect(movement_group)
+            loaded_from_cache = False
         else:
-            self.cache_state = _("Cached %s") % dict(MOVEMENT_GROUP_SELECTION).get(
-                movement_group, movement_group,
+            self.cache_state = self._build_cache_state(
+                movement_group,
+                cache_entry,
+                loaded_from_cache=True,
             )
-        self._load_cached_lines(movement_group)
+        self._load_cached_lines(movement_group, loaded_from_cache=loaded_from_cache)
 
     def _normalize_limit(self):
         return self.env["ab_stock_report_cache_line"]._normalize_limit(self.limit)
+
+    def _get_fetch_mode(self):
+        return FETCH_MODE_DATE_RANGE if self.from_date else FETCH_MODE_LIMITED
+
+    def _get_cache_entry(self, movement_group):
+        self.ensure_one()
+        return (self.cache_payload or {}).get(movement_group) or {}
+
+    def _cache_entry_matches_current_request(self, cache_entry, movement_group):
+        self.ensure_one()
+        if not cache_entry or "rows" not in cache_entry:
+            return False
+        fetch_mode = self._get_fetch_mode()
+        from_date_value = fields.Date.to_string(self.from_date) if self.from_date else False
+        if cache_entry.get("movement_group") != movement_group:
+            return False
+        if cache_entry.get("product_serial") != self.product_eplus_serial:
+            return False
+        if cache_entry.get("fetch_mode") != fetch_mode:
+            return False
+        if cache_entry.get("from_date") != from_date_value:
+            return False
+        if fetch_mode == FETCH_MODE_LIMITED:
+            return cache_entry.get("limit") == self._normalize_limit()
+        return cache_entry.get("batch_size") == DATE_RANGE_BATCH_SIZE
 
     def _open_action(self):
         self.ensure_one()
@@ -201,26 +256,64 @@ class AbStockReportWizard(models.TransientModel):
         if not movement_group:
             movement_group = self.active_tab
         cache_model = self.env["ab_stock_report_cache_line"]
+        fetch_mode = self._get_fetch_mode()
         limit_value = self._normalize_limit()
+        fetch_limit = DATE_RANGE_BATCH_SIZE + 1 if fetch_mode == FETCH_MODE_DATE_RANGE else limit_value
         rows = cache_model._fetch_group_rows(
             self.product_eplus_serial,
-            limit_value,
+            fetch_limit,
             movement_group=movement_group,
             from_date=self.from_date,
         )
+        has_more = False
+        if fetch_mode == FETCH_MODE_DATE_RANGE:
+            has_more = len(rows) > DATE_RANGE_BATCH_SIZE
+            rows = rows[:DATE_RANGE_BATCH_SIZE]
         payload = dict(self.cache_payload or {})
         payload[movement_group] = {
+            "movement_group": movement_group,
+            "product_serial": self.product_eplus_serial,
             "limit": limit_value,
             "from_date": fields.Date.to_string(self.from_date) if self.from_date else False,
             "fetched_at": fields.Datetime.to_string(fields.Datetime.now()),
+            "fetch_mode": fetch_mode,
+            "batch_size": DATE_RANGE_BATCH_SIZE if fetch_mode == FETCH_MODE_DATE_RANGE else False,
+            "offset": len(rows) if fetch_mode == FETCH_MODE_DATE_RANGE else 0,
+            "has_more": has_more,
+            "empty": not bool(rows),
             "rows": [cache_model._row_to_json(row) for row in rows],
         }
         self.cache_payload = payload
-        self.cache_state = _("Fetched %s from BConnect") % dict(
-            MOVEMENT_GROUP_SELECTION,
-        ).get(movement_group, movement_group)
+        self.cache_state = self._build_cache_state(movement_group, payload[movement_group])
 
-    def _load_cached_lines(self, movement_group=None):
+    def _fetch_next_date_range_batch(self, movement_group):
+        self.ensure_one()
+        cache_model = self.env["ab_stock_report_cache_line"]
+        payload = dict(self.cache_payload or {})
+        cache_entry = dict(payload.get(movement_group) or {})
+        rows = cache_model._fetch_group_rows(
+            self.product_eplus_serial,
+            DATE_RANGE_BATCH_SIZE + 1,
+            movement_group=movement_group,
+            from_date=self.from_date,
+            offset=int(cache_entry.get("offset") or len(cache_entry.get("rows") or [])),
+        )
+        has_more = len(rows) > DATE_RANGE_BATCH_SIZE
+        new_rows = rows[:DATE_RANGE_BATCH_SIZE]
+        loaded_rows = list(cache_entry.get("rows") or [])
+        loaded_rows.extend(cache_model._row_to_json(row) for row in new_rows)
+        cache_entry.update({
+            "fetched_at": fields.Datetime.to_string(fields.Datetime.now()),
+            "rows": loaded_rows,
+            "offset": len(loaded_rows),
+            "has_more": has_more,
+            "empty": not bool(loaded_rows),
+        })
+        payload[movement_group] = cache_entry
+        self.cache_payload = payload
+        self.cache_state = self._build_cache_state(movement_group, cache_entry)
+
+    def _load_cached_lines(self, movement_group=None, loaded_from_cache=True):
         self.ensure_one()
         movement_group = movement_group or self.active_tab
         cache_model = self.env["ab_stock_report_cache_line"]
@@ -230,8 +323,10 @@ class AbStockReportWizard(models.TransientModel):
             fields.Datetime.to_datetime(cache_entry["fetched_at"])
             if cache_entry.get("fetched_at") else False
         )
-        state = _("Cached %s") % dict(MOVEMENT_GROUP_SELECTION).get(
-            movement_group, movement_group,
+        state = self._build_cache_state(
+            movement_group,
+            cache_entry,
+            loaded_from_cache=loaded_from_cache,
         ) if cache_entry else _("No cached movements yet")
 
         self.line_ids.unlink()
@@ -259,6 +354,29 @@ class AbStockReportWizard(models.TransientModel):
             "last_refresh": last_refresh,
             "cache_state": state,
         })
+
+    def _build_cache_state(self, movement_group, cache_entry, loaded_from_cache=False):
+        label = dict(MOVEMENT_GROUP_SELECTION).get(movement_group, movement_group)
+        if not cache_entry:
+            return _("No cached movements yet")
+        if cache_entry.get("empty"):
+            return _("No movements found")
+
+        parts = []
+        if loaded_from_cache:
+            parts.append(_("Loaded from Wizard Cache"))
+        else:
+            parts.append(_("Fetched from BConnect"))
+
+        if cache_entry.get("fetch_mode") == FETCH_MODE_DATE_RANGE:
+            if cache_entry.get("has_more"):
+                parts.append(_("More movements available"))
+            else:
+                parts.append(_("All movements loaded"))
+        else:
+            parts.append(_("Latest movements loaded"))
+
+        return "%s - %s" % (label, " - ".join(parts))
 
 
 class AbStockReportWizardLine(models.TransientModel):
