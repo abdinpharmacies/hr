@@ -13,6 +13,7 @@ from lxml import etree
 
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
+from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
 
 from odoo.addons.ab_transfer_smart.models.ab_transfer_header import (
@@ -33,6 +34,215 @@ from odoo.addons.ab_transfer_smart.models.ab_transfer_header import (
     SMART_STOCK_METHOD_NORMAL,
     SMART_STOCK_METHOD_WEIGHTED,
 )
+
+
+@tagged("post_install", "-at_install")
+class TestFastTransferPreSubmit(TransactionCase):
+    def setUp(self):
+        super().setUp()
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ab_transfer_smart.fast_transfer_pre_submit_enabled",
+            "True",
+        )
+        self.env.user.write({
+            "group_ids": [
+                (4, self.env.ref("ab_transfer_smart.group_trnasfer_smart_store_revision").id),
+            ],
+        })
+
+    def _create_store_or_skip(self, vals):
+        try:
+            return self.env["ab_store"].create(vals)
+        except ValidationError as error:
+            if "Replication Database" in str(error):
+                self.skipTest("Replica database blocks creating ab_store test records.")
+            raise
+
+    def _existing_product_or_skip(self):
+        product = self.env["ab_product"].sudo().search([
+            ("uom_id", "!=", False),
+        ], limit=1)
+        if not product:
+            self.skipTest("No existing product with UOM is available for Fast Transfer tests.")
+        return product
+
+    def _create_header_source(self):
+        Store = self.env["ab_store"].sudo()
+        source_domain = [("allow_sale", "=", True)]
+        allowed_store_ids = self.env["ab_transfer_header"]._get_allowed_source_store_ids()
+        if allowed_store_ids:
+            source_domain.append(("id", "in", allowed_store_ids))
+        source = Store.search(source_domain, limit=1)
+        if not source:
+            self.skipTest("No allowed source store is available for Fast Transfer tests.")
+
+        destination = Store.search([
+            ("id", "!=", source.id),
+            ("allow_sale", "=", True),
+        ], limit=1)
+        if not destination:
+            self.skipTest("No destination store is available for Fast Transfer tests.")
+
+        user = self.env["ab_costcenter"].sudo().search([], limit=1)
+        if not user:
+            self.skipTest("No costcenter is available for Fast Transfer tests.")
+
+        return self.env["ab_transfer_header"].create({
+            "from_store_id": source.id,
+            "to_store_id": destination.id,
+            "user_id": user.id,
+        })
+
+    def _payload(self, header, product, uom, **header_extra):
+        header_vals = {
+            "from_store_id": header.from_store_id.id,
+            "to_store_id": header.to_store_id.id,
+            "transfer_type": "1",
+            "notes": "Fast transfer pre-submit test",
+        }
+        header_vals.update(header_extra)
+        return {
+            "header": header_vals,
+            "lines": [{
+                "product_id": product.id,
+                "class_id": 98765,
+                "qty": 2.5,
+                "requested_qty": 7.5,
+                "expiry_date": fields.Date.to_string(fields.Date.today()),
+                "uom_id": uom.id,
+            }],
+        }
+
+    def _submit_with_patched_action_submit(self, payload, default_user, api=None):
+        api = api or self.env["ab_transfer_pos_api"]
+        with patch.object(type(api), "_default_user", return_value=default_user), patch.object(
+                type(self.env["ab_transfer_header"]),
+                "action_submit",
+                autospec=True,
+        ) as action_submit:
+            action = api.pos_submit(payload)
+        return action, action_submit
+
+    def _create_security_user(self, login, group_xmlids=None):
+        group_ids = [self.env.ref("base.group_user").id]
+        group_ids.extend(self.env.ref(xmlid).id for xmlid in group_xmlids or [])
+        return self.env["res.users"].sudo().with_context(no_reset_password=True).create({
+            "name": login.replace("_", " ").title(),
+            "login": login,
+            "email": "%s@example.com" % login,
+            "group_ids": [(6, 0, group_ids)],
+        })
+
+    def test_missing_parameter_creates_pre_submit_transfer_lines(self):
+        self.env["ir.config_parameter"].sudo().search([
+            ("key", "=", "ab_transfer_smart.fast_transfer_pre_submit_enabled"),
+        ]).unlink()
+        header = self._create_header_source()
+        product = self._existing_product_or_skip()
+        uom = product.uom_id
+        payload = self._payload(header, product, uom)
+
+        action, action_submit = self._submit_with_patched_action_submit(payload, header.user_id)
+        created = self.env["ab_transfer_header"].browse(action["res_id"])
+
+        action_submit.assert_not_called()
+        self.assertEqual(created.smart_stage, SMART_STAGE_PRE_SUBMIT)
+        self.assertFalse(created.is_submitted)
+        self.assertEqual(action["res_model"], "ab_transfer_header")
+        self.assertEqual(len(created.line_ids), 1)
+        self.assertFalse(created.smart_line_ids)
+        line = created.line_ids
+        self.assertEqual(line._name, "ab_transfer_line")
+        self.assertEqual(line.product_id, product)
+        self.assertEqual(line.class_id, 98765)
+        self.assertEqual(line.qty, 2.5)
+        self.assertEqual(line.requested_qty, 7.5)
+        self.assertEqual(line.expiry_date, fields.Date.today())
+        self.assertEqual(line.uom_id, uom)
+
+    def test_enabled_parameter_creates_pre_submit_transfer(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ab_transfer_smart.fast_transfer_pre_submit_enabled",
+            "True",
+        )
+        header = self._create_header_source()
+        product = self._existing_product_or_skip()
+        uom = product.uom_id
+
+        action, action_submit = self._submit_with_patched_action_submit(
+            self._payload(header, product, uom),
+            header.user_id,
+        )
+        created = self.env["ab_transfer_header"].browse(action["res_id"])
+
+        action_submit.assert_not_called()
+        self.assertEqual(created.smart_stage, SMART_STAGE_PRE_SUBMIT)
+        self.assertFalse(created.is_submitted)
+        self.assertEqual(created.line_ids.product_id, product)
+
+    def test_linked_request_remains_pending(self):
+        header = self._create_header_source()
+        product = self._existing_product_or_skip()
+        uom = product.uom_id
+        request = self.env["ab_transfer_request"].create({
+            "from_store_id": header.to_store_id.id,
+            "to_store_id": header.from_store_id.id,
+            "user_id": header.user_id.id,
+            "line_ids": [(0, 0, {
+                "product_id": product.id,
+                "requested_qty": 7.5,
+                "uom_id": uom.id,
+            })],
+        })
+        request.action_confirm()
+
+        action, action_submit = self._submit_with_patched_action_submit(
+            self._payload(header, product, uom, transfer_request_id=request.id),
+            header.user_id,
+        )
+        created = self.env["ab_transfer_header"].browse(action["res_id"])
+
+        action_submit.assert_not_called()
+        self.assertEqual(created.transfer_request_id, request)
+        self.assertEqual(request.execution_state, "pending")
+        self.assertFalse(created.is_submitted)
+
+    def test_disabled_parameter_delegates_to_immediate_submit(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ab_transfer_smart.fast_transfer_pre_submit_enabled",
+            "False",
+        )
+        header = self._create_header_source()
+        product = self._existing_product_or_skip()
+        uom = product.uom_id
+        existing_header_ids = set(self.env["ab_transfer_header"].search([]).ids)
+
+        action, action_submit = self._submit_with_patched_action_submit(
+            self._payload(header, product, uom),
+            header.user_id,
+        )
+        created = self.env["ab_transfer_header"].search([
+            ("id", "not in", list(existing_header_ids) or [0]),
+            ("from_store_id", "=", header.from_store_id.id),
+            ("to_store_id", "=", header.to_store_id.id),
+            ("line_ids.product_id", "=", product.id),
+        ], limit=1)
+
+        self.assertIsNone(action)
+        self.assertEqual(action_submit.call_count, 1)
+        self.assertTrue(action_submit.call_args[0][0].env.context.get("fast_transfer_immediate_submit"))
+        self.assertNotEqual(created.smart_stage, SMART_STAGE_PRE_SUBMIT)
+
+    def test_pre_submit_requires_store_revision_group(self):
+        header = self._create_header_source()
+        product = self._existing_product_or_skip()
+        uom = product.uom_id
+        user = self._create_security_user("fast_pre_submit_blocked")
+        api = self.env["ab_transfer_pos_api"].with_user(user)
+
+        with patch.object(type(api), "_default_user", return_value=header.user_id):
+            with self.assertRaises(AccessError):
+                api.pos_submit(self._payload(header, product, uom))
 
 
 class TestSmartTransfer(TransactionCase):
@@ -201,6 +411,36 @@ class TestSmartTransfer(TransactionCase):
         vals.update(extra_vals)
         return self.env["ab_transfer_smart_line"].create(vals)
 
+    def _fast_transfer_payload(self, header, product, uom, **header_extra):
+        header_vals = {
+            "from_store_id": header.from_store_id.id,
+            "to_store_id": header.to_store_id.id,
+            "transfer_type": "1",
+            "notes": "Fast transfer pre-submit test",
+        }
+        header_vals.update(header_extra)
+        return {
+            "header": header_vals,
+            "lines": [{
+                "product_id": product.id,
+                "class_id": 98765,
+                "qty": 2.5,
+                "requested_qty": 7.5,
+                "expiry_date": fields.Date.to_string(fields.Date.today()),
+                "uom_id": uom.id,
+            }],
+        }
+
+    def _run_fast_transfer_submit(self, payload, default_user, api=None):
+        api = api or self.env["ab_transfer_pos_api"]
+        with patch.object(type(api), "_default_user", return_value=default_user), patch.object(
+                type(self.env["ab_transfer_header"]),
+                "action_submit",
+                autospec=True,
+        ) as action_submit:
+            action = api.pos_submit(payload)
+        return action, action_submit
+
     def _smart_source_row(self, source_id, qty, exp_date=None):
         return {
             "source_id": source_id,
@@ -237,6 +477,109 @@ class TestSmartTransfer(TransactionCase):
             "smart_wizard_id": wizard.id,
             "smart_stage": smart_stage,
         })
+
+    def test_fast_transfer_missing_parameter_creates_pre_submit_transfer_lines(self):
+        self.env["ir.config_parameter"].sudo().search([
+            ("key", "=", "ab_transfer_smart.fast_transfer_pre_submit_enabled"),
+        ]).unlink()
+        header = self._create_smart_header()
+        product = self._create_smart_product("SMART-FAST-001", 93001, self._create_smart_uom())
+        payload = self._fast_transfer_payload(header, product, product.uom_id)
+
+        action, action_submit = self._run_fast_transfer_submit(payload, header.user_id)
+        created = self.env["ab_transfer_header"].browse(action["res_id"])
+
+        action_submit.assert_not_called()
+        self.assertEqual(created.smart_stage, SMART_STAGE_PRE_SUBMIT)
+        self.assertFalse(created.is_submitted)
+        self.assertEqual(action["res_model"], "ab_transfer_header")
+        self.assertEqual(len(created.line_ids), 1)
+        self.assertFalse(created.smart_line_ids)
+        line = created.line_ids
+        self.assertEqual(line._name, "ab_transfer_line")
+        self.assertEqual(line.product_id, product)
+        self.assertEqual(line.class_id, 98765)
+        self.assertEqual(line.qty, 2.5)
+        self.assertEqual(line.requested_qty, 7.5)
+        self.assertEqual(line.expiry_date, fields.Date.today())
+        self.assertEqual(line.uom_id, product.uom_id)
+
+    def test_fast_transfer_enabled_parameter_creates_pre_submit_transfer(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ab_transfer_smart.fast_transfer_pre_submit_enabled",
+            "True",
+        )
+        header = self._create_smart_header()
+        product = self._create_smart_product("SMART-FAST-002", 93002, self._create_smart_uom())
+        payload = self._fast_transfer_payload(header, product, product.uom_id)
+
+        action, action_submit = self._run_fast_transfer_submit(payload, header.user_id)
+        created = self.env["ab_transfer_header"].browse(action["res_id"])
+
+        action_submit.assert_not_called()
+        self.assertEqual(created.smart_stage, SMART_STAGE_PRE_SUBMIT)
+        self.assertFalse(created.is_submitted)
+        self.assertEqual(created.line_ids.product_id, product)
+
+    def test_fast_transfer_pre_submit_keeps_linked_request_pending(self):
+        header = self._create_smart_header()
+        product = self._create_smart_product("SMART-FAST-003", 93003, self._create_smart_uom())
+        request = self.env["ab_transfer_request"].create({
+            "from_store_id": header.to_store_id.id,
+            "to_store_id": header.from_store_id.id,
+            "user_id": header.user_id.id,
+            "line_ids": [(0, 0, {
+                "product_id": product.id,
+                "requested_qty": 7.5,
+                "uom_id": product.uom_id.id,
+            })],
+        })
+        request.action_confirm()
+        payload = self._fast_transfer_payload(
+            header,
+            product,
+            product.uom_id,
+            transfer_request_id=request.id,
+        )
+
+        action, action_submit = self._run_fast_transfer_submit(payload, header.user_id)
+        created = self.env["ab_transfer_header"].browse(action["res_id"])
+
+        action_submit.assert_not_called()
+        self.assertEqual(created.transfer_request_id, request)
+        self.assertEqual(request.execution_state, "pending")
+        self.assertFalse(created.is_submitted)
+
+    def test_fast_transfer_disabled_parameter_delegates_to_immediate_submit(self):
+        self.env["ir.config_parameter"].sudo().set_param(
+            "ab_transfer_smart.fast_transfer_pre_submit_enabled",
+            "False",
+        )
+        header = self._create_smart_header()
+        product = self._create_smart_product("SMART-FAST-004", 93004, self._create_smart_uom())
+        payload = self._fast_transfer_payload(header, product, product.uom_id)
+
+        action, action_submit = self._run_fast_transfer_submit(payload, header.user_id)
+        created = self.env["ab_transfer_header"].search([
+            ("from_store_id", "=", header.from_store_id.id),
+            ("to_store_id", "=", header.to_store_id.id),
+            ("line_ids.product_id", "=", product.id),
+        ], limit=1)
+
+        self.assertIsNone(action)
+        self.assertEqual(action_submit.call_count, 1)
+        self.assertNotEqual(created.smart_stage, SMART_STAGE_PRE_SUBMIT)
+
+    def test_fast_transfer_pre_submit_requires_store_revision_group(self):
+        header = self._create_smart_header()
+        product = self._create_smart_product("SMART-FAST-005", 93005, self._create_smart_uom())
+        payload = self._fast_transfer_payload(header, product, product.uom_id)
+        user = self._create_smart_security_user("smart_fast_transfer_blocked", [])
+        api = self.env["ab_transfer_pos_api"].with_user(user)
+
+        with patch.object(type(api), "_default_user", return_value=header.user_id):
+            with self.assertRaises(AccessError):
+                api.pos_submit(payload)
 
     def test_weighted_method_is_default(self):
         defaults = self.env["ab_transfer_header"].default_get(["smart_stock_method"])

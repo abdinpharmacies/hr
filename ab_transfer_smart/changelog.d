@@ -1,5 +1,21 @@
 Current changes before commit:
 
+- Add post-install Fast Transfer Pre-Submit tests that execute on the installed `ab_transfer_smart` database.
+- Cover enabled, missing, disabled, linked-request pending, preserved line values, and unauthorized-user behavior.
+- Use existing stores, costcenters, and products in replica databases so tests do not write protected master data.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/tests/test_smart_transfer.py
+
+
+commit 339164514add9a86b64ac065986ef5cb671aea94
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Mon Aug 17 12:59:34 2026 +0300
+
+    ab_transfer_smart/FEAT: Active Smart Transfer Reservations With Same-Day Submit Hold (1959#)
+
 - Reserve active unsubmitted Smart Transfer lines across days when calculating Expected Stock.
 - Keep same-day submitted Smart Transfers reserved using `sent_at` in the context local business day.
 - Share the same active-reservation rule with duplicate prevention and remove `create_day` from duplicate eligibility.

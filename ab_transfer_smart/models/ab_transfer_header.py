@@ -620,12 +620,17 @@ class AbTransferHeader(models.Model):
 
     def action_submit(self):
         self.ensure_one()
-        if not self.is_submitted:
+        fast_transfer_immediate_submit = self.env.context.get("fast_transfer_immediate_submit")
+        if not self.is_submitted and not fast_transfer_immediate_submit:
             self._check_smart_group(SMART_GROUP_STORE_REVISION)
             self._check_smart_stage(SMART_STAGE_PRE_SUBMIT)
 
         previous_stage = self.smart_stage
-        if not self.is_submitted and self.smart_stage != SMART_STAGE_SUBMIT:
+        if (
+                not self.is_submitted
+                and not fast_transfer_immediate_submit
+                and self.smart_stage != SMART_STAGE_SUBMIT
+        ):
             self.write({"smart_stage": SMART_STAGE_SUBMIT})
 
         try:
