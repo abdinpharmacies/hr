@@ -63,10 +63,12 @@ class AbOdooSyncUploadRecord(models.Model):
     status = fields.Selection(
         string="Status",
         selection=[
+            ("pending_mapping", "Pending Mapping"),
             ("pending", "Pending"),
             ("queued", "Queued"),
             ("applied", "Applied"),
             ("failed", "Failed"),
+            ("raw_only", "Raw Only"),
             ("not_sync", "Not Sync"),
         ],
         default="pending",
@@ -141,7 +143,18 @@ class AbOdooSyncUploadRecord(models.Model):
             raise ValueError(_("source_operation must be upsert or archive."))
 
         profile = self.env["ab_odoo_sync_apply_profile"].sudo().get_for_source(model_name)
-        target_model_name = profile.target_model_name if profile else self.target_model_from_source(model_name)
+        target_model_name = (
+            profile.target_model_name
+            if profile and profile.target_model_name
+            else self.target_model_from_source(model_name)
+        )
+        status = "pending"
+        if not profile:
+            status = "pending_mapping"
+        elif profile.apply_mode == "raw_only":
+            status = "raw_only"
+        elif profile.apply_mode == "ignore":
+            status = "not_sync"
         vals = {
             "event_uuid": event_uuid,
             "payload_json": payload,
@@ -150,7 +163,7 @@ class AbOdooSyncUploadRecord(models.Model):
             "source_write_date": source_write_date or False,
             "target_model_name": target_model_name,
             "apply_profile_id": profile.id if profile else False,
-            "status": "pending",
+            "status": status,
             "skipped_fields_json": [],
             "error_message": False,
             "received_at": fields.Datetime.now(),
@@ -181,6 +194,21 @@ class AbOdooSyncUploadRecord(models.Model):
         )
         return self.sudo().create(vals), True
 
+    def _set_profile_handling(self, profile):
+        self.ensure_one()
+        vals = {
+            "apply_profile_id": profile.id,
+            "target_model_name": profile.target_model_name or self.target_model_from_source(self.model_name),
+            "error_message": False,
+        }
+        if profile.apply_mode == "raw_only":
+            vals.update({"status": "raw_only", "applied_at": fields.Datetime.now()})
+        elif profile.apply_mode == "ignore":
+            vals.update({"status": "not_sync", "applied_at": fields.Datetime.now()})
+        elif self.status in {"pending_mapping", "raw_only", "not_sync"}:
+            vals["status"] = "pending"
+        self.sudo().write(vals)
+
     def _queue_identity_key(self):
         self.ensure_one()
         return f"ab_odoo_sync_upload_record_apply:{self.id}"
@@ -189,7 +217,19 @@ class AbOdooSyncUploadRecord(models.Model):
         queued_count = 0
         now = fields.Datetime.now()
         for record in self.sudo().exists():
-            if record.status in {"applied", "not_sync"}:
+            profile = record.apply_profile_id
+            if not profile:
+                record.write(
+                    {
+                        "status": "pending_mapping",
+                        "error_message": False,
+                    }
+                )
+                continue
+            if profile.apply_mode in {"raw_only", "ignore"}:
+                record._set_profile_handling(profile)
+                continue
+            if record.status in {"applied", "not_sync", "raw_only"}:
                 continue
             record.write(
                 {
@@ -224,7 +264,7 @@ class AbOdooSyncUploadRecord(models.Model):
         )
 
     def action_mark_not_sync(self):
-        records = self.filtered(lambda rec: rec.status in {"pending", "queued", "failed"})
+        records = self.filtered(lambda rec: rec.status in {"pending_mapping", "pending", "queued", "failed", "raw_only"})
         records.sudo().write(
             {
                 "status": "not_sync",
@@ -302,19 +342,31 @@ class AbOdooSyncUploadRecord(models.Model):
                     _("Relation %(field)s is missing its source record ID.")
                     % {"field": mapping.source_field_name}
                 )
-            relation = relation_model.search(
-                [
-                    ("db_serial", "=", self.db_serial),
-                    ("rec_id", "=", source_rec_id),
-                ],
-                limit=1,
-            )
-            if not relation:
-                relation = self._create_missing_sync_relation(
-                    relation_model,
-                    source_rec_id,
-                    reference,
-                    mapping,
+            if {"db_serial", "rec_id"}.issubset(relation_model._fields):
+                relation = relation_model.search(
+                    [
+                        ("db_serial", "=", self.db_serial),
+                        ("rec_id", "=", source_rec_id),
+                    ],
+                    limit=1,
+                )
+                if not relation:
+                    relation = self._create_missing_sync_relation(
+                        relation_model,
+                        source_rec_id,
+                        reference,
+                        mapping,
+                    )
+            else:
+                profile = self.apply_profile_id
+                relation = self.env["ab_odoo_sync_identity"].sudo().get_or_create_business_record(
+                    db_serial=self.db_serial,
+                    source_model_name=reference.get("model") or target_field.comodel_name,
+                    source_rec_id=source_rec_id,
+                    target_model_name=target_field.comodel_name,
+                    reference=reference,
+                    upload_record=self,
+                    create_placeholder=profile.allow_placeholder_creation if profile else True,
                 )
         else:
             identity_values = reference.get("values") or {}
@@ -501,27 +553,36 @@ class AbOdooSyncUploadRecord(models.Model):
 
     def _prepare_target_vals(self, target_model):
         self.ensure_one()
-        if "db_serial" not in target_model._fields or "rec_id" not in target_model._fields:
-            raise ValueError(
-                _("Target sync model %(model)s must define db_serial and rec_id fields.")
-                % {"model": self.target_model_name}
-            )
-
         profile = self.apply_profile_id
         if not profile or not profile.active:
             raise ValueError(
                 _("No active apply profile exists for source model %(model)s.")
                 % {"model": self.model_name}
             )
+        if profile.apply_mode == "raw_only":
+            return {}, []
+        if profile.apply_mode == "ignore":
+            return {}, []
         if profile.target_model_name != self.target_model_name:
             raise ValueError(_("Upload target does not match its active apply profile."))
+        if profile.apply_mode == "mirror_sync" and (
+            "db_serial" not in target_model._fields or "rec_id" not in target_model._fields
+        ):
+            raise ValueError(
+                _("Target sync model %(model)s must define db_serial and rec_id fields.")
+                % {"model": self.target_model_name}
+            )
 
         payload_fields = self._payload_fields()
 
-        vals = {
-            "db_serial": self.db_serial,
-            "rec_id": self.rec_id,
-        }
+        vals = {}
+        if profile.apply_mode == "mirror_sync":
+            vals.update(
+                {
+                    "db_serial": self.db_serial,
+                    "rec_id": self.rec_id,
+                }
+            )
         meta_vals = {
             "payload_json": self.payload_json or {},
             "source_revision": self.source_revision,
@@ -531,7 +592,7 @@ class AbOdooSyncUploadRecord(models.Model):
             "synced_at": fields.Datetime.now(),
         }
         for field_name, value in meta_vals.items():
-            if field_name in target_model._fields:
+            if profile.apply_mode == "mirror_sync" and field_name in target_model._fields:
                 vals[field_name] = value
 
         active_mappings = profile.mapping_ids.filtered(
@@ -593,6 +654,50 @@ class AbOdooSyncUploadRecord(models.Model):
 
         return vals, skipped_fields
 
+    def _apply_to_mirror_model(self, target_model, vals):
+        self.ensure_one()
+        existing = target_model.search(
+            [
+                ("db_serial", "=", self.db_serial),
+                ("rec_id", "=", self.rec_id),
+            ],
+            limit=1,
+        )
+        if existing:
+            existing.write(vals)
+            return existing
+        return target_model.create(vals)
+
+    def _apply_to_business_model(self, target_model, vals):
+        self.ensure_one()
+        identity_model = self.env["ab_odoo_sync_identity"].sudo()
+        target_res_id = self.rec_id
+        existing = target_model.browse(target_res_id)
+        if self.source_operation == "archive":
+            if existing.exists():
+                existing.write(vals)
+                identity_model.mark_resolved(self, target_model._name, target_res_id)
+            return existing
+
+        if existing.exists():
+            existing.write(vals)
+        else:
+            payload_fields = self._payload_fields()
+            create_vals = identity_model._prepare_placeholder_vals(
+                target_model,
+                target_res_id,
+                {
+                    "display_name": payload_fields.get("display_name") or payload_fields.get("name"),
+                    "values": {},
+                },
+            )
+            create_vals.update(vals)
+            with self.env.cr.savepoint():
+                self.env["ab_odoo_sync_service"].sudo()._force_next_id(target_model, target_res_id)
+                existing = target_model.create(create_vals)
+        identity_model.mark_resolved(self, target_model._name, target_res_id)
+        return existing
+
     def job_apply_to_target(self):
         for record in self.sudo().exists():
             record._apply_to_target()
@@ -604,19 +709,19 @@ class AbOdooSyncUploadRecord(models.Model):
 
         try:
             with self.env.cr.savepoint():
+                profile = self.apply_profile_id
+                if not profile:
+                    self.write({"status": "pending_mapping", "error_message": False})
+                    return
+                if profile.apply_mode in {"raw_only", "ignore"}:
+                    self._set_profile_handling(profile)
+                    return
                 target_model = self._get_target_model()
                 vals, skipped_fields = self._prepare_target_vals(target_model)
-                existing = target_model.search(
-                    [
-                        ("db_serial", "=", self.db_serial),
-                        ("rec_id", "=", self.rec_id),
-                    ],
-                    limit=1,
-                )
-                if existing:
-                    existing.write(vals)
+                if profile.apply_mode == "business_model":
+                    self._apply_to_business_model(target_model, vals)
                 else:
-                    target_model.create(vals)
+                    self._apply_to_mirror_model(target_model, vals)
         except Exception as ex:
             _logger.exception(
                 "ab_odoo_sync upload apply failed for %s db_serial=%s rec_id=%s",

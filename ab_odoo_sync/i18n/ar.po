@@ -1332,3 +1332,148 @@ msgstr "يجب أن يكون rec_id رقما صحيحا موجبا."
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
 msgid "watermark is zero"
 msgstr "علامة التنظيف تساوي صفرا"
+
+#. module: ab_odoo_sync
+#: model:ir.model,name:ab_odoo_sync.model_ab_odoo_sync_identity
+msgid "AB Odoo Sync Identity"
+msgstr "هوية مزامنة أودو"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_apply_profile__apply_mode
+msgid "Apply Mode"
+msgstr "وضع التطبيق"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_apply_profile__apply_mode__raw_only
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_upload_record__status__raw_only
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_upload_record_search
+msgid "Raw Only"
+msgstr "بيانات خام فقط"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_apply_profile__apply_mode__mirror_sync
+msgid "Mirror Sync Model"
+msgstr "نموذج مزامنة مرآة"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_apply_profile__apply_mode__business_model
+msgid "Business Model"
+msgstr "نموذج أعمال"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_apply_profile__allow_placeholder_creation
+msgid "Allow Placeholder Creation"
+msgstr "السماح بإنشاء سجلات مؤقتة"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,help:ab_odoo_sync.field_ab_odoo_sync_apply_profile__apply_mode
+msgid "Controls how MAIN handles accepted branch uploads for this source model."
+msgstr "يتحكم في طريقة تعامل MAIN مع الرفعات المقبولة من الفروع لهذا النموذج المصدر."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,help:ab_odoo_sync.field_ab_odoo_sync_apply_profile__allow_placeholder_creation
+msgid "Create missing target records with the source ID when source-ID relations arrive out of order."
+msgstr "ينشئ السجلات الهدف المفقودة بمعرف المصدر عند وصول علاقات معرف المصدر بترتيب غير متزامن."
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_identity__target_res_id
+msgid "Target Record ID"
+msgstr "معرف السجل الهدف"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_identity__stable_key_json
+msgid "Stable Keys"
+msgstr "المفاتيح الثابتة"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_identity__last_upload_record_id
+msgid "Last Upload Record"
+msgstr "آخر سجل رفع"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields,field_description:ab_odoo_sync.field_ab_odoo_sync_identity__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_identity__state__placeholder
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_identity_search
+msgid "Placeholder"
+msgstr "سجل مؤقت"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_identity__state__resolved
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_identity_search
+msgid "Resolved"
+msgstr "تم حله"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_identity__state__conflict
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_identity_search
+msgid "Conflict"
+msgstr "تعارض"
+
+#. module: ab_odoo_sync
+#: model:ir.model.fields.selection,name:ab_odoo_sync.selection__ab_odoo_sync_upload_record__status__pending_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_upload_record_search
+msgid "Pending Mapping"
+msgstr "بانتظار الربط"
+
+#. module: ab_odoo_sync
+#: model:ir.actions.act_window,name:ab_odoo_sync.action_ab_odoo_sync_identity
+#: model:ir.ui.menu,name:ab_odoo_sync.menu_ab_odoo_sync_identities
+msgid "Sync Identities"
+msgstr "هويات المزامنة"
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target model is required for this apply mode."
+msgstr "النموذج الهدف مطلوب لهذا وضع التطبيق."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target model %(model)s is not installed."
+msgstr "النموذج الهدف %(model)s غير مثبت."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_identity.py:0
+msgid "Source identity must be unique per branch, source model, source ID, and target model."
+msgstr "يجب أن تكون هوية المصدر فريدة لكل فرع ونموذج مصدر ومعرف مصدر ونموذج هدف."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_identity.py:0
+msgid "Target model %(model)s does not exist."
+msgstr "النموذج الهدف %(model)s غير موجود."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_identity.py:0
+msgid "No sequence found for model %(model)s."
+msgstr "لم يتم العثور على تسلسل للنموذج %(model)s."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_identity.py:0
+msgid "Expected target ID %(expected)s but identity points to %(actual)s."
+msgstr "المعرف الهدف المتوقع %(expected)s لكن الهوية تشير إلى %(actual)s."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_identity.py:0
+msgid "Sync identity points to a different target record."
+msgstr "هوية المزامنة تشير إلى سجل هدف مختلف."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_identity.py:0
+msgid "Sync identities are audit records and cannot be deleted."
+msgstr "هويات المزامنة سجلات تدقيق ولا يمكن حذفها."
+
+#. module: ab_odoo_sync
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync.view_ab_odoo_sync_apply_profile_form
+msgid "Raw JSON remains complete. MAIN can keep uploads raw, apply them into mirror sync models, or write selected fields into real business models."
+msgstr "تبقى بيانات JSON الخام كاملة. يمكن لـ MAIN إبقاء الرفعات خاما أو تطبيقها على نماذج مزامنة مرآة أو كتابة الحقول المحددة في نماذج أعمال فعلية."

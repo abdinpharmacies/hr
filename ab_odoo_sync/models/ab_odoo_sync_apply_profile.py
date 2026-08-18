@@ -29,7 +29,25 @@ class AbOdooSyncApplyProfile(models.Model):
     name = fields.Char(required=True)
     sequence = fields.Integer(default=10)
     source_model_name = fields.Char(string="Source Model", required=True, index=True)
-    target_model_name = fields.Char(string="Target Sync Model", required=True, index=True)
+    apply_mode = fields.Selection(
+        selection=[
+            ("raw_only", "Raw Only"),
+            ("mirror_sync", "Mirror Sync Model"),
+            ("business_model", "Business Model"),
+            ("ignore", "Ignore"),
+        ],
+        string="Apply Mode",
+        default="mirror_sync",
+        required=True,
+        index=True,
+        help="Controls how MAIN handles accepted branch uploads for this source model.",
+    )
+    target_model_name = fields.Char(string="Target Model", index=True)
+    allow_placeholder_creation = fields.Boolean(
+        string="Allow Placeholder Creation",
+        default=True,
+        help="Create missing target records with the source ID when source-ID relations arrive out of order.",
+    )
     mapping_ids = fields.One2many(
         "ab_odoo_sync_field_mapping",
         "profile_id",
@@ -48,29 +66,29 @@ class AbOdooSyncApplyProfile(models.Model):
         "Only one apply profile is allowed for each source model.",
     )
 
-    @api.constrains("source_model_name", "target_model_name")
+    @api.constrains("source_model_name", "target_model_name", "apply_mode")
     def _check_models(self):
         for profile in self:
-            if profile.source_model_name not in self.env:
-                raise ValidationError(
-                    _("Source model %(model)s is not installed.")
-                    % {"model": profile.source_model_name}
-                )
+            if profile.apply_mode in {"raw_only", "ignore"}:
+                continue
+            if not profile.target_model_name:
+                raise ValidationError(_("Target model is required for this apply mode."))
             if profile.target_model_name not in self.env:
                 raise ValidationError(
-                    _("Target sync model %(model)s is not installed.")
+                    _("Target model %(model)s is not installed.")
                     % {"model": profile.target_model_name}
                 )
             target_model = self.env[profile.target_model_name]
-            missing = {"db_serial", "rec_id", "payload_json"} - set(target_model._fields)
-            if missing:
-                raise ValidationError(
-                    _("Target sync model %(model)s is missing required fields: %(fields)s")
-                    % {
-                        "model": profile.target_model_name,
-                        "fields": ", ".join(sorted(missing)),
-                    }
-                )
+            if profile.apply_mode == "mirror_sync":
+                missing = {"db_serial", "rec_id", "payload_json"} - set(target_model._fields)
+                if missing:
+                    raise ValidationError(
+                        _("Target sync model %(model)s is missing required fields: %(fields)s")
+                        % {
+                            "model": profile.target_model_name,
+                            "fields": ", ".join(sorted(missing)),
+                        }
+                    )
 
     @api.model
     def get_for_source(self, source_model_name):
@@ -83,23 +101,57 @@ class AbOdooSyncApplyProfile(models.Model):
         )
 
     @api.model
-    def _mapping_type_for_fields(self, source_field, target_field):
+    def _mapping_type_for_fields(self, source_field, target_field, apply_mode="mirror_sync"):
         if target_field.type == "one2many":
             return "ignore"
         if target_field.type == "many2one":
-            return "sync_many2one" if target_field.comodel_name.endswith("__sync") else "stable_many2one"
+            if target_field.comodel_name.endswith("__sync") or apply_mode == "business_model":
+                return "sync_many2one"
+            return "stable_many2one"
         if target_field.type == "many2many":
-            return "sync_many2many" if target_field.comodel_name.endswith("__sync") else "stable_many2many"
-        if source_field.type == target_field.type:
+            if target_field.comodel_name.endswith("__sync") or apply_mode == "business_model":
+                return "sync_many2many"
+            return "stable_many2many"
+        source_type = source_field.type if source_field else False
+        if source_type == target_field.type:
             return "direct"
         return "ignore"
+
+    def _source_field_info(self):
+        self.ensure_one()
+        if self.source_model_name in self.env:
+            return {
+                field_name: field
+                for field_name, field in self.env[self.source_model_name]._fields.items()
+            }
+        upload = self.env["ab_odoo_sync_upload_record"].sudo().search(
+            [
+                ("model_name", "=", self.source_model_name),
+                ("payload_json", "!=", False),
+            ],
+            order="received_at desc, id desc",
+            limit=1,
+        )
+        payload = upload.payload_json or {}
+        field_types = payload.get("field_types") or {}
+        fields_payload = payload.get("fields") or {}
+        return {
+            field_name: type(
+                "PayloadField",
+                (),
+                {"type": field_types.get(field_name)},
+            )()
+            for field_name in fields_payload
+        }
 
     def action_load_matching_fields(self):
         Mapping = self.env["ab_odoo_sync_field_mapping"].sudo()
         created = 0
         for profile in self:
             profile._check_models()
-            source_model = self.env[profile.source_model_name]
+            if profile.apply_mode not in {"mirror_sync", "business_model"}:
+                continue
+            source_fields = profile._source_field_info()
             target_model = self.env[profile.target_model_name]
             existing_pairs = {
                 (mapping.source_field_name, mapping.target_field_name)
@@ -107,13 +159,17 @@ class AbOdooSyncApplyProfile(models.Model):
             }
             vals_list = []
             for field_name, target_field in sorted(target_model._fields.items()):
-                if field_name in _TARGET_META_FIELDS or field_name not in source_model._fields:
+                if field_name in _TARGET_META_FIELDS or field_name not in source_fields:
                     continue
                 pair = (field_name, field_name)
                 if pair in existing_pairs:
                     continue
-                source_field = source_model._fields[field_name]
-                mapping_type = self._mapping_type_for_fields(source_field, target_field)
+                source_field = source_fields[field_name]
+                mapping_type = self._mapping_type_for_fields(
+                    source_field,
+                    target_field,
+                    profile.apply_mode,
+                )
                 vals_list.append(
                     {
                         "profile_id": profile.id,
@@ -142,22 +198,15 @@ class AbOdooSyncApplyProfile(models.Model):
             records = Upload.search(
                 [
                     ("model_name", "=", profile.source_model_name),
-                    ("status", "in", ["pending", "failed"]),
+                    ("status", "in", ["pending_mapping", "raw_only", "pending", "failed"]),
                     ("active", "=", True),
                 ],
                 order="source_revision, id",
             )
             for record in records:
-                if (
-                    record.apply_profile_id != profile
-                    or record.target_model_name != profile.target_model_name
-                ):
-                    record.write(
-                        {
-                            "apply_profile_id": profile.id,
-                            "target_model_name": profile.target_model_name,
-                        }
-                    )
+                record._set_profile_handling(profile)
+                if record.status in {"raw_only", "not_sync"}:
+                    continue
                 record._apply_to_target()
                 if record.status == "applied":
                     applied += 1
@@ -242,14 +291,17 @@ class AbOdooSyncFieldMapping(models.Model):
     def _check_mapping(self):
         stable_types = {"stable_many2one", "stable_many2many"}
         for mapping in self:
-            source_model = self.env[mapping.profile_id.source_model_name]
-            target_model = self.env[mapping.profile_id.target_model_name]
-            if mapping.source_field_name not in source_model._fields:
+            profile = mapping.profile_id
+            if profile.apply_mode not in {"mirror_sync", "business_model"}:
+                continue
+            source_model = self.env[profile.source_model_name] if profile.source_model_name in self.env else False
+            target_model = self.env[profile.target_model_name]
+            if source_model and mapping.source_field_name not in source_model._fields:
                 raise ValidationError(
                     _("Source field %(field)s does not exist on %(model)s.")
                     % {
                         "field": mapping.source_field_name,
-                        "model": mapping.profile_id.source_model_name,
+                        "model": profile.source_model_name,
                     }
                 )
             if mapping.target_field_name not in target_model._fields:
@@ -257,7 +309,7 @@ class AbOdooSyncFieldMapping(models.Model):
                     _("Target field %(field)s does not exist on %(model)s.")
                     % {
                         "field": mapping.target_field_name,
-                        "model": mapping.profile_id.target_model_name,
+                        "model": profile.target_model_name,
                     }
                 )
             if mapping.mapping_type in stable_types and (

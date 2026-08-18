@@ -191,7 +191,11 @@ class AbOdooSyncService(models.Model):
                     result["ignored"] += 1
                     continue
                 profile = upload_record.apply_profile_id
-                if profile and profile.auto_apply:
+                if (
+                    profile
+                    and profile.auto_apply
+                    and profile.apply_mode in {"mirror_sync", "business_model"}
+                ):
                     result["queued"] += upload_record._queue_apply_records()
             except Exception as ex:
                 result["failed"] += 1
@@ -463,6 +467,7 @@ class AbOdooSyncService(models.Model):
             [
                 ("active", "=", True),
                 ("auto_apply", "=", True),
+                ("apply_mode", "in", ["mirror_sync", "business_model"]),
             ],
             order="sequence, id",
         )
@@ -473,13 +478,20 @@ class AbOdooSyncService(models.Model):
 
             records = Upload.search(
                 [
-                    ("apply_profile_id", "=", profile.id),
-                    ("status", "in", ["pending", "failed"]),
+                    ("model_name", "=", profile.source_model_name),
+                    ("status", "in", ["pending_mapping", "raw_only", "pending", "failed"]),
                     ("active", "=", True),
                 ],
                 order="source_revision, id",
                 limit=remaining,
             )
+            for record in records:
+                if (
+                    record.apply_profile_id != profile
+                    or record.target_model_name != profile.target_model_name
+                    or record.status in {"pending_mapping", "raw_only"}
+                ):
+                    record._set_profile_handling(profile)
             queued_count += records._queue_apply_records()
 
         result = {

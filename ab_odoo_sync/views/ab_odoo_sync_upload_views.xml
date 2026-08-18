@@ -142,8 +142,10 @@
                 <list>
                     <field name="sequence" widget="handle"/>
                     <field name="name"/>
+                    <field name="apply_mode"/>
                     <field name="source_model_name"/>
                     <field name="target_model_name"/>
+                    <field name="allow_placeholder_creation" optional="show"/>
                     <field name="auto_apply"/>
                     <field name="active"/>
                 </list>
@@ -170,12 +172,17 @@
                             </group>
                             <group>
                                 <field name="source_model_name"/>
-                                <field name="target_model_name"/>
+                                <field name="apply_mode"/>
+                                <field name="target_model_name"
+                                       invisible="apply_mode in ('raw_only', 'ignore')"
+                                       required="apply_mode in ('mirror_sync', 'business_model')"/>
+                                <field name="allow_placeholder_creation"
+                                       invisible="apply_mode != 'business_model'"/>
                                 <field name="auto_apply"/>
                             </group>
                         </group>
                         <div class="alert alert-warning" role="alert">
-                            Raw JSON remains complete. Only active field mappings are written into the typed sync model.
+                            Raw JSON remains complete. MAIN can keep uploads raw, apply them into mirror sync models, or write selected fields into real business models.
                         </div>
                         <field name="mapping_ids">
                             <list editable="bottom">

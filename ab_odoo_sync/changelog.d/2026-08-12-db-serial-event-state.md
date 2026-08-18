@@ -203,13 +203,26 @@ Files changed:
 
 User-facing changes:
 
-- Made MAIN upload apply jobs and the MAIN feeder job use infinite queue retries.
-- Changed upload apply retry intervals to 10 seconds, 60 seconds, 5 minutes, then 1 day for later retries.
-- Kept upload record audit status updates when apply fails, while raising retryable queue errors for queued apply jobs so they continue retrying.
+- Added MAIN-side sync identities for branch uploads applied into real business models.
+- Added apply modes so MAIN can keep uploads raw, apply them into mirror sync models, apply them into real business models, or mark them ignored.
+- Preserved globally assigned source IDs as MAIN primary keys for business-model applies.
+- Added out-of-order relation handling that creates placeholder business records by source ID and patches them when their full upload later arrives.
+- Allowed apply profiles for branch-only source models by loading source fields from recent uploaded payloads when the model is not installed on MAIN.
+- Kept unknown or unmapped source models accepted as Pending Mapping instead of failing upload.
+- Added admin views for sync identity audit rows and updated Arabic translations.
+- Added a test guide for raw-only, business-model, placeholder, and patching scenarios.
 
 Files changed:
 
 - `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
-- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/__init__.py`
+- `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
+- `ab_odoo_sync/models/ab_odoo_sync_identity.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
+- `ab_odoo_sync/security/ir.model.access.csv`
+- `ab_odoo_sync/test-guide.md`
+- `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
+- `ab_odoo_sync/views/ab_odoo_sync_views.xml`
