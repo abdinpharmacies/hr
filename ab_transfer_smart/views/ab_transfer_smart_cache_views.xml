@@ -253,5 +253,12 @@
                   action="ab_sales.ab_sales_inventory_action"
                   sequence="40"
                   groups="base.group_system,ab_transfer_smart.group_transfer_smart_purchase,ab_transfer_smart.group_trnasfer_smart_store_preparation,ab_transfer_smart.group_trnasfer_smart_store_revision"/>
+
+        <menuitem id="ab_transfer_smart_products_menu"
+                  name="Products"
+                  parent="ab_transfer_smart_reports_menu"
+                  action="ab_product.ab_product_action"
+                  sequence="50"
+                  groups="base.group_system,ab_transfer_smart.group_transfer_smart_purchase,ab_transfer_smart.group_trnasfer_smart_store_preparation,ab_transfer_smart.group_trnasfer_smart_store_revision"/>
     </data>
 </odoo>

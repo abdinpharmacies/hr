@@ -1,13 +1,13 @@
 Current changes before commit:
 
-- Add post-install Fast Transfer Pre-Submit tests that execute on the installed `ab_transfer_smart` database.
-- Cover enabled, missing, disabled, linked-request pending, preserved line values, and unauthorized-user behavior.
-- Use existing stores, costcenters, and products in replica databases so tests do not write protected master data.
+- Add a Products report menu under Transfer Smart > Reports.
+- Reuse the existing `ab_product.ab_product_action` so the new report menu opens the same Products list/form action.
+- Keep the existing Sales > Configurations > Products menu unchanged.
 
 Files changed:
 
 - ab_transfer_smart/changelog.d
-- ab_transfer_smart/tests/test_smart_transfer.py
+- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
 
 
 commit 339164514add9a86b64ac065986ef5cb671aea94
