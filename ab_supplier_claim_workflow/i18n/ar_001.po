@@ -3344,6 +3344,12 @@ msgid "Delay days after expected deferral date: %(days)s days"
 msgstr "أيام التأخير بعد نهاية الوقت المتوقع للتأجيل: %(days)s أيام"
 
 #. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Remaining days until expected deferral date: %(days)s days"
+msgstr "الأيام المتبقية حتى الوقت المتوقع للتأجيل: %(days)s أيام"
+
+#. module: ab_supplier_claim_workflow
 #: model_terms:ir.ui.view,arch_db:ab_supplier_claim_workflow.view_ab_supplier_claim_defer_wizard_form
 msgid ""
 "<div class=\"scc-stage-field-label o_translate_inline\">Expected Completion "

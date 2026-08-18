@@ -2274,6 +2274,7 @@ class SupplierClaimCycle(models.Model):
 
             show_defer_overdue_days = False
             defer_overdue_days = 0
+            defer_remaining_days = 0
             if stage in DEPARTMENT_STAGES:
                 decision_field = current_dept_decisions.get(stage)
                 expected_date_field = self._get_defer_expected_date_field(stage)
@@ -2284,7 +2285,12 @@ class SupplierClaimCycle(models.Model):
                     and self[expected_date_field]
                 ):
                     show_defer_overdue_days = True
-                    defer_overdue_days = self._get_deferred_actual_overdue_days(stage)
+                    expected_date = self[expected_date_field]
+                    today = fields.Date.context_today(self)
+                    if today > expected_date:
+                        defer_overdue_days = (today - expected_date).days
+                    else:
+                        defer_remaining_days = (expected_date - today).days
 
             timeline.append({
                 'type': 'stage',
@@ -2300,6 +2306,7 @@ class SupplierClaimCycle(models.Model):
                 'parallel_decisions': parallel_decisions,
                 'show_defer_overdue_days': show_defer_overdue_days,
                 'defer_overdue_days': defer_overdue_days,
+                'defer_remaining_days': defer_remaining_days,
             })
 
         for issue in self.issue_ids:
@@ -2351,6 +2358,16 @@ class SupplierClaimCycle(models.Model):
         'sup_decision',
         'tax_decision',
         'bank_decision',
+        'inv_deferred_expected_date',
+        'pur_deferred_expected_date',
+        'sup_deferred_expected_date',
+        'tax_deferred_expected_date',
+        'bank_deferred_expected_date',
+        'inv_deferred_reason',
+        'pur_deferred_reason',
+        'sup_deferred_reason',
+        'tax_deferred_reason',
+        'bank_deferred_reason',
         'has_blocking_issue',
         'issue_ids',
         'issue_ids.resolved',
@@ -2427,10 +2444,23 @@ class SupplierClaimCycle(models.Model):
                 if entry['notes']:
                     L.append('<div class="scc-timeline-notes">%s</div>' % entry['notes'])
                 if entry.get('show_defer_overdue_days'):
-                    defer_overdue_label = _('Delay days after expected deferral date: %(days)s days') % {
-                        'days': entry.get('defer_overdue_days', 0),
-                    }
-                    L.append('<div class="scc-timeline-defer-overdue">%s</div>' % defer_overdue_label)
+                    if entry.get('defer_overdue_days', 0) > 0:
+                        defer_overdue_label = _('Delay days after expected deferral date: %(days)s days') % {
+                            'days': entry.get('defer_overdue_days', 0),
+                        }
+                        defer_overdue_class = 'scc-timeline-defer-overdue is-overdue'
+                    else:
+                        remaining_days = entry.get('defer_remaining_days', 0)
+                        defer_overdue_label = _('Remaining days until expected deferral date: %(days)s days') % {
+                            'days': remaining_days,
+                        }
+                        if remaining_days == 0:
+                            defer_overdue_class = 'scc-timeline-defer-overdue is-due-today'
+                        elif remaining_days <= 2:
+                            defer_overdue_class = 'scc-timeline-defer-overdue is-due-soon'
+                        else:
+                            defer_overdue_class = 'scc-timeline-defer-overdue is-on-track'
+                    L.append('<div class="%s">%s</div>' % (defer_overdue_class, defer_overdue_label))
 
                 if entry['stage'] == 'tax_accounts' and is_comp and self._requires_tax_accounts_stage():
                     L.append('<div class="scc-timeline-tax-summary">')

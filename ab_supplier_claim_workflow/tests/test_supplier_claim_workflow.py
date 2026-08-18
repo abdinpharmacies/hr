@@ -95,6 +95,19 @@ class TestSupplierClaimWorkflow(TransactionCase):
                 'type_of_invoice': 'original',
             })
 
+    def test_reviewer_can_open_claim_with_blocking_issues(self):
+        claim = self._create_claim()
+        self.env['ab_supplier_claim_issue'].sudo().create({
+            'claim_id': claim.id,
+            'title': 'Missing approval',
+            'description': 'Waiting for approval.',
+            'stage': 'inventory',
+        })
+
+        self._set_workflow_group(self.group_reviewer)
+        reviewer_claim = claim.with_user(self.workflow_user)
+        self.assertEqual(len(reviewer_claim.issue_ids), 1)
+
     def test_secretarial_starts_cycle(self):
         claim = self._create_claim()
         self.assertEqual(claim.status, 'secretarial')
@@ -238,9 +251,13 @@ class TestSupplierClaimWorkflow(TransactionCase):
         )
         self.assertTrue(inventory_stage['show_defer_overdue_days'])
         self.assertEqual(inventory_stage['defer_overdue_days'], 0)
+        self.assertEqual(inventory_stage['defer_remaining_days'], 1)
         self.assertIn('أيام التأخير الفعلية: 0', inventory_stage['notes'])
         timeline_html = localized_claim._render_timeline_html()
-        self.assertIn('أيام التأخير بعد نهاية الوقت المتوقع للتأجيل: 0 أيام', timeline_html)
+        self.assertIn('الأيام المتبقية حتى الوقت المتوقع للتأجيل: 1 أيام', timeline_html)
+        self.assertIn('scc-timeline-defer-overdue is-due-soon', timeline_html)
+        localized_claim.invalidate_recordset(['timeline_display'])
+        self.assertIn('الأيام المتبقية حتى الوقت المتوقع للتأجيل: 1 أيام', localized_claim.timeline_display)
 
         with self.assertRaises(UserError):
             claim.with_user(self.workflow_user).action_finish()

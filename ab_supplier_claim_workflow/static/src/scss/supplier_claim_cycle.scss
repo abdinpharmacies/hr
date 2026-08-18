@@ -646,13 +646,33 @@
   align-items: center;
   margin-top: 6px;
   padding: 5px 10px;
-  border: 1px solid #fecaca;
+  border: 1px solid #d1d5db;
   border-radius: 999px;
-  background: #fef2f2;
-  color: #991b1b;
+  background: #f9fafb;
+  color: #374151;
   font-size: 12px;
   font-weight: 700;
   line-height: 1.2;
+}
+.scc-timeline-defer-overdue.is-on-track {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #166534;
+}
+.scc-timeline-defer-overdue.is-due-soon {
+  border-color: #fde68a;
+  background: #fffbeb;
+  color: #92400e;
+}
+.scc-timeline-defer-overdue.is-due-today {
+  border-color: #fed7aa;
+  background: #fff7ed;
+  color: #9a3412;
+}
+.scc-timeline-defer-overdue.is-overdue {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #991b1b;
 }
 .scc-timeline-divider {
   font-size: 12px;
