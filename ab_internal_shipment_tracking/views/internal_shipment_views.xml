@@ -374,7 +374,10 @@
                                        invisible="not warehouse_required">
                                     <div class="o_ais_party_label o_ais_party_label_warehouse">Warehouse</div>
                                     <field name="warehouse_department_id" string="Selected Warehouse" readonly="1"/>
-                                    <field name="warehouse_employee_ids" widget="many2many_tags" readonly="1"/>
+                                    <field name="warehouse_employee_ids"
+                                           widget="many2many_tags"
+                                           class="o_ais_compact_employee_tags"
+                                           readonly="1"/>
                                     <field name="warehouse_received_by_id" readonly="1"/>
                                     <field name="warehouse_received_date" readonly="1"/>
                                 </group>
@@ -398,10 +401,12 @@
                                            readonly="state != 'draft'"/>
                                     <field name="recipient_confirmation_employee_ids"
                                            widget="many2many_tags"
+                                           class="o_ais_compact_employee_tags"
                                            invisible="recipient_type not in ('department', 'branch') or recipient_employee_selection_type != 'all'"
                                            readonly="1"/>
                                     <field name="recipient_selected_employee_ids"
                                            widget="many2many_tags"
+                                           class="o_ais_compact_employee_tags"
                                            invisible="recipient_type not in ('department', 'branch') or recipient_employee_selection_type != 'specific'"
                                            readonly="state != 'draft'"
                                            placeholder="Select employees..."/>

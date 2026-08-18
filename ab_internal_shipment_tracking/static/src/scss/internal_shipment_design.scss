@@ -960,6 +960,33 @@ $ais-ease: cubic-bezier(0.2, 0, 0.2, 1);
             gap: 4px;
         }
 
+        .o_ais_compact_employee_tags {
+            max-height: 112px;
+            padding: 4px 6px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            scrollbar-gutter: stable;
+            border: 1px solid rgba(32, 36, 42, 0.08);
+            border-radius: 10px;
+            background: rgba(248, 250, 252, 0.82);
+
+            .o_tag,
+            .badge {
+                flex: 0 1 auto;
+                min-width: 0;
+                margin: 0;
+            }
+
+            &::-webkit-scrollbar {
+                width: 6px;
+            }
+
+            &::-webkit-scrollbar-thumb {
+                border-radius: 999px;
+                background: rgba($ais-muted, 0.28);
+            }
+        }
+
         .dropdown-menu,
         .o-dropdown--menu,
         .o-autocomplete--dropdown-menu {
