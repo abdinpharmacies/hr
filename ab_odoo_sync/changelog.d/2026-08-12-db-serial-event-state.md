@@ -213,6 +213,7 @@ User-facing changes:
 - Made branch upload source records inactive by default and added a loader that imports installed persistent models as inactive rows.
 - Marked incoming MAIN events for locally missing models as Not Sync instead of failing branch sync with a registry `KeyError`.
 - Allowed dotted Odoo model names such as `ab.sales.dashboard.snapshot` in branch upload payload validation.
+- Auto-filled apply profile targets by mode, including dotted source models converted to underscored `__sync` mirror names.
 - Added a test guide for raw-only, business-model, placeholder, and patching scenarios.
 
 Files changed:

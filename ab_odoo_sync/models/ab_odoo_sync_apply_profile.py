@@ -66,6 +66,29 @@ class AbOdooSyncApplyProfile(models.Model):
         "Only one apply profile is allowed for each source model.",
     )
 
+    @api.model
+    def mirror_target_from_source(self, source_model_name):
+        source_model_name = (source_model_name or "").strip()
+        if not source_model_name:
+            return False
+        return "%s__sync" % source_model_name.replace(".", "_")
+
+    @api.model
+    def _default_target_model_name(self, source_model_name, apply_mode):
+        if apply_mode == "mirror_sync":
+            return self.mirror_target_from_source(source_model_name)
+        if apply_mode == "business_model":
+            return (source_model_name or "").strip() or False
+        return False
+
+    @api.onchange("source_model_name", "apply_mode")
+    def _onchange_default_target_model_name(self):
+        for profile in self:
+            profile.target_model_name = profile._default_target_model_name(
+                profile.source_model_name,
+                profile.apply_mode,
+            )
+
     @api.constrains("source_model_name", "target_model_name", "apply_mode")
     def _check_models(self):
         for profile in self:
@@ -89,6 +112,33 @@ class AbOdooSyncApplyProfile(models.Model):
                             "fields": ", ".join(sorted(missing)),
                         }
                     )
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        for vals in vals_list:
+            apply_mode = vals.get("apply_mode") or "mirror_sync"
+            if not vals.get("target_model_name"):
+                vals["target_model_name"] = self._default_target_model_name(
+                    vals.get("source_model_name"),
+                    apply_mode,
+                )
+        return super().create(vals_list)
+
+    def write(self, vals):
+        if "target_model_name" in vals:
+            return super().write(vals)
+
+        for profile in self:
+            source_model_name = vals.get("source_model_name", profile.source_model_name)
+            apply_mode = vals.get("apply_mode", profile.apply_mode)
+            write_vals = dict(vals)
+            if not profile.target_model_name or vals.get("source_model_name") or vals.get("apply_mode"):
+                write_vals["target_model_name"] = profile._default_target_model_name(
+                    source_model_name,
+                    apply_mode,
+                )
+            super(AbOdooSyncApplyProfile, profile).write(write_vals)
+        return True
 
     @api.model
     def get_for_source(self, source_model_name):
