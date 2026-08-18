@@ -13,9 +13,9 @@
             <field name="sequence">10</field>
         </record>
 
-        <!--  user -->
+        <!--  secretary -->
         <record id="supplier_claim_group_user" model="res.groups">
-            <field name="name">supplier claim User</field>
+            <field name="name">Supplier Claim Secretary</field>
             <field name="privilege_id" ref="privilege_ab_supplier_claim_cycle"/>
         </record>
 
@@ -37,5 +37,4 @@
         </record>
     </data>
 </odoo>
-
 
