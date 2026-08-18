@@ -126,15 +126,44 @@ class SupplierClaimCycle(models.Model):
         self._send_claim_created_telegram_notifications()
         return result
 
+    def _get_claim_created_telegram_recipient_users(self):
+        included_group_xmlids = [
+            'ab_supplier_claim_cycle.supplier_claim_group_user',
+            'ab_supplier_claim_workflow.supplier_claim_group_inventory',
+            'ab_supplier_claim_workflow.supplier_claim_group_purchase',
+            'ab_supplier_claim_workflow.supplier_claim_group_suppliers',
+            'ab_supplier_claim_workflow.supplier_claim_group_tax_accounts',
+            'ab_supplier_claim_workflow.supplier_claim_group_bank_acc',
+        ]
+        excluded_group_xmlids = [
+            'ab_supplier_claim_cycle.supplier_claim_group_reviewer',
+            'ab_supplier_claim_cycle.supplier_claim_group_admin',
+            'base.group_system',
+        ]
+        users = self.env['res.users']
+        excluded_users = self.env['res.users']
+        for xmlid in included_group_xmlids:
+            group = self.env.ref(xmlid, raise_if_not_found=False)
+            if group:
+                users |= group.sudo().user_ids
+        for xmlid in excluded_group_xmlids:
+            group = self.env.ref(xmlid, raise_if_not_found=False)
+            if group:
+                excluded_users |= group.sudo().user_ids
+        return (users - excluded_users).filtered('active')
+
     def _send_claim_created_telegram_notifications(self):
         if config['test_enable']:
             return False
         Registration = self.env['ab_supplier_claim_telegram_registration'].sudo()
         TelegramBot = self.env['ab_telegram_bot'].sudo()
+        recipient_users = self._get_claim_created_telegram_recipient_users()
+        if not recipient_users:
+            return False
         for claim in self:
             registrations = Registration.search([
                 ('active', '=', True),
-                ('workflow_department', '!=', False),
+                ('employee_id.user_id', 'in', recipient_users.ids),
                 ('telegram_connected', '=', True),
             ])
             sent_chat_ids = set()
