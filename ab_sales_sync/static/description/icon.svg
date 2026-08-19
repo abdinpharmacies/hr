@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" role="img" aria-label="Sales Sync">
+    <defs>
+        <linearGradient id="background" x1="35" y1="20" x2="265" y2="280" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#4f8df7"/>
+            <stop offset="1" stop-color="#3154c6"/>
+        </linearGradient>
+        <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+            <feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#17306f" flood-opacity="0.38"/>
+        </filter>
+    </defs>
+    <rect width="300" height="300" rx="38" fill="url(#background)"/>
+    <path d="M38 1h224c20 0 37 16 37 37v10c-5-13-18-22-34-22H35C20 26 8 34 1 46v-8C1 17 17 1 38 1Z" fill="#fff" opacity="0.18"/>
+    <g filter="url(#shadow)">
+        <rect x="91" y="91" width="118" height="118" rx="26" fill="#fff"/>
+        <path d="M119 122h62M119 147h42M119 172h27" fill="none" stroke="#3154c6" stroke-width="12" stroke-linecap="round"/>
+        <circle cx="178" cy="172" r="9" fill="#4f8df7"/>
+    </g>
+    <g fill="none" stroke="#fff" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M65 116C76 70 123 45 168 55c24 5 44 18 58 37"/>
+        <path d="m207 90 22 4 4-22"/>
+        <path d="M235 184c-11 46-58 71-103 61-24-5-44-18-58-37"/>
+        <path d="m93 210-22-4-4 22"/>
+    </g>
+</svg>

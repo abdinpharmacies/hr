@@ -42,7 +42,7 @@
                                 <field name="notes"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -96,7 +96,7 @@
                                 <field name="notes"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -155,7 +155,7 @@
                         </group>
                         <notebook>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -210,7 +210,7 @@
                         </group>
                         <notebook>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -266,7 +266,7 @@
                                 <field name="error_message"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -329,7 +329,7 @@
                         </group>
                         <notebook>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -370,10 +370,10 @@
                         </group>
                         <notebook>
                             <page string="Settings">
-                                <field name="settings_json"/>
+                                <field name="settings_json" widget="ab_pretty_json"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -426,10 +426,10 @@
                         </group>
                         <notebook>
                             <page string="Bills">
-                                <field name="bills_json"/>
+                                <field name="bills_json" widget="ab_pretty_json"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -470,7 +470,7 @@
                         </group>
                         <notebook>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -536,7 +536,7 @@
                                 <field name="notes"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>

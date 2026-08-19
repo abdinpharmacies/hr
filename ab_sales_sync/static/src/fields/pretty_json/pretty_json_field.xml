@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_sales_sync.PrettyJsonField">
+        <pre class="o_ab_pretty_json mb-0" tabindex="0"><t t-esc="formattedValue"/></pre>
+    </t>
+</templates>

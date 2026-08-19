@@ -117,7 +117,7 @@
                                 <field name="push_message"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -216,10 +216,10 @@
                                 </group>
                             </page>
                             <page string="Inventory Snapshot">
-                                <field name="inventory_json"/>
+                                <field name="inventory_json" widget="ab_pretty_json"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -322,7 +322,7 @@
                                 <field name="notes"/>
                             </page>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -432,7 +432,7 @@
                         </group>
                         <notebook>
                             <page string="Raw Payload">
-                                <field name="payload_json"/>
+                                <field name="payload_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -447,7 +447,8 @@
         </record>
 
         <menuitem id="menu_ab_sales_sync_root" name="Sales Sync"
-                  parent="base.menu_custom" sequence="72"
+                  sequence="72"
+                  web_icon="ab_sales_sync,static/description/icon.png"
                   groups="group_ab_sales_sync_manager"/>
         <menuitem id="menu_ab_sales_header_sync" name="Synced Sales"
                   parent="menu_ab_sales_sync_root" action="action_ab_sales_header_sync" sequence="10"/>

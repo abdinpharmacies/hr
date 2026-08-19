@@ -49,6 +49,7 @@ msgid "Sales Sync Manager"
 msgstr "مدير مزامنة المبيعات"
 
 #. module: ab_sales_sync
+#: model:ir.ui.menu,name:ab_sales_sync.menu_ab_sales_sync_root
 msgid "Sales Sync"
 msgstr "مزامنة المبيعات"
 
