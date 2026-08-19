@@ -636,21 +636,12 @@ class AbTransferHeader(models.Model):
         try:
             result = super().action_submit()
             if self.is_submitted:
-                self._mark_smart_transfer_request_done_after_submit()
                 self._sync_smart_eplus_serial_from_sent_transfer()
             return self._smart_soft_reload_action() if result is True else result
         except Exception:
             if not self.is_submitted and self.smart_stage != previous_stage:
                 self.write({"smart_stage": previous_stage})
             raise
-
-    def _mark_smart_transfer_request_done_after_submit(self):
-        self.ensure_one()
-        if (
-                self.transfer_request_id
-                and self.transfer_request_id.execution_state != "done"
-        ):
-            self.transfer_request_id.write({"execution_state": "done"})
 
     def _sync_smart_eplus_serial_from_sent_transfer(self):
         self.ensure_one()
