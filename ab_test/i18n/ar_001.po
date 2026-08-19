@@ -334,3 +334,126 @@ msgstr "سعر الوحدة"
 #: model:ir.model.fields.selection,name:ab_test.selection__ab_test_header__priority__urgent
 msgid "Urgent"
 msgstr "عاجل"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_delete_cascade_child
+msgid "AB Sync Test Cascade Delete Child"
+msgstr "تابع اختبار حذف التعاقب في مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_delete_cascade_parent
+msgid "AB Sync Test Cascade Delete Parent"
+msgstr "أصل اختبار حذف التعاقب في مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_delete_restrict_child
+msgid "AB Sync Test Restrict Delete Child"
+msgstr "تابع اختبار منع الحذف في مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_delete_restrict_parent
+msgid "AB Sync Test Restrict Delete Parent"
+msgstr "أصل اختبار منع الحذف في مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_delete_set_null_child
+msgid "AB Sync Test Set Null Delete Child"
+msgstr "تابع اختبار تفريغ العلاقة عند الحذف في مزامنة AB"
+
+#. module: ab_test
+#: model:ir.model,name:ab_test.model_ab_test_delete_set_null_parent
+msgid "AB Sync Test Set Null Delete Parent"
+msgstr "أصل اختبار تفريغ العلاقة عند الحذف في مزامنة AB"
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_delete_cascade_child
+msgid "Cascade Children"
+msgstr "توابع التعاقب"
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_delete_cascade_parent
+msgid "Cascade Parents"
+msgstr "أصول التعاقب"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_delete_cascade_child
+msgid "Cascade Delete Children"
+msgstr "توابع حذف التعاقب"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_delete_cascade_parent
+msgid "Cascade Delete Parents"
+msgstr "أصول حذف التعاقب"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_cascade_parent__child_ids
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_restrict_parent__child_ids
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_set_null_parent__child_ids
+msgid "Children"
+msgstr "التوابع"
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_delete_policy
+msgid "Delete Policy Tests"
+msgstr "اختبارات سياسات الحذف"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_cascade_child__note
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_restrict_child__note
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_set_null_child__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_cascade_child__parent_id
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_restrict_child__parent_id
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_delete_set_null_child__parent_id
+msgid "Parent"
+msgstr "الأصل"
+
+#. module: ab_test
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_delete_cascade_parent_uniq_code
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_delete_restrict_parent_uniq_code
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_delete_set_null_parent_uniq_code
+msgid "Parent code must be unique."
+msgstr "يجب أن يكون رمز الأصل فريداً."
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_delete_restrict_child
+msgid "Restrict Children"
+msgstr "توابع منع الحذف"
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_delete_restrict_parent
+msgid "Restrict Parents"
+msgstr "أصول منع الحذف"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_delete_restrict_child
+msgid "Restrict Delete Children"
+msgstr "توابع حذف المنع"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_delete_restrict_parent
+msgid "Restrict Delete Parents"
+msgstr "أصول حذف المنع"
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_delete_set_null_child
+msgid "Set Null Children"
+msgstr "توابع تفريغ العلاقة"
+
+#. module: ab_test
+#: model:ir.ui.menu,name:ab_test.menu_ab_test_delete_set_null_parent
+msgid "Set Null Parents"
+msgstr "أصول تفريغ العلاقة"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_delete_set_null_child
+msgid "Set Null Delete Children"
+msgstr "توابع حذف تفريغ العلاقة"
+
+#. module: ab_test
+#: model:ir.actions.act_window,name:ab_test.action_ab_test_delete_set_null_parent
+msgid "Set Null Delete Parents"
+msgstr "أصول حذف تفريغ العلاقة"

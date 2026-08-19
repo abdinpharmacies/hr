@@ -157,3 +157,113 @@ class AbTestLine(models.Model):
         for record in self:
             if record.quantity < 0:
                 raise ValidationError(_("Quantity cannot be negative."))
+
+
+class AbTestDeleteCascadeParent(models.Model):
+    _name = "ab_test_delete_cascade_parent"
+    _description = "AB Sync Test Cascade Delete Parent"
+    _order = "code, name"
+
+    name = fields.Char(required=True)
+    code = fields.Char(required=True, index=True)
+    active = fields.Boolean(default=True, index=True)
+    child_ids = fields.One2many(
+        "ab_test_delete_cascade_child",
+        "parent_id",
+        string="Children",
+    )
+
+    _uniq_code = models.Constraint(
+        "UNIQUE(code)",
+        "Parent code must be unique.",
+    )
+
+
+class AbTestDeleteCascadeChild(models.Model):
+    _name = "ab_test_delete_cascade_child"
+    _description = "AB Sync Test Cascade Delete Child"
+    _order = "parent_id, id"
+
+    parent_id = fields.Many2one(
+        "ab_test_delete_cascade_parent",
+        string="Parent",
+        required=True,
+        ondelete="cascade",
+        index=True,
+    )
+    name = fields.Char(required=True)
+    note = fields.Text()
+    active = fields.Boolean(default=True, index=True)
+
+
+class AbTestDeleteSetNullParent(models.Model):
+    _name = "ab_test_delete_set_null_parent"
+    _description = "AB Sync Test Set Null Delete Parent"
+    _order = "code, name"
+
+    name = fields.Char(required=True)
+    code = fields.Char(required=True, index=True)
+    active = fields.Boolean(default=True, index=True)
+    child_ids = fields.One2many(
+        "ab_test_delete_set_null_child",
+        "parent_id",
+        string="Children",
+    )
+
+    _uniq_code = models.Constraint(
+        "UNIQUE(code)",
+        "Parent code must be unique.",
+    )
+
+
+class AbTestDeleteSetNullChild(models.Model):
+    _name = "ab_test_delete_set_null_child"
+    _description = "AB Sync Test Set Null Delete Child"
+    _order = "parent_id, id"
+
+    parent_id = fields.Many2one(
+        "ab_test_delete_set_null_parent",
+        string="Parent",
+        ondelete="set null",
+        index=True,
+    )
+    name = fields.Char(required=True)
+    note = fields.Text()
+    active = fields.Boolean(default=True, index=True)
+
+
+class AbTestDeleteRestrictParent(models.Model):
+    _name = "ab_test_delete_restrict_parent"
+    _description = "AB Sync Test Restrict Delete Parent"
+    _order = "code, name"
+
+    name = fields.Char(required=True)
+    code = fields.Char(required=True, index=True)
+    active = fields.Boolean(default=True, index=True)
+    child_ids = fields.One2many(
+        "ab_test_delete_restrict_child",
+        "parent_id",
+        string="Children",
+    )
+
+    _uniq_code = models.Constraint(
+        "UNIQUE(code)",
+        "Parent code must be unique.",
+    )
+
+
+class AbTestDeleteRestrictChild(models.Model):
+    _name = "ab_test_delete_restrict_child"
+    _description = "AB Sync Test Restrict Delete Child"
+    _order = "parent_id, id"
+
+    parent_id = fields.Many2one(
+        "ab_test_delete_restrict_parent",
+        string="Parent",
+        required=True,
+        ondelete="restrict",
+        index=True,
+    )
+    name = fields.Char(required=True)
+    note = fields.Text()
+    active = fields.Boolean(default=True, index=True)
