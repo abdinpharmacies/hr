@@ -215,11 +215,20 @@
 }
 
 .o_ab_stock_report_title {
+    display: block;
+    margin: 0;
     color: var(--ab-sr-text);
     font-size: 22px;
     font-weight: 700;
     line-height: 1.2;
     letter-spacing: 0;
+}
+
+.o_ab_stock_report_title .o_form_label {
+    margin: 0;
+    color: inherit;
+    font: inherit;
+    letter-spacing: inherit;
 }
 
 .o_ab_stock_report_subtitle {
@@ -277,6 +286,13 @@
     margin-top: 6px;
     color: var(--ab-sr-secondary);
     font-size: 13px;
+}
+
+.o_ab_stock_report_meta_label .o_form_label,
+.o_ab_stock_report_metric_label .o_form_label {
+    margin: 0;
+    color: inherit;
+    font: inherit;
 }
 
 .o_ab_stock_report_filters {
@@ -667,6 +683,29 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
+}
+
+.o_ab_stock_report_loaded_count {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.o_ab_stock_report_loaded_count .o_field_widget {
+    margin-inline-end: 4px;
+}
+
+.o_ab_stock_report_loaded_count .o_form_label {
+    margin: 0;
+    margin-inline-start: 4px;
+    color: inherit;
+    font: inherit;
+}
+
+.o_ab_stock_report_load_more_meta .small .o_form_label {
+    margin: 0;
+    color: inherit;
+    font: inherit;
 }
 
 .o_ab_stock_report_load_more_action {

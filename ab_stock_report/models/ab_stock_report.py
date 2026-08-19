@@ -145,6 +145,25 @@ class AbStockReportWizard(models.TransientModel):
         string="Cache Progress",
         readonly=True,
     )
+    cache_source_display = fields.Selection(
+        [
+            ("wizard_cache", "Loaded from Wizard Cache"),
+            ("bconnect", "Fetched from BConnect"),
+        ],
+        string="Cache Source Display",
+        compute="_compute_ui_state",
+    )
+    cache_progress_display = fields.Selection(
+        [
+            ("more", "More movements available"),
+            ("all", "All movements loaded"),
+            ("latest", "Latest movements loaded"),
+            ("empty", "No movements found"),
+            ("none", "No cached movements yet"),
+        ],
+        string="Cache Progress Display",
+        compute="_compute_ui_state",
+    )
     loaded_rows_label = fields.Char(
         string="Loaded Rows",
         compute="_compute_ui_state",
@@ -172,8 +191,27 @@ class AbStockReportWizard(models.TransientModel):
             cache_entry = wizard._get_cache_entry(wizard.active_tab)
             wizard.has_loaded_lines = bool(wizard.line_ids)
             wizard.is_empty_result = bool(cache_entry.get("empty"))
-            wizard.active_tab_label = tab_labels.get(wizard.active_tab, "")
+            wizard.active_tab_label = _(tab_labels.get(wizard.active_tab, ""))
+            wizard.cache_source_display = wizard._cache_source_display_key(wizard.cache_source_label)
+            wizard.cache_progress_display = wizard._cache_progress_display_key(wizard.cache_progress_label)
             wizard.loaded_rows_label = _("%s movements loaded") % (wizard.line_count or 0)
+
+    def _cache_source_display_key(self, label):
+        source_keys = {
+            "Loaded from Wizard Cache": "wizard_cache",
+            "Fetched from BConnect": "bconnect",
+        }
+        return source_keys.get(label) or False
+
+    def _cache_progress_display_key(self, label):
+        progress_keys = {
+            "More movements available": "more",
+            "All movements loaded": "all",
+            "Latest movements loaded": "latest",
+            "No movements found": "empty",
+            "No cached movements yet": "none",
+        }
+        return progress_keys.get(label) or False
 
     @api.model
     def default_get(self, fields_list):

@@ -13,6 +13,7 @@ msgstr ""
 
 #. module: ab_stock_report
 #: model:ir.actions.act_window,name:ab_stock_report.action_ab_stock_report_wizard
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Stock Movements"
 msgstr "حركات المخزون"
 
@@ -33,6 +34,7 @@ msgstr "اضغط تحميل الحركات لجلب أحدث السجلات من
 
 #. module: ab_stock_report
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_product_view_tree_inherit_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Movements"
 msgstr "الحركات"
 
@@ -72,16 +74,19 @@ msgid "Movement Group"
 msgstr "مجموعة الحركة"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__sale
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Sales / Return"
 msgstr "المبيعات / المرتجعات"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__purchase
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Purchase / Return"
 msgstr "الشراء / المرتجعات"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__transfer
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Transfer / From / To"
 msgstr "التحويل / من / إلى"
@@ -215,6 +220,7 @@ msgid "Refresh queued"
 msgstr "تمت جدولة التحديث"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_source_display__bconnect
 msgid "Fetched from BConnect"
 msgstr "تم الجلب من BConnect"
 
@@ -227,6 +233,7 @@ msgid "No %s cache"
 msgstr "لا توجد ذاكرة مؤقتة لـ%s"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__none
 msgid "No cached movements yet"
 msgstr "لا توجد حركات مخزنة بعد"
 #. module: ab_stock_report
@@ -276,6 +283,7 @@ msgstr "اختر المبيعات أو المشتريات أو التحويلا�
 
 #. module: ab_stock_report
 #: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__from_date
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "From Date"
 msgstr "من تاريخ"
 
@@ -295,22 +303,28 @@ msgid "Select Sales, Purchase, or Transfer to fetch that movement group. Use Fro
 msgstr "اختر المبيعات أو المشتريات أو التحويلات لجلب مجموعة الحركة. استخدم من تاريخ للتحميل على دفعات وزر تحميل المزيد."
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_source_display__wizard_cache
 msgid "Loaded from Wizard Cache"
 msgstr "تم التحميل من كاش المعالج"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__more
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "More movements available"
 msgstr "توجد حركات أخرى متاحة"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__all
 msgid "All movements loaded"
 msgstr "تم تحميل كل الحركات"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__empty
 msgid "No movements found"
 msgstr "لا توجد حركات"
 
 #. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__cache_progress_display__latest
 msgid "Latest movements loaded"
 msgstr "تم تحميل أحدث الحركات"
 
@@ -340,6 +354,16 @@ msgid "Cache Progress"
 msgstr "تقدم الكاش"
 
 #. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_source_display
+msgid "Cache Source Display"
+msgstr "عرض مصدر الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_progress_display
+msgid "Cache Progress Display"
+msgstr "عرض تقدم الكاش"
+
+#. module: ab_stock_report
 #: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__loaded_rows_label
 msgid "Loaded Rows"
 msgstr "السطور المحملة"
@@ -347,6 +371,11 @@ msgstr "السطور المحملة"
 #. module: ab_stock_report
 msgid "%s movements loaded"
 msgstr "تم تحميل %s حركة"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "movements loaded"
+msgstr "حركة محملة"
 
 #. module: ab_stock_report
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form

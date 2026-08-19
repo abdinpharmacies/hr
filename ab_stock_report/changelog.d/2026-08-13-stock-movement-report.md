@@ -29,6 +29,13 @@ User-facing changes:
 - Keep Last Movements visible beside From Date, read-only and muted when From Date is selected.
 - Keep the compact clear button for From Date and the normal cursor on the date input.
 - Mirror Load More into the modal footer strip opposite Save/Discard while preserving the original Odoo object action.
+- Render cache/status chips through translated selection display fields so restored or stale wizard values do not appear in English for Arabic users.
+- Convert the header, product serial, movement count, and updated labels to validator-safe Odoo labels so their Arabic view translations load correctly.
+- Render the loaded-row count as a numeric field plus translated view label, avoiding the English computed text `movements loaded`.
+- Add the missing wizard view translation reference for `From Date`.
+- Convert the Load More footer `More movements available` message to a translated Odoo view label and add spacing between the loaded count and its Arabic label.
+- Hide the Last Movements filter block while From Date mode is active.
+- Add Arabic translations for the new display-only status fields and selection labels in both `ar.po` and `ar_001.po`.
 - Preserve the existing stock movement workflow, BConnect providers, cache payload behavior, fetch modes, `sec_update_date` logic, and Load More pagination logic.
 
 Files changed:
