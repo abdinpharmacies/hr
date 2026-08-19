@@ -54,6 +54,52 @@ class TestDoctorPrescription(TransactionCase):
         self.assertEqual(prescriptions.product_id, self.product)
         self.assertEqual(prescriptions.qty, 2.0)
 
+    def test_doctor_display_name_includes_code_name_and_specialty(self):
+        doctor = self.env["ab_doctor"].create({
+            "name": "Dr. Test",
+            "code": "D001",
+            "specialty": "Cardiology",
+        })
+
+        self.assertEqual(doctor.display_name, "D001 - Dr. Test - Cardiology")
+
+    def test_doctor_display_name_omits_empty_parts(self):
+        no_code = self.env["ab_doctor"].create({
+            "name": "Dr. No Code",
+            "specialty": "Pediatrics",
+        })
+        no_specialty = self.env["ab_doctor"].create({
+            "name": "Dr. No Specialty",
+            "code": "D002",
+        })
+        name_only = self.env["ab_doctor"].create({"name": "Dr. Name Only"})
+
+        self.assertEqual(no_code.display_name, "Dr. No Code - Pediatrics")
+        self.assertEqual(no_specialty.display_name, "D002 - Dr. No Specialty")
+        self.assertEqual(name_only.display_name, "Dr. Name Only")
+
+    def test_doctor_display_name_search_by_code(self):
+        doctor = self.env["ab_doctor"].create({
+            "name": "Dr. Code Search",
+            "code": "D003",
+            "specialty": "Neurology",
+        })
+
+        found = self.env["ab_doctor"].search([("display_name", "ilike", "D003")])
+
+        self.assertIn(doctor, found)
+
+    def test_doctor_display_name_search_by_specialty(self):
+        doctor = self.env["ab_doctor"].create({
+            "name": "Dr. Specialty Search",
+            "code": "D004",
+            "specialty": "Dermatology",
+        })
+
+        found = self.env["ab_doctor"].search([("display_name", "ilike", "Dermatology")])
+
+        self.assertIn(doctor, found)
+
     def test_group_user_can_manage_doctor_prescription_products(self):
         user = self.env["res.users"].create({
             "name": "Doctor Prescription User",

@@ -1,4 +1,4 @@
-from odoo import fields, models
+from odoo import api, fields, models
 
 
 class AbDoctor(models.Model):
@@ -16,3 +16,28 @@ class AbDoctor(models.Model):
         "doctor_id",
         string="Prescription Products",
     )
+
+    @api.depends("code", "name", "specialty")
+    def _compute_display_name(self):
+        for rec in self:
+            rec.display_name = " - ".join(
+                part
+                for part in (
+                    (rec.code or "").strip(),
+                    (rec.name or "").strip(),
+                    (rec.specialty or "").strip(),
+                )
+                if part
+            )
+
+    @api.model
+    def _search_display_name(self, operator, value):
+        domains = [
+            fields.Domain("code", operator, value),
+            fields.Domain("name", operator, value),
+            fields.Domain("specialty", operator, value),
+        ]
+        domain = fields.Domain.OR(domains)
+        if operator in fields.Domain.NEGATIVE_OPERATORS:
+            domain = ["!"] + domain
+        return list(domain)
