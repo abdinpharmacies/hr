@@ -1,31 +1,15 @@
-commit 578b0e729f216f30eef56604c41f518c89698fa8
-Author: itharrefaat5 <itharrefaat5@gmail.com>
-Date:   Mon Aug 17 12:28:58 2026 +0300
+commit 82e1d02727dbe1146527afbede2b08695ca2cc36
+Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
+Date:   Tue Aug 18 15:32:38 2026 +0300
 
-    ab_stock_report/ FIX slow sales report using ordy by sec_insert_date desc instead of std_id desc
-
-User-facing changes:
-
-- Improved stock movement report performance for recent sales movement loading.
-
-Files changed:
-
-- `ab_stock_report/models/ab_stock_report_cache.py`
-
-## Current changes before commit
+    ab_stock_report(#2019)/feat: add local storage to wizard and load more for more than 100+
 
 User-facing changes:
 
-- Keep each Stock Movements wizard on its own private JSON cache, including movement group, product serial, date, fetch mode, loaded rows, offset, `has_more`, and empty-result state.
-- Keep opening the wizard lazy: BConnect is queried only after pressing Sales, Purchase, or Transfer.
-- Without From Date, fetch the latest movements using the Last Movements limit, defaulting to 10.
-- With From Date, ignore and hide Last Movements, then load matching movements in 100-row batches.
-- Add a Load More action for date-range mode and hide it when all rows are loaded.
-- Reuse the current wizard cache on repeated tab clicks and refetch when the date, limit, product, or fetch mode changes.
-- Use `sec_update_date` for movement datetime, From Date filtering, SQL ordering, Python sorting, cache payloads, and displayed lines.
-- Remove `sec_insert_date` fallback usage from the stock movement providers.
-- Include sales returns in the Sales / Return family fetch path.
-- Add Arabic translations for the new Load More and cache status labels.
+- Keep each Stock Movements wizard on its own private JSON cache for loaded movement rows.
+- Add date-range loading for more than 100 movements while preserving lazy Sales, Purchase, and Transfer fetches.
+- Keep Load More available only when the current cached date-range result has more rows.
+- Preserve `sec_update_date` as the displayed and sorted movement date.
 
 Files changed:
 
@@ -34,4 +18,26 @@ Files changed:
 - `ab_stock_report/i18n/ar_001.po`
 - `ab_stock_report/models/ab_stock_report.py`
 - `ab_stock_report/models/ab_stock_report_cache.py`
+- `ab_stock_report/views/ab_stock_report_views.xml`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Restore the premium SaaS-style Stock Movements wizard assets and manifest registration after the UI files were accidentally broken.
+- Keep the wider dialog shell, scoped neutral palette, modern product header, filter bar, segmented movement tabs, status chips, empty states, and data-grid table styling.
+- Keep Last Movements visible beside From Date, read-only and muted when From Date is selected.
+- Keep the compact clear button for From Date and the normal cursor on the date input.
+- Mirror Load More into the modal footer strip opposite Save/Discard while preserving the original Odoo object action.
+- Preserve the existing stock movement workflow, BConnect providers, cache payload behavior, fetch modes, `sec_update_date` logic, and Load More pagination logic.
+
+Files changed:
+
+- `ab_stock_report/__manifest__.py`
+- `ab_stock_report/changelog.d/2026-08-13-stock-movement-report.md`
+- `ab_stock_report/i18n/ar.po`
+- `ab_stock_report/i18n/ar_001.po`
+- `ab_stock_report/models/ab_stock_report.py`
+- `ab_stock_report/static/src/js/ab_stock_report_dialog.js`
+- `ab_stock_report/static/src/scss/ab_stock_report.scss`
 - `ab_stock_report/views/ab_stock_report_views.xml`

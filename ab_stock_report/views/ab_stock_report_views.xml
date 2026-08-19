@@ -5,83 +5,165 @@
             <field name="name">ab_stock_report_wizard_view_form</field>
             <field name="model">ab_stock_report_wizard</field>
             <field name="arch" type="xml">
-                <form string="Stock Movements">
-                    <header>
-                        <div class="d-flex align-items-center flex-nowrap me-3">
-                            <label for="from_date" string="From Date" class="oe_inline text-nowrap me-2"/>
-                            <field name="from_date" nolabel="1" class="oe_inline" style="width: 145px; min-width: 145px;"/>
-                        </div>
-                        <button name="action_fetch_sales"
-                                type="object"
-                                string="Sales"
-                                class="btn-primary"/>
-                        <button name="action_fetch_purchase"
-                                type="object"
-                                string="Purchase"
-                                class="btn-primary"/>
-                        <button name="action_fetch_transfers"
-                                type="object"
-                                string="Transfer"
-                                class="btn-primary"/>
-                        <button name="action_load_more"
-                                type="object"
-                                string="Load More"
-                                invisible="not can_load_more"/>
-                    </header>
+                <form string="Stock Movements" class="o_ab_stock_report_wizard">
                     <sheet>
-                        <group>
-                            <group>
-                                <field name="product_id" readonly="1"/>
-                                <field name="product_eplus_serial" readonly="1" invisible="1"/>
-                                <field name="limit" invisible="from_date"/>
-                            </group>
-                            <group>
-                                <field name="line_count" readonly="1"/>
-                                <field name="last_refresh" readonly="1"/>
-                                <field name="cache_state" readonly="1"/>
-                                <field name="active_tab" invisible="1"/>
-                                <field name="can_load_more" invisible="1"/>
-                            </group>
-                        </group>
-                        <div class="alert alert-info" role="alert">
-                            Select Sales, Purchase, or Transfer to fetch that movement group. Use From Date for batched loading and Load More.
+                        <field name="active_tab" invisible="1"/>
+                        <field name="can_load_more" invisible="1"/>
+                        <field name="has_loaded_lines" invisible="1"/>
+                        <field name="is_empty_result" invisible="1"/>
+                        <field name="cache_state" invisible="1"/>
+
+                        <div class="o_ab_stock_report">
+                            <div class="o_ab_stock_report_header">
+                                <div class="o_ab_stock_report_title_block">
+                                    <div class="o_ab_stock_report_title">Stock Movements</div>
+                                    <div class="o_ab_stock_report_subtitle">Track all stock activity for this product across sales, purchases and transfers.</div>
+                                    <div class="o_ab_stock_report_identity">
+                                        <div class="o_ab_stock_report_avatar">
+                                            <i class="fa fa-cube" aria-hidden="true"/>
+                                        </div>
+                                        <div class="o_ab_stock_report_identity_text">
+                                            <field name="product_id" readonly="1" nolabel="1" class="o_ab_stock_report_product"/>
+                                            <div class="o_ab_stock_report_meta">
+                                                <span>Product / Serial:</span>
+                                                <field name="product_eplus_serial" readonly="1" nolabel="1" class="oe_inline"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="o_ab_stock_report_filters">
+                                    <div class="o_ab_stock_report_filter">
+                                        <label for="from_date" string="From Date" class="o_form_label"/>
+                                        <div class="o_ab_stock_report_date_filter">
+                                            <field name="from_date" nolabel="1"/>
+                                            <button name="action_clear_from_date"
+                                                    type="object"
+                                                    icon="fa-times"
+                                                    title="Clear From Date"
+                                                    class="btn o_ab_stock_report_clear_date"
+                                                    invisible="not from_date"/>
+                                        </div>
+                                    </div>
+                                    <div class="o_ab_stock_report_filter">
+                                        <label for="limit" string="Last Movements" class="o_form_label"/>
+                                        <field name="limit" nolabel="1" readonly="from_date"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="o_ab_stock_report_tabs" role="group">
+                                <button name="action_fetch_sales" type="object" string="Sales" icon="fa-shopping-cart" class="btn o_ab_stock_report_tab" invisible="active_tab == 'sale'"/>
+                                <button name="action_fetch_sales" type="object" string="Sales" icon="fa-shopping-cart" class="btn o_ab_stock_report_tab active" invisible="active_tab != 'sale'"/>
+                                <button name="action_fetch_purchase" type="object" string="Purchase" icon="fa-truck" class="btn o_ab_stock_report_tab" invisible="active_tab == 'purchase'"/>
+                                <button name="action_fetch_purchase" type="object" string="Purchase" icon="fa-truck" class="btn o_ab_stock_report_tab active" invisible="active_tab != 'purchase'"/>
+                                <button name="action_fetch_transfers" type="object" string="Transfer" icon="fa-exchange" class="btn o_ab_stock_report_tab" invisible="active_tab == 'transfer'"/>
+                                <button name="action_fetch_transfers" type="object" string="Transfer" icon="fa-exchange" class="btn o_ab_stock_report_tab active" invisible="active_tab != 'transfer'"/>
+                            </div>
+
+                            <div class="o_ab_stock_report_status">
+                                <div class="o_ab_stock_report_metric">
+                                    <span class="o_ab_stock_report_metric_value">
+                                        <field name="line_count" readonly="1" nolabel="1"/>
+                                    </span>
+                                    <span class="o_ab_stock_report_metric_label">Movements</span>
+                                </div>
+                                <div class="o_ab_stock_report_metric">
+                                    <span class="o_ab_stock_report_metric_label">Updated</span>
+                                    <field name="last_refresh" readonly="1" nolabel="1" class="o_ab_stock_report_metric_value"/>
+                                </div>
+                                <div class="o_ab_stock_report_badges">
+                                    <span class="o_ab_stock_report_chip">
+                                        <field name="active_tab_label" readonly="1" nolabel="1"/>
+                                    </span>
+                                    <span class="o_ab_stock_report_chip o_ab_stock_report_chip_status" invisible="not cache_source_label">
+                                        <field name="cache_source_label" readonly="1" nolabel="1"/>
+                                    </span>
+                                    <span class="o_ab_stock_report_chip o_ab_stock_report_chip_status" invisible="not cache_progress_label">
+                                        <field name="cache_progress_label" readonly="1" nolabel="1"/>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="o_ab_stock_report_empty" invisible="has_loaded_lines or is_empty_result">
+                                <div class="o_ab_stock_report_empty_icon">
+                                    <i class="fa fa-line-chart" aria-hidden="true"/>
+                                </div>
+                                <div class="fw-semibold">View Movement History</div>
+                                <div class="text-muted">Select a movement type above to view activity.</div>
+                            </div>
+                            <div class="o_ab_stock_report_empty" invisible="not is_empty_result">
+                                <div class="o_ab_stock_report_empty_icon">
+                                    <i class="fa fa-search" aria-hidden="true"/>
+                                </div>
+                                <div class="fw-semibold">No movements found</div>
+                                <div class="text-muted">There is no movement activity for this product with the selected filters.</div>
+                            </div>
+
+                            <div class="o_ab_stock_report_table" invisible="not has_loaded_lines">
+                                <field name="sale_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'sale'">
+                                    <list string="Sales / Return" create="0" edit="0" delete="0">
+                                        <field name="movement_datetime" class="o_ab_stock_report_date text-nowrap" width="150px"/>
+                                        <field name="movement_type" widget="badge" class="o_ab_stock_report_type" width="135px"
+                                               decoration-info="movement_type == 'sale'"
+                                               decoration-warning="movement_type == 'sale_return'"
+                                               decoration-success="movement_type == 'purchase'"
+                                               decoration-muted="movement_type in ('transfer_in', 'transfer_out')"/>
+                                        <field name="sale_price" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="qty_large" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="store_name" class="o_ab_stock_report_text"/>
+                                        <field name="supplier_name" class="o_ab_stock_report_text" optional="hide"/>
+                                        <field name="customer_name" class="o_ab_stock_report_text"/>
+                                        <field name="employee_name" class="o_ab_stock_report_text"/>
+                                    </list>
+                                </field>
+                                <field name="purchase_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'purchase'">
+                                    <list string="Purchase / Return" create="0" edit="0" delete="0">
+                                        <field name="movement_datetime" class="o_ab_stock_report_date text-nowrap" width="150px"/>
+                                        <field name="movement_type" widget="badge" class="o_ab_stock_report_type" width="135px"
+                                               decoration-info="movement_type == 'sale'"
+                                               decoration-warning="movement_type == 'purchase_return'"
+                                               decoration-success="movement_type == 'purchase'"
+                                               decoration-muted="movement_type in ('transfer_in', 'transfer_out')"/>
+                                        <field name="sale_price" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="qty_large" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="store_name" class="o_ab_stock_report_text"/>
+                                        <field name="supplier_name" class="o_ab_stock_report_text"/>
+                                        <field name="customer_name" class="o_ab_stock_report_text" optional="hide"/>
+                                        <field name="employee_name" class="o_ab_stock_report_text"/>
+                                    </list>
+                                </field>
+                                <field name="transfer_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'transfer'">
+                                    <list string="Transfer / From / To" create="0" edit="0" delete="0">
+                                        <field name="movement_datetime" class="o_ab_stock_report_date text-nowrap" width="150px"/>
+                                        <field name="movement_type" widget="badge" class="o_ab_stock_report_type" width="135px"
+                                               decoration-info="movement_type == 'sale'"
+                                               decoration-warning="movement_type == 'sale_return'"
+                                               decoration-success="movement_type == 'purchase'"
+                                               decoration-muted="movement_type in ('transfer_in', 'transfer_out')"/>
+                                        <field name="sale_price" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="qty_large" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="store_name" class="o_ab_stock_report_text"/>
+                                        <field name="supplier_name" class="o_ab_stock_report_text" optional="hide"/>
+                                        <field name="customer_name" class="o_ab_stock_report_text" optional="hide"/>
+                                        <field name="employee_name" class="o_ab_stock_report_text"/>
+                                    </list>
+                                </field>
+                            </div>
+
+                            <div class="o_ab_stock_report_load_more" invisible="not has_loaded_lines">
+                                <div class="o_ab_stock_report_load_more_meta">
+                                    <field name="loaded_rows_label" readonly="1" nolabel="1" class="text-muted"/>
+                                    <div class="small text-muted" invisible="not can_load_more">More movements available</div>
+                                </div>
+                                <div class="o_ab_stock_report_load_more_action">
+                                    <button name="action_load_more"
+                                            type="object"
+                                            string="Load more movements"
+                                            class="btn o_ab_stock_report_load_more_btn"
+                                            invisible="not can_load_more"/>
+                                </div>
+                            </div>
                         </div>
-                        <field name="sale_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'sale'">
-                            <list string="Sales / Return">
-                                <field name="movement_datetime"/>
-                                <field name="movement_type"/>
-                                <field name="sale_price"/>
-                                <field name="qty_large"/>
-                                <field name="store_name"/>
-                                <field name="supplier_name"/>
-                                <field name="customer_name"/>
-                                <field name="employee_name"/>
-                            </list>
-                        </field>
-                        <field name="purchase_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'purchase'">
-                            <list string="Purchase / Return">
-                                <field name="movement_datetime"/>
-                                <field name="movement_type"/>
-                                <field name="sale_price"/>
-                                <field name="qty_large"/>
-                                <field name="store_name"/>
-                                <field name="supplier_name"/>
-                                <field name="customer_name"/>
-                                <field name="employee_name"/>
-                            </list>
-                        </field>
-                        <field name="transfer_line_ids" nolabel="1" readonly="1" invisible="active_tab != 'transfer'">
-                            <list string="Transfer / From / To">
-                                <field name="movement_datetime"/>
-                                <field name="movement_type"/>
-                                <field name="sale_price"/>
-                                <field name="qty_large"/>
-                                <field name="store_name"/>
-                                <field name="supplier_name"/>
-                                <field name="customer_name"/>
-                                <field name="employee_name"/>
-                            </list>
-                        </field>
                     </sheet>
                 </form>
             </field>
@@ -92,6 +174,7 @@
             <field name="res_model">ab_stock_report_wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
+            <field name="context">{'dialog_size': 'large'}</field>
             <field name="view_id" ref="ab_stock_report_wizard_view_form"/>
         </record>
 

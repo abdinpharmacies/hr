@@ -38,7 +38,12 @@ class AbStockReportProduct(models.Model):
         action = self.env.ref("ab_stock_report.action_ab_stock_report_wizard").sudo().read()[0]
         action.update({
             "res_id": wizard.id,
-            "context": dict(self.env.context, default_product_id=self.id, default_limit=10),
+            "context": dict(
+                self.env.context,
+                default_product_id=self.id,
+                default_limit=10,
+                dialog_size="large",
+            ),
         })
         return action
 
@@ -120,6 +125,30 @@ class AbStockReportWizard(models.TransientModel):
         string="Can Load More",
         compute="_compute_can_load_more",
     )
+    has_loaded_lines = fields.Boolean(
+        string="Has Loaded Lines",
+        compute="_compute_ui_state",
+    )
+    is_empty_result = fields.Boolean(
+        string="Is Empty Result",
+        compute="_compute_ui_state",
+    )
+    active_tab_label = fields.Char(
+        string="Movement Family",
+        compute="_compute_ui_state",
+    )
+    cache_source_label = fields.Char(
+        string="Cache Source",
+        readonly=True,
+    )
+    cache_progress_label = fields.Char(
+        string="Cache Progress",
+        readonly=True,
+    )
+    loaded_rows_label = fields.Char(
+        string="Loaded Rows",
+        compute="_compute_ui_state",
+    )
 
     @api.depends("line_ids")
     def _compute_line_count(self):
@@ -135,6 +164,16 @@ class AbStockReportWizard(models.TransientModel):
                 and cache_entry.get("fetch_mode") == FETCH_MODE_DATE_RANGE
                 and cache_entry.get("has_more")
             )
+
+    @api.depends("active_tab", "line_ids", "line_count", "cache_payload", "from_date", "can_load_more")
+    def _compute_ui_state(self):
+        tab_labels = dict(MOVEMENT_GROUP_SELECTION)
+        for wizard in self:
+            cache_entry = wizard._get_cache_entry(wizard.active_tab)
+            wizard.has_loaded_lines = bool(wizard.line_ids)
+            wizard.is_empty_result = bool(cache_entry.get("empty"))
+            wizard.active_tab_label = tab_labels.get(wizard.active_tab, "")
+            wizard.loaded_rows_label = _("%s movements loaded") % (wizard.line_count or 0)
 
     @api.model
     def default_get(self, fields_list):
@@ -159,6 +198,11 @@ class AbStockReportWizard(models.TransientModel):
         self.ensure_one()
         self._force_fetch_from_bconnect(self.active_tab)
         self._load_cached_lines(self.active_tab, loaded_from_cache=False)
+        return self._open_action()
+
+    def action_clear_from_date(self):
+        self.ensure_one()
+        self.from_date = False
         return self._open_action()
 
     def action_fetch_sales(self):
@@ -243,7 +287,12 @@ class AbStockReportWizard(models.TransientModel):
         action = self.env.ref("ab_stock_report.action_ab_stock_report_wizard").sudo().read()[0]
         action.update({
             "res_id": self.id,
-            "context": dict(self.env.context, default_product_id=self.product_id.id, default_limit=self.limit),
+            "context": dict(
+                self.env.context,
+                default_product_id=self.product_id.id,
+                default_limit=self.limit,
+                dialog_size="large",
+            ),
         })
         return action
 
@@ -328,6 +377,10 @@ class AbStockReportWizard(models.TransientModel):
             cache_entry,
             loaded_from_cache=loaded_from_cache,
         ) if cache_entry else _("No cached movements yet")
+        source_label, progress_label = self._build_cache_badges(
+            cache_entry,
+            loaded_from_cache=loaded_from_cache,
+        )
 
         self.line_ids.unlink()
         if rows:
@@ -353,7 +406,26 @@ class AbStockReportWizard(models.TransientModel):
         self.write({
             "last_refresh": last_refresh,
             "cache_state": state,
+            "cache_source_label": source_label,
+            "cache_progress_label": progress_label,
         })
+
+    def _build_cache_badges(self, cache_entry, loaded_from_cache=False):
+        if not cache_entry:
+            return "", _("No cached movements yet")
+        if cache_entry.get("empty"):
+            return "", _("No movements found")
+
+        source_label = _("Loaded from Wizard Cache") if loaded_from_cache else _("Fetched from BConnect")
+        if cache_entry.get("fetch_mode") == FETCH_MODE_DATE_RANGE:
+            progress_label = (
+                _("More movements available")
+                if cache_entry.get("has_more")
+                else _("All movements loaded")
+            )
+        else:
+            progress_label = _("Latest movements loaded")
+        return source_label, progress_label
 
     def _build_cache_state(self, movement_group, cache_entry, loaded_from_cache=False):
         label = dict(MOVEMENT_GROUP_SELECTION).get(movement_group, movement_group)
