@@ -448,6 +448,14 @@ class TestSmartTransfer(TransactionCase):
             "exp_date": exp_date or fields.Date.today(),
         }
 
+    def _create_source_opening_cache(self, header, product, qty):
+        return self.env["ab_transfer_smart_source_stock_cache"].create({
+            "store_id": header.from_store_id.id,
+            "product_eplus_serial": int(product.eplus_serial),
+            "stock_qty": qty,
+            "cache_date": fields.Date.context_today(header),
+        })
+
     def _create_smart_archive_wizard(self, smart_stage=SMART_STAGE_PURCHASE_PREPARATION):
         header = self._create_smart_header_from_existing_records_or_skip()
         wizard = self.env["ab_transfer_smart_wizard"].create({
@@ -2825,6 +2833,7 @@ class TestSmartTransfer(TransactionCase):
             qty=6,
             smart_source_stock_qty=50,
         )
+        self._create_source_opening_cache(header, product, 50)
 
         active_preparation = self._create_smart_header_for_source(header, "SMART-EXP-PREP", 8301)
         self._create_smart_line(active_preparation, product, uom, qty=4)
@@ -2864,6 +2873,164 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(reserved_qty[(product.id, header.from_store_id.id)], 25)
         self.assertEqual(reference_line.smart_expected_source_stock_qty, 25)
 
+    def test_expected_source_stock_excludes_current_header_reservation(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-EXPECTED-SELF", 990181, uom)
+        line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=8,
+            smart_source_stock_qty=10,
+        )
+        self._create_source_opening_cache(header, product, 10)
+        header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        self.assertEqual(line.smart_expected_source_stock_qty, 10)
+
+    def test_expected_source_stock_excludes_current_header_with_existing_store(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        line = self._create_smart_line(
+            header,
+            product,
+            product.uom_id,
+            qty=8,
+            smart_source_stock_qty=50,
+        )
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"]
+        product_serial = int(product.eplus_serial)
+
+        with patch.object(
+                type(SourceCache),
+                "read_store_cache_context",
+                return_value={
+                    "has_cache": True,
+                    "snapshot_at": fields.Datetime.now(),
+                    "stock_by_serial": {product_serial: 20},
+                },
+        ), patch.object(
+                type(header),
+                "_read_smart_active_reserved_qty_by_product_store",
+                return_value={},
+        ) as read_reserved:
+            line.invalidate_recordset(["smart_expected_source_stock_qty"])
+            self.assertEqual(line.smart_expected_source_stock_qty, 20)
+
+        self.assertEqual(
+            read_reserved.call_args.kwargs["exclude_header_ids"],
+            header.ids,
+        )
+
+    def test_pre_submit_expected_stock_compares_request_to_other_reservations(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        line = self._create_smart_line(
+            header,
+            product,
+            product.uom_id,
+            qty=3,
+            smart_source_stock_qty=50,
+        )
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"]
+        product_serial = int(product.eplus_serial)
+        cache_context = {
+            "has_cache": True,
+            "snapshot_at": fields.Datetime.now(),
+            "stock_by_serial": {product_serial: 10},
+        }
+
+        with patch.object(
+                type(header),
+                "_ensure_smart_source_cache",
+        ), patch.object(
+                type(SourceCache),
+                "read_store_cache_context",
+                return_value=cache_context,
+        ), patch.object(
+                type(header),
+                "_read_smart_active_reserved_qty_by_product_store",
+                return_value={(product.id, header.from_store_id.id): 5},
+        ):
+            header._validate_smart_expected_source_stock_available(line)
+
+        with patch.object(
+                type(header),
+                "_ensure_smart_source_cache",
+        ), patch.object(
+                type(SourceCache),
+                "read_store_cache_context",
+                return_value=cache_context,
+        ), patch.object(
+                type(header),
+                "_read_smart_active_reserved_qty_by_product_store",
+                return_value={(product.id, header.from_store_id.id): 8},
+        ), self.assertRaisesRegex(UserError, "expected source stock"):
+            header._validate_smart_expected_source_stock_available(line)
+
+    def test_expected_source_stock_uses_current_day_opening_cache(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-EXPECTED-TODAY", 990182, uom)
+        line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=3,
+            smart_source_stock_qty=50,
+        )
+        self._create_source_opening_cache(header, product, 20)
+
+        other_header = self._create_smart_header_for_source(
+            header,
+            "SMART-EXPECTED-TODAY-OTHER",
+            8308,
+        )
+        self._create_smart_line(other_header, product, uom, qty=5)
+        other_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
+
+        self.assertEqual(line.smart_expected_source_stock_qty, 15)
+
+    def test_expected_source_stock_only_subtracts_submissions_after_opening_snapshot(self):
+        header = self._create_smart_header()
+        uom = self._create_smart_uom()
+        product = self._create_smart_product("SMART-EXPECTED-SNAPSHOT", 990183, uom)
+        line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=2,
+            smart_source_stock_qty=50,
+        )
+        opening_cache = self._create_source_opening_cache(header, product, 20)
+
+        submitted_before = self._create_smart_header_for_source(
+            header,
+            "SMART-EXPECTED-BEFORE",
+            8309,
+        )
+        self._create_smart_line(submitted_before, product, uom, qty=4)
+        submitted_before.write({
+            "smart_stage": SMART_STAGE_SUBMIT,
+            "is_submitted": True,
+            "sent_at": opening_cache.create_date - timedelta(seconds=1),
+        })
+
+        submitted_after = self._create_smart_header_for_source(
+            header,
+            "SMART-EXPECTED-AFTER",
+            8310,
+        )
+        self._create_smart_line(submitted_after, product, uom, qty=3)
+        submitted_after.write({
+            "smart_stage": SMART_STAGE_SUBMIT,
+            "is_submitted": True,
+            "sent_at": opening_cache.create_date + timedelta(seconds=1),
+        })
+
+        self.assertEqual(line.smart_expected_source_stock_qty, 17)
+
     def test_expected_source_stock_ignores_yesterday_smart_reservations(self):
         header = self._create_smart_header()
         uom = self._create_smart_uom()
@@ -2875,6 +3042,7 @@ class TestSmartTransfer(TransactionCase):
             qty=6,
             smart_source_stock_qty=50,
         )
+        self._create_source_opening_cache(header, product, 50)
         yesterday = fields.Date.context_today(header) - timedelta(days=1)
 
         for index, stage in enumerate(
@@ -4237,17 +4405,14 @@ class TestSmartTransfer(TransactionCase):
         uom = self._create_smart_uom()
         product = self._create_smart_product("SMART-PRE-SUB-STOCK-BLOCK", 99107, uom)
         self._create_smart_line(header, product, uom, qty=8)
+        self._create_source_opening_cache(header, product, 10)
         header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
 
         other_header = self._create_smart_header_for_source(header, "SMART-PRE-SUB-OTHER", 8311)
         self._create_smart_line(other_header, product, uom, qty=5)
         other_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
 
-        with patch.object(
-                type(header),
-                "_get_smart_source_stock_by_product_serial",
-                return_value={99107: 10},
-        ), self.assertRaisesRegex(UserError, "already reserved"):
+        with self.assertRaisesRegex(UserError, "expected source stock"):
             header.action_smart_pre_submit()
 
         self.assertEqual(header.smart_stage, SMART_STAGE_STORE_REVISION)
@@ -4257,18 +4422,23 @@ class TestSmartTransfer(TransactionCase):
         header = self._create_smart_header()
         uom = self._create_smart_uom()
         product = self._create_smart_product("SMART-PRE-SUB-STOCK-CURRENT", 99108, uom)
-        self._create_smart_line(header, product, uom, qty=8, smart_source_stock_qty=10)
+        smart_line = self._create_smart_line(
+            header,
+            product,
+            uom,
+            qty=8,
+            smart_source_stock_qty=10,
+        )
+        self._create_source_opening_cache(header, product, 10)
         header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
 
         other_header = self._create_smart_header_for_source(header, "SMART-PRE-SUB-SMALL", 8312)
         self._create_smart_line(other_header, product, uom, qty=2)
         other_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
 
+        self.assertEqual(smart_line.smart_expected_source_stock_qty, 8)
+
         with patch.object(
-                type(header),
-                "_get_smart_source_stock_by_product_serial",
-                return_value={99108: 10},
-        ), patch.object(
                 type(header),
                 "_get_source_inventory_rows",
                 return_value=[self._smart_source_row(901, 10)],
@@ -4303,8 +4473,11 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
-                return_value={99021: 20},
+                "_get_smart_expected_source_stock_context",
+                return_value={
+                    "opening_qty_by_product": {included_product.id: 20},
+                    "reserved_qty_by_product": {included_product.id: 0},
+                },
         ), patch.object(
                 type(header),
                 "_get_source_inventory_rows",
@@ -4347,8 +4520,11 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
-                return_value={product_serial: 20},
+                "_get_smart_expected_source_stock_context",
+                return_value={
+                    "opening_qty_by_product": {product.id: 20},
+                    "reserved_qty_by_product": {product.id: 0},
+                },
         ), patch.object(
                 type(header),
                 "_get_source_inventory_rows",
@@ -4391,8 +4567,17 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
-                return_value=source_stock_by_serial,
+                "_get_smart_expected_source_stock_context",
+                return_value={
+                    "opening_qty_by_product": {
+                        included_product.id: source_stock_by_serial[included_serial],
+                        excluded_product.id: source_stock_by_serial[excluded_serial],
+                    },
+                    "reserved_qty_by_product": {
+                        included_product.id: 0,
+                        excluded_product.id: 0,
+                    },
+                },
         ), patch.object(
                 type(header),
                 "_get_source_inventory_rows",
@@ -4431,8 +4616,11 @@ class TestSmartTransfer(TransactionCase):
 
         with patch.object(
                 type(header),
-                "_get_smart_source_stock_by_product_serial",
-                return_value={99032: 12},
+                "_get_smart_expected_source_stock_context",
+                return_value={
+                    "opening_qty_by_product": {product.id: 12},
+                    "reserved_qty_by_product": {product.id: 0},
+                },
         ), patch.object(
                 type(header),
                 "_get_source_inventory_rows",

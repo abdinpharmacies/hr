@@ -1,13 +1,75 @@
 Current changes before commit:
 
-- Add a Products report menu under Transfer Smart > Reports.
-- Reuse the existing `ab_product.ab_product_action` so the new report menu opens the same Products list/form action.
-- Keep the existing Sales > Configurations > Products menu unchanged.
+- Validate Pre-Submit quantities against the current business day's opening stock minus reservations from other active Smart Transfers.
+- Exclude the current transfer from Expected Stock so its quantity is not counted twice.
+- Deduct submitted transfers only when they were sent after the daily opening-stock snapshot.
+- Keep live batch, class, and expiry validation when generating final transfer lines.
+- Add matching Arabic translations and regression coverage for daily rollover, snapshot timing, and current-header exclusion.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/i18n/ar.po
+- ab_transfer_smart/i18n/ar_001.po
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/models/ab_transfer_line.py
+- ab_transfer_smart/models/ab_transfer_smart_cache.py
+- ab_transfer_smart/tests/test_smart_transfer.py
+
+
+commit ef67934c75aa989216f2926cfe0fbf1728b65316
+Author: emadco88 <emadco88@gmail.com>
+Date:   Wed Aug 19 13:45:00 2026 +0300
+
+    Revert "ab_transfer_smart/FIX(1970#): fix request status update on final submit" we will delay updating ab_transfer_request logic
+
+- Delay linked Transfer Request status updates during final Smart Transfer submission.
+- Restore the prior request access and test behavior until the request workflow is reintroduced.
+
+Files changed:
+
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/security/ir.model.access.csv
+- ab_transfer_smart/tests/test_smart_transfer.py
+
+
+commit de96642e95e60981b61e397929b27682eeba16b7
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Tue Aug 18 15:26:47 2026 +0300
+
+    ab_transfer_smart/FEAT(#2017): Add Products Menu to Transfer Smart Reports
+
+- Add a Products menu under Transfer Smart > Reports.
+- Reuse the existing Products list and form action.
 
 Files changed:
 
 - ab_transfer_smart/changelog.d
 - ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
+
+
+commit c354ac3a19e9f4ab25f759aa4a3f847c3293610e
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Tue Aug 18 12:14:06 2026 +0300
+
+    ab_transfer_smart/FEAT: Add Fast Transfer Pre-Submit flow (1970#)
+
+- Route enabled Fast Transfers to Pre-Submit for Store Revision review.
+- Preserve immediate submission when the feature parameter is disabled.
+- Add the required access, configuration, and post-install coverage.
+
+Files changed:
+
+- ab_transfer_smart/__manifest__.py
+- ab_transfer_smart/changelog.d
+- ab_transfer_smart/data/ir_config_parameter.xml
+- ab_transfer_smart/models/__init__.py
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/models/ab_transfer_pos_api.py
+- ab_transfer_smart/security/ir.model.access.csv
+- ab_transfer_smart/security/record_rules.xml
+- ab_transfer_smart/tests/test_smart_transfer.py
 
 
 commit 339164514add9a86b64ac065986ef5cb671aea94

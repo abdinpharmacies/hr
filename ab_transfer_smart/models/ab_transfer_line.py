@@ -117,23 +117,26 @@ class AbTransferLine(models.Model):
                 - float(line.smart_total_need or 0.0)
             )
 
-    @api.depends("smart_source_stock_qty", "product_id", "from_store_id")
+    @api.depends("smart_source_stock_qty", "product_id", "from_store_id", "header_id")
     def _compute_smart_expected_source_stock_qty(self):
         valid_lines = self.filtered(lambda line: line.product_id and line.from_store_id)
-        reserved_qty_by_key = {}
-        if valid_lines:
-            reserved_qty_by_key = self.env[
-                "ab_transfer_header"
-            ]._read_smart_active_reserved_qty_by_product_store(
-                valid_lines.mapped("product_id").ids,
-                valid_lines.mapped("from_store_id").ids,
+        for line in self:
+            line.smart_expected_source_stock_qty = float(
+                line.smart_source_stock_qty or 0.0
             )
 
-        for line in self:
-            reserved_qty = reserved_qty_by_key.get(
-                (line.product_id.id, line.from_store_id.id),
-                0.0,
+        for header in valid_lines.mapped("header_id"):
+            header_lines = valid_lines.filtered(lambda line: line.header_id == header)
+            expected_context = header._get_smart_expected_source_stock_context(
+                header_lines,
             )
-            line.smart_expected_source_stock_qty = (
-                float(line.smart_source_stock_qty or 0.0) - reserved_qty
-            )
+            for line in header_lines:
+                opening_qty = expected_context["opening_qty_by_product"].get(
+                    line.product_id.id,
+                    0.0,
+                )
+                reserved_qty = expected_context["reserved_qty_by_product"].get(
+                    line.product_id.id,
+                    0.0,
+                )
+                line.smart_expected_source_stock_qty = opening_qty - reserved_qty

@@ -719,7 +719,7 @@ class AbTransferHeader(models.Model):
         if not eligible_lines:
             raise UserError(_("There are no eligible smart lines to pre-submit."))
 
-        self._validate_smart_source_stock_available(eligible_lines)
+        self._validate_smart_expected_source_stock_available(eligible_lines)
 
         vals_list = []
         for smart_line in eligible_lines:
@@ -735,6 +735,123 @@ class AbTransferHeader(models.Model):
             "excluded": excluded_count,
         }
         return result
+
+    def _validate_smart_expected_source_stock_available(self, smart_lines):
+        self.ensure_one()
+        smart_lines = smart_lines.filtered(lambda line: line.product_id)
+        if not smart_lines:
+            return
+
+        expected_context = self._get_smart_expected_source_stock_context(
+            smart_lines,
+            ensure_opening_cache=True,
+        )
+        requested_qty_by_product = {}
+        for line in smart_lines:
+            requested_qty_by_product[line.product_id.id] = (
+                requested_qty_by_product.get(line.product_id.id, 0.0)
+                + float(line.qty or 0.0)
+            )
+
+        errors = []
+        products = smart_lines.mapped("product_id")
+        for product in products.sorted(lambda rec: (rec.display_name or rec.name or "").casefold()):
+            requested_qty = requested_qty_by_product.get(product.id, 0.0)
+            opening_qty = expected_context["opening_qty_by_product"].get(product.id, 0.0)
+            reserved_qty = expected_context["reserved_qty_by_product"].get(product.id, 0.0)
+            expected_qty = opening_qty - reserved_qty
+            if float_compare(requested_qty, expected_qty, precision_digits=3) <= 0:
+                continue
+
+            errors.append(
+                _(
+                    "%(product)s: opening stock %(opening).3f, reserved by other "
+                    "transfers %(reserved).3f, expected stock %(expected).3f, "
+                    "requested %(requested).3f."
+                )
+                % {
+                    "product": product.display_name,
+                    "opening": opening_qty,
+                    "reserved": reserved_qty,
+                    "expected": expected_qty,
+                    "requested": requested_qty,
+                }
+            )
+
+        if errors:
+            raise UserError(
+                _(
+                    "Cannot continue because the expected source stock is not enough:\n%s"
+                )
+                % "\n".join(errors)
+            )
+
+    def _get_smart_expected_source_stock_context(
+            self,
+            lines,
+            ensure_opening_cache=False,
+    ):
+        self.ensure_one()
+        lines = lines.filtered(lambda line: line.product_id and line.from_store_id)
+        if not lines:
+            return {
+                "opening_qty_by_product": {},
+                "reserved_qty_by_product": {},
+            }
+
+        products = lines.mapped("product_id")
+        products_by_serial = {}
+        product_serial_by_id = {}
+        for product in products:
+            product_serial = self._get_smart_product_serial(product)
+            if not product_serial:
+                continue
+            products_by_serial.setdefault(product_serial, product)
+            product_serial_by_id[product.id] = product_serial
+
+        if ensure_opening_cache:
+            self._ensure_smart_source_cache()
+        opening_context = self.env[
+            "ab_transfer_smart_source_stock_cache"
+        ].sudo().read_store_cache_context(
+            self.from_store_id,
+            products_by_serial.keys(),
+        )
+        has_opening_cache = opening_context["has_cache"]
+        opening_snapshot_at = opening_context["snapshot_at"]
+        if ensure_opening_cache and not has_opening_cache:
+            has_opening_cache = True
+            opening_snapshot_at = fields.Datetime.now()
+
+        opening_qty_by_product = {}
+        for line in lines:
+            product_id = line.product_id.id
+            if product_id in opening_qty_by_product:
+                continue
+            if has_opening_cache:
+                product_serial = product_serial_by_id.get(product_id)
+                opening_qty_by_product[product_id] = float(
+                    opening_context["stock_by_serial"].get(product_serial, 0.0)
+                )
+            else:
+                opening_qty_by_product[product_id] = 0.0
+
+        reserved_qty_by_key = self._read_smart_active_reserved_qty_by_product_store(
+            products.ids,
+            self.from_store_id.ids,
+            exclude_header_ids=self.ids,
+            submitted_since=opening_snapshot_at,
+        )
+        return {
+            "opening_qty_by_product": opening_qty_by_product,
+            "reserved_qty_by_product": {
+                product.id: reserved_qty_by_key.get(
+                    (product.id, self.from_store_id.id),
+                    0.0,
+                )
+                for product in products
+            },
+        }
 
     def _validate_smart_source_stock_available(self, smart_lines):
         self.ensure_one()
@@ -1202,6 +1319,7 @@ class AbTransferHeader(models.Model):
             product_ids,
             store_ids,
             exclude_header_ids=None,
+            submitted_since=None,
     ):
         product_ids = [int(product_id) for product_id in product_ids or [] if product_id]
         store_ids = [int(store_id) for store_id in store_ids or [] if store_id]
@@ -1211,7 +1329,9 @@ class AbTransferHeader(models.Model):
         domain = [
             ("product_id", "in", product_ids),
             ("from_store_id", "in", store_ids),
-        ] + self._get_smart_active_reservation_line_domain()
+        ] + self._get_smart_active_reservation_line_domain(
+            submitted_since=submitted_since,
+        )
         if exclude_header_ids:
             domain.append(("header_id", "not in", exclude_header_ids))
 
@@ -1233,8 +1353,9 @@ class AbTransferHeader(models.Model):
         return result
 
     @api.model
-    def _get_smart_active_reservation_line_domain(self):
+    def _get_smart_active_reservation_line_domain(self, submitted_since=None):
         today_start, tomorrow_start = self._get_smart_submitted_today_bounds()
+        submitted_since = submitted_since or today_start
         return [
             ("header_id.active", "=", True),
             ("header_id.smart_stage", "in", list(SMART_EXPECTED_BALANCE_STAGES)),
@@ -1244,7 +1365,7 @@ class AbTransferHeader(models.Model):
             "&",
             ("header_id.is_submitted", "=", True),
             "&",
-            ("header_id.sent_at", ">=", today_start),
+            ("header_id.sent_at", ">=", submitted_since),
             ("header_id.sent_at", "<", tomorrow_start),
         ]
 

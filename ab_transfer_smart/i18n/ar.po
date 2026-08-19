@@ -25,6 +25,16 @@ msgstr "%(product)s: الرصيد الفعلي %(live).3f، المحجوز با�
 #. module: ab_transfer_smart
 #. odoo-python
 #: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"%(product)s: opening stock %(opening).3f, reserved by other transfers "
+"%(reserved).3f, expected stock %(expected).3f, requested %(requested).3f."
+msgstr ""
+"%(product)s: الرصيد الافتتاحي %(opening).3f، المحجوز بواسطة تحويلات أخرى "
+"%(reserved).3f، الرصيد المتوقع %(expected).3f، المطلوب %(requested).3f."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
 msgid "%s, and %s more"
 msgstr "%s، و%s أخرى"
 
@@ -132,6 +142,16 @@ msgid ""
 "%s"
 msgstr ""
 "لا يمكن المتابعة لأن رصيد المصدر لم يعد متاحًا. بعض الكميات محجوزة بالفعل بواسطة تحويلات ذكية نشطة:\n"
+"%s"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
+msgid ""
+"Cannot continue because the expected source stock is not enough:\n"
+"%s"
+msgstr ""
+"لا يمكن المتابعة لأن رصيد المصدر المتوقع غير كافٍ:\n"
 "%s"
 
 #. module: ab_transfer_smart

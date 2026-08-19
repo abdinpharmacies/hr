@@ -302,12 +302,26 @@ class AbTransferSmartSourceStockCache(AbTransferSmartCacheTools, models.Model):
 
     @api.model
     def read_store_cache_rows(self, store, product_serials=None, cache_date=None):
+        return self.read_store_cache_context(
+            store,
+            product_serials=product_serials,
+            cache_date=cache_date,
+        )["stock_by_serial"]
+
+    @api.model
+    def read_store_cache_context(self, store, product_serials=None, cache_date=None):
         store = self._ensure_store_record(store)
         cache_date = cache_date or self._get_cache_date()
-        domain = [
+        base_domain = [
             ("store_id", "=", store.id),
             ("cache_date", "=", cache_date),
         ]
+        snapshot_record = self.search(
+            base_domain,
+            order="create_date, id",
+            limit=1,
+        )
+        domain = list(base_domain)
         serials = sorted({
             self._safe_int(product_serial)
             for product_serial in product_serials or []
@@ -317,8 +331,12 @@ class AbTransferSmartSourceStockCache(AbTransferSmartCacheTools, models.Model):
             domain.append(("product_eplus_serial", "in", serials))
 
         return {
-            int(line.product_eplus_serial): float(line.stock_qty or 0.0)
-            for line in self.search(domain)
+            "has_cache": bool(snapshot_record),
+            "snapshot_at": snapshot_record.create_date if snapshot_record else False,
+            "stock_by_serial": {
+                int(line.product_eplus_serial): float(line.stock_qty or 0.0)
+                for line in self.search(domain)
+            },
         }
 
     @api.model
