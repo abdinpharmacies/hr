@@ -89,7 +89,7 @@ class AbOdooSyncApplyProfile(models.Model):
                 profile.apply_mode,
             )
 
-    @api.constrains("source_model_name", "target_model_name", "apply_mode", "auto_apply")
+    @api.constrains("source_model_name", "target_model_name", "apply_mode")
     def _check_models(self):
         for profile in self:
             if profile.apply_mode in {"raw_only", "ignore"}:
@@ -97,12 +97,6 @@ class AbOdooSyncApplyProfile(models.Model):
             if not profile.target_model_name:
                 raise ValidationError(_("Target model is required for this apply mode."))
             if profile.target_model_name not in self.env:
-                if (
-                    profile.apply_mode == "mirror_sync"
-                    and profile.target_model_name == profile.mirror_target_from_source(profile.source_model_name)
-                    and not profile.auto_apply
-                ):
-                    continue
                 raise ValidationError(
                     _("Target model %(model)s is not installed.")
                     % {"model": profile.target_model_name}
@@ -145,24 +139,6 @@ class AbOdooSyncApplyProfile(models.Model):
                 )
             super(AbOdooSyncApplyProfile, profile).write(write_vals)
         return True
-
-    def action_generate_mirror_scaffold(self):
-        self.ensure_one()
-        if self.apply_mode != "mirror_sync":
-            raise ValidationError(_("Mirror scaffold generation is available only for Mirror Sync Model profiles."))
-        target_model_name = self.mirror_target_from_source(self.source_model_name)
-        if self.target_model_name != target_model_name:
-            self.write({"target_model_name": target_model_name})
-        scaffold = self.env["ab_odoo_sync_mirror_scaffold"].sudo().create_from_profile(self)
-        scaffold.action_generate_files()
-        return {
-            "type": "ir.actions.act_window",
-            "name": _("Mirror Scaffold"),
-            "res_model": "ab_odoo_sync_mirror_scaffold",
-            "res_id": scaffold.id,
-            "view_mode": "form",
-            "target": "current",
-        }
 
     @api.model
     def get_for_source(self, source_model_name):
@@ -359,6 +335,47 @@ class AbOdooSyncFieldMapping(models.Model):
         "UNIQUE(profile_id, source_field_name, target_field_name)",
         "Field mapping must be unique per profile.",
     )
+
+    @api.model
+    def ensure_mappings(self, mapping_specs):
+        Profile = self.env["ab_odoo_sync_apply_profile"].sudo()
+        for spec in mapping_specs or []:
+            profile = Profile.search(
+                [
+                    ("source_model_name", "=", spec.get("profile_source_model_name")),
+                ],
+                limit=1,
+            )
+            if not profile:
+                continue
+            source_field_name = spec.get("source_field_name")
+            target_field_name = spec.get("target_field_name") or source_field_name
+            if not source_field_name or not target_field_name:
+                continue
+            vals = {
+                "profile_id": profile.id,
+                "sequence": int(spec.get("sequence", 10)),
+                "source_field_name": source_field_name,
+                "target_field_name": target_field_name,
+                "mapping_type": spec.get("mapping_type") or "direct",
+                "relation_source_key": spec.get("relation_source_key") or False,
+                "relation_target_key": spec.get("relation_target_key") or False,
+                "required": bool(spec.get("required", False)),
+                "sync_enabled": bool(spec.get("sync_enabled", True)),
+            }
+            mapping = self.sudo().search(
+                [
+                    ("profile_id", "=", profile.id),
+                    ("source_field_name", "=", source_field_name),
+                    ("target_field_name", "=", target_field_name),
+                ],
+                limit=1,
+            )
+            if mapping:
+                mapping.write(vals)
+            else:
+                self.sudo().create(vals)
+        return True
 
     @api.constrains(
         "source_field_name",

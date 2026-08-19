@@ -5,7 +5,6 @@ from . import ab_odoo_sync_upload_record
 from . import ab_odoo_sync_upload_source
 from . import ab_odoo_sync_outbox
 from . import ab_odoo_sync_apply_profile
-from . import ab_odoo_sync_mirror_scaffold
 from . import ab_odoo_sync_checkpoint
 from . import ab_odoo_sync_config
 from . import ab_odoo_sync_service

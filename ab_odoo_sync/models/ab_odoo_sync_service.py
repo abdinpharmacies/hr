@@ -10,6 +10,7 @@ from odoo.tools import config
 from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
+_SENSITIVE_SNAPSHOT_FIELDS = {"password"}
 
 
 class AbOdooSyncService(models.Model):
@@ -90,6 +91,8 @@ class AbOdooSyncService(models.Model):
         payload_fields = {}
         field_types = {}
         for field_name, field in sorted(record._fields.items()):
+            if field_name in _SENSITIVE_SNAPSHOT_FIELDS:
+                continue
             if not field.store:
                 continue
             value = record[field_name]

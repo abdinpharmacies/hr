@@ -170,9 +170,6 @@
                     <header>
                         <button name="action_load_matching_fields" type="object"
                                 string="Load Matching Fields" class="btn-secondary"/>
-                        <button name="action_generate_mirror_scaffold" type="object"
-                                string="Generate Mirror Scaffold" class="btn-secondary"
-                                invisible="apply_mode != 'mirror_sync'"/>
                         <button name="action_apply_pending" type="object"
                                 string="Apply Pending Uploads" class="btn-primary"/>
                     </header>
@@ -222,68 +219,6 @@
             <field name="view_mode">list,form</field>
         </record>
 
-        <record id="view_ab_odoo_sync_mirror_scaffold_list" model="ir.ui.view">
-            <field name="name">ab_odoo_sync_mirror_scaffold.list</field>
-            <field name="model">ab_odoo_sync_mirror_scaffold</field>
-            <field name="arch" type="xml">
-                <list create="0" delete="0">
-                    <field name="state" widget="badge"/>
-                    <field name="source_model_name"/>
-                    <field name="target_model_name"/>
-                    <field name="module_name"/>
-                    <field name="generated_path"/>
-                </list>
-            </field>
-        </record>
-
-        <record id="view_ab_odoo_sync_mirror_scaffold_form" model="ir.ui.view">
-            <field name="name">ab_odoo_sync_mirror_scaffold.form</field>
-            <field name="model">ab_odoo_sync_mirror_scaffold</field>
-            <field name="arch" type="xml">
-                <form create="0" delete="0">
-                    <header>
-                        <button name="action_generate_files" type="object"
-                                string="Generate Files" class="btn-primary"/>
-                        <button name="action_open_profile" type="object"
-                                string="Open Profile" class="btn-secondary"/>
-                        <field name="state" widget="statusbar" statusbar_visible="draft,generated"/>
-                    </header>
-                    <sheet>
-                        <group>
-                            <group>
-                                <field name="name"/>
-                                <field name="profile_id"/>
-                                <field name="source_model_name"/>
-                                <field name="target_model_name"/>
-                            </group>
-                            <group>
-                                <field name="module_name"/>
-                                <field name="generated_path"/>
-                                <field name="active"/>
-                            </group>
-                        </group>
-                        <group>
-                            <field name="command_hint" nolabel="1"/>
-                        </group>
-                        <notebook>
-                            <page string="Generated Fields">
-                                <field name="field_spec_json"/>
-                            </page>
-                            <page string="Skipped Fields">
-                                <field name="skipped_field_json"/>
-                            </page>
-                        </notebook>
-                    </sheet>
-                </form>
-            </field>
-        </record>
-
-        <record id="action_ab_odoo_sync_mirror_scaffold" model="ir.actions.act_window">
-            <field name="name">Mirror Scaffolds</field>
-            <field name="res_model">ab_odoo_sync_mirror_scaffold</field>
-            <field name="view_mode">list,form</field>
-        </record>
-
         <menuitem id="menu_ab_odoo_sync_upload_sources" name="Branch Upload Sources"
                   parent="menu_ab_odoo_sync_root" action="action_ab_odoo_sync_upload_source"
                   sequence="12" groups="base.group_system"/>
@@ -293,8 +228,5 @@
         <menuitem id="menu_ab_odoo_sync_apply_profiles" name="Apply Profiles"
                   parent="menu_ab_odoo_sync_root" action="action_ab_odoo_sync_apply_profile"
                   sequence="26" groups="base.group_system"/>
-        <menuitem id="menu_ab_odoo_sync_mirror_scaffolds" name="Mirror Scaffolds"
-                  parent="menu_ab_odoo_sync_root" action="action_ab_odoo_sync_mirror_scaffold"
-                  sequence="28" groups="base.group_system"/>
     </data>
 </odoo>

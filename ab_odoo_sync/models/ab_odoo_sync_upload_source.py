@@ -120,6 +120,28 @@ class AbOdooSyncUploadSource(models.Model):
         )
 
     @api.model
+    def ensure_upload_sources(self, source_specs):
+        existing = {
+            source.model_name: source
+            for source in self.with_context(active_test=False).sudo().search([])
+        }
+        vals_list = []
+        for spec in source_specs or []:
+            model_name = (spec.get("model_name") or "").strip()
+            if not model_name or model_name in existing:
+                continue
+            vals = {
+                "model_name": model_name,
+                "active": bool(spec.get("active", False)),
+            }
+            if spec.get("aggregate_parent_field"):
+                vals["aggregate_parent_field"] = spec["aggregate_parent_field"]
+            vals_list.append(vals)
+        if vals_list:
+            self.sudo().create(vals_list)
+        return True
+
+    @api.model
     def _notification(self, title, message, notification_type):
         return {
             "type": "ir.actions.client",
