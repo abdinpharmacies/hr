@@ -51,7 +51,7 @@
                 <form class="ab_self_inventory_form">
                     <header>
                         <button name="action_submit_process" string="Submit Inventory" type="object" class="btn-success" invisible="state not in ('draft', 'in_progress')" groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
-                        <button name="action_export_count_sheet" string="Export Count Sheet" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')" groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
+                        <button name="action_export_count_sheet" string="Export Count Sheet" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress', 'submitted')" groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
                         <button name="action_open_import_wizard" string="Import Actual Counts" type="object" class="btn-secondary" invisible="state not in ('draft', 'in_progress')" groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
                         <button name="action_cancel" string="Cancel" type="object" class="btn-danger" invisible="state not in ('draft', 'in_progress')" groups="ab_self_inventory.group_ab_self_inventory_requester,ab_self_inventory.group_ab_self_inventory_manager"/>
                         <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'" groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
