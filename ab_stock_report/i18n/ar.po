@@ -314,3 +314,97 @@ msgstr "لا توجد حركات"
 #. module: ab_stock_report
 msgid "Latest movements loaded"
 msgstr "تم تحميل أحدث الحركات"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__has_loaded_lines
+msgid "Has Loaded Lines"
+msgstr "يحتوي على سطور محملة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__is_empty_result
+msgid "Is Empty Result"
+msgstr "نتيجة فارغة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__active_tab_label
+msgid "Movement Family"
+msgstr "مجموعة الحركة"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_source_label
+msgid "Cache Source"
+msgstr "مصدر الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__cache_progress_label
+msgid "Cache Progress"
+msgstr "تقدم الكاش"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__loaded_rows_label
+msgid "Loaded Rows"
+msgstr "السطور المحملة"
+
+#. module: ab_stock_report
+msgid "%s movements loaded"
+msgstr "تم تحميل %s حركة"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Product / Serial:"
+msgstr "الصنف / الرقم:"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Updated"
+msgstr "آخر تحديث"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "View Movement History"
+msgstr "عرض سجل الحركات"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Select Sales, Purchase, or Transfer to view the product's movement history."
+msgstr "اختر المبيعات أو المشتريات أو التحويلات لعرض سجل حركات الصنف."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "No movements were found for this product with the selected filters."
+msgstr "لم يتم العثور على حركات لهذا الصنف بالفلاتر المحددة."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Track sales, purchases, and transfers for this product."
+msgstr "تابع المبيعات والمشتريات والتحويلات لهذا الصنف."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "No activity was found for this product and selected date."
+msgstr "لم يتم العثور على نشاط لهذا الصنف والتاريخ المحدد."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Load more movements"
+msgstr "تحميل حركات إضافية"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Track all stock activity for this product across sales, purchases and transfers."
+msgstr "تابع كل نشاط المخزون لهذا الصنف عبر المبيعات والمشتريات والتحويلات."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Select a movement type above to view activity."
+msgstr "اختر نوع حركة أعلاه لعرض النشاط."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "There is no movement activity for this product with the selected filters."
+msgstr "لا يوجد نشاط حركات لهذا الصنف بالفلاتر المحددة."
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Clear From Date"
+msgstr "مسح من تاريخ"

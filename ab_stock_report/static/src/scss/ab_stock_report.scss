@@ -1,0 +1,769 @@
+.o_ab_stock_report_dialog {
+    --ab-sr-text: #0f172a;
+    --ab-sr-text-soft: #1e293b;
+    --ab-sr-secondary: #64748b;
+    --ab-sr-muted: #94a3b8;
+    --ab-sr-border: #e2e8f0;
+    --ab-sr-border-soft: #e5e7eb;
+    --ab-sr-row: #f1f5f9;
+    --ab-sr-page: #f8fafc;
+    --ab-sr-surface: #ffffff;
+    --ab-sr-accent: #2563eb;
+    --ab-sr-success: #16a34a;
+
+    .modal-dialog.o_ab_stock_report_modal_dialog {
+        width: calc(100vw - 32px);
+        max-width: 1360px;
+    }
+
+    .modal-content.o_ab_stock_report_modal_content {
+        overflow: hidden;
+        border: 1px solid var(--ab-sr-border);
+        border-radius: 12px;
+        background: var(--ab-sr-page);
+        box-shadow: 0 24px 70px rgba(15, 23, 42, .18);
+    }
+
+    .modal-header {
+        min-height: 56px;
+        padding: 14px 24px;
+        border-bottom: 1px solid var(--ab-sr-border-soft);
+        background: var(--ab-sr-surface);
+    }
+
+    .modal-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: var(--ab-sr-text);
+        font-size: 15px;
+        font-weight: 650;
+        letter-spacing: 0;
+    }
+
+    .modal-title::before {
+        content: "\f1b2";
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border: 1px solid var(--ab-sr-border-soft);
+        border-radius: 8px;
+        background: #f8fafc;
+        color: var(--ab-sr-accent);
+        font-family: FontAwesome;
+        font-size: 13px;
+        font-weight: normal;
+    }
+
+    .modal-header .btn,
+    .modal-header button {
+        color: var(--ab-sr-secondary);
+        opacity: 1;
+        transition: color .16s ease, background-color .16s ease;
+    }
+
+    .modal-header .btn:hover,
+    .modal-header button:hover {
+        color: var(--ab-sr-text);
+        background: #f8fafc;
+    }
+
+    .modal-body {
+        padding: 0;
+        background: var(--ab-sr-page);
+    }
+
+    .modal-footer {
+        justify-content: flex-start !important;
+        padding: 16px 24px;
+        border-top: 1px solid var(--ab-sr-border-soft);
+        background: var(--ab-sr-surface);
+    }
+
+    .o_ab_stock_report_footer_load_more {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-inline-end: auto;
+        min-width: 0;
+    }
+
+    .o_ab_stock_report_footer_load_more[hidden] {
+        display: none !important;
+    }
+
+    .o_ab_stock_report_footer_load_more_meta {
+        max-width: 360px;
+        overflow: hidden;
+        color: var(--ab-sr-secondary);
+        font-size: 13px;
+        line-height: 1.35;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .o_ab_stock_report_footer_load_more_btn {
+        min-height: 40px;
+        padding: 0 18px;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--ab-sr-accent);
+        font-size: 13px;
+        font-weight: 700;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+        transition: background-color .16s ease, border-color .16s ease, color .16s ease;
+    }
+
+    .o_ab_stock_report_footer_load_more_btn::after {
+        content: "\f061";
+        margin-inline-start: 8px;
+        font-family: FontAwesome;
+        font-weight: normal;
+    }
+
+    .o_ab_stock_report_footer_load_more_btn:hover {
+        border-color: #93c5fd;
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .modal-footer .o_form_button_save,
+    .modal-footer .btn-primary {
+        min-height: 40px;
+        padding: 0 20px;
+        border: 1px solid #0f172a;
+        border-radius: 8px;
+        background: #0f172a;
+        color: #ffffff;
+        font-size: 13px;
+        font-weight: 650;
+        box-shadow: 0 8px 18px rgba(15, 23, 42, .16);
+        transition: background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .modal-footer .o_form_button_save:hover,
+    .modal-footer .btn-primary:hover {
+        border-color: #1e293b;
+        background: #1e293b;
+        box-shadow: 0 10px 22px rgba(15, 23, 42, .20);
+    }
+
+    .modal-footer .o_form_button_cancel,
+    .modal-footer .btn-secondary {
+        min-height: 40px;
+        padding: 0 18px;
+        border: 1px solid var(--ab-sr-border);
+        border-radius: 8px;
+        background: #ffffff;
+        color: var(--ab-sr-text-soft);
+        font-size: 13px;
+        font-weight: 600;
+        transition: background-color .16s ease, border-color .16s ease;
+    }
+
+    .modal-footer .o_form_button_cancel:hover,
+    .modal-footer .btn-secondary:hover {
+        border-color: #cbd5e1;
+        background: #f8fafc;
+    }
+}
+
+.o_ab_stock_report_wizard {
+    background: #f8fafc;
+
+    .o_form_sheet_bg,
+    .o_form_sheet {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+}
+
+.o_ab_stock_report {
+    --ab-sr-text: #0f172a;
+    --ab-sr-text-soft: #1e293b;
+    --ab-sr-secondary: #64748b;
+    --ab-sr-muted: #94a3b8;
+    --ab-sr-border: #e2e8f0;
+    --ab-sr-border-soft: #e5e7eb;
+    --ab-sr-row: #f1f5f9;
+    --ab-sr-page: #f8fafc;
+    --ab-sr-surface: #ffffff;
+    --ab-sr-accent: #2563eb;
+    --ab-sr-success: #16a34a;
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 1180px;
+    padding: 28px 32px 22px;
+    color: var(--ab-sr-text);
+    background: var(--ab-sr-page);
+}
+
+.o_ab_stock_report_header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, auto);
+    gap: 24px;
+    align-items: end;
+}
+
+.o_ab_stock_report_title {
+    color: var(--ab-sr-text);
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: 0;
+}
+
+.o_ab_stock_report_subtitle {
+    margin-top: 6px;
+    color: var(--ab-sr-secondary);
+    font-size: 13px;
+    font-weight: 450;
+}
+
+.o_ab_stock_report_identity {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 22px;
+    min-width: 0;
+}
+
+.o_ab_stock_report_avatar,
+.o_ab_stock_report_empty_icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--ab-sr-border);
+    background: #ffffff;
+    color: var(--ab-sr-accent);
+}
+
+.o_ab_stock_report_avatar {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    font-size: 24px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.o_ab_stock_report_identity_text {
+    min-width: 0;
+}
+
+.o_ab_stock_report_product {
+    display: block;
+    max-width: 680px;
+    color: var(--ab-sr-text);
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.o_ab_stock_report_meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 6px;
+    color: var(--ab-sr-secondary);
+    font-size: 13px;
+}
+
+.o_ab_stock_report_filters {
+    display: flex;
+    align-items: end;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.o_ab_stock_report_filter {
+    min-width: 190px;
+}
+
+.o_ab_stock_report_filter .o_form_label {
+    margin: 0 0 6px;
+    color: var(--ab-sr-text-soft);
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.o_ab_stock_report_filter .o_field_widget,
+.o_ab_stock_report_filter .o_field_widget input,
+.o_ab_stock_report_filter .o_input {
+    width: 100%;
+}
+
+.o_ab_stock_report_date_filter {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.o_ab_stock_report_filter .o_field_widget input,
+.o_ab_stock_report_filter .o_input {
+    min-height: 44px;
+    padding: 0 14px;
+    border: 1px solid var(--ab-sr-border);
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: var(--ab-sr-text);
+    font-size: 14px;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
+    transition: border-color .16s ease, box-shadow .16s ease;
+}
+
+.o_ab_stock_report_date_filter .o_field_widget input,
+.o_ab_stock_report_date_filter .o_input {
+    padding-inline-end: 42px;
+    cursor: default;
+}
+
+.o_ab_stock_report_date_filter .o_field_widget input:hover,
+.o_ab_stock_report_date_filter .o_input:hover {
+    cursor: default;
+}
+
+.o_ab_stock_report_clear_date {
+    position: absolute;
+    inset-inline-end: 8px;
+    width: 28px;
+    height: 28px;
+    min-height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 28px;
+    transition: background-color .16s ease, color .16s ease;
+}
+
+.o_ab_stock_report_clear_date:hover {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+.o_ab_stock_report_filter .o_field_widget input:read-only,
+.o_ab_stock_report_filter .o_input:read-only,
+.o_ab_stock_report_filter .o_readonly_modifier .o_input,
+.o_ab_stock_report_filter .o_readonly_modifier input {
+    border-color: #e5e7eb;
+    background-color: #f8fafc;
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.o_ab_stock_report_filter .o_field_widget input:focus,
+.o_ab_stock_report_filter .o_input:focus {
+    border-color: var(--ab-sr-accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .10);
+}
+
+.o_ab_stock_report_tabs {
+    display: inline-flex;
+    width: fit-content;
+    padding: 4px;
+    border: 1px solid var(--ab-sr-border);
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.o_ab_stock_report_tab {
+    min-width: 156px;
+    min-height: 44px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    color: #334155;
+    font-size: 14px;
+    font-weight: 650;
+    background: transparent;
+    transition: color .16s ease, background-color .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+
+.o_ab_stock_report_tab .fa {
+    margin-inline-end: 8px;
+    color: var(--ab-sr-secondary);
+    font-size: 15px;
+}
+
+.o_ab_stock_report_tab:hover {
+    color: var(--ab-sr-text);
+    background: #f8fafc;
+}
+
+.o_ab_stock_report_tab.active {
+    position: relative;
+    border-color: var(--ab-sr-border);
+    background: #ffffff;
+    color: var(--ab-sr-text);
+    box-shadow: 0 6px 14px rgba(15, 23, 42, .08);
+}
+
+.o_ab_stock_report_tab.active .fa {
+    color: var(--ab-sr-accent);
+}
+
+.o_ab_stock_report_tab.active::after {
+    content: "";
+    position: absolute;
+    inset-inline: 18px;
+    bottom: -5px;
+    height: 3px;
+    border-radius: 999px;
+    background: var(--ab-sr-accent);
+}
+
+.o_ab_stock_report_status {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 18px;
+    padding: 16px;
+    border: 1px solid var(--ab-sr-border);
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+}
+
+.o_ab_stock_report_metric {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.o_ab_stock_report_metric + .o_ab_stock_report_metric {
+    padding-inline-start: 18px;
+    border-inline-start: 1px solid var(--ab-sr-border-soft);
+}
+
+.o_ab_stock_report_metric_value {
+    color: var(--ab-sr-text);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.o_ab_stock_report_metric_label {
+    color: var(--ab-sr-secondary);
+    font-size: 13px;
+}
+
+.o_ab_stock_report_badges {
+    display: flex;
+    align-items: center;
+    flex: 1 1 30rem;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.o_ab_stock_report_chip {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    min-height: 32px;
+    padding: 0 12px;
+    border: 1px solid var(--ab-sr-border);
+    border-radius: 10px;
+    background: #f8fafc;
+    color: var(--ab-sr-text-soft);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.o_ab_stock_report_chip_status::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    margin-inline-end: 8px;
+    border-radius: 999px;
+    background: var(--ab-sr-accent);
+}
+
+.o_ab_stock_report_chip_status:last-child::before {
+    background: var(--ab-sr-success);
+}
+
+.o_ab_stock_report_empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    padding: 32px;
+    border: 1px solid var(--ab-sr-border);
+    border-radius: 12px;
+    text-align: center;
+    background: #ffffff;
+}
+
+.o_ab_stock_report_empty_icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 14px;
+    border-radius: 10px;
+    font-size: 16px;
+}
+
+.o_ab_stock_report_empty .fw-semibold {
+    color: var(--ab-sr-text);
+    font-size: 15px;
+    font-weight: 700 !important;
+}
+
+.o_ab_stock_report_empty .text-muted {
+    max-width: 420px;
+    margin-top: 6px;
+    color: var(--ab-sr-secondary) !important;
+    font-size: 13px;
+}
+
+.o_ab_stock_report_table {
+    overflow: hidden;
+    border: 1px solid var(--ab-sr-border);
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+}
+
+.o_ab_stock_report_table .o_list_view {
+    margin-bottom: 0;
+    --table-border-color: var(--ab-sr-border);
+}
+
+.o_ab_stock_report_table .o_list_renderer {
+    overflow-x: auto;
+}
+
+.o_ab_stock_report_table .o_list_table,
+.o_ab_stock_report_table table {
+    min-width: 1120px;
+    table-layout: fixed;
+}
+
+.o_ab_stock_report_table thead th {
+    height: 48px;
+    border-bottom: 1px solid var(--ab-sr-border);
+    background: #f8fafc;
+    color: var(--ab-sr-secondary);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.o_ab_stock_report_table tbody tr {
+    background: #ffffff;
+    border-bottom: 1px solid var(--ab-sr-row);
+    transition: background-color .16s ease;
+}
+
+.o_ab_stock_report_table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.o_ab_stock_report_table .o_data_cell {
+    height: 52px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #1e293b;
+    font-size: 13px;
+    vertical-align: middle;
+}
+
+.o_ab_stock_report_table .o_ab_stock_report_text {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.o_ab_stock_report_table .o_ab_stock_report_date {
+    min-width: 145px;
+    color: #334155;
+}
+
+.o_ab_stock_report_table .o_ab_stock_report_number {
+    font-variant-numeric: tabular-nums;
+}
+
+.o_ab_stock_report_table .badge,
+.o_ab_stock_report_table .o_field_badge {
+    min-height: 26px;
+    padding: 4px 10px;
+    border: 1px solid #dbeafe !important;
+    border-radius: 999px;
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.o_ab_stock_report_table .text-bg-warning,
+.o_ab_stock_report_table .text-warning,
+.o_ab_stock_report_table .o_field_badge.text-bg-warning {
+    border-color: #fed7aa !important;
+    background: #fff7ed !important;
+    color: #c2410c !important;
+}
+
+.o_ab_stock_report_table .text-bg-success,
+.o_ab_stock_report_table .text-success,
+.o_ab_stock_report_table .o_field_badge.text-bg-success {
+    border-color: #bbf7d0 !important;
+    background: #f0fdf4 !important;
+    color: #15803d !important;
+}
+
+.o_ab_stock_report_table .text-bg-muted,
+.o_ab_stock_report_table .o_field_badge.text-bg-muted {
+    border-color: var(--ab-sr-border) !important;
+    background: #f8fafc !important;
+    color: #475569 !important;
+}
+
+.o_ab_stock_report_table .o_x2m_control_panel {
+    min-height: 58px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--ab-sr-border);
+    background: #ffffff;
+}
+
+.o_ab_stock_report_table .o_pager {
+    color: var(--ab-sr-secondary);
+    font-size: 13px;
+    opacity: .72;
+}
+
+.o_ab_stock_report_load_more {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 0 4px;
+    border-top: 1px solid var(--ab-sr-border-soft);
+}
+
+.o_ab_stock_report_dialog .o_ab_stock_report > .o_ab_stock_report_load_more {
+    display: none !important;
+}
+
+.o_ab_stock_report_load_more_meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.o_ab_stock_report_load_more_action {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 220px;
+}
+
+.o_ab_stock_report_load_more .text-muted {
+    color: var(--ab-sr-secondary) !important;
+    font-size: 13px;
+}
+
+.o_ab_stock_report_load_more_btn {
+    min-height: 40px;
+    padding: 0 18px;
+    border: 1px solid #bfdbfe;
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--ab-sr-accent);
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+    transition: background-color .16s ease, border-color .16s ease, color .16s ease;
+}
+
+.o_ab_stock_report_load_more_btn::after {
+    content: "\f061";
+    margin-inline-start: 8px;
+    font-family: FontAwesome;
+    font-weight: normal;
+}
+
+.o_ab_stock_report_load_more_btn:hover {
+    border-color: #93c5fd;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+[dir="rtl"] .o_ab_stock_report_table .text-end {
+    text-align: left !important;
+}
+
+@media (max-width: 1200px) {
+    .o_ab_stock_report {
+        min-width: 0;
+    }
+
+    .o_ab_stock_report_header {
+        grid-template-columns: 1fr;
+    }
+
+    .o_ab_stock_report_filters {
+        justify-content: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .o_ab_stock_report {
+        padding: 20px 16px;
+    }
+
+    .o_ab_stock_report_identity {
+        align-items: flex-start;
+    }
+
+    .o_ab_stock_report_filters,
+    .o_ab_stock_report_tabs {
+        width: 100%;
+    }
+
+    .o_ab_stock_report_filter {
+        flex: 1 1 150px;
+        min-width: 150px;
+    }
+
+    .o_ab_stock_report_tabs {
+        display: flex;
+    }
+
+    .o_ab_stock_report_tab {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    .o_ab_stock_report_metric + .o_ab_stock_report_metric {
+        padding-inline-start: 0;
+        border-inline-start: 0;
+    }
+
+    .o_ab_stock_report_load_more {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .o_ab_stock_report_load_more_action {
+        justify-content: flex-start;
+        min-width: 0;
+    }
+}

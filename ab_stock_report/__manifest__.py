@@ -16,6 +16,12 @@
         "data/ab_stock_report_cron.xml",
         "views/ab_stock_report_views.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ab_stock_report/static/src/js/ab_stock_report_dialog.js",
+            "ab_stock_report/static/src/scss/ab_stock_report.scss",
+        ],
+    },
     "installable": True,
     "application": False,
 }
