@@ -13,7 +13,10 @@
         "security/record_rules.xml",
         "security/ir.model.access.csv",
         "data/sync_profiles.xml",
+        "data/sync_profile_updates.xml",
+        "data/sync_profiles_extra.xml",
         "views/ab_sales_sync_views.xml",
+        "views/ab_sales_sync_extra_views.xml",
     ],
     "installable": True,
 }

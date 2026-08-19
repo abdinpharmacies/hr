@@ -507,3 +507,319 @@ msgstr "يجب أن تكون مرآة رأس مرتجع المبيعات فري�
 #. module: ab_sales_sync
 msgid "Sales return line mirror must be unique per branch and source record."
 msgstr "يجب أن تكون مرآة سطر مرتجع المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Product Priced Mirror: all records"
+msgstr "مرآة تسعير المنتج: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Product Metadata Mirror: all records"
+msgstr "مرآة بيانات المنتج الوصفية: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales Inventory Mirror: all records"
+msgstr "مرآة مخزون المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales Per Day Mirror: all records"
+msgstr "مرآة مبيعات اليوم: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales Per Day Sync State Mirror: all records"
+msgstr "مرآة حالة مزامنة مبيعات اليوم: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Product Ranking Mirror: all records"
+msgstr "مرآة ترتيب المنتجات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales POS Settings Mirror: all records"
+msgstr "مرآة إعدادات نقطة بيع المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales POS Draft Cache Mirror: all records"
+msgstr "مرآة مسودات نقطة بيع المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Sales POS Replication Turn Mirror: all records"
+msgstr "مرآة دور تكرار نقطة بيع المبيعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Printer Configuration Mirror: all records"
+msgstr "مرآة إعدادات الطابعات: كل السجلات"
+
+#. module: ab_sales_sync
+msgid "Branch Product Priced Mirror"
+msgstr "مرآة تسعير المنتج للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Product Metadata Mirror"
+msgstr "مرآة بيانات المنتج الوصفية للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales Inventory Mirror"
+msgstr "مرآة مخزون المبيعات للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales Per Day Mirror"
+msgstr "مرآة مبيعات اليوم للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales Per Day Sync State Mirror"
+msgstr "مرآة حالة مزامنة مبيعات اليوم للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Product Ranking Mirror"
+msgstr "مرآة ترتيب المنتجات للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales POS Settings Mirror"
+msgstr "مرآة إعدادات نقطة بيع المبيعات للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales POS Draft Cache Mirror"
+msgstr "مرآة مسودات نقطة بيع المبيعات للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Sales POS Replication Turn Mirror"
+msgstr "مرآة دور تكرار نقطة بيع المبيعات للفرع"
+
+#. module: ab_sales_sync
+msgid "Branch Printer Configuration Mirror"
+msgstr "مرآة إعدادات طابعات الفرع"
+
+#. module: ab_sales_sync
+msgid "Priced"
+msgstr "مسعر"
+
+#. module: ab_sales_sync
+msgid "Product ePlus Serial"
+msgstr "مسلسل المنتج في إي بلس"
+
+#. module: ab_sales_sync
+msgid "Default Price"
+msgstr "السعر الافتراضي"
+
+#. module: ab_sales_sync
+msgid "Sale Date"
+msgstr "تاريخ البيع"
+
+#. module: ab_sales_sync
+msgid "Sales Quantity"
+msgstr "كمية المبيعات"
+
+#. module: ab_sales_sync
+msgid "Source Synced At"
+msgstr "وقت مزامنة المصدر"
+
+#. module: ab_sales_sync
+msgid "Rows Synced"
+msgstr "الصفوف المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Started At"
+msgstr "وقت البدء"
+
+#. module: ab_sales_sync
+msgid "Finished At"
+msgstr "وقت الانتهاء"
+
+#. module: ab_sales_sync
+msgid "Rank Scope"
+msgstr "نطاق الترتيب"
+
+#. module: ab_sales_sync
+msgid "Period Days"
+msgstr "أيام الفترة"
+
+#. module: ab_sales_sync
+msgid "Order Count"
+msgstr "عدد الطلبات"
+
+#. module: ab_sales_sync
+msgid "Score"
+msgstr "النقاط"
+
+#. module: ab_sales_sync
+msgid "Last Order Date"
+msgstr "تاريخ آخر طلب"
+
+#. module: ab_sales_sync
+msgid "Settings Version"
+msgstr "إصدار الإعدادات"
+
+#. module: ab_sales_sync
+msgid "Last Synced At"
+msgstr "وقت آخر مزامنة"
+
+#. module: ab_sales_sync
+msgid "Settings JSON"
+msgstr "إعدادات JSON"
+
+#. module: ab_sales_sync
+msgid "Employee Scope Key"
+msgstr "مفتاح نطاق الموظف"
+
+#. module: ab_sales_sync
+msgid "Cache Key"
+msgstr "مفتاح التخزين المؤقت"
+
+#. module: ab_sales_sync
+msgid "Selected ID"
+msgstr "المعرف المحدد"
+
+#. module: ab_sales_sync
+msgid "Bills JSON"
+msgstr "فواتير JSON"
+
+#. module: ab_sales_sync
+msgid "Cron"
+msgstr "مهمة مجدولة"
+
+#. module: ab_sales_sync
+msgid "Last Manual Run At"
+msgstr "وقت آخر تشغيل يدوي"
+
+#. module: ab_sales_sync
+msgid "Port"
+msgstr "المنفذ"
+
+#. module: ab_sales_sync
+msgid "Username"
+msgstr "اسم المستخدم"
+
+#. module: ab_sales_sync
+msgid "Printer / Share Name"
+msgstr "اسم الطابعة / المشاركة"
+
+#. module: ab_sales_sync
+msgid "Protocol"
+msgstr "البروتوكول"
+
+#. module: ab_sales_sync
+msgid "Paper Size"
+msgstr "حجم الورق"
+
+#. module: ab_sales_sync
+msgid "Extra Feed Lines"
+msgstr "أسطر تغذية إضافية"
+
+#. module: ab_sales_sync
+msgid "Product Priced Flags"
+msgstr "علامات تسعير المنتج"
+
+#. module: ab_sales_sync
+msgid "Product Metadata"
+msgstr "بيانات المنتج الوصفية"
+
+#. module: ab_sales_sync
+msgid "Sales Inventory"
+msgstr "مخزون المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales Per Day"
+msgstr "مبيعات اليوم"
+
+#. module: ab_sales_sync
+msgid "Sales Per Day Sync States"
+msgstr "حالات مزامنة مبيعات اليوم"
+
+#. module: ab_sales_sync
+msgid "Product Ranking"
+msgstr "ترتيب المنتجات"
+
+#. module: ab_sales_sync
+msgid "Sales POS Settings"
+msgstr "إعدادات نقطة بيع المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales POS Draft Cache"
+msgstr "مسودات نقطة بيع المبيعات"
+
+#. module: ab_sales_sync
+msgid "Sales POS Replication Turns"
+msgstr "أدوار تكرار نقطة بيع المبيعات"
+
+#. module: ab_sales_sync
+msgid "Printer Configurations"
+msgstr "إعدادات الطابعات"
+
+#. module: ab_sales_sync
+msgid "Synced Product Priced Flags"
+msgstr "علامات تسعير المنتج المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Product Metadata"
+msgstr "بيانات المنتج الوصفية المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Sales Inventory"
+msgstr "مخزون المبيعات المتزامن"
+
+#. module: ab_sales_sync
+msgid "Synced Sales Per Day"
+msgstr "مبيعات اليوم المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Sales Per Day States"
+msgstr "حالات مبيعات اليوم المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Product Rankings"
+msgstr "ترتيبات المنتجات المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced POS Settings"
+msgstr "إعدادات نقطة البيع المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced POS Draft Caches"
+msgstr "مسودات نقطة البيع المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced POS Replication Turns"
+msgstr "أدوار تكرار نقطة البيع المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Synced Printer Configurations"
+msgstr "إعدادات الطابعات المتزامنة"
+
+#. module: ab_sales_sync
+msgid "Product priced mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة تسعير المنتج فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Product metadata mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة بيانات المنتج الوصفية فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales inventory mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة مخزون المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales per day mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة مبيعات اليوم فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales per day sync state mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة حالة مزامنة مبيعات اليوم فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Product ranking mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة ترتيب المنتجات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales POS settings mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة إعدادات نقطة بيع المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales POS draft cache mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة مسودات نقطة بيع المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Sales POS replication turn mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة دور تكرار نقطة بيع المبيعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Printer configuration mirror must be unique per branch and source record."
+msgstr "يجب أن تكون مرآة إعدادات الطابعات فريدة لكل فرع وسجل مصدر."

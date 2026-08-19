@@ -234,3 +234,222 @@ class AbSalesReturnLineSync(models.Model):
         "UNIQUE(db_serial, rec_id)",
         "Sales return line mirror must be unique per branch and source record.",
     )
+
+
+class AbProductPricedSync(models.Model):
+    _name = "ab_product_priced__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Product Priced Mirror"
+    _order = "db_serial, product_code, rec_id"
+    _rec_name = "product_code"
+
+    product_id = fields.Many2one("ab_product", string="Product", ondelete="restrict", index=True)
+    product_code = fields.Char(string="Product Code", index=True)
+    is_priced = fields.Boolean(string="Priced")
+    notes = fields.Char(string="Notes")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Product priced mirror must be unique per branch and source record.",
+    )
+
+
+class AbProductMetadataSync(models.Model):
+    _name = "ab_product_metadata__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Product Metadata Mirror"
+    _order = "db_serial, product_code, rec_id"
+    _rec_name = "product_code"
+
+    product_id = fields.Many2one("ab_product", string="Product", ondelete="restrict", index=True)
+    product_code = fields.Char(string="Product Code", index=True)
+    is_priced = fields.Boolean(string="Priced")
+    notes = fields.Char(string="Notes")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Product metadata mirror must be unique per branch and source record.",
+    )
+
+
+class AbSalesInventorySync(models.Model):
+    _name = "ab_sales_inventory__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Sales Inventory Mirror"
+    _order = "db_serial, store_id, product_eplus_serial, rec_id"
+    _rec_name = "product_code"
+
+    product_eplus_serial = fields.Integer(string="Product ePlus Serial", index=True)
+    product_id = fields.Many2one("ab_product", string="Product", ondelete="restrict", index=True)
+    product_code = fields.Char(string="Product Code", index=True)
+    store_id = fields.Many2one("ab_store", string="Store", ondelete="restrict", index=True)
+    balance = fields.Float(string="Balance")
+    default_price = fields.Float(string="Default Price")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Sales inventory mirror must be unique per branch and source record.",
+    )
+
+
+class AbSalesPerDaySync(models.Model):
+    _name = "ab_sales_per_day__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Sales Per Day Mirror"
+    _order = "db_serial, sale_date desc, store_id, product_eplus_serial"
+
+    store_id = fields.Many2one("ab_store", string="Store", ondelete="restrict", index=True)
+    product_eplus_serial = fields.Integer(string="Product ePlus Serial", index=True)
+    product_id = fields.Many2one("ab_product", string="Product", ondelete="restrict", index=True)
+    sale_date = fields.Date(string="Sale Date", index=True)
+    sales_qty = fields.Float(string="Sales Quantity", digits=(16, 4))
+    sync_at = fields.Datetime(string="Source Synced At")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Sales per day mirror must be unique per branch and source record.",
+    )
+
+
+class AbSalesPerDaySyncStateSync(models.Model):
+    _name = "ab_sales_per_day_sync_state__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Sales Per Day Sync State Mirror"
+    _order = "db_serial, sale_date desc, rec_id"
+
+    sale_date = fields.Date(string="Sale Date", index=True)
+    state = fields.Selection(
+        selection=[
+            ("pending", "Pending"),
+            ("running", "Running"),
+            ("done", "Done"),
+            ("failed", "Failed"),
+        ],
+        string="Status",
+        index=True,
+    )
+    rows_synced = fields.Integer(string="Rows Synced")
+    started_at = fields.Datetime(string="Started At")
+    finished_at = fields.Datetime(string="Finished At")
+    error_message = fields.Text(string="Error")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Sales per day sync state mirror must be unique per branch and source record.",
+    )
+
+
+class AbProductRankSync(models.Model):
+    _name = "ab_product_rank__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Product Ranking Mirror"
+    _order = "db_serial, score desc, order_count desc, qty_total desc, rec_id desc"
+    _rec_name = "product_id"
+
+    product_id = fields.Many2one("ab_product", string="Product", ondelete="restrict", index=True)
+    store_id = fields.Many2one("ab_store", string="Store", ondelete="restrict", index=True)
+    customer_phone = fields.Char(string="Customer Phone", index=True)
+    rank_scope = fields.Selection(
+        selection=[("branch", "Branch"), ("customer", "Customer")],
+        string="Rank Scope",
+        index=True,
+    )
+    period_days = fields.Integer(string="Period Days", index=True)
+    order_count = fields.Integer(string="Order Count")
+    qty_total = fields.Float(string="Total Quantity")
+    score = fields.Float(string="Score", index=True)
+    last_order_date = fields.Datetime(string="Last Order Date")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Product ranking mirror must be unique per branch and source record.",
+    )
+
+
+class AbSalesPosSettingsSync(models.Model):
+    _name = "ab_sales_pos_settings__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Sales POS Settings Mirror"
+    _order = "db_serial, rec_id desc"
+
+    user_id = fields.Many2one("res.users", string="User", ondelete="restrict", index=True)
+    settings_version = fields.Integer(string="Settings Version")
+    last_synced_at = fields.Datetime(string="Last Synced At")
+    settings_json = fields.Json(string="Settings JSON", default=dict)
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Sales POS settings mirror must be unique per branch and source record.",
+    )
+
+
+class AbSalesPosDraftCacheSync(models.Model):
+    _name = "ab_sales_pos_draft_cache__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Sales POS Draft Cache Mirror"
+    _order = "db_serial, source_write_date desc, rec_id desc"
+
+    user_id = fields.Many2one("res.users", string="User", ondelete="restrict", index=True)
+    employee_id = fields.Many2one("ab_hr_employee", string="Employee", ondelete="restrict", index=True)
+    employee_scope_key = fields.Integer(string="Employee Scope Key", index=True)
+    cache_key = fields.Char(string="Cache Key", index=True)
+    selected_id = fields.Char(string="Selected ID")
+    last_synced_at = fields.Datetime(string="Last Synced At")
+    bills_json = fields.Json(string="Bills JSON", default=list)
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Sales POS draft cache mirror must be unique per branch and source record.",
+    )
+
+
+class AbSalesPosReplicationTurnSync(models.Model):
+    _name = "ab_sales_pos_replication_turn__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Sales POS Replication Turn Mirror"
+    _order = "db_serial, last_manual_run_at desc, rec_id desc"
+
+    user_id = fields.Many2one("res.users", string="User", ondelete="restrict", index=True)
+    cron_id = fields.Many2one("ir.cron", string="Cron", ondelete="restrict", index=True)
+    last_manual_run_at = fields.Datetime(string="Last Manual Run At")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Sales POS replication turn mirror must be unique per branch and source record.",
+    )
+
+
+class AbPrinterSync(models.Model):
+    _name = "ab_printer__sync"
+    _inherit = "ab_sales_sync_mixin"
+    _description = "Branch Printer Configuration Mirror"
+    _order = "db_serial, is_default desc, name asc, rec_id"
+
+    name = fields.Char(string="Name", index=True)
+    is_default = fields.Boolean(string="Default")
+    ip = fields.Char(string="IP / Host")
+    port = fields.Integer(string="Port")
+    username = fields.Char(string="Username")
+    printer_name = fields.Char(string="Printer / Share Name")
+    protocol = fields.Selection(
+        selection=[
+            ("shared", "Shared"),
+            ("connected", "Connected"),
+            ("network", "Network"),
+        ],
+        string="Protocol",
+    )
+    paper_size = fields.Selection(
+        selection=[
+            ("pos_80mm", "POS 80mm"),
+            ("a4", "A4"),
+        ],
+        string="Paper Size",
+    )
+    notes = fields.Text(string="Notes")
+    extra_feed_lines = fields.Integer(string="Extra Feed Lines")
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Printer configuration mirror must be unique per branch and source record.",
+    )

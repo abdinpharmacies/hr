@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <function model="ab_odoo_sync_upload_source" name="ensure_upload_sources"
+                  eval="[[{'model_name': 'ab_product_priced'},
+                          {'model_name': 'ab_product_metadata'},
+                          {'model_name': 'ab_sales_inventory'},
+                          {'model_name': 'ab_sales_per_day'},
+                          {'model_name': 'ab_sales_per_day_sync_state'},
+                          {'model_name': 'ab_product_rank'},
+                          {'model_name': 'ab_sales_pos_settings'},
+                          {'model_name': 'ab_sales_pos_draft_cache'},
+                          {'model_name': 'ab_sales_pos_replication_turn'},
+                          {'model_name': 'ab_printer'}]]"/>
+
+        <record id="apply_profile_ab_product_priced" model="ab_odoo_sync_apply_profile">
+            <field name="name">Product Priced Flags</field>
+            <field name="sequence">50</field>
+            <field name="source_model_name">ab_product_priced</field>
+            <field name="target_model_name">ab_product_priced__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_product_priced_product" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_priced"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">product_id</field>
+            <field name="target_field_name">product_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_priced_product_code" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_priced"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">product_code</field>
+            <field name="target_field_name">product_code</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_priced_is_priced" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_priced"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">is_priced</field>
+            <field name="target_field_name">is_priced</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_priced_notes" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_priced"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">notes</field>
+            <field name="target_field_name">notes</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_priced_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_priced"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_product_metadata" model="ab_odoo_sync_apply_profile">
+            <field name="name">Product Metadata</field>
+            <field name="sequence">60</field>
+            <field name="source_model_name">ab_product_metadata</field>
+            <field name="target_model_name">ab_product_metadata__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_product_metadata_product" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_metadata"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">product_id</field>
+            <field name="target_field_name">product_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_metadata_product_code" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_metadata"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">product_code</field>
+            <field name="target_field_name">product_code</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_metadata_is_priced" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_metadata"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">is_priced</field>
+            <field name="target_field_name">is_priced</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_metadata_notes" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_metadata"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">notes</field>
+            <field name="target_field_name">notes</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_metadata_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_metadata"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_sales_inventory" model="ab_odoo_sync_apply_profile">
+            <field name="name">Sales Inventory</field>
+            <field name="sequence">70</field>
+            <field name="source_model_name">ab_sales_inventory</field>
+            <field name="target_model_name">ab_sales_inventory__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_inventory_product_eplus_serial" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_inventory"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">product_eplus_serial</field>
+            <field name="target_field_name">product_eplus_serial</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_inventory_product" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_inventory"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">product_id</field>
+            <field name="target_field_name">product_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_inventory_product_code" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_inventory"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">product_code</field>
+            <field name="target_field_name">product_code</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_inventory_store" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_inventory"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">store_id</field>
+            <field name="target_field_name">store_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_inventory_balance" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_inventory"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">balance</field>
+            <field name="target_field_name">balance</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_inventory_default_price" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_inventory"/>
+            <field name="sequence">60</field>
+            <field name="source_field_name">default_price</field>
+            <field name="target_field_name">default_price</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_sales_per_day" model="ab_odoo_sync_apply_profile">
+            <field name="name">Sales Per Day</field>
+            <field name="sequence">80</field>
+            <field name="source_model_name">ab_sales_per_day</field>
+            <field name="target_model_name">ab_sales_per_day__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_store" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">store_id</field>
+            <field name="target_field_name">store_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_product_eplus_serial" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">product_eplus_serial</field>
+            <field name="target_field_name">product_eplus_serial</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_product" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">product_id</field>
+            <field name="target_field_name">product_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sale_date" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">sale_date</field>
+            <field name="target_field_name">sale_date</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sales_qty" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">sales_qty</field>
+            <field name="target_field_name">sales_qty</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sync_at" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day"/>
+            <field name="sequence">60</field>
+            <field name="source_field_name">sync_at</field>
+            <field name="target_field_name">sync_at</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_sales_per_day_sync_state" model="ab_odoo_sync_apply_profile">
+            <field name="name">Sales Per Day Sync States</field>
+            <field name="sequence">90</field>
+            <field name="source_model_name">ab_sales_per_day_sync_state</field>
+            <field name="target_model_name">ab_sales_per_day_sync_state__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sync_state_sale_date" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day_sync_state"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">sale_date</field>
+            <field name="target_field_name">sale_date</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sync_state_state" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day_sync_state"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">state</field>
+            <field name="target_field_name">state</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sync_state_rows" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day_sync_state"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">rows_synced</field>
+            <field name="target_field_name">rows_synced</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sync_state_started" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day_sync_state"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">started_at</field>
+            <field name="target_field_name">started_at</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sync_state_finished" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day_sync_state"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">finished_at</field>
+            <field name="target_field_name">finished_at</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_per_day_sync_state_error" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_per_day_sync_state"/>
+            <field name="sequence">60</field>
+            <field name="source_field_name">error_message</field>
+            <field name="target_field_name">error_message</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_product_rank" model="ab_odoo_sync_apply_profile">
+            <field name="name">Product Ranking</field>
+            <field name="sequence">100</field>
+            <field name="source_model_name">ab_product_rank</field>
+            <field name="target_model_name">ab_product_rank__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_product" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">product_id</field>
+            <field name="target_field_name">product_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_store" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">store_id</field>
+            <field name="target_field_name">store_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_customer_phone" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">customer_phone</field>
+            <field name="target_field_name">customer_phone</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_rank_scope" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">rank_scope</field>
+            <field name="target_field_name">rank_scope</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_period_days" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">period_days</field>
+            <field name="target_field_name">period_days</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_order_count" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">60</field>
+            <field name="source_field_name">order_count</field>
+            <field name="target_field_name">order_count</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_qty_total" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">70</field>
+            <field name="source_field_name">qty_total</field>
+            <field name="target_field_name">qty_total</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_score" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">80</field>
+            <field name="source_field_name">score</field>
+            <field name="target_field_name">score</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_product_rank_last_order_date" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_product_rank"/>
+            <field name="sequence">90</field>
+            <field name="source_field_name">last_order_date</field>
+            <field name="target_field_name">last_order_date</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_sales_pos_settings" model="ab_odoo_sync_apply_profile">
+            <field name="name">Sales POS Settings</field>
+            <field name="sequence">110</field>
+            <field name="source_model_name">ab_sales_pos_settings</field>
+            <field name="target_model_name">ab_sales_pos_settings__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_settings_version" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_settings"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">settings_version</field>
+            <field name="target_field_name">settings_version</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_settings_last_synced_at" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_settings"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">last_synced_at</field>
+            <field name="target_field_name">last_synced_at</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_settings_json" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_settings"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">settings_json</field>
+            <field name="target_field_name">settings_json</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_sales_pos_draft_cache" model="ab_odoo_sync_apply_profile">
+            <field name="name">Sales POS Draft Cache</field>
+            <field name="sequence">120</field>
+            <field name="source_model_name">ab_sales_pos_draft_cache</field>
+            <field name="target_model_name">ab_sales_pos_draft_cache__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_draft_cache_employee" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">employee_id</field>
+            <field name="target_field_name">employee_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_draft_cache_employee_scope_key" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">employee_scope_key</field>
+            <field name="target_field_name">employee_scope_key</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_draft_cache_cache_key" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">cache_key</field>
+            <field name="target_field_name">cache_key</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_draft_cache_selected_id" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">selected_id</field>
+            <field name="target_field_name">selected_id</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_draft_cache_last_synced_at" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">last_synced_at</field>
+            <field name="target_field_name">last_synced_at</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_draft_cache_bills_json" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
+            <field name="sequence">60</field>
+            <field name="source_field_name">bills_json</field>
+            <field name="target_field_name">bills_json</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_sales_pos_replication_turn" model="ab_odoo_sync_apply_profile">
+            <field name="name">Sales POS Replication Turns</field>
+            <field name="sequence">130</field>
+            <field name="source_model_name">ab_sales_pos_replication_turn</field>
+            <field name="target_model_name">ab_sales_pos_replication_turn__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_replication_turn_last_run" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_replication_turn"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">last_manual_run_at</field>
+            <field name="target_field_name">last_manual_run_at</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+
+        <record id="apply_profile_ab_printer" model="ab_odoo_sync_apply_profile">
+            <field name="name">Printer Configurations</field>
+            <field name="sequence">140</field>
+            <field name="source_model_name">ab_printer</field>
+            <field name="target_model_name">ab_printer__sync</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_printer_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_is_default" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">is_default</field>
+            <field name="target_field_name">is_default</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_ip" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">ip</field>
+            <field name="target_field_name">ip</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_port" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">port</field>
+            <field name="target_field_name">port</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_username" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">60</field>
+            <field name="source_field_name">username</field>
+            <field name="target_field_name">username</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_printer_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">70</field>
+            <field name="source_field_name">printer_name</field>
+            <field name="target_field_name">printer_name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_protocol" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">80</field>
+            <field name="source_field_name">protocol</field>
+            <field name="target_field_name">protocol</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_paper_size" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">90</field>
+            <field name="source_field_name">paper_size</field>
+            <field name="target_field_name">paper_size</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_notes" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">100</field>
+            <field name="source_field_name">notes</field>
+            <field name="target_field_name">notes</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_printer_extra_feed_lines" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_printer"/>
+            <field name="sequence">110</field>
+            <field name="source_field_name">extra_feed_lines</field>
+            <field name="target_field_name">extra_feed_lines</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+    </data>
+</odoo>

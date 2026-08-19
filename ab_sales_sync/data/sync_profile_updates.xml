@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <function model="ab_odoo_sync_field_mapping" name="ensure_mappings"
+                  eval="[[{'profile_source_model_name': 'ab_sales_header',
+                           'sequence': 10,
+                           'source_field_name': 'store_id',
+                           'target_field_name': 'store_id',
+                           'mapping_type': 'sync_many2one',
+                           'required': True,
+                           'sync_enabled': True},
+                          {'profile_source_model_name': 'ab_sales_line',
+                           'sequence': 20,
+                           'source_field_name': 'product_id',
+                           'target_field_name': 'product_id',
+                           'mapping_type': 'sync_many2one',
+                           'required': True,
+                           'sync_enabled': True},
+                          {'profile_source_model_name': 'ab_sales_return_header',
+                           'sequence': 10,
+                           'source_field_name': 'store_id',
+                           'target_field_name': 'store_id',
+                           'mapping_type': 'sync_many2one',
+                           'required': True,
+                           'sync_enabled': True},
+                          {'profile_source_model_name': 'ab_sales_return_line',
+                           'sequence': 20,
+                           'source_field_name': 'product_id',
+                           'target_field_name': 'product_id',
+                           'mapping_type': 'sync_many2one',
+                           'sync_enabled': True}]]"/>
+    </data>
+</odoo>

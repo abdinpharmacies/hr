@@ -3,21 +3,21 @@
     <data noupdate="1">
         <record id="upload_source_ab_sales_header" model="ab_odoo_sync_upload_source">
             <field name="model_name">ab_sales_header</field>
-            <field name="active">True</field>
+            <field name="active">False</field>
         </record>
         <record id="upload_source_ab_sales_line" model="ab_odoo_sync_upload_source">
             <field name="model_name">ab_sales_line</field>
             <field name="aggregate_parent_field">header_id</field>
-            <field name="active">True</field>
+            <field name="active">False</field>
         </record>
         <record id="upload_source_ab_sales_return_header" model="ab_odoo_sync_upload_source">
             <field name="model_name">ab_sales_return_header</field>
-            <field name="active">True</field>
+            <field name="active">False</field>
         </record>
         <record id="upload_source_ab_sales_return_line" model="ab_odoo_sync_upload_source">
             <field name="model_name">ab_sales_return_line</field>
             <field name="aggregate_parent_field">header_id</field>
-            <field name="active">True</field>
+            <field name="active">False</field>
         </record>
 
         <record id="apply_profile_ab_sales_header" model="ab_odoo_sync_apply_profile">
@@ -58,9 +58,7 @@
             <field name="sequence">10</field>
             <field name="source_field_name">store_id</field>
             <field name="target_field_name">store_id</field>
-            <field name="mapping_type">stable_many2one</field>
-            <field name="relation_source_key">eplus_serial</field>
-            <field name="relation_target_key">eplus_serial</field>
+            <field name="mapping_type">sync_many2one</field>
             <field name="required">True</field>
             <field name="sync_enabled">True</field>
         </record>
@@ -223,9 +221,7 @@
             <field name="sequence">20</field>
             <field name="source_field_name">product_id</field>
             <field name="target_field_name">product_id</field>
-            <field name="mapping_type">stable_many2one</field>
-            <field name="relation_source_key">eplus_serial</field>
-            <field name="relation_target_key">eplus_serial</field>
+            <field name="mapping_type">sync_many2one</field>
             <field name="required">True</field>
             <field name="sync_enabled">True</field>
         </record>
@@ -331,9 +327,7 @@
             <field name="sequence">10</field>
             <field name="source_field_name">store_id</field>
             <field name="target_field_name">store_id</field>
-            <field name="mapping_type">stable_many2one</field>
-            <field name="relation_source_key">eplus_serial</field>
-            <field name="relation_target_key">eplus_serial</field>
+            <field name="mapping_type">sync_many2one</field>
             <field name="required">True</field>
             <field name="sync_enabled">True</field>
         </record>
@@ -424,9 +418,7 @@
             <field name="sequence">20</field>
             <field name="source_field_name">product_id</field>
             <field name="target_field_name">product_id</field>
-            <field name="mapping_type">stable_many2one</field>
-            <field name="relation_source_key">eplus_serial</field>
-            <field name="relation_target_key">eplus_serial</field>
+            <field name="mapping_type">sync_many2one</field>
             <field name="sync_enabled">True</field>
         </record>
         <record id="mapping_ab_sales_return_line_sale_line_id" model="ab_odoo_sync_field_mapping">
