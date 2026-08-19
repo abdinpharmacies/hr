@@ -7,7 +7,7 @@
     "website": "https://www.abdinpharmacies.com",
     "license": "LGPL-3",
     "category": "Tools",
-    "version": "19.0.2.0.0",
+    "version": "19.0.2.1.0",
     "depends": ["base", "web", "integration_queue_job"],
     "data": [
         "security/ir.model.access.csv",

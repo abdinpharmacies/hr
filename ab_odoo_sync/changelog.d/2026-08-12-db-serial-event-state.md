@@ -199,26 +199,16 @@ Files changed:
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 
-## Current changes before commit
+## f8aca5fbd4a360900c1d08e041bf234c1e40fec9
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Tue Aug 18 16:12:03 2026 +0300
+- Subject: ab_odoo_sync/What changed:
 
 User-facing changes:
 
-- Added MAIN-side sync identities for branch uploads applied into real business models.
-- Added apply modes so MAIN can keep uploads raw, apply them into mirror sync models, apply them into real business models, or mark them ignored.
-- Preserved globally assigned source IDs as MAIN primary keys for business-model applies.
-- Added out-of-order relation handling that creates placeholder business records by source ID and patches them when their full upload later arrives.
-- Allowed apply profiles for branch-only source models by loading source fields from recent uploaded payloads when the model is not installed on MAIN.
-- Kept unknown or unmapped source models accepted as Pending Mapping instead of failing upload.
-- Added admin views for sync identity audit rows and updated Arabic translations.
-- Made branch upload source records inactive by default and added a loader that imports installed persistent models as inactive rows.
-- Marked incoming MAIN events for locally missing models as Not Sync instead of failing branch sync with a registry `KeyError`.
-- Allowed dotted Odoo model names such as `ab.sales.dashboard.snapshot` in branch upload payload validation.
-- Auto-filled apply profile targets by mode, including dotted source models converted to underscored `__sync` mirror names.
-- Removed mirror scaffold generation from apply profiles; MAIN now expects dedicated `__sync` modules to be installed before profiles are created.
-- Excluded stored password fields from branch upload snapshots so local credentials are not sent in raw MAIN payloads.
-- Added idempotent upload-source seeding for sync modules so inactive source rows can be created without duplicating manually loaded models.
-- Added idempotent field-mapping seeding so sync modules can correct existing profile mappings during targeted upgrades.
-- Added a test guide for raw-only, business-model, placeholder, and patching scenarios.
+- Added generated mirror-target naming and a mirror scaffold generator for apply profiles.
+- Added scaffold audit records and administration views.
 
 Files changed:
 
@@ -227,12 +217,49 @@ Files changed:
 - `ab_odoo_sync/i18n/ar_001.po`
 - `ab_odoo_sync/models/__init__.py`
 - `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
-- `ab_odoo_sync/models/ab_odoo_sync_identity.py`
+- `ab_odoo_sync/models/ab_odoo_sync_mirror_scaffold.py`
+- `ab_odoo_sync/security/ir.model.access.csv`
+- `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
+
+## 914d7492fcf12a00b9a9c07a2dc1f0aff3a1cee1
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Wed Aug 19 10:10:52 2026 +0300
+- Subject: ab_odoo_sync/remove scaffold generation and depending on manual module creation
+
+User-facing changes:
+
+- Removed runtime mirror scaffold generation and its administration records.
+- Required dedicated mirror addons to be created and installed explicitly.
+- Retained idempotent upload-source seeding for dedicated sync modules.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/__init__.py`
+- `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
 - `ab_odoo_sync/models/ab_odoo_sync_mirror_scaffold.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
-- `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_source.py`
 - `ab_odoo_sync/security/ir.model.access.csv`
-- `ab_odoo_sync/test-guide.md`
 - `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
-- `ab_odoo_sync/views/ab_odoo_sync_views.xml`
+
+## Current changes before commit:
+
+User-facing changes:
+
+- Synchronize dependent records during unlink according to their source `Many2one.ondelete` policy.
+- Archive cascade descendants before their deleted parent so sales lines and headers are both retired on mirror databases.
+- Re-snapshot surviving `set null` children after Odoo clears their parent relation.
+- Defer all unlink events and outbox writes until the source deletion succeeds, leaving restrict failures without false archive records.
+- Roll back tracked deletions when their required unlink synchronization cannot be queued.
+- Bump the module version to `19.0.2.1.0`.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/models/ab_odoo_sync_orm_hook.py`
+- `ab_odoo_sync/models/ab_odoo_sync_outbox.py`

@@ -51,27 +51,39 @@ class AbOdooSyncOutbox(models.Model):
     )
 
     @api.model
-    def capture_record(self, record, operation="upsert"):
+    def prepare_record_snapshot(self, record):
         record.ensure_one()
-        if operation not in {"upsert", "archive"}:
-            raise ValueError(_("Unsupported upload operation: %(operation)s") % {"operation": operation})
-
         service = self.env["ab_odoo_sync_service"].sudo()
         payload = service.serialize_stored_record(record.sudo())
         raw_write_date = (payload.get("fields") or {}).get("write_date")
-        vals = {
+        return {
             "db_serial": service.get_db_serial(),
             "model_name": record._name,
             "rec_id": record.id,
-            "operation": operation,
             "payload_json": payload,
             "source_write_date": raw_write_date or fields.Datetime.now(),
         }
+
+    @api.model
+    def capture_prepared_snapshot(self, snapshot, operation="upsert"):
+        if operation not in {"upsert", "archive"}:
+            raise ValueError(
+                _("Unsupported upload operation: %(operation)s")
+                % {"operation": operation}
+            )
+
+        vals = dict(snapshot)
+        vals["operation"] = operation
         outbox = self.with_context(skip_ab_odoo_sync_upload=True).sudo().create(vals)
         outbox.with_context(skip_ab_odoo_sync_upload=True).sudo().write(
             {"source_revision": outbox.id}
         )
         return outbox
+
+    @api.model
+    def capture_record(self, record, operation="upsert"):
+        snapshot = self.prepare_record_snapshot(record)
+        return self.capture_prepared_snapshot(snapshot, operation=operation)
 
     def action_send_now(self):
         result = self.env["ab_odoo_sync_service"].sudo().send_branch_upload_batch(self)
