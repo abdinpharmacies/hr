@@ -394,7 +394,7 @@ class AbStockReportCacheLine(models.Model):
               AND sd.sec_update_date IS NOT NULL
               {return_filter}
               {date_filter}
-            ORDER BY sd.sec_update_date DESC, sd.std_id DESC
+            ORDER BY sd.sec_update_date DESC
         """
         detail_params = [candidate_limit, product_serial]
         if from_date:
@@ -609,7 +609,7 @@ class AbStockReportCacheLine(models.Model):
                   AND pd.sec_update_date IS NOT NULL
                   AND (? IS NULL
                    OR pd.sec_update_date >= ?)
-                ORDER BY pd.sec_update_date DESC, pd.ptd_id DESC \
+                ORDER BY pd.sec_update_date DESC \
                 """
         return self._run_query(
             query,
@@ -667,7 +667,7 @@ class AbStockReportCacheLine(models.Model):
                     > 0
                   AND (? IS NULL
                    OR pd.sec_update_date >= ?)
-                ORDER BY pd.sec_update_date DESC, pd.ptd_id DESC \
+                ORDER BY pd.sec_update_date DESC \
                 """
         return self._run_query(
             query,
@@ -717,7 +717,7 @@ class AbStockReportCacheLine(models.Model):
                   AND sth.sec_update_date IS NOT NULL
                   AND (? IS NULL
                    OR sth.sec_update_date >= ?)
-                ORDER BY sth.sec_update_date DESC, st.st_id DESC \
+                ORDER BY sth.sec_update_date DESC \
                 """
         return self._run_query(
             query,
@@ -767,7 +767,7 @@ class AbStockReportCacheLine(models.Model):
                   AND sth.sec_update_date IS NOT NULL
                   AND (? IS NULL
                    OR sth.sec_update_date >= ?)
-                ORDER BY sth.sec_update_date DESC, st.st_id DESC \
+                ORDER BY sth.sec_update_date DESC \
                 """
         return self._run_query(
             query,
