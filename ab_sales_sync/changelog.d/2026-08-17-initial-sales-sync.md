@@ -51,16 +51,17 @@ Files changed:
 - `ab_sales_sync/security/record_rules.xml`
 - `ab_sales_sync/views/ab_sales_sync_extra_views.xml`
 
-## Current changes before commit
+## c5eff61c9a5b00c5bfd36151a4d0a6db5e413998
+
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Wed Aug 19 15:14:10 2026 +0300
+- Subject: ab_sales_sync/promote sales sync app and format JSON payloads
 
 User-facing changes:
 
-- Promote Sales Sync from Settings > Technical to a standalone top-level Odoo app.
-- Add a dedicated Sales Sync app icon while retaining manager-only menu visibility.
-- Repair the Arabic root-menu translation with its Odoo-exported source reference.
-- Display every received JSON payload in a safe, pretty-printed, scrollable viewer.
-- Apply the JSON viewer to raw payloads, inventory snapshots, POS settings, and draft bills without affecting other modules.
-- Bump the module version to `19.0.1.2.0` for the app navigation and JSON viewer updates.
+- Promoted Sales Sync to a standalone top-level Odoo app with dedicated icons.
+- Added a pretty JSON field widget for raw payloads, inventory snapshots, settings, and bills.
+- Maintained Arabic menu translations and manager-only visibility.
 
 Files changed:
 
@@ -75,3 +76,18 @@ Files changed:
 - `ab_sales_sync/static/src/fields/pretty_json/pretty_json_field.xml`
 - `ab_sales_sync/views/ab_sales_sync_extra_views.xml`
 - `ab_sales_sync/views/ab_sales_sync_views.xml`
+
+## Current changes before commit:
+
+User-facing changes:
+
+- Reuse the shared `ab_odoo_sync` pretty JSON widget while preserving formatted coverage for every Sales Sync JSON field.
+- Remove duplicate widget assets from Sales Sync and bump the module version to `19.0.1.3.0`.
+
+Files changed:
+
+- `ab_sales_sync/__manifest__.py`
+- `ab_sales_sync/changelog.d/2026-08-17-initial-sales-sync.md`
+- `ab_sales_sync/static/src/fields/pretty_json/pretty_json_field.js`
+- `ab_sales_sync/static/src/fields/pretty_json/pretty_json_field.scss`
+- `ab_sales_sync/static/src/fields/pretty_json/pretty_json_field.xml`
