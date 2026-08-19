@@ -428,3 +428,149 @@ msgstr "إنشاء أو تحديث"
 #: model:ir.model.fields.selection,name:ab_test_sync.selection__ab_test_header__sync__priority__urgent
 msgid "Urgent"
 msgstr "عاجل"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_delete_cascade_child__sync
+msgid "AB Sync Test Cascade Delete Child Mirror"
+msgstr "نسخة تابع اختبار حذف التعاقب في مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_delete_cascade_parent__sync
+msgid "AB Sync Test Cascade Delete Parent Mirror"
+msgstr "نسخة أصل اختبار حذف التعاقب في مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_delete_restrict_child__sync
+msgid "AB Sync Test Restrict Delete Child Mirror"
+msgstr "نسخة تابع اختبار منع الحذف في مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_delete_restrict_parent__sync
+msgid "AB Sync Test Restrict Delete Parent Mirror"
+msgstr "نسخة أصل اختبار منع الحذف في مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_delete_set_null_child__sync
+msgid "AB Sync Test Set Null Delete Child Mirror"
+msgstr "نسخة تابع اختبار تفريغ العلاقة عند الحذف في مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_delete_set_null_parent__sync
+msgid "AB Sync Test Set Null Delete Parent Mirror"
+msgstr "نسخة أصل اختبار تفريغ العلاقة عند الحذف في مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_delete_cascade_child__sync_uniq_branch_source
+msgid "Cascade delete child mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة تابع حذف التعاقب فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_delete_cascade_parent__sync_uniq_branch_source
+msgid "Cascade delete parent mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة أصل حذف التعاقب فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_cascade_parent__sync__child_ids
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_restrict_parent__sync__child_ids
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_set_null_parent__sync__child_ids
+msgid "Children"
+msgstr "التوابع"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_cascade_child__sync__note
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_restrict_child__sync__note
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_set_null_child__sync__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_cascade_child__sync__parent_id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_restrict_child__sync__parent_id
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_delete_set_null_child__sync__parent_id
+msgid "Parent"
+msgstr "الأصل"
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_delete_restrict_child__sync_uniq_branch_source
+msgid "Restrict delete child mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة تابع منع الحذف فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_delete_restrict_parent__sync_uniq_branch_source
+msgid "Restrict delete parent mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة أصل منع الحذف فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_delete_set_null_child__sync_uniq_branch_source
+msgid "Set null delete child mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة تابع تفريغ العلاقة فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_delete_set_null_parent__sync_uniq_branch_source
+msgid "Set null delete parent mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة أصل تفريغ العلاقة فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_delete_cascade_child_sync
+msgid "Synced Cascade Children"
+msgstr "توابع التعاقب المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_delete_cascade_parent_sync
+msgid "Synced Cascade Parents"
+msgstr "أصول التعاقب المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_delete_cascade_child_sync
+msgid "Synced Cascade Delete Children"
+msgstr "توابع حذف التعاقب المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_delete_cascade_parent_sync
+msgid "Synced Cascade Delete Parents"
+msgstr "أصول حذف التعاقب المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_delete_policy_sync
+msgid "Synced Delete Policy Tests"
+msgstr "اختبارات سياسات الحذف المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_delete_restrict_child_sync
+msgid "Synced Restrict Children"
+msgstr "توابع منع الحذف المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_delete_restrict_parent_sync
+msgid "Synced Restrict Parents"
+msgstr "أصول منع الحذف المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_delete_restrict_child_sync
+msgid "Synced Restrict Delete Children"
+msgstr "توابع حذف المنع المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_delete_restrict_parent_sync
+msgid "Synced Restrict Delete Parents"
+msgstr "أصول حذف المنع المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_delete_set_null_child_sync
+msgid "Synced Set Null Children"
+msgstr "توابع تفريغ العلاقة المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_delete_set_null_child_sync
+msgid "Synced Set Null Delete Children"
+msgstr "توابع حذف تفريغ العلاقة المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_delete_set_null_parent_sync
+msgid "Synced Set Null Delete Parents"
+msgstr "أصول حذف تفريغ العلاقة المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_delete_set_null_parent_sync
+msgid "Synced Set Null Parents"
+msgstr "أصول تفريغ العلاقة المتزامنة"

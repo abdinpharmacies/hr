@@ -18,6 +18,30 @@
             <field name="aggregate_parent_field">header_id</field>
             <field name="active">True</field>
         </record>
+        <record id="upload_source_ab_test_delete_cascade_parent" model="ab_odoo_sync_upload_source">
+            <field name="model_name">ab_test_delete_cascade_parent</field>
+            <field name="active">True</field>
+        </record>
+        <record id="upload_source_ab_test_delete_cascade_child" model="ab_odoo_sync_upload_source">
+            <field name="model_name">ab_test_delete_cascade_child</field>
+            <field name="active">True</field>
+        </record>
+        <record id="upload_source_ab_test_delete_set_null_parent" model="ab_odoo_sync_upload_source">
+            <field name="model_name">ab_test_delete_set_null_parent</field>
+            <field name="active">True</field>
+        </record>
+        <record id="upload_source_ab_test_delete_set_null_child" model="ab_odoo_sync_upload_source">
+            <field name="model_name">ab_test_delete_set_null_child</field>
+            <field name="active">True</field>
+        </record>
+        <record id="upload_source_ab_test_delete_restrict_parent" model="ab_odoo_sync_upload_source">
+            <field name="model_name">ab_test_delete_restrict_parent</field>
+            <field name="active">True</field>
+        </record>
+        <record id="upload_source_ab_test_delete_restrict_child" model="ab_odoo_sync_upload_source">
+            <field name="model_name">ab_test_delete_restrict_child</field>
+            <field name="active">True</field>
+        </record>
 
         <record id="apply_profile_ab_test_tag" model="ab_odoo_sync_apply_profile">
             <field name="name">Test Tags</field>
@@ -50,6 +74,225 @@
             <field name="target_model_name">ab_test_line__sync</field>
             <field name="auto_apply">False</field>
             <field name="active">True</field>
+        </record>
+        <record id="apply_profile_ab_test_delete_cascade_parent" model="ab_odoo_sync_apply_profile">
+            <field name="name">Cascade Delete Parents</field>
+            <field name="sequence">50</field>
+            <field name="source_model_name">ab_test_delete_cascade_parent</field>
+            <field name="target_model_name">ab_test_delete_cascade_parent__sync</field>
+            <field name="auto_apply">False</field>
+            <field name="active">True</field>
+        </record>
+        <record id="apply_profile_ab_test_delete_cascade_child" model="ab_odoo_sync_apply_profile">
+            <field name="name">Cascade Delete Children</field>
+            <field name="sequence">60</field>
+            <field name="source_model_name">ab_test_delete_cascade_child</field>
+            <field name="target_model_name">ab_test_delete_cascade_child__sync</field>
+            <field name="auto_apply">False</field>
+            <field name="active">True</field>
+        </record>
+        <record id="apply_profile_ab_test_delete_set_null_parent" model="ab_odoo_sync_apply_profile">
+            <field name="name">Set Null Delete Parents</field>
+            <field name="sequence">70</field>
+            <field name="source_model_name">ab_test_delete_set_null_parent</field>
+            <field name="target_model_name">ab_test_delete_set_null_parent__sync</field>
+            <field name="auto_apply">False</field>
+            <field name="active">True</field>
+        </record>
+        <record id="apply_profile_ab_test_delete_set_null_child" model="ab_odoo_sync_apply_profile">
+            <field name="name">Set Null Delete Children</field>
+            <field name="sequence">80</field>
+            <field name="source_model_name">ab_test_delete_set_null_child</field>
+            <field name="target_model_name">ab_test_delete_set_null_child__sync</field>
+            <field name="auto_apply">False</field>
+            <field name="active">True</field>
+        </record>
+        <record id="apply_profile_ab_test_delete_restrict_parent" model="ab_odoo_sync_apply_profile">
+            <field name="name">Restrict Delete Parents</field>
+            <field name="sequence">90</field>
+            <field name="source_model_name">ab_test_delete_restrict_parent</field>
+            <field name="target_model_name">ab_test_delete_restrict_parent__sync</field>
+            <field name="auto_apply">False</field>
+            <field name="active">True</field>
+        </record>
+        <record id="apply_profile_ab_test_delete_restrict_child" model="ab_odoo_sync_apply_profile">
+            <field name="name">Restrict Delete Children</field>
+            <field name="sequence">100</field>
+            <field name="source_model_name">ab_test_delete_restrict_child</field>
+            <field name="target_model_name">ab_test_delete_restrict_child__sync</field>
+            <field name="auto_apply">False</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="mapping_ab_test_delete_cascade_parent_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_cascade_parent"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_cascade_parent_code" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_cascade_parent"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">code</field>
+            <field name="target_field_name">code</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_cascade_parent_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_cascade_parent"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_cascade_child_parent" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_cascade_child"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">parent_id</field>
+            <field name="target_field_name">parent_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_cascade_child_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_cascade_child"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_cascade_child_note" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_cascade_child"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">note</field>
+            <field name="target_field_name">note</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_cascade_child_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_cascade_child"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_set_null_parent_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_set_null_parent"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_set_null_parent_code" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_set_null_parent"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">code</field>
+            <field name="target_field_name">code</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_set_null_parent_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_set_null_parent"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_set_null_child_parent" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_set_null_child"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">parent_id</field>
+            <field name="target_field_name">parent_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_set_null_child_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_set_null_child"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_set_null_child_note" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_set_null_child"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">note</field>
+            <field name="target_field_name">note</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_set_null_child_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_set_null_child"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_restrict_parent_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_restrict_parent"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_restrict_parent_code" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_restrict_parent"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">code</field>
+            <field name="target_field_name">code</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_restrict_parent_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_restrict_parent"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_restrict_child_parent" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_restrict_child"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">parent_id</field>
+            <field name="target_field_name">parent_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_restrict_child_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_restrict_child"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_restrict_child_note" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_restrict_child"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">note</field>
+            <field name="target_field_name">note</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_delete_restrict_child_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_delete_restrict_child"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
         </record>
     </data>
 </odoo>
