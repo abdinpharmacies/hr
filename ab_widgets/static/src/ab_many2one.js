@@ -1,7 +1,7 @@
 /** @odoo-module **/
 
 import {Component} from "@odoo/owl";
-import {useChildRef} from "@web/core/utils/hooks";
+import {useChildRef, useService} from "@web/core/utils/hooks";
 import {Many2XAutocomplete} from "@web/views/fields/relational_utils";
 
 export class ABMany2one extends Component {
@@ -28,6 +28,7 @@ export class ABMany2one extends Component {
     };
 
     setup() {
+        this.orm = useService("orm");
         this.autocompleteContainerRef = useChildRef();
         this.inputId = `ab_many2one_${Math.random().toString(36).slice(2, 10)}`;
         this.getDomain = this.getDomain.bind(this);
@@ -90,6 +91,7 @@ export class ABMany2one extends Component {
             context: this.props.context || {},
             getDomain: this.getDomain,
             nameCreateField: this.props.nameCreateField || "name",
+            searchMoreLabel: this.props.searchMoreLabel,
             setInputFloats: () => {
             },
             autocomplete_container: this.autocompleteContainerRef,
@@ -99,24 +101,66 @@ export class ABMany2one extends Component {
         };
     }
 
-    onAutocompleteUpdate(value) {
+    async onAutocompleteUpdate(value) {
         const handler = this.onUpdateHandler;
         if (!handler) {
             return;
         }
+        const idNamePair = await this._normalizeAutocompleteValue(value);
+        return handler(idNamePair);
+    }
+
+    async _normalizeAutocompleteValue(value) {
         if (!value || (Array.isArray(value) && !value.length)) {
-            handler(false);
-            return;
+            return false;
         }
         const first = Array.isArray(value) ? value[0] : value;
-        if (!first || typeof first !== "object") {
-            handler(false);
-            return;
+        if (Array.isArray(first)) {
+            return {
+                id: first[0] || false,
+                display_name: String(first[1] || "").trim(),
+            };
         }
-        handler({
-            id: first.id || false,
-            display_name: first.display_name || first.name || "",
+        if (Number.isInteger(first)) {
+            return this._fetchIdNamePair(first);
+        }
+        if (!first || typeof first !== "object") {
+            return false;
+        }
+        const id = first.id || false;
+        const displayName = this._extractDisplayName(first);
+        if (displayName || !id) {
+            return {
+                id,
+                display_name: displayName,
+            };
+        }
+        return this._fetchIdNamePair(id);
+    }
+
+    _extractDisplayName(record) {
+        if (!record) {
+            return "";
+        }
+        if (record.display_name) {
+            return String(record.display_name).trim();
+        }
+        const name = record.name;
+        if (name && typeof name === "object") {
+            return String(name.display_name || name.name || "").trim();
+        }
+        return String(name || "").trim();
+    }
+
+    async _fetchIdNamePair(id) {
+        const records = await this.orm.read(this.props.relation, [id], ["display_name"], {
+            context: this.props.context || {},
         });
+        const displayName = this._extractDisplayName(records[0]);
+        return {
+            id,
+            display_name: displayName,
+        };
     }
 
     clearValue(ev) {
