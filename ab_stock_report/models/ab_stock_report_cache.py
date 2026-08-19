@@ -379,19 +379,23 @@ class AbStockReportCacheLine(models.Model):
     def _fetch_sales_batch_rows_with_connection(
             self, product_serial, limit_value, return_only=False, from_date=None, connection=None
     ):
-        # Fetch detail rows first. Header and lookup tables are loaded in batches
-        # below, avoiding repeated dimension-table joins for every detail row.
-        candidate_limit = max(limit_value * 5, 50)
+        # Fetch confirmed detail rows with the header join first. Lookup tables
+        # are loaded in batches below, avoiding wide dimension joins per row.
+        candidate_limit = limit_value
         return_filter = "AND sd.sec_update_date IS NOT NULL AND ISNULL(sd.itm_back, 0) > 0" if return_only is True else ""
         date_filter = "AND sd.sec_update_date >= ?" if from_date else ""
         detail_query = f"""
             SELECT TOP (?)
                 sd.std_id, sd.sth_id, sd.std_stock_id, sd.itm_unit,
                 sd.qnty, sd.itm_sell, sd.itm_back_price, sd.itm_back,
-                sd.sec_update_date
+                sd.sec_update_date, sh.cust_id, sh.emp_id
             FROM r_sales_trans_d sd WITH (NOLOCK)
+            INNER JOIN r_sales_trans_h sh WITH (NOLOCK)
+                ON sh.sth_id = sd.sth_id
+               AND sh.sto_id = sd.std_stock_id
             WHERE sd.itm_id = ?
               AND sd.sec_update_date IS NOT NULL
+              AND sh.sth_flag = 'C'
               {return_filter}
               {date_filter}
             ORDER BY sd.sec_update_date DESC
@@ -407,43 +411,16 @@ class AbStockReportCacheLine(models.Model):
         if not detail_rows:
             return []
 
-        header_keys = list(dict.fromkeys((row[1], row[2]) for row in detail_rows))
-        pair_sql = " OR ".join("(sh.sth_id = ? AND sh.sto_id = ?)" for _key in header_keys)
-        header_query = f"""
-            SELECT sh.sth_id, sh.sto_id, sh.cust_id, sh.emp_id, sh.sth_flag
-            FROM r_sales_trans_h sh WITH (NOLOCK)
-            WHERE {pair_sql}
-        """
-        header_rows = self._run_raw_query(
-            header_query,
-            [value for key in header_keys for value in key],
-            connection=connection,
-        )
-        headers = {
-            (row[0], row[1]): {
-                "cust_id": row[2],
-                "emp_id": row[3],
-                "valid": row[4] == "C",
-            }
-            for row in header_rows
-        }
-        detail_rows = [
-            row for row in detail_rows
-            if headers.get((row[1], row[2]), {}).get("valid")
-        ]
-        if not detail_rows:
-            return []
-
         store_ids = list(dict.fromkeys(row[2] for row in detail_rows))
         customer_ids = list(dict.fromkeys(
-            headers[(row[1], row[2])]["cust_id"]
+            row[9]
             for row in detail_rows
-            if headers[(row[1], row[2])]["cust_id"] is not None
+            if row[9] is not None
         ))
         employee_ids = list(dict.fromkeys(
-            headers[(row[1], row[2])]["emp_id"]
+            row[10]
             for row in detail_rows
-            if headers[(row[1], row[2])]["emp_id"] is not None
+            if row[10] is not None
         ))
 
         stores = self._fetch_sales_lookup(
@@ -475,7 +452,6 @@ class AbStockReportCacheLine(models.Model):
             movement_type = "sale_return" if return_mode else "sale"
             movement_sort = 20 if return_mode else 10
             for row in detail_rows:
-                header = headers[(row[1], row[2])]
                 quantity = row[7] if return_mode else row[4]
                 if return_mode and not quantity:
                     continue
@@ -492,8 +468,8 @@ class AbStockReportCacheLine(models.Model):
                     ),
                     "store_name": self._lookup_name(stores.get(row[2]), row[2]),
                     "supplier_name": "",
-                    "customer_name": self._lookup_name(customers.get(header["cust_id"]), header["cust_id"]),
-                    "employee_name": self._lookup_name(employees.get(header["emp_id"]), header["emp_id"]),
+                    "customer_name": self._lookup_name(customers.get(row[9]), row[9]),
+                    "employee_name": self._lookup_name(employees.get(row[10]), row[10]),
                     "source_table": "r_sales_trans_d",
                     "source_line_id": str(row[0] or ""),
                     "source_updated_at": row[8],
