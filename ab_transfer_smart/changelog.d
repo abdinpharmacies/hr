@@ -1,13 +1,16 @@
 Current changes before commit:
 
-- Add a Products report menu under Transfer Smart > Reports.
-- Reuse the existing `ab_product.ab_product_action` so the new report menu opens the same Products list/form action.
-- Keep the existing Sales > Configurations > Products menu unchanged.
+- Mark a linked Fast Transfer request as done after a prepared Smart Transfer is manually submitted successfully.
+- Keep the linked request pending during pre-submit creation until the final submit succeeds.
+- Allow Store Revision users to update linked transfer request execution state without granting request create or delete access.
+- Add a regression test for manual submit completing the linked transfer request.
 
 Files changed:
 
 - ab_transfer_smart/changelog.d
-- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
+- ab_transfer_smart/models/ab_transfer_header.py
+- ab_transfer_smart/security/ir.model.access.csv
+- ab_transfer_smart/tests/test_smart_transfer.py
 
 
 commit 339164514add9a86b64ac065986ef5cb671aea94

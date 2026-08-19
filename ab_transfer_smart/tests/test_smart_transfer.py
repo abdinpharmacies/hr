@@ -11,11 +11,14 @@ from unittest.mock import MagicMock, patch
 
 from lxml import etree
 
-from odoo import fields
+from odoo import fields, models
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
 
+from odoo.addons.ab_transfer.models.ab_transfer_header import (
+    AbTransferHeader as BaseTransferHeader,
+)
 from odoo.addons.ab_transfer_smart.models.ab_transfer_header import (
     SMART_EXPORT_COMPANY_NAME,
     SMART_STAGE_PURCHASE_PREPARATION,
@@ -133,6 +136,15 @@ class TestFastTransferPreSubmit(TransactionCase):
             "group_ids": [(6, 0, group_ids)],
         })
 
+    def _fake_successful_base_submit(self, header):
+        models.Model.write(header, {
+            "selection": "saved",
+            "is_submitted": True,
+            "sent_at": fields.Datetime.now(),
+            "error_message": False,
+        })
+        return True
+
     def test_missing_parameter_creates_pre_submit_transfer_lines(self):
         self.env["ir.config_parameter"].sudo().search([
             ("key", "=", "ab_transfer_smart.fast_transfer_pre_submit_enabled"),
@@ -206,6 +218,54 @@ class TestFastTransferPreSubmit(TransactionCase):
         self.assertEqual(created.transfer_request_id, request)
         self.assertEqual(request.execution_state, "pending")
         self.assertFalse(created.is_submitted)
+
+    def test_manual_submit_marks_linked_request_done_after_success(self):
+        header = self._create_header_source()
+        product = self._existing_product_or_skip()
+        uom = product.uom_id
+        request = self.env["ab_transfer_request"].create({
+            "from_store_id": header.to_store_id.id,
+            "to_store_id": header.from_store_id.id,
+            "user_id": header.user_id.id,
+            "line_ids": [(0, 0, {
+                "product_id": product.id,
+                "requested_qty": 7.5,
+                "uom_id": uom.id,
+            })],
+        })
+        request.action_confirm()
+
+        action, action_submit = self._submit_with_patched_action_submit(
+            self._payload(header, product, uom, transfer_request_id=request.id),
+            header.user_id,
+        )
+        created = self.env["ab_transfer_header"].browse(action["res_id"])
+        action_submit.assert_not_called()
+        self.assertEqual(request.execution_state, "pending")
+        submit_user = self._create_security_user(
+            "fast_pre_submit_revision_submit",
+            ["ab_transfer_smart.group_trnasfer_smart_store_revision"],
+        )
+        self.assertTrue(
+            submit_user.has_group("ab_transfer_smart.group_trnasfer_smart_store_revision")
+        )
+        self.assertFalse(submit_user.has_group("base.group_system"))
+
+        with patch.object(
+                BaseTransferHeader,
+                "action_submit",
+                autospec=True,
+                side_effect=self._fake_successful_base_submit,
+        ), patch.object(
+                type(created),
+                "_sync_smart_eplus_serial_from_sent_transfer",
+        ) as sync_serial:
+            created.with_user(submit_user).action_submit()
+
+        sync_serial.assert_called_once()
+        self.assertTrue(created.is_submitted)
+        self.assertEqual(created.smart_stage, SMART_STAGE_SUBMIT)
+        self.assertEqual(request.execution_state, "done")
 
     def test_disabled_parameter_delegates_to_immediate_submit(self):
         self.env["ir.config_parameter"].sudo().set_param(
