@@ -22,14 +22,14 @@
                                 relation="'ab_doctor'"
                                 value="doctorValue()"
                                 update="onDoctorM2OUpdate"
-                                placeholder="'Doctor...'"
+                                placeholder="doctorPlaceholder()"
                                 domain="() => [['active', '=', true]]"
                                 canCreate="false"
                                 canCreateEdit="false"
                                 canQuickCreate="false"
                                 canOpen="false"
                                 canWrite="true"
-                                string="'Doctor'"
+                                string="_t('Doctor')"
                         />
                         <button class="btn btn-outline-primary btn-sm ab_pos_doctor_btn_add"
                                 type="button"
@@ -75,29 +75,29 @@
     </t>
 
     <t t-name="ab_sales_doctor.DoctorCreateDialog">
-        <Dialog title="'Add Doctor to Main'">
+        <Dialog title="_t('Add Doctor to Main')">
             <div class="ab_sales_doctor_create_dialog">
                 <div class="row g-2">
                     <div class="col-12">
-                        <label class="form-label">Name</label>
+                        <label class="form-label" t-esc="_t('Name')"/>
                         <input class="form-control"
                                t-att-value="state.name"
                                t-on-input="(ev) => updateField('name', ev)"/>
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label">Code</label>
+                        <label class="form-label" t-esc="_t('Code')"/>
                         <input class="form-control"
                                t-att-value="state.code"
                                t-on-input="(ev) => updateField('code', ev)"/>
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label">Phone</label>
+                        <label class="form-label" t-esc="_t('Phone')"/>
                         <input class="form-control"
                                t-att-value="state.phone"
                                t-on-input="(ev) => updateField('phone', ev)"/>
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label">Specialty</label>
+                        <label class="form-label" t-esc="_t('Specialty')"/>
                         <input class="form-control"
                                t-att-value="state.specialty"
                                t-on-input="(ev) => updateField('specialty', ev)"/>

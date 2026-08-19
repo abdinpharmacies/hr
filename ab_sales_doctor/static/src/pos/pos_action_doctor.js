@@ -2,6 +2,7 @@
 
 import {Component, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
+import {_t} from "@web/core/l10n/translation";
 import {registry} from "@web/core/registry";
 import {patch} from "@web/core/utils/patch";
 
@@ -16,6 +17,7 @@ class AbSalesDoctorCreateDialog extends Component {
     };
 
     setup() {
+        this._t = _t;
         this.state = useState({
             name: "",
             code: "",
@@ -37,7 +39,7 @@ class AbSalesDoctorCreateDialog extends Component {
             return;
         }
         if (!(this.state.name || "").trim()) {
-            this.state.message = "Doctor name is required.";
+            this.state.message = _t("Doctor name is required.");
             return;
         }
         this.state.submitting = true;
@@ -57,7 +59,7 @@ class AbSalesDoctorCreateDialog extends Component {
                 (Array.isArray(rpcArgs) && rpcArgs[0])
                 || data?.message
                 || err?.message
-                || "No connection available."
+                || _t("No connection available.")
             );
         } finally {
             this.state.submitting = false;
@@ -69,7 +71,9 @@ if (PosAction) {
     patch(PosAction.prototype, {
         setup() {
             super.setup(...arguments);
+            this._t = _t;
             this.doctorValue = this.doctorValue.bind(this);
+            this.doctorPlaceholder = this.doctorPlaceholder.bind(this);
             this.onDoctorPrescriptionToggle = this.onDoctorPrescriptionToggle.bind(this);
             this.onDoctorM2OUpdate = this.onDoctorM2OUpdate.bind(this);
             this.openDoctorCreateDialog = this.openDoctorCreateDialog.bind(this);
@@ -119,6 +123,10 @@ if (PosAction) {
                 id: bill.header.doctor_id,
                 display_name: bill.header.doctor_name || "",
             };
+        },
+
+        doctorPlaceholder() {
+            return _t("Doctor...");
         },
 
         onDoctorPrescriptionToggle(ev) {
@@ -171,13 +179,13 @@ if (PosAction) {
                         {values}
                     );
                     if (!doctor?.id) {
-                        throw new Error("Doctor was not replicated to this branch.");
+                        throw new Error(_t("Doctor was not replicated to this branch."));
                     }
                     bill.header.doctor_id = doctor.id;
                     bill.header.doctor_name = doctor.display_name || values.name || "";
                     bill.updated_at = new Date().toISOString();
                     this.persistCache();
-                    this.notification.add("Doctor added from main.", {type: "success"});
+                    this.notification.add(_t("Doctor added from main."), {type: "success"});
                     await this.searchProducts((this.state.productQuery || "").trim());
                 },
             });
@@ -228,14 +236,14 @@ if (PosAction) {
                 bill?.header?.is_doctor_prescription
                 && !bill.header.doctor_id
             ) {
-                this.notification.add("Select a doctor for this prescription bill.", {type: "danger"});
+                this.notification.add(_t("Select a doctor for this prescription bill."), {type: "danger"});
                 return;
             }
             if (
                 bill?.header?.is_doctor_prescription
                 && !(bill.lines || []).some((line) => line.is_doctor_prescription_product)
             ) {
-                this.notification.add("Mark at least one line as a prescription product.", {type: "danger"});
+                this.notification.add(_t("Mark at least one line as a prescription product."), {type: "danger"});
                 return;
             }
             return super.submitCurrentBill(...arguments);
@@ -326,7 +334,7 @@ if (PosAction) {
                 this.state.selectionIndex = -1;
                 this.schedulePosBalanceRefresh(this.state.productResults, storeId);
             } catch (err) {
-                this.notification.add(err?.message || "Failed to load doctor products.", {type: "warning"});
+                this.notification.add(err?.message || _t("Failed to load doctor products."), {type: "warning"});
             }
         },
 

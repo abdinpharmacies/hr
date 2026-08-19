@@ -36,9 +36,18 @@ Files changed:
 User-facing changes:
 - Display doctors as code, name, and specialty joined with ` - ` wherever `ab_doctor.display_name` is rendered.
 - Allow doctor lookup by code, name, and specialty through the backend display name search used by many2one selectors.
+- Added Arabic translations for doctor, prescription, POS doctor dialog, validation, and doctor product labels.
+- Merged Arabic translations with exported POT references so Odoo can apply field and view labels correctly.
+- Wrapped POS doctor notification strings for translation.
+- Exposed the translation helper to doctor POS OWL templates so translated labels do not crash rendering.
+- Moved the POS doctor placeholder translation through JavaScript so `Doctor...` switches correctly by user language.
 - Added tests for full doctor labels, missing label parts, code search, and specialty search.
 
 Files changed:
 - ab_sales_doctor/models/ab_doctor.py
 - ab_sales_doctor/tests/test_doctor_prescription.py
+- ab_sales_doctor/static/src/pos/pos_action_doctor.js
+- ab_sales_doctor/static/src/pos/pos_action_doctor.xml
+- ab_sales_doctor/i18n/ar.po
+- ab_sales_doctor/i18n/ar_001.po
 - ab_sales_doctor/changelog.d/2026-08-19-doctor-code-display-search.md

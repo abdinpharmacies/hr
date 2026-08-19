@@ -1,0 +1,333 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_doctor
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-19 12:45+0000\n"
+"PO-Revision-Date: 2026-08-19 11:38+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__active
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__active
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_doctor_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_product_doctor_prescription_view_search
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+msgid "Add"
+msgstr "إضافة"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+msgid "Adding..."
+msgstr "جارى الإضافة..."
+
+#. module: ab_sales_doctor
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_doctor_view_search
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_product_doctor_prescription_view_search
+msgid "Archived"
+msgstr "مؤرشف"
+
+#. module: ab_sales_doctor
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_sales_header.py:0
+#: code:addons/ab_sales_doctor/models/ab_sales_pos_api.py:0
+msgid "At least one line must be marked as a prescription product."
+msgstr "يجب تحديد سطر واحد على الأقل كمنتج روشتة."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+msgid "Cancel"
+msgstr "إلغاء"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__code
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__product_code
+msgid "Code"
+msgstr "الكود"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__create_uid
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__create_uid
+msgid "Created by"
+msgstr "أنشئ بواسطة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__create_date
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__create_date
+msgid "Created on"
+msgstr "أنشئ في"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__display_name
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__display_name
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_header__display_name
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_line__display_name
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_pos_api__display_name
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_ui_api__display_name
+msgid "Display Name"
+msgstr "الاسم المعروض"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+#: model:ir.model,name:ab_sales_doctor.model_ab_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__doctor_id
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_header__doctor_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_product_doctor_prescription_view_search
+msgid "Doctor"
+msgstr "الدكتور"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_header__is_doctor_prescription
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_sales_header_view_search_inherit_doctor
+msgid "Doctor Prescription"
+msgstr "روشتة دكتور"
+
+#. module: ab_sales_doctor
+#: model:ir.model,name:ab_sales_doctor.model_ab_product_doctor_prescription
+msgid "Doctor Prescription Product"
+msgstr "منتج روشتة دكتور"
+
+#. module: ab_sales_doctor
+#: model:ir.actions.act_window,name:ab_sales_doctor.ab_product_doctor_prescription_action
+#: model:ir.ui.menu,name:ab_sales_doctor.ab_product_doctor_prescription_menu
+msgid "Doctor Prescription Products"
+msgstr "منتجات روشتات الدكاترة"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+msgid "Doctor Products"
+msgstr "منتجات الدكتور"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Doctor added from main."
+msgstr "تمت إضافة الدكتور من الرئيسي."
+
+#. module: ab_sales_doctor
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_sales_header.py:0
+#: code:addons/ab_sales_doctor/models/ab_sales_pos_api.py:0
+msgid "Doctor is required for doctor prescription bills."
+msgstr "الدكتور مطلوب لفواتير روشتات الدكاترة."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Doctor name is required."
+msgstr "اسم الدكتور مطلوب."
+
+#. module: ab_sales_doctor
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_sales_pos_api.py:0
+msgid "Doctor was created on main but was not replicated to this branch yet."
+msgstr "تم إنشاء الدكتور على الرئيسي، لكنه لم يتم نسخه إلى هذا الفرع بعد."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Doctor was not replicated to this branch."
+msgstr "لم يتم نسخ الدكتور إلى هذا الفرع."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Doctor..."
+msgstr "الدكتور..."
+
+#. module: ab_sales_doctor
+#: model:ir.actions.act_window,name:ab_sales_doctor.ab_doctor_action
+#: model:ir.ui.menu,name:ab_sales_doctor.ab_doctor_menu
+msgid "Doctors"
+msgstr "الدكاترة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,help:ab_sales_doctor.field_ab_sales_line__is_doctor_prescription_product
+msgid "Enable when this line is part of the selected doctor's prescription."
+msgstr "فعله عندما يكون هذا السطر جزءا من روشتة الدكتور المحدد."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Failed to load doctor products."
+msgstr "فشل تحميل منتجات الدكتور."
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__id
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__id
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_header__id
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_line__id
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_pos_api__id
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_ui_api__id
+msgid "ID"
+msgstr "المعرف"
+
+#. module: ab_sales_doctor
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_sales_ui_api.py:0
+msgid "Invalid doctor."
+msgstr "دكتور غير صالح."
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__last_sales_header_id
+msgid "Last Bill"
+msgstr "آخر فاتورة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__last_sales_line_id
+msgid "Last Bill Line"
+msgstr "آخر سطر فاتورة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__write_uid
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__write_date
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Mark at least one line as a prescription product."
+msgstr "حدد سطرا واحدا على الأقل كمنتج روشتة."
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__name
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_sales_pos_api.py:0
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "No connection available."
+msgstr "لا يوجد اتصال متاح."
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__phone
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+msgid "Prescription"
+msgstr "روشتة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_sales_line__is_doctor_prescription_product
+msgid "Prescription Product"
+msgstr "منتج روشتة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__prescription_product_ids
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_doctor_view_form
+msgid "Prescription Products"
+msgstr "منتجات الروشتة"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__product_id
+#: model_terms:ir.ui.view,arch_db:ab_sales_doctor.ab_product_doctor_prescription_view_search
+msgid "Product"
+msgstr "المنتج"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__qty
+msgid "Qty"
+msgstr "الكمية"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.xml:0
+msgid "Rx"
+msgstr "روشتة"
+
+#. module: ab_sales_doctor
+#: model:ir.model,name:ab_sales_doctor.model_ab_sales_pos_api
+msgid "Sales POS API"
+msgstr "واجهة برمجة نقاط بيع المبيعات"
+
+#. module: ab_sales_doctor
+#: model:ir.model,name:ab_sales_doctor.model_ab_sales_ui_api
+msgid "Sales UI API"
+msgstr "واجهة برمجة واجهة المبيعات"
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Select a doctor for this prescription bill."
+msgstr "اختر دكتورا لفاتورة الروشتة هذه."
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__sell_price
+msgid "Sell Price"
+msgstr "سعر البيع"
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_doctor__specialty
+msgid "Specialty"
+msgstr "التخصص"
+
+#. module: ab_sales_doctor
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_product_doctor_prescription.py:0
+#: model:ir.model.constraint,message:ab_sales_doctor.constraint_ab_product_doctor_prescription_uniq_doctor_product
+msgid "This product is already registered for this doctor."
+msgstr "هذا المنتج مسجل بالفعل لهذا الدكتور."
+
+#. module: ab_sales_doctor
+#: model:ir.model.fields,field_description:ab_sales_doctor.field_ab_product_doctor_prescription__uom_id
+msgid "UoM"
+msgstr "وحدة القياس"
+
+#. module: ab_sales_doctor
+#: model:ir.actions.server,name:ab_sales_doctor.ab_odoo_replication_8_doctor_ir_actions_server
+msgid "ab_odoo_replication_8_doctor"
+msgstr "ab_odoo_replication_8_doctor"
+
+#. module: ab_sales_doctor
+#: model:ir.model,name:ab_sales_doctor.model_ab_sales_header
+msgid "ab_sales_header"
+msgstr "ab_sales_header"
+
+#. module: ab_sales_doctor
+#: model:ir.model,name:ab_sales_doctor.model_ab_sales_line
+msgid "ab_sales_line"
+msgstr "ab_sales_line"
+
+#~ msgid "Add Doctor to Main"
+#~ msgstr "إضافة دكتور إلى الرئيسي"
