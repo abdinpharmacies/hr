@@ -115,7 +115,7 @@
                         </group>
                         <group>
                             <field name="last_error"/>
-                            <field name="payload_json"/>
+                            <field name="payload_json" widget="ab_pretty_json"/>
                         </group>
                     </sheet>
                 </form>

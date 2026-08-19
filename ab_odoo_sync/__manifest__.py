@@ -7,7 +7,7 @@
     "website": "https://www.abdinpharmacies.com",
     "license": "LGPL-3",
     "category": "Tools",
-    "version": "19.0.2.1.0",
+    "version": "19.0.2.2.0",
     "depends": ["base", "web", "integration_queue_job"],
     "data": [
         "security/ir.model.access.csv",
@@ -16,6 +16,13 @@
         "views/ab_odoo_sync_views.xml",
         "views/ab_odoo_sync_upload_views.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.js",
+            "ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.xml",
+            "ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.scss",
+        ],
+    },
     "installable": True,
     "application": False,
 }

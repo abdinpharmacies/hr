@@ -57,7 +57,7 @@
                     <field name="record_id"/>
                     <field name="operation"/>
                     <field name="source_server"/>
-                    <field name="changed_fields_json"/>
+                    <field name="changed_fields_json" widget="ab_pretty_json"/>
                 </list>
             </field>
         </record>
@@ -78,11 +78,11 @@
                             <group>
                                 <field name="operation"/>
                                 <field name="source_server"/>
-                                <field name="changed_fields_json"/>
+                                <field name="changed_fields_json" widget="ab_pretty_json"/>
                             </group>
                         </group>
                         <group>
-                            <field name="payload_json"/>
+                            <field name="payload_json" widget="ab_pretty_json"/>
                         </group>
                     </sheet>
                 </form>
@@ -199,7 +199,7 @@
                     <field name="model_name"/>
                     <field name="record_id"/>
                     <field name="operation"/>
-                    <field name="skipped_fields_json" optional="hide"/>
+                    <field name="skipped_fields_json" widget="ab_pretty_json" optional="hide"/>
                     <field name="error_message" optional="show"/>
                     <field name="applied_at"/>
                     <button name="action_mark_not_sync" type="object" string="Mark Not Sync"
@@ -233,9 +233,9 @@
                             </group>
                         </group>
                         <group>
-                            <field name="skipped_fields_json"/>
+                            <field name="skipped_fields_json" widget="ab_pretty_json"/>
                             <field name="error_message"/>
-                            <field name="payload_json"/>
+                            <field name="payload_json" widget="ab_pretty_json"/>
                         </group>
                     </sheet>
                 </form>
@@ -299,7 +299,7 @@
                     <field name="target_model_name"/>
                     <field name="apply_profile_id" optional="show"/>
                     <field name="attempt_count"/>
-                    <field name="skipped_fields_json" optional="hide"/>
+                    <field name="skipped_fields_json" widget="ab_pretty_json" optional="hide"/>
                     <field name="error_message" optional="show"/>
                     <field name="queued_at" optional="hide"/>
                     <field name="applied_at"/>
@@ -350,9 +350,9 @@
                             </group>
                         </group>
                         <group>
-                            <field name="skipped_fields_json"/>
+                            <field name="skipped_fields_json" widget="ab_pretty_json"/>
                             <field name="error_message"/>
-                            <field name="payload_json"/>
+                            <field name="payload_json" widget="ab_pretty_json"/>
                         </group>
                     </sheet>
                 </form>
@@ -407,7 +407,7 @@
                     <field name="source_rec_id"/>
                     <field name="target_model_name"/>
                     <field name="target_res_id"/>
-                    <field name="stable_key_json" optional="hide"/>
+                    <field name="stable_key_json" widget="ab_pretty_json" optional="hide"/>
                     <field name="last_upload_record_id" optional="show"/>
                     <field name="note" optional="show"/>
                     <field name="active"/>
@@ -436,7 +436,7 @@
                             </group>
                         </group>
                         <group>
-                            <field name="stable_key_json"/>
+                            <field name="stable_key_json" widget="ab_pretty_json"/>
                             <field name="note"/>
                         </group>
                     </sheet>

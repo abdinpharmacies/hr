@@ -1498,3 +1498,9 @@ msgstr "تبقى بيانات JSON الخام كاملة. يمكن لـ MAIN إ�
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
 msgid "Install or upgrade target model %(model)s before loading field mappings."
 msgstr "ثبت أو رق النموذج الهدف %(model)s قبل تحميل ربط الحقول."
+
+#. module: ab_odoo_sync
+#. odoo-javascript
+#: code:addons/ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.js:0
+msgid "Enter valid JSON before saving."
+msgstr "أدخل JSON صالحًا قبل الحفظ."

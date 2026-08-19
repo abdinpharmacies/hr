@@ -246,16 +246,18 @@ Files changed:
 - `ab_odoo_sync/security/ir.model.access.csv`
 - `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
 
-## Current changes before commit:
+## 23fd6c637dce58788fe44f93034792d738164016
+
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Wed Aug 19 15:13:41 2026 +0300
+- Subject: ab_odoo_sync/handle relational unlink policies safely
 
 User-facing changes:
 
-- Synchronize dependent records during unlink according to their source `Many2one.ondelete` policy.
-- Archive cascade descendants before their deleted parent so sales lines and headers are both retired on mirror databases.
-- Re-snapshot surviving `set null` children after Odoo clears their parent relation.
-- Defer all unlink events and outbox writes until the source deletion succeeds, leaving restrict failures without false archive records.
-- Roll back tracked deletions when their required unlink synchronization cannot be queued.
-- Bump the module version to `19.0.2.1.0`.
+- Synchronized dependent records during unlink according to their source `Many2one.ondelete` policy.
+- Archived cascade descendants before their deleted parent and re-snapshotted surviving `set null` children.
+- Deferred unlink events and outbox writes until source deletion succeeds and kept restrict failures event-free.
+- Rolled back tracked deletions when required unlink synchronization could not be queued.
 
 Files changed:
 
@@ -263,3 +265,25 @@ Files changed:
 - `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
 - `ab_odoo_sync/models/ab_odoo_sync_orm_hook.py`
 - `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
+
+## Current changes before commit:
+
+User-facing changes:
+
+- Add a shared pretty JSON field widget for all AB Odoo Sync dependent modules.
+- Format event payloads, changed fields, skipped fields, stable keys, upload payloads, and outbox payloads in scrollable JSON containers.
+- Keep JSON fields editable through a validated, formatted text area and reject invalid JSON before saving.
+- Use a compact scrollable layout when JSON fields are displayed in list views.
+- Add Arabic translations for JSON validation and bump the module version to `19.0.2.2.0`.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.js`
+- `ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.scss`
+- `ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.xml`
+- `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
+- `ab_odoo_sync/views/ab_odoo_sync_views.xml`
