@@ -47,6 +47,22 @@ class AbOdooSyncService(models.Model):
         return db_serial
 
     @api.model
+    def _ensure_ascii_transport_config(self, config_key, value):
+        try:
+            (value or "").encode("ascii")
+        except UnicodeEncodeError as ex:
+            raise ValueError(
+                _(
+                    "Config %(config)s contains non-ASCII character %(character)s. "
+                    "Use ASCII only for sync transport settings; use an IP address or ASCII hostname for MAIN URL."
+                )
+                % {
+                    "config": config_key,
+                    "character": ex.object[ex.start:ex.end],
+                }
+            ) from ex
+
+    @api.model
     def _jsonable_snapshot_value(self, value):
         if value is None or isinstance(value, (str, int, float, bool)):
             return value
@@ -308,6 +324,9 @@ class AbOdooSyncService(models.Model):
             raise ValueError(_("Missing MAIN database config: ab_odoo_sync.main_database"))
         if not api_key:
             raise ValueError(_("Missing API key config: ab_odoo_sync.api_key"))
+        self._ensure_ascii_transport_config("ab_odoo_sync.main_url", main_url)
+        self._ensure_ascii_transport_config("ab_odoo_sync.main_database", main_database)
+        self._ensure_ascii_transport_config("ab_odoo_sync.api_key", api_key)
 
         url = f"{main_url}{path}"
         raw = json.dumps(payload).encode("utf-8")
@@ -319,6 +338,13 @@ class AbOdooSyncService(models.Model):
         try:
             with urllib.request.urlopen(req, timeout=60) as response:
                 body = response.read().decode("utf-8")
+        except UnicodeEncodeError as ex:
+            raise ValueError(
+                _(
+                    "MAIN API request contains non-ASCII characters in an HTTP URL or header. "
+                    "Check ab_odoo_sync.main_url, ab_odoo_sync.main_database, and ab_odoo_sync.api_key."
+                )
+            ) from ex
         except urllib.error.HTTPError as ex:
             err_body = ex.read().decode("utf-8", errors="ignore")
             raise ValueError(f"MAIN API HTTP {ex.code}: {err_body}") from ex

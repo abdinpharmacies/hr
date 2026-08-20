@@ -266,15 +266,19 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_orm_hook.py`
 - `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
 
-## Current changes before commit:
+## f816dfce34a8493a41be78d637eb4e2f49ce7112
+
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Wed Aug 19 16:38:46 2026 +0300
+- Subject: ab_odoo_sync/add shared formatted JSON field widget
 
 User-facing changes:
 
-- Add a shared pretty JSON field widget for all AB Odoo Sync dependent modules.
-- Format event payloads, changed fields, skipped fields, stable keys, upload payloads, and outbox payloads in scrollable JSON containers.
-- Keep JSON fields editable through a validated, formatted text area and reject invalid JSON before saving.
-- Use a compact scrollable layout when JSON fields are displayed in list views.
-- Add Arabic translations for JSON validation and bump the module version to `19.0.2.2.0`.
+- Added a shared pretty JSON field widget for all AB Odoo Sync dependent modules.
+- Formatted event payloads, changed fields, skipped fields, stable keys, upload payloads, and outbox payloads in scrollable JSON containers.
+- Kept JSON fields editable through a validated, formatted text area and rejected invalid JSON before saving.
+- Used a compact scrollable layout when JSON fields are displayed in list views.
+- Added Arabic translations for JSON validation and bumped the module version to `19.0.2.2.0`.
 
 Files changed:
 
@@ -287,3 +291,20 @@ Files changed:
 - `ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.xml`
 - `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`
+
+## Current changes before commit:
+
+User-facing changes:
+
+- Validate branch-to-MAIN transport settings before opening HTTP requests so non-ASCII values show a clear configuration error instead of a Latin-1 codec traceback.
+- Check `ab_odoo_sync.main_url`, `ab_odoo_sync.main_database`, and `ab_odoo_sync.api_key` for ASCII-safe values because they are used in URL/header transport.
+- Keep the Odoo database selection header in place for multi-database MAIN servers.
+- Add Arabic translations for the new configuration validation messages and bump the module version to `19.0.2.3.0`.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`

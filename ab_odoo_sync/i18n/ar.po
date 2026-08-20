@@ -1504,3 +1504,26 @@ msgstr "ثبت أو رق النموذج الهدف %(model)s قبل تحميل �
 #: code:addons/ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.js:0
 msgid "Enter valid JSON before saving."
 msgstr "أدخل JSON صالحًا قبل الحفظ."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid ""
+"Config %(config)s contains non-ASCII character %(character)s. Use ASCII only"
+" for sync transport settings; use an IP address or ASCII hostname for MAIN "
+"URL."
+msgstr ""
+"يحتوي الإعداد %(config)s على حرف غير ASCII وهو %(character)s. استخدم أحرف "
+"ASCII فقط لإعدادات نقل المزامنة؛ واستخدم عنوان IP أو اسم مضيف ASCII لرابط "
+"MAIN."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid ""
+"MAIN API request contains non-ASCII characters in an HTTP URL or header. "
+"Check ab_odoo_sync.main_url, ab_odoo_sync.main_database, and "
+"ab_odoo_sync.api_key."
+msgstr ""
+"يحتوي طلب MAIN API على أحرف غير ASCII في رابط HTTP أو ترويسة. تحقق من "
+"ab_odoo_sync.main_url و ab_odoo_sync.main_database و ab_odoo_sync.api_key."
