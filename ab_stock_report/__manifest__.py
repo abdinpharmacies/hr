@@ -9,6 +9,7 @@
     "depends": [
         "base",
         "ab_product",
+        "ab_store",
         "ab_eplus_connect",
     ],
     "data": [

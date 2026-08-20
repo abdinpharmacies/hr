@@ -894,7 +894,7 @@ class AbStockReportRefreshJob(models.Model):
                 return
             _REFRESH_WORKER_RUNNING = True
         worker = threading.Thread(
-            target=self._run_background_worker,
+            target=AbStockReportRefreshJob._run_background_worker,
             args=(dbname,),
             daemon=True,
         )
@@ -919,10 +919,12 @@ class AbStockReportRefreshJob(models.Model):
     @api.model
     def cron_process_pending_jobs(self):
         self.process_pending_jobs()
+        self.env["ab_stock_report_store_balance_job"].process_pending_jobs()
 
     @api.model
     def action_process_pending_jobs(self):
         self.process_pending_jobs()
+        self.env["ab_stock_report_store_balance_job"].process_pending_jobs()
 
     @api.model
     def process_pending_jobs(self):

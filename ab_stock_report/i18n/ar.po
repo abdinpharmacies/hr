@@ -437,3 +437,239 @@ msgstr "لا يوجد نشاط حركات لهذا الصنف بالفلاتر �
 #: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
 msgid "Clear From Date"
 msgstr "مسح من تاريخ"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_wizard__active_tab__store_balance
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Store Balances & Sales"
+msgstr "أرصدة ومبيعات الفروع"
+
+#. module: ab_stock_report
+msgid "Stores"
+msgstr "الفروع"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__main_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__main_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__main_balance_display
+msgid "Main Server Balance"
+msgstr "رصيد السيرفر الرئيسي"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__direct_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_balance
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_balance_display
+msgid "Direct Store Balance"
+msgstr "رصيد الفرع المباشر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__difference
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__difference
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__difference_display
+msgid "Difference"
+msgstr "الفرق"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_days_61_90
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_61_90
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_61_90_display
+msgid "Days 61-90"
+msgstr "الأيام 61-90"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_days_31_60
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_31_60
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_days_31_60_display
+msgid "Days 31-60"
+msgstr "الأيام 31-60"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_last_30_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_last_30_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_last_30_days_display
+msgid "Last 30 Days"
+msgstr "آخر 30 يوم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__sales_total_90_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_total_90_days
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__sales_total_90_days_display
+msgid "Total 90 Days"
+msgstr "إجمالي 90 يوم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__direct_status
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_status
+msgid "Direct Status"
+msgstr "حالة الاتصال المباشر"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__direct_updated_at
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__direct_updated_at
+msgid "Direct Updated At"
+msgstr "وقت تحديث الاتصال المباشر"
+
+#. module: ab_stock_report
+msgid "Refresh Direct Balance"
+msgstr "تحديث الرصيد المباشر"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh"
+msgstr "تحديث"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__store_balance_filter_store_id
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "All Branches"
+msgstr "كل الفروع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Clear Branch"
+msgstr "مسح الفرع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh Main Server"
+msgstr "تحديث السيرفر الرئيسي"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Update All Stores"
+msgstr "تحديث كل الفروع"
+
+#. module: ab_stock_report
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Cancel Update"
+msgstr "إلغاء التحديث"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__store_balance_progress_label
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Refresh Progress"
+msgstr "تحديث التقدم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__main_updated_at
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_wizard__store_balance_last_main_update
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Main Updated At"
+msgstr "وقت تحديث الرئيسي"
+
+#. module: ab_stock_report
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_cache__latest_error
+#: model:ir.model.fields,field_description:ab_stock_report.field_ab_stock_report_store_balance_wizard_line__latest_error
+#: model_terms:ir.ui.view,arch_db:ab_stock_report.ab_stock_report_wizard_view_form
+msgid "Latest Error"
+msgstr "آخر خطأ"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__not_checked
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__not_checked
+msgid "Not Checked"
+msgstr "لم يتم الفحص"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__pending
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__pending
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__pending
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__running
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__running
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__running
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__success
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__success
+msgid "Success"
+msgstr "ناجح"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__failed
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__failed
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__failed
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__missing_ip
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__missing_ip
+msgid "Missing IP"
+msgstr "IP غير مسجل"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_cache__direct_status__cancelled
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__cancelled
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_wizard_line__direct_status__cancelled
+msgid "Cancelled"
+msgstr "ملغي"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__cancel_requested
+msgid "Cancel Requested"
+msgstr "تم طلب الإلغاء"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__done
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_stock_report
+#: model:ir.model.fields.selection,name:ab_stock_report.selection__ab_stock_report_store_balance_job__state__done_with_errors
+msgid "Done with Errors"
+msgstr "تم مع وجود أخطاء"
+
+#. module: ab_stock_report
+msgid "Store balances loaded from cache."
+msgstr "تم تحميل أرصدة الفروع من الكاش."
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "No direct update is running."
+msgstr "لا يوجد تحديث مباشر قيد التشغيل."
+
+#. module: ab_stock_report
+msgid "%(state)s: %(done)s/%(total)s %(stores)s, %(ok)s %(succeeded)s, %(bad)s %(failed)s"
+msgstr "%(state)s: %(done)s/%(total)s %(stores)s، %(ok)s %(succeeded)s، %(bad)s %(failed)s"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "stores"
+msgstr "فرع"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "succeeded"
+msgstr "ناجح"
+
+#. module: ab_stock_report
+#: code:addons/ab_stock_report/models/ab_stock_report.py:0
+msgid "failed"
+msgstr "فشل"
+
+#. module: ab_stock_report
+msgid "Store has no direct IP configured."
+msgstr "لا يوجد IP مباشر مسجل لهذا الفرع."
+
+#. module: ab_stock_report
+msgid "Direct balance update was cancelled."
+msgstr "تم إلغاء تحديث الرصيد المباشر."
+
+#. module: ab_stock_report
+msgid "This store is already being refreshed for the selected product."
+msgstr "يتم تحديث هذا الفرع بالفعل للمنتج المحدد."
+
+#. module: ab_stock_report
+msgid "A direct balance update is already pending or running for this product."
+msgstr "يوجد تحديث رصيد مباشر قيد الانتظار أو التشغيل لهذا المنتج بالفعل."

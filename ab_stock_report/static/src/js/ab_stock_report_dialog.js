@@ -3,6 +3,8 @@
 const STOCK_REPORT_SELECTOR = ".o_ab_stock_report";
 const DIALOG_CLASS = "o_ab_stock_report_dialog";
 const FOOTER_LOAD_MORE_CLASS = "o_ab_stock_report_footer_load_more";
+const STORE_BALANCE_TABLE_SELECTOR = ".o_ab_stock_report_store_balance_table";
+const STORE_BALANCE_FILTER_SELECTOR = ".o_ab_store_balance_filter";
 
 function isOdooHidden(element) {
     return (
@@ -72,6 +74,25 @@ function syncFooterLoadMore(report) {
     }
 }
 
+function syncStoreBalanceFilter(report) {
+    const table = report.querySelector(STORE_BALANCE_TABLE_SELECTOR);
+    const filter = table?.querySelector(STORE_BALANCE_FILTER_SELECTOR);
+    const controlPanel = table?.querySelector(".o_x2m_control_panel");
+    if (!table || !filter || !controlPanel) {
+        return;
+    }
+
+    let leftSlot = controlPanel.querySelector(".o_ab_store_balance_filter_slot");
+    if (!leftSlot) {
+        leftSlot = document.createElement("div");
+        leftSlot.className = "o_ab_store_balance_filter_slot";
+        controlPanel.insertBefore(leftSlot, controlPanel.firstChild);
+    }
+    if (filter.parentElement !== leftSlot) {
+        leftSlot.appendChild(filter);
+    }
+}
+
 function decorateStockReportDialogs(root = document) {
     const reports = [
         ...(root.matches?.(STOCK_REPORT_SELECTOR) ? [root] : []),
@@ -91,6 +112,7 @@ function decorateStockReportDialogs(root = document) {
             modalContent.classList.add("o_ab_stock_report_modal_content");
         }
         syncFooterLoadMore(report);
+        syncStoreBalanceFilter(report);
     }
 }
 

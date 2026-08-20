@@ -749,6 +749,58 @@
     text-align: left !important;
 }
 
+.o_ab_stock_report_store_balance_table {
+    .o_x2m_control_panel {
+        align-items: center;
+        display: flex;
+        gap: 12px;
+        justify-content: space-between;
+    }
+
+    .o_ab_store_balance_filter_slot {
+        align-items: center;
+        display: flex;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+
+    .o_ab_store_balance_filter {
+        align-items: center;
+        display: flex;
+        gap: 8px;
+        max-width: 360px;
+        min-width: 260px;
+    }
+
+    .o_ab_store_balance_filter .o_form_label {
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        margin: 0;
+        white-space: nowrap;
+    }
+
+    .o_ab_store_balance_filter_field {
+        min-width: 190px;
+    }
+
+    .o_ab_store_balance_filter_clear {
+        align-items: center;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        color: #475569;
+        display: inline-flex;
+        height: 30px;
+        justify-content: center;
+        min-width: 30px;
+        padding: 0;
+    }
+
+    .o_cp_pager {
+        flex: 0 0 auto;
+    }
+}
+
 @media (max-width: 1200px) {
     .o_ab_stock_report {
         min-width: 0;

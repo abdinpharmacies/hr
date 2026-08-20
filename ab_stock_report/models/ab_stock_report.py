@@ -3,10 +3,21 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 
+DIRECT_STATUS_SELECTION = [
+    ("not_checked", "Not Checked"),
+    ("pending", "Pending"),
+    ("running", "Running"),
+    ("success", "Success"),
+    ("missing_ip", "Missing IP"),
+    ("failed", "Failed"),
+    ("cancelled", "Cancelled"),
+]
+
 MOVEMENT_GROUP_SELECTION = [
     ("sale", "Sales / Return"),
     ("purchase", "Purchase / Return"),
     ("transfer", "Transfer / From / To"),
+    ("store_balance", "Store Balances & Sales"),
 ]
 
 MOVEMENT_SELECTION = [
@@ -98,6 +109,17 @@ class AbStockReportWizard(models.TransientModel):
         readonly=True,
         domain=[("movement_group", "=", "transfer")],
     )
+    store_balance_line_ids = fields.One2many(
+        "ab_stock_report_store_balance_wizard_line",
+        "wizard_id",
+        string="Store Balances & Sales",
+        readonly=True,
+    )
+    store_balance_filter_store_id = fields.Many2one(
+        "ab_store",
+        string="Branch",
+        domain=[("active", "=", True), ("eplus_serial", "!=", False)],
+    )
     line_count = fields.Integer(
         string="Movement Count",
         compute="_compute_line_count",
@@ -167,6 +189,23 @@ class AbStockReportWizard(models.TransientModel):
     loaded_rows_label = fields.Char(
         string="Loaded Rows",
         compute="_compute_ui_state",
+    )
+    store_balance_count = fields.Integer(
+        string="Store Count",
+        compute="_compute_store_balance_state",
+    )
+    store_balance_last_main_update = fields.Datetime(
+        string="Main Updated At",
+        compute="_compute_store_balance_state",
+    )
+    store_balance_progress_label = fields.Char(
+        string="Refresh Progress",
+        compute="_compute_store_balance_state",
+    )
+    store_balance_active_job_id = fields.Many2one(
+        "ab_stock_report_store_balance_job",
+        string="Active Direct Update",
+        compute="_compute_store_balance_state",
     )
 
     @api.depends("line_ids")
@@ -261,6 +300,54 @@ class AbStockReportWizard(models.TransientModel):
         self._load_or_fetch_group("transfer")
         return self._open_action()
 
+    def action_fetch_store_balances(self):
+        self.ensure_one()
+        self.active_tab = "store_balance"
+        cache_model = self.env["ab_stock_report_store_balance_cache"].sudo()
+        if not cache_model.has_main_cache_for_product(self.product_id):
+            cache_model.refresh_main_server(self.product_id)
+        else:
+            cache_model._get_or_create_rows(self.product_id)
+        self._load_store_balance_lines()
+        return self._open_action()
+
+    def action_refresh_store_balance_main(self):
+        self.ensure_one()
+        self.active_tab = "store_balance"
+        self.env["ab_stock_report_store_balance_cache"].sudo().refresh_main_server(self.product_id)
+        self._load_store_balance_lines()
+        return self._open_action()
+
+    def action_update_all_store_balances(self):
+        self.ensure_one()
+        self.active_tab = "store_balance"
+        self.env["ab_stock_report_store_balance_job"].sudo().enqueue_for_product(self.product_id)
+        self._load_store_balance_lines()
+        return self._open_action()
+
+    def action_cancel_store_balance_update(self):
+        self.ensure_one()
+        self._active_store_balance_job().request_cancel()
+        self._load_store_balance_lines()
+        return self._open_action()
+
+    def action_refresh_store_balance_progress(self):
+        self.ensure_one()
+        self._load_store_balance_lines()
+        return self._open_action()
+
+    def action_clear_store_balance_filter(self):
+        self.ensure_one()
+        self.store_balance_filter_store_id = False
+        self._load_store_balance_lines()
+        return self._open_action()
+
+    @api.onchange("store_balance_filter_store_id")
+    def _onchange_store_balance_filter_store_id(self):
+        for wizard in self:
+            if wizard.id and wizard.active_tab == "store_balance":
+                wizard._load_store_balance_lines()
+
     def action_load_more(self):
         self.ensure_one()
         if not self.from_date:
@@ -279,6 +366,9 @@ class AbStockReportWizard(models.TransientModel):
 
     def _load_or_fetch_group(self, movement_group):
         self.ensure_one()
+        if movement_group == "store_balance":
+            self.action_fetch_store_balances()
+            return
         cache_entry = self._get_cache_entry(movement_group)
         loaded_from_cache = True
         if not self._cache_entry_matches_current_request(cache_entry, movement_group):
@@ -336,7 +426,10 @@ class AbStockReportWizard(models.TransientModel):
 
     def _bootstrap_from_cache(self):
         self.ensure_one()
-        self._load_cached_lines(self.active_tab)
+        if self.active_tab == "store_balance":
+            self._load_store_balance_lines()
+        else:
+            self._load_cached_lines(self.active_tab)
 
     def _force_fetch_from_bconnect(self, movement_group=None):
         self.ensure_one()
@@ -448,6 +541,94 @@ class AbStockReportWizard(models.TransientModel):
             "cache_progress_label": progress_label,
         })
 
+    def _load_store_balance_lines(self):
+        self.ensure_one()
+        cache_rows = self.env["ab_stock_report_store_balance_cache"].sudo()._get_or_create_rows(self.product_id)
+        if self.store_balance_filter_store_id:
+            cache_rows = cache_rows.filtered(lambda cache: cache.store_id == self.store_balance_filter_store_id)
+        self.store_balance_line_ids.unlink()
+        self.env["ab_stock_report_store_balance_wizard_line"].create([
+            {
+                "wizard_id": self.id,
+                "cache_id": cache.id,
+                "store_id": cache.store_id.id,
+                "main_balance": cache.main_balance,
+                "direct_balance": cache.direct_balance,
+                "difference": cache.difference,
+                "sales_days_61_90": cache.sales_days_61_90,
+                "sales_days_31_60": cache.sales_days_31_60,
+                "sales_last_30_days": cache.sales_last_30_days,
+                "sales_total_90_days": cache.sales_total_90_days,
+                "direct_status": cache.direct_status,
+                "direct_updated_at": cache.direct_updated_at,
+                "latest_error": cache.latest_error,
+            }
+            for cache in cache_rows
+        ])
+        last_main = max((dt for dt in cache_rows.mapped("main_updated_at") if dt), default=False)
+        self.write({
+            "last_refresh": last_main,
+            "cache_state": _("Store balances loaded from cache."),
+            "cache_source_label": _("Loaded from Wizard Cache"),
+            "cache_progress_label": _("Latest movements loaded"),
+        })
+
+    def _active_store_balance_job(self):
+        self.ensure_one()
+        return self.env["ab_stock_report_store_balance_job"].sudo().search([
+            ("product_id", "=", self.product_id.id),
+            ("state", "in", ("pending", "running", "cancel_requested")),
+        ], order="requested_at desc, id desc", limit=1)
+
+    @api.depends("store_balance_line_ids", "product_id")
+    def _compute_store_balance_state(self):
+        for wizard in self:
+            wizard.store_balance_count = len(wizard.store_balance_line_ids)
+            dates = [line.cache_id.main_updated_at for line in wizard.store_balance_line_ids if line.cache_id.main_updated_at]
+            wizard.store_balance_last_main_update = max(dates) if dates else False
+            job = wizard._active_store_balance_job()
+            wizard.store_balance_active_job_id = job
+            if job:
+                state_selection = dict(
+                    self.env["ab_stock_report_store_balance_job"]
+                    .with_context(lang=self.env.context.get("lang"))
+                    .fields_get(["state"])["state"]["selection"]
+                )
+                wizard.store_balance_progress_label = wizard._format_store_balance_progress(
+                    state_selection.get(job.state, job.state),
+                    job.completed_count,
+                    job.total_count,
+                    job.succeeded_count,
+                    job.failed_count,
+                )
+            else:
+                wizard.store_balance_progress_label = wizard._store_balance_text("No direct update is running.")
+
+    def _is_arabic_context(self):
+        return str(self.env.context.get("lang") or "").startswith("ar")
+
+    def _store_balance_text(self, source):
+        if self._is_arabic_context():
+            return {
+                "No direct update is running.": "لا يوجد تحديث مباشر قيد التشغيل.",
+                "stores": "فرع",
+                "succeeded": "ناجح",
+                "failed": "فشل",
+            }.get(source, source)
+        return _(source)
+
+    def _format_store_balance_progress(self, state, done, total, succeeded, failed):
+        return _("%(state)s: %(done)s/%(total)s %(stores)s, %(ok)s %(succeeded)s, %(bad)s %(failed)s") % {
+            "state": state,
+            "done": done,
+            "total": total,
+            "stores": self._store_balance_text("stores"),
+            "ok": succeeded,
+            "succeeded": self._store_balance_text("succeeded"),
+            "bad": failed,
+            "failed": self._store_balance_text("failed"),
+        }
+
     def _build_cache_badges(self, cache_entry, loaded_from_cache=False):
         if not cache_entry:
             return "", _("No cached movements yet")
@@ -539,3 +720,108 @@ class AbStockReportWizardLine(models.TransientModel):
         string="Employee",
         readonly=True,
     )
+
+
+class AbStockReportStoreBalanceWizardLine(models.TransientModel):
+    _name = "ab_stock_report_store_balance_wizard_line"
+    _description = "Stock Report Store Balance Wizard Line"
+    _order = "store_id, id"
+
+    wizard_id = fields.Many2one(
+        "ab_stock_report_wizard",
+        required=True,
+        ondelete="cascade",
+    )
+    cache_id = fields.Many2one(
+        "ab_stock_report_store_balance_cache",
+        string="Cache Row",
+        required=True,
+        readonly=True,
+        ondelete="cascade",
+    )
+    store_id = fields.Many2one(
+        "ab_store",
+        string="Store",
+        readonly=True,
+    )
+    main_balance = fields.Float(string="Main Server Balance", readonly=True, digits=(16, 4))
+    direct_balance = fields.Float(string="Direct Store Balance", readonly=True, digits=(16, 4))
+    difference = fields.Float(string="Difference", readonly=True, digits=(16, 4))
+    sales_days_61_90 = fields.Float(string="Days 61-90", readonly=True, digits=(16, 4))
+    sales_days_31_60 = fields.Float(string="Days 31-60", readonly=True, digits=(16, 4))
+    sales_last_30_days = fields.Float(string="Last 30 Days", readonly=True, digits=(16, 4))
+    sales_total_90_days = fields.Float(string="Total 90 Days", readonly=True, digits=(16, 4))
+    main_balance_display = fields.Char(
+        string="Main Server Balance",
+        compute="_compute_number_display",
+    )
+    direct_balance_display = fields.Char(
+        string="Direct Store Balance",
+        compute="_compute_number_display",
+    )
+    difference_display = fields.Char(
+        string="Difference",
+        compute="_compute_number_display",
+    )
+    sales_days_61_90_display = fields.Char(
+        string="Days 61-90",
+        compute="_compute_number_display",
+    )
+    sales_days_31_60_display = fields.Char(
+        string="Days 31-60",
+        compute="_compute_number_display",
+    )
+    sales_last_30_days_display = fields.Char(
+        string="Last 30 Days",
+        compute="_compute_number_display",
+    )
+    sales_total_90_days_display = fields.Char(
+        string="Total 90 Days",
+        compute="_compute_number_display",
+    )
+    direct_status = fields.Selection(
+        DIRECT_STATUS_SELECTION,
+        string="Direct Status",
+        readonly=True,
+    )
+    direct_updated_at = fields.Datetime(string="Direct Updated At", readonly=True)
+    latest_error = fields.Text(string="Latest Error", readonly=True)
+
+    @api.depends(
+        "main_balance",
+        "direct_balance",
+        "difference",
+        "sales_days_61_90",
+        "sales_days_31_60",
+        "sales_last_30_days",
+        "sales_total_90_days",
+    )
+    def _compute_number_display(self):
+        for line in self:
+            line.main_balance_display = line._format_balance_number(line.main_balance)
+            line.direct_balance_display = line._format_balance_number(line.direct_balance)
+            line.difference_display = line._format_balance_number(line.difference)
+            line.sales_days_61_90_display = line._format_balance_number(line.sales_days_61_90)
+            line.sales_days_31_60_display = line._format_balance_number(line.sales_days_31_60)
+            line.sales_last_30_days_display = line._format_balance_number(line.sales_last_30_days)
+            line.sales_total_90_days_display = line._format_balance_number(line.sales_total_90_days)
+
+    @staticmethod
+    def _format_balance_number(value):
+        if value in (False, None, ""):
+            return "0"
+        try:
+            number = float(value)
+        except Exception:
+            return "0"
+        if abs(number) < 0.00005:
+            return "0"
+        return f"{number:.4f}".rstrip("0").rstrip(".")
+
+    def action_refresh_direct_balance(self):
+        self.ensure_one()
+        self.cache_id.sudo().refresh_direct_balance()
+        wizard = self.wizard_id
+        wizard.active_tab = "store_balance"
+        wizard._load_store_balance_lines()
+        return wizard._open_action()
