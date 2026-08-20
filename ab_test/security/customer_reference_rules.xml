@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="rule_ab_test_customer_reference_all" model="ir.rule">
+            <field name="name">AB Sync Test Customer Reference: all records</field>
+            <field name="model_id" ref="model_ab_test_customer_reference"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_test_user'))]"/>
+        </record>
+    </data>
+</odoo>
