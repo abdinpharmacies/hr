@@ -139,7 +139,7 @@
                             </page>
                             <page string="Additional Data">
                                 <field name="notes"/>
-                                <field name="settings_json"/>
+                                <field name="settings_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -168,6 +168,33 @@
                     <field name="planned_date"/>
                     <field name="active"/>
                 </list>
+            </field>
+        </record>
+        <record id="view_ab_test_line_form" model="ir.ui.view">
+            <field name="name">ab_test_line.form</field>
+            <field name="model">ab_test_line</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="header_id"/>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="category_id"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="quantity"/>
+                                <field name="unit_price"/>
+                                <field name="subtotal" readonly="1"/>
+                                <field name="planned_date"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <field name="attributes_json" widget="ab_pretty_json"/>
+                    </sheet>
+                </form>
             </field>
         </record>
         <record id="action_ab_test_line" model="ir.actions.act_window">
