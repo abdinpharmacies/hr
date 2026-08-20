@@ -1,0 +1,57 @@
+# Translation of Odoo Server.
+# This file contains supplemental translations of the following modules:
+# 	* ab_test_sync
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-20 00:00+0000\n"
+"PO-Revision-Date: 2026-08-20 00:00+0000\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_test_sync
+#: model:ir.model,name:ab_test_sync.model_ab_test_customer_reference__sync
+msgid "AB Sync Test Customer Reference Mirror"
+msgstr "نسخة مرجع عميل اختبار مزامنة AB"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_customer_reference__sync__customer_id
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_test_sync
+#: model:ir.model.constraint,message:ab_test_sync.constraint_ab_test_customer_reference__sync_uniq_branch_source
+msgid "Customer reference mirror must be unique per branch and source record."
+msgstr "يجب أن تكون نسخة مرجع العميل فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_customer_reference__sync__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_customer_reference__sync__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_test_sync
+#: model:ir.model.fields,field_description:ab_test_sync.field_ab_test_customer_reference__sync__reference
+msgid "Reference"
+msgstr "المرجع"
+
+#. module: ab_test_sync
+#: model:ir.actions.act_window,name:ab_test_sync.action_ab_test_customer_reference_sync
+msgid "Synced Customer Reference Tests"
+msgstr "اختبارات مرجع العميل المتزامنة"
+
+#. module: ab_test_sync
+#: model:ir.ui.menu,name:ab_test_sync.menu_ab_test_customer_reference_sync
+msgid "Synced Customer References"
+msgstr "مراجع العملاء المتزامنة"

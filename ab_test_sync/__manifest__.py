@@ -7,13 +7,17 @@
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
     "application": True,
-    "depends": ["ab_odoo_sync", "ab_test"],
+    "depends": ["ab_odoo_sync", "ab_test", "ab_customer"],
     "data": [
         "security/security_groups.xml",
         "security/record_rules.xml",
+        "security/customer_reference_rules.xml",
         "security/ir.model.access.csv",
+        "security/customer_reference_access.xml",
         "data/sync_profiles.xml",
+        "data/customer_reference_sync_profiles.xml",
         "views/ab_test_sync_views.xml",
+        "views/ab_test_customer_reference_sync_views.xml",
     ],
     "installable": True,
 }

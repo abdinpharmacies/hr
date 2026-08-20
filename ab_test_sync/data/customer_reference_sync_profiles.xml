@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="upload_source_ab_test_customer_reference" model="ab_odoo_sync_upload_source">
+            <field name="model_name">ab_test_customer_reference</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="apply_profile_ab_test_customer_reference" model="ab_odoo_sync_apply_profile">
+            <field name="name">Customer Reference Tests</field>
+            <field name="sequence">45</field>
+            <field name="source_model_name">ab_test_customer_reference</field>
+            <field name="target_model_name">ab_test_customer_reference__sync</field>
+            <field name="allow_placeholder_creation">True</field>
+            <field name="auto_apply">True</field>
+            <field name="active">True</field>
+        </record>
+
+        <record id="mapping_ab_test_customer_reference_customer" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_customer_reference"/>
+            <field name="sequence">10</field>
+            <field name="source_field_name">customer_id</field>
+            <field name="target_field_name">customer_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_customer_reference_reference" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_customer_reference"/>
+            <field name="sequence">20</field>
+            <field name="source_field_name">reference</field>
+            <field name="target_field_name">reference</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_customer_reference_name" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_customer_reference"/>
+            <field name="sequence">30</field>
+            <field name="source_field_name">name</field>
+            <field name="target_field_name">name</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_customer_reference_note" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_customer_reference"/>
+            <field name="sequence">40</field>
+            <field name="source_field_name">note</field>
+            <field name="target_field_name">note</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_test_customer_reference_active" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_test_customer_reference"/>
+            <field name="sequence">50</field>
+            <field name="source_field_name">active</field>
+            <field name="target_field_name">active</field>
+            <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+    </data>
+</odoo>
