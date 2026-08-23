@@ -9,7 +9,7 @@
                 <form string="Import Promotions from Excel">
                     <group>
                         <field name="from_excel" nolabel="1" colspan="4"
-                               placeholder="Paste Excel rows here (tab-separated)"/>
+                               placeholder="name&#9;product_code&#9;promo_text&#9;rule_date_from&#9;rule_date_to&#9;Compensation way&#9;Compensation Type&#9;promotion_ownership&#10;Back to School Vitamin Deal&#9;PWIZ-TST-001&#9;1+1&#9;2026-09-01 00:00:00&#9;2026-09-30 23:59:59&#9;Before&#9;Products&#9;Other Promotion"/>
                     </group>
                     <footer>
                         <button string="Add Promotions"

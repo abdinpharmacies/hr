@@ -17,6 +17,135 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5;\n"
 
 #. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__approval_email_attachment
+msgid "Approval Email Attachment"
+msgstr "مرفق إيميل الموافقة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__approval_email_attachment_filename
+msgid "Approval Email Filename"
+msgstr "اسم ملف إيميل الموافقة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__compensation_timing__before
+msgid "Before"
+msgstr "قبل"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__compensation_type__cash
+msgid "Cash"
+msgstr "نقدي"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__compensation_company_id
+msgid "Compensation Company"
+msgstr "الشركة الواجب عليها التعويض"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.ab_promo_program_view_form
+msgid "Compensation Details"
+msgstr "بيانات التعويض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__compensation_timing
+msgid "Compensation Way"
+msgstr "توقيت التعويض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__compensation_type
+msgid "Compensation Type"
+msgstr "نوع التعويض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__compensation_timing__later
+msgid "Later"
+msgstr "لاحقًا"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__replica_db_ids
+msgid "Leave empty to apply to all replica databases."
+msgstr "اتركه فارغًا للتطبيق على جميع قواعد البيانات المكررة."
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__promo_uom_basis__largest_uom
+msgid "Largest Unit"
+msgstr "أكبر وحدة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__promo_uom_basis__smallest_uom
+msgid "Smallest Unit"
+msgstr "أصغر وحدة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__apply_disc_on__incentives
+msgid "Incentives"
+msgstr "حوافز"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__compensation_type__products
+msgid "Products"
+msgstr "منتجات"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__promotion_ownership__other_promotion
+msgid "Other Promotion"
+msgstr "عرض مقدم من جهة أخرى"
+
+#. module: ab_promo_program
+#: model:ir.model.fields.selection,name:ab_promo_program.selection__ab_promo_program__promotion_ownership__our_promotion
+msgid "Our Promotion"
+msgstr "عرض تابع لنا"
+
+#. module: ab_promo_program
+#: model_terms:ir.ui.view,arch_db:ab_promo_program.view_ab_promo_program_wizard_form
+msgid ""
+"name\tproduct_code\tpromo_text\trule_date_from\trule_date_to\tCompensation "
+"way\tCompensation Type\tpromotion_ownership\n"
+"Back to School Vitamin Deal\tPWIZ-TST-001\t1+1\t2026-09-01 00:00:00\t"
+"2026-09-30 23:59:59\tBefore\tProducts\tOther Promotion"
+msgstr ""
+"name\tproduct_code\tpromo_text\trule_date_from\trule_date_to\tCompensation "
+"way\tCompensation Type\tpromotion_ownership\n"
+"Back to School Vitamin Deal\tPWIZ-TST-001\t1+1\t2026-09-01 00:00:00\t"
+"2026-09-30 23:59:59\tBefore\tProducts\tOther Promotion"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__promotion_ownership
+msgid "Promotion Ownership"
+msgstr "تبعية العرض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__promo_uom_basis
+msgid "Promo UoM Basis"
+msgstr "أساس وحدة قياس العرض"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__promo_uom_basis
+msgid "Controls which unit basis is used when evaluating minimum promo quantity."
+msgstr "يحدد أساس وحدة القياس المستخدم عند تقييم الحد الأدنى لكمية العرض."
+
+#. module: ab_promo_program
+#: model:ir.model.fields,field_description:ab_promo_program.field_ab_promo_program__replica_db_ids
+msgid "Replica Databases"
+msgstr "قواعد البيانات المكررة"
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__compensation_company_id
+msgid ""
+"The manufacturing or supplier company responsible for compensating the "
+"pharmacy for this promotion."
+msgstr "الشركة المصنعة أو الموردة المسؤولة عن تعويض الصيدلية عن هذا العرض."
+
+#. module: ab_promo_program
+#: model:ir.model.fields,help:ab_promo_program.field_ab_promo_program__approval_email_attachment
+msgid ""
+"Upload the approval email from the compensation company. It must confirm "
+"activation of this promotion and show the approved promotion duration."
+msgstr ""
+"قم برفع إيميل الموافقة من شركة التعويض. يجب أن يؤكد تفعيل هذا العرض ويوضح "
+"مدة العرض المعتمدة."
+
+#. module: ab_promo_program
 #. odoo-python
 #: code:addons/ab_promo_program/models/ab_promo_program_wiz.py:0
 msgid ""

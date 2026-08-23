@@ -18,6 +18,43 @@ class AbPromoProgram(models.Model):
     supplier_id = fields.Many2one('ab_costcenter')
     budget = fields.Float()
 
+    promotion_ownership = fields.Selection(
+        [
+            ("other_promotion", "Other Promotion"),
+            ("our_promotion", "Our Promotion"),
+        ],
+        string="Promotion Ownership",
+        default="other_promotion",
+        required=True,
+    )
+    compensation_company_id = fields.Many2one(
+        'ab_product_company',
+        string="Compensation Company",
+        help="The manufacturing or supplier company responsible for compensating the pharmacy for this promotion.",
+    )
+    compensation_timing = fields.Selection(
+        [
+            ('before', 'Before'),
+            ('later', 'Later'),
+        ],
+        string="Compensation Way",
+    )
+    compensation_type = fields.Selection(
+        [
+            ('cash', 'Cash'),
+            ('products', 'Products'),
+        ],
+        string="Compensation Type",
+    )
+    approval_email_attachment = fields.Binary(
+        string="Approval Email Attachment",
+        attachment=True,
+        help="Upload the approval email from the compensation company. It must confirm activation of this promotion and show the approved promotion duration.",
+    )
+    approval_email_attachment_filename = fields.Char(
+        string="Approval Email Filename",
+    )
+
     max_repetition_per_invoice = fields.Integer(
         default=3,
         string="Max Repetition per Invoice",

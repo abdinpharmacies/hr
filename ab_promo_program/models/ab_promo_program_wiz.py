@@ -319,7 +319,7 @@ class AbPromoProgramWizard(models.TransientModel):
                 self._get_cell(row, header_map, 'promotion_ownership')
                 if 'promotion_ownership' in header_map else '',
                 'promotion_ownership',
-            )
+            ) or 'other_promotion'
 
             # --- اشتقاق القيم من promo_text ---
             derived = self._derive_promo_fields(promo_text)
@@ -365,7 +365,7 @@ class AbPromoProgramWizard(models.TransientModel):
                 max_repetition_per_invoice or 0,
                 compensation_timing or '',
                 compensation_type or '',
-                promotion_ownership or '',
+                promotion_ownership,
             )
 
             if key not in promo_map:
@@ -388,8 +388,7 @@ class AbPromoProgramWizard(models.TransientModel):
                     promo_map[key]['vals']['compensation_timing'] = compensation_timing
                 if compensation_type:
                     promo_map[key]['vals']['compensation_type'] = compensation_type
-                if promotion_ownership:
-                    promo_map[key]['vals']['promotion_ownership'] = promotion_ownership
+                promo_map[key]['vals']['promotion_ownership'] = promotion_ownership
 
             promo_map[key]['product_codes'].add(product_code)
             for c in disc_codes:
