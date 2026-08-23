@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
@@ -94,6 +96,49 @@ class TestSupplierClaimWorkflow(TransactionCase):
                 'amount_of_check': 0.0,
                 'type_of_invoice': 'original',
             })
+
+    def test_supplier_lookup_uses_existing_mappings_without_seed_sync(self):
+        Mapping = self.env['ab_supplier_mapping'].sudo()
+        Supplier = self.env['ab_costcenter'].sudo()
+        Mapping.with_context(
+            skip_supplier_mapping_auto_create=True,
+            skip_supplier_mapping_validation=True,
+        ).search([('supplier_id', '=', self.supplier.id)], limit=1) or Mapping.with_context(
+            skip_supplier_mapping_auto_create=True,
+            skip_supplier_mapping_validation=True,
+        ).create({'supplier_id': self.supplier.id})
+
+        mapping_count_before = Mapping.with_context(skip_supplier_mapping_auto_create=True).search_count([])
+        supplier_before = self.supplier.read(['supplier_type', 'region', 'section'])[0]
+
+        with patch.object(
+            type(Mapping),
+            '_sync_seed_supplier_mappings',
+            side_effect=AssertionError('Supplier lookup must not synchronize seed mappings.'),
+        ):
+            results = Supplier.with_context(supplier_claim_filter=True).name_search(
+                name='',
+                args=[('id', '=', self.supplier.id)],
+                operator='ilike',
+                limit=10,
+            )
+
+        mapping_count_after = Mapping.with_context(skip_supplier_mapping_auto_create=True).search_count([])
+        supplier_after = self.supplier.read(['supplier_type', 'region', 'section'])[0]
+
+        self.assertIn(self.supplier.id, [result[0] for result in results])
+        self.assertEqual(mapping_count_before, mapping_count_after)
+        self.assertEqual(supplier_before['supplier_type'], supplier_after['supplier_type'])
+        self.assertEqual(supplier_before['region'], supplier_after['region'])
+        self.assertEqual(supplier_before['section'], supplier_after['section'])
+
+    def test_supplier_mapping_search_still_runs_seed_sync_by_default(self):
+        Mapping = self.env['ab_supplier_mapping'].sudo()
+
+        with patch.object(type(Mapping), '_sync_seed_supplier_mappings', return_value=None) as sync_seed:
+            Mapping.search_count([])
+
+        self.assertTrue(sync_seed.called)
 
     def test_reviewer_can_open_claim_with_blocking_issues(self):
         claim = self._create_claim()
