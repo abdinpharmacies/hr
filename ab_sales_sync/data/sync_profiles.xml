@@ -62,6 +62,14 @@
             <field name="required">True</field>
             <field name="sync_enabled">True</field>
         </record>
+        <record id="mapping_ab_sales_header_customer" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_header"/>
+            <field name="sequence">15</field>
+            <field name="source_field_name">customer_id</field>
+            <field name="target_field_name">customer_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
         <record id="mapping_ab_sales_header_invoice_address" model="ab_odoo_sync_field_mapping">
             <field name="profile_id" ref="apply_profile_ab_sales_header"/>
             <field name="sequence">20</field>
@@ -76,6 +84,14 @@
             <field name="source_field_name">is_delivery</field>
             <field name="target_field_name">is_delivery</field>
             <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_header_employee_delivery" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_header"/>
+            <field name="sequence">35</field>
+            <field name="source_field_name">employee_delivery_id</field>
+            <field name="target_field_name">employee_delivery_id</field>
+            <field name="mapping_type">sync_many2one</field>
             <field name="sync_enabled">True</field>
         </record>
         <record id="mapping_ab_sales_header_description" model="ab_odoo_sync_field_mapping">
@@ -196,6 +212,22 @@
             <field name="source_field_name">pos_client_token</field>
             <field name="target_field_name">pos_client_token</field>
             <field name="mapping_type">direct</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_header_create_uid" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_header"/>
+            <field name="sequence">185</field>
+            <field name="source_field_name">create_uid</field>
+            <field name="target_field_name">source_create_uid</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="sync_enabled">True</field>
+        </record>
+        <record id="mapping_ab_sales_header_employee" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_header"/>
+            <field name="sequence">188</field>
+            <field name="source_field_name">employee_id</field>
+            <field name="target_field_name">employee_id</field>
+            <field name="mapping_type">sync_many2one</field>
             <field name="sync_enabled">True</field>
         </record>
         <record id="mapping_ab_sales_header_active" model="ab_odoo_sync_field_mapping">

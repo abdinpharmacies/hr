@@ -9,6 +9,13 @@ class AbSalesSyncMixin(models.AbstractModel):
     rec_id = fields.Integer(string="Source Record ID", required=True, readonly=True, index=True)
     source_revision = fields.Integer(string="Source Revision", readonly=True, index=True)
     event_uuid = fields.Char(string="Event UUID", readonly=True, index=True)
+    source_create_uid = fields.Many2one(
+        "ab_users",
+        string="Source Created By",
+        readonly=True,
+        ondelete="restrict",
+        index=True,
+    )
     source_operation = fields.Selection(
         selection=[("upsert", "Upsert"), ("archive", "Archive")],
         string="Source Operation",

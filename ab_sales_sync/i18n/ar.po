@@ -824,3 +824,7 @@ msgstr "يجب أن تكون مرآة دور تكرار نقطة بيع المب
 #. module: ab_sales_sync
 msgid "Printer configuration mirror must be unique per branch and source record."
 msgstr "يجب أن تكون مرآة إعدادات الطابعات فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_sales_sync
+msgid "Source Created By"
+msgstr "أنشئ في المصدر بواسطة"
