@@ -8,7 +8,6 @@
     'data': [
         'security/ir.model.access.csv',
         'views/menus.xml',
-        'views/ab_promo_program_compensation.xml',
         'views/ab_sales_header_promo_inherit.xml',
     ],
     'assets': {

@@ -1,10 +1,9 @@
-Current changes before commit:
+commit f9ebc42
+Author: hager yasser
+Date:   Sun Aug 16 2026
 
-- Fix sales promotion invoice and line markers so incentive programs do not write `§§§`.
-- Use promotion marker products as the shared source for sales header notice and sales detail marker eligibility.
-- Add UI-only required promotion ownership, compensation timing, and compensation type fields to the promotion compensation details form.
-- Add Arabic translations for the new promotion ownership field and options.
-- Add focused marker scope tests for specific products, normal promotions, incentives, and header marker behavior.
+    ab_sales_promo/fix: update promo compensation terminology for #1860
+
 - Rename the compensation timing field label to `Compensation Way`.
 - Replace compensation timing choices `Advance` and `Subsequent` with `Before` and `Later`.
 - Replace compensation type choice `Goods` with `Products`, keeping `Cash` unchanged.
@@ -13,6 +12,24 @@ Current changes before commit:
 Files changed:
 
 - ab_sales_promo/changelog.d
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/ab_promo_program_compensation.py
+
+
+commit c69ddae
+Author: hagerYasser
+Date:   Sun Aug 16 2026
+
+    ab_sales_promo/feat: exclude incentives from markers and add promotion ownership
+
+- Fix sales promotion invoice and line markers so incentive programs do not write marker text.
+- Use promotion marker products as the shared source for sales header notice and sales detail marker eligibility.
+- Add promotion ownership metadata to the promotion compensation form.
+- Add focused marker scope tests for specific products, normal promotions, incentives, and header marker behavior.
+
+Files changed:
+
 - ab_sales_promo/i18n/ar.po
 - ab_sales_promo/i18n/ar_001.po
 - ab_sales_promo/models/ab_promo_program_compensation.py
@@ -53,4 +70,20 @@ Files changed:
 - ab_sales_promo/models/__init__.py
 - ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/tests/test_ab_sales_specific_promo.py
+- ab_sales_promo/views/ab_promo_program_compensation.xml
+
+Current changes before commit:
+
+- Remove the compensation metadata model extension from `ab_sales_promo` after moving ownership to `ab_promo_program`.
+- Remove the inherited compensation form view registration and file from `ab_sales_promo`.
+- Remove stale Arabic compensation translations from `ab_sales_promo` so the base module owns those labels.
+
+Files changed:
+
+- ab_sales_promo/changelog.d
+- ab_sales_promo/__manifest__.py
+- ab_sales_promo/i18n/ar.po
+- ab_sales_promo/i18n/ar_001.po
+- ab_sales_promo/models/__init__.py
+- ab_sales_promo/models/ab_promo_program_compensation.py
 - ab_sales_promo/views/ab_promo_program_compensation.xml

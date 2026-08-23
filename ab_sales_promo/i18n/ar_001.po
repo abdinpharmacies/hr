@@ -49,16 +49,6 @@ msgid "Applied Programs"
 msgstr "البرامج المطبقة"
 
 #. module: ab_sales_promo
-#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__promotion_ownership__abdin_promotion
-msgid "Abdin Promotion"
-msgstr "عروض عابدين"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_timing__before
-msgid "Before"
-msgstr "قبل"
-
-#. module: ab_sales_promo
 #: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__available_program_ids
 msgid "Available Programs"
 msgstr "البرامج المتاحة"
@@ -74,11 +64,6 @@ msgstr "اختر يدويًا من العروض المتاحة."
 #: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
 msgid "Clear"
 msgstr "مسح"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__promotion_ownership__company_promotion
-msgid "Company Promotion"
-msgstr "عروض شركات"
 
 #. module: ab_sales_promo
 #: model:ir.model.fields,field_description:ab_sales_promo.field_ab_sales_header__currency_id
@@ -156,11 +141,6 @@ msgid "Promotion Discount"
 msgstr "خصم العرض"
 
 #. module: ab_sales_promo
-#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__promotion_ownership
-msgid "Promotion Ownership"
-msgstr "ملكية العرض"
-
-#. module: ab_sales_promo
 #: model:ir.ui.menu,name:ab_sales_promo.ab_sales_promo_program_menu
 msgid "Promotion Programs"
 msgstr "برامج العروض"
@@ -219,64 +199,3 @@ msgstr "ab_sales_header"
 #: code:addons/ab_sales_promo/static/src/pos/pos_promo_panel.xml:0
 msgid "unit(s)"
 msgstr "وحدة"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__approval_email_attachment
-msgid "Approval Email Attachment"
-msgstr "مرفق إيميل الموافقة"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__approval_email_attachment_filename
-msgid "Approval Email Filename"
-msgstr "اسم ملف إيميل الموافقة"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_type__cash
-msgid "Cash"
-msgstr "نقدي"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__compensation_company_id
-msgid "Compensation Company"
-msgstr "الشركة الواجب عليها التعويض"
-
-#. module: ab_sales_promo
-#: model_terms:ir.ui.view,arch_db:ab_sales_promo.ab_promo_program_view_form_compensation_inherit
-msgid "Compensation Details"
-msgstr "بيانات التعويض"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__compensation_timing
-msgid "Compensation Way"
-msgstr "طريقة التعويض"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields,field_description:ab_sales_promo.field_ab_promo_program__compensation_type
-msgid "Compensation Type"
-msgstr "نوع التعويض"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_timing__later
-msgid "Later"
-msgstr "لاحقًا"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields.selection,name:ab_sales_promo.selection__ab_promo_program__compensation_type__products
-msgid "Products"
-msgstr "منتجات"
-
-#. module: ab_sales_promo
-#: model:ir.model.fields,help:ab_sales_promo.field_ab_promo_program__compensation_company_id
-msgid ""
-"The manufacturing or supplier company responsible for compensating the "
-"pharmacy for this promotion."
-msgstr "الشركة المصنعة أو الموردة المسؤولة عن تعويض الصيدلية عن هذا العرض."
-
-#. module: ab_sales_promo
-#: model:ir.model.fields,help:ab_sales_promo.field_ab_promo_program__approval_email_attachment
-msgid ""
-"Upload the approval email from the compensation company. It must confirm "
-"activation of this promotion and show the approved promotion duration."
-msgstr ""
-"قم برفع إيميل الموافقة من شركة التعويض. يجب أن يؤكد تفعيل هذا العرض ويوضح "
-"مدة العرض المعتمدة."
