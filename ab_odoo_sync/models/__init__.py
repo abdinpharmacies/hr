@@ -1,3 +1,4 @@
+from . import ab_odoo_sync_rules
 from . import ab_odoo_sync_event
 from . import ab_odoo_sync_event_state
 from . import ab_odoo_sync_identity

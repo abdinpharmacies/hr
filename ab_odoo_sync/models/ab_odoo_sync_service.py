@@ -81,6 +81,11 @@ class AbOdooSyncService(models.Model):
     @api.model
     def _serialize_relation_ref(self, record):
         record.ensure_one()
+        if self.env["ab_odoo_sync_rules"].sudo().is_id_only_relation_model(record._name):
+            return {
+                "model": record._name,
+                "id": record.id,
+            }
         identity = {}
         for field_name in (
             "eplus_serial",
@@ -102,11 +107,26 @@ class AbOdooSyncService(models.Model):
         }
 
     @api.model
+    def _upload_payload_field_names(self, model_name):
+        profile = self.env["ab_odoo_sync_apply_profile"].sudo().get_for_source(model_name)
+        if not profile or profile.apply_mode not in {"mirror_sync", "business_model"}:
+            return False
+        field_names = set(
+            profile.mapping_ids.filtered(
+                lambda mapping: mapping.sync_enabled and mapping.mapping_type != "ignore"
+            ).mapped("source_field_name")
+        )
+        return field_names
+
+    @api.model
     def serialize_stored_record(self, record):
         record.ensure_one()
         payload_fields = {}
         field_types = {}
+        allowed_field_names = self._upload_payload_field_names(record._name)
         for field_name, field in sorted(record._fields.items()):
+            if allowed_field_names is not False and field_name not in allowed_field_names:
+                continue
             if field_name in _SENSITIVE_SNAPSHOT_FIELDS:
                 continue
             if not field.store:

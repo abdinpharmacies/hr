@@ -55,13 +55,12 @@ class AbOdooSyncOutbox(models.Model):
         record.ensure_one()
         service = self.env["ab_odoo_sync_service"].sudo()
         payload = service.serialize_stored_record(record.sudo())
-        raw_write_date = (payload.get("fields") or {}).get("write_date")
         return {
             "db_serial": service.get_db_serial(),
             "model_name": record._name,
             "rec_id": record.id,
             "payload_json": payload,
-            "source_write_date": raw_write_date or fields.Datetime.now(),
+            "source_write_date": record.write_date or fields.Datetime.now(),
         }
 
     @api.model

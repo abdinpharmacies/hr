@@ -42,6 +42,8 @@ class AbOdooSyncUploadSource(models.Model):
     def is_upload_source(self, model_name):
         if not model_name:
             return False
+        if self.env["ab_odoo_sync_rules"].sudo().is_upload_source_forbidden(model_name):
+            return False
         try:
             return bool(self._is_upload_source_cached(self.env.cr.dbname, model_name))
         except Exception:
@@ -54,6 +56,11 @@ class AbOdooSyncUploadSource(models.Model):
             if record.model_name not in self.env:
                 raise ValidationError(
                     _("Source model %(model)s is not installed in this database.")
+                    % {"model": record.model_name}
+                )
+            if self.env["ab_odoo_sync_rules"].sudo().is_upload_source_forbidden(record.model_name):
+                raise ValidationError(
+                    _("Source model %(model)s is protected by sync-rules.md and cannot be a branch upload source.")
                     % {"model": record.model_name}
                 )
             if record.aggregate_parent_field:
@@ -130,6 +137,11 @@ class AbOdooSyncUploadSource(models.Model):
             model_name = (spec.get("model_name") or "").strip()
             if not model_name or model_name in existing:
                 continue
+            if self.env["ab_odoo_sync_rules"].sudo().is_upload_source_forbidden(model_name):
+                raise ValueError(
+                    _("Source model %(model)s is protected by sync-rules.md and cannot be a branch upload source.")
+                    % {"model": model_name}
+                )
             vals = {
                 "model_name": model_name,
                 "active": bool(spec.get("active", False)),

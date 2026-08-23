@@ -1527,3 +1527,27 @@ msgid ""
 msgstr ""
 "يحتوي طلب MAIN API على أحرف غير ASCII في رابط HTTP أو ترويسة. تحقق من "
 "ab_odoo_sync.main_url و ab_odoo_sync.main_database و ab_odoo_sync.api_key."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_upload_source.py:0
+msgid "Source model %(model)s is protected by sync-rules.md and cannot be a branch upload source."
+msgstr "نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن أن يكون مصدر رفع من الفرع."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
+msgid "Source model %(model)s is protected by sync-rules.md and cannot be mirrored from branch uploads."
+msgstr "نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن نسخه كمرآة من رفعات الفروع."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target field %(field)s on %(target)s must point to %(user_model)s because %(source)s points to res.users."
+msgstr "يجب أن يشير الحقل الهدف %(field)s في %(target)s إلى %(user_model)s لأن %(source)s يشير إلى res.users."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
+msgid "Relations to %(model)s must use source-ID sync mapping according to sync-rules.md."
+msgstr "يجب أن تستخدم العلاقات إلى %(model)s ربط مزامنة معرف المصدر وفقًا لملف sync-rules.md."

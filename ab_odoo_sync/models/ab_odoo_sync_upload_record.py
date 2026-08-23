@@ -363,12 +363,18 @@ class AbOdooSyncUploadRecord(models.Model):
                         mapping,
                     )
             else:
+                source_relation_model = reference.get("model") or target_field.comodel_name
+                rules = self.env["ab_odoo_sync_rules"].sudo()
+                if source_relation_model == rules.user_source_model():
+                    target_model_name = rules.user_mirror_model()
+                else:
+                    target_model_name = target_field.comodel_name
                 profile = self.apply_profile_id
                 relation = self.env["ab_odoo_sync_identity"].sudo().get_or_create_business_record(
                     db_serial=self.db_serial,
-                    source_model_name=reference.get("model") or target_field.comodel_name,
+                    source_model_name=source_relation_model,
                     source_rec_id=source_rec_id,
-                    target_model_name=target_field.comodel_name,
+                    target_model_name=target_model_name,
                     reference=reference,
                     upload_record=self,
                     create_placeholder=profile.allow_placeholder_creation if profile else True,

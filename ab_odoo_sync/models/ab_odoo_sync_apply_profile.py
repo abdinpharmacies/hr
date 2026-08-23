@@ -92,6 +92,11 @@ class AbOdooSyncApplyProfile(models.Model):
     @api.constrains("source_model_name", "target_model_name", "apply_mode")
     def _check_models(self):
         for profile in self:
+            if self.env["ab_odoo_sync_rules"].sudo().is_upload_source_forbidden(profile.source_model_name):
+                raise ValidationError(
+                    _("Source model %(model)s is protected by sync-rules.md and cannot be mirrored from branch uploads.")
+                    % {"model": profile.source_model_name}
+                )
             if profile.apply_mode in {"raw_only", "ignore"}:
                 continue
             if not profile.target_model_name:
@@ -112,6 +117,30 @@ class AbOdooSyncApplyProfile(models.Model):
                             "fields": ", ".join(sorted(missing)),
                         }
                     )
+            source_model = self.env[profile.source_model_name] if profile.source_model_name in self.env else False
+            user_target = self.env["ab_odoo_sync_rules"].sudo().user_mirror_model()
+            if source_model:
+                for field_name, source_field in source_model._fields.items():
+                    if (
+                        source_field.type == "many2one"
+                        and source_field.store
+                        and source_field.comodel_name == "res.users"
+                        and field_name in target_model._fields
+                    ):
+                        target_field = target_model._fields[field_name]
+                        if target_field.type != "many2one" or target_field.comodel_name != user_target:
+                            raise ValidationError(
+                                _(
+                                    "Target field %(field)s on %(target)s must point to %(user_model)s because "
+                                    "%(source)s points to res.users."
+                                )
+                                % {
+                                    "field": field_name,
+                                    "target": profile.target_model_name,
+                                    "user_model": user_target,
+                                    "source": "%s.%s" % (profile.source_model_name, field_name),
+                                }
+                            )
 
     @api.model_create_multi
     def create(self, vals_list):
@@ -414,3 +443,10 @@ class AbOdooSyncFieldMapping(models.Model):
                 raise ValidationError(
                     _("Stable-key mappings require both relation key fields.")
                 )
+            if mapping.mapping_type in {"stable_many2one", "stable_many2many"}:
+                target_field = target_model._fields[mapping.target_field_name]
+                if self.env["ab_odoo_sync_rules"].sudo().is_never_mirror_model(target_field.comodel_name):
+                    raise ValidationError(
+                        _("Relations to %(model)s must use source-ID sync mapping according to sync-rules.md.")
+                        % {"model": target_field.comodel_name}
+                    )
