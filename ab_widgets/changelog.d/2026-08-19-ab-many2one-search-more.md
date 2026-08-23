@@ -1,31 +1,8 @@
-## 3db5d596c9429ff082c3fe9b0466692b945f788f
+## d13253a90ebae08cdecc4846ca7f38fdc9279a07
 
 - Author: emadco88 <emadco88@gmail.com>
-- Date: Tue Jul 28 15:21:42 2026 +0300
-- Subject: INIT commit pos19
-
-User-facing changes:
-
-- Added reusable AB many2one and many2many widgets for Odoo 19 frontend screens.
-- Added autocomplete search behavior patches for AB widgets.
-- Added keyboard mapping support for Arabic and English input in AB many2one searches.
-
-Files changed:
-
-- `ab_widgets/__init__.py`
-- `ab_widgets/__manifest__.py`
-- `ab_widgets/static/src/ab_many2many.js`
-- `ab_widgets/static/src/ab_many2many.scss`
-- `ab_widgets/static/src/ab_many2many.xml`
-- `ab_widgets/static/src/ab_many2one.js`
-- `ab_widgets/static/src/ab_many2one.scss`
-- `ab_widgets/static/src/ab_many2one.xml`
-- `ab_widgets/static/src/ab_many2one_keyboard_context_patch.js`
-- `ab_widgets/static/src/ab_many2one_keyboard_context_patch.xml`
-- `ab_widgets/static/src/ab_many2x_keyboard_map_patch.js`
-- `ab_widgets/static/src/ab_many2x_patch.js`
-
-## Current changes before commit
+- Date: Wed Aug 19 11:02:49 2026 +0300
+- Subject: ab_widgets/ FIX many2one selection
 
 User-facing changes:
 
@@ -37,3 +14,25 @@ Files changed:
 
 - `ab_widgets/changelog.d/2026-08-19-ab-many2one-search-more.md`
 - `ab_widgets/static/src/ab_many2one.js`
+
+## Current changes before commit
+
+User-facing changes:
+
+- Added the opt-in `ab_char_autocomplete` widget for stored char fields.
+- Added same-model, same-field distinct value suggestions using Odoo access rules without `sudo`.
+- Added paginated Search More suggestions with Arabic translations.
+- Added safer suggestion loading behavior for failed or stale asynchronous requests.
+
+Files changed:
+
+- `ab_widgets/__init__.py`
+- `ab_widgets/__manifest__.py`
+- `ab_widgets/changelog.d/2026-08-19-ab-many2one-search-more.md`
+- `ab_widgets/i18n/ar.po`
+- `ab_widgets/i18n/ar_001.po`
+- `ab_widgets/models/__init__.py`
+- `ab_widgets/models/ab_char_autocomplete.py`
+- `ab_widgets/static/src/ab_char_autocomplete.js`
+- `ab_widgets/static/src/ab_char_autocomplete.scss`
+- `ab_widgets/static/src/ab_char_autocomplete.xml`

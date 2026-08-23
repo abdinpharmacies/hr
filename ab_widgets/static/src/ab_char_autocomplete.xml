@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_widgets.AbCharAutocompleteField">
+        <t t-if="props.readonly">
+            <span t-esc="formattedValue"/>
+        </t>
+        <t t-else="">
+            <AutoComplete t-props="autocompleteProps"/>
+        </t>
+    </t>
+
+    <t t-name="ab_widgets.AbCharAutocompleteSearchMoreDialog">
+        <Dialog title.translate="Suggestions" size="'md'">
+            <div class="o_ab_char_autocomplete_dialog">
+                <div class="o_ab_char_autocomplete_search">
+                    <input class="o_input"
+                           type="text"
+                           t-att-value="state.searchTerm"
+                           placeholder="Search values..."
+                           t-on-input="onSearchInput"
+                           t-on-change="onSearchChange"/>
+                    <button class="btn btn-primary"
+                            type="button"
+                            t-on-click="() => this.loadPage(0)">
+                        Search
+                    </button>
+                </div>
+                <div class="o_ab_char_autocomplete_values">
+                    <t t-if="state.loading">
+                        <div class="o_ab_char_autocomplete_empty">Loading...</div>
+                    </t>
+                    <t t-elif="!state.values.length">
+                        <div class="o_ab_char_autocomplete_empty">No suggestions found</div>
+                    </t>
+                    <t t-else="">
+                        <button t-foreach="state.values"
+                                t-as="row"
+                                t-key="row.value"
+                                class="o_ab_char_autocomplete_value"
+                                type="button"
+                                t-on-click="() => this.selectValue(row.value)">
+                            <span t-esc="row.value"/>
+                        </button>
+                    </t>
+                </div>
+                <div class="o_ab_char_autocomplete_pager">
+                    <button class="btn btn-secondary"
+                            type="button"
+                            t-att-disabled="!canGoPrevious"
+                            t-on-click="previousPage">
+                        Previous
+                    </button>
+                    <span class="o_ab_char_autocomplete_page">
+                        <t t-esc="pageLabel"/>
+                    </span>
+                    <button class="btn btn-secondary"
+                            type="button"
+                            t-att-disabled="!canGoNext"
+                            t-on-click="nextPage">
+                        Next
+                    </button>
+                </div>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="props.close">Close</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>
