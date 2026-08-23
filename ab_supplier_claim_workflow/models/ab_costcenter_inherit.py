@@ -8,9 +8,10 @@ class ClsCostCenters(models.Model):
 
     def name_search(self, name='', args=None, operator='ilike', limit=100):
         if self.env.context.get('supplier_claim_filter'):
-            mapped = self.env['ab_supplier_mapping'].sudo().search([]).mapped('supplier_id').ids
-            if mapped:
-                args = list(args or []) + [('id', 'in', mapped)]
+            mapped = self.env['ab_supplier_mapping'].sudo().with_context(
+                skip_supplier_mapping_auto_create=True
+            ).search([]).mapped('supplier_id').ids
+            args = list(args or []) + [('id', 'in', mapped)]
         return super(ClsCostCenters, self).name_search(name, args, operator, limit)
 
     supplier_type = fields.Selection(

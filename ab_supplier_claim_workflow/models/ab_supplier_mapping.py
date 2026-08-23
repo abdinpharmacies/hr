@@ -110,12 +110,14 @@ class SupplierMapping(models.Model):
 
     @api.model
     def search_fetch(self, domain, field_names, offset=0, limit=None, order=None):
-        self._sync_seed_supplier_mappings()
+        if not self.env.context.get('skip_supplier_mapping_auto_create'):
+            self._sync_seed_supplier_mappings()
         return super().search_fetch(domain, field_names, offset=offset, limit=limit, order=order)
 
     @api.model
     def search_count(self, domain, limit=None):
-        self._sync_seed_supplier_mappings()
+        if not self.env.context.get('skip_supplier_mapping_auto_create'):
+            self._sync_seed_supplier_mappings()
         return super().search_count(domain, limit=limit)
 
     @api.model_create_multi
