@@ -10,6 +10,7 @@ import sys
 import tomllib
 from contextlib import redirect_stdout
 from dataclasses import dataclass
+from datetime import datetime
 from pathlib import Path
 from typing import NoReturn, Sequence
 
@@ -200,7 +201,10 @@ def recent_commits(repository: Path, ref: str, days: int) -> list[Commit]:
                 parents=tuple(raw_parents.split()),
             )
         )
-    return commits
+    return sorted(
+        commits,
+        key=lambda commit: (datetime.fromisoformat(commit.authored_at), commit.sha),
+    )
 
 
 def picker_coverage(repository: Path, picker_branch: str) -> set[str]:
@@ -297,7 +301,7 @@ def changed_modules(
 
 
 def print_missing_summary(repository: Path, commits: Sequence[Commit]) -> None:
-    print("\n=== Missing cherry-pick summary ===")
+    print("=== Missing cherry-pick summary ===")
     if not commits:
         print("No missing commits.")
         return
@@ -336,7 +340,9 @@ def write_report(arguments: argparse.Namespace) -> None:
         if not commit.is_merge and commit.sha.lower() not in covered_shas
     ]
 
+    print_missing_summary(repository, missing_commits)
     print(
+        "\n"
         f"Commit report: last {config.last_x_days} day(s) | "
         f"working={config.working_branch} | picker={config.picker_branch}"
     )
@@ -344,7 +350,6 @@ def write_report(arguments: argparse.Namespace) -> None:
     print_history(f"Recent commits on {config.picker_branch}", picker_commits)
     show_missing_commits(repository, missing_commits)
     print(f"\nMissing cherry-pick count: {len(missing_commits)}")
-    print_missing_summary(repository, missing_commits)
 
 
 def main() -> int:
