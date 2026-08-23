@@ -1549,5 +1549,11 @@ msgstr "يجب أن يشير الحقل الهدف %(field)s في %(target)s إ�
 #. module: ab_odoo_sync
 #. odoo-python
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
+msgid "Source user field %(source)s must map with sync_many2one to a %(user_model)s field."
+msgstr "يجب ربط حقل مستخدم المصدر %(source)s باستخدام sync_many2one إلى حقل %(user_model)s."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
 msgid "Relations to %(model)s must use source-ID sync mapping according to sync-rules.md."
 msgstr "يجب أن تستخدم العلاقات إلى %(model)s ربط مزامنة معرف المصدر وفقًا لملف sync-rules.md."

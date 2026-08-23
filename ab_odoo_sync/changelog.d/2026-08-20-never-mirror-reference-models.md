@@ -22,6 +22,7 @@ User-facing changes:
 - Rename `never-mirror.md` to `sync-rules.md` and document the branch upload boundary as enforceable sync rules.
 - Add Rule 2 for `res.users` dependent mirrored models, requiring corresponding `__sync` relations to target `ab_users`.
 - Add central Odoo Sync rule checks so protected master models and `res.users` cannot be branch upload sources or branch mirrored source models.
+- Enforce Rule 2 at field-mapping level so any mapped source `res.users` field must use `sync_many2one` into an `ab_users` target field, including renamed mappings.
 - Restrict branch snapshots to enabled apply-profile fields and serialize protected master/user relations as source IDs only.
 - Ignore protected relation details during MAIN placeholder creation, even if an older queued payload still contains display names or stable-key values.
 - Resolve user force-ID references through the standalone MAIN-side `ab_users` module instead of defining user placeholders inside `ab_odoo_sync`.

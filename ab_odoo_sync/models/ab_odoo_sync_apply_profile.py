@@ -437,6 +437,28 @@ class AbOdooSyncFieldMapping(models.Model):
                         "model": profile.target_model_name,
                     }
                 )
+            source_field = source_model._fields.get(mapping.source_field_name) if source_model else False
+            target_field = target_model._fields[mapping.target_field_name]
+            if (
+                source_field
+                and source_field.type == "many2one"
+                and source_field.comodel_name == self.env["ab_odoo_sync_rules"].sudo().user_source_model()
+            ):
+                user_target = self.env["ab_odoo_sync_rules"].sudo().user_mirror_model()
+                if (
+                    mapping.mapping_type != "sync_many2one"
+                    or target_field.type != "many2one"
+                    or target_field.comodel_name != user_target
+                ):
+                    raise ValidationError(
+                        _(
+                            "Source user field %(source)s must map with sync_many2one to a %(user_model)s field."
+                        )
+                        % {
+                            "source": "%s.%s" % (profile.source_model_name, mapping.source_field_name),
+                            "user_model": user_target,
+                        }
+                    )
             if mapping.mapping_type in stable_types and (
                 not mapping.relation_source_key or not mapping.relation_target_key
             ):
@@ -444,7 +466,6 @@ class AbOdooSyncFieldMapping(models.Model):
                     _("Stable-key mappings require both relation key fields.")
                 )
             if mapping.mapping_type in {"stable_many2one", "stable_many2many"}:
-                target_field = target_model._fields[mapping.target_field_name]
                 if self.env["ab_odoo_sync_rules"].sudo().is_never_mirror_model(target_field.comodel_name):
                     raise ValidationError(
                         _("Relations to %(model)s must use source-ID sync mapping according to sync-rules.md.")
