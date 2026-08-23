@@ -81,13 +81,14 @@ Files changed:
 
 User-facing changes:
 
-- Reuse the shared `ab_odoo_sync` pretty JSON widget while preserving formatted coverage for every Sales Sync JSON field.
-- Remove duplicate widget assets from Sales Sync and bump the module version to `19.0.1.3.0`.
+- Update POS-related `__sync` mirror models so branch user references point to `ab_users`, not `res.users`.
+- Depend on the standalone `ab_users` module so Sales Sync can be installed on MAIN with the required user placeholder model.
+- Add explicit source-ID mappings for POS settings, POS draft cache, and POS replication turn user fields.
+- Keep protected master references such as product, store, employee, UoM, and customer as business-model links rather than separate `__sync` mirrors.
 
 Files changed:
 
-- `ab_sales_sync/__manifest__.py`
 - `ab_sales_sync/changelog.d/2026-08-17-initial-sales-sync.md`
-- `ab_sales_sync/static/src/fields/pretty_json/pretty_json_field.js`
-- `ab_sales_sync/static/src/fields/pretty_json/pretty_json_field.scss`
-- `ab_sales_sync/static/src/fields/pretty_json/pretty_json_field.xml`
+- `ab_sales_sync/__manifest__.py`
+- `ab_sales_sync/data/sync_profiles_extra.xml`
+- `ab_sales_sync/models/ab_sales_sync_models.py`

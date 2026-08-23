@@ -372,7 +372,7 @@ class AbSalesPosSettingsSync(models.Model):
     _description = "Branch Sales POS Settings Mirror"
     _order = "db_serial, rec_id desc"
 
-    user_id = fields.Many2one("res.users", string="User", ondelete="restrict", index=True)
+    user_id = fields.Many2one("ab_users", string="User", ondelete="restrict", index=True)
     settings_version = fields.Integer(string="Settings Version")
     last_synced_at = fields.Datetime(string="Last Synced At")
     settings_json = fields.Json(string="Settings JSON", default=dict)
@@ -389,7 +389,7 @@ class AbSalesPosDraftCacheSync(models.Model):
     _description = "Branch Sales POS Draft Cache Mirror"
     _order = "db_serial, source_write_date desc, rec_id desc"
 
-    user_id = fields.Many2one("res.users", string="User", ondelete="restrict", index=True)
+    user_id = fields.Many2one("ab_users", string="User", ondelete="restrict", index=True)
     employee_id = fields.Many2one("ab_hr_employee", string="Employee", ondelete="restrict", index=True)
     employee_scope_key = fields.Integer(string="Employee Scope Key", index=True)
     cache_key = fields.Char(string="Cache Key", index=True)
@@ -409,7 +409,7 @@ class AbSalesPosReplicationTurnSync(models.Model):
     _description = "Branch Sales POS Replication Turn Mirror"
     _order = "db_serial, last_manual_run_at desc, rec_id desc"
 
-    user_id = fields.Many2one("res.users", string="User", ondelete="restrict", index=True)
+    user_id = fields.Many2one("ab_users", string="User", ondelete="restrict", index=True)
     cron_id = fields.Many2one("ir.cron", string="Cron", ondelete="restrict", index=True)
     last_manual_run_at = fields.Datetime(string="Last Manual Run At")
 

@@ -375,6 +375,15 @@
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
+        <record id="mapping_ab_sales_pos_settings_user" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_settings"/>
+            <field name="sequence">5</field>
+            <field name="source_field_name">user_id</field>
+            <field name="target_field_name">user_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
+        </record>
         <record id="mapping_ab_sales_pos_settings_version" model="ab_odoo_sync_field_mapping">
             <field name="profile_id" ref="apply_profile_ab_sales_pos_settings"/>
             <field name="sequence">10</field>
@@ -407,6 +416,15 @@
             <field name="target_model_name">ab_sales_pos_draft_cache__sync</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_draft_cache_user" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
+            <field name="sequence">5</field>
+            <field name="source_field_name">user_id</field>
+            <field name="target_field_name">user_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
         </record>
         <record id="mapping_ab_sales_pos_draft_cache_employee" model="ab_odoo_sync_field_mapping">
             <field name="profile_id" ref="apply_profile_ab_sales_pos_draft_cache"/>
@@ -464,6 +482,15 @@
             <field name="target_model_name">ab_sales_pos_replication_turn__sync</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
+        </record>
+        <record id="mapping_ab_sales_pos_replication_turn_user" model="ab_odoo_sync_field_mapping">
+            <field name="profile_id" ref="apply_profile_ab_sales_pos_replication_turn"/>
+            <field name="sequence">5</field>
+            <field name="source_field_name">user_id</field>
+            <field name="target_field_name">user_id</field>
+            <field name="mapping_type">sync_many2one</field>
+            <field name="required">True</field>
+            <field name="sync_enabled">True</field>
         </record>
         <record id="mapping_ab_sales_pos_replication_turn_last_run" model="ab_odoo_sync_field_mapping">
             <field name="profile_id" ref="apply_profile_ab_sales_pos_replication_turn"/>
