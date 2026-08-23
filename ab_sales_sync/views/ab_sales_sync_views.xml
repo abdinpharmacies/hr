@@ -56,6 +56,7 @@
                                 <field name="source_revision"/>
                                 <field name="event_uuid"/>
                                 <field name="source_create_uid"/>
+                                <field name="source_write_uid"/>
                                 <field name="source_operation"/>
                                 <field name="source_write_date"/>
                                 <field name="synced_at"/>

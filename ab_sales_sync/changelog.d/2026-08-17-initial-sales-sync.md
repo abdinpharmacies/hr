@@ -84,8 +84,8 @@ User-facing changes:
 - Update POS-related `__sync` mirror models so branch user references point to `ab_users`, not `res.users`.
 - Depend on the standalone `ab_users` module so Sales Sync can be installed on MAIN with the required user placeholder model.
 - Add explicit source-ID mappings for POS settings, POS draft cache, and POS replication turn user fields.
-- Add missing Sales Header mappings for customer, delivery employee, actual salesperson, and source creator.
-- Show the source creator on the synced sales header form as an `ab_users` reference.
+- Add missing Sales Header mappings for customer, delivery employee, actual salesperson, source creator, and source last updater.
+- Show source creator and source last updater on the synced sales header form as `ab_users` references.
 - Keep protected master references such as product, store, employee, UoM, and customer as business-model links rather than separate `__sync` mirrors.
 
 Files changed:

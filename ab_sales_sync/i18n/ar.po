@@ -828,3 +828,7 @@ msgstr "يجب أن تكون مرآة إعدادات الطابعات فريدة
 #. module: ab_sales_sync
 msgid "Source Created By"
 msgstr "أنشئ في المصدر بواسطة"
+
+#. module: ab_sales_sync
+msgid "Source Last Updated By"
+msgstr "آخر تحديث في المصدر بواسطة"

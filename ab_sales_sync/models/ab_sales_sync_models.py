@@ -16,6 +16,13 @@ class AbSalesSyncMixin(models.AbstractModel):
         ondelete="restrict",
         index=True,
     )
+    source_write_uid = fields.Many2one(
+        "ab_users",
+        string="Source Last Updated By",
+        readonly=True,
+        ondelete="restrict",
+        index=True,
+    )
     source_operation = fields.Selection(
         selection=[("upsert", "Upsert"), ("archive", "Archive")],
         string="Source Operation",
