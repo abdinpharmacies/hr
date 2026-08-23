@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 19.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-19 12:45+0000\n"
+"POT-Creation-Date: 2026-08-23 09:05+0000\n"
 "PO-Revision-Date: 2026-08-19 11:38+0000\n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -126,6 +126,35 @@ msgstr "تمت إضافة الدكتور من الرئيسي."
 
 #. module: ab_sales_doctor
 #. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_doctor.py:0
+#: code:addons/ab_sales_doctor/models/ab_sales_pos_api.py:0
+msgid "Doctor code already exists."
+msgstr "كود الدكتور موجود بالفعل."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_doctor.py:0
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Doctor code is required."
+msgstr "كود الدكتور مطلوب."
+
+#. module: ab_sales_doctor
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_doctor.py:0
+msgid "Doctor code must be unique."
+msgstr "يجب أن يكون كود الدكتور غير مكرر."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_doctor.py:0
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Doctor code must contain only English letters and digits."
+msgstr "يجب أن يحتوي كود الدكتور على حروف إنجليزية وأرقام فقط."
+
+#. module: ab_sales_doctor
+#. odoo-python
 #: code:addons/ab_sales_doctor/models/ab_sales_header.py:0
 #: code:addons/ab_sales_doctor/models/ab_sales_pos_api.py:0
 msgid "Doctor is required for doctor prescription bills."
@@ -138,6 +167,14 @@ msgstr "الدكتور مطلوب لفواتير روشتات الدكاترة."
 #: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
 msgid "Doctor name is required."
 msgstr "اسم الدكتور مطلوب."
+
+#. module: ab_sales_doctor
+#. odoo-javascript
+#. odoo-python
+#: code:addons/ab_sales_doctor/models/ab_doctor.py:0
+#: code:addons/ab_sales_doctor/static/src/pos/pos_action_doctor.js:0
+msgid "Doctor specialty is required."
+msgstr "تخصص الدكتور مطلوب."
 
 #. module: ab_sales_doctor
 #. odoo-python

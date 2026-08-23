@@ -31,23 +31,58 @@ Files changed:
 - ab_sales_doctor/views/ab_sales_line_views.xml
 - ab_sales_doctor/views/menus.xml
 
-## Current changes before commit
+## ecd82c9 - Mohamed Fawzy - 2026-08-19
+
+Original commit subject: ab_sales_doctor(#2058)/feat: display and search doctors by code and specialty
 
 User-facing changes:
-- Display doctors as code, name, and specialty joined with ` - ` wherever `ab_doctor.display_name` is rendered.
-- Allow doctor lookup by code, name, and specialty through the backend display name search used by many2one selectors.
-- Added Arabic translations for doctor, prescription, POS doctor dialog, validation, and doctor product labels.
-- Merged Arabic translations with exported POT references so Odoo can apply field and view labels correctly.
-- Wrapped POS doctor notification strings for translation.
-- Exposed the translation helper to doctor POS OWL templates so translated labels do not crash rendering.
-- Moved the POS doctor placeholder translation through JavaScript so `Doctor...` switches correctly by user language.
+- Displayed doctors as code, name, and specialty joined with ` - ` wherever `ab_doctor.display_name` is rendered.
+- Allowed doctor lookup by code, name, and specialty through backend display name search used by many2one selectors.
 - Added tests for full doctor labels, missing label parts, code search, and specialty search.
 
 Files changed:
+- ab_sales_doctor/changelog.d/2026-08-19-doctor-code-display-search.md
 - ab_sales_doctor/models/ab_doctor.py
 - ab_sales_doctor/tests/test_doctor_prescription.py
-- ab_sales_doctor/static/src/pos/pos_action_doctor.js
-- ab_sales_doctor/static/src/pos/pos_action_doctor.xml
+
+## cd520ed - Mohamed Fawzy - 2026-08-19
+
+Original commit subject: ab_sales_doctor(#2058)/fix: translate Sales > Configuration > Doctors,Prescription Products and in sakes > pos doctor word
+
+User-facing changes:
+- Added Arabic translations for doctor, prescription, POS doctor dialog, validation, and doctor product labels.
+- Merged Arabic translations with exported POT references so Odoo can apply field and view labels correctly.
+- Wrapped POS doctor notification strings and the doctor placeholder for translation.
+- Exposed the translation helper to doctor POS OWL templates so translated labels do not crash rendering.
+
+Files changed:
+- ab_sales_doctor/changelog.d/2026-08-19-doctor-code-display-search.md
 - ab_sales_doctor/i18n/ar.po
 - ab_sales_doctor/i18n/ar_001.po
+- ab_sales_doctor/static/src/pos/pos_action_doctor.js
+- ab_sales_doctor/static/src/pos/pos_action_doctor.xml
+
+## Current changes before commit
+
+User-facing changes:
+- Require new doctors to have a nonblank ASCII alphanumeric code and a nonblank specialty while keeping legacy incomplete doctors editable for unrelated fields.
+- Preserve entered doctor code letter case after trimming surrounding whitespace.
+- Reject case-insensitive doctor code duplicates, including archived doctors and duplicates within one multi-create request.
+- Change POS doctor creation to create-only on main: existing matching codes are rejected instead of updated.
+- Keep POS Add Doctor to Main on the existing `ab_odoo_connect` XML-RPC connection while validating before connecting.
+- Add POS Add Doctor validation for name, code, specialty, and code format with specific in-dialog messages.
+- Mark Code and Specialty as required in the POS Add Doctor dialog.
+- Add Arabic translations for the new validation messages.
+- Add focused tests for doctor validation, legacy edit preservation, POS duplicate rejection, XML-RPC doctor creation, and POS create-only behavior.
+
+Files changed:
+- ab_sales_doctor/__init__.py
+- ab_sales_doctor/__manifest__.py
 - ab_sales_doctor/changelog.d/2026-08-19-doctor-code-display-search.md
+- ab_sales_doctor/i18n/ar.po
+- ab_sales_doctor/i18n/ar_001.po
+- ab_sales_doctor/models/ab_doctor.py
+- ab_sales_doctor/models/ab_sales_pos_api.py
+- ab_sales_doctor/static/src/pos/pos_action_doctor.js
+- ab_sales_doctor/static/src/pos/pos_action_doctor.xml
+- ab_sales_doctor/tests/test_doctor_prescription.py

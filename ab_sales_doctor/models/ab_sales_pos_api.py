@@ -22,19 +22,24 @@ class AbSalesPosApi(models.TransientModel):
         }
         if not vals["name"]:
             raise UserError(_("Doctor name is required."))
+        self.env["ab_doctor"]._validate_doctor_code_format(vals["code"])
+        self.env["ab_doctor"]._validate_doctor_specialty_value(vals["specialty"])
         return {key: value for key, value in vals.items() if value not in ("", None)}
 
     @api.model
-    def _main_doctor_lookup_domain(self, vals):
-        if vals.get("code"):
-            return [("code", "=", vals["code"])]
-        if vals.get("phone"):
-            return [
-                "&",
-                ("name", "=ilike", vals["name"]),
-                ("phone", "=", vals["phone"]),
-            ]
-        return [("name", "=ilike", vals["name"])]
+    def _doctor_validation_error_substrings(self):
+        return (
+            "Doctor name is required",
+            "Doctor code is required",
+            "Doctor specialty is required",
+            "Doctor code must contain only English letters and digits",
+            "Doctor code already exists",
+            "Doctor code must be unique",
+        )
+
+    @api.model
+    def _main_doctor_code_lookup_domain(self, vals):
+        return [("code", "=ilike", vals["code"])]
 
     @api.model
     def pos_create_main_doctor(self, values=None):
@@ -51,28 +56,26 @@ class AbSalesPosApi(models.TransientModel):
                 key: value for key, value in vals.items()
                 if key in remote_fields
             }
-            if not remote_vals.get("name"):
-                raise UserError(_("Doctor name is required."))
-
             existing_ids = conn.execute_kw(
                 "ab_doctor",
                 "search",
-                [self._main_doctor_lookup_domain(remote_vals)],
-                {"limit": 1},
+                [self._main_doctor_code_lookup_domain(remote_vals)],
+                {"limit": 1, "context": {"active_test": False}},
             )
             if existing_ids:
-                doctor_id = int(existing_ids[0])
-                conn.execute_kw("ab_doctor", "write", [[doctor_id], remote_vals])
-            else:
-                doctor_id = int(conn.execute_kw("ab_doctor", "create", [remote_vals]))
+                raise UserError(_("Doctor code already exists."))
 
+            doctor_id = int(conn.execute_kw("ab_doctor", "create", [remote_vals]))
             self.env["ab_odoo_replication"].sudo().replicate_model("ab_doctor")
         except UserError as error:
             message = str(error)
-            if "Doctor name is required" in message:
+            if any(error_msg in message for error_msg in self._doctor_validation_error_substrings()):
                 raise
             raise self._doctor_connection_unavailable_error()
-        except Exception:
+        except Exception as error:
+            message = str(error)
+            if any(error_msg in message for error_msg in self._doctor_validation_error_substrings()):
+                raise UserError(message)
             raise self._doctor_connection_unavailable_error()
 
         doctor = self.env["ab_doctor"].sudo().with_context(active_test=False).browse(doctor_id).exists()

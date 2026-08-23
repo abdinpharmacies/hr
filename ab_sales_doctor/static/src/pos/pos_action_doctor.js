@@ -7,6 +7,7 @@ import {registry} from "@web/core/registry";
 import {patch} from "@web/core/utils/patch";
 
 const PosAction = registry.category("actions").get("ab_sales.pos");
+const DOCTOR_CODE_PATTERN = /^[A-Za-z0-9]+$/;
 
 class AbSalesDoctorCreateDialog extends Component {
     static template = "ab_sales_doctor.DoctorCreateDialog";
@@ -34,22 +35,42 @@ class AbSalesDoctorCreateDialog extends Component {
         this.state[field] = ev.target.value || "";
     }
 
+    validate() {
+        const name = (this.state.name || "").trim();
+        const code = (this.state.code || "").trim();
+        const specialty = (this.state.specialty || "").trim();
+        if (!name) {
+            return _t("Doctor name is required.");
+        }
+        if (!code) {
+            return _t("Doctor code is required.");
+        }
+        if (!DOCTOR_CODE_PATTERN.test(code)) {
+            return _t("Doctor code must contain only English letters and digits.");
+        }
+        if (!specialty) {
+            return _t("Doctor specialty is required.");
+        }
+        return "";
+    }
+
     async submit() {
         if (this.state.submitting) {
             return;
         }
-        if (!(this.state.name || "").trim()) {
-            this.state.message = _t("Doctor name is required.");
+        const validationMessage = this.validate();
+        if (validationMessage) {
+            this.state.message = validationMessage;
             return;
         }
         this.state.submitting = true;
         this.state.message = "";
         try {
             await this.props.onSave({
-                name: this.state.name,
-                code: this.state.code,
+                name: (this.state.name || "").trim(),
+                code: (this.state.code || "").trim(),
                 phone: this.state.phone,
-                specialty: this.state.specialty,
+                specialty: (this.state.specialty || "").trim(),
             });
             this.props.close();
         } catch (err) {

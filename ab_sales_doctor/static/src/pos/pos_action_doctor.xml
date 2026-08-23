@@ -82,12 +82,17 @@
                         <label class="form-label" t-esc="_t('Name')"/>
                         <input class="form-control"
                                t-att-value="state.name"
+                               required="required"
                                t-on-input="(ev) => updateField('name', ev)"/>
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label" t-esc="_t('Code')"/>
+                        <label class="form-label">
+                            <t t-esc="_t('Code')"/>
+                            <span class="text-danger">*</span>
+                        </label>
                         <input class="form-control"
                                t-att-value="state.code"
+                               required="required"
                                t-on-input="(ev) => updateField('code', ev)"/>
                     </div>
                     <div class="col-12 col-md-4">
@@ -97,9 +102,13 @@
                                t-on-input="(ev) => updateField('phone', ev)"/>
                     </div>
                     <div class="col-12 col-md-4">
-                        <label class="form-label" t-esc="_t('Specialty')"/>
+                        <label class="form-label">
+                            <t t-esc="_t('Specialty')"/>
+                            <span class="text-danger">*</span>
+                        </label>
                         <input class="form-control"
                                t-att-value="state.specialty"
+                               required="required"
                                t-on-input="(ev) => updateField('specialty', ev)"/>
                     </div>
                 </div>
