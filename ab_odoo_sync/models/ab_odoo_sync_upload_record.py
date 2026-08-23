@@ -369,6 +369,11 @@ class AbOdooSyncUploadRecord(models.Model):
                     target_model_name = rules.user_mirror_model()
                 else:
                     target_model_name = target_field.comodel_name
+                if rules.is_id_only_relation_model(source_relation_model):
+                    reference = {
+                        "model": source_relation_model,
+                        "id": source_rec_id,
+                    }
                 profile = self.apply_profile_id
                 relation = self.env["ab_odoo_sync_identity"].sudo().get_or_create_business_record(
                     db_serial=self.db_serial,

@@ -23,6 +23,7 @@ User-facing changes:
 - Add Rule 2 for `res.users` dependent mirrored models, requiring corresponding `__sync` relations to target `ab_users`.
 - Add central Odoo Sync rule checks so protected master models and `res.users` cannot be branch upload sources or branch mirrored source models.
 - Restrict branch snapshots to enabled apply-profile fields and serialize protected master/user relations as source IDs only.
+- Ignore protected relation details during MAIN placeholder creation, even if an older queued payload still contains display names or stable-key values.
 - Resolve user force-ID references through the standalone MAIN-side `ab_users` module instead of defining user placeholders inside `ab_odoo_sync`.
 - Preserve upload source write dates from the source record metadata instead of relying on payload fields.
 - Add Arabic translations for the new validation messages.
@@ -38,5 +39,6 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
 - `ab_odoo_sync/models/ab_odoo_sync_rules.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/models/ab_odoo_sync_identity.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_source.py`

@@ -113,6 +113,9 @@ class AbOdooSyncIdentity(models.Model):
     @api.model
     def _prepare_placeholder_vals(self, target_model, source_rec_id, reference=None):
         reference = reference or {}
+        rules = self.env["ab_odoo_sync_rules"].sudo()
+        if rules.is_never_mirror_model(target_model._name) or target_model._name == rules.user_mirror_model():
+            reference = {}
         identity_values = reference.get("values") if isinstance(reference, dict) else {}
         identity_values = identity_values if isinstance(identity_values, dict) else {}
         display_name = reference.get("display_name") if isinstance(reference, dict) else False
@@ -160,6 +163,10 @@ class AbOdooSyncIdentity(models.Model):
     @api.model
     def _stable_key_values(self, reference=None):
         if not isinstance(reference, dict):
+            return {}
+        rules = self.env["ab_odoo_sync_rules"].sudo()
+        model_name = reference.get("model")
+        if rules.is_id_only_relation_model(model_name):
             return {}
         values = reference.get("values") or {}
         if not isinstance(values, dict):
