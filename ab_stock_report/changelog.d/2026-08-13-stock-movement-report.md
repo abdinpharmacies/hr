@@ -75,6 +75,7 @@ User-facing changes:
 - Tighten Store Balances & Sales table column widths to fit the displayed content more closely.
 - Add a branch dropdown filter for Store Balances & Sales using the same active-store and EPlus-serial criteria as the report lines.
 - Place the branch filter on the left side of the Store Balances & Sales one2many control panel when the list pager renders.
+- Display Sales, Purchase, and Transfer movement prices and quantities without unnecessary trailing zeros while keeping raw float fields unchanged.
 
 Files changed:
 

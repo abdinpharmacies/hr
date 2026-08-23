@@ -162,8 +162,8 @@
                                                decoration-warning="movement_type == 'sale_return'"
                                                decoration-success="movement_type == 'purchase'"
                                                decoration-muted="movement_type in ('transfer_in', 'transfer_out')"/>
-                                        <field name="sale_price" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
-                                        <field name="qty_large" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="sale_price_display" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="qty_large_display" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
                                         <field name="store_name" class="o_ab_stock_report_text"/>
                                         <field name="supplier_name" class="o_ab_stock_report_text" optional="hide"/>
                                         <field name="customer_name" class="o_ab_stock_report_text"/>
@@ -178,8 +178,8 @@
                                                decoration-warning="movement_type == 'purchase_return'"
                                                decoration-success="movement_type == 'purchase'"
                                                decoration-muted="movement_type in ('transfer_in', 'transfer_out')"/>
-                                        <field name="sale_price" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
-                                        <field name="qty_large" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="sale_price_display" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="qty_large_display" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
                                         <field name="store_name" class="o_ab_stock_report_text"/>
                                         <field name="supplier_name" class="o_ab_stock_report_text"/>
                                         <field name="customer_name" class="o_ab_stock_report_text" optional="hide"/>
@@ -194,8 +194,8 @@
                                                decoration-warning="movement_type == 'sale_return'"
                                                decoration-success="movement_type == 'purchase'"
                                                decoration-muted="movement_type in ('transfer_in', 'transfer_out')"/>
-                                        <field name="sale_price" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
-                                        <field name="qty_large" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="sale_price_display" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
+                                        <field name="qty_large_display" class="text-end text-nowrap o_ab_stock_report_number" width="125px"/>
                                         <field name="store_name" class="o_ab_stock_report_text"/>
                                         <field name="supplier_name" class="o_ab_stock_report_text" optional="hide"/>
                                         <field name="customer_name" class="o_ab_stock_report_text" optional="hide"/>

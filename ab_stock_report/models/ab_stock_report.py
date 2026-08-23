@@ -34,6 +34,18 @@ FETCH_MODE_LIMITED = "limited"
 FETCH_MODE_DATE_RANGE = "date-range"
 
 
+def _format_number_without_trailing_zeros(value):
+    if value in (False, None, ""):
+        return "0"
+    try:
+        number = float(value)
+    except Exception:
+        return "0"
+    if abs(number) < 0.00005:
+        return "0"
+    return f"{number:.4f}".rstrip("0").rstrip(".")
+
+
 class AbStockReportProduct(models.Model):
     _inherit = "ab_product"
 
@@ -699,10 +711,18 @@ class AbStockReportWizardLine(models.TransientModel):
         readonly=True,
         digits=(16, 4),
     )
+    sale_price_display = fields.Char(
+        string="Sale Price",
+        compute="_compute_number_display",
+    )
     qty_large = fields.Float(
         string="Quantity in Large Unit",
         readonly=True,
         digits=(16, 4),
+    )
+    qty_large_display = fields.Char(
+        string="Quantity in Large Unit",
+        compute="_compute_number_display",
     )
     store_name = fields.Char(
         string="Store",
@@ -720,6 +740,12 @@ class AbStockReportWizardLine(models.TransientModel):
         string="Employee",
         readonly=True,
     )
+
+    @api.depends("sale_price", "qty_large")
+    def _compute_number_display(self):
+        for line in self:
+            line.sale_price_display = _format_number_without_trailing_zeros(line.sale_price)
+            line.qty_large_display = _format_number_without_trailing_zeros(line.qty_large)
 
 
 class AbStockReportStoreBalanceWizardLine(models.TransientModel):
@@ -808,15 +834,7 @@ class AbStockReportStoreBalanceWizardLine(models.TransientModel):
 
     @staticmethod
     def _format_balance_number(value):
-        if value in (False, None, ""):
-            return "0"
-        try:
-            number = float(value)
-        except Exception:
-            return "0"
-        if abs(number) < 0.00005:
-            return "0"
-        return f"{number:.4f}".rstrip("0").rstrip(".")
+        return _format_number_without_trailing_zeros(value)
 
     def action_refresh_direct_balance(self):
         self.ensure_one()
