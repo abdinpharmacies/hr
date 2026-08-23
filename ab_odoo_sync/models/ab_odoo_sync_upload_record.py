@@ -3,7 +3,7 @@ import re
 import uuid
 
 from odoo import api, fields, models
-from odoo.addons.integration_queue_job.exception import RetryableJobError
+from odoo.addons.queue_job.exception import RetryableJobError
 from odoo.exceptions import UserError
 from odoo.tools.translate import _
 

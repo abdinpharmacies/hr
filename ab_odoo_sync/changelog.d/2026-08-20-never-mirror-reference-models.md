@@ -19,27 +19,19 @@ Files changed:
 
 User-facing changes:
 
-- Rename `never-mirror.md` to `sync-rules.md` and document the branch upload boundary as enforceable sync rules.
-- Add Rule 2 for `res.users` dependent mirrored models, requiring corresponding `__sync` relations to target `ab_users`.
-- Add central Odoo Sync rule checks so protected master models and `res.users` cannot be branch upload sources or branch mirrored source models.
-- Enforce Rule 2 at field-mapping level so any mapped source `res.users` field must use `sync_many2one` into an `ab_users` target field, including renamed mappings.
-- Restrict branch snapshots to enabled apply-profile fields and serialize protected master/user relations as source IDs only.
-- Ignore protected relation details during MAIN placeholder creation, even if an older queued payload still contains display names or stable-key values.
-- Resolve user force-ID references through the standalone MAIN-side `ab_users` module instead of defining user placeholders inside `ab_odoo_sync`.
-- Preserve upload source write dates from the source record metadata instead of relying on payload fields.
-- Add Arabic translations for the new validation messages.
+- Use the already installed OCA `queue_job` provider for Odoo Sync background jobs.
+- Stop forcing installation of `integration_queue_job`, which collides with `queue_job` on the unique root queue channel.
+- Queue branch Upload Outbox sending through `queue_job` from both the Send Now action and the Branch Upload cron.
+- Automatically enqueue the branch upload sender when a new upload outbox event is captured.
+- Keep the existing branch-to-MAIN HTTP batch sender as the queued worker body so failed outbox rows still record their error details.
 
 Files changed:
 
-- `ab_odoo_sync/sync-rules.md`
+- `ab_odoo_sync/__manifest__.py`
 - `ab_odoo_sync/changelog.d/2026-08-20-never-mirror-reference-models.md`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
 - `ab_odoo_sync/i18n/ar.po`
 - `ab_odoo_sync/i18n/ar_001.po`
-- `ab_odoo_sync/models/__init__.py`
-- `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
 - `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
-- `ab_odoo_sync/models/ab_odoo_sync_rules.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
-- `ab_odoo_sync/models/ab_odoo_sync_identity.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
-- `ab_odoo_sync/models/ab_odoo_sync_upload_source.py`

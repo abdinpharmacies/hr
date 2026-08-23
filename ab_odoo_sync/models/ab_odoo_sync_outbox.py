@@ -77,6 +77,7 @@ class AbOdooSyncOutbox(models.Model):
         outbox.with_context(skip_ab_odoo_sync_upload=True).sudo().write(
             {"source_revision": outbox.id}
         )
+        self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch()
         return outbox
 
     @api.model
@@ -85,15 +86,14 @@ class AbOdooSyncOutbox(models.Model):
         return self.capture_prepared_snapshot(snapshot, operation=operation)
 
     def action_send_now(self):
-        result = self.env["ab_odoo_sync_service"].sudo().send_branch_upload_batch(self)
+        result = self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch(self)
         return self._notification(
             _("Odoo Sync Upload"),
-            _("Sent %(sent)s outbox event(s); %(failed)s failed.")
+            _("Queued %(count)s outbox event(s) for sending.")
             % {
-                "sent": result.get("sent", 0),
-                "failed": result.get("failed", 0),
+                "count": result.get("queued", 0),
             },
-            "success" if not result.get("failed") else "warning",
+            "success" if result.get("queued") else "warning",
         )
 
     def action_retry(self):

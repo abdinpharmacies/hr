@@ -1557,3 +1557,15 @@ msgstr "يجب ربط حقل مستخدم المصدر %(source)s باستخدا
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_apply_profile.py:0
 msgid "Relations to %(model)s must use source-ID sync mapping according to sync-rules.md."
 msgstr "يجب أن تستخدم العلاقات إلى %(model)s ربط مزامنة معرف المصدر وفقًا لملف sync-rules.md."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_outbox.py:0
+msgid "Queued %(count)s outbox event(s) for sending."
+msgstr "تمت إضافة %(count)s من أحداث صندوق الرفع إلى قائمة انتظار الإرسال."
+
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Send branch upload outbox events to MAIN"
+msgstr "إرسال أحداث صندوق رفع الفرع إلى MAIN"

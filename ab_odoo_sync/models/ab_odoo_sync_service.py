@@ -1,5 +1,6 @@
 import base64
 import datetime
+import hashlib
 import json
 import logging
 import urllib.error
@@ -489,9 +490,68 @@ class AbOdooSyncService(models.Model):
         return {"status": "ok" if not failed else "partial", "sent": sent, "failed": failed}
 
     @api.model
+    def _branch_upload_sender_identity_key(self, outbox_records=None):
+        if not outbox_records:
+            return "ab_odoo_sync_branch_upload_sender"
+        raw_ids = ",".join(str(record_id) for record_id in sorted(outbox_records.ids))
+        digest = hashlib.sha1(raw_ids.encode("ascii")).hexdigest()
+        return f"ab_odoo_sync_branch_upload_sender:{digest}"
+
+    @api.model
+    def queue_branch_upload_batch(self, outbox_records=None):
+        if self.get_server_role() != "branch":
+            return {"status": "skipped", "queued": 0, "reason": _("server_role is not branch")}
+
+        configuration_error = self._get_branch_sync_configuration_error()
+        if configuration_error:
+            return {"status": "skipped", "queued": 0, "reason": configuration_error}
+
+        Outbox = self.env["ab_odoo_sync_outbox"].sudo()
+        if outbox_records is None:
+            outbox_records = Outbox.search(
+                [
+                    ("status", "in", ["pending", "failed"]),
+                    ("active", "=", True),
+                ],
+                order="id",
+                limit=self.get_batch_size(),
+            )
+            if not outbox_records:
+                return {"status": "ok", "queued": 0}
+            self.sudo().with_delay(
+                identity_key=self._branch_upload_sender_identity_key(),
+                description=_("Send branch upload outbox events to MAIN"),
+                max_retries=0,
+            ).job_send_branch_upload_batch()
+            return {"status": "queued", "queued": len(outbox_records)}
+        else:
+            outbox_records = outbox_records.sudo().filtered(
+                lambda record: record.status in {"pending", "failed"} and record.active
+            ).sorted("id")
+
+        if not outbox_records:
+            return {"status": "ok", "queued": 0}
+
+        self.sudo().with_delay(
+            identity_key=self._branch_upload_sender_identity_key(outbox_records),
+            description=_("Send branch upload outbox events to MAIN"),
+            max_retries=0,
+        ).job_send_branch_upload_batch(outbox_records.ids)
+        return {"status": "queued", "queued": len(outbox_records)}
+
+    @api.model
+    def job_send_branch_upload_batch(self, outbox_ids=None):
+        outbox_records = None
+        if outbox_ids:
+            outbox_records = self.env["ab_odoo_sync_outbox"].sudo().browse(outbox_ids)
+        result = self.send_branch_upload_batch(outbox_records)
+        _logger.info("ab_odoo_sync branch upload sender result: %s", result)
+        return result
+
+    @api.model
     def cron_send_branch_uploads(self):
-        result = self.send_branch_upload_batch()
-        _logger.info("ab_odoo_sync branch upload result: %s", result)
+        result = self.queue_branch_upload_batch()
+        _logger.info("ab_odoo_sync branch upload queue result: %s", result)
         return result
 
     @api.model
