@@ -8,10 +8,9 @@ class AbUsers(models.Model):
     _description = "Odoo User Sync Placeholder"
     _order = "id"
 
-    name = fields.Char(default=lambda self: _("Sync User Placeholder"))
+    name = fields.Char()
     login = fields.Char(index=True)
     active = fields.Boolean(default=True, index=True)
 
     def unlink(self):
         raise UserError(_("Synchronized user placeholders cannot be deleted."))
-

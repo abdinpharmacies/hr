@@ -4,6 +4,7 @@ User-facing changes:
 
 - Add a standalone MAIN-owned `ab_users` module for branch user identity placeholders.
 - Provide the `ab_users` model used by branch upload apply flows to resolve source `res.users` IDs without mirroring real Odoo users.
+- Leave placeholder user fields empty on force-ID creation so branch uploads reserve only the source ID.
 - Add manager/system ACL coverage and Arabic translations for the placeholder messages.
 
 Files changed:
@@ -16,4 +17,3 @@ Files changed:
 - `ab_users/models/__init__.py`
 - `ab_users/models/ab_users.py`
 - `ab_users/security/ir.model.access.csv`
-

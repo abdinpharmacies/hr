@@ -19,12 +19,5 @@ msgstr ""
 #. module: ab_users
 #. odoo-python
 #: code:addons/ab_users/models/ab_users.py:0
-msgid "Sync User Placeholder"
-msgstr "عنصر نائب لمستخدم المزامنة"
-
-#. module: ab_users
-#. odoo-python
-#: code:addons/ab_users/models/ab_users.py:0
 msgid "Synchronized user placeholders cannot be deleted."
 msgstr "لا يمكن حذف العناصر النائبة لمستخدمي المزامنة."
-
