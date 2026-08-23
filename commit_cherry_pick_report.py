@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 import tomllib
+from contextlib import redirect_stdout
 from dataclasses import dataclass
 from pathlib import Path
 from typing import NoReturn, Sequence
@@ -15,6 +16,7 @@ from typing import NoReturn, Sequence
 
 SCRIPT_DIR = Path(__file__).resolve().parent
 DEFAULT_CONFIG = SCRIPT_DIR / "commit_cherry_pick_report.toml"
+DEFAULT_OUTPUT = SCRIPT_DIR / "commit_cherry_pick_report.txt"
 FIELD_SEPARATOR = "\x1f"
 RECORD_SEPARATOR = "\x1e"
 CHERRY_PICK_TRAILER = re.compile(
@@ -59,6 +61,12 @@ def parse_arguments() -> argparse.Namespace:
         type=Path,
         default=DEFAULT_CONFIG,
         help=f"TOML configuration file (default: {DEFAULT_CONFIG.name})",
+    )
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT,
+        help=f"Report output file (default: {DEFAULT_OUTPUT.name})",
     )
     return parser.parse_args()
 
@@ -304,8 +312,7 @@ def print_missing_summary(repository: Path, commits: Sequence[Commit]) -> None:
         )
 
 
-def main() -> int:
-    arguments = parse_arguments()
+def write_report(arguments: argparse.Namespace) -> None:
     config = load_config(arguments.config)
     repository = find_repository()
 
@@ -338,6 +345,17 @@ def main() -> int:
     show_missing_commits(repository, missing_commits)
     print(f"\nMissing cherry-pick count: {len(missing_commits)}")
     print_missing_summary(repository, missing_commits)
+
+
+def main() -> int:
+    arguments = parse_arguments()
+    output_path = arguments.output.expanduser()
+    try:
+        with output_path.open("w", encoding="utf-8") as output_file:
+            with redirect_stdout(output_file):
+                write_report(arguments)
+    except OSError as error:
+        fail(f"Cannot write report file {output_path}: {error}")
     return 0
 
 
