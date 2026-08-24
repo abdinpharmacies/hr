@@ -170,6 +170,7 @@
                                     <field name="store_balance_filter_store_id"
                                            nolabel="1"
                                            placeholder="All Branches"
+                                           domain="[('active', '=', True), ('eplus_serial', '!=', False), ('has_working_balance', '=', True)]"
                                            options="{'no_create': True, 'no_open': True}"
                                            class="o_ab_store_balance_filter_field"/>
                                     <button name="action_clear_store_balance_filter"
@@ -179,7 +180,8 @@
                                             class="btn o_ab_store_balance_filter_clear"
                                             invisible="not store_balance_filter_store_id"/>
                                 </div>
-                                <field name="store_balance_line_ids" nolabel="1" readonly="1">
+                                <field name="store_balance_line_ids" nolabel="1" readonly="1"
+                                       domain="store_balance_filter_store_id and [('store_id', '=', store_balance_filter_store_id)] or []">
                                     <list string="Store Balances &amp; Sales" create="0" edit="0" delete="0"
                                           decoration-danger="direct_status in ('failed', 'missing_ip')"
                                           decoration-warning="direct_status in ('pending', 'running')"

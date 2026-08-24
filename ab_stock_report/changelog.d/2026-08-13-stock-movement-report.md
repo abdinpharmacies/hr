@@ -1,59 +1,72 @@
-commit 82e1d02727dbe1146527afbede2b08695ca2cc36
-Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
-Date:   Tue Aug 18 15:32:38 2026 +0300
+commit ffce00968ebe5faad6741abf8b73c5413784989c
+Author: emadco88 <emadco88@gmail.com>
+Date:   Mon Aug 24 16:59:44 2026 +0300
 
-    ab_stock_report(#2019)/feat: add local storage to wizard and load more for more than 100+
+    ab_stock_report/ UPD simplify view
 
 User-facing changes:
 
-- Keep each Stock Movements wizard on its own private JSON cache for loaded movement rows.
-- Add date-range loading for more than 100 movements while preserving lazy Sales, Purchase, and Transfer fetches.
-- Keep Load More available only when the current cached date-range result has more rows.
-- Preserve `sec_update_date` as the displayed and sorted movement date.
+- Simplified the Stock Movements wizard layout while preserving the tabbed report workflow.
 
 Files changed:
 
-- `ab_stock_report/changelog.d/2026-08-13-stock-movement-report.md`
-- `ab_stock_report/i18n/ar.po`
-- `ab_stock_report/i18n/ar_001.po`
-- `ab_stock_report/models/ab_stock_report.py`
-- `ab_stock_report/models/ab_stock_report_cache.py`
 - `ab_stock_report/views/ab_stock_report_views.xml`
 
-commit cd9a5a1b7eda2039ce3bf22f5c09f076f6358440
+commit 4f20b3c1924d39ba5d45f78e1e14ac12680515e8
 Author: emadco88 <emadco88@gmail.com>
-Date:   Wed Aug 19 16:19:20 2026 +0300
+Date:   Mon Aug 24 16:50:35 2026 +0300
 
-    ab_stock_report/ FIX slow Sales report by adding indexes
-
-User-facing changes:
-
-- Keep the Sales movement report responsive by narrowing the BConnect sales query path.
-- Add focused test coverage for the sales query join and filters.
-
-Files changed:
-
-- `ab_stock_report/models/ab_stock_report_cache.py`
-- `ab_stock_report/tests/__init__.py`
-- `ab_stock_report/tests/test_stock_report_sales_query.py`
-
-commit f53c4681caefdafb22c4251bcd7166817ee521fb
-Author: Mohamed Fawzy <mohamed.fawzy.dev87@gmail.com>
-Date:   Wed Aug 19 15:33:22 2026 +0300
-
-    ab_stock_report(#2019)/fix: translate the task words
+    ab_stock_report/ FIX conversion factor
 
 User-facing changes:
 
-- Improve Arabic translations and display wording for the Stock Movements wizard.
-- Preserve translated task/status labels in the refreshed wizard UI.
+- Calculate transfer quantities with the authoritative Item Catalog conversion factors.
+- Avoid incorrect zero quantities when transfer-side unit conversion fields are empty.
 
 Files changed:
 
 - `ab_stock_report/changelog.d/2026-08-13-stock-movement-report.md`
+- `ab_stock_report/models/ab_stock_report_cache.py`
+
+commit d8706f167625921044d592f5f3c5c6bb748a04a4
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Sun Aug 23 13:48:06 2026 +0300
+
+    ab_stock_report/FIX(#2184): Remove Trailing Zeros from Movement Numbers
+
+User-facing changes:
+
+- Display movement, balance, and sales quantities without unnecessary trailing zeros.
+
+Files changed:
+
+- `ab_stock_report/changelog.d/2026-08-13-stock-movement-report.md`
+- `ab_stock_report/models/ab_stock_report.py`
+- `ab_stock_report/views/ab_stock_report_views.xml`
+
+commit cd21a5797610860bfc34da2eae4e15aa95293990
+Author: hager yasser <hageryasser2002@gmail.com>
+Date:   Thu Aug 20 15:42:35 2026 +0300
+
+    ab_stock_report/FEAT(#2108):Add a fourth Store Balances & Sales tab to the product-specific ab_stock_report wizard
+
+User-facing changes:
+
+- Added the Store Balances & Sales tab to the product stock report wizard.
+- Added main-server balance/sales cache rows and direct branch balance refresh tracking.
+
+Files changed:
+
+- `ab_stock_report/__manifest__.py`
+- `ab_stock_report/changelog.d/2026-08-13-stock-movement-report.md`
 - `ab_stock_report/i18n/ar.po`
 - `ab_stock_report/i18n/ar_001.po`
+- `ab_stock_report/models/__init__.py`
 - `ab_stock_report/models/ab_stock_report.py`
+- `ab_stock_report/models/ab_stock_report_cache.py`
+- `ab_stock_report/models/ab_stock_report_store_balance.py`
+- `ab_stock_report/security/ir.model.access.csv`
+- `ab_stock_report/static/src/js/ab_stock_report_dialog.js`
 - `ab_stock_report/static/src/scss/ab_stock_report.scss`
 - `ab_stock_report/views/ab_stock_report_views.xml`
 
@@ -61,10 +74,13 @@ Files changed:
 
 User-facing changes:
 
-- Calculate transfer-in and transfer-out quantities with the authoritative Item Catalog unit conversion factors.
-- Avoid incorrect zero quantities when transfer-side unit conversion fields are empty.
+- Filter Store Balances & Sales immediately when a branch is selected in the tab.
+- Limit Store Balances & Sales branch choices and rows to stores with working balance enabled.
 
 Files changed:
 
 - `ab_stock_report/changelog.d/2026-08-13-stock-movement-report.md`
-- `ab_stock_report/models/ab_stock_report_cache.py`
+- `ab_stock_report/models/ab_stock_report.py`
+- `ab_stock_report/models/ab_stock_report_store_balance.py`
+- `ab_stock_report/tests/test_stock_report_sales_query.py`
+- `ab_stock_report/views/ab_stock_report_views.xml`

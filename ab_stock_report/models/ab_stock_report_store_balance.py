@@ -7,6 +7,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 
 from .ab_stock_report_cache import AbStockReportRefreshJob
+from .ab_stock_report import STORE_BALANCE_STORE_DOMAIN
 
 _logger = logging.getLogger(__name__)
 
@@ -89,7 +90,7 @@ class AbStockReportStoreBalanceCache(models.Model):
     @api.model
     def _active_configured_stores(self):
         return self.env["ab_store"].sudo().search(
-            [("active", "=", True), ("eplus_serial", "!=", False)],
+            STORE_BALANCE_STORE_DOMAIN,
             order="eplus_serial, name, id",
         )
 
@@ -116,8 +117,12 @@ class AbStockReportStoreBalanceCache(models.Model):
     @api.model
     def has_main_cache_for_product(self, product):
         product_rec = self.env["ab_stock_report_cache_line"]._resolve_product(product)
+        stores = self._active_configured_stores()
+        if not stores:
+            return False
         return bool(self.sudo().search_count([
             ("product_id", "=", product_rec.id),
+            ("store_id", "in", stores.ids),
             ("main_updated_at", "!=", False),
         ]))
 

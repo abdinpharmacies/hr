@@ -32,6 +32,11 @@ MOVEMENT_SELECTION = [
 DATE_RANGE_BATCH_SIZE = 100
 FETCH_MODE_LIMITED = "limited"
 FETCH_MODE_DATE_RANGE = "date-range"
+STORE_BALANCE_STORE_DOMAIN = [
+    ("active", "=", True),
+    ("eplus_serial", "!=", False),
+    ("has_working_balance", "=", True),
+]
 
 
 def _format_number_without_trailing_zeros(value):
@@ -130,7 +135,7 @@ class AbStockReportWizard(models.TransientModel):
     store_balance_filter_store_id = fields.Many2one(
         "ab_store",
         string="Branch",
-        domain=[("active", "=", True), ("eplus_serial", "!=", False)],
+        domain=STORE_BALANCE_STORE_DOMAIN,
     )
     line_count = fields.Integer(
         string="Movement Count",
@@ -556,10 +561,8 @@ class AbStockReportWizard(models.TransientModel):
     def _load_store_balance_lines(self):
         self.ensure_one()
         cache_rows = self.env["ab_stock_report_store_balance_cache"].sudo()._get_or_create_rows(self.product_id)
-        if self.store_balance_filter_store_id:
-            cache_rows = cache_rows.filtered(lambda cache: cache.store_id == self.store_balance_filter_store_id)
         self.store_balance_line_ids.unlink()
-        self.env["ab_stock_report_store_balance_wizard_line"].create([
+        lines = self.env["ab_stock_report_store_balance_wizard_line"].create([
             {
                 "wizard_id": self.id,
                 "cache_id": cache.id,
@@ -577,6 +580,7 @@ class AbStockReportWizard(models.TransientModel):
             }
             for cache in cache_rows
         ])
+        self.store_balance_line_ids = [(6, 0, lines.ids)]
         last_main = max((dt for dt in cache_rows.mapped("main_updated_at") if dt), default=False)
         self.write({
             "last_refresh": last_main,
