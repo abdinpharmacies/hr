@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <delete model="ir.ui.view" search="[('model', '=', 'ab_supplier_mapping')]"/>
+        <delete model="ir.actions.act_window" search="[('res_model', '=', 'ab_supplier_mapping')]"/>
+        <delete model="ir.model.access" search="[('model_id.model', '=', 'ab_supplier_mapping')]"/>
+    </data>
+</odoo>

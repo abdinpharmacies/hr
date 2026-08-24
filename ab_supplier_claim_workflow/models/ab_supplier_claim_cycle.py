@@ -123,11 +123,6 @@ class SupplierClaimCycle(models.Model):
     _uniq_tracking_token = models.Constraint('UNIQUE(tracking_token)', 'Tracking token must be unique.')
     stage_history_ids = fields.One2many('ab_supplier_claim_stage_history', 'claim_id', string='Stage History', copy=False)
 
-    supplier_section = fields.Selection(
-        related='supplier_id.section',
-        string='Supplier Section',
-        readonly=True,
-    )
     supplier_type = fields.Selection(
         string='Supplier Type',
         selection=[
@@ -136,6 +131,39 @@ class SupplierClaimCycle(models.Model):
             ('non_taxable', 'Non-Taxable'),
         ],
         copy=False,
+    )
+    supplier_section = fields.Selection(
+        selection=[
+            ('medicine', 'Medicine'),
+            ('cosmetics', 'Cosmetics'),
+            ('medical_preparations', 'Medical Preparations'),
+            ('supplies', 'Supplies'),
+            ('imported_medicine', 'Imported Medicine'),
+            ('imported_cosmetics', 'Imported Cosmetics'),
+        ],
+        string='Section',
+        copy=False,
+    )
+    amount_of_check = fields.Monetary(string='Check Amount', currency_field='currency_id', required=False)
+    supplier_type_header_label = fields.Char(
+        compute='_compute_supplier_header_labels',
+        string='Supplier Type Header Label',
+    )
+    supplier_section_header_label = fields.Char(
+        compute='_compute_supplier_header_labels',
+        string='Section Header Label',
+    )
+    supplier_type_badge_label = fields.Char(
+        compute='_compute_supplier_header_labels',
+        string='Supplier Type Badge Label',
+    )
+    supplier_section_badge_label = fields.Char(
+        compute='_compute_supplier_header_labels',
+        string='Section Badge Label',
+    )
+    claim_header_name_label = fields.Char(
+        compute='_compute_supplier_header_labels',
+        string='Claim Header Name Label',
     )
     supplier_email = fields.Char(string='Supplier Email', copy=False)
     representative_phone = fields.Char(string='Representative Phone', copy=False)
@@ -322,6 +350,47 @@ class SupplierClaimCycle(models.Model):
     def _compute_has_tax_accounts(self):
         for rec in self:
             rec.has_tax_accounts = rec.supplier_type == WITHHOLDING_TAX_SUPPLIER_TYPE
+
+    @api.depends_context('lang')
+    @api.depends('name', 'supplier_type', 'supplier_section')
+    def _compute_supplier_header_labels(self):
+        for rec in self:
+            is_arabic = (rec.env.context.get('lang') or rec.env.user.lang or '').startswith('ar')
+            rec.supplier_type_header_label = 'نوع المورد' if is_arabic else _('Supplier Type')
+            rec.supplier_section_header_label = 'القسم' if is_arabic else _('Section')
+            rec.claim_header_name_label = 'جديد' if is_arabic and (not rec.name or rec.name == 'New') else (
+                _('New') if not rec.name or rec.name == 'New' else rec.name
+            )
+            if is_arabic:
+                supplier_type_labels = {
+                    'advance_payment': 'دفعات مقدمة',
+                    'withholding_tax': 'خصم من المنبع',
+                    'non_taxable': 'غير ضريبي',
+                }
+                supplier_section_labels = {
+                    'medicine': 'ادوية',
+                    'cosmetics': 'تجميل',
+                    'medical_preparations': 'مستحضرات طبية',
+                    'supplies': 'مستلزمات',
+                    'imported_medicine': 'مستورد ادوية',
+                    'imported_cosmetics': 'مستورد تجميل',
+                }
+            else:
+                supplier_type_labels = {
+                    'advance_payment': _('Advance Payment'),
+                    'withholding_tax': _('Withholding Tax'),
+                    'non_taxable': _('Non-Taxable'),
+                }
+                supplier_section_labels = {
+                    'medicine': _('Medicine'),
+                    'cosmetics': _('Cosmetics'),
+                    'medical_preparations': _('Medical Preparations'),
+                    'supplies': _('Supplies'),
+                    'imported_medicine': _('Imported Medicine'),
+                    'imported_cosmetics': _('Imported Cosmetics'),
+                }
+            rec.supplier_type_badge_label = supplier_type_labels.get(rec.supplier_type, '')
+            rec.supplier_section_badge_label = supplier_section_labels.get(rec.supplier_section, '')
 
     @api.depends(
         'inv_decision', 'pur_decision', 'sup_decision', 'tax_decision', 'bank_decision',
@@ -698,15 +767,71 @@ class SupplierClaimCycle(models.Model):
     @api.onchange('supplier_id')
     def _onchange_supplier_id(self):
         if self.supplier_id:
-            self.supplier_email = self.supplier_id.work_email or ''
-            self.contact_phone = self._get_valid_supplier_master_contact_phone(self.supplier_id) or ''
-            delegate_phones = self._get_supplier_delegate_phone_candidates(create_missing=False)
-            if delegate_phones:
-                self.delegate_phone_ids = [(6, 0, delegate_phones.ids)]
-            if self.supplier_id.supplier_type:
-                self.supplier_type = self.supplier_id.supplier_type
-            if self.supplier_id.region:
-                self.area = self.supplier_id.region
+            self._apply_supplier_previous_claim_defaults()
+            if not self.supplier_email:
+                self.supplier_email = self.supplier_id.work_email or ''
+            if not self.contact_phone:
+                self.contact_phone = self._get_valid_supplier_master_contact_phone(self.supplier_id) or ''
+            if not self.delegate_phone_ids:
+                delegate_phones = self._get_supplier_delegate_phone_candidates(create_missing=False)
+                if delegate_phones:
+                    self.delegate_phone_ids = [(6, 0, delegate_phones.ids)]
+
+    @api.model
+    def _get_supplier_previous_claim(self, supplier_id, excluded_claim_ids=None):
+        if not supplier_id:
+            return self.env['ab_supplier_claim_cycle']
+        domain = [('supplier_id', '=', supplier_id)]
+        excluded_ids = [claim_id for claim_id in (excluded_claim_ids or []) if claim_id]
+        if excluded_ids:
+            domain.append(('id', 'not in', excluded_ids))
+        return self.sudo().search(domain, order='create_date desc, id desc', limit=1)
+
+    @api.model
+    def _get_supplier_previous_claim_defaults(self, supplier_id, excluded_claim_ids=None):
+        previous_claim = self._get_supplier_previous_claim(supplier_id, excluded_claim_ids=excluded_claim_ids)
+        if not previous_claim:
+            return {}
+        defaults = {
+            'supplier_type': previous_claim.supplier_type,
+            'supplier_section': previous_claim.supplier_section,
+            'area': previous_claim.area,
+            'supplier_email': previous_claim.supplier_email,
+            'contact_phone': previous_claim.contact_phone,
+            'representative_phone': previous_claim.representative_phone,
+        }
+        if previous_claim.delegate_phone_ids:
+            defaults['delegate_phone_ids'] = previous_claim.delegate_phone_ids.ids
+        return {field_name: value for field_name, value in defaults.items() if value}
+
+    def _apply_supplier_previous_claim_defaults(self):
+        for rec in self:
+            excluded_ids = rec._origin.ids if rec._origin else []
+            defaults = rec._get_supplier_previous_claim_defaults(
+                rec.supplier_id.id,
+                excluded_claim_ids=excluded_ids,
+            )
+            for field_name in ('supplier_type', 'supplier_section', 'area', 'supplier_email', 'contact_phone', 'representative_phone'):
+                if defaults.get(field_name) and not rec[field_name]:
+                    rec[field_name] = defaults[field_name]
+            if defaults.get('delegate_phone_ids') and not rec.delegate_phone_ids:
+                rec.delegate_phone_ids = [(6, 0, defaults['delegate_phone_ids'])]
+
+    @api.model
+    def _apply_supplier_previous_claim_defaults_to_vals(self, vals, excluded_claim_ids=None):
+        supplier_id = vals.get('supplier_id')
+        if not supplier_id:
+            return vals
+        defaults = self._get_supplier_previous_claim_defaults(
+            supplier_id,
+            excluded_claim_ids=excluded_claim_ids,
+        )
+        for field_name in ('supplier_type', 'supplier_section', 'area', 'supplier_email', 'contact_phone', 'representative_phone'):
+            if field_name not in vals and defaults.get(field_name):
+                vals[field_name] = defaults[field_name]
+        if 'delegate_phone_ids' not in vals and defaults.get('delegate_phone_ids'):
+            vals['delegate_phone_ids'] = [(6, 0, defaults['delegate_phone_ids'])]
+        return vals
 
     def _split_delegate_phone_values(self, value):
         phones = []
@@ -757,17 +882,6 @@ class SupplierClaimCycle(models.Model):
         if self.delegate_phone_ids:
             return ', '.join(self.delegate_phone_ids.mapped('name'))
         return self.contact_phone or self.supplier_id.mobile_phone or ''
-
-    def _get_supplier_mapping_phone_text(self):
-        self.ensure_one()
-        return self._normalize_contact_phone(self.contact_phone) or self._get_delegate_phone_text()
-
-    def _sync_supplier_mapping_contact_phone(self):
-        for rec in self:
-            phone = rec._normalize_contact_phone(rec.contact_phone)
-            if rec.supplier_id and phone:
-                rec.supplier_id.sudo().write({'mobile_phone': phone})
-        return True
 
     @api.model
     def _normalize_contact_phone(self, phone):
@@ -1110,9 +1224,7 @@ class SupplierClaimCycle(models.Model):
             raise AccessError(_("Only Secretarial or Admin users can create supplier claims."))
         for vals in vals_list:
             self._normalize_check_delivery_status_vals(vals)
-            amount = vals.get('amount_of_check')
-            if not amount or float(amount) <= 0:
-                raise ValidationError(_("Please enter the cheque amount."))
+            self._apply_supplier_previous_claim_defaults_to_vals(vals)
             if vals.get('supplier_id') and not vals.get('contact_phone'):
                 supplier = self.env['ab_costcenter'].browse(vals['supplier_id'])
                 vals['contact_phone'] = self._get_valid_supplier_master_contact_phone(supplier)
@@ -1127,7 +1239,6 @@ class SupplierClaimCycle(models.Model):
         for rec in records:
             rec._create_stage_history('secretarial', 'accepted', _('Created Request'))
             rec._notify_claim_created_to_module_users()
-        records._sync_supplier_mapping_contact_phone()
         return records
 
     def _notify_claim_created_to_module_users(self):
@@ -1185,14 +1296,24 @@ class SupplierClaimCycle(models.Model):
     def write(self, vals):
         vals = dict(vals)
         self._normalize_check_delivery_status_vals(vals)
-        if 'supplier_id' in vals and 'contact_phone' not in vals:
+        if 'supplier_id' in vals and len(self) == 1:
+            current_values = {
+                field_name: self[field_name]
+                for field_name in ('supplier_type', 'supplier_section', 'area', 'supplier_email', 'contact_phone', 'representative_phone')
+            }
+            self._apply_supplier_previous_claim_defaults_to_vals(vals, excluded_claim_ids=self.ids)
+            for field_name, current_value in current_values.items():
+                if current_value and field_name in vals:
+                    vals.pop(field_name)
+        if (
+            'supplier_id' in vals
+            and 'contact_phone' not in vals
+            and (len(self) != 1 or not self.contact_phone)
+        ):
             supplier = self.env['ab_costcenter'].browse(vals['supplier_id']) if vals['supplier_id'] else False
             vals['contact_phone'] = self._get_valid_supplier_master_contact_phone(supplier)
         if self.env.context.get('supplier_claim_internal_write'):
-            result = super().write(vals)
-            if 'contact_phone' in vals or 'supplier_id' in vals:
-                self._sync_supplier_mapping_contact_phone()
-            return result
+            return super().write(vals)
         if 'status' in vals:
             raise AccessError(_("Use workflow actions to move supplier claims between stages."))
         if not self._is_supplier_claim_admin() and not self._is_supplier_claim_secretarial():
@@ -1208,10 +1329,7 @@ class SupplierClaimCycle(models.Model):
                         raise AccessError(_("Only the current department can edit this supplier claim."))
                 elif not rec._user_can_handle_stage(rec.status):
                     raise AccessError(_("Only the current department can edit this supplier claim."))
-        result = super().write(vals)
-        if 'contact_phone' in vals or 'supplier_id' in vals:
-            self._sync_supplier_mapping_contact_phone()
-        return result
+        return super().write(vals)
 
     def action_accept(self):
         for rec in self:
@@ -1502,7 +1620,8 @@ class SupplierClaimCycle(models.Model):
                         'context': {
                             'default_supplier_id': rec.supplier_id.id,
                             'default_claim_id': rec.id,
-                            'default_supplier_type': False,
+                            'default_supplier_type': rec.supplier_type or False,
+                            'default_supplier_section': rec.supplier_section or False,
                         },
                     }
                 if not rec.num_of_invoice:
@@ -1728,10 +1847,6 @@ class SupplierClaimCycle(models.Model):
                 'supplier_notification_date': fields.Datetime.now(),
             })
             rec._ensure_delegate_phone_selection()
-            rec.supplier_id.sudo().write({
-                'work_email': rec.supplier_email or '',
-                'mobile_phone': rec._get_supplier_mapping_phone_text(),
-            })
             rec._create_stage_history('supplier_notification', 'accepted', rec.notification_notes or '')
             rec.message_post(
                 body=_("Supplier notified by %(name)s (%(phone)s). Result: %(result)s. Notes: %(notes)s") % {
@@ -1836,10 +1951,6 @@ class SupplierClaimCycle(models.Model):
                 return error
             rec._normalize_delivery_values_for_close()
             rec._ensure_delegate_phone_selection()
-            rec.supplier_id.sudo().write({
-                'work_email': rec.supplier_email or '',
-                'mobile_phone': rec._get_supplier_mapping_phone_text(),
-            })
             rec._move_to_next_stage()
 
     @api.model

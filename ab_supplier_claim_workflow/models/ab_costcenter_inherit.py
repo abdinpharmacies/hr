@@ -6,44 +6,6 @@ from odoo import _, models, fields, api
 class ClsCostCenters(models.Model):
     _inherit = 'ab_costcenter'
 
-    def name_search(self, name='', args=None, operator='ilike', limit=100):
-        if self.env.context.get('supplier_claim_filter'):
-            mapped = self.env['ab_supplier_mapping'].sudo().with_context(
-                skip_supplier_mapping_auto_create=True
-            ).search([]).mapped('supplier_id').ids
-            args = list(args or []) + [('id', 'in', mapped)]
-        return super(ClsCostCenters, self).name_search(name, args, operator, limit)
-
-    supplier_type = fields.Selection(
-        string='Supplier Type',
-        selection=[
-            ('advance_payment', 'Advance Payment'),
-            ('withholding_tax', 'Withholding Tax'),
-            ('non_taxable', 'Non-Taxable'),
-        ],
-        copy=False,
-    )
-    region = fields.Selection(
-        string='Region',
-        selection=[
-            ('north', 'North'),
-            ('south', 'South'),
-        ],
-        copy=False,
-    )
-    section = fields.Selection(
-        string='Section',
-        selection=[
-            ('medicine', 'Medicine'),
-            ('cosmetics', 'Cosmetics'),
-            ('medical_preps', 'Medical Preparations'),
-            ('supplies', 'Supplies'),
-            ('import_medicine', 'Imported Medicine'),
-            ('import_cosmetics', 'Imported Cosmetics'),
-        ],
-        copy=False,
-    )
-
     claim_ids = fields.One2many(
         'ab_supplier_claim_cycle', 'supplier_id', string='Supplier Claims',
     )

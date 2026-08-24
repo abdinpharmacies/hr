@@ -35,6 +35,7 @@
                     <field name="has_pending_escalation" invisible="1"/>
                     <field name="escalation_count" invisible="1"/>
                     <field name="supplier_type" optional="show"/>
+                    <field name="supplier_section" optional="show"/>
                     <field name="stage_escalated" widget="boolean_toggle" optional="hide"/>
                 </field>
                 <field name="amount_of_check" position="attributes">
@@ -128,11 +129,6 @@
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin">
                             💬
                         </button>
-                        <button name="%(action_ab_supplier_mapping)d" type="action"
-                                class="btn-secondary float-end"
-                                groups="ab_supplier_claim_cycle.supplier_claim_group_admin">
-                            ⚙️
-                        </button>
                         <button name="action_open_tracking_dialog" type="object"
                                 class="btn-secondary float-end"
                                 groups="ab_supplier_claim_cycle.supplier_claim_group_admin"
@@ -165,6 +161,12 @@
                         <field name="has_pending_escalation" invisible="1"/>
                         <field name="escalation_missing_manager" invisible="1"/>
                         <field name="supplier_type" invisible="1"/>
+                        <field name="supplier_section" invisible="1"/>
+                        <field name="supplier_type_header_label" invisible="1"/>
+                        <field name="supplier_section_header_label" invisible="1"/>
+                        <field name="supplier_type_badge_label" invisible="1"/>
+                        <field name="supplier_section_badge_label" invisible="1"/>
+                        <field name="claim_header_name_label" invisible="1"/>
                         <field name="has_tax_accounts" invisible="1"/>
                         <field name="tax_percentage" invisible="1"/>
                         <field name="tax_amount" invisible="1"/>
@@ -205,48 +207,51 @@
                                 <div style="flex:1;">
                                     <div style="display:flex;align-items:center;gap:12px;">
                                         <span class="scc-supplier-name">
-                                            <field name="supplier_id" readonly="not can_current_user_edit" options="{'open_form': True}" context="{'supplier_claim_filter': True}"/>
+                                            <field name="supplier_id" readonly="not can_current_user_edit" options="{'open_form': True}"/>
                                             <span class="scc-supplier-link-icon">↗</span>
                                         </span>
                                         <div class="scc-meta-badges">
                                             <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 12px;background:linear-gradient(135deg,#6366f1,#4f46e5);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;">
-                                                🏷 <field name="name" readonly="1" class="o_inline_modifier"/>
+                                                🏷 <field name="claim_header_name_label" readonly="1" class="o_inline_modifier"/>
                                             </span>
-                                            <span class="scc-section-badge scc-section-badge--medicine"
-                                                  invisible="supplier_section != 'medicine'">
-                                                💊 <span>Medicine</span>
+                                            <span class="scc-clickable-select-badge">
+                                                <field name="supplier_type" readonly="not can_current_user_edit" required="1" class="scc-badge-select-control"/>
+                                                <span class="scc-supplier-type-badge scc-supplier-type-badge--placeholder" invisible="supplier_type">
+                                                    <field name="supplier_type_header_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-supplier-type-badge scc-supplier-type-badge--withholding" invisible="supplier_type != 'withholding_tax'">
+                                                    🏛 <field name="supplier_type_badge_label" readonly="1" class="o_inline_modifier"/> • <field name="tax_percentage" class="o_inline_modifier"/>%
+                                                </span>
+                                                <span class="scc-supplier-type-badge scc-supplier-type-badge--standard" invisible="supplier_type != 'advance_payment'">
+                                                    <field name="supplier_type_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-supplier-type-badge scc-supplier-type-badge--standard" invisible="supplier_type != 'non_taxable'">
+                                                    <field name="supplier_type_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
                                             </span>
-                                            <span class="scc-section-badge scc-section-badge--cosmetics"
-                                                  invisible="supplier_section != 'cosmetics'">
-                                                💄 <span>Cosmetics</span>
-                                            </span>
-                                            <span class="scc-section-badge scc-section-badge--medical_preps"
-                                                  invisible="supplier_section != 'medical_preps'">
-                                                🩺 <span>Medical Preparations</span>
-                                            </span>
-                                            <span class="scc-section-badge scc-section-badge--supplies"
-                                                  invisible="supplier_section != 'supplies'">
-                                                📦 <span>Supplies</span>
-                                            </span>
-                                            <span class="scc-section-badge scc-section-badge--import_medicine"
-                                                  invisible="supplier_section != 'import_medicine'">
-                                                🌍 <span>Imported Medicine</span>
-                                            </span>
-                                            <span class="scc-section-badge scc-section-badge--import_cosmetics"
-                                                  invisible="supplier_section != 'import_cosmetics'">
-                                                🌐 <span>Imported Cosmetics</span>
-                                            </span>
-                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap;"
-                                                  invisible="supplier_type != 'withholding_tax'">
-                                                🏛 <span>Withholding Tax</span> • <field name="tax_percentage" class="o_inline_modifier"/>%
-                                            </span>
-                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
-                                                  invisible="supplier_type != 'advance_payment'">
-                                                <span>Advance Payment</span>
-                                            </span>
-                                            <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;"
-                                                  invisible="supplier_type != 'non_taxable'">
-                                                <span>Non-Taxable</span>
+                                            <span class="scc-clickable-select-badge">
+                                                <field name="supplier_section" readonly="not can_current_user_edit" class="scc-badge-select-control"/>
+                                                <span class="scc-section-badge scc-section-badge--placeholder" invisible="supplier_section">
+                                                    <field name="supplier_section_header_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-section-badge scc-section-badge--medicine" invisible="supplier_section != 'medicine'">
+                                                    💊 <field name="supplier_section_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-section-badge scc-section-badge--cosmetics" invisible="supplier_section != 'cosmetics'">
+                                                    💄 <field name="supplier_section_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-section-badge scc-section-badge--medical_preparations" invisible="supplier_section != 'medical_preparations'">
+                                                    🩺 <field name="supplier_section_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-section-badge scc-section-badge--supplies" invisible="supplier_section != 'supplies'">
+                                                    📦 <field name="supplier_section_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-section-badge scc-section-badge--imported_medicine" invisible="supplier_section != 'imported_medicine'">
+                                                    🌍 <field name="supplier_section_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
+                                                <span class="scc-section-badge scc-section-badge--imported_cosmetics" invisible="supplier_section != 'imported_cosmetics'">
+                                                    🌐 <field name="supplier_section_badge_label" readonly="1" class="o_inline_modifier"/>
+                                                </span>
                                             </span>
                                             <span style="display:inline-flex;align-items:center;gap:4px;padding:3px 10px;background:linear-gradient(135deg,#10b981,#059669);color:#fff;border-radius:20px;font-size:12px;font-weight:700;">
                                                 📅 <field name="claim_month" readonly="status != 'secretarial'"/>
