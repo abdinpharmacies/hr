@@ -61,33 +61,10 @@ Files changed:
 
 User-facing changes:
 
-- Add a fourth Store Balances & Sales tab to the product Stock Movements wizard.
-- Show active configured `ab_store` rows for the selected product with cached main-server balance, direct-store balance, difference, and 90-day sales buckets.
-- Add a persistent product/store cache with a unique product-store key and read-only internal-user access.
-- Add single-store direct refresh through `store.ip1`, explicit missing-IP/failure/cancel statuses, direct timestamps, and latest error text.
-- Add a persistent bulk direct-refresh job with progress counters, cooperative cancellation, per-store commits, and reuse of the existing stock report worker and cron fallback.
-- Add toolbar actions to refresh main-server data, update all stores, cancel an update, and refresh progress.
-- Add Arabic translations for the new tab, columns, actions, statuses, and errors in both Arabic language files.
-- Add `ab_store` as a manifest dependency.
-- Move the Store Balances & Sales row refresh action to the first column and Direct Status to the last column.
-- Display balance and sales numbers without trailing zero padding, while showing a single `0` for empty values.
-- Hide the three day-bucket columns by default behind the optional columns menu and keep Total 90 Days visible.
-- Tighten Store Balances & Sales table column widths to fit the displayed content more closely.
-- Add a branch dropdown filter for Store Balances & Sales using the same active-store and EPlus-serial criteria as the report lines.
-- Place the branch filter on the left side of the Store Balances & Sales one2many control panel when the list pager renders.
-- Display Sales, Purchase, and Transfer movement prices and quantities without unnecessary trailing zeros while keeping raw float fields unchanged.
+- Calculate transfer-in and transfer-out quantities with the authoritative Item Catalog unit conversion factors.
+- Avoid incorrect zero quantities when transfer-side unit conversion fields are empty.
 
 Files changed:
 
-- `ab_stock_report/__manifest__.py`
 - `ab_stock_report/changelog.d/2026-08-13-stock-movement-report.md`
-- `ab_stock_report/i18n/ar.po`
-- `ab_stock_report/i18n/ar_001.po`
-- `ab_stock_report/models/ab_stock_report.py`
 - `ab_stock_report/models/ab_stock_report_cache.py`
-- `ab_stock_report/models/ab_stock_report_store_balance.py`
-- `ab_stock_report/models/__init__.py`
-- `ab_stock_report/security/ir.model.access.csv`
-- `ab_stock_report/static/src/js/ab_stock_report_dialog.js`
-- `ab_stock_report/static/src/scss/ab_stock_report.scss`
-- `ab_stock_report/views/ab_stock_report_views.xml`

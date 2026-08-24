@@ -661,9 +661,9 @@ class AbStockReportCacheLine(models.Model):
                     -1 * CASE st.st_itm_unit
                         WHEN 1 THEN CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
                         WHEN 2 THEN CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
-                            / NULLIF(CAST(st.st_f_itm_unit1_unit2 AS DECIMAL(18, 4)), 0)
+                            / NULLIF(CAST(ic.itm_unit1_unit2 AS DECIMAL(18, 4)), 0)
                         WHEN 3 THEN CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
-                            / NULLIF(CAST(st.st_f_itm_unit1_unit3 AS DECIMAL(18, 4)), 0)
+                            / NULLIF(CAST(ic.itm_unit1_unit3 AS DECIMAL(18, 4)), 0)
                         ELSE CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
                     END
                     AS DECIMAL(18, 4)
@@ -683,6 +683,9 @@ class AbStockReportCacheLine(models.Model):
                 ON st.stnh_id = sth.stnh_id
                     AND st.st_from_store = sth.stnh_f_Sto_id
                     AND st.st_to_store = sth.stnh_t_Sto_id
+                    INNER JOIN Item_Catalog ic
+                WITH (NOLOCK)
+                ON ic.itm_id = st.st_itm_id
                     LEFT JOIN Store src_store
                 WITH (NOLOCK)
                 ON src_store.sto_id = sth.stnh_f_Sto_id
@@ -711,9 +714,9 @@ class AbStockReportCacheLine(models.Model):
                     CASE st.st_itm_unit
                         WHEN 1 THEN CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
                         WHEN 2 THEN CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
-                            / NULLIF(CAST(st.st_t_itm_unit1_unit2 AS DECIMAL(18, 4)), 0)
+                            / NULLIF(CAST(ic.itm_unit1_unit2 AS DECIMAL(18, 4)), 0)
                         WHEN 3 THEN CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
-                            / NULLIF(CAST(st.st_t_itm_unit1_unit3 AS DECIMAL(18, 4)), 0)
+                            / NULLIF(CAST(ic.itm_unit1_unit3 AS DECIMAL(18, 4)), 0)
                         ELSE CAST(ISNULL(st.st_itm_quantity, 0) AS DECIMAL(18, 4))
                     END
                     AS DECIMAL(18, 4)
@@ -733,6 +736,9 @@ class AbStockReportCacheLine(models.Model):
                 ON st.stnh_id = sth.stnh_id
                     AND st.st_from_store = sth.stnh_f_Sto_id
                     AND st.st_to_store = sth.stnh_t_Sto_id
+                    INNER JOIN Item_Catalog ic
+                WITH (NOLOCK)
+                ON ic.itm_id = st.st_itm_id
                     LEFT JOIN Store dst_store
                 WITH (NOLOCK)
                 ON dst_store.sto_id = sth.stnh_t_Sto_id
