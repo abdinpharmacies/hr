@@ -18,6 +18,7 @@
             'ab_widgets/static/src/ab_many2many.xml',
             'ab_widgets/static/src/ab_many2many.scss',
             'ab_widgets/static/src/ab_char_autocomplete.js',
+            'ab_widgets/static/src/ab_char_autocomplete_input_service.js',
             'ab_widgets/static/src/ab_char_autocomplete.xml',
             'ab_widgets/static/src/ab_char_autocomplete.scss',
         ],

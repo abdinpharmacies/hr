@@ -42,6 +42,7 @@ msgstr "إغلاق"
 #. module: ab_widgets
 #. odoo-javascript
 #: code:addons/ab_widgets/static/src/ab_char_autocomplete.js:0
+#: code:addons/ab_widgets/static/src/ab_char_autocomplete_input_service.js:0
 msgid "Could not load suggestions."
 msgstr "تعذر تحميل الاقتراحات."
 
@@ -113,6 +114,7 @@ msgstr "بحث"
 #. module: ab_widgets
 #. odoo-javascript
 #: code:addons/ab_widgets/static/src/ab_char_autocomplete.js:0
+#: code:addons/ab_widgets/static/src/ab_char_autocomplete.xml:0
 msgid "Search More..."
 msgstr "بحث المزيد..."
 

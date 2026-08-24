@@ -66,4 +66,47 @@
             </t>
         </Dialog>
     </t>
+
+    <t t-name="ab_widgets.AbCharAutocompleteInputPopover">
+        <div class="o_ab_char_autocomplete_input_options"
+             t-att-id="listId"
+             role="listbox">
+            <t t-if="state.loading">
+                <div class="o_ab_char_autocomplete_input_status">
+                    <i class="fa fa-spin fa-circle-o-notch"/> Loading...
+                </div>
+            </t>
+            <t t-elif="!state.values.length">
+                <div class="o_ab_char_autocomplete_input_status">No suggestions found</div>
+            </t>
+            <t t-else="">
+                <button t-foreach="state.values"
+                        t-as="row"
+                        t-key="row.value"
+                        t-att-id="optionId(row_index)"
+                        class="o_ab_char_autocomplete_input_option dropdown-item"
+                        t-att-class="{'active': state.activeIndex === row_index}"
+                        type="button"
+                        role="option"
+                        t-att-aria-selected="state.activeIndex === row_index ? 'true' : 'false'"
+                        t-on-mouseenter="() => this.setActiveIndex(row_index)"
+                        t-on-pointerdown.prevent=""
+                        t-on-click="() => this.selectValue(row.value)">
+                    <span t-esc="row.value"/>
+                </button>
+                <button t-if="state.hasMore"
+                        t-att-id="optionId(state.values.length)"
+                        class="o_ab_char_autocomplete_input_option o_ab_char_autocomplete_input_search_more dropdown-item"
+                        t-att-class="{'active': state.activeIndex === state.values.length}"
+                        type="button"
+                        role="option"
+                        t-att-aria-selected="state.activeIndex === state.values.length ? 'true' : 'false'"
+                        t-on-mouseenter="() => this.setActiveIndex(state.values.length)"
+                        t-on-pointerdown.prevent=""
+                        t-on-click="openSearchMore">
+                    Search More...
+                </button>
+            </t>
+        </div>
+    </t>
 </templates>
