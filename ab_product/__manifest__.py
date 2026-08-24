@@ -20,6 +20,7 @@
              'views/ab_usage_manner.xml',
              'views/ab_uom.xml',
              'views/ab_product_uom.xml',
+             'views/menus.xml',
              ],
     'assets': {
         'web.assets_backend': [

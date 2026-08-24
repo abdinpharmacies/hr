@@ -6,7 +6,7 @@ class AbdinProductBarcodeTemp(models.Model):
     _name = "ab_product_barcode_temp"
     _description = "Abdin Product Barcode Temp"
 
-    name = fields.Char(required=True, index=True)
+    name = fields.Char(index=True)
     product_ids = fields.Many2many(
         comodel_name="ab_product",
         relation="ab_product_barcode_temp_rel",

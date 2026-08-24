@@ -28,7 +28,6 @@ class AbProductManagementFieldRule(models.Model):
             ('store', '=', True),
             ('name', 'not in', list(EXCLUDED_FIELD_NAMES)),
         ],
-        required=True,
     )
     editable_fields = fields.Char(compute='_compute_editable_fields')
 
@@ -57,9 +56,9 @@ class AbProductManagementFieldRule(models.Model):
     def _is_allowed_product_field(self, field):
         self.ensure_one()
         return (
-            field.model == 'ab_product'
-            and bool(field.store)
-            and field.name not in self.EXCLUDED_FIELD_NAMES
+                field.model == 'ab_product'
+                and bool(field.store)
+                and field.name not in self.EXCLUDED_FIELD_NAMES
         )
 
     @api.model

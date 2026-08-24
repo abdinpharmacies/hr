@@ -9,7 +9,6 @@ class AbProductQty(models.AbstractModel):
 
     qty_str = fields.Char(
         string='Qty',
-        required=True,
         default='1',
         help='Enter arithmetic expression, e.g. 1/3, 2.5*4, 10-3, 2*1.25',
     )
@@ -21,7 +20,6 @@ class AbProductQty(models.AbstractModel):
         store=True,
         readonly=True,
     )
-
 
     @api.depends('qty_str')
     def _compute_qty(self):

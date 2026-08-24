@@ -9,9 +9,8 @@ import re
 class AbdinProduct(models.Model):
     _name = 'ab_product'
     _description = 'Abdin Product'
-    _inherits = {'ab_product_card': 'product_card_id'}
 
-    product_card_id = fields.Many2one('ab_product_card', required=True, delegate=True, ondelete='restrict')
+    product_card_id = fields.Many2one('ab_product_card', ondelete='restrict')
     product_card_name = fields.Char(related='product_card_id.name', readonly=False, string="Name")
     name = fields.Char(store=True, readonly=True, string="Full Name")
     default_price = fields.Float(digits=(16, 2), default=0)
