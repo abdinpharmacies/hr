@@ -1,5 +1,3 @@
-from unittest.mock import patch
-
 from odoo import fields
 from odoo.exceptions import AccessError, UserError, ValidationError
 from odoo.tests.common import TransactionCase
@@ -53,6 +51,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
         return self.env['ab_supplier_claim_cycle'].with_user(self.workflow_user).create({
             'supplier_id': self.supplier.id,
             'supplier_type': supplier_type,
+            'supplier_section': 'medicine',
             'num_of_invoice': 2,
             'area': 'south',
             'amount_of_check': 1000.0,
@@ -85,60 +84,89 @@ class TestSupplierClaimWorkflow(TransactionCase):
         for group in groups:
             self._department_accept_and_finish(claim, group)
 
-    def test_create_claim_requires_positive_amount(self):
+    def test_secretarial_start_requires_cheque_amount_dialog(self):
         self._set_workflow_group(self.group_secretarial)
-        with self.assertRaises(ValidationError):
-            self.env['ab_supplier_claim_cycle'].with_user(self.workflow_user).create({
-                'supplier_id': self.supplier.id,
-                'supplier_type': 'non_taxable',
-                'num_of_invoice': 2,
-                'area': 'south',
-                'amount_of_check': 0.0,
-                'type_of_invoice': 'original',
-            })
+        claim = self.env['ab_supplier_claim_cycle'].with_user(self.workflow_user).create({
+            'supplier_id': self.supplier.id,
+            'supplier_type': 'non_taxable',
+            'supplier_section': 'medicine',
+            'num_of_invoice': 2,
+            'area': 'south',
+            'amount_of_check': 0.0,
+            'type_of_invoice': 'original',
+            'claim_document': b'dGVzdF9jbGFpbV9kb2N1bWVudA==',
+            'claim_document_filename': 'claim.pdf',
+        })
 
-    def test_supplier_lookup_uses_existing_mappings_without_seed_sync(self):
-        Mapping = self.env['ab_supplier_mapping'].sudo()
+        action = claim.with_user(self.workflow_user).action_done()
+
+        self.assertEqual(action['res_model'], 'ab_claim_error_wizard')
+        self.assertEqual(action['context']['default_error_message'], 'Please enter the cheque amount.')
+
+    def test_supplier_lookup_uses_normal_costcenter_domain(self):
         Supplier = self.env['ab_costcenter'].sudo()
-        Mapping.with_context(
-            skip_supplier_mapping_auto_create=True,
-            skip_supplier_mapping_validation=True,
-        ).search([('supplier_id', '=', self.supplier.id)], limit=1) or Mapping.with_context(
-            skip_supplier_mapping_auto_create=True,
-            skip_supplier_mapping_validation=True,
-        ).create({'supplier_id': self.supplier.id})
+        supplier_before = self.supplier.read(['name', 'code', 'mobile_phone', 'work_email'])[0]
 
-        mapping_count_before = Mapping.with_context(skip_supplier_mapping_auto_create=True).search_count([])
-        supplier_before = self.supplier.read(['supplier_type', 'region', 'section'])[0]
+        results = Supplier.name_search(
+            name='',
+            args=[('code', '=like', '1-%'), ('id', '=', self.supplier.id)],
+            operator='ilike',
+            limit=10,
+        )
 
-        with patch.object(
-            type(Mapping),
-            '_sync_seed_supplier_mappings',
-            side_effect=AssertionError('Supplier lookup must not synchronize seed mappings.'),
-        ):
-            results = Supplier.with_context(supplier_claim_filter=True).name_search(
-                name='',
-                args=[('id', '=', self.supplier.id)],
-                operator='ilike',
-                limit=10,
-            )
-
-        mapping_count_after = Mapping.with_context(skip_supplier_mapping_auto_create=True).search_count([])
-        supplier_after = self.supplier.read(['supplier_type', 'region', 'section'])[0]
-
+        supplier_after = self.supplier.read(['name', 'code', 'mobile_phone', 'work_email'])[0]
         self.assertIn(self.supplier.id, [result[0] for result in results])
-        self.assertEqual(mapping_count_before, mapping_count_after)
-        self.assertEqual(supplier_before['supplier_type'], supplier_after['supplier_type'])
-        self.assertEqual(supplier_before['region'], supplier_after['region'])
-        self.assertEqual(supplier_before['section'], supplier_after['section'])
+        self.assertEqual(supplier_before, supplier_after)
 
-    def test_supplier_mapping_search_still_runs_seed_sync_by_default(self):
-        Mapping = self.env['ab_supplier_mapping'].sudo()
+    def test_supplier_defaults_are_filled_from_previous_claim(self):
+        previous = self._create_claim(supplier_type='withholding_tax')
+        previous.write({
+            'supplier_section': 'cosmetics',
+            'area': 'north',
+            'supplier_email': 'supplier@example.com',
+            'contact_phone': '01000000001',
+            'representative_phone': '01000000002',
+        })
 
-        with patch.object(type(Mapping), '_sync_seed_supplier_mappings', return_value=None) as sync_seed:
-            Mapping.search_count([])
+        self._set_workflow_group(self.group_secretarial)
+        claim = self.env['ab_supplier_claim_cycle'].with_user(self.workflow_user).create({
+            'supplier_id': self.supplier.id,
+            'num_of_invoice': 1,
+            'amount_of_check': 500.0,
+            'type_of_invoice': 'original',
+        })
 
-        self.assertTrue(sync_seed.called)
+        self.assertEqual(claim.supplier_type, 'withholding_tax')
+        self.assertEqual(claim.supplier_section, 'cosmetics')
+        self.assertEqual(claim.area, 'north')
+        self.assertEqual(claim.supplier_email, 'supplier@example.com')
+        self.assertEqual(claim.contact_phone, '01000000001')
+        self.assertEqual(claim.representative_phone, '01000000002')
+
+    def test_supplier_defaults_do_not_overwrite_claim_values(self):
+        previous = self._create_claim(supplier_type='withholding_tax')
+        previous.write({
+            'supplier_section': 'cosmetics',
+            'area': 'north',
+            'contact_phone': '01000000001',
+        })
+
+        self._set_workflow_group(self.group_secretarial)
+        claim = self.env['ab_supplier_claim_cycle'].with_user(self.workflow_user).create({
+            'supplier_id': self.supplier.id,
+            'supplier_type': 'non_taxable',
+            'supplier_section': 'supplies',
+            'area': 'south',
+            'contact_phone': '01000000003',
+            'num_of_invoice': 1,
+            'amount_of_check': 500.0,
+            'type_of_invoice': 'original',
+        })
+
+        self.assertEqual(claim.supplier_type, 'non_taxable')
+        self.assertEqual(claim.supplier_section, 'supplies')
+        self.assertEqual(claim.area, 'south')
+        self.assertEqual(claim.contact_phone, '01000000003')
 
     def test_reviewer_can_open_claim_with_blocking_issues(self):
         claim = self._create_claim()
