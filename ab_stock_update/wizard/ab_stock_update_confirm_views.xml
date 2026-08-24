@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_ab_stock_update_confirm_wizard_form" model="ir.ui.view">
+        <field name="name">ab_stock_update_confirm_wizard_form</field>
+        <field name="model">ab_stock_update_confirm_wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirm Stock Update">
+                <group>
+                    <field name="run_id"/>
+                    <field name="acknowledge_live"/>
+                </group>
+                <footer>
+                    <button name="action_apply"
+                            type="object"
+                            string="Apply Update"
+                            icon="fa-check"
+                            class="oe_highlight"/>
+                    <button string="Cancel" special="cancel" icon="fa-times"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
