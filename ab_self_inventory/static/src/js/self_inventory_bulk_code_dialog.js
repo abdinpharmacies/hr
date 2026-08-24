@@ -126,5 +126,12 @@ class BulkImportResultsDialog extends Component {
 
 registry.category('actions').add('ab_inventory_bulk_code_results', function (env, action) {
     const dialog = env.services.dialog;
-    dialog.add(BulkImportResultsDialog, action.params);
+    dialog.add(BulkImportResultsDialog, action.params, {
+        onClose: async () => {
+            await env.services.action.doAction({
+                type: "ir.actions.client",
+                tag: "soft_reload",
+            });
+        },
+    });
 });
