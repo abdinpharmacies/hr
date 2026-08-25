@@ -6,7 +6,7 @@ class AbDoctor(models.Model):
     _description = "Doctor"
     _order = "name"
 
-    name = fields.Char(required=True, index=True)
+    name = fields.Char(required=False, index=True)
     code = fields.Char(index=True)
     phone = fields.Char(index=True)
     specialty = fields.Char()
