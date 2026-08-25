@@ -1,0 +1,580 @@
+{
+  "version": 1,
+  "scenarios": [
+    {
+      "code": "CONTRACT_25",
+      "name": "Contract 25%",
+      "enabled": true,
+      "workflow_type": "contract",
+      "source": {
+        "sth_id": 1755947,
+        "sto_id": 26,
+        "cust_id": 39520
+      },
+      "inputs": {
+        "contract": {
+          "paid_percentage": 25,
+          "origin_discounts": {
+            "local": 12
+          }
+        },
+        "pos_session": {
+          "device_uid": "ab_sales_test",
+          "device_name": "AB Sales Test",
+          "device_ip": "127.0.0.1",
+          "session_token_prefix": "ab_sales_test"
+        }
+      },
+      "expected": {
+        "expected_total_bill": 994,
+        "expected_total_bill_after_disc": 874.72,
+        "expected_total_bill_net": 248.5
+      },
+      "lines": [
+        {
+          "sequence": 1,
+          "source": {
+            "itm_id": 109090,
+            "c_id": 52
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 396,
+            "itm_cost": 295.5,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 12,
+            "expected_itm_id": 109090,
+            "expected_c_id": 52,
+            "expected_qnty": 1,
+            "expected_itm_sell": 396,
+            "expected_itm_cost": 295.5
+          }
+        },
+        {
+          "sequence": 2,
+          "source": {
+            "itm_id": 28270,
+            "c_id": 529
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 156,
+            "itm_cost": 123,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 12,
+            "expected_itm_id": 28270,
+            "expected_c_id": 529,
+            "expected_qnty": 1,
+            "expected_itm_sell": 156,
+            "expected_itm_cost": 123
+          }
+        },
+        {
+          "sequence": 3,
+          "source": {
+            "itm_id": 100742,
+            "c_id": 75
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 135,
+            "itm_cost": 108,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 12,
+            "expected_itm_id": 100742,
+            "expected_c_id": 75,
+            "expected_qnty": 1,
+            "expected_itm_sell": 135,
+            "expected_itm_cost": 108
+          }
+        },
+        {
+          "sequence": 4,
+          "source": {
+            "itm_id": 103247,
+            "c_id": 107
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 172,
+            "itm_cost": 127,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 12,
+            "expected_itm_id": 103247,
+            "expected_c_id": 107,
+            "expected_qnty": 1,
+            "expected_itm_sell": 172,
+            "expected_itm_cost": 127
+          }
+        },
+        {
+          "sequence": 5,
+          "source": {
+            "itm_id": 112495,
+            "c_id": 7
+          },
+          "inputs": {
+            "qnty": 30,
+            "itm_sell": 4.5,
+            "itm_cost": 3.6,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 12,
+            "expected_itm_id": 112495,
+            "expected_c_id": 7,
+            "expected_qnty": 30,
+            "expected_itm_sell": 4.5,
+            "expected_itm_cost": 3.6
+          }
+        }
+      ]
+    },
+    {
+      "code": "CONTRACT_0",
+      "name": "Contract 0%",
+      "enabled": true,
+      "workflow_type": "contract",
+      "source": {
+        "sth_id": 1755941,
+        "sto_id": 26,
+        "cust_id": 61703
+      },
+      "inputs": {
+        "contract": {
+          "paid_percentage": 0,
+          "origin_discounts": {
+            "local": 13,
+            "imported": 7
+          }
+        },
+        "pos_session": {
+          "device_uid": "ab_sales_test",
+          "device_name": "AB Sales Test",
+          "device_ip": "127.0.0.1",
+          "session_token_prefix": "ab_sales_test"
+        }
+      },
+      "expected": {
+        "expected_total_bill": 239,
+        "expected_total_bill_after_disc": 211.23,
+        "expected_total_bill_net": 0
+      },
+      "lines": [
+        {
+          "sequence": 1,
+          "source": {
+            "itm_id": 112849,
+            "c_id": 11
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 100,
+            "itm_cost": 80,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 13,
+            "expected_itm_id": 112849,
+            "expected_c_id": 11,
+            "expected_qnty": 1,
+            "expected_itm_sell": 100,
+            "expected_itm_cost": 80
+          }
+        },
+        {
+          "sequence": 2,
+          "source": {
+            "itm_id": 47137,
+            "c_id": 108
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 55,
+            "itm_cost": 40.75,
+            "product": {
+              "origin": "imported"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 7,
+            "expected_itm_id": 47137,
+            "expected_c_id": 108,
+            "expected_qnty": 1,
+            "expected_itm_sell": 55,
+            "expected_itm_cost": 40.75
+          }
+        },
+        {
+          "sequence": 3,
+          "source": {
+            "itm_id": 49824,
+            "c_id": 163
+          },
+          "inputs": {
+            "qnty": 0.5,
+            "itm_sell": 84,
+            "itm_cost": 66,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 13,
+            "expected_itm_id": 49824,
+            "expected_c_id": 163,
+            "expected_qnty": 0.5,
+            "expected_itm_sell": 84,
+            "expected_itm_cost": 66
+          }
+        },
+        {
+          "sequence": 4,
+          "source": {
+            "itm_id": 49824,
+            "c_id": 164
+          },
+          "inputs": {
+            "qnty": 0.5,
+            "itm_sell": 84,
+            "itm_cost": 66,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 13,
+            "expected_itm_id": 49824,
+            "expected_c_id": 164,
+            "expected_qnty": 0.5,
+            "expected_itm_sell": 84,
+            "expected_itm_cost": 66
+          }
+        }
+      ]
+    },
+    {
+      "code": "CONTRACT_100",
+      "name": "Contract 100%",
+      "enabled": true,
+      "workflow_type": "contract",
+      "source": {
+        "sth_id": 1444048,
+        "sto_id": 54,
+        "cust_id": 517822
+      },
+      "inputs": {
+        "contract": {
+          "paid_percentage": 100,
+          "origin_discounts": {
+            "imported": 4,
+            "local": 7
+          }
+        },
+        "pos_session": {
+          "device_uid": "ab_sales_test",
+          "device_name": "AB Sales Test",
+          "device_ip": "127.0.0.1",
+          "session_token_prefix": "ab_sales_test"
+        }
+      },
+      "expected": {
+        "expected_total_bill": 256.25,
+        "expected_total_bill_after_disc": 239.1,
+        "expected_total_bill_net": 239.1
+      },
+      "lines": [
+        {
+          "sequence": 1,
+          "source": {
+            "itm_id": 96107,
+            "c_id": 0
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 26.25,
+            "itm_cost": 22.3125,
+            "product": {
+              "origin": "imported"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 4,
+            "expected_itm_id": 96107,
+            "expected_c_id": 0,
+            "expected_qnty": 1,
+            "expected_itm_sell": 26.25,
+            "expected_itm_cost": 22.3125
+          }
+        },
+        {
+          "sequence": 2,
+          "source": {
+            "itm_id": 107546,
+            "c_id": 144
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 65,
+            "itm_cost": 47.45,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 7,
+            "expected_itm_id": 107546,
+            "expected_c_id": 144,
+            "expected_qnty": 1,
+            "expected_itm_sell": 65,
+            "expected_itm_cost": 47.45
+          }
+        },
+        {
+          "sequence": 3,
+          "source": {
+            "itm_id": 105882,
+            "c_id": 19
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 165,
+            "itm_cost": 135.3,
+            "product": {
+              "origin": "local"
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 7,
+            "expected_itm_id": 105882,
+            "expected_c_id": 19,
+            "expected_qnty": 1,
+            "expected_itm_sell": 165,
+            "expected_itm_cost": 135.3
+          }
+        }
+      ]
+    },
+    {
+      "code": "CASH",
+      "name": "Cash Sale",
+      "enabled": true,
+      "workflow_type": "cash",
+      "source": {
+        "sth_id": 1755919,
+        "sto_id": 26,
+        "cust_id": 0
+      },
+      "inputs": {
+        "pos_session": {
+          "device_uid": "ab_sales_test",
+          "device_name": "AB Sales Test",
+          "device_ip": "127.0.0.1",
+          "session_token_prefix": "ab_sales_test"
+        }
+      },
+      "expected": {
+        "expected_total_bill": 136,
+        "expected_total_bill_after_disc": 136,
+        "expected_total_bill_net": 136
+      },
+      "lines": [
+        {
+          "sequence": 1,
+          "source": {
+            "itm_id": 49360,
+            "c_id": 577
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 35,
+            "itm_cost": 25.75
+          },
+          "expected": {
+            "expected_itm_dis_per": 0,
+            "expected_itm_id": 49360,
+            "expected_c_id": 577,
+            "expected_qnty": 1,
+            "expected_itm_sell": 35,
+            "expected_itm_cost": 25.75
+          }
+        },
+        {
+          "sequence": 2,
+          "source": {
+            "itm_id": 102591,
+            "c_id": 35
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 70,
+            "itm_cost": 49.2445
+          },
+          "expected": {
+            "expected_itm_dis_per": 0,
+            "expected_itm_id": 102591,
+            "expected_c_id": 35,
+            "expected_qnty": 1,
+            "expected_itm_sell": 70,
+            "expected_itm_cost": 49.2445
+          }
+        },
+        {
+          "sequence": 3,
+          "source": {
+            "itm_id": 49069,
+            "c_id": 450
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 31,
+            "itm_cost": 22.75
+          },
+          "expected": {
+            "expected_itm_dis_per": 0,
+            "expected_itm_id": 49069,
+            "expected_c_id": 450,
+            "expected_qnty": 1,
+            "expected_itm_sell": 31,
+            "expected_itm_cost": 22.75
+          }
+        }
+      ]
+    },
+    {
+      "code": "PROMO",
+      "name": "Promotion Sale",
+      "enabled": true,
+      "workflow_type": "promo",
+      "source": {
+        "sth_id": 1755637,
+        "sto_id": 26,
+        "cust_id": 284737
+      },
+      "inputs": {
+        "promo": {
+          "name": "Buy 1 get 10% on ordered quantity",
+          "apply_disc_on": "on_order",
+          "disc_percent": 10,
+          "rule_min_qty": 1
+        },
+        "pos_session": {
+          "device_uid": "ab_sales_test",
+          "device_name": "AB Sales Test",
+          "device_ip": "127.0.0.1",
+          "session_token_prefix": "ab_sales_test"
+        }
+      },
+      "expected": {
+        "expected_total_bill": 741,
+        "expected_total_bill_after_disc": 741,
+        "expected_total_bill_net": 710
+      },
+      "lines": [
+        {
+          "sequence": 1,
+          "source": {
+            "itm_id": 107555,
+            "c_id": 29
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 190,
+            "itm_cost": 152
+          },
+          "expected": {
+            "expected_itm_dis_per": 0,
+            "expected_itm_id": 107555,
+            "expected_c_id": 29,
+            "expected_qnty": 1,
+            "expected_itm_sell": 190,
+            "expected_itm_cost": 152
+          }
+        },
+        {
+          "sequence": 2,
+          "source": {
+            "itm_id": 110474,
+            "c_id": 44
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 310,
+            "itm_cost": 246.234,
+            "promo": {
+              "in_product_scope": true
+            }
+          },
+          "expected": {
+            "expected_itm_dis_per": 0,
+            "expected_itm_id": 110474,
+            "expected_c_id": 44,
+            "expected_qnty": 1,
+            "expected_itm_sell": 310,
+            "expected_itm_cost": 246.234
+          }
+        },
+        {
+          "sequence": 3,
+          "source": {
+            "itm_id": 49141,
+            "c_id": 172
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 192,
+            "itm_cost": 156.8
+          },
+          "expected": {
+            "expected_itm_dis_per": 0,
+            "expected_itm_id": 49141,
+            "expected_c_id": 172,
+            "expected_qnty": 1,
+            "expected_itm_sell": 192,
+            "expected_itm_cost": 156.8
+          }
+        },
+        {
+          "sequence": 4,
+          "source": {
+            "itm_id": 67439,
+            "c_id": 123
+          },
+          "inputs": {
+            "qnty": 1,
+            "itm_sell": 49,
+            "itm_cost": 36.25
+          },
+          "expected": {
+            "expected_itm_dis_per": 0,
+            "expected_itm_id": 67439,
+            "expected_c_id": 123,
+            "expected_qnty": 1,
+            "expected_itm_sell": 49,
+            "expected_itm_cost": 36.25
+          }
+        }
+      ]
+    }
+  ]
+}

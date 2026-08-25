@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_test_case_view_list" model="ir.ui.view">
+            <field name="name">ab_sales_test.case.list</field>
+            <field name="model">ab_sales_test.case</field>
+            <field name="arch" type="xml">
+                <list string="Sales Regression Cases" multi_edit="1" create="0" delete="0">
+                    <field name="enabled"/>
+                    <field name="scenario_code"/>
+                    <field name="scenario_name"/>
+                    <field name="workflow_type"/>
+                    <field name="source_sth_id"/>
+                    <field name="json_line_count"/>
+                    <field name="expected_total_bill"/>
+                    <field name="expected_total_bill_after_disc"/>
+                    <field name="expected_total_bill_net"/>
+                    <field name="configuration_state"/>
+                    <field name="last_status"/>
+                    <field name="last_run_date"/>
+                    <field name="last_result_summary"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_sales_test_case_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_test.case.form</field>
+            <field name="model">ab_sales_test.case</field>
+            <field name="arch" type="xml">
+                <form string="Sales Regression Case" create="0" delete="0">
+                    <header>
+                        <button name="action_run_case" type="object" string="Run Test" class="btn-primary"/>
+                        <button name="action_run_all_enabled" type="object" string="Run All Enabled"/>
+                        <button name="action_sync_json_button" type="object" string="Sync JSON"/>
+                    </header>
+                    <sheet>
+                        <field name="active" invisible="1"/>
+                        <widget name="web_ribbon" title="Archived" bg_color="bg-info" invisible="active == True"/>
+                        <group>
+                            <group>
+                                <field name="enabled"/>
+                                <field name="scenario_code"/>
+                                <field name="scenario_name"/>
+                                <field name="workflow_type"/>
+                                <field name="configuration_state"/>
+                            </group>
+                            <group>
+                                <field name="last_status"/>
+                                <field name="last_run_date"/>
+                                <field name="last_result_summary"/>
+                                <field name="json_line_count"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Source">
+                                <group>
+                                    <field name="source_sth_id"/>
+                                    <field name="source_sto_id"/>
+                                    <field name="source_cust_id"/>
+                                </group>
+                            </page>
+                            <page string="Expected Totals">
+                                <group>
+                                    <field name="expected_total_bill"/>
+                                    <field name="expected_total_bill_after_disc"/>
+                                    <field name="expected_total_bill_net"/>
+                                </group>
+                            </page>
+                            <page string="Diagnostics">
+                                <field name="last_result_details" nolabel="1" readonly="1"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_sales_test_case_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_test.case.search</field>
+            <field name="model">ab_sales_test.case</field>
+            <field name="arch" type="xml">
+                <search string="Sales Regression Cases">
+                    <field name="scenario_code"/>
+                    <field name="scenario_name"/>
+                    <field name="source_sth_id"/>
+                    <filter name="enabled" string="Enabled" domain="[('enabled', '=', True)]"/>
+                    <filter name="blocked" string="Blocked" domain="[('last_status', '=', 'blocked')]"/>
+                    <filter name="failed" string="Failed" domain="[('last_status', '=', 'fail')]"/>
+                    <filter name="passed" string="Passed" domain="[('last_status', '=', 'pass')]"/>
+                    <group name="group_by">
+                        <filter name="group_workflow_type" string="Workflow" context="{'group_by': 'workflow_type'}"/>
+                        <filter name="group_last_status" string="Last Status" context="{'group_by': 'last_status'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_sales_test_case_action" model="ir.actions.act_window">
+            <field name="name">Sales Regression Cases</field>
+            <field name="res_model">ab_sales_test.case</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_sales_test_case_view_search"/>
+            <field name="context">{'search_default_enabled': 1}</field>
+        </record>
+
+        <record id="ab_sales_test_case_sync_action" model="ir.actions.server">
+            <field name="name">Sync Sales Regression JSON</field>
+            <field name="model_id" ref="model_ab_sales_test_case"/>
+            <field name="state">code</field>
+            <field name="code">action = env['ab_sales_test.case'].action_sync_json()</field>
+        </record>
+
+        <menuitem id="ab_sales_test_menu"
+                  name="Regression Tests"
+                  parent="ab_sales.sales_menu_root"
+                  sequence="900"/>
+
+        <menuitem id="ab_sales_test_case_menu"
+                  name="Sales Cases"
+                  parent="ab_sales_test_menu"
+                  action="ab_sales_test_case_action"
+                  sequence="10"/>
+
+        <menuitem id="ab_sales_test_sync_menu"
+                  name="Sync JSON"
+                  parent="ab_sales_test_menu"
+                  action="ab_sales_test_case_sync_action"
+                  sequence="20"/>
+    </data>
+</odoo>
