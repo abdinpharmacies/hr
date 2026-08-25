@@ -7,7 +7,8 @@
     "author": "Abdin Pharmacies",
     "developer": "hossam elsheikh",
     "application": True,
-    "depends": ["ab_odoo_sync", "ab_users", "ab_sales", "ab_hr"],
+    "depends": ["ab_odoo_sync", "ab_users", "ab_hr", 'ab_customer', 'ab_contract', 'ab_product', 'ab_store',
+                'abdin_et', 'ab_widgets'],
     "data": [
         "security/security_groups.xml",
         "security/record_rules.xml",
