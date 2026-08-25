@@ -5,8 +5,8 @@ class AbTestSyncMixin(models.AbstractModel):
     _name = "ab_test_sync_mixin"
     _description = "AB Sync Test Mirror Mixin"
 
-    db_serial = fields.Integer(string="DB Serial", required=True, readonly=True, index=True)
-    rec_id = fields.Integer(string="Source Record ID", required=True, readonly=True, index=True)
+    db_serial = fields.Integer(string="DB Serial", required=False, readonly=True, index=True)
+    rec_id = fields.Integer(string="Source Record ID", required=False, readonly=True, index=True)
     source_revision = fields.Integer(string="Source Revision", readonly=True, index=True)
     event_uuid = fields.Char(string="Event UUID", readonly=True, index=True)
     source_operation = fields.Selection(
