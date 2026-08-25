@@ -11,9 +11,9 @@ class Customer(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'eplus_serial desc,id desc'
 
-    code = fields.Char(size=16, required=True, index=True, readonly=True)
+    code = fields.Char(size=16, required=False, index=True, readonly=True)
     costcenter_id = fields.Many2one('ab_costcenter', index=True)
-    name = fields.Char(required=True, index=True, tracking=True)
+    name = fields.Char(required=False, index=True, tracking=True)
     mobile_phone = fields.Char('Mobile', index=True, tracking=True)
     work_phone = fields.Char('Tel', index=True, tracking=True)
     delivery_phone = fields.Char('Delivery Phone', index=True, tracking=True)
