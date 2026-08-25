@@ -117,6 +117,22 @@ class AbOdooSyncApplyProfile(models.Model):
                             "fields": ", ".join(sorted(missing)),
                         }
                     )
+                required_fields = sorted(
+                    field_name
+                    for field_name, field in target_model._fields.items()
+                    if field.required
+                )
+                if required_fields:
+                    raise ValidationError(
+                        _(
+                            "Target sync model %(model)s must not define required fields. "
+                            "Use apply profile field mappings to mark required values instead: %(fields)s"
+                        )
+                        % {
+                            "model": profile.target_model_name,
+                            "fields": ", ".join(required_fields),
+                        }
+                    )
             source_model = self.env[profile.source_model_name] if profile.source_model_name in self.env else False
             user_target = self.env["ab_odoo_sync_rules"].sudo().user_mirror_model()
             if source_model:

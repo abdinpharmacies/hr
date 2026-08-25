@@ -60,3 +60,21 @@ A branch uploads `ab_sales_pos_settings` with `user_id = 17`. The mirror model
 must define `user_id = fields.Many2one("ab_users", ...)`, and the upload/mapping
 must resolve only ID `17` into `ab_users`. It must not create or mirror a
 `res.users` row and must not send full user data in the JSON payload.
+
+## Rule number 3
+
+Every `__sync` mirror model must be schema-permissive.
+
+No field on a `__sync` model may be declared with `required=True`, including
+technical identity fields such as `db_serial`, `rec_id`, `event_uuid`, and
+payload fields. The report server must be able to accept partial branch data,
+force-create placeholder rows, and preserve raw payloads without being blocked
+by ORM or database required-field validation.
+
+If a field is required for a specific apply flow, enforce that requirement in
+the relevant `ab_odoo_sync_apply_profile` field mapping by enabling the mapping
+`required` flag. Requiredness belongs to the apply profile, not the mirror table
+schema.
+
+This keeps raw/report storage tolerant while still allowing strict validation
+for selected fields when MAIN later applies or validates the data.

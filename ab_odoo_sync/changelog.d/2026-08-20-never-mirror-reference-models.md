@@ -19,9 +19,9 @@ Files changed:
 
 User-facing changes:
 
-- Use the already installed OCA `queue_job` provider for Odoo Sync background jobs.
-- Stop forcing installation of `integration_queue_job`, which collides with `queue_job` on the unique root queue channel.
-- Queue branch Upload Outbox sending through `queue_job` from both the Send Now action and the Branch Upload cron.
+- Use the already installed `integration_queue_job` provider for Odoo Sync background jobs.
+- Stop forcing installation of the separate OCA `queue_job` addon, which collides with `integration_queue_job` on the unique root queue channel.
+- Queue branch Upload Outbox sending through `integration_queue_job` from both the Send Now action and the Branch Upload cron.
 - Automatically enqueue the branch upload sender when a new upload outbox event is captured.
 - Keep the existing branch-to-MAIN HTTP batch sender as the queued worker body so failed outbox rows still record their error details.
 
