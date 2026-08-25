@@ -15,5 +15,5 @@ class CustomerContracts(models.Model):
             ("contract_company", "Contract Company"),
         ],
         default="our_company",
-        required=True,
+        required=False,
     )
