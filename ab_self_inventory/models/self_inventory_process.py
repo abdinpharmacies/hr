@@ -3,6 +3,7 @@ import logging
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools.float_utils import float_compare, float_round
+from odoo.tools.misc import format_datetime
 from odoo.tools.translate import _
 
 
@@ -60,6 +61,18 @@ class SelfInventoryProcess(models.Model):
     submitted_date = fields.Datetime(readonly=True, copy=False)
     can_sync_requested_stock = fields.Boolean(compute='_compute_can_sync_requested_stock')
     can_refresh_system_stock = fields.Boolean(compute='_compute_can_refresh_system_stock')
+    last_system_stock_refresh_at = fields.Datetime(string='Last System Stock Refresh', readonly=True, copy=False)
+    system_stock_refresh_button_label = fields.Char(compute='_compute_system_stock_refresh_status')
+    system_stock_refresh_label = fields.Char(compute='_compute_system_stock_refresh_status')
+    system_stock_refresh_age_state = fields.Selection(
+        selection=[
+            ('none', 'Not Refreshed'),
+            ('fresh', 'Fresh'),
+            ('warning', 'Needs Attention'),
+            ('danger', 'Outdated'),
+        ],
+        compute='_compute_system_stock_refresh_status',
+    )
     shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_totals', digits=(12, 2))
     extra_qty = fields.Float(string='Extra Cost', compute='_compute_totals', digits=(12, 2))
     requested_total_cost = fields.Float(
@@ -167,6 +180,29 @@ class SelfInventoryProcess(models.Model):
                 )
             )
 
+    @api.depends('last_system_stock_refresh_at')
+    def _compute_system_stock_refresh_status(self):
+        now = fields.Datetime.now()
+        for rec in self:
+            rec.system_stock_refresh_button_label = _("Refresh System Stock")
+            if not rec.last_system_stock_refresh_at:
+                rec.system_stock_refresh_label = _("Not refreshed yet")
+                rec.system_stock_refresh_age_state = 'none'
+                continue
+
+            rec.system_stock_refresh_label = _("Last refresh: %s") % format_datetime(
+                self.env,
+                rec.last_system_stock_refresh_at,
+                dt_format='short',
+            )
+            age_days = (now - rec.last_system_stock_refresh_at).total_seconds() / 86400
+            if age_days <= 1:
+                rec.system_stock_refresh_age_state = 'fresh'
+            elif age_days <= 3:
+                rec.system_stock_refresh_age_state = 'warning'
+            else:
+                rec.system_stock_refresh_age_state = 'danger'
+
     def write(self, vals):
         auto_receiver = False
         if vals.get('branch_id') and 'receiver_id' not in vals:
@@ -234,9 +270,11 @@ class SelfInventoryProcess(models.Model):
 
     def action_sync_requested_product_quantities(self):
         total_updated = 0
+        refreshed_at = fields.Datetime.now()
         for rec in self:
             sync_result = rec._refresh_system_stock_quantities()
             total_updated += sync_result['updated']
+            rec.sudo().write({'last_system_stock_refresh_at': refreshed_at})
 
         if total_updated:
             title = _('System stock updated')
@@ -451,6 +489,8 @@ class SelfInventoryProcess(models.Model):
             'is_counted': is_counted,
             'product_name': line.product_id.display_name or line.product_id.name or '' if line.product_id else '',
             'product_code': line.product_code or '',
+            'product_eplus_serial': line.product_id.eplus_serial if line.product_id else False,
+            'eplus_item_id': line.eplus_item_id,
             'eplus_item_code': line.eplus_item_code or '',
             'system_qty': line.system_qty,
             # Keep untouched quantities blank so entering a real zero triggers
@@ -485,6 +525,8 @@ class SelfInventoryProcess(models.Model):
             'product_id': 'product_id',
             'product_name': 'product_id',
             'product_code': 'product_code',
+            'product_eplus_serial': 'product_id.eplus_serial',
+            'eplus_item_id': 'eplus_item_id',
             'eplus_item_code': 'eplus_item_code',
             'system_qty': 'system_qty',
             'actual_qty': 'actual_qty',
