@@ -9,13 +9,13 @@ class ClsCostCenters(models.Model):
     _name = 'ab_costcenter'
     _description = 'Abdin Cost Centers'
 
-    name = fields.Char(required=True, index=True)
+    name = fields.Char(required=False, index=True)
     costcenter_type = fields.Integer()
     tel_no = fields.Char()
     branch_id = fields.Integer()
     hr_name = fields.Char()
     bc_id = fields.Integer()
-    code = fields.Char(size=16, required=True, index=True)
+    code = fields.Char(size=16, required=False, index=True)
     official_name = fields.Char()
     special_id = fields.Char()
     active = fields.Boolean(default=True)
