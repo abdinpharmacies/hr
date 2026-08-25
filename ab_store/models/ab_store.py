@@ -5,8 +5,8 @@ class Store(models.Model):
     _name = 'ab_store'
     _description = 'Store'
 
-    name = fields.Char(required=True)
-    code = fields.Char(required=True, index=True)
+    name = fields.Char(required=False)
+    code = fields.Char(required=False, index=True)
     status = fields.Selection(selection=[('internal', 'Internal'),
                                          ('external', 'External')],
                               default='internal')
