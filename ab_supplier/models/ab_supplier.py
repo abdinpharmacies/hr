@@ -21,7 +21,7 @@ class Supplier(models.Model):
         string='Sub Suppliers')
     name = fields.Char()
     costcenter_id = fields.Many2one('ab_costcenter', index=True)
-    code = fields.Char(required=True, index=True)
+    code = fields.Char(required=False, index=True)
     telephone = fields.Char()
     address = fields.Char()
     registration_number = fields.Char()
