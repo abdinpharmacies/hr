@@ -57,16 +57,38 @@
                         <button name="action_reset_to_draft" string="Reset to Draft" type="object" invisible="state != 'cancelled'" groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
                         <field name="can_sync_requested_stock" invisible="1"/>
                         <field name="can_refresh_system_stock" invisible="1"/>
+                        <field name="last_system_stock_refresh_at" invisible="1"/>
+                        <field name="system_stock_refresh_age_state" invisible="1"/>
+                        <field name="system_stock_refresh_button_label" invisible="1"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,in_progress,submitted"/>
                     </header>
                     <sheet>
                         <div class="ab_self_inventory_floating_sync" invisible="not can_refresh_system_stock">
                             <button name="action_sync_requested_product_quantities"
-                                    string="Refresh System Stock"
                                     type="object"
-                                    icon="fa-refresh"
                                     class="ab_self_inventory_floating_sync_btn"
-                                    groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
+                                    groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager">
+                                <span class="ab_self_inventory_floating_sync_main">
+                                    <i class="fa fa-refresh" aria-hidden="true"/>
+                                    <field name="system_stock_refresh_button_label" nolabel="1"/>
+                                </span>
+                                <span class="ab_self_inventory_floating_sync_meta ab_self_inventory_floating_sync_meta--none" invisible="system_stock_refresh_age_state != 'none'">
+                                    <span class="ab_self_inventory_floating_sync_dot"/>
+                                    <field name="system_stock_refresh_label" nolabel="1"/>
+                                </span>
+                                <span class="ab_self_inventory_floating_sync_meta ab_self_inventory_floating_sync_meta--fresh" invisible="system_stock_refresh_age_state != 'fresh'">
+                                    <span class="ab_self_inventory_floating_sync_dot"/>
+                                    <field name="system_stock_refresh_label" nolabel="1"/>
+                                </span>
+                                <span class="ab_self_inventory_floating_sync_meta ab_self_inventory_floating_sync_meta--warning" invisible="system_stock_refresh_age_state != 'warning'">
+                                    <span class="ab_self_inventory_floating_sync_dot"/>
+                                    <field name="system_stock_refresh_label" nolabel="1"/>
+                                </span>
+                                <span class="ab_self_inventory_floating_sync_meta ab_self_inventory_floating_sync_meta--danger" invisible="system_stock_refresh_age_state != 'danger'">
+                                    <span class="ab_self_inventory_floating_sync_dot"/>
+                                    <field name="system_stock_refresh_label" nolabel="1"/>
+                                </span>
+                            </button>
                         </div>
                         <div class="ab_form_hero_row">
                             <field name="name" widget="ab_inventory_form_hero" nolabel="1"/>

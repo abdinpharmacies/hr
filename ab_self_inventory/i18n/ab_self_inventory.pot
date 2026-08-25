@@ -1678,7 +1678,46 @@ msgid "Can Refresh System Stock"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__last_system_stock_refresh_at
+msgid "Last System Stock Refresh"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__system_stock_refresh_age_state__none
+msgid "Not Refreshed"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__system_stock_refresh_age_state__fresh
+msgid "Fresh"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__system_stock_refresh_age_state__warning
+msgid "Needs Attention"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields.selection,name:ab_self_inventory.selection__ab_self_inventory_process__system_stock_refresh_age_state__danger
+msgid "Outdated"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Not refreshed yet"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "Last refresh: %s"
+msgstr ""
+
+#. module: ab_self_inventory
 #: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "Refresh System Stock"
 msgstr ""
 
