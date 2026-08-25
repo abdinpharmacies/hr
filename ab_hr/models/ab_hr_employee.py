@@ -32,7 +32,7 @@ class Employees(models.Model):
         'ab_hr_employee', 'parent_id',
         string='Children')
 
-    name = fields.Char(required=True)
+    name = fields.Char(required=False)
     costcenter_id = fields.Many2one('ab_costcenter', index=True, )
     user_id = fields.Many2one('res.users', string='Related User',
                               )
