@@ -1611,6 +1611,11 @@ $si-gray-900: #0F172A;
         opacity: 1;
         transform: translateY(0);
     }
+
+    &.ab_self_inventory_stock_toast--warning {
+        border-color: rgba(245, 158, 11, 0.34);
+        box-shadow: 0 18px 40px rgba(146, 64, 14, 0.16), 0 4px 10px rgba(15, 23, 42, 0.08);
+    }
 }
 
 .ab_self_inventory_stock_toast_icon {
@@ -1624,6 +1629,13 @@ $si-gray-900: #0F172A;
     background: $si-success-light;
     color: #15803D;
     font-size: 14px;
+}
+
+.ab_self_inventory_stock_toast--warning .ab_self_inventory_stock_toast_icon {
+    background: #FEE2E2;
+    color: #B91C1C;
+    font-size: 16px;
+    box-shadow: inset 0 0 0 1px rgba(185, 28, 28, 0.14);
 }
 
 .ab_self_inventory_stock_toast_content {
@@ -2156,7 +2168,7 @@ $saas-transition: 0.15s ease;
 // Analytics Header
 .ab_saas_analytics_row {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 12px;
     margin-bottom: 16px;
     min-width: 0;
@@ -2172,10 +2184,60 @@ $saas-transition: 0.15s ease;
     flex-direction: column;
     gap: 4px;
     transition: box-shadow $saas-transition;
+    position: relative;
 
     &:hover {
         box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     }
+}
+
+.ab_saas_analytics_card--unmatched {
+    cursor: help;
+}
+
+.ab_saas_analytics_card--unmatched::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    inset-inline-start: 50%;
+    bottom: calc(100% + 10px);
+    z-index: 1080;
+    display: none;
+    width: 260px;
+    max-width: 260px;
+    padding: 10px 12px;
+    border: 1px solid rgba(245, 158, 11, 0.26);
+    border-radius: 8px;
+    background: #FFFBEB;
+    color: #92400E;
+    box-shadow: 0 14px 30px rgba(146, 64, 14, 0.16), 0 4px 10px rgba(15, 23, 42, 0.08);
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.45;
+    text-align: start;
+    white-space: normal;
+    transform: translateX(-50%) translateY(4px);
+}
+
+.ab_saas_analytics_card--unmatched::before {
+    content: "";
+    position: absolute;
+    inset-inline-start: 50%;
+    bottom: calc(100% + 4px);
+    z-index: 1081;
+    display: none;
+    width: 10px;
+    height: 10px;
+    border-inline-end: 1px solid rgba(245, 158, 11, 0.26);
+    border-bottom: 1px solid rgba(245, 158, 11, 0.26);
+    background: #FFFBEB;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+.ab_saas_analytics_card--unmatched:hover::after,
+.ab_saas_analytics_card--unmatched:focus::after,
+.ab_saas_analytics_card--unmatched:hover::before,
+.ab_saas_analytics_card--unmatched:focus::before {
+    display: block;
 }
 
 .ab_saas_analytics_value {
@@ -2196,6 +2258,7 @@ $saas-transition: 0.15s ease;
 .ab_saas_analytics_card--branches .ab_saas_analytics_value { color: $saas-primary; }
 .ab_saas_analytics_card--products .ab_saas_analytics_value { color: $saas-primary; }
 .ab_saas_analytics_card--selected .ab_saas_analytics_value { color: $saas-success; }
+.ab_saas_analytics_card--unmatched .ab_saas_analytics_value { color: $saas-warning; }
 .ab_saas_analytics_card--matched .ab_saas_analytics_value { color: #8B5CF6; }
 
 // Branch Nav
@@ -2404,6 +2467,82 @@ $saas-transition: 0.15s ease;
     opacity: 0.4;
 }
 
+.ab_saas_optional_columns {
+    position: relative;
+    display: inline-flex;
+    z-index: 1070;
+}
+
+.ab_saas_toolbar_icon_btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: $saas-card;
+    border: 1px solid $saas-border;
+    border-radius: 8px;
+    color: $saas-text-secondary;
+    cursor: pointer;
+    transition: all $saas-transition;
+
+    &:hover {
+        background: $saas-neutral-light;
+        border-color: darken($saas-border, 10%);
+        color: $saas-text;
+    }
+}
+
+.ab_saas_optional_columns_menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    inset-inline-end: 0;
+    z-index: 1070;
+    min-width: 190px;
+    max-height: 260px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 6px 6px 14px;
+    background: $saas-card;
+    border: 1px solid $saas-border;
+    border-radius: 8px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.16);
+}
+
+.ab_saas_optional_columns_menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ab_saas_optional_columns_menu::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 8px;
+}
+
+.ab_saas_optional_columns_menu::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.ab_saas_optional_columns_item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 6px;
+    color: $saas-text;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    &:hover {
+        background: $saas-neutral-light;
+    }
+
+    input {
+        margin: 0;
+    }
+}
+
 .ab_saas_selection_pill {
     display: inline-flex;
     align-items: center;
@@ -2508,6 +2647,7 @@ $saas-transition: 0.15s ease;
 
 // Grid Container
 .ab_saas_grid_container {
+    --ab-saas-grid-width: 1620px;
     border: 1px solid $saas-border;
     border-radius: $saas-radius;
     background: $saas-card;
@@ -2524,14 +2664,15 @@ $saas-transition: 0.15s ease;
     position: sticky;
     top: 0;
     z-index: 2;
-    min-width: 900px;
+    min-width: var(--ab-saas-grid-width, 900px);
 }
 
 .ab_saas_grid_header_row {
     display: flex;
     align-items: center;
     min-height: 44px;
-    min-width: 100%;
+    min-width: var(--ab-saas-grid-width, 100%);
+    width: var(--ab-saas-grid-width, max-content);
 }
 
 // Grid Body
@@ -2541,7 +2682,7 @@ $saas-transition: 0.15s ease;
     max-height: 440px;
     min-height: 200px;
     position: relative;
-    min-width: 900px;
+    min-width: var(--ab-saas-grid-width, 900px);
 }
 
 // Grid Row
@@ -2553,7 +2694,8 @@ $saas-transition: 0.15s ease;
     cursor: pointer;
     transition: background 0.1s ease;
     position: relative;
-    min-width: 100%;
+    min-width: var(--ab-saas-grid-width, 100%);
+    width: var(--ab-saas-grid-width, max-content);
 
     &:hover {
         background: #FAFBFC;
@@ -2608,8 +2750,8 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_grid_cell_product {
-    flex: 1;
-    min-width: 170px;
+    width: 260px;
+    flex: 0 0 260px;
     flex-direction: column;
     align-items: flex-start;
     gap: 2px;
@@ -2625,8 +2767,23 @@ $saas-transition: 0.15s ease;
     flex-shrink: 0;
 }
 
+.ab_saas_grid_cell_product_code {
+    width: 112px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_cell_eplus_id {
+    width: 112px;
+    flex-shrink: 0;
+}
+
+.ab_saas_grid_cell_eplus_serial {
+    width: 112px;
+    flex-shrink: 0;
+}
+
 .ab_saas_grid_cell_qty {
-    width: 80px;
+    width: 104px;
     flex-shrink: 0;
     justify-content: flex-end;
     font-weight: 600;
@@ -2634,14 +2791,14 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_grid_cell_price {
-    width: 78px;
+    width: 92px;
     flex-shrink: 0;
     justify-content: flex-end;
     font-variant-numeric: tabular-nums;
 }
 
 .ab_saas_grid_cell_sold {
-    width: 70px;
+    width: 116px;
     flex-shrink: 0;
     justify-content: flex-end;
     font-variant-numeric: tabular-nums;
@@ -2653,26 +2810,32 @@ $saas-transition: 0.15s ease;
     flex-shrink: 0;
 }
 
+.ab_saas_grid_cell_reason {
+    width: 138px;
+    flex-shrink: 0;
+    overflow: visible;
+}
+
 .ab_saas_grid_cell_note {
-    flex: 0.6;
-    min-width: 100px;
+    width: 130px;
+    flex-shrink: 0;
 }
 
 .ab_saas_grid_header--request,
 .ab_saas_grid_body--request {
-    min-width: 980px;
+    --ab-saas-grid-width: 1620px;
 }
 
 .ab_saas_grid_header--process,
 .ab_saas_grid_body--process {
-    min-width: 1180px;
+    --ab-saas-grid-width: 1260px;
 }
 
 .ab_saas_grid_header_row--request,
 .ab_saas_grid_row--request {
     .ab_saas_grid_cell_product {
-        min-width: 220px;
-        flex: 1.2;
+        width: 300px;
+        flex: 0 0 300px;
     }
 
     .ab_saas_grid_cell_qty {
@@ -2696,8 +2859,8 @@ $saas-transition: 0.15s ease;
     }
 
     .ab_saas_grid_cell_product {
-        min-width: 240px;
-        flex: 1.2;
+        width: 320px;
+        flex: 0 0 320px;
     }
 
     .ab_saas_grid_cell_actual,
@@ -2843,7 +3006,17 @@ $saas-transition: 0.15s ease;
         color: $saas-primary;
     }
 
+    &--matched {
+        background: $saas-success-light;
+        color: #16A34A;
+    }
+
     &--none {
+        background: $saas-danger-light;
+        color: $saas-danger;
+    }
+
+    &--unmatched {
         background: $saas-danger-light;
         color: $saas-danger;
     }
@@ -2858,6 +3031,59 @@ $saas-transition: 0.15s ease;
     white-space: nowrap;
     display: block;
     max-width: 100%;
+}
+
+.ab_saas_reason {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+    padding: 3px 9px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 700;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.ab_saas_reason::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    inset-inline-start: 0;
+    bottom: calc(100% + 8px);
+    z-index: 30;
+    display: none;
+    width: max-content;
+    max-width: 360px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: #111827;
+    color: #FFFFFF;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.35;
+    white-space: normal;
+    text-align: start;
+}
+
+.ab_saas_reason:hover::after,
+.ab_saas_reason:focus::after {
+    display: block;
+}
+
+.ab_saas_reason--matched {
+    background: $saas-success-light;
+    color: #16A34A;
+}
+
+.ab_saas_reason--unmatched {
+    background: $saas-warning-light;
+    color: #B45309;
 }
 
 // Sort Icon
@@ -3557,9 +3783,12 @@ $saas-transition: 0.15s ease;
 
     .ab_saas_grid_cell_branch { width: 120px; }
     .ab_saas_grid_cell_code { width: 100px; }
-    .ab_saas_grid_cell_price { width: 70px; }
-    .ab_saas_grid_cell_sold { width: 60px; }
+    .ab_saas_grid_cell_product_code { width: 104px; }
+    .ab_saas_grid_cell_eplus_serial { width: 104px; }
+    .ab_saas_grid_cell_price { width: 92px; }
+    .ab_saas_grid_cell_sold { width: 116px; }
     .ab_saas_grid_cell_match { width: 90px; }
+    .ab_saas_grid_cell_reason { width: 128px; }
     .ab_saas_grid_cell_note { display: none; }
 }
 
@@ -3592,9 +3821,14 @@ $saas-transition: 0.15s ease;
 
     .ab_saas_grid_cell_branch { width: 100px; }
     .ab_saas_grid_cell_code { width: 80px; }
-    .ab_saas_grid_cell_qty { width: 60px; }
+    .ab_saas_grid_cell_product_code { width: 96px; }
+    .ab_saas_grid_cell_eplus_serial { width: 96px; }
+    .ab_saas_grid_cell_qty { width: 104px; }
+    .ab_saas_grid_cell_price { width: 92px; }
+    .ab_saas_grid_cell_sold { width: 116px; }
     .ab_saas_grid_cell_note { display: none; }
     .ab_saas_grid_cell_match { width: 80px; }
+    .ab_saas_grid_cell_reason { width: 118px; }
 
     .ab_saas_grid_body {
         max-height: 360px;

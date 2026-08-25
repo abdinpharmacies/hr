@@ -1793,6 +1793,30 @@ msgstr "لا توجد تغييرات في كميات السيستم."
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Submit All completed"
+msgstr "تم تقديم الكل"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Unmatched products were removed."
+msgstr "تمت ازالة الاصناف الغير متطابقة"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Removed %s unmatched product(s)."
+msgstr "تمت ازالة %s أصناف غير متطابقة."
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Note: These products will be removed after pressing Submit All."
+msgstr "ملحوظة: هذه الأصناف سوف يتم إزالتها بعد الضغط على تقديم الكل."
+
+#. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "There are no products to refresh."
 msgstr "لا توجد منتجات لتحديث رصيدها."
@@ -2354,9 +2378,6 @@ msgstr "لا يمكنك إضافة بنود بعد تقديم الطلب."
 msgid "state"
 msgstr "الحالة"
 
-#~ msgid "Loading data..."
-#~ msgstr "جاري تحميل البيانات..."
-
 #. module: ab_self_inventory
 msgid "Requested Products Cost"
 msgstr "تكلفة الأصناف المطلوبة"
@@ -2387,6 +2408,93 @@ msgstr "مسح"
 #. module: ab_self_inventory
 msgid "products selected"
 msgstr "أصناف محددة"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Optional columns"
+msgstr "الأعمدة الاختيارية"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Cause"
+msgstr "السبب"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No identifiers"
+msgstr "لا توجد معرفات"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No E-plus ID"
+msgstr "لا يوجد معرف E-plus"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No item code"
+msgstr "لا يوجد كود صنف"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No Odoo product"
+msgstr "لا يوجد منتج في Odoo"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "E-plus Serial"
+msgstr "رقم E-plus"
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Odoo Code"
+msgstr "كود Odoo"
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Matched by E-plus Item ID. We found an Odoo product whose E-plus Serial matches the E-plus Item ID returned by B-Connect."
+msgstr "تمت المطابقة باستخدام رقم صنف E-plus. تم العثور على منتج في Odoo يحمل E-plus Serial مطابقًا لرقم الصنف الذي أرجعه B-Connect."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Matched by Item Code. The E-plus Item ID did not match an Odoo product, so the Item Code was used and matched with the Odoo product code."
+msgstr "تمت المطابقة باستخدام كود الصنف. لم تتم مطابقة رقم صنف E-plus مع أي منتج في Odoo، لذلك تم استخدام كود الصنف ومطابقته مع كود المنتج في Odoo."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No Odoo product was found. We tried both the E-plus Item ID and the Item Code, but neither matched an Odoo product."
+msgstr "لم يتم العثور على منتج في Odoo. تمت تجربة كل من رقم صنف E-plus وكود الصنف، ولكن لم يطابق أيٌّ منهما منتجًا في Odoo."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No E-plus Item ID was returned by B-Connect, and the Item Code could not be matched with an Odoo product."
+msgstr "لم يُرجع B-Connect رقم صنف E-plus، كما تعذر العثور على منتج في Odoo مطابق لكود الصنف."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No Item Code was returned by B-Connect, and the E-plus Item ID could not be matched with an Odoo product."
+msgstr "لم يُرجع B-Connect كود الصنف، كما تعذر العثور على منتج في Odoo مطابق لرقم صنف E-plus."
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "B-Connect did not return an E-plus Item ID or an Item Code, so the row cannot be matched with an Odoo product."
+msgstr "لم يُرجع B-Connect رقم صنف E-plus أو كود الصنف، لذلك لا يمكن مطابقة هذا الصف مع منتج في Odoo."
+
+#~ msgid "Loading data..."
+#~ msgstr "جاري تحميل البيانات..."
 
 #~ msgid "Self inventory batches: own requester records"
 #~ msgstr "مجموعات الجرد الذاتي: سجلات الطالب الخاص"

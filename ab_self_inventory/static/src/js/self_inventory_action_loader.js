@@ -116,7 +116,7 @@ async function stockRefreshToast(env, action) {
     toast.className = `ab_self_inventory_stock_toast ab_self_inventory_stock_toast--${params.type || "success"}`;
 
     const icon = document.createElement("span");
-    icon.className = "fa fa-refresh ab_self_inventory_stock_toast_icon";
+    icon.className = `fa ${params.icon || "fa-refresh"} ab_self_inventory_stock_toast_icon`;
     icon.setAttribute("aria-hidden", "true");
 
     const content = document.createElement("div");
@@ -138,7 +138,7 @@ async function stockRefreshToast(env, action) {
     setTimeout(() => {
         toast.classList.remove("ab_self_inventory_stock_toast--visible");
         setTimeout(() => toast.remove(), 260);
-    }, 3200);
+    }, params.duration || 3200);
     await env.services.action.doAction({ type: "ir.actions.client", tag: "soft_reload" });
 }
 
