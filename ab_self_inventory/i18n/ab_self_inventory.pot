@@ -1708,6 +1708,30 @@ msgstr ""
 
 #. module: ab_self_inventory
 #. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Submit All completed"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Unmatched products were removed."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Removed %s unmatched product(s)."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Note: These products will be removed after pressing Submit All."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_process.py:0
 msgid "There are no products to refresh."
 msgstr ""
@@ -2496,6 +2520,90 @@ msgstr ""
 #. odoo-python
 #: code:addons/ab_self_inventory/models/self_inventory_request.py:0
 msgid "id"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Optional columns"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Cause"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No identifiers"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No E-plus ID"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No item code"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No Odoo product"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "E-plus Serial"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Odoo Code"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Matched by E-plus Item ID. We found an Odoo product whose E-plus Serial matches the E-plus Item ID returned by B-Connect."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "Matched by Item Code. The E-plus Item ID did not match an Odoo product, so the Item Code was used and matched with the Odoo product code."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No Odoo product was found. We tried both the E-plus Item ID and the Item Code, but neither matched an Odoo product."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No E-plus Item ID was returned by B-Connect, and the Item Code could not be matched with an Odoo product."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "No Item Code was returned by B-Connect, and the E-plus Item ID could not be matched with an Odoo product."
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_request.py:0
+msgid "B-Connect did not return an E-plus Item ID or an Item Code, so the row cannot be matched with an Odoo product."
 msgstr ""
 
 #. module: ab_self_inventory

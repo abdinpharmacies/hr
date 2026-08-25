@@ -964,6 +964,10 @@ class DataGridWidget extends Component {
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.selected_products"/>
                         <div class="ab_saas_analytics_label"><t t-esc="_t('Selected')"/></div>
                     </div>
+                    <div class="ab_saas_analytics_card ab_saas_analytics_card--unmatched" t-att-title="_t('Note: These products will be removed after pressing Submit All.')" t-att-data-tooltip="_t('Note: These products will be removed after pressing Submit All.')" tabindex="0">
+                        <div class="ab_saas_analytics_value" t-esc="state.analytics.unmatched_products || 0"/>
+                        <div class="ab_saas_analytics_label"><t t-esc="_t('Unmatched')"/></div>
+                    </div>
                     <div class="ab_saas_analytics_card ab_saas_analytics_card--matched">
                         <div class="ab_saas_analytics_value" t-esc="state.analytics.matched_pct + '%'"/>
                         <div class="ab_saas_analytics_label"><t t-esc="_t('Matched')"/></div>
@@ -1031,8 +1035,21 @@ class DataGridWidget extends Component {
                             <input type="text" t-ref="searchInput" t-att-placeholder="_t('Search products...')" t-on-input="onSearchInput" class="o_input"/>
                         </div>
                     </div>
-                    <div class="ab_saas_toolbar_right" t-if="!isProcessColumns || !isReadonly">
-                        <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly"><t t-esc="_t('Add Line')"/></button>
+                    <div class="ab_saas_toolbar_right">
+                        <div class="ab_saas_optional_columns" t-on-click.stop="() => {}">
+                            <button class="ab_saas_toolbar_icon_btn" t-on-click="toggleOptionalColumnsDropdown" t-att-title="_t('Optional columns')">
+                                <i class="o_optional_columns_dropdown_toggle oi oi-fw oi-settings-adjust"/>
+                            </button>
+                            <div class="ab_saas_optional_columns_menu" t-if="state.optionalDropdownOpen">
+                                <t t-foreach="columnOptions" t-as="column" t-key="column.key">
+                                    <label class="ab_saas_optional_columns_item">
+                                        <input type="checkbox" t-att-checked="isColumnVisible(column.key)" t-on-change="(ev) => this.toggleColumn(column.key, ev)"/>
+                                        <span t-esc="column.label"/>
+                                    </label>
+                                </t>
+                            </div>
+                        </div>
+                        <button class="ab_saas_toolbar_btn ab_saas_toolbar_btn--primary" t-if="!isProcessColumns || !isReadonly" t-on-click="() => this.openAddLine()" t-att-disabled="isReadonly"><t t-esc="_t('Add Line')"/></button>
                         <t t-if="!isProcessColumns">
                             <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.selectAll()" t-att-disabled="!state.total || isReadonly"><t t-esc="_t('Select All')"/></button>
                             <button class="ab_saas_toolbar_btn" t-if="!state.groupByBranch" t-on-click="() => this.unselectAll()" t-att-disabled="!selectedTotal || isReadonly"><t t-esc="_t('Unselect All')"/></button>
@@ -1055,47 +1072,69 @@ class DataGridWidget extends Component {
                 </div>
 
                 <!-- Grid -->
-                <div class="ab_saas_grid_container" t-ref="gridContainer">
+                <div class="ab_saas_grid_container" t-ref="gridContainer" t-att-style="'--ab-saas-grid-width: ' + gridWidth + 'px'">
                     <div t-att-class="'ab_saas_grid_header' + (isRequestColumns ? ' ab_saas_grid_header--request' : '') + (isProcessColumns ? ' ab_saas_grid_header--process' : '')">
                         <div t-att-class="'ab_saas_grid_header_row' + (isRequestColumns ? ' ab_saas_grid_header_row--request' : '') + (isProcessColumns ? ' ab_saas_grid_header_row--process' : '')">
                             <t t-if="isProcessColumns">
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_source"><t t-esc="_t('Source')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_source" t-if="isColumnVisible('source')"><t t-esc="_t('Source')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product" t-if="isColumnVisible('product')">
                                     <t t-esc="_t('Product')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus"><t t-esc="_t('Code')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus" t-if="isColumnVisible('code')"><t t-esc="_t('Code')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product_code" t-if="isColumnVisible('product_code')" t-on-click="() => this.sortBy('product_code')">
+                                    <t t-esc="_t('Odoo Code')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_code')"/>
+                                </div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_id" t-if="isColumnVisible('eplus_item_id')" t-on-click="() => this.sortBy('eplus_item_id')">
+                                    <t t-esc="_t('E-plus Item ID')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('eplus_item_id')"/>
+                                </div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_serial" t-if="isColumnVisible('product_eplus_serial')" t-on-click="() => this.sortBy('product_eplus_serial')">
+                                    <t t-esc="_t('E-plus Serial')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_eplus_serial')"/>
+                                </div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-if="isColumnVisible('system_qty')" t-on-click="() => this.sortBy('system_qty')">
                                     <t t-esc="_t('E-stock Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_actual" t-on-click="() => this.sortBy('actual_qty')">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_actual" t-if="isColumnVisible('actual_qty')" t-on-click="() => this.sortBy('actual_qty')">
                                     <t t-esc="_t('Actual Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('actual_qty')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_difference" t-on-click="() => this.sortBy('difference_qty')">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_difference" t-if="isColumnVisible('difference_qty')" t-on-click="() => this.sortBy('difference_qty')">
                                     <t t-esc="_t('Difference')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('difference_qty')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage" t-on-click="() => this.sortBy('shortage_qty')">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage" t-if="isColumnVisible('shortage_qty')" t-on-click="() => this.sortBy('shortage_qty')">
                                     <t t-esc="_t('Shortage')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('shortage_qty')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_extra" t-on-click="() => this.sortBy('extra_qty')">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_extra" t-if="isColumnVisible('extra_qty')" t-on-click="() => this.sortBy('extra_qty')">
                                     <t t-esc="_t('Extra')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('extra_qty')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation"><t t-esc="_t('Explanation')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation" t-if="isColumnVisible('explanation')"><t t-esc="_t('Explanation')"/></div>
                             </t>
                             <t t-else="">
                                 <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click="toggleAllCheck">☑</div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns" t-on-click="() => this.sortBy('branch_name')">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns &amp;&amp; isColumnVisible('branch')" t-on-click="() => this.sortBy('branch_name')">
                                     <t t-esc="_t('Branch')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('branch_name')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product" t-if="isColumnVisible('product')">
                                     <t t-esc="_t('Product')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_name')" t-on-click="() => this.sortBy('product_name')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus"><t t-esc="_t('Code')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-on-click="() => this.sortBy('system_qty')">
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus" t-if="isColumnVisible('code')"><t t-esc="_t('Code')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_product_code" t-if="isColumnVisible('product_code')" t-on-click="() => this.sortBy('product_code')">
+                                    <t t-esc="_t('Odoo Code')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_code')"/>
+                                </div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_id" t-if="isColumnVisible('eplus_item_id')" t-on-click="() => this.sortBy('eplus_item_id')">
+                                    <t t-esc="_t('E-plus Item ID')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('eplus_item_id')"/>
+                                </div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_serial" t-if="isColumnVisible('product_eplus_serial')" t-on-click="() => this.sortBy('product_eplus_serial')">
+                                    <t t-esc="_t('E-plus Serial')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('product_eplus_serial')"/>
+                                </div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-if="isColumnVisible('system_qty')" t-on-click="() => this.sortBy('system_qty')">
                                     <t t-esc="_t('E-stock Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('system_qty')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_price"><t t-esc="_t('Sell Price')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_sold"><t t-esc="_t('Sold Qty')"/></div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_note"><t t-esc="_t('Note')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_price" t-if="isColumnVisible('sell_price')"><t t-esc="_t('Sell Price')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_sold" t-if="isColumnVisible('sold_qty')"><t t-esc="_t('Sold Qty')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_match" t-if="isColumnVisible('matched_by')" t-on-click="() => this.sortBy('matched_by')">
+                                    <t t-esc="_t('Match')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('matched_by')"/>
+                                </div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_reason" t-if="isColumnVisible('unmatched_reason')"><t t-esc="_t('Cause')"/></div>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_note" t-if="isColumnVisible('note')"><t t-esc="_t('Note')"/></div>
                             </t>
                         </div>
                     </div>
@@ -1104,33 +1143,42 @@ class DataGridWidget extends Component {
                             <t t-foreach="state.rows" t-as="row" t-key="row.id">
                                 <t t-if="isProcessColumns">
                                     <div t-att-class="'ab_saas_grid_row ab_saas_grid_row--process' + (row._highlight ? ' ab_saas_grid_row_highlight' : '')">
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_source">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_source" t-if="isColumnVisible('source')">
                                             <span t-att-class="'ab_saas_source_badge ' + (row.requested ? 'ab_saas_source_badge--requested' : 'ab_saas_source_badge--manual')">
                                                 <t t-esc="row.requested ? _t('Requested') : _t('Manual')"/>
                                             </span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product" t-if="isColumnVisible('product')">
                                             <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus" t-if="isColumnVisible('code')">
                                             <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product_code" t-if="isColumnVisible('product_code')">
+                                            <code class="ab_saas_eplus_code" t-if="row.product_code"><t t-esc="row.product_code"/></code>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_id" t-if="isColumnVisible('eplus_item_id')">
+                                            <code class="ab_saas_eplus_code" t-if="row.eplus_item_id"><t t-esc="row.eplus_item_id"/></code>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_serial" t-if="isColumnVisible('product_eplus_serial')">
+                                            <code class="ab_saas_eplus_code" t-if="row.product_eplus_serial"><t t-esc="row.product_eplus_serial"/></code>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-if="isColumnVisible('system_qty')">
                                             <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_actual">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_actual" t-if="isColumnVisible('actual_qty')">
                                             <input type="number" step="0.001" class="o_input ab_saas_grid_input ab_saas_grid_input_qty" t-att-value="row.actual_qty" t-att-disabled="isReadonly" t-on-click.stop="() => {}" t-on-change="(ev) => this.updateProcessRow(row, 'actual_qty', ev.target.value)"/>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_difference">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_difference" t-if="isColumnVisible('difference_qty')">
                                             <span t-att-class="'ab_saas_qty ' + (row.difference_qty > 0 ? 'ab_saas_qty_extra' : row.difference_qty &lt; 0 ? 'ab_saas_qty_shortage' : '')"><t t-esc="row.difference_qty"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage" t-if="isColumnVisible('shortage_qty')">
                                             <span t-if="row.shortage_qty" class="ab_saas_qty ab_saas_qty_shortage"><t t-esc="row.shortage_qty"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_extra">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_extra" t-if="isColumnVisible('extra_qty')">
                                             <span t-if="row.extra_qty" class="ab_saas_qty ab_saas_qty_extra"><t t-esc="row.extra_qty"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation" t-if="isColumnVisible('explanation')">
                                             <input type="text" class="o_input ab_saas_grid_input" t-att-value="row.explanation" t-att-disabled="isReadonly" t-on-click.stop="() => {}" t-on-change="(ev) => this.updateProcessRow(row, 'explanation', ev.target.value)"/>
                                         </div>
                                     </div>
@@ -1140,25 +1188,44 @@ class DataGridWidget extends Component {
                                         <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
                                             <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns &amp;&amp; isColumnVisible('branch')">
                                             <span class="ab_saas_branch_pill"><t t-esc="row.branch_name"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product" t-if="isColumnVisible('product')">
                                             <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus" t-if="isColumnVisible('code')">
                                             <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_product_code" t-if="isColumnVisible('product_code')">
+                                            <code class="ab_saas_eplus_code" t-if="row.product_code"><t t-esc="row.product_code"/></code>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_id" t-if="isColumnVisible('eplus_item_id')">
+                                            <code class="ab_saas_eplus_code" t-if="row.eplus_item_id"><t t-esc="row.eplus_item_id"/></code>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_serial" t-if="isColumnVisible('product_eplus_serial')">
+                                            <code class="ab_saas_eplus_code" t-if="row.product_eplus_serial"><t t-esc="row.product_eplus_serial"/></code>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-if="isColumnVisible('system_qty')">
                                             <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_price">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_price" t-if="isColumnVisible('sell_price')">
                                             <span class="ab_saas_price" t-if="row.sell_price"><t t-esc="row.sell_price"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_sold" t-if="isColumnVisible('sold_qty')">
                                             <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
                                         </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_match" t-if="isColumnVisible('matched_by')">
+                                            <span t-att-class="'ab_saas_match_badge ' + (row.matched_by === 'none' ? 'ab_saas_match_badge--unmatched' : 'ab_saas_match_badge--matched')">
+                                                <t t-esc="matchStatusLabel(row.matched_by)"/>
+                                            </span>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_reason" t-if="isColumnVisible('unmatched_reason')">
+                                            <span t-att-class="'ab_saas_reason ' + (row.matched_by === 'none' ? 'ab_saas_reason--unmatched' : 'ab_saas_reason--matched')" t-att-title="causeTooltip(row)" t-att-data-tooltip="causeTooltip(row)" t-att-aria-label="causeTooltip(row)" tabindex="0">
+                                                <t t-esc="causeDisplay(row)"/>
+                                            </span>
+                                        </div>
+                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_note" t-if="isColumnVisible('note')">
                                             <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
                                         </div>
                                     </div>
@@ -1178,23 +1245,42 @@ class DataGridWidget extends Component {
                                             <div class="ab_saas_grid_cell ab_saas_grid_cell_check" t-on-click.stop="() => this.toggleRow(row)">
                                                 <span class="ab_saas_checkbox" t-esc="row.selected ? '\u2611' : '\u2610'"/>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns"/>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_product">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_branch" t-if="!isRequestColumns &amp;&amp; isColumnVisible('branch')"/>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_product" t-if="isColumnVisible('product')">
                                                 <div class="ab_saas_product_name" t-if="row.product_name"><t t-esc="row.product_name"/></div>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus" t-if="isColumnVisible('code')">
                                                 <code class="ab_saas_eplus_code" t-if="row.eplus_item_code"><t t-esc="row.eplus_item_code"/></code>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_qty">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_product_code" t-if="isColumnVisible('product_code')">
+                                                <code class="ab_saas_eplus_code" t-if="row.product_code"><t t-esc="row.product_code"/></code>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_id" t-if="isColumnVisible('eplus_item_id')">
+                                                <code class="ab_saas_eplus_code" t-if="row.eplus_item_id"><t t-esc="row.eplus_item_id"/></code>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_eplus_serial" t-if="isColumnVisible('product_eplus_serial')">
+                                                <code class="ab_saas_eplus_code" t-if="row.product_eplus_serial"><t t-esc="row.product_eplus_serial"/></code>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_qty" t-if="isColumnVisible('system_qty')">
                                                 <span t-att-class="'ab_saas_qty' + (row.system_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.system_qty"/></span>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_price" t-if="isColumnVisible('sell_price')">
                                                 <span class="ab_saas_price" t-if="row.sell_price"><t t-esc="row.sell_price"/></span>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_sold" t-if="isColumnVisible('sold_qty')">
                                                 <span class="ab_saas_sold" t-if="row.sold_qty"><t t-esc="row.sold_qty"/></span>
                                             </div>
-                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_note">
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_match" t-if="isColumnVisible('matched_by')">
+                                                <span t-att-class="'ab_saas_match_badge ' + (row.matched_by === 'none' ? 'ab_saas_match_badge--unmatched' : 'ab_saas_match_badge--matched')">
+                                                    <t t-esc="matchStatusLabel(row.matched_by)"/>
+                                                </span>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_reason" t-if="isColumnVisible('unmatched_reason')">
+                                                <span t-att-class="'ab_saas_reason ' + (row.matched_by === 'none' ? 'ab_saas_reason--unmatched' : 'ab_saas_reason--matched')" t-att-title="causeTooltip(row)" t-att-data-tooltip="causeTooltip(row)" t-att-aria-label="causeTooltip(row)" tabindex="0">
+                                                    <t t-esc="causeDisplay(row)"/>
+                                                </span>
+                                            </div>
+                                            <div class="ab_saas_grid_cell ab_saas_grid_cell_note" t-if="isColumnVisible('note')">
                                                 <span class="ab_saas_note" t-if="row.note" t-att-title="row.note"><t t-esc="row.note"/></span>
                                             </div>
                                         </div>
@@ -1266,6 +1352,7 @@ class DataGridWidget extends Component {
         this._searchGlowTimer = null;
         this._loadKey = "";
         this.loading = useBatchLoading({ minDuration: 600 });
+        const visibleColumns = this._loadVisibleColumns();
         this.state = useState({
             analytics: null,
             branches: [],
@@ -1285,6 +1372,8 @@ class DataGridWidget extends Component {
             branchSelectionInitialized: false,
             serverBranchKey: "",
             bulkDropdownOpen: false,
+            optionalDropdownOpen: false,
+            visibleColumns,
             searchGlow: false,
         });
         onWillStart(() => this._load());
@@ -1299,6 +1388,9 @@ class DataGridWidget extends Component {
         useExternalListener(window, "click", (e) => {
             if (this.state.bulkDropdownOpen) {
                 this.state.bulkDropdownOpen = false;
+            }
+            if (this.state.optionalDropdownOpen) {
+                this.state.optionalDropdownOpen = false;
             }
         });
         onPatched(() => this._onPatched());
@@ -1318,6 +1410,116 @@ class DataGridWidget extends Component {
         const lineCount = getRecordValue(rec, this.props.name, "");
         const search = this.state.searchText || "";
         return `${rec.resId}:${key}:${version}:${lineCount}:${search}:${grp}:${this.state.page}:${this.state.sortBy}:${this.state.sortOrder}`;
+    }
+
+    get columnOptions() {
+        if (this.isProcessColumns) {
+            return [
+                { key: "source", label: _t("Source") },
+                { key: "product", label: _t("Product") },
+                { key: "code", label: _t("Code") },
+                { key: "product_code", label: _t("Odoo Code") },
+                { key: "eplus_item_id", label: _t("E-plus Item ID") },
+                { key: "product_eplus_serial", label: _t("E-plus Serial") },
+                { key: "system_qty", label: _t("E-stock Qty") },
+                { key: "actual_qty", label: _t("Actual Qty") },
+                { key: "difference_qty", label: _t("Difference") },
+                { key: "shortage_qty", label: _t("Shortage") },
+                { key: "extra_qty", label: _t("Extra") },
+                { key: "explanation", label: _t("Explanation") },
+            ];
+        }
+        const columns = [];
+        if (!this.isRequestColumns) {
+            columns.push({ key: "branch", label: _t("Branch") });
+        }
+        columns.push(
+            { key: "product", label: _t("Product") },
+            { key: "code", label: _t("Code") },
+            { key: "product_code", label: _t("Odoo Code") },
+            { key: "eplus_item_id", label: _t("E-plus Item ID") },
+            { key: "product_eplus_serial", label: _t("E-plus Serial") },
+            { key: "system_qty", label: _t("E-stock Qty") },
+            { key: "sell_price", label: _t("Sell Price") },
+            { key: "sold_qty", label: _t("Sold Qty") },
+            { key: "matched_by", label: _t("Match") },
+            { key: "unmatched_reason", label: _t("Cause") },
+            { key: "note", label: _t("Note") }
+        );
+        return columns;
+    }
+
+    get optionalColumnStorageKey() {
+        const columnType = this.isProcessColumns ? "process" : this.isRequestColumns ? "request" : "batch";
+        return `ab_self_inventory.visible_columns.v5.${columnType}`;
+    }
+
+    get defaultVisibleColumns() {
+        if (this.isProcessColumns) {
+            return {
+                product_code: false,
+                eplus_item_id: false,
+                product_eplus_serial: false,
+            };
+        }
+        return {
+            product_code: false,
+            eplus_item_id: false,
+            product_eplus_serial: false,
+            matched_by: false,
+            unmatched_reason: false,
+        };
+    }
+
+    get gridWidth() {
+        if (!this.isProcessColumns) {
+            return 1620;
+        }
+        let width = 1260;
+        if (this.isColumnVisible("product_code")) {
+            width += 112;
+        }
+        if (this.isColumnVisible("eplus_item_id")) {
+            width += 112;
+        }
+        if (this.isColumnVisible("product_eplus_serial")) {
+            width += 112;
+        }
+        return width;
+    }
+
+    _loadVisibleColumns() {
+        try {
+            const storedColumns = JSON.parse(window.localStorage.getItem(this.optionalColumnStorageKey) || "{}") || {};
+            return { ...this.defaultVisibleColumns, ...storedColumns };
+        } catch {
+            return { ...this.defaultVisibleColumns };
+        }
+    }
+
+    _saveVisibleColumns() {
+        try {
+            window.localStorage.setItem(this.optionalColumnStorageKey, JSON.stringify(this.state.visibleColumns || {}));
+        } catch {
+            return;
+        }
+    }
+
+    isColumnVisible(key) {
+        return (this.state.visibleColumns || {})[key] !== false;
+    }
+
+    toggleOptionalColumnsDropdown(ev) {
+        ev?.stopPropagation();
+        this.state.optionalDropdownOpen = !this.state.optionalDropdownOpen;
+    }
+
+    toggleColumn(key, ev) {
+        ev?.stopPropagation();
+        const visibleColumns = { ...(this.state.visibleColumns || {}) };
+        visibleColumns[key] = Boolean(ev?.target?.checked);
+        this.state.visibleColumns = visibleColumns;
+        this._saveVisibleColumns();
     }
 
     get resModel() {
@@ -1815,6 +2017,18 @@ class DataGridWidget extends Component {
     matchLabel(value) {
         const labels = { eplus_serial: _t("E-plus ID"), code: _t("Item Code"), none: _t("Unmatched") };
         return labels[value] || value || "";
+    }
+
+    matchStatusLabel(value) {
+        return value === "none" ? _t("Unmatched") : _t("Matched");
+    }
+
+    causeDisplay(row) {
+        return row?.unmatched_reason_short || row?.unmatched_reason || this.matchStatusLabel(row?.matched_by);
+    }
+
+    causeTooltip(row) {
+        return row?.unmatched_reason || this.causeDisplay(row);
     }
 
     get footerText() {

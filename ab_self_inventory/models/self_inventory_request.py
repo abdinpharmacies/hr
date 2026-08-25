@@ -371,10 +371,12 @@ class SelfInventoryRequest(models.Model):
         self.ensure_one()
         lines = self.line_ids
         total = len(lines)
+        unmatched = len(lines.filtered(lambda line: line.matched_by == 'none'))
         return {
             'branch_count': 1 if self.branch_id and total else 0,
             'total_products': total,
             'selected_products': len(lines.filtered('selected')),
+            'unmatched_products': unmatched,
             'matched_pct': round(len(lines.filtered(lambda line: line.matched_by != 'none')) / total * 100) if total else 0,
         }
 
@@ -418,13 +420,47 @@ class SelfInventoryRequest(models.Model):
             'selected': line.selected,
             'product_name': line.product_id.display_name or line.product_id.name or '' if line.product_id else '',
             'product_code': line.product_code or '',
+            'product_eplus_serial': line.product_id.eplus_serial if line.product_id else False,
+            'eplus_item_id': line.eplus_item_id,
             'eplus_item_code': line.eplus_item_code or '',
             'system_qty': line.system_qty,
             'sell_price': line.sell_price,
             'sold_qty': line.sold_qty,
             'matched_by': line.matched_by,
+            'unmatched_reason': self._get_line_match_reason(line),
+            'unmatched_reason_short': self._get_line_match_reason_short(line),
             'note': line.note or '',
         }
+
+    def _get_line_match_reason(self, line):
+        if line.matched_by == 'eplus_serial':
+            return _("Matched by E-plus Item ID. We found an Odoo product whose E-plus Serial matches the E-plus Item ID returned by B-Connect.")
+        if line.matched_by == 'code':
+            return _("Matched by Item Code. The E-plus Item ID did not match an Odoo product, so the Item Code was used and matched with the Odoo product code.")
+        has_eplus_id = bool(line.eplus_item_id)
+        has_code = bool((line.eplus_item_code or '').strip())
+        if not has_eplus_id and not has_code:
+            return _("B-Connect did not return an E-plus Item ID or an Item Code, so the row cannot be matched with an Odoo product.")
+        if not has_eplus_id:
+            return _("No E-plus Item ID was returned by B-Connect, and the Item Code could not be matched with an Odoo product.")
+        if not has_code:
+            return _("No Item Code was returned by B-Connect, and the E-plus Item ID could not be matched with an Odoo product.")
+        return _("No Odoo product was found. We tried both the E-plus Item ID and the Item Code, but neither matched an Odoo product.")
+
+    def _get_line_match_reason_short(self, line):
+        if line.matched_by == 'eplus_serial':
+            return _("E-plus ID")
+        if line.matched_by == 'code':
+            return _("Item Code")
+        has_eplus_id = bool(line.eplus_item_id)
+        has_code = bool((line.eplus_item_code or '').strip())
+        if not has_eplus_id and not has_code:
+            return _("No identifiers")
+        if not has_eplus_id:
+            return _("No E-plus ID")
+        if not has_code:
+            return _("No item code")
+        return _("No Odoo product")
 
     def action_get_grouped_rows(self, search=None, limit=50, branch_id=None, branch_ids=None):
         self.ensure_one()
@@ -451,6 +487,8 @@ class SelfInventoryRequest(models.Model):
             'product_id': 'product_id',
             'product_name': 'product_id.name',
             'product_code': 'product_code',
+            'product_eplus_serial': 'product_id.eplus_serial',
+            'eplus_item_id': 'eplus_item_id',
             'eplus_item_code': 'eplus_item_code',
             'system_qty': 'system_qty',
             'sell_price': 'sell_price',
@@ -1236,11 +1274,14 @@ class SelfInventoryRequestBatch(models.Model):
 
     def action_submit_batch(self):
         Request = self.env['ab_self_inventory_request']
+        removed_unmatched_count = 0
         for rec in self:
             if rec.state != 'draft':
                 continue
             rec._check_can_update_lines()
-            rec.line_ids.filtered(lambda line: not line.selected).unlink()
+            removed_lines = rec.line_ids.filtered(lambda line: not line.selected or not line.product_id)
+            removed_unmatched_count += len(removed_lines)
+            removed_lines.unlink()
             selected_lines = rec.line_ids.filtered(lambda line: line.selected and line.product_id)
             if not selected_lines:
                 raise ValidationError(_("Select at least one matched product before submitting."))
@@ -1273,7 +1314,17 @@ class SelfInventoryRequestBatch(models.Model):
                 'state': 'submitted',
                 'submitted_date': fields.Datetime.now(),
             })
-        return self._get_reload_action()
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'ab_self_inventory_stock_refresh_toast',
+            'params': {
+                'title': _('Submit All completed'),
+                'message': _('Removed %s unmatched product(s).') % removed_unmatched_count,
+                'type': 'warning',
+                'icon': 'fa-trash',
+                'duration': 5000,
+            },
+        }
 
     def action_select_all_lines(self):
         for rec in self:
@@ -1396,10 +1447,12 @@ class SelfInventoryRequestBatch(models.Model):
         self.ensure_one()
         lines = self.line_ids
         total = len(lines)
+        unmatched = len(lines.filtered(lambda line: line.matched_by == 'none'))
         return {
             'branch_count': len(lines.mapped('branch_id')),
             'total_products': total,
             'selected_products': len(lines.filtered('selected')),
+            'unmatched_products': unmatched,
             'matched_pct': round(len(lines.filtered(lambda l: l.matched_by != 'none')) / total * 100) if total else 0,
         }
 
@@ -1448,13 +1501,47 @@ class SelfInventoryRequestBatch(models.Model):
             'selected': line.selected,
             'product_name': line.product_id.display_name or line.product_id.name or '' if line.product_id else '',
             'product_code': line.product_code or '',
+            'product_eplus_serial': line.product_id.eplus_serial if line.product_id else False,
+            'eplus_item_id': line.eplus_item_id,
             'eplus_item_code': line.eplus_item_code or '',
             'system_qty': line.system_qty,
             'sell_price': line.sell_price,
             'sold_qty': line.sold_qty,
             'matched_by': line.matched_by,
+            'unmatched_reason': self._get_line_match_reason(line),
+            'unmatched_reason_short': self._get_line_match_reason_short(line),
             'note': line.note or '',
         }
+
+    def _get_line_match_reason(self, line):
+        if line.matched_by == 'eplus_serial':
+            return _("Matched by E-plus Item ID. We found an Odoo product whose E-plus Serial matches the E-plus Item ID returned by B-Connect.")
+        if line.matched_by == 'code':
+            return _("Matched by Item Code. The E-plus Item ID did not match an Odoo product, so the Item Code was used and matched with the Odoo product code.")
+        has_eplus_id = bool(line.eplus_item_id)
+        has_code = bool((line.eplus_item_code or '').strip())
+        if not has_eplus_id and not has_code:
+            return _("B-Connect did not return an E-plus Item ID or an Item Code, so the row cannot be matched with an Odoo product.")
+        if not has_eplus_id:
+            return _("No E-plus Item ID was returned by B-Connect, and the Item Code could not be matched with an Odoo product.")
+        if not has_code:
+            return _("No Item Code was returned by B-Connect, and the E-plus Item ID could not be matched with an Odoo product.")
+        return _("No Odoo product was found. We tried both the E-plus Item ID and the Item Code, but neither matched an Odoo product.")
+
+    def _get_line_match_reason_short(self, line):
+        if line.matched_by == 'eplus_serial':
+            return _("E-plus ID")
+        if line.matched_by == 'code':
+            return _("Item Code")
+        has_eplus_id = bool(line.eplus_item_id)
+        has_code = bool((line.eplus_item_code or '').strip())
+        if not has_eplus_id and not has_code:
+            return _("No identifiers")
+        if not has_eplus_id:
+            return _("No E-plus ID")
+        if not has_code:
+            return _("No item code")
+        return _("No Odoo product")
 
     def action_get_grouped_rows(self, search=None, limit=50, branch_id=None, branch_ids=None):
         self.ensure_one()
@@ -1485,6 +1572,8 @@ class SelfInventoryRequestBatch(models.Model):
             'product_id': 'product_id',
             'product_name': 'product_id.name',
             'product_code': 'product_code',
+            'product_eplus_serial': 'product_id.eplus_serial',
+            'eplus_item_id': 'eplus_item_id',
             'eplus_item_code': 'eplus_item_code',
             'system_qty': 'system_qty',
             'sell_price': 'sell_price',
