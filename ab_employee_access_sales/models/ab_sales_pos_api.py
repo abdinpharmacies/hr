@@ -54,6 +54,17 @@ class AbSalesPosApi(models.TransientModel):
         if not selected_employee:
             selected_employee = session.employee_id
         header_payload["employee_id"] = selected_employee.id
+        header_payload.update({
+            "pos_hr_employee_id": session.employee_id.id,
+            "pos_hr_profile_id": session._get_pos_profile().id if session._get_pos_profile() else False,
+            "pos_hr_role_id": session.role_id.id if session.role_id else False,
+            "pos_hr_shift_id": session.shift_id.id if session.shift_id else False,
+            "pos_hr_session_id": session.id,
+            "pos_hr_service_user_id": session.service_user_id.id if session.service_user_id else False,
+            "pos_hr_device_uid": session.device_uid or False,
+            "pos_hr_device_name": session.device_name or False,
+            "pos_hr_device_ip": session.device_ip or False,
+        })
         payload["header"] = header_payload
 
         try:
@@ -68,6 +79,21 @@ class AbSalesPosApi(models.TransientModel):
                 details={"message": str(exc)},
             )
             raise
+
+        if isinstance(result, dict) and result.get("remote_callcenter"):
+            self.env["ab_employee_access_sales_pos_api"]._log_operation(
+                "sale_submit",
+                session.employee_id,
+                profile=session._get_pos_profile(),
+                session=session,
+                status="success",
+                details={
+                    "result_type": "remote_callcenter",
+                    "remote_header_id": result.get("branch_header_id") or result.get("remote_header_id"),
+                    "eplus_serial": result.get("eplus_serial"),
+                },
+            )
+            return result
 
         header_id = result.get("pos_header_id") or result.get("id") if isinstance(result, dict) else False
         header = self.env["ab_sales_header"].sudo().browse(int(header_id or 0)).exists() if header_id else False
