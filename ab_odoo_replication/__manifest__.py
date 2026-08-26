@@ -17,13 +17,12 @@
     'version': '19.0.1.0.0',
 
     # any module necessary for this one to work correctly
-    'depends': ['base', 'ab_hr', 'ab_product', 'ab_customer',
-                'ab_announcement', 'mail', 'ab_promo_program',
-                'integration_queue_job'],
+    'depends': ['base', 'ab_odoo_connect'],
 
     # always loaded
     'data': [
         'security/ir.model.access.csv',
+        'data/models_to_override.xml',
         # 'data/queue_job_record.xml',
         'views/cron_ab_odoo_replication.xml',
         'views/ab_odoo_replication.xml',

@@ -63,6 +63,91 @@
                   action="ab_odoo_replication_log_action"
                   sequence="1000"/>
 
+        <record id="ab_odoo_replication_override_view_list" model="ir.ui.view">
+            <field name="name">ab.odoo.replication.override.list</field>
+            <field name="model">ab_odoo_replication_override</field>
+            <field name="arch" type="xml">
+                <list string="Replication Model Overrides" multi_edit="1">
+                    <field name="active" column_invisible="True"/>
+                    <field name="model_name"/>
+                    <field name="model_available"/>
+                    <field name="disable_write"/>
+                    <field name="disable_create"/>
+                    <field name="disable_unlink"/>
+                    <field name="ignore_write_date" optional="show"/>
+                    <field name="control_server_bypass" optional="show"/>
+                    <field name="allowed_write_group_ids" widget="many2many_tags" optional="hide"/>
+                    <field name="allowed_create_group_ids" widget="many2many_tags" optional="hide"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_odoo_replication_override_view_form" model="ir.ui.view">
+            <field name="name">ab.odoo.replication.override.form</field>
+            <field name="model">ab_odoo_replication_override</field>
+            <field name="arch" type="xml">
+                <form string="Replication Model Override">
+                    <sheet>
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                        <field name="active" invisible="True"/>
+                        <group>
+                            <group string="Model">
+                                <field name="model_name" placeholder="for example: ab_hr_employee"/>
+                                <field name="model_available" readonly="True"/>
+                                <field name="control_server_bypass"/>
+                            </group>
+                            <group string="Restricted Operations">
+                                <field name="disable_write"/>
+                                <field name="disable_create"/>
+                                <field name="disable_unlink"/>
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Trusted Replication">
+                                <field name="ignore_write_date"/>
+                                <field name="allow_replication_create"/>
+                                <field name="allow_replication_unlink"/>
+                            </group>
+                            <group string="Allowed Groups">
+                                <field name="allowed_write_group_ids"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                                <field name="allowed_create_group_ids"
+                                       widget="many2many_tags"
+                                       options="{'no_create': True}"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_odoo_replication_override_view_search" model="ir.ui.view">
+            <field name="name">ab.odoo.replication.override.search</field>
+            <field name="model">ab_odoo_replication_override</field>
+            <field name="arch" type="xml">
+                <search string="Replication Model Overrides">
+                    <field name="model_name"/>
+                    <filter name="active" string="Active" domain="[('active', '=', True)]"/>
+                    <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_odoo_replication_override_action" model="ir.actions.act_window">
+            <field name="name">Replication Model Overrides</field>
+            <field name="res_model">ab_odoo_replication_override</field>
+            <field name="view_mode">list,form</field>
+            <field name="context">{'search_default_active': 1}</field>
+        </record>
+
+        <menuitem id="ab_odoo_replication_override_menu"
+                  name="Replication Model Overrides"
+                  parent="base.menu_custom"
+                  action="ab_odoo_replication_override_action"
+                  groups="base.group_system"
+                  sequence="999"/>
+
 
     </data>
 </odoo>
