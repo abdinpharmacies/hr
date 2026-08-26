@@ -683,6 +683,75 @@ class AbSalesPosApi(models.TransientModel):
         }
 
     @api.model
+    def _pos_remote_submit_response(self, header, duplicate_token=False, message=None):
+        header = header.exists()
+        if not header:
+            return {
+                "remote_callcenter": True,
+                "duplicate_token": bool(duplicate_token),
+                "branch_header_id": 0,
+                "remote_header_id": 0,
+                "status": "",
+                "eplus_serial": 0,
+                "message": message or _("Remote invoice was not found."),
+            }
+
+        customer_name = (
+            header.customer_id.display_name
+            if header.customer_id
+            else header.bill_customer_name
+                 or header.new_customer_name
+                 or ""
+        )
+        customer_phone = (
+            header.customer_phone
+            or header.customer_mobile
+            or header.bill_customer_phone
+            or header.new_customer_phone
+            or ""
+        )
+        customer_address = (
+            header.customer_address
+            or header.bill_customer_address
+            or header.new_customer_address
+            or ""
+        )
+        response = {
+            "remote_callcenter": True,
+            "duplicate_token": bool(duplicate_token),
+            "branch_header_id": int(header.id or 0),
+            "remote_header_id": int(header.id or 0),
+            "status": header.status or "",
+            "eplus_serial": int(header.eplus_serial or 0),
+            "message": message or _("Remote branch invoice created."),
+        }
+        if duplicate_token:
+            response["existing_header"] = {
+                "id": int(header.id or 0),
+                "eplus_serial": int(header.eplus_serial or 0),
+                "status": header.status or "",
+                "store": {
+                    "id": int(header.store_id.id or 0) if header.store_id else 0,
+                    "name": header.store_id.display_name if header.store_id else "",
+                    "code": header.store_id.code if header.store_id else "",
+                },
+                "customer": {
+                    "name": customer_name,
+                    "phone": customer_phone,
+                    "address": customer_address,
+                    "code": header.customer_code or "",
+                },
+                "create_date": fields.Datetime.to_string(header.create_date) if header.create_date else "",
+                "totals": {
+                    "total_price": float(header.total_price or 0.0),
+                    "total_net_amount": float(header.total_net_amount or 0.0),
+                    "number_of_products": int(header.number_of_products or len(header.line_ids)),
+                },
+                "line_count": int(len(header.line_ids)),
+            }
+        return response
+
+    @api.model
     def _pos_unavailable_action(self, header):
         return None
 
@@ -791,20 +860,23 @@ class AbSalesPosApi(models.TransientModel):
         return uom_id or default_uom_id
 
     @api.model
-    def pos_submit(self, payload=None, **kwargs):
-        """
-        Create and submit a sales header from a POS payload.
+    def _pos_apply_payload_promotion(self, header, payload):
+        applied_program_id = payload.get("applied_program_id")
+        if applied_program_id and "applied_program_ids" in header._fields:
+            if isinstance(applied_program_id, (list, tuple)) and applied_program_id:
+                applied_program_id = applied_program_id[0]
+            try:
+                promo_id = int(applied_program_id)
+            except Exception:
+                promo_id = 0
+            if promo_id:
+                header.applied_program_ids = [(6, 0, [promo_id])]
+                if hasattr(header, "btn_apply_promotion"):
+                    header.btn_apply_promotion()
 
-        The method validates the header, handles duplicate client tokens,
-        creates sales lines with default UoMs when needed, applies a promotion
-        when provided, fills offline balances, and returns the submit action or
-        the created header metadata.
-        """
+    @api.model
+    def _pos_create_prepending_header_from_payload(self, payload):
         self._require_models("ab_sales_header", "ab_sales_line", "ab_product")
-        if payload is None and kwargs:
-            payload = kwargs
-        if not payload or not isinstance(payload, dict):
-            raise UserError(_("Invalid payload."))
 
         header_vals = self._filter_vals("ab_sales_header", payload.get("header") or {})
         if not header_vals.get("employee_id"):
@@ -815,9 +887,7 @@ class AbSalesPosApi(models.TransientModel):
         if token:
             existing = self.env["ab_sales_header"].search([("pos_client_token", "=", token)], limit=1)
             if existing:
-                if on_existing_token == "warn":
-                    return self._pos_existing_header_payload(existing)
-                return self._pos_existing_header_action(existing)
+                return existing, True, on_existing_token
             header_vals["pos_client_token"] = token
         else:
             header_vals.pop("pos_client_token", None)
@@ -837,9 +907,7 @@ class AbSalesPosApi(models.TransientModel):
             if token:
                 existing = self.env["ab_sales_header"].search([("pos_client_token", "=", token)], limit=1)
                 if existing:
-                    if on_existing_token == "warn":
-                        return self._pos_existing_header_payload(existing)
-                    return self._pos_existing_header_action(existing)
+                    return existing, True, on_existing_token
             raise
 
         product_ids = []
@@ -869,18 +937,113 @@ class AbSalesPosApi(models.TransientModel):
         if lines_to_create:
             self.env["ab_sales_line"].create(lines_to_create)
 
-        applied_program_id = payload.get("applied_program_id")
-        if applied_program_id and "applied_program_ids" in header._fields:
-            if isinstance(applied_program_id, (list, tuple)) and applied_program_id:
-                applied_program_id = applied_program_id[0]
-            try:
-                promo_id = int(applied_program_id)
-            except Exception:
-                promo_id = 0
-            if promo_id:
-                header.applied_program_ids = [(6, 0, [promo_id])]
-                if hasattr(header, "btn_apply_promotion"):
-                    header.btn_apply_promotion()
-
+        self._pos_apply_payload_promotion(header, payload)
         self._fill_lines_balance_from_offline(header)
+        return header, False, on_existing_token
+
+    @api.model
+    def _pos_callcenter_remote_config(self, payload):
+        if not self.env.user.has_group("ab_sales.group_call_center"):
+            return self.env["ab_sales_branch_rpc_config"]
+        header_vals = payload.get("header") or {}
+        try:
+            store_id = int(header_vals.get("store_id") or 0)
+        except Exception:
+            store_id = 0
+        if not store_id:
+            raise UserError(_("Store is required."))
+        config = self.env["ab_sales_branch_rpc_config"].sudo().search([
+            ("store_id", "=", store_id),
+            ("active", "=", True),
+        ], limit=1)
+        if not config:
+            raise UserError(_("No active branch RPC configuration was found for the selected store."))
+        return config
+
+    @api.model
+    def _pos_submit_to_branch_rpc(self, payload):
+        config = self._pos_callcenter_remote_config(payload)
+        if not config:
+            return False
+
+        header_vals = payload.get("header") or {}
+        token = (header_vals.get("pos_client_token") or "").strip()
+        log = self.env["ab_sales_callcenter_rpc_log"].sudo().create({
+            "rpc_config_id": config.id,
+            "store_id": config.store_id.id,
+            "payload_token": token,
+            "state": "started",
+            "submitted_by_id": self.env.uid,
+            "submitted_at": fields.Datetime.now(),
+        })
+        self.env.cr.commit()
+
+        try:
+            response = config._execute_kw(
+                "ab_sales_pos_api",
+                "pos_submit_from_callcenter",
+                [payload],
+            )
+            if not isinstance(response, dict):
+                raise UserError(_("Branch RPC submit returned an invalid response."))
+            log.write({
+                "state": "success",
+                "remote_header_id": int(
+                    response.get("branch_header_id") or response.get("remote_header_id") or 0
+                ),
+                "remote_status": response.get("status") or "",
+                "remote_eplus_serial": int(response.get("eplus_serial") or 0),
+                "response_message": response.get("message") or "",
+            })
+            self.env.cr.commit()
+            return response
+        except Exception as error:
+            log.write({
+                "state": "error",
+                "error_message": str(error),
+            })
+            self.env.cr.commit()
+            raise
+
+    @api.model
+    def pos_submit_from_callcenter(self, payload=None, **kwargs):
+        if payload is None and kwargs:
+            payload = kwargs
+        if not payload or not isinstance(payload, dict):
+            raise UserError(_("Invalid payload."))
+
+        header, duplicate_token, _on_existing_token = (
+            self.with_context(from_callcenter_rpc=True)._pos_create_prepending_header_from_payload(payload)
+        )
+        message = (
+            _("An invoice already exists with the same token.")
+            if duplicate_token
+            else _("Remote branch invoice created.")
+        )
+        return self._pos_remote_submit_response(header, duplicate_token=duplicate_token, message=message)
+
+    @api.model
+    def pos_submit(self, payload=None, **kwargs):
+        """
+        Create and submit a sales header from a POS payload.
+
+        The method validates the header, handles duplicate client tokens,
+        creates sales lines with default UoMs when needed, applies a promotion
+        when provided, fills offline balances, and returns the submit action or
+        the created header metadata.
+        """
+        if payload is None and kwargs:
+            payload = kwargs
+        if not payload or not isinstance(payload, dict):
+            raise UserError(_("Invalid payload."))
+
+        remote_response = self._pos_submit_to_branch_rpc(payload)
+        if remote_response:
+            return remote_response
+
+        header, duplicate_token, on_existing_token = self._pos_create_prepending_header_from_payload(payload)
+        if duplicate_token:
+            if on_existing_token == "warn":
+                return self._pos_existing_header_payload(header)
+            return self._pos_existing_header_action(header)
         return self._pos_submit_response(header.with_context(pos_submit=True), apply_submit=True)

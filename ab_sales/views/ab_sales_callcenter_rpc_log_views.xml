@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="ab_sales_callcenter_rpc_log_view_list" model="ir.ui.view">
+            <field name="name">ab_sales_callcenter_rpc_log.list</field>
+            <field name="model">ab_sales_callcenter_rpc_log</field>
+            <field name="arch" type="xml">
+                <list string="Call-Center RPC Logs" create="0" edit="0" delete="0">
+                    <field name="submitted_at"/>
+                    <field name="state"/>
+                    <field name="store_id"/>
+                    <field name="payload_token"/>
+                    <field name="remote_header_id"/>
+                    <field name="remote_status"/>
+                    <field name="remote_eplus_serial"/>
+                    <field name="submitted_by_id"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_sales_callcenter_rpc_log_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_callcenter_rpc_log.form</field>
+            <field name="model">ab_sales_callcenter_rpc_log</field>
+            <field name="arch" type="xml">
+                <form string="Call-Center RPC Log" create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="state"/>
+                                <field name="submitted_at"/>
+                                <field name="submitted_by_id"/>
+                            </group>
+                            <group>
+                                <field name="store_id"/>
+                                <field name="rpc_config_id"/>
+                                <field name="payload_token"/>
+                            </group>
+                        </group>
+                        <group string="Remote Result">
+                            <field name="remote_header_id"/>
+                            <field name="remote_status"/>
+                            <field name="remote_eplus_serial"/>
+                            <field name="response_message"/>
+                            <field name="error_message"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_sales_callcenter_rpc_log_view_search" model="ir.ui.view">
+            <field name="name">ab_sales_callcenter_rpc_log.search</field>
+            <field name="model">ab_sales_callcenter_rpc_log</field>
+            <field name="arch" type="xml">
+                <search string="Call-Center RPC Logs">
+                    <field name="store_id"/>
+                    <field name="payload_token"/>
+                    <filter name="success" string="Success" domain="[('state', '=', 'success')]"/>
+                    <filter name="error" string="Errors" domain="[('state', '=', 'error')]"/>
+                </search>
+            </field>
+        </record>
+
+        <record id="ab_sales_callcenter_rpc_log_action" model="ir.actions.act_window">
+            <field name="name">Call-Center RPC Logs</field>
+            <field name="res_model">ab_sales_callcenter_rpc_log</field>
+            <field name="view_mode">list,form</field>
+            <field name="search_view_id" ref="ab_sales_callcenter_rpc_log_view_search"/>
+        </record>
+
+        <menuitem id="ab_sales_callcenter_rpc_log_menu"
+                  name="Call-Center RPC Logs"
+                  parent="config_sub_menu"
+                  action="ab_sales_callcenter_rpc_log_action"
+                  sequence="430"
+                  groups="base.group_system"/>
+    </data>
+</odoo>

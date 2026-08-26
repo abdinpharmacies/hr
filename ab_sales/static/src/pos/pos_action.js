@@ -3,6 +3,7 @@
 import {registry} from "@web/core/registry";
 import {Component, onMounted, onWillStart, onWillUnmount, useExternalListener, useRef, useState} from "@odoo/owl";
 import {Dialog} from "@web/core/dialog/dialog";
+import {_t} from "@web/core/l10n/translation";
 import {useService} from "@web/core/utils/hooks";
 import {FormViewDialog} from "@web/views/view_dialogs/form_view_dialog";
 import {session} from "@web/session";
@@ -3969,10 +3970,10 @@ class AbSalesPosAction extends Component {
                 });
                 return;
             }
-            this.notification.add(
-                `Submitted invoice #${result?.eplus_serial || result?.id || ""}`,
-                {type: "success"}
-            );
+            const successMessage = result?.remote_callcenter
+                ? _t("Submitted to branch invoice ID %(id)s", {id: result?.branch_header_id || ""})
+                : `Submitted invoice #${result?.eplus_serial || result?.id || ""}`;
+            this.notification.add(successMessage, {type: "success"});
             this.removeBill(bill.id);
             if (storeId) {
                 this.createNewBill(storeId);

@@ -10,6 +10,7 @@ from . import ab_product_inherit
 from . import ab_product_rank
 from . import ab_sales_pos_settings
 from . import ab_sales_branch_rpc_config
+from . import ab_sales_callcenter_rpc_log
 from . import ab_sales_pos_draft_cache
 from . import ab_sales_pos_replication_turn
 from . import ab_product_balance_wizard

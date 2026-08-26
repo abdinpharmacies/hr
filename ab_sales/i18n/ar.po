@@ -206,3 +206,122 @@ msgstr "نجح الاتصال وتمت مطابقة الفرع البعيد."
 #: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_branch_rpc_config_uniq_store_rpc_config
 msgid "Only one branch RPC configuration is allowed per store."
 msgstr "يسمح بإعداد اتصال RPC واحد فقط لكل فرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_callcenter_rpc_log.py:0
+msgid "Call-Center Branch Submit"
+msgstr "إرسال فرع من مركز الاتصال"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_callcenter_rpc_log
+msgid "Sales Call-Center RPC Log"
+msgstr "سجل RPC لمبيعات مركز الاتصال"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_callcenter_rpc_log_view_list
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_callcenter_rpc_log_view_search
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_callcenter_rpc_log_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_callcenter_rpc_log_menu
+msgid "Call-Center RPC Logs"
+msgstr "سجلات RPC لمركز الاتصال"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_callcenter_rpc_log_view_form
+msgid "Call-Center RPC Log"
+msgstr "سجل RPC لمركز الاتصال"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__store_id
+msgid "Target Store"
+msgstr "الفرع المستهدف"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__payload_token
+msgid "POS Client Token"
+msgstr "رمز عميل نقطة البيع"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_callcenter_rpc_log__state__started
+msgid "Started"
+msgstr "بدأ"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_callcenter_rpc_log__state__success
+msgid "Success"
+msgstr "نجاح"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_callcenter_rpc_log__state__error
+msgid "Error"
+msgstr "خطأ"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__submitted_by_id
+msgid "Submitted By"
+msgstr "أرسل بواسطة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__submitted_at
+msgid "Submitted At"
+msgstr "تاريخ الإرسال"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__remote_header_id
+msgid "Remote Header ID"
+msgstr "معرف فاتورة الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__remote_status
+msgid "Remote Status"
+msgstr "حالة الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__remote_eplus_serial
+msgid "Remote E-Plus Serial"
+msgstr "رقم E-Plus في الفرع"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_callcenter_rpc_log_view_form
+msgid "Remote Result"
+msgstr "نتيجة الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__response_message
+msgid "Response Message"
+msgstr "رسالة الاستجابة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__error_message
+msgid "Error Message"
+msgstr "رسالة الخطأ"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Remote invoice was not found."
+msgstr "لم يتم العثور على فاتورة الفرع."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Remote branch invoice created."
+msgstr "تم إنشاء فاتورة الفرع البعيد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "No active branch RPC configuration was found for the selected store."
+msgstr "لم يتم العثور على إعداد RPC نشط للفرع المحدد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Branch RPC submit returned an invalid response."
+msgstr "أرجع إرسال RPC للفرع استجابة غير صحيحة."
+
+#. module: ab_sales
+#. odoo-javascript
+#: code:addons/ab_sales/static/src/pos/pos_action.js:0
+msgid "Submitted to branch invoice ID %(id)s"
+msgstr "تم الإرسال إلى فاتورة الفرع رقم %(id)s"
