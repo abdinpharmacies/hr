@@ -10,7 +10,9 @@ Files changed:
 - ab_employee_access_sales
 
 Current changes before commit:
-- Include POS HR employee/session metadata in the sales header payload before POS submit, so call-center XML-RPC creates the branch invoice with the correct POS HR fields.
+- Include remote-safe POS HR employee/device metadata in the sales header payload before POS submit, so call-center XML-RPC creates the branch invoice with the correct employee reference.
+- Skip local-only POS HR relation IDs for call-center remote submits because branch databases do not share session/profile/role/shift records.
+- Centralize POS HR header metadata building so local branch POS keeps full session metadata and call-center remote POS gets only safe values.
 - Skip the old local header metadata write when POS submit returns a remote branch result, while still logging the successful sale submit operation.
 
 Files changed:

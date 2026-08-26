@@ -37,11 +37,43 @@ class AbSalesPosApi(models.TransientModel):
         return session
 
     @api.model
+    def _pos_hr_is_remote_branch_submit(self):
+        return self.env.user.has_group("ab_sales.group_call_center")
+
+    @api.model
+    def _pos_hr_header_metadata(self, session, selected_employee, profile=False, include_local_relations=True):
+        vals = {
+            "employee_id": selected_employee.id,
+            "pos_hr_employee_id": session.employee_id.id,
+            "pos_hr_device_uid": session.device_uid or False,
+            "pos_hr_device_name": session.device_name or False,
+            "pos_hr_device_ip": session.device_ip or False,
+        }
+        if include_local_relations:
+            vals.update({
+                "pos_hr_profile_id": profile.id if profile else False,
+                "pos_hr_role_id": session.role_id.id if session.role_id else False,
+                "pos_hr_shift_id": session.shift_id.id if session.shift_id else False,
+                "pos_hr_session_id": session.id,
+                "pos_hr_service_user_id": session.service_user_id.id if session.service_user_id else False,
+            })
+        else:
+            vals.update({
+                "pos_hr_profile_id": False,
+                "pos_hr_role_id": False,
+                "pos_hr_shift_id": False,
+                "pos_hr_session_id": False,
+                "pos_hr_service_user_id": False,
+            })
+        return vals
+
+    @api.model
     def pos_submit(self, payload=None, **kwargs):
         if payload is None and kwargs:
             payload = kwargs
         payload = dict(payload or {})
         session = self._validate_pos_hr_payload(payload)
+        profile = session._get_pos_profile()
 
         header_payload = dict(payload.get("header") or {})
         selected_employee = self.env["ab_hr_employee"]
@@ -53,18 +85,12 @@ class AbSalesPosApi(models.TransientModel):
             selected_employee = self.env["ab_hr_employee"].sudo().browse(selected_employee_id).exists()[:1]
         if not selected_employee:
             selected_employee = session.employee_id
-        header_payload["employee_id"] = selected_employee.id
-        header_payload.update({
-            "pos_hr_employee_id": session.employee_id.id,
-            "pos_hr_profile_id": session._get_pos_profile().id if session._get_pos_profile() else False,
-            "pos_hr_role_id": session.role_id.id if session.role_id else False,
-            "pos_hr_shift_id": session.shift_id.id if session.shift_id else False,
-            "pos_hr_session_id": session.id,
-            "pos_hr_service_user_id": session.service_user_id.id if session.service_user_id else False,
-            "pos_hr_device_uid": session.device_uid or False,
-            "pos_hr_device_name": session.device_name or False,
-            "pos_hr_device_ip": session.device_ip or False,
-        })
+        header_payload.update(self._pos_hr_header_metadata(
+            session=session,
+            selected_employee=selected_employee,
+            profile=profile,
+            include_local_relations=not self._pos_hr_is_remote_branch_submit(),
+        ))
         payload["header"] = header_payload
 
         try:
@@ -73,7 +99,7 @@ class AbSalesPosApi(models.TransientModel):
             self.env["ab_employee_access_sales_pos_api"]._log_operation(
                 "sale_submit",
                 session.employee_id,
-                profile=session._get_pos_profile(),
+                profile=profile,
                 session=session,
                 status="error",
                 details={"message": str(exc)},
@@ -84,7 +110,7 @@ class AbSalesPosApi(models.TransientModel):
             self.env["ab_employee_access_sales_pos_api"]._log_operation(
                 "sale_submit",
                 session.employee_id,
-                profile=session._get_pos_profile(),
+                profile=profile,
                 session=session,
                 status="success",
                 details={
@@ -98,22 +124,16 @@ class AbSalesPosApi(models.TransientModel):
         header_id = result.get("pos_header_id") or result.get("id") if isinstance(result, dict) else False
         header = self.env["ab_sales_header"].sudo().browse(int(header_id or 0)).exists() if header_id else False
         if header:
-            header.write({
-                "employee_id": selected_employee.id,
-                "pos_hr_employee_id": session.employee_id.id,
-                "pos_hr_profile_id": session._get_pos_profile().id if session._get_pos_profile() else False,
-                "pos_hr_role_id": session.role_id.id if session.role_id else False,
-                "pos_hr_shift_id": session.shift_id.id if session.shift_id else False,
-                "pos_hr_session_id": session.id,
-                "pos_hr_service_user_id": session.service_user_id.id if session.service_user_id else False,
-                "pos_hr_device_uid": session.device_uid or False,
-                "pos_hr_device_name": session.device_name or False,
-                "pos_hr_device_ip": session.device_ip or False,
-            })
+            header.write(self._pos_hr_header_metadata(
+                session=session,
+                selected_employee=selected_employee,
+                profile=profile,
+                include_local_relations=True,
+            ))
             self.env["ab_employee_access_sales_pos_api"]._log_operation(
                 "sale_submit",
                 session.employee_id,
-                profile=session._get_pos_profile(),
+                profile=profile,
                 session=session,
                 status="success",
                 header=header,
