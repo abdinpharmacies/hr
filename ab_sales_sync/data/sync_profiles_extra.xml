@@ -1,23 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <function model="ab_odoo_sync_upload_source" name="ensure_upload_sources"
-                  eval="[[{'model_name': 'ab_product_priced'},
-                          {'model_name': 'ab_product_metadata'},
-                          {'model_name': 'ab_sales_inventory'},
-                          {'model_name': 'ab_sales_per_day'},
-                          {'model_name': 'ab_sales_per_day_sync_state'},
-                          {'model_name': 'ab_product_rank'},
-                          {'model_name': 'ab_sales_pos_settings'},
-                          {'model_name': 'ab_sales_pos_draft_cache'},
-                          {'model_name': 'ab_sales_pos_replication_turn'},
-                          {'model_name': 'ab_printer'}]]"/>
-
         <record id="apply_profile_ab_product_priced" model="ab_odoo_sync_apply_profile">
             <field name="name">Product Priced Flags</field>
             <field name="sequence">50</field>
             <field name="source_model_name">ab_product_priced</field>
-            <field name="target_model_name">ab_product_priced__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_product_priced</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -66,7 +55,8 @@
             <field name="name">Product Metadata</field>
             <field name="sequence">60</field>
             <field name="source_model_name">ab_product_metadata</field>
-            <field name="target_model_name">ab_product_metadata__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_product_metadata</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -116,7 +106,8 @@
             <field name="name">Sales Inventory</field>
             <field name="sequence">70</field>
             <field name="source_model_name">ab_sales_inventory</field>
-            <field name="target_model_name">ab_sales_inventory__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_inventory</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -173,7 +164,8 @@
             <field name="name">Sales Per Day</field>
             <field name="sequence">80</field>
             <field name="source_model_name">ab_sales_per_day</field>
-            <field name="target_model_name">ab_sales_per_day__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_per_day</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -231,7 +223,8 @@
             <field name="name">Sales Per Day Sync States</field>
             <field name="sequence">90</field>
             <field name="source_model_name">ab_sales_per_day_sync_state</field>
-            <field name="target_model_name">ab_sales_per_day_sync_state__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_per_day_sync_state</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -288,7 +281,8 @@
             <field name="name">Product Ranking</field>
             <field name="sequence">100</field>
             <field name="source_model_name">ab_product_rank</field>
-            <field name="target_model_name">ab_product_rank__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_product_rank</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -371,7 +365,8 @@
             <field name="name">Sales POS Settings</field>
             <field name="sequence">110</field>
             <field name="source_model_name">ab_sales_pos_settings</field>
-            <field name="target_model_name">ab_sales_pos_settings__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_pos_settings</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -413,7 +408,8 @@
             <field name="name">Sales POS Draft Cache</field>
             <field name="sequence">120</field>
             <field name="source_model_name">ab_sales_pos_draft_cache</field>
-            <field name="target_model_name">ab_sales_pos_draft_cache__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_pos_draft_cache</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -479,7 +475,8 @@
             <field name="name">Sales POS Replication Turns</field>
             <field name="sequence">130</field>
             <field name="source_model_name">ab_sales_pos_replication_turn</field>
-            <field name="target_model_name">ab_sales_pos_replication_turn__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_pos_replication_turn</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -505,7 +502,8 @@
             <field name="name">Printer Configurations</field>
             <field name="sequence">140</field>
             <field name="source_model_name">ab_printer</field>
-            <field name="target_model_name">ab_printer__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_printer</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>

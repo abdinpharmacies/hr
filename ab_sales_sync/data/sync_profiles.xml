@@ -1,30 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <record id="upload_source_ab_sales_header" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_sales_header</field>
-            <field name="active">False</field>
-        </record>
-        <record id="upload_source_ab_sales_line" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_sales_line</field>
-            <field name="aggregate_parent_field">header_id</field>
-            <field name="active">False</field>
-        </record>
-        <record id="upload_source_ab_sales_return_header" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_sales_return_header</field>
-            <field name="active">False</field>
-        </record>
-        <record id="upload_source_ab_sales_return_line" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_sales_return_line</field>
-            <field name="aggregate_parent_field">header_id</field>
-            <field name="active">False</field>
-        </record>
-
         <record id="apply_profile_ab_sales_header" model="ab_odoo_sync_apply_profile">
             <field name="name">Sales Headers</field>
             <field name="sequence">10</field>
             <field name="source_model_name">ab_sales_header</field>
-            <field name="target_model_name">ab_sales_header__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_header</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -32,7 +14,8 @@
             <field name="name">Sales Lines</field>
             <field name="sequence">20</field>
             <field name="source_model_name">ab_sales_line</field>
-            <field name="target_model_name">ab_sales_line__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_line</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -40,7 +23,8 @@
             <field name="name">Sales Return Headers</field>
             <field name="sequence">30</field>
             <field name="source_model_name">ab_sales_return_header</field>
-            <field name="target_model_name">ab_sales_return_header__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_return_header</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>
@@ -48,7 +32,8 @@
             <field name="name">Sales Return Lines</field>
             <field name="sequence">40</field>
             <field name="source_model_name">ab_sales_return_line</field>
-            <field name="target_model_name">ab_sales_return_line__sync</field>
+            <field name="apply_mode">mirror_sync</field>
+            <field name="target_model_name">ab_sales_return_line</field>
             <field name="auto_apply">True</field>
             <field name="active">True</field>
         </record>

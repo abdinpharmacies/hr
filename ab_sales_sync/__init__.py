@@ -1,1 +1,1 @@
-from . import models
+"""Sales reporting mirror sync connector."""
