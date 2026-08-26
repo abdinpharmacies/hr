@@ -5,7 +5,7 @@
             <field name="name">ab_self_inventory_process_line_list</field>
             <field name="model">ab_self_inventory_process_line</field>
             <field name="arch" type="xml">
-                <list class="ab_self_inventory_list ab_self_inventory_line_list" editable="bottom" delete="0" create="0" decoration-danger="shortage_qty &gt; 0" decoration-warning="extra_qty &gt; 0" decoration-success="is_counted and difference_qty == 0">
+                <list class="ab_self_inventory_list ab_self_inventory_line_list" editable="bottom" delete="0" create="0" decoration-warning="shortage_qty &gt; 0" decoration-danger="extra_qty &gt; 0" decoration-success="is_counted and difference_qty == 0">
                     <field name="requested" string="Requested" widget="ab_inventory_boolean_badge" readonly="1" options="{'yes': 'Requested', 'no': 'Manual'}"/>
                     <field name="is_counted" column_invisible="1"/>
                     <field name="product_id" string="Product" readonly="id"/>
@@ -18,9 +18,6 @@
                     <field name="unit_cost" readonly="id"/>
                     <field name="actual_qty"/>
                     <field name="difference_qty" readonly="1"/>
-                    <field name="shortage_qty" readonly="1"/>
-                    <field name="extra_qty" string="Excess" readonly="1"/>
-                    <field name="matched_qty" readonly="1" optional="show"/>
                     <field name="explanation"/>
                     <button name="action_delete_manual_line" type="object" icon="fa-trash" string="Delete" title="Delete" invisible="requested or parent.state not in ('draft', 'in_progress')" groups="ab_self_inventory.group_ab_self_inventory_receiver,ab_self_inventory.group_ab_self_inventory_manager"/>
                 </list>

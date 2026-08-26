@@ -321,14 +321,24 @@ registry.category("fields").add("ab_inventory_kpi_card", {
 
 class ImplementationProgressWidget extends Component {
     static template = xml`
-        <span class="ab_implementation_progress" t-att-title="progressTitle">
+        <span t-if="textOnly" class="ab_implementation_percent_value" t-att-title="progressTitle">
+            <t t-esc="formattedPercent"/>
+        </span>
+        <span t-else="" class="ab_implementation_progress" t-att-title="progressTitle">
             <span class="ab_implementation_progress_track">
                 <span class="ab_implementation_progress_fill" t-att-style="progressStyle"/>
             </span>
             <span class="ab_implementation_progress_value"><t t-esc="formattedPercent"/></span>
         </span>
     `;
-    static props = { ...standardFieldProps };
+    static props = {
+        ...standardFieldProps,
+        textOnly: { type: Boolean, optional: true },
+    };
+
+    get textOnly() {
+        return Boolean(this.props.textOnly);
+    }
 
     get percent() {
         const value = Number(getRecordValue(this.props.record, this.props.name, 0)) || 0;
@@ -350,6 +360,9 @@ class ImplementationProgressWidget extends Component {
 
 registry.category("fields").add("ab_inventory_implementation_progress", {
     component: ImplementationProgressWidget,
+    extractProps: ({ attrs }) => ({
+        textOnly: Boolean(attrs.options?.text_only),
+    }),
 });
 
 class BranchResponseBadgeWidget extends Component {
@@ -994,8 +1007,6 @@ class DataGridWidget extends Component {
                         </div>
                     </div>
                     <div class="ab_process_progress_stats">
-                        <div><strong><t t-esc="state.analytics.counted_products || 0"/></strong><span><t t-esc="_t('Counted')"/></span></div>
-                        <div><strong><t t-esc="state.analytics.pending_products || 0"/></strong><span><t t-esc="_t('Pending')"/></span></div>
                         <div><strong><t t-esc="state.analytics.matched_total || 0"/></strong><span><t t-esc="_t('Matched')"/></span></div>
                         <div><strong><t t-esc="state.analytics.shortage_total || 0"/></strong><span><t t-esc="_t('Shortage')"/></span></div>
                         <div><strong><t t-esc="state.analytics.excess_total || 0"/></strong><span><t t-esc="_t('Excess')"/></span></div>
@@ -1099,20 +1110,11 @@ class DataGridWidget extends Component {
                                 <div class="ab_saas_grid_cell ab_saas_grid_cell_count_balance" t-if="isColumnVisible('count_snapshot_qty')" t-on-click="() => this.sortBy('count_snapshot_qty')">
                                     <t t-esc="_t('Balance at Count')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('count_snapshot_qty')"/>
                                 </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_actual" t-if="isColumnVisible('actual_qty')" t-on-click="() => this.sortBy('actual_qty')">
-                                    <t t-esc="_t('Actual Qty')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('actual_qty')"/>
+                                <div class="ab_saas_grid_cell ab_saas_grid_cell_actual" t-if="isColumnVisible('actual_qty')">
+                                    <t t-esc="_t('Actual Qty')"/>
                                 </div>
                                 <div class="ab_saas_grid_cell ab_saas_grid_cell_difference" t-if="isColumnVisible('difference_qty')" t-on-click="() => this.sortBy('difference_qty')">
                                     <t t-esc="_t('Difference')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('difference_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage" t-if="isColumnVisible('shortage_qty')" t-on-click="() => this.sortBy('shortage_qty')">
-                                    <t t-esc="_t('Shortage')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('shortage_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_extra" t-if="isColumnVisible('extra_qty')" t-on-click="() => this.sortBy('extra_qty')">
-                                    <t t-esc="_t('Excess')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('extra_qty')"/>
-                                </div>
-                                <div class="ab_saas_grid_cell ab_saas_grid_cell_matched_result" t-if="isColumnVisible('matched_qty')" t-on-click="() => this.sortBy('matched_qty')">
-                                    <t t-esc="_t('Matched')"/> <span class="ab_saas_sort_icon" t-esc="sortIcon('matched_qty')"/>
                                 </div>
                                 <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation" t-if="isColumnVisible('explanation')"><t t-esc="_t('Explanation')"/></div>
                             </t>
@@ -1179,19 +1181,12 @@ class DataGridWidget extends Component {
                                             <span t-att-class="'ab_saas_qty' + (row.count_snapshot_qty > 0 ? ' ab_saas_qty_positive' : '')"><t t-esc="row.count_snapshot_qty"/></span>
                                         </div>
                                         <div class="ab_saas_grid_cell ab_saas_grid_cell_actual" t-if="isColumnVisible('actual_qty')">
-                                            <input type="number" step="0.001" class="o_input ab_saas_grid_input ab_saas_grid_input_qty" t-att-value="row.actual_qty" t-att-disabled="isReadonly" t-on-click.stop="() => {}" t-on-change="(ev) => this.updateProcessRow(row, 'actual_qty', ev.target.value)"/>
+                                            <input type="text" inputmode="decimal" class="o_input ab_saas_grid_input ab_saas_grid_input_qty" t-att-value="row.actual_qty" t-att-disabled="isReadonly" t-on-click.stop="() => {}" t-on-change="(ev) => this.updateProcessRow(row, 'actual_qty', ev.target.value)"/>
                                         </div>
                                         <div class="ab_saas_grid_cell ab_saas_grid_cell_difference" t-if="isColumnVisible('difference_qty')">
-                                            <span t-att-class="'ab_saas_qty ' + (row.difference_qty > 0 ? 'ab_saas_qty_extra' : row.difference_qty &lt; 0 ? 'ab_saas_qty_shortage' : '')"><t t-esc="row.difference_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_shortage" t-if="isColumnVisible('shortage_qty')">
-                                            <span t-if="row.shortage_qty" class="ab_saas_qty ab_saas_qty_shortage"><t t-esc="row.shortage_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_extra" t-if="isColumnVisible('extra_qty')">
-                                            <span t-if="row.extra_qty" class="ab_saas_qty ab_saas_qty_extra"><t t-esc="row.extra_qty"/></span>
-                                        </div>
-                                        <div class="ab_saas_grid_cell ab_saas_grid_cell_matched_result" t-if="isColumnVisible('matched_qty')">
-                                            <span t-if="row.is_counted &amp;&amp; !row.difference_qty" class="ab_saas_qty ab_saas_qty_matched"><t t-esc="row.matched_qty"/></span>
+                                            <span t-if="row.is_counted" t-att-class="'ab_saas_difference_badge ' + differenceClass(row)">
+                                                <t t-esc="differenceDisplay(row)"/>
+                                            </span>
                                         </div>
                                         <div class="ab_saas_grid_cell ab_saas_grid_cell_explanation" t-if="isColumnVisible('explanation')">
                                             <input type="text" class="o_input ab_saas_grid_input" t-att-value="row.explanation" t-att-disabled="isReadonly" t-on-click.stop="() => {}" t-on-change="(ev) => this.updateProcessRow(row, 'explanation', ev.target.value)"/>
@@ -1440,9 +1435,6 @@ class DataGridWidget extends Component {
                 { key: "count_snapshot_qty", label: _t("Balance at Count") },
                 { key: "actual_qty", label: _t("Actual Qty") },
                 { key: "difference_qty", label: _t("Difference") },
-                { key: "shortage_qty", label: _t("Shortage") },
-                { key: "extra_qty", label: _t("Excess") },
-                { key: "matched_qty", label: _t("Matched") },
                 { key: "explanation", label: _t("Explanation") },
             ];
         }
@@ -1495,9 +1487,6 @@ class DataGridWidget extends Component {
         let width = 1260;
         if (this.isColumnVisible("count_snapshot_qty")) {
             width += 136;
-        }
-        if (this.isColumnVisible("matched_qty")) {
-            width += 104;
         }
         if (this.isColumnVisible("product_code")) {
             width += 112;
@@ -2044,6 +2033,22 @@ class DataGridWidget extends Component {
 
     matchStatusLabel(value) {
         return value === "none" ? _t("Unmatched") : _t("Matched");
+    }
+
+    differenceClass(row) {
+        const value = Number(row?.difference_qty || 0);
+        if (value < 0) {
+            return "ab_saas_difference_badge--shortage";
+        }
+        if (value > 0) {
+            return "ab_saas_difference_badge--excess";
+        }
+        return "ab_saas_difference_badge--matched";
+    }
+
+    differenceDisplay(row) {
+        const value = Number(row?.difference_qty || 0);
+        return Number.isInteger(value) ? String(value) : String(value);
     }
 
     causeDisplay(row) {

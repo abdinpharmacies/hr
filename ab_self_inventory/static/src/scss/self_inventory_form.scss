@@ -92,6 +92,17 @@ $si-gray-900: #0F172A;
     }
 }
 
+.ab_implementation_percent_value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 48px;
+    color: #0f172a;
+    font-size: 13px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
 .ab_response_badge {
     display: inline-flex;
     align-items: center;
@@ -487,8 +498,7 @@ $si-gray-900: #0F172A;
 }
 
 .ab_process_progress_panel {
-    display: grid;
-    grid-template-columns: 98px minmax(240px, 1fr) auto;
+    display: flex;
     align-items: center;
     gap: 22px;
     margin-bottom: 18px;
@@ -496,9 +506,12 @@ $si-gray-900: #0F172A;
     border: 1px solid #bfdbfe;
     border-radius: 16px;
     background: linear-gradient(135deg, #eff6ff, #f0fdfa);
+    overflow-x: auto;
+    overflow-y: hidden;
 }
 
 .ab_process_progress_donut {
+    flex: 0 0 88px;
     width: 88px;
     height: 88px;
 
@@ -526,6 +539,11 @@ $si-gray-900: #0F172A;
     font-size: 17px;
 }
 
+.ab_process_progress_content {
+    flex: 1 0 260px;
+    min-width: 260px;
+}
+
 .ab_process_progress_caption {
     margin-top: 4px;
 }
@@ -538,21 +556,30 @@ $si-gray-900: #0F172A;
 
 .ab_process_progress_stats {
     display: flex;
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
     gap: 10px;
+    justify-content: flex-start;
+    max-width: 100%;
+    padding-inline-end: 18px;
 
     > div {
         display: flex;
-        flex-direction: column;
-        min-width: 88px;
+        align-items: baseline;
+        gap: 6px;
+        min-width: max-content;
         padding: 11px 14px;
         border: 1px solid rgba(148, 163, 184, 0.25);
         border-radius: 12px;
         background: rgba(255, 255, 255, 0.8);
+        white-space: nowrap;
     }
 
     strong {
         color: #0f172a;
-        font-size: 18px;
+        font-size: 16px;
+        line-height: 1.15;
+        overflow-wrap: anywhere;
     }
 
     span {
@@ -582,13 +609,11 @@ $si-gray-900: #0F172A;
 }
 
 @media (max-width: 760px) {
-    .ab_item_implementation_chart,
-    .ab_process_progress_panel {
+    .ab_item_implementation_chart {
         grid-template-columns: 1fr;
     }
 
-    .ab_item_implementation_donut,
-    .ab_process_progress_donut {
+    .ab_item_implementation_donut {
         margin: 0 auto;
     }
 
@@ -613,6 +638,7 @@ $si-gray-900: #0F172A;
 
     .ab_process_progress_stats {
         justify-content: center;
+        padding-inline-end: 0;
     }
 }
 
@@ -2935,10 +2961,7 @@ $saas-transition: 0.15s ease;
 
     .ab_saas_grid_cell_actual,
     .ab_saas_grid_cell_count_balance,
-    .ab_saas_grid_cell_difference,
-    .ab_saas_grid_cell_shortage,
-    .ab_saas_grid_cell_extra,
-    .ab_saas_grid_cell_matched_result {
+    .ab_saas_grid_cell_difference {
         width: 108px;
         justify-content: flex-end;
     }
@@ -2963,6 +2986,15 @@ $saas-transition: 0.15s ease;
 .ab_saas_grid_input_qty {
     text-align: end;
     font-variant-numeric: tabular-nums;
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.ab_saas_grid_input_qty::-webkit-outer-spin-button,
+.ab_saas_grid_input_qty::-webkit-inner-spin-button {
+    margin: 0;
+    appearance: none;
+    -webkit-appearance: none;
 }
 
 .ab_saas_source_badge {
@@ -2990,18 +3022,52 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_qty_shortage {
-    color: #B91C1C;
+    color: #B45309;
     font-weight: 700;
 }
 
 .ab_saas_qty_extra {
-    color: #B45309;
+    color: #B91C1C;
     font-weight: 700;
 }
 
 .ab_saas_qty_matched {
     color: #047857;
     font-weight: 700;
+}
+
+.ab_saas_difference_badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    min-width: 72px;
+    max-width: 100%;
+    min-height: 26px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    border: 1px solid transparent;
+}
+
+.ab_saas_difference_badge--shortage {
+    color: #92400E;
+    background: #FEF3C7;
+    border-color: #F59E0B;
+}
+
+.ab_saas_difference_badge--excess {
+    color: #991B1B;
+    background: #FEE2E2;
+    border-color: #F87171;
+}
+
+.ab_saas_difference_badge--matched {
+    color: #047857;
+    background: #D1FAE5;
+    border-color: #34D399;
 }
 
 // Product Info
@@ -3546,10 +3612,7 @@ $saas-transition: 0.15s ease;
         td[name="unit_cost"],
         td[name="actual_qty"],
         td[name="count_snapshot_qty"],
-        td[name="difference_qty"],
-        td[name="shortage_qty"],
-        td[name="extra_qty"],
-        td[name="matched_qty"] {
+        td[name="difference_qty"] {
             text-align: right;
             font-variant-numeric: tabular-nums;
             font-weight: 600;
@@ -3562,18 +3625,6 @@ $saas-transition: 0.15s ease;
 
         td[name="sold_qty"] {
             color: #EA580C;
-        }
-
-        td[name="extra_qty"] {
-            color: #B45309;
-        }
-
-        td[name="shortage_qty"] {
-            color: $saas-danger;
-        }
-
-        td[name="matched_qty"] {
-            color: #047857;
         }
 
         th[data-name="selected"],
@@ -3697,13 +3748,7 @@ $saas-transition: 0.15s ease;
             th[data-name="actual_qty"],
             td[name="actual_qty"],
             th[data-name="difference_qty"],
-            td[name="difference_qty"],
-            th[data-name="shortage_qty"],
-            td[name="shortage_qty"],
-            th[data-name="extra_qty"],
-            td[name="extra_qty"],
-            th[data-name="matched_qty"],
-            td[name="matched_qty"] {
+            td[name="difference_qty"] {
                 width: 105px;
                 min-width: 105px;
             }
