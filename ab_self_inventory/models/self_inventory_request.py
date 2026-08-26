@@ -1089,6 +1089,9 @@ class SelfInventoryRequestBatch(models.Model):
                     'counted': 0,
                     'pending': len(request.line_ids),
                     'percent': 0.0,
+                    'shortage_total': 0.0,
+                    'excess_total': 0.0,
+                    'matched_total': 0,
                 }
             if request.state == 'cancelled' or (process and process.state == 'cancelled'):
                 response_state = 'cancelled'
@@ -1111,6 +1114,9 @@ class SelfInventoryRequestBatch(models.Model):
                 'counted_items': metrics['counted'],
                 'pending_items': metrics['pending'],
                 'implementation_percent': metrics['percent'],
+                'shortage_total': metrics.get('shortage_total', 0.0),
+                'excess_total': metrics.get('excess_total', 0.0),
+                'matched_total': metrics.get('matched_total', 0),
                 'response_state': response_state,
                 'requested_total_cost': request.requested_total_cost,
             })

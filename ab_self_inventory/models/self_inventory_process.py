@@ -73,8 +73,9 @@ class SelfInventoryProcess(models.Model):
         ],
         compute='_compute_system_stock_refresh_status',
     )
-    shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_totals', digits=(12, 2))
-    extra_qty = fields.Float(string='Extra Cost', compute='_compute_totals', digits=(12, 2))
+    shortage_qty = fields.Float(string='Shortage', compute='_compute_totals', digits=(12, 3))
+    extra_qty = fields.Float(string='Excess', compute='_compute_totals', digits=(12, 3))
+    matched_line_count = fields.Integer(compute='_compute_totals')
     requested_total_cost = fields.Float(
         string='Requested Products Cost',
         compute='_compute_totals',
@@ -102,6 +103,9 @@ class SelfInventoryProcess(models.Model):
     @api.depends(
         'line_ids.shortage_qty',
         'line_ids.extra_qty',
+        'line_ids.matched_qty',
+        'line_ids.difference_qty',
+        'line_ids.is_counted',
         'line_ids.requested',
         'line_ids.system_qty',
         'line_ids.unit_cost',
@@ -110,6 +114,7 @@ class SelfInventoryProcess(models.Model):
         for rec in self:
             rec.shortage_qty = sum(rec.line_ids.mapped('shortage_qty'))
             rec.extra_qty = sum(rec.line_ids.mapped('extra_qty'))
+            rec.matched_line_count = len(rec.line_ids.filtered(lambda line: line._is_inventory_counted() and not line.difference_qty))
             rec.requested_total_cost = sum(
                 (line.system_qty or 0.0) * (line.unit_cost or 0.0)
                 for line in rec.line_ids
@@ -136,12 +141,16 @@ class SelfInventoryProcess(models.Model):
     def _get_implementation_metrics(self):
         self.ensure_one()
         total = len(self.line_ids)
-        counted = len(self.line_ids.filtered(lambda line: line._is_inventory_counted()))
+        counted_lines = self.line_ids.filtered(lambda line: line._is_inventory_counted())
+        counted = len(counted_lines)
         return {
             'total': total,
             'counted': counted,
             'pending': max(total - counted, 0),
             'percent': round(counted / total * 100, 2) if total else 0.0,
+            'shortage_total': sum(counted_lines.mapped('shortage_qty')),
+            'excess_total': sum(counted_lines.mapped('extra_qty')),
+            'matched_total': len(counted_lines.filtered(lambda line: not line.difference_qty)),
         }
 
     @api.depends('state', 'branch_id')
@@ -228,6 +237,13 @@ class SelfInventoryProcess(models.Model):
                 continue
             if not rec.line_ids:
                 raise ValidationError(_("Add at least one product line before submitting."))
+            required_lines = rec.line_ids.filtered('requested') or rec.line_ids
+            pending_lines = required_lines.filtered(lambda line: not line._is_inventory_counted())
+            if pending_lines:
+                raise ValidationError(
+                    _("All requested products must be counted before final submission. Pending products: %s")
+                    % len(pending_lines)
+                )
             request = rec.sudo().request_id
             submitted_date = fields.Datetime.now()
             rec.with_context(ab_self_inventory_allow_receiver_write=True).write({
@@ -410,7 +426,27 @@ class SelfInventoryProcess(models.Model):
         return result
 
     def action_export_count_sheet(self):
+        for rec in self:
+            if rec.state in ('draft', 'in_progress'):
+                rec._prepare_count_sheet_snapshot()
         return self.env.ref('ab_self_inventory.action_self_inventory_count_sheet_xlsx').report_action(self)
+
+    def _prepare_count_sheet_snapshot(self):
+        self.ensure_one()
+        refreshed_at = fields.Datetime.now()
+        self._refresh_system_stock_quantities()
+        for line in self.line_ids:
+            line.sudo().with_context(
+                ab_self_inventory_allow_count_snapshot_sync=True,
+                ab_self_inventory_reset_count_results=True,
+            ).write({
+                'count_snapshot_qty': line.system_qty,
+                'count_snapshot_taken': True,
+                'actual_qty': 0.0,
+                'is_counted': False,
+                'explanation': False,
+            })
+        self.sudo().write({'last_system_stock_refresh_at': refreshed_at})
 
     def action_open_import_wizard(self):
         self.ensure_one()
@@ -449,6 +485,9 @@ class SelfInventoryProcess(models.Model):
             'selected_products': metrics['counted'],
             'counted_products': metrics['counted'],
             'pending_products': metrics['pending'],
+            'shortage_total': metrics['shortage_total'],
+            'excess_total': metrics['excess_total'],
+            'matched_total': metrics['matched_total'],
             'matched_pct': round(metrics['percent']),
             'implementation_percent': metrics['percent'],
         }
@@ -493,12 +532,15 @@ class SelfInventoryProcess(models.Model):
             'eplus_item_id': line.eplus_item_id,
             'eplus_item_code': line.eplus_item_code or '',
             'system_qty': line.system_qty,
+            'count_snapshot_qty': line.count_snapshot_qty if line.count_snapshot_taken else line.system_qty,
+            'count_snapshot_taken': line.count_snapshot_taken,
             # Keep untouched quantities blank so entering a real zero triggers
             # a change and marks the item as counted.
             'actual_qty': line.actual_qty if is_counted else False,
             'difference_qty': line.difference_qty,
             'shortage_qty': line.shortage_qty,
             'extra_qty': line.extra_qty,
+            'matched_qty': line.matched_qty if is_counted and not line.difference_qty else False,
             'explanation': line.explanation or '',
         }
 
@@ -529,10 +571,12 @@ class SelfInventoryProcess(models.Model):
             'eplus_item_id': 'eplus_item_id',
             'eplus_item_code': 'eplus_item_code',
             'system_qty': 'system_qty',
+            'count_snapshot_qty': 'count_snapshot_qty',
             'actual_qty': 'actual_qty',
             'difference_qty': 'difference_qty',
             'shortage_qty': 'shortage_qty',
             'extra_qty': 'extra_qty',
+            'matched_qty': 'matched_qty',
             'requested': 'requested',
         }
         sort_field = sort_map.get(sort_by, 'product_id')
@@ -595,11 +639,14 @@ class SelfInventoryProcessLine(models.Model):
     eplus_item_code = fields.Char(string='E-plus Item Code', readonly=True, index=True)
     requested = fields.Boolean(default=False, readonly=True)
     system_qty = fields.Float(string='E-stock Qty', digits=(12, 3), required=True, default=0.0)
+    count_snapshot_qty = fields.Float(string='Balance at Count', digits=(12, 3), default=0.0, copy=False)
+    count_snapshot_taken = fields.Boolean(string='Count Snapshot Taken', default=False, readonly=True, copy=False)
     unit_cost = fields.Float(digits=(12, 2), default=0.0)
     actual_qty = fields.Float(digits=(12, 3))
     difference_qty = fields.Float(compute='_compute_difference_qty', digits=(12, 3), store=True)
-    shortage_qty = fields.Float(string='Shortage Cost', compute='_compute_difference_qty', digits=(12, 2), store=True)
-    extra_qty = fields.Float(string='Extra Cost', compute='_compute_difference_qty', digits=(12, 2), store=True)
+    shortage_qty = fields.Float(string='Shortage', compute='_compute_difference_qty', digits=(12, 3), store=True)
+    extra_qty = fields.Float(string='Excess', compute='_compute_difference_qty', digits=(12, 3), store=True)
+    matched_qty = fields.Float(string='Matched', compute='_compute_difference_qty', digits=(12, 3), store=True)
     explanation = fields.Char()
     is_counted = fields.Boolean(
         string='Counted',
@@ -626,7 +673,7 @@ class SelfInventoryProcessLine(models.Model):
         return super().create(vals_list)
 
     def write(self, vals):
-        mark_counted = 'actual_qty' in vals
+        mark_counted = 'actual_qty' in vals and not self.env.context.get('ab_self_inventory_reset_count_results')
         if not self.env.su:
             for process in self.mapped('process_id'):
                 process._check_can_update_process_line_grid()
@@ -691,11 +738,17 @@ class SelfInventoryProcessLine(models.Model):
             'eplus_item_code',
             'requested',
             'system_qty',
+            'count_snapshot_qty',
+            'count_snapshot_taken',
             'unit_cost',
             'is_counted',
         }
         if self.env.su and self.env.context.get('ab_self_inventory_allow_system_qty_sync'):
             locked_fields.discard('system_qty')
+        if self.env.su and self.env.context.get('ab_self_inventory_allow_count_snapshot_sync'):
+            locked_fields.discard('count_snapshot_qty')
+            locked_fields.discard('count_snapshot_taken')
+            locked_fields.discard('is_counted')
         if locked_fields.intersection(vals):
             raise ValidationError(_("Self inventory products cannot be changed after the request is received."))
 
@@ -712,18 +765,21 @@ class SelfInventoryProcessLine(models.Model):
             if not vals.get('requested'):
                 vals['system_qty'] = 0.0
 
-    @api.depends('system_qty', 'actual_qty', 'unit_cost', 'is_counted', 'explanation')
+    @api.depends('system_qty', 'count_snapshot_qty', 'count_snapshot_taken', 'actual_qty', 'is_counted', 'explanation')
     def _compute_difference_qty(self):
         for rec in self:
             if not rec._is_inventory_counted():
                 rec.difference_qty = 0.0
                 rec.shortage_qty = 0.0
                 rec.extra_qty = 0.0
+                rec.matched_qty = 0.0
                 continue
-            difference = (rec.actual_qty or 0.0) - (rec.system_qty or 0.0)
+            base_qty = rec.count_snapshot_qty if rec.count_snapshot_taken else rec.system_qty
+            difference = (rec.actual_qty or 0.0) - (base_qty or 0.0)
             rec.difference_qty = difference
-            rec.shortage_qty = abs(difference) * (rec.unit_cost or 0.0) if difference < 0 else 0.0
-            rec.extra_qty = difference * (rec.unit_cost or 0.0) if difference > 0 else 0.0
+            rec.shortage_qty = abs(difference) if difference < 0 else 0.0
+            rec.extra_qty = difference if difference > 0 else 0.0
+            rec.matched_qty = 0.0 if difference == 0 else 0.0
 
     def _is_inventory_counted(self):
         self.ensure_one()

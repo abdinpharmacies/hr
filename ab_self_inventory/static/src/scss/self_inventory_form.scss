@@ -2934,11 +2934,17 @@ $saas-transition: 0.15s ease;
     }
 
     .ab_saas_grid_cell_actual,
+    .ab_saas_grid_cell_count_balance,
     .ab_saas_grid_cell_difference,
     .ab_saas_grid_cell_shortage,
-    .ab_saas_grid_cell_extra {
+    .ab_saas_grid_cell_extra,
+    .ab_saas_grid_cell_matched_result {
         width: 108px;
         justify-content: flex-end;
+    }
+
+    .ab_saas_grid_cell_count_balance {
+        width: 136px;
     }
 
     .ab_saas_grid_cell_explanation {
@@ -2989,6 +2995,11 @@ $saas-transition: 0.15s ease;
 }
 
 .ab_saas_qty_extra {
+    color: #B45309;
+    font-weight: 700;
+}
+
+.ab_saas_qty_matched {
     color: #047857;
     font-weight: 700;
 }
@@ -3534,9 +3545,11 @@ $saas-transition: 0.15s ease;
         td[name="sold_qty"],
         td[name="unit_cost"],
         td[name="actual_qty"],
+        td[name="count_snapshot_qty"],
         td[name="difference_qty"],
         td[name="shortage_qty"],
-        td[name="extra_qty"] {
+        td[name="extra_qty"],
+        td[name="matched_qty"] {
             text-align: right;
             font-variant-numeric: tabular-nums;
             font-weight: 600;
@@ -3552,11 +3565,15 @@ $saas-transition: 0.15s ease;
         }
 
         td[name="extra_qty"] {
-            color: #16A34A;
+            color: #B45309;
         }
 
         td[name="shortage_qty"] {
             color: $saas-danger;
+        }
+
+        td[name="matched_qty"] {
+            color: #047857;
         }
 
         th[data-name="selected"],
@@ -3673,6 +3690,8 @@ $saas-transition: 0.15s ease;
 
             th[data-name="system_qty"],
             td[name="system_qty"],
+            th[data-name="count_snapshot_qty"],
+            td[name="count_snapshot_qty"],
             th[data-name="unit_cost"],
             td[name="unit_cost"],
             th[data-name="actual_qty"],
@@ -3682,7 +3701,9 @@ $saas-transition: 0.15s ease;
             th[data-name="shortage_qty"],
             td[name="shortage_qty"],
             th[data-name="extra_qty"],
-            td[name="extra_qty"] {
+            td[name="extra_qty"],
+            th[data-name="matched_qty"],
+            td[name="matched_qty"] {
                 width: 105px;
                 min-width: 105px;
             }
