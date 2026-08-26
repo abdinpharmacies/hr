@@ -44,6 +44,7 @@
                                 <field name="rpc_password" password="True"/>
                                 <field name="rpc_sync_key" password="True"/>
                                 <field name="connection_timeout"/>
+                                <field name="push_to_eplus_on_submit"/>
                             </group>
                         </group>
                         <group string="Last Test">

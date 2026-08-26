@@ -968,10 +968,12 @@ class AbSalesPosApi(models.TransientModel):
 
         header_vals = payload.get("header") or {}
         token = (header_vals.get("pos_client_token") or "").strip()
+        push_to_eplus = bool(config.push_to_eplus_on_submit)
         log = self.env["ab_sales_callcenter_rpc_log"].sudo().create({
             "rpc_config_id": config.id,
             "store_id": config.store_id.id,
             "payload_token": token,
+            "push_to_eplus_requested": push_to_eplus,
             "state": "started",
             "submitted_by_id": self.env.uid,
             "submitted_at": fields.Datetime.now(),
@@ -982,7 +984,7 @@ class AbSalesPosApi(models.TransientModel):
             response = config._execute_kw(
                 "ab_sales_pos_api",
                 "pos_submit_from_callcenter",
-                [payload],
+                [payload, push_to_eplus],
             )
             if not isinstance(response, dict):
                 raise UserError(_("Branch RPC submit returned an invalid response."))
@@ -1006,7 +1008,20 @@ class AbSalesPosApi(models.TransientModel):
             raise
 
     @api.model
-    def pos_submit_from_callcenter(self, payload=None, **kwargs):
+    def _pos_push_callcenter_header_to_eplus(self, header):
+        header = header.exists()
+        if not header:
+            raise UserError(_("Remote branch invoice was not found before E-Plus push."))
+        if header.status in ("pending", "saved"):
+            return _("Remote branch invoice was already pushed to E-Plus.")
+        if header.status != "prepending":
+            raise UserError(_("Remote branch invoice must be prepending before E-Plus push."))
+        header.with_context(pos_submit=True, from_callcenter_rpc=True).action_push_to_eplus()
+        header.invalidate_recordset(["status", "eplus_serial", "push_state", "push_message"])
+        return _("Remote branch invoice pushed to E-Plus.")
+
+    @api.model
+    def pos_submit_from_callcenter(self, payload=None, push_to_eplus=False, **kwargs):
         if payload is None and kwargs:
             payload = kwargs
         if not payload or not isinstance(payload, dict):
@@ -1015,11 +1030,15 @@ class AbSalesPosApi(models.TransientModel):
         header, duplicate_token, _on_existing_token = (
             self.with_context(from_callcenter_rpc=True)._pos_create_prepending_header_from_payload(payload)
         )
-        message = (
-            _("An invoice already exists with the same token.")
-            if duplicate_token
-            else _("Remote branch invoice created.")
-        )
+        push_requested = bool(push_to_eplus)
+        if push_requested:
+            message = self._pos_push_callcenter_header_to_eplus(header)
+        else:
+            message = (
+                _("An invoice already exists with the same token.")
+                if duplicate_token
+                else _("Remote branch invoice created.")
+            )
         return self._pos_remote_submit_response(header, duplicate_token=duplicate_token, message=message)
 
     @api.model

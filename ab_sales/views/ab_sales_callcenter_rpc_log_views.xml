@@ -10,6 +10,7 @@
                     <field name="state"/>
                     <field name="store_id"/>
                     <field name="payload_token"/>
+                    <field name="push_to_eplus_requested"/>
                     <field name="remote_header_id"/>
                     <field name="remote_status"/>
                     <field name="remote_eplus_serial"/>
@@ -35,6 +36,7 @@
                                 <field name="store_id"/>
                                 <field name="rpc_config_id"/>
                                 <field name="payload_token"/>
+                                <field name="push_to_eplus_requested"/>
                             </group>
                         </group>
                         <group string="Remote Result">

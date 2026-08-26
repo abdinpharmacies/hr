@@ -28,6 +28,7 @@ class AbSalesCallcenterRpcLog(models.Model):
         index=True,
     )
     payload_token = fields.Char(string="POS Client Token", readonly=True, index=True)
+    push_to_eplus_requested = fields.Boolean(string="E-Plus Push Requested", readonly=True)
     state = fields.Selection(
         selection=[
             ("started", "Started"),

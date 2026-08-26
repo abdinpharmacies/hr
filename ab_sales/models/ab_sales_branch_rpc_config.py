@@ -38,6 +38,10 @@ class AbSalesBranchRpcConfig(models.Model):
     )
     rpc_sync_key_encrypted = fields.Char(string="Encrypted RPC Sync Key", readonly=True, copy=False)
     connection_timeout = fields.Integer(default=15)
+    push_to_eplus_on_submit = fields.Boolean(
+        string="Push to E-Plus on Submit",
+        help="When enabled, call-center POS submit asks the branch Odoo to push the remote prepending invoice to E-Plus immediately.",
+    )
     last_test_state = fields.Selection(
         selection=[
             ("untested", "Untested"),

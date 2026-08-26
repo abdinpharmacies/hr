@@ -4052,6 +4052,11 @@ msgid "POS Client Token"
 msgstr "رمز عميل نقطة البيع"
 
 #. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_callcenter_rpc_log__push_to_eplus_requested
+msgid "E-Plus Push Requested"
+msgstr "تم طلب الإرسال إلى E-Plus"
+
+#. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_callcenter_rpc_log__state__started
 msgid "Started"
 msgstr "بدأ"
@@ -4119,6 +4124,40 @@ msgstr "لم يتم العثور على إعداد RPC نشط للفرع الم�
 #: code:addons/ab_sales/models/ab_sales_pos_api.py:0
 msgid "Branch RPC submit returned an invalid response."
 msgstr "أرجع إرسال RPC للفرع استجابة غير صحيحة."
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__push_to_eplus_on_submit
+msgid "Push to E-Plus on Submit"
+msgstr "الإرسال إلى E-Plus عند الاعتماد"
+
+#. module: ab_sales
+#: model:ir.model.fields,help:ab_sales.field_ab_sales_branch_rpc_config__push_to_eplus_on_submit
+msgid "When enabled, call-center POS submit asks the branch Odoo to push the remote prepending invoice to E-Plus immediately."
+msgstr "عند التفعيل، يطلب إرسال نقطة بيع مركز الاتصال من أودو الفرع إرسال الفاتورة المبدئية البعيدة إلى E-Plus فورًا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Remote branch invoice was not found before E-Plus push."
+msgstr "لم يتم العثور على فاتورة الفرع البعيد قبل الإرسال إلى E-Plus."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Remote branch invoice was already pushed to E-Plus."
+msgstr "تم إرسال فاتورة الفرع البعيد إلى E-Plus مسبقًا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Remote branch invoice must be prepending before E-Plus push."
+msgstr "يجب أن تكون فاتورة الفرع البعيد في حالة مبدئية قبل الإرسال إلى E-Plus."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_pos_api.py:0
+msgid "Remote branch invoice pushed to E-Plus."
+msgstr "تم إرسال فاتورة الفرع البعيد إلى E-Plus."
 
 #. module: ab_sales
 #. odoo-javascript
