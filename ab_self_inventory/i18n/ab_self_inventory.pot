@@ -2675,3 +2675,42 @@ msgstr ""
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 msgid "submitted"
 msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/wizard/self_inventory_import_wizard.py:0
+msgid "Balance at Count must be numeric for product code %s."
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__count_snapshot_qty
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Balance at Count"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__count_snapshot_taken
+msgid "Count Snapshot Taken"
+msgstr ""
+
+#. module: ab_self_inventory
+#. odoo-python
+#: code:addons/ab_self_inventory/models/self_inventory_process.py:0
+msgid "All requested products must be counted before final submission. Pending products: %s"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_form
+msgid "Exporting a new count sheet for an active process refreshes the system balance, saves a new Balance at Count snapshot, and clears previous count results. Continue?"
+msgstr ""
+
+#. module: ab_self_inventory
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process__extra_qty
+#: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__extra_qty
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_process_line_list
+#. odoo-javascript
+#: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
+msgid "Excess"
+msgstr ""

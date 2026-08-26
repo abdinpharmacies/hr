@@ -24,6 +24,7 @@ class SelfInventoryImportWizard(models.TransientModel):
             raise UserError(_("openpyxl is required to import Excel files."))
         if self.process_id.state not in ('draft', 'in_progress'):
             raise ValidationError(_("Only active self inventory processes can import actual counts."))
+        self.process_id._check_can_update_process_line_grid()
 
         try:
             workbook = openpyxl.load_workbook(io.BytesIO(base64.b64decode(self.file)), data_only=True)
@@ -37,7 +38,7 @@ class SelfInventoryImportWizard(models.TransientModel):
         headers = {str(value or '').strip().lower(): index for index, value in enumerate(header_row)}
         code_index = self._first_header(headers, 'product code', 'e-plus item code', 'item code')
         actual_index = self._first_header(headers, 'actual qty', 'actual quantity')
-        system_qty_index = self._first_header(headers, 'system qty', 'e-stock qty')
+        balance_at_count_index = self._first_header(headers, 'balance at count', 'system qty', 'e-stock qty')
         if code_index is None or actual_index is None:
             raise ValidationError(_("Excel must contain Product Code and Actual Qty columns."))
 
@@ -64,11 +65,15 @@ class SelfInventoryImportWizard(models.TransientModel):
             if not line:
                 missing_codes.append(code)
                 continue
-            if system_qty_index is not None and row[system_qty_index] not in (None, ''):
-                system_qty = self._to_float(row[system_qty_index], code, 'system')
-                if abs(system_qty - line.system_qty) > 0.0001:
-                    raise ValidationError(_("System quantity cannot be changed for product code %s.") % code)
-            line.write({'actual_qty': self._to_float(row[actual_index], code, 'actual')})
+            if row[actual_index] in (None, ''):
+                continue
+            values = {'actual_qty': self._to_float(row[actual_index], code, 'actual')}
+            if balance_at_count_index is not None and row[balance_at_count_index] not in (None, ''):
+                values.update({
+                    'count_snapshot_qty': self._to_float(row[balance_at_count_index], code, 'balance'),
+                    'count_snapshot_taken': True,
+                })
+            line.sudo().with_context(ab_self_inventory_allow_count_snapshot_sync=True).write(values)
             updated += 1
 
         if not updated:
@@ -92,8 +97,8 @@ class SelfInventoryImportWizard(models.TransientModel):
         try:
             return float(value or 0.0)
         except (TypeError, ValueError):
-            if column_type == 'system':
-                raise ValidationError(_("System quantity must be numeric for product code %s.") % code)
+            if column_type == 'balance':
+                raise ValidationError(_("Balance at Count must be numeric for product code %s.") % code)
             raise ValidationError(_("Actual quantity must be numeric for product code %s.") % code)
 
 
