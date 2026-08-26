@@ -55,6 +55,21 @@ msgid "Goods"
 msgstr "بضاعة"
 
 #. module: ab_sales_promo_report
+#: model:ir.model.fields.selection,name:ab_sales_promo_report.selection__ab_sales_promo_report_line__promotion_ownership__other_promotion
+msgid "Other Promotion"
+msgstr "عرض خارجي"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__promotion_ownership
+msgid "Promotion Ownership"
+msgstr "ملكية العرض"
+
+#. module: ab_sales_promo_report
+#: model:ir.model.fields.selection,name:ab_sales_promo_report.selection__ab_sales_promo_report_line__promotion_ownership__our_promotion
+msgid "Our Promotion"
+msgstr "عرضنا"
+
+#. module: ab_sales_promo_report
 #: model:ir.model.fields,field_description:ab_sales_promo_report.field_ab_sales_promo_report_line__supplier_id
 #: model_terms:ir.ui.view,arch_db:ab_sales_promo_report.ab_sales_promo_report_line_view_search
 msgid "Supplier"

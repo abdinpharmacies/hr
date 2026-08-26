@@ -20,6 +20,7 @@
                     <field name="is_odoo"/>
                     <field name="invoice_date"/>
                     <field name="promo_id"/>
+                    <field name="promotion_ownership"/>
                     <field name="supplier_id"/>
                     <field name="compensation_company_id"/>
                     <field name="compensation_timing"/>

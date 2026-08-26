@@ -55,6 +55,11 @@ class AbSalesPromoReportLine(models.Model):
     is_odoo = fields.Boolean(string="Odoo Invoice", index=True, readonly=True)
     invoice_date = fields.Date(string="Invoice Date", index=True, readonly=True)
     promo_id = fields.Many2one("ab_promo_program", string="Promo", index=True, readonly=True)
+    promotion_ownership = fields.Selection(
+        related="promo_id.promotion_ownership",
+        string="Promotion Ownership",
+        readonly=True,
+    )
     supplier_id = fields.Many2one(
         related="promo_id.supplier_id",
         string="Supplier",
