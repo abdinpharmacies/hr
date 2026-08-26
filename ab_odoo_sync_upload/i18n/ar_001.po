@@ -1,0 +1,413 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_odoo_sync_upload
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-26 12:42+0000\n"
+"PO-Revision-Date: 2026-08-26 12:42+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model,name:ab_odoo_sync_upload.model_ab_odoo_sync_service
+msgid "AB Odoo Sync Service"
+msgstr "حالة حدث مزامنة أودو"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model,name:ab_odoo_sync_upload.model_ab_odoo_sync_upload_orm_hook
+msgid "AB Odoo Sync Upload ORM Hook"
+msgstr "خطاف ORM لرفع مزامنة Odoo"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model,name:ab_odoo_sync_upload.model_ab_odoo_sync_outbox
+msgid "AB Odoo Sync Upload Outbox"
+msgstr "سجل رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model,name:ab_odoo_sync_upload.model_ab_odoo_sync_upload_source
+msgid "AB Odoo Sync Upload Source"
+msgstr "سجل رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.actions.server,name:ab_odoo_sync_upload.ir_cron_ab_odoo_sync_branch_upload_ir_actions_server
+msgid "AB Odoo Sync: Branch Upload"
+msgstr "رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__active
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__aggregate_parent_field
+msgid "Aggregate Parent Field"
+msgstr "حقل الأصل التجميعي"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Aggregate parent field %(field)s must be a Many2one on %(model)s."
+msgstr ""
+"يجب أن يكون حقل الأصل التجميعي %(field)s من نوع Many2one في %(model)s."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_outbox__operation__archive
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__attempt_count
+msgid "Attempt Count"
+msgstr "عدد المحاولات"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+#: model:ir.actions.act_window,name:ab_odoo_sync_upload.action_ab_odoo_sync_upload_source
+#: model:ir.ui.menu,name:ab_odoo_sync_upload.menu_ab_odoo_sync_upload_sources
+msgid "Branch Upload Sources"
+msgstr "مصادر تحميل الفروع"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid ""
+"Config %(config)s contains non-ASCII character %(character)s. Use ASCII only"
+" for sync transport settings."
+msgstr ""
+"يحتوي الإعداد %(config)s على المحرف %(character)s غير المتوافق مع ASCII. "
+"استخدم محارف ASCII فقط في إعدادات نقل المزامنة."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid ""
+"Connected to report database %(database)s. Upload check passed for DB serial"
+" %(db_serial)s."
+msgstr ""
+"تم الاتصال بقاعدة بيانات التقارير %(database)s. نجح فحص الرفع للرقم التسلسلي"
+" %(db_serial)s."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Connection test was skipped."
+msgstr "تم تخطي اختبار الاتصال."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__create_uid
+msgid "Created by"
+msgstr "إنشاء"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__create_date
+msgid "Created on"
+msgstr "إنشاء"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__db_serial
+msgid "DB Serial"
+msgstr "رقم قاعدة البيانات"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_service__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_orm_hook__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__event_uuid
+msgid "Event UUID"
+msgstr "معرف الحدث المصدر"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_outbox__status__failed
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__payload_json
+msgid "Full Payload"
+msgstr "البيانات"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_service__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_orm_hook__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__last_error
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_list
+msgid "Load Installed Models"
+msgstr "تحميل النماذج المثبتة"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Loaded %(count)s installed model(s) as inactive upload sources."
+msgstr "تم تحميل %(count)s نموذج مثبت كمصادر رفع غير نشطة."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid ""
+"MAIN API request contains non-ASCII characters in an HTTP URL or header."
+msgstr ""
+"يحتوي طلب واجهة MAIN على محارف غير متوافقة مع ASCII في رابط HTTP أو "
+"الترويسة."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "MAIN API returned an invalid JSON response."
+msgstr "أعادت واجهة MAIN استجابة JSON غير صحيحة."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "MAIN API returned failure."
+msgstr "أعادت واجهة MAIN نتيجة فشل."
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_list
+msgid "Mark Not Sync"
+msgstr "تعليم كغير متزامن"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_outbox.py:0
+msgid "Marked %(count)s outbox event(s) as Not Sync."
+msgstr "تم تعليم %(count)s سجل رفع كغير متزامن."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Missing API key config: ab_odoo_sync.api_key"
+msgstr "إعداد مفتاح API مفقود: ab_odoo_sync.api_key"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Missing MAIN URL config: ab_odoo_sync.main_url"
+msgstr "إعداد رابط الخادم الرئيسي مفقود: ab_odoo_sync.main_url"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Missing MAIN database config: ab_odoo_sync.main_database"
+msgstr "إعداد قاعدة بيانات MAIN مفقود: ab_odoo_sync.main_database"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_outbox__status__not_sync
+msgid "Not Sync"
+msgstr "غير متزامن"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_outbox.py:0
+msgid "Odoo Sync Upload"
+msgstr "رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Odoo Sync Upload Connection"
+msgstr "اتصال رفع مزامنة Odoo"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__operation
+msgid "Operation"
+msgstr "العملية"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,help:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__aggregate_parent_field
+msgid ""
+"Optional Many2one field whose parent must be re-snapshotted after this model"
+" changes."
+msgstr ""
+"حقل Many2one اختياري يجب إعادة التقاط الأصل المرتبط به بعد تغييرات هذا "
+"النموذج."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_outbox__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_search
+msgid "Pending"
+msgstr "معلق"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_outbox.py:0
+msgid "Queued %(count)s outbox event(s) for sending."
+msgstr "تمت إضافة %(count)s من أحداث صندوق الرفع إلى قائمة انتظار الإرسال."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_outbox.py:0
+msgid "Reset %(count)s failed outbox event(s) to Pending."
+msgstr "تمت إضافة %(count)s سجل رفع فاشل لإعادة التشغيل إلى قائمة الانتظار."
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_list
+msgid "Retry Failed"
+msgstr "إعادة تشغيل الفاشل"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_list
+msgid "Send Now"
+msgstr "إرسال الآن"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Send branch upload outbox events to MAIN"
+msgstr "إرسال أحداث صندوق رفع الفرع إلى MAIN"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_outbox__status__sent
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_outbox_search
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__sent_at
+msgid "Sent At"
+msgstr "وقت الإرسال"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__model_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__model_name
+msgid "Source Model"
+msgstr "الموديل المصدر"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__rec_id
+msgid "Source Record ID"
+msgstr "معرف السجل المصدر"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__source_revision
+msgid "Source Revision"
+msgstr "معرف السجل المصدر"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__source_write_date
+msgid "Source Write Date"
+msgstr "معرف الحدث المصدر"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Source model %(model)s is not installed in this database."
+msgstr "موديل المزامنة الهدف %(model)s غير موجود."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid ""
+"Source model %(model)s is protected by sync-rules.md and cannot be a branch "
+"upload source."
+msgstr ""
+"نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن أن يكون مصدر رفع "
+"من الفرع."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.constraint,message:ab_odoo_sync_upload.constraint_ab_odoo_sync_upload_source_uniq_model_name
+msgid "Source model must be unique in upload sources."
+msgstr "يجب أن يكون الحدث المصدر فريدا لكل رقم قاعدة بيانات."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_outbox__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_form
+msgid ""
+"Stored fields are captured as a raw snapshot. The reporting server controls "
+"how each snapshot is mapped and applied."
+msgstr ""
+"تُلتقط الحقول المخزنة كلقطة أولية. يتحكم خادم التقارير في كيفية تعيين كل "
+"لقطة وتطبيقها."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.actions.server,name:ab_odoo_sync_upload.action_ab_odoo_sync_test_upload_connection
+#: model:ir.ui.menu,name:ab_odoo_sync_upload.menu_ab_odoo_sync_test_upload
+msgid "Test Upload Connection"
+msgstr "اختبار اتصال الرفع"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Unknown upload error"
+msgstr "خطأ تحميل غير معروف"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_outbox.py:0
+msgid "Unsupported upload operation: %(operation)s"
+msgstr "عملية تحميل غير مدعومة: %(operation)s"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.actions.act_window,name:ab_odoo_sync_upload.action_ab_odoo_sync_outbox
+#: model:ir.ui.menu,name:ab_odoo_sync_upload.menu_ab_odoo_sync_outbox
+msgid "Upload Outbox"
+msgstr "صندوق صادر التحميل"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.constraint,message:ab_odoo_sync_upload.constraint_ab_odoo_sync_outbox_uniq_event_uuid
+msgid "Upload outbox event UUID must be unique."
+msgstr "يجب أن يكون UUID لحدث صندوق صادر التحميل فريداً."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_outbox.py:0
+msgid "Upload outbox events are audit records and cannot be deleted."
+msgstr "سجلات رفع المزامنة سجلات تدقيق ولا يمكن حذفها."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_outbox__operation__upsert
+msgid "Upsert"
+msgstr "إدراج أو تحديث"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "records must be a JSON array."
+msgstr "يجب أن تكون records مصفوفة JSON."
