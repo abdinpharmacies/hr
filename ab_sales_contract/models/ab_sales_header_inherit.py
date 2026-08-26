@@ -474,12 +474,24 @@ class AbSalesHeaderContract(models.Model):
             "total_tax": 0.0,
         }
 
-    def _insert_sales_trans_h(self, cur, totals, emp_code, pc_name, bill_typ):
+    def _insert_sales_trans_h(self, cur, totals, emp_code, pc_name, bill_typ, return_reuse=False):
         if self.contract_id:
             bill_typ = '5'
-        sth_id = super()._insert_sales_trans_h(cur, totals, emp_code, pc_name, bill_typ)
+        result = super()._insert_sales_trans_h(
+            cur,
+            totals,
+            emp_code,
+            pc_name,
+            bill_typ,
+            return_reuse=return_reuse,
+        )
+        if return_reuse:
+            sth_id, reused_eplus_header = result
+        else:
+            sth_id = result
+            reused_eplus_header = False
         if not self.contract_id:
-            return sth_id
+            return (sth_id, reused_eplus_header) if return_reuse else sth_id
 
         insurance_name = self.customer_insurance_name
         insurance_number = self.customer_insurance_number
@@ -516,7 +528,7 @@ class AbSalesHeaderContract(models.Model):
                 (int(contract_customer_id), int(sth_id)),
             )
 
-        return sth_id
+        return (sth_id, reused_eplus_header) if return_reuse else sth_id
 
     def _insert_sales_deliv_info(self, cur, sth_id, emp_code):
         super()._insert_sales_deliv_info(cur, sth_id, emp_code)

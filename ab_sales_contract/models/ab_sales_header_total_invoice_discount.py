@@ -175,5 +175,12 @@ class AbSalesHeaderTotalInvoiceDiscount(models.Model):
             return discount_note
         return f"{notice} {discount_note}"
 
-    def _insert_sales_trans_h(self, cur, totals, emp_code, pc_name, bill_typ):
-        return super()._insert_sales_trans_h(cur, totals, emp_code, pc_name, bill_typ)
+    def _insert_sales_trans_h(self, cur, totals, emp_code, pc_name, bill_typ, return_reuse=False):
+        return super()._insert_sales_trans_h(
+            cur,
+            totals,
+            emp_code,
+            pc_name,
+            bill_typ,
+            return_reuse=return_reuse,
+        )
