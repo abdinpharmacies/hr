@@ -1,137 +1,89 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="ab_sales_header_rule_crud_not_saved" model="ir.rule">
-            <field name="name">Sales Header: CRUD not saved</field>
+        <record id="rule_ab_sales_header_sync_all" model="ir.rule">
+            <field name="name">Sales Header Mirror: all records</field>
             <field name="model_id" ref="model_ab_sales_header"/>
-            <field name="domain_force">[('status', 'not in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('ab_sales.group_ab_sales_manager'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_header_rule_ro_saved" model="ir.rule">
-            <field name="name">Sales Header: Readonly saved</field>
-            <field name="model_id" ref="model_ab_sales_header"/>
-            <field name="domain_force">[('status', 'in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('ab_sales.group_ab_sales_manager'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
-        </record>
-
-        <record id="ab_sales_line_rule_crud_not_saved" model="ir.rule">
-            <field name="name">Sales Line: CRUD not saved</field>
+        <record id="rule_ab_sales_line_sync_all" model="ir.rule">
+            <field name="name">Sales Line Mirror: all records</field>
             <field name="model_id" ref="model_ab_sales_line"/>
-            <field name="domain_force">[('header_id.status', 'not in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('ab_sales.group_ab_sales_manager'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_line_rule_ro_saved" model="ir.rule">
-            <field name="name">Sales Line: Readonly saved</field>
-            <field name="model_id" ref="model_ab_sales_line"/>
-            <field name="domain_force">[('header_id.status', 'in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('ab_sales.group_ab_sales_manager'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
+        <record id="rule_ab_sales_return_header_sync_all" model="ir.rule">
+            <field name="name">Sales Return Header Mirror: all records</field>
+            <field name="model_id" ref="model_ab_sales_return_header"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_header_rule_crud_not_saved_user" model="ir.rule">
-            <field name="name">Sales Header: CRUD not saved (user)</field>
-            <field name="model_id" ref="model_ab_sales_header"/>
-            <field name="domain_force">[('status', 'not in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+        <record id="rule_ab_sales_return_line_sync_all" model="ir.rule">
+            <field name="name">Sales Return Line Mirror: all records</field>
+            <field name="model_id" ref="model_ab_sales_return_line"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_header_rule_ro_saved_user" model="ir.rule">
-            <field name="name">Sales Header: Readonly saved (user)</field>
-            <field name="model_id" ref="model_ab_sales_header"/>
-            <field name="domain_force">[('status', 'in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
+        <record id="rule_ab_product_priced_sync_all" model="ir.rule">
+            <field name="name">Product Priced Mirror: all records</field>
+            <field name="model_id" ref="model_ab_product_priced"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_line_rule_crud_not_saved_user" model="ir.rule">
-            <field name="name">Sales Line: CRUD not saved (user)</field>
-            <field name="model_id" ref="model_ab_sales_line"/>
-            <field name="domain_force">[('header_id.status', 'not in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+        <record id="rule_ab_product_metadata_sync_all" model="ir.rule">
+            <field name="name">Product Metadata Mirror: all records</field>
+            <field name="model_id" ref="model_ab_product_metadata"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_line_rule_ro_saved_user" model="ir.rule">
-            <field name="name">Sales Line: Readonly saved (user)</field>
-            <field name="model_id" ref="model_ab_sales_line"/>
-            <field name="domain_force">[('header_id.status', 'in', ['saved', 'pending'])]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="False"/>
-            <field name="perm_create" eval="False"/>
-            <field name="perm_unlink" eval="False"/>
+        <record id="rule_ab_sales_inventory_sync_all" model="ir.rule">
+            <field name="name">Sales Inventory Mirror: all records</field>
+            <field name="model_id" ref="model_ab_sales_inventory"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_pos_settings_rule_user_own" model="ir.rule">
-            <field name="name">POS Settings: user own records</field>
-            <field name="model_id" ref="model_ab_sales_pos_settings"/>
-            <field name="domain_force">[('user_id', '=', user.id)]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="False"/>
+        <record id="rule_ab_sales_per_day_sync_all" model="ir.rule">
+            <field name="name">Sales Per Day Mirror: all records</field>
+            <field name="model_id" ref="model_ab_sales_per_day"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_pos_settings_rule_system_all" model="ir.rule">
-            <field name="name">POS Settings: system full access</field>
+        <record id="rule_ab_sales_per_day_sync_state_sync_all" model="ir.rule">
+            <field name="name">Sales Per Day Sync State Mirror: all records</field>
+            <field name="model_id" ref="model_ab_sales_per_day_sync_state"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
+        </record>
+        <record id="rule_ab_product_rank_sync_all" model="ir.rule">
+            <field name="name">Product Ranking Mirror: all records</field>
+            <field name="model_id" ref="model_ab_product_rank"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
+        </record>
+        <record id="rule_ab_sales_pos_settings_sync_all" model="ir.rule">
+            <field name="name">Sales POS Settings Mirror: all records</field>
             <field name="model_id" ref="model_ab_sales_pos_settings"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
-        <record id="ab_sales_pos_draft_cache_rule_user_own" model="ir.rule">
-            <field name="name">POS Draft Cache: user own records</field>
-            <field name="model_id" ref="model_ab_sales_pos_draft_cache"/>
-            <field name="domain_force">[('user_id', '=', user.id)]</field>
-            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="False"/>
-        </record>
-
-        <record id="ab_sales_pos_draft_cache_rule_system_all" model="ir.rule">
-            <field name="name">POS Draft Cache: system full access</field>
+        <record id="rule_ab_sales_pos_draft_cache_sync_all" model="ir.rule">
+            <field name="name">Sales POS Draft Cache Mirror: all records</field>
             <field name="model_id" ref="model_ab_sales_pos_draft_cache"/>
             <field name="domain_force">[(1, '=', 1)]</field>
-            <field name="groups" eval="[(4, ref('base.group_system'))]"/>
-            <field name="perm_read" eval="True"/>
-            <field name="perm_write" eval="True"/>
-            <field name="perm_create" eval="True"/>
-            <field name="perm_unlink" eval="True"/>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
         </record>
-
+        <record id="rule_ab_sales_pos_replication_turn_sync_all" model="ir.rule">
+            <field name="name">Sales POS Replication Turn Mirror: all records</field>
+            <field name="model_id" ref="model_ab_sales_pos_replication_turn"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
+        </record>
+        <record id="rule_ab_printer_sync_all" model="ir.rule">
+            <field name="name">Printer Configuration Mirror: all records</field>
+            <field name="model_id" ref="model_ab_printer"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[Command.link(ref('group_ab_sales_manager'))]"/>
+        </record>
     </data>
 </odoo>

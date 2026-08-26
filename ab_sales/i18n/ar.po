@@ -1,20 +1,17 @@
-# Translation of Odoo Server.
-# This file contains the translation of the following modules:
-# 	* ab_sales
-#
 msgid ""
 msgstr ""
-"Project-Id-Version: Odoo Server 19.0\n"
+"Project-Id-Version: ab_sales 19.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2026-08-25 16:16+0000\n"
-"PO-Revision-Date: 2026-04-28 14:52+0000\n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: ar_001\n"
+"PO-Revision-Date: 2026-08-17 00:00+0000\n"
+"Last-Translator: Abdin Pharmacies\n"
+"Language-Team: Arabic\n"
+"Language: ar\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: \n"
-"Plural-Forms: \n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=6; plural=n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 ? 4 : 5;\n"
 
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__paper_size__a4
@@ -58,7 +55,7 @@ msgstr "مندوب البيع الفعلي"
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__promised_customer
 msgid "Already told customer we will deliver product"
-msgstr "تم إبلاغ العميل مسبقًا بأننا سنسلم المنتج"
+msgstr "تم إبلاغ العميل بالفعل أننا سنوفر الصنف"
 
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__source_operation__archive
@@ -85,7 +82,7 @@ msgstr "أرشفة"
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_search
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_line_view_search
 msgid "Archived"
-msgstr "مؤرشف"
+msgstr "مؤرشفة"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__available_prices
@@ -234,7 +231,7 @@ msgstr "التكلفة"
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__create_uid
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__create_uid
 msgid "Created by"
-msgstr "تم الإنشاء بواسطة"
+msgstr "أنشئ بواسطة"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__create_date
@@ -257,7 +254,7 @@ msgstr "تاريخ الإنشاء"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__cron_id
 msgid "Cron"
-msgstr "مهمة Cron"
+msgstr "مهمة مجدولة"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__customer_id
@@ -321,7 +318,7 @@ msgstr "السعر الافتراضي"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__is_delivery
 msgid "Delivery"
-msgstr "طيار"
+msgstr "توصيل"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__employee_delivery_id
@@ -401,7 +398,7 @@ msgstr "معرف الحدث"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__extra_feed_lines
 msgid "Extra Feed Lines"
-msgstr "تغذية بسطور إضافية"
+msgstr "أسطر تغذية إضافية"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__f_transaction_id
@@ -465,12 +462,12 @@ msgstr "المعرّف"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__ip
 msgid "IP / Host"
-msgstr "عنوان IP / المضيف"
+msgstr "IP / المضيف"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__inventory_json
 msgid "Inventory JSON"
-msgstr "JSON المخزون"
+msgstr "بيانات المخزون JSON"
 
 #. module: ab_sales
 #: model_terms:ir.ui.view,arch_db:ab_sales.view_ab_sales_line_sync_form
@@ -495,7 +492,7 @@ msgstr "الصنف غير موجود"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_replication_turn__last_manual_run_at
 msgid "Last Manual Run At"
-msgstr "آخر تشغيل يدوي في"
+msgstr "وقت آخر تشغيل يدوي"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__last_order_date
@@ -506,7 +503,7 @@ msgstr "تاريخ آخر طلب"
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__last_synced_at
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_settings__last_synced_at
 msgid "Last Synced At"
-msgstr "آخر مزامنة في"
+msgstr "وقت آخر مزامنة"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__write_uid
@@ -564,7 +561,7 @@ msgstr "السطور"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__max_returnable_qty
 msgid "Max Returnable"
-msgstr "أقصى كمية قابلة للإرجاع"
+msgstr "أقصى كمية مرتجعة"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__max_returnable_source
@@ -594,7 +591,7 @@ msgstr "الاسم"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__net_amount
 msgid "Net Amount"
-msgstr "القيمة الصافية"
+msgstr "صافي القيمة"
 
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__protocol__network
@@ -619,17 +616,17 @@ msgstr "هاتف العميل الجديد"
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__push_state__none
 msgid "None"
-msgstr "لا شيء"
+msgstr "لا يوجد"
 
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__not_entered
 msgid "Not entered by data entry yet"
-msgstr "لم يتم إدخالها بعد بواسطة مدخل البيانات"
+msgstr "لم يتم إدخاله بعد بواسطة مدخل البيانات"
 
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__not_transferred
 msgid "Not transferred yet from main store"
-msgstr "لم تُنقل بعد من المخزن الرئيسي"
+msgstr "لم يتم التحويل بعد من المخزن الرئيسي"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__notes
@@ -666,7 +663,7 @@ msgstr "سبب آخر"
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_printer__paper_size__pos_80mm
 msgid "POS 80mm"
-msgstr "نقطة البيع 80 مم"
+msgstr "نقطة بيع 80 مم"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__pos_client_token
@@ -676,7 +673,7 @@ msgstr "رمز عميل نقطة البيع"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__paper_size
 msgid "Paper Size"
-msgstr "مقاس الورق"
+msgstr "حجم الورق"
 
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__pending
@@ -701,7 +698,7 @@ msgstr "المنفذ"
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_header__status__prepending
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_return_header__status__prepending
 msgid "PrePending"
-msgstr "قيد الإعداد"
+msgstr "قبل الانتظار"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__price
@@ -736,7 +733,7 @@ msgstr "يجب أن تكون مرآة إعدادات الطابعات فريدة
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_line_view_search
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_line_view_search
 msgid "Product"
-msgstr "المنتج"
+msgstr "الصنف"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_product_metadata__product_code
@@ -770,7 +767,7 @@ msgstr "يجب أن تكون مرآة ترتيب المنتجات فريدة ل�
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_line__products_not_exist
 msgid "Products Not Exist"
-msgstr "منتجات غير موجودة"
+msgstr "أصناف غير موجودة"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__protocol
@@ -950,7 +947,7 @@ msgstr "محفوظة"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__score
 msgid "Score"
-msgstr "النتيجة"
+msgstr "النقاط"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_pos_draft_cache__selected_id
@@ -1101,7 +1098,7 @@ msgstr "وحدة المصدر"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__source_uom_factor
 msgid "Source UoM Factor"
-msgstr "معامل وحدة القياس للمصدر"
+msgstr "معامل وحدة قياس المصدر"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_printer__source_write_date
@@ -1144,7 +1141,7 @@ msgstr "توفر المخزون"
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__stocktaking_error
 msgid "Stocktaking error"
-msgstr "خطأ في الجرد"
+msgstr "خطأ جرد"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_product_rank__store_id
@@ -1155,7 +1152,7 @@ msgstr "خطأ في الجرد"
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_header_view_search
 #: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_return_header_view_search
 msgid "Store"
-msgstr "المخزن"
+msgstr "الفرع"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__sto_eplus_serial
@@ -1293,7 +1290,7 @@ msgstr "إجمالي الرصيد"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__total_net_amount
 msgid "Total Net Amount"
-msgstr "إجمالي القيمة الصافية"
+msgstr "إجمالي الصافي"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__total_price
@@ -1314,7 +1311,7 @@ msgstr "إجمالي الكمية"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__total_sales_net
 msgid "Total Sales Net"
-msgstr "إجمالي صافي المبيعات"
+msgstr "صافي المبيعات"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_header__total_return_value
@@ -1366,7 +1363,7 @@ msgstr "اسم المستخدم"
 #. module: ab_sales
 #: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_line__unavailable_reason__wrong_price
 msgid "Wrong price in system"
-msgstr "سعر خاطئ في النظام"
+msgstr "سعر غير صحيح في النظام"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__c_id
@@ -1376,7 +1373,7 @@ msgstr "c_id"
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_header__eplus_serial
 msgid "ePlus Serial"
-msgstr "الرقم التسلسلي في E-Plus"
+msgstr "مسلسل إي بلس"
 
 #. module: ab_sales
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__item_unit1_unit2
@@ -1402,1611 +1399,6 @@ msgstr "sth_id"
 #: model:ir.model.fields,field_description:ab_sales.field_ab_sales_return_line__sto_id
 msgid "sto_id"
 msgstr "sto_id"
-
-#~ msgid "#%s: Store IP is missing."
-#~ msgstr "#%s: المخزن IP مفقود."
-
-#~ msgid ""
-#~ "<i class=\"fa fa-line-chart\" aria-hidden=\"true\"/>\n"
-#~ "                        <span class=\"small\">Store balances</span>"
-#~ msgstr ""
-#~ "<i class=\"fa fa-line-chart\" aria-hidden=\"true\"/>\n"
-#~ "                        <span class=\"small\">أرصدة المخازن</span>"
-
-#~ msgid ""
-#~ "<span class=\"badge text-bg-success ms-2\" invisible=\"not store_id or "
-#~ "store_server_online == False\">Connected</span>\n"
-#~ "                        <span class=\"badge text-bg-danger ms-2\" "
-#~ "invisible=\"not store_id or store_server_online == True\">Offline</span>"
-#~ msgstr ""
-#~ "<span class=\"badge text-bg-success ms-2\" visual=\"not store_id or "
-#~ "store_server_online == False\">متصل</span>\n"
-#~ "                        <span class=\"badge text-bg-danger ms-2\" "
-#~ "visual=\"not store_id or store_server_online == True\">غير متصل</span>"
-
-#~ msgid ""
-#~ "<span class=\"d-inline-flex align-items-center gap-2\">\n"
-#~ "                                                    <i class=\"fa fa-"
-#~ "building-o text-muted\" aria-hidden=\"true\"/>\n"
-#~ "                                                    <span>Store</span>\n"
-#~ "                                                </span>"
-#~ msgstr ""
-#~ "<span class=\"d-inline-flex align-items-center الفجوة-2\">\n"
-#~ "                                                    <i class=\"fa fa-"
-#~ "building-o text-muted\" aria-hidden=\"true\"/>\n"
-#~ "                                                    <span>المخزن</span>\n"
-#~ "                                                </span>"
-
-#~ msgid ""
-#~ "<span class=\"o_stat_text\">\n"
-#~ "                                        Net:\n"
-#~ "                                    </span>"
-#~ msgstr ""
-#~ "<span class=\"o_stat_text\">\n"
-#~ "                                        الصافي:\n"
-#~ "                                    </span>"
-
-#~ msgid ""
-#~ "<span class=\"o_stat_text\">\n"
-#~ "                                        Product:\n"
-#~ "                                    </span>"
-#~ msgstr ""
-#~ "<span class=\"o_stat_text\">\n"
-#~ "                                        المنتج:\n"
-#~ "                                    </span>"
-
-#~ msgid ""
-#~ "<span class=\"o_stat_text\">\n"
-#~ "                                        Total:\n"
-#~ "                                    </span>"
-#~ msgstr ""
-#~ "<span class=\"o_stat_text\">\n"
-#~ "                                        الإجمالي:\n"
-#~ "                                    </span>"
-
-#~ msgid "Ab sales inventory"
-#~ msgstr "مخزون مبيعات عابدين"
-
-#~ msgid "Abdin Pharmacies Pharma"
-#~ msgstr "صيدليات عابدين فارما"
-
-#~ msgid "Abdin Product"
-#~ msgstr "منتج عبدين"
-
-#~ msgid "Abdin Sales"
-#~ msgstr "مبيعات عبدين"
-
-#~ msgid "Action"
-#~ msgstr "الإجراء"
-
-#~ msgid "Action Needed"
-#~ msgstr "إجراء مطلوب"
-
-#~ msgid "Actions"
-#~ msgstr "الإجراءات"
-
-#~ msgid "Active ab_odoo_replication Crons"
-#~ msgstr "مهام Cron النشطة لـ ab_odoo_replication"
-
-#~ msgid "Activities"
-#~ msgstr "الأنشطة"
-
-#~ msgid "Activity Exception Decoration"
-#~ msgstr "تمييز استثناء النشاط"
-
-#~ msgid "Activity State"
-#~ msgstr "حالة النشاط"
-
-#~ msgid "Activity Type Icon"
-#~ msgstr "أيقونة نوع النشاط"
-
-#~ msgid "Add"
-#~ msgstr "إضافة"
-
-#~ msgid "Add Products"
-#~ msgstr "إضافة منتجات"
-
-#~ msgid "Add all items"
-#~ msgstr "إضافة كل الأصناف"
-
-#~ msgid "Add notes"
-#~ msgstr "إضافة ملاحظات"
-
-#~ msgid "Add products to start building the bill."
-#~ msgstr "أضف منتجات لبدء إنشاء الفاتورة."
-
-#~ msgid "Address"
-#~ msgstr "العنوان"
-
-#~ msgid "Address must be at least 3 characters."
-#~ msgstr "يجب أن يتكون العنوان من 3 أحرف على الأقل."
-
-#~ msgid "All 'New Customer' fields must set!"
-#~ msgstr "يجب تعبئة جميع حقول \"العميل الجديد\"!"
-
-#~ msgid "All Invoices"
-#~ msgstr "كل الفواتير"
-
-#~ msgid "Already Saved"
-#~ msgstr "محفوظ بالفعل"
-
-#~ msgid "An invoice already exists with the same token."
-#~ msgstr "توجد فاتورة بالفعل بنفس الرمز المميز."
-
-#~ msgid "Apply"
-#~ msgstr "تطبيق"
-
-#~ msgid "Apply ("
-#~ msgstr "تطبيق ("
-
-#~ msgid "Applying…"
-#~ msgstr "جارٍ التطبيق…"
-
-#~ msgid "Are you sure you want to push this return to E-Plus?"
-#~ msgstr "هل أنت متأكد أنك تريد إرسال هذا المرتجع إلى E-Plus؟"
-
-#~ msgid "Assistant"
-#~ msgstr "مساعد"
-
-#~ msgid "Attachment Count"
-#~ msgstr "عدد المرفقات"
-
-#~ msgid "Available Balance"
-#~ msgstr "الرصيد المتاح"
-
-#~ msgid "BConnect Total Guard failed. Header total (%s) != lines total (%s)."
-#~ msgstr ""
-#~ "فشل التحقق من إجمالي BConnect. إجمالي الرأس (%s) لا يساوي إجمالي السطور "
-#~ "(%s)."
-
-#~ msgid "Back"
-#~ msgstr "رجوع"
-
-#~ msgid "Barcode"
-#~ msgstr "الباركود"
-
-#~ msgid "Barcode is required."
-#~ msgstr "الباركود مطلوب."
-
-#~ msgid "Barcode not found:"
-#~ msgstr "لم يتم العثور على الباركود:"
-
-#~ msgid "Batches (Unique)"
-#~ msgstr "الدفعات (الفريدة)"
-
-#~ msgid "Bill"
-#~ msgstr "الفاتورة"
-
-#~ msgid "Bill #"
-#~ msgstr "رقم الفاتورة"
-
-#~ msgid "Bill Customer Data"
-#~ msgstr "بيانات عميل الفاتورة"
-
-#~ msgid "Bill Wizard"
-#~ msgstr "معالج الفاتورة"
-
-#~ msgid "Branch is required."
-#~ msgstr "الفرع مطلوب."
-
-#~ msgid "Branch:"
-#~ msgstr "الفرع:"
-
-#~ msgid "Call Center"
-#~ msgstr "مركز الاتصال"
-
-#~ msgid "Can not get data for multiple headers"
-#~ msgstr "لا يمكن جلب البيانات لعدة رؤوس في نفس الوقت"
-
-#~ msgid "Cancel"
-#~ msgstr "إلغاء"
-
-#~ msgid "Cashier"
-#~ msgstr "أمين الصندوق"
-
-#~ msgid "Class/source ID used in sales_trans_d and Item_Class_Store (batch)."
-#~ msgstr ""
-#~ "معرف الفئة/المصدر المستخدم في sales_trans_d وItem_Class_Store (دفعة)."
-
-#~ msgid "Clear"
-#~ msgstr "مسح"
-
-#~ msgid "Clear Lines"
-#~ msgstr "مسح السطور"
-
-#~ msgid "Click products to add them."
-#~ msgstr "انقر على المنتجات لإضافتها."
-
-#~ msgid "Close"
-#~ msgstr "إغلاق"
-
-#~ msgid "Code"
-#~ msgstr "الرمز"
-
-#~ msgid "Code or part of product name"
-#~ msgstr "الكود أو جزء من اسم المنتج"
-
-#~ msgid "Command execution failed."
-#~ msgstr "فشل تنفيذ الأمر."
-
-#~ msgid "Company"
-#~ msgstr "الشركة"
-
-#~ msgid "Company Pay"
-#~ msgstr "نصيب الشركة"
-
-#~ msgid "Configurations"
-#~ msgstr "الإعدادات"
-
-#~ msgid "Confirm"
-#~ msgstr "تأكيد"
-
-#~ msgid "Connected printers require Printer / Share Name."
-#~ msgstr "الطابعات المتصلة تتطلب اسم الطابعة / المشاركة."
-
-#~ msgid "Connection to B-Connect failed while inserting Replication_Trans."
-#~ msgstr "فشل الاتصال بـ B-Connect أثناء إدراج Replication_Trans."
-
-#~ msgid "Connection to B-Connect failed."
-#~ msgstr "فشل الاتصال بـ B-Connect."
-
-#~ msgid "Connection to E-Plus failed."
-#~ msgstr "فشل الاتصال بنظام E-Plus."
-
-#~ msgid "Contract"
-#~ msgstr "التعاقد"
-
-#~ msgid "Contract Data"
-#~ msgstr "بيانات التعاقد"
-
-#~ msgid "Cosmetics Salesman"
-#~ msgstr "مندوب مبيعات مستحضرات التجميل"
-
-#~ msgid "Could not retrieve %s from E-Plus (@@IDENTITY is NULL)."
-#~ msgstr "تعذر جلب %s من E-Plus (القيمة @@IDENTITY هي NULL)."
-
-#~ msgid "Create"
-#~ msgstr "إنشاء"
-
-#~ msgid "Create Bill"
-#~ msgstr "إنشاء فاتورة"
-
-#~ msgid "Create Date"
-#~ msgstr "تاريخ الإنشاء"
-
-#~ msgid "Create a new cached bill or pick one from the left panel."
-#~ msgstr "أنشئ فاتورة مخزنة جديدة أو اختر واحدة من اللوحة اليسرى."
-
-#~ msgid "Create new token & submit"
-#~ msgstr "أنشئ رمزًا جديدًا وأرسل"
-
-#~ msgid "Created"
-#~ msgstr "تم الإنشاء"
-
-#~ msgid "Cron has been triggered."
-#~ msgstr "تم تشغيل مهمة Cron."
-
-#~ msgid "Cron name must start with '%s'."
-#~ msgstr "يجب أن يبدأ اسم مهمة Cron بـ '%s'."
-
-#~ msgid "Cron not found."
-#~ msgstr "لم يتم العثور على مهمة Cron."
-
-#~ msgid "Current Customer"
-#~ msgstr "العميل الحالي"
-
-#~ msgid ""
-#~ "Current sell store is not equal ePlus DB store!\n"
-#~ "ePlus DB store is %s\n"
-#~ "with serial %s"
-#~ msgstr ""
-#~ "المخزن الحالي للبيع لا يطابق المخزن المسجل في قاعدة بيانات E-Plus!\n"
-#~ "مخزن قاعدة بيانات E-Plus هو %s\n"
-#~ "برقم تسلسلي %s"
-
-#~ msgid "Customer Pay"
-#~ msgstr "تحمل العميل"
-
-#~ msgid "Net"
-#~ msgstr "الصافي"
-
-#~ msgid "Customer Quick Picks"
-#~ msgstr "اختيارات العملاء السريعة"
-
-#~ msgid "Customer name must contain at least two words."
-#~ msgstr "يجب أن يحتوي اسم العميل على كلمتين على الأقل."
-
-#~ msgid "Customer was created but could not be loaded."
-#~ msgstr "تم إنشاء العميل ولكن تعذر تحميله."
-
-#~ msgid "Customers"
-#~ msgstr "العملاء"
-
-#~ msgid "Date"
-#~ msgstr "التاريخ"
-
-#~ msgid "Date:"
-#~ msgstr "التاريخ:"
-
-#~ msgid "Default Printer"
-#~ msgstr "الطابعة الافتراضية"
-
-#~ msgid "Details"
-#~ msgstr "التفاصيل"
-
-#~ msgid "Direct print failed while building ESC/POS binary: %s"
-#~ msgstr "فشل الطباعة المباشرة أثناء إنشاء ملف ESC/POS الثنائي: %s"
-
-#~ msgid "Direct print failed while processing POS image: %s"
-#~ msgstr "فشلت الطباعة المباشرة أثناء معالجة صورة POS: %s"
-
-#~ msgid "Direct print failed: %s"
-#~ msgstr "فشلت الطباعة المباشرة: %s"
-
-#~ msgid "Direct print failed: receipt image was not generated."
-#~ msgstr "فشلت الطباعة المباشرة: لم يتم إنشاء صورة الإيصال."
-
-#~ msgid "Direct print is not available on this server (missing '%s')."
-#~ msgstr "الطباعة المباشرة غير متاحة على هذا الخادم (العنصر '%s' مفقود)."
-
-#~ msgid "Direct print is not available on this server (missing 'lp')."
-#~ msgstr "الطباعة المباشرة غير متاحة على هذا الخادم (الأمر 'lp' مفقود)."
-
-#~ msgid "Discount"
-#~ msgstr "خصم"
-
-#~ msgid "Discover"
-#~ msgstr "اكتشاف"
-
-#~ msgid "Done: %(done)s, Skipped: %(skipped)s, Failed: %(failed)s"
-#~ msgstr "تم: %(done)s، تم التخطي: %(skipped)s، فشل: %(failed)s"
-
-#~ msgid "Duplicate token detected."
-#~ msgstr "تم اكتشاف رمز مكرر."
-
-#~ msgid "E-Plus Item ID (itm_id)"
-#~ msgstr "معرف عنصر E-Plus (itm_id)"
-
-#~ msgid "E-Plus Sales Return Header"
-#~ msgstr "رأس مرتجع مبيعات E-Plus"
-
-#~ msgid "E-Plus Sales Return Line"
-#~ msgstr "سطر مرتجع مبيعات E-Plus"
-
-#~ msgid "E-Plus push failed: %s"
-#~ msgstr "فشل الإرسال إلى E-Plus: %s"
-
-#~ msgid "E-Plus return push failed: %s"
-#~ msgstr "فشل إرسال المرتجع إلى E-Plus: %s"
-
-#~ msgid "E-Plus return was saved, but Replication_Trans insert failed: %s"
-#~ msgstr "تم حفظ مرتجع E-Plus، لكن فشل إدراج Replication_Trans: %s"
-
-#~ msgid "EPlus connection is not valid."
-#~ msgstr "اتصال E-Plus غير صالح."
-
-#~ msgid "ESC/POS binary build failed: %s"
-#~ msgstr "فشل إنشاء ملف ESC/POS الثنائي: %s"
-
-#~ msgid "ESC/POS binary print is only supported on Linux servers."
-#~ msgstr "طباعة ESC/POS الثنائية مدعومة فقط على خوادم Linux."
-
-#~ msgid "Employee Delivery"
-#~ msgstr "توصيل الموظف"
-
-#~ msgid "Enable Arabic/English ABMany2one mapping"
-#~ msgstr "تفعيل ربط ABMany2one بالعربية/الإنجليزية"
-
-#~ msgid "Enable Arabic/English Product Searchbar mapping"
-#~ msgstr "تفعيل ربط شريط بحث المنتجات بالعربية/الإنجليزية"
-
-#~ msgid "End Date"
-#~ msgstr "تاريخ الانتهاء"
-
-#~ msgid "Enter arithmetic expression, e.g. 1/3, 2.5*4, 10-3, 2*1.25"
-#~ msgstr "أدخل تعبيرًا حسابيًا، مثل 1/3 أو 2.5*4 أو 10-3 أو 2*1.25"
-
-#~ msgid "Exact serial"
-#~ msgstr "الرقم التسلسلي المطابق"
-
-#~ msgid "Existing invoice not found."
-#~ msgstr "لم يتم العثور على الفاتورة الحالية."
-
-#~ msgid "Expand/collapse"
-#~ msgstr "توسيع/طي"
-
-#~ msgid "Explain in more detail if you chose 'Other'."
-#~ msgstr "اشرح بمزيد من التفصيل إذا اخترت «أخرى»."
-
-#~ msgid "Extra Notes"
-#~ msgstr "ملاحظات إضافية"
-
-#~ msgid "F-Transaction ID:"
-#~ msgstr "معرف F-Transaction:"
-
-#~ msgid "F-Transaction_Header ID (fh_id)"
-#~ msgstr "معرف F-Transaction_Header (fh_id)"
-
-#~ msgid ""
-#~ "Failed to get new STH ID (SCOPE_IDENTITY/@@IDENTITY/IDENT_CURRENT all "
-#~ "returned NULL). Please check that sales_trans_h.sth_id is an IDENTITY "
-#~ "column."
-#~ msgstr ""
-#~ "فشل في الحصول على رقم STH جديد (الدوال SCOPE_IDENTITY/@@IDENTITY/"
-#~ "IDENT_CURRENT أعادت جميعها القيمة NULL). يرجى التحقق من أن الحقل "
-#~ "sales_trans_h.sth_id هو حقل IDENTITY."
-
-#~ msgid "Followers"
-#~ msgstr "المتابعون"
-
-#~ msgid "Followers (Partners)"
-#~ msgstr "المتابعون (الشركاء)"
-
-#~ msgid "Font awesome icon e.g. fa-tasks"
-#~ msgstr "أيقونة Font Awesome مثل fa-tasks"
-
-#~ msgid "Footer text (optional)"
-#~ msgstr "نص التذييل (اختياري)"
-
-#~ msgid "Frequent"
-#~ msgstr "متكرر"
-
-#~ msgid "Full Screen"
-#~ msgstr "ملء الشاشة"
-
-#~ msgid "Generate a new token to submit this bill."
-#~ msgstr "أنشئ رمزًا جديدًا لإرسال هذه الفاتورة."
-
-#~ msgid ""
-#~ "HTML direct print is not available on this server (missing 'wkhtmltopdf')."
-#~ msgstr ""
-#~ "الطباعة المباشرة بتنسيق HTML غير متاحة على هذا الخادم (الأمر "
-#~ "'wkhtmltopdf' مفقود)."
-
-#~ msgid "Has Balance"
-#~ msgstr "له رصيد"
-
-#~ msgid "Has Message"
-#~ msgstr "به رسائل"
-
-#~ msgid "Has Pos Balance"
-#~ msgstr "يحتوي على رصيد نقطة البيع"
-
-#~ msgid "Has Store Balance"
-#~ msgstr "يحتوي على رصيد مخزن"
-
-#~ msgid "Has balance (any)"
-#~ msgstr "يحتوي على رصيد (أي قيمة)"
-
-#~ msgid "Has balance in current store"
-#~ msgstr "لديه رصيد في المتجر الحالي"
-
-#~ msgid "Header insert failed; header record not found (sth_id=%s)."
-#~ msgstr "فشل إدراج الرأس؛ لم يتم العثور على سجل الرأس (sth_id=%s)."
-
-#~ msgid "Header text (optional)"
-#~ msgstr "نص الرأس (اختياري)"
-
-#~ msgid "IP range is too large. Maximum is %s addresses."
-#~ msgstr "نطاق IP كبير جدًا. الحد الأقصى هو عناوين %s."
-
-#~ msgid "Icon"
-#~ msgstr "أيقونة"
-
-#~ msgid "Icon to indicate an exception activity."
-#~ msgstr "أيقونة تشير إلى نشاط استثنائي."
-
-#~ msgid "If checked, new messages require your attention."
-#~ msgstr "إذا تم التحديد، فهذا يعني أن هناك رسائل جديدة تتطلب انتباهك."
-
-#~ msgid "If checked, some messages have a delivery error."
-#~ msgstr "إذا تم التحديد، فهذا يعني أن هناك رسائل بها خطأ في التسليم."
-
-#~ msgid "Insert Replication_Trans"
-#~ msgstr "إدراج Replication_Trans"
-
-#~ msgid "Insurance"
-#~ msgstr "التأمين"
-
-#~ msgid "Insurance Name"
-#~ msgstr "الاسم التأميني"
-
-#~ msgid "Insurance Number"
-#~ msgstr "الرقم التأميني"
-
-#~ msgid "Invalid IP range."
-#~ msgstr "نطاق IP غير صالح."
-
-#~ msgid "Invalid items payload."
-#~ msgstr "بيانات الأصناف غير صالحة."
-
-#~ msgid "Invalid payload."
-#~ msgstr "البيانات غير صالحة."
-
-#~ msgid "Invalid quantity in a line (<= 0)."
-#~ msgstr "كمية غير صالحة في أحد السطور (<= 0)."
-
-#~ msgid "Invalid store or product."
-#~ msgstr "المخزن أو المنتج غير صالح."
-
-#~ msgid "Invalid store."
-#~ msgstr "المخزن غير صالح."
-
-#~ msgid "Inventory"
-#~ msgstr "المخزون"
-
-#~ msgid "Inventory: Update Balance Per Store"
-#~ msgstr "المخزون: تحديث الرصيد لكل المخزن"
-
-#~ msgid "Invoice"
-#~ msgstr "الفاتورة"
-
-#~ msgid "Invoice #"
-#~ msgstr "رقم الفاتورة"
-
-#~ msgid "Invoice %s has no lines in B-Connect."
-#~ msgstr "الفاتورة %s لا يوجد لديه خطوط في B-Connect."
-
-#~ msgid "Invoice %s not found in B-Connect."
-#~ msgstr "الفاتورة %s غير موجود في B-Connect."
-
-#~ msgid "Invoice Address Datalist"
-#~ msgstr "قائمة بيانات عنوان الفاتورة"
-
-#~ msgid "Invoice does not Exist"
-#~ msgstr "الفاتورة غير موجودة"
-
-#~ msgid "Invoice must be in prepending status"
-#~ msgstr "يجب أن تكون الفاتورة في حالة قيد التهيئة."
-
-#~ msgid "Invoices"
-#~ msgstr "الفواتير"
-
-#~ msgid "Ip1"
-#~ msgstr "عنوان IP1"
-
-#~ msgid "Is Closed"
-#~ msgstr "مغلقة"
-
-#~ msgid "Is Delivery"
-#~ msgstr "فاتورة توصيل"
-
-#~ msgid "Is Follower"
-#~ msgstr "متابع"
-
-#~ msgid "Item"
-#~ msgstr "الصنف"
-
-#~ msgid "Item #"
-#~ msgstr "رقم الصنف"
-
-#~ msgid "Item ID in E-Plus (item_catalog.itm_id)."
-#~ msgstr "معرف العنصر في E-Plus (item_catalog.itm_id)."
-
-#~ msgid "Items"
-#~ msgstr "الأصناف"
-
-#~ msgid "Itm Nexist"
-#~ msgstr "الصنف غير موجود"
-
-#~ msgid "LE"
-#~ msgstr "ج.م"
-
-#~ msgid "Last Call (UTC)"
-#~ msgstr "آخر استدعاء (UTC)"
-
-#~ msgid "Line with missing product E-Plus serial."
-#~ msgstr "سطر بدون رقم تسلسلي للمنتج في E-Plus."
-
-#~ msgid "Lines exceeding available stock"
-#~ msgstr "السطور بدون رصيد"
-
-#~ msgid "Lines where requested qty exceeds available stock"
-#~ msgstr "سطور بيع ذات رصيد صفر أو غير متاح"
-
-#~ msgid "Linked Products (Temp)"
-#~ msgstr "المنتجات المرتبطة (مؤقت)"
-
-#~ msgid "Load Lines"
-#~ msgstr "تحميل السطور"
-
-#~ msgid "Loading active crons..."
-#~ msgstr "جارٍ تحميل مهام Cron النشطة..."
-
-#~ msgid "Loading bills..."
-#~ msgstr "جارٍ تحميل الفواتير..."
-
-#~ msgid "Loading details..."
-#~ msgstr "جارٍ تحميل التفاصيل..."
-
-#~ msgid "Loading linked products..."
-#~ msgstr "جارٍ تحميل المنتجات المرتبطة..."
-
-#~ msgid "Loading sales return..."
-#~ msgstr "جارٍ تحميل مرتجع المبيعات..."
-
-#~ msgid "Loading..."
-#~ msgstr "جارٍ التحميل..."
-
-#~ msgid "Loading…"
-#~ msgstr "جارٍ التحميل…"
-
-#~ msgid "Lost Discount"
-#~ msgstr "خصم مفقود"
-
-#~ msgid "Manager"
-#~ msgstr "المدير"
-
-#~ msgid "Manual replication turn already exists for this user and cron."
-#~ msgstr "دورة النسخ اليدوي موجودة بالفعل لهذا المستخدم ولمهمة Cron هذه."
-
-#~ msgid "Marketing"
-#~ msgstr "التسويق"
-
-#~ msgid "Max Return"
-#~ msgstr "أقصى مرتجع"
-
-#~ msgid "Max Returnable (source)"
-#~ msgstr "أقصى كمية قابلة للإرجاع (المصدر)"
-
-#~ msgid "Maximize"
-#~ msgstr "تكبير"
-
-#~ msgid "Maximum quantity allowed to be returned for this line."
-#~ msgstr "الحد الأقصى للكمية المسموح بإرجاعها لهذا الخط."
-
-#~ msgid "Message Delivery error"
-#~ msgstr "خطأ في تسليم الرسالة"
-
-#~ msgid "Minimize"
-#~ msgstr "تصغير"
-
-#~ msgid "Missing cron id."
-#~ msgstr "معرف Cron مفقود."
-
-#~ msgid "Missing header_id."
-#~ msgstr "header_id مفقود."
-
-#~ msgid "Missing key values for return line update."
-#~ msgstr "القيم الأساسية المفقودة لتحديث خط الإرجاع."
-
-#~ msgid "Missing required models: %s"
-#~ msgstr "النماذج المطلوبة مفقودة: %s"
-
-#~ msgid "Missing required values to insert Replication_Trans rows."
-#~ msgstr "القيم المطلوبة مفقودة لإدراج صفوف Replication_Trans."
-
-#~ msgid "Mobile"
-#~ msgstr "الجوال"
-
-#~ msgid "My Activity Deadline"
-#~ msgstr "آخر موعد لنشاطي"
-
-#~ msgid "Net:"
-#~ msgstr "الصافي:"
-
-#~ msgid "Network printers require IP / Host."
-#~ msgstr "تتطلب طابعات الشبكة IP / Host."
-
-#~ msgid "New Bill"
-#~ msgstr "فاتورة جديدة"
-
-#~ msgid "New Customer"
-#~ msgstr "عميل جديد"
-
-#~ msgid "Next"
-#~ msgstr "التالي"
-
-#~ msgid "Next Activity Deadline"
-#~ msgstr "آخر موعد للنشاط التالي"
-
-#~ msgid "Next Activity Summary"
-#~ msgstr "ملخص النشاط التالي"
-
-#~ msgid "Next Activity Type"
-#~ msgstr "نوع النشاط التالي"
-
-#~ msgid "Next Call (UTC)"
-#~ msgstr "الاستدعاء التالي (UTC)"
-
-#~ msgid "No IP for this store."
-#~ msgstr "لا يوجد IP لهذا المتجر."
-
-#~ msgid "No Sales Return records selected."
-#~ msgstr "لم يتم تحديد أي سجلات مرتجع المبيعات."
-
-#~ msgid "No Stock Warning"
-#~ msgstr "تحذير: لا يوجد رصيد"
-
-#~ msgid "No UoM"
-#~ msgstr "لا توجد وحدة قياس"
-
-#~ msgid "No active ab_odoo_replication cron found."
-#~ msgstr "لم يتم العثور على مهمة Cron نشطة لـ ab_odoo_replication."
-
-#~ msgid "No active store found in BConnect."
-#~ msgstr "لم يتم العثور على متجر نشط في BConnect."
-
-#~ msgid "No bill selected"
-#~ msgstr "لم يتم تحديد فاتورة"
-
-#~ msgid "No bills found."
-#~ msgstr "لم يتم العثور على فواتير."
-
-#~ msgid "No cached bills yet."
-#~ msgstr "لا توجد فواتير مخزنة مؤقتًا بعد."
-
-#~ msgid "No invoices found."
-#~ msgstr "لم يتم العثور على فواتير."
-
-#~ msgid "No items found in selected invoice."
-#~ msgstr "لم يتم العثور على أي عناصر في الفاتورة المحددة."
-
-#~ msgid "No lines available."
-#~ msgstr "لا توجد سطور متاحة."
-
-#~ msgid "No lines loaded."
-#~ msgstr "لم يتم تحميل أي سطور."
-
-#~ msgid "No lines to print."
-#~ msgstr "لا توجد سطور للطباعة."
-
-#~ msgid "No lines to return."
-#~ msgstr "لا توجد سطور للإرجاع."
-
-#~ msgid "No lines to send."
-#~ msgstr "لا توجد سطور لإرسالها."
-
-#~ msgid "No lines."
-#~ msgstr "لا توجد سطور."
-
-#~ msgid "No matching products."
-#~ msgstr "لا توجد منتجات مطابقة."
-
-#~ msgid "No matching stores found for this sell store"
-#~ msgstr "لم يتم العثور على مخازن مطابقة لهذا المخزن للبيع"
-
-#~ msgid "No positive balances found for the selected product(s)."
-#~ msgstr "لم يتم العثور على أرصدة موجبة للمنتج (المنتجات) المحددة."
-
-#~ msgid "No product"
-#~ msgstr "لا يوجد منتج"
-
-#~ msgid "No products found."
-#~ msgstr "لم يتم العثور على منتجات."
-
-#~ msgid "No spare customers available for this store."
-#~ msgstr "لا يوجد عملاء احتياطيين متاحين لهذا المتجر."
-
-#~ msgid "No stores with valid IP found for repair."
-#~ msgstr "لم يتم العثور على متاجر ذات عنوان IP صالح للإصلاح."
-
-#~ msgid "Nothing to print."
-#~ msgstr "لا يوجد شيء للطباعة."
-
-#~ msgid "Nothing to return."
-#~ msgstr "لا يوجد شيء للإرجاع."
-
-#~ msgid "Number Of Products"
-#~ msgstr "عدد المنتجات"
-
-#~ msgid "Number of Actions"
-#~ msgstr "عدد الإجراءات"
-
-#~ msgid "Number of errors"
-#~ msgstr "عدد الأخطاء"
-
-#~ msgid "Number of messages requiring action"
-#~ msgstr "عدد الرسائل التي تتطلب إجراءً"
-
-#~ msgid "Number of messages with delivery error"
-#~ msgstr "عدد الرسائل التي بها خطأ في التسليم"
-
-#~ msgid "Number of small units in one source unit."
-#~ msgstr "عدد الوحدات الصغيرة في وحدة مصدر واحدة."
-
-#~ msgid "Offline"
-#~ msgstr "غير متصل"
-
-#~ msgid "Online"
-#~ msgstr "متصل"
-
-#~ msgid "Only IPv4 ranges are supported."
-#~ msgstr "يتم دعم نطاقات IPv4 فقط."
-
-#~ msgid "Only ab_odoo_replication cron is allowed."
-#~ msgstr "يُسمح فقط بمهمة Cron الخاصة بـ ab_odoo_replication."
-
-#~ msgid "Only one default printer is allowed."
-#~ msgstr "يُسمح بطابعة افتراضية واحدة فقط."
-
-#~ msgid "Only prepending returns can be moved to pending."
-#~ msgstr "يمكن نقل المرتجعات المعلقة فقط إلى المعلقة."
-
-#~ msgid "Operation not supported"
-#~ msgstr "العملية غير مدعومة"
-
-#~ msgid "Optional operational notes..."
-#~ msgstr "ملاحظات تشغيلية اختيارية..."
-
-#~ msgid "Original Line (optional)"
-#~ msgstr "السطر الأصلي (اختياري)"
-
-#~ msgid "Original invoice STH ID in B-Connect (sales_trans_h.sth_id)."
-#~ msgstr "معرف STH للفاتورة الأصلية في B-Connect (sales_trans_h.sth_id)."
-
-#~ msgid "Original sales_trans_d.itm_unit value."
-#~ msgstr "القيمة الأصلية للحقل sales_trans_d.itm_unit."
-
-#~ msgid "Original sales_trans_h.sth_id (E-Plus header ID)."
-#~ msgstr "sales_trans_h.sth_id الأصلي (معرف رأس E-Plus)."
-
-#~ msgid "Other (details)"
-#~ msgstr "أخرى (تفاصيل)"
-
-#~ msgid "Other (please explain)"
-#~ msgstr "أخرى (يرجى الشرح)"
-
-#~ msgid "Other reason (details)"
-#~ msgstr "سبب آخر (تفاصيل)"
-
-#~ msgid "PDF rendering failed: %s"
-#~ msgstr "فشل إنشاء PDF: %s"
-
-#~ msgid "POS"
-#~ msgstr "نقطة البيع"
-
-#~ msgid "POS 80mm format requires a thermal ESC/POS printer queue."
-#~ msgstr "يتطلب تنسيق POS مقاس 80 مم قائمة انتظار الطابعة الحرارية ESC/POS."
-
-#~ msgid "POS Settings"
-#~ msgstr "إعدادات نقطة البيع"
-
-#~ msgid "POS image processing failed: %s"
-#~ msgstr "فشلت معالجة الصور POS: %s"
-
-#~ msgid "POS image rendering failed: %s"
-#~ msgstr "فشل عرض الصورة POS: %s"
-
-#~ msgid "POS image rendering failed: output image not generated."
-#~ msgstr "فشل عرض الصورة POS: لم يتم إنشاء صورة الإخراج."
-
-#~ msgid "POS settings already exist for this user."
-#~ msgstr "إعدادات POS موجودة بالفعل لهذا المستخدم."
-
-#~ msgid "POS submit token must be unique."
-#~ msgstr "يجب أن يكون رمز الإرسال POS فريدًا."
-
-#~ msgid "Page"
-#~ msgstr "الصفحة"
-
-#~ msgid "Password"
-#~ msgstr "كلمة المرور"
-
-#~ msgid "Pay to Customer"
-#~ msgstr "ادفع للعميل"
-
-#~ msgid "Pharmacist"
-#~ msgstr "صيدلي"
-
-#~ msgid "Phone"
-#~ msgstr "الهاتف"
-
-#~ msgid "Phone is required."
-#~ msgstr "الهاتف مطلوب."
-
-#~ msgid "Phone must be 11 digits and start with 010, 011, 012, or 015."
-#~ msgstr ""
-#~ "يجب أن يتكون الهاتف من 11 رقمًا ويبدأ بالرقم 010 أو 011 أو 012 أو 015."
-
-#~ msgid "Phone, delivery phone, or name"
-#~ msgstr "الهاتف أو هاتف التسليم أو الاسم"
-
-#~ msgid "Pinned"
-#~ msgstr "مثبت"
-
-#~ msgid "Please Submit this invoice first."
-#~ msgstr "يرجى تقديم هذه الفاتورة أولا."
-
-#~ msgid "Please choose a product first, then click Balance."
-#~ msgstr "يرجى اختيار المنتج أولاً، ثم انقر فوق الرصيد."
-
-#~ msgid "Please choose a reason for each line you still want to sell."
-#~ msgstr "يرجى اختيار سبب لكل سطر تريد بيعه رغم عدم وجود رصيد."
-
-#~ msgid "Please correct the data and try again."
-#~ msgstr "يرجى تصحيح البيانات والمحاولة مرة أخرى."
-
-#~ msgid "Please enter a positive return quantity on at least one line."
-#~ msgstr "الرجاء إدخال كمية إرجاع موجبة في سطر واحد على الأقل."
-
-#~ msgid "Please enter sth_id (Original Invoice) first."
-#~ msgstr "الرجاء إدخال sth_id (الفاتورة الأصلي) أولاً."
-
-#~ msgid "Please select a Store first."
-#~ msgstr "الرجاء تحديد المخزن أولاً."
-
-#~ msgid "Please select a Store with IP before loading invoice."
-#~ msgstr "الرجاء تحديد المخزن مع IP قبل تحميل الفاتورة."
-
-#~ msgid "Port must be between 1 and 65535."
-#~ msgstr "يجب أن يكون المنفذ بين 1 و65535."
-
-#~ msgid "Pos Client Token"
-#~ msgstr "رمز عميل نقطة البيع"
-
-#~ msgid "PowerShell HTML print command failed."
-#~ msgstr "فشل أمر الطباعة PowerShell HTML."
-
-#~ msgid "PowerShell command failed."
-#~ msgstr "فشل أمر PowerShell."
-
-#~ msgid "PowerShell print command failed."
-#~ msgstr "فشل أمر الطباعة في PowerShell."
-
-#~ msgid "Pre-Pending"
-#~ msgstr "ما قبل التعليق"
-
-#~ msgid "Prepending"
-#~ msgstr "قيد التهيئة"
-
-#~ msgid "Preview"
-#~ msgstr "معاينة"
-
-#~ msgid "Previous"
-#~ msgstr "السابق"
-
-#~ msgid "Price Subtotal"
-#~ msgstr "إجمالي السعر الفرعي"
-
-#~ msgid "Price Tax"
-#~ msgstr "ضريبة السعر"
-
-#~ msgid "Price:Balance"
-#~ msgstr "السعر:الرصيد"
-
-#~ msgid "Prices"
-#~ msgstr "الأسعار"
-
-#~ msgid "Primary key from F_Transaction_Header table."
-#~ msgstr "المفتاح الأساسي من جدول F_Transaction_Header."
-
-#~ msgid "Print"
-#~ msgstr "طباعة"
-
-#~ msgid "Print Receipt"
-#~ msgstr "طباعة الإيصال"
-
-#~ msgid "Print command failed: %s"
-#~ msgstr "فشل أمر الطباعة: %s"
-
-#~ msgid "Printer"
-#~ msgstr "الطابعة"
-
-#~ msgid ""
-#~ "Printer '%s' is a raw queue. HTML/PDF print is blocked to avoid binary "
-#~ "garbage output. Use text print or configure a non-raw driver queue."
-#~ msgstr ""
-#~ "الطابعة '%s' عبارة عن قائمة انتظار أولية. تم حظر طباعة HTML/PDF لتجنب "
-#~ "إخراج البيانات الثنائية المهملة. استخدم طباعة النص أو قم بتكوين قائمة "
-#~ "انتظار برامج التشغيل غير الأولية."
-
-#~ msgid "Printer Configuration"
-#~ msgstr "إعدادات الطابعة"
-
-#~ msgid "Printer Profile"
-#~ msgstr "ملف تعريف الطابعة"
-
-#~ msgid "Printer Test"
-#~ msgstr "اختبار الطابعة"
-
-#~ msgid "Printer discovery failed: %s"
-#~ msgstr "فشل اكتشاف الطابعة: %s"
-
-#~ msgid "Printer discovery is not available on this server (missing lpadmin)."
-#~ msgstr "اكتشاف الطابعة غير متاح على هذا الخادم (مفقود lpadmin)."
-
-#~ msgid "Printer name (label only)"
-#~ msgstr "اسم الطابعة (للعرض فقط)"
-
-#~ msgid "Printer name must be unique."
-#~ msgstr "يجب أن يكون اسم الطابعة فريدًا."
-
-#~ msgid "Printers"
-#~ msgstr "الطابعات"
-
-#~ msgid ""
-#~ "Product '%s' is sold without balance.\n"
-#~ "Must be returned completely!"
-#~ msgstr ""
-#~ "المنتج '%s' يباع بدون رصيد.\n"
-#~ "يجب أن تعاد بالكامل!"
-
-#~ msgid "Product Balance Wizard"
-#~ msgstr "معالج أرصدة المنتج"
-
-#~ msgid "Product Eplus Serial"
-#~ msgstr "الرقم التسلسلي للمنتج في E-Plus"
-
-#~ msgid "Product Search"
-#~ msgstr "بحث المنتجات"
-
-#~ msgid "Product rank entry already exists for this scope."
-#~ msgstr "إدخال التصنيف المنتج موجود بالفعل لهذا النطاق."
-
-#~ msgid "Products"
-#~ msgstr "المنتجات"
-
-#~ msgid "Products Cards"
-#~ msgstr "بطاقات المنتجات"
-
-#~ msgid ""
-#~ "Products where requested qty exceeds available balance require a reason "
-#~ "before submit.\n"
-#~ "If reason is 'Other', details are required.\n"
-#~ "\n"
-#~ "Missing lines:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "المنتجات عندما تتجاوز الكمية المطلوبة الرصيد المتاح، يجب تقديم سبب قبل "
-#~ "الإرسال.\n"
-#~ "إذا كان السبب هو \"غير ذلك\"، فالتفاصيل مطلوبة.\n"
-#~ "\n"
-#~ "الخطوط المفقودة:\n"
-#~ "%s"
-
-#~ msgid "Promo"
-#~ msgstr "العرض"
-
-#~ msgid "Push to E-Plus"
-#~ msgstr "إرسال إلى E-Plus"
-
-#~ msgid "Pushed to E-Plus successfully (sth_id=%s)."
-#~ msgstr "تم الدفع إلى E-Plus بنجاح (sth_id=%s)."
-
-#~ msgid "Python package 'Pillow' is required for POS image processing: %s"
-#~ msgstr "حزمة Python \"Pillow\" مطلوبة لمعالجة الصور POS: %s"
-
-#~ msgid ""
-#~ "Python package 'python-escpos' is required for ESC/POS binary printing: %s"
-#~ msgstr "حزمة Python \"python-escpos\" مطلوبة للطباعة الثنائية ESC/POS: %s"
-
-#~ msgid ""
-#~ "Python package 'python-escpos' is required for POS binary printing: %s"
-#~ msgstr "حزمة Python \"python-escpos\" مطلوبة للطباعة الثنائية POS: %s"
-
-#~ msgid "Qty Total"
-#~ msgstr "إجمالي الكمية"
-
-#~ msgid "Qty to return"
-#~ msgstr "الكمية المطلوب إرجاعها"
-
-#~ msgid "Raw TCP print failed: %s"
-#~ msgstr "فشلت طباعة TCP الأولية: %s"
-
-#~ msgid "Reason"
-#~ msgstr "السبب"
-
-#~ msgid "Reason for selling products exceeding available stock"
-#~ msgstr "سبب بيع المنتجات بدون رصيد"
-
-#~ msgid "Reason for selling without stock"
-#~ msgstr "سبب البيع بدون رصيد"
-
-#~ msgid "Receipt Footer"
-#~ msgstr "تذييل الإيصال"
-
-#~ msgid "Receipt Header"
-#~ msgstr "رأس الإيصال"
-
-#~ msgid "Recent"
-#~ msgstr "الأحدث"
-
-#~ msgid "Refresh"
-#~ msgstr "تحديث"
-
-#~ msgid "Remove"
-#~ msgstr "إزالة"
-
-#~ msgid "Replica Databases"
-#~ msgstr "قواعد بيانات Replica"
-
-#~ msgid "Replication"
-#~ msgstr "النسخ"
-
-#~ msgid "Replication_Trans Bulk Insert"
-#~ msgstr "إدراج Replication_Trans دفعة واحدة"
-
-#~ msgid "Reports"
-#~ msgstr "التقارير"
-
-#~ msgid "Requested Qty"
-#~ msgstr "الكمية المطلوبة"
-
-#~ msgid "Required"
-#~ msgstr "مطلوب"
-
-#~ msgid "Required details..."
-#~ msgstr "التفاصيل المطلوبة..."
-
-#~ msgid "Required print binary is missing: %s"
-#~ msgstr "ثنائي الطباعة المطلوب مفقود: %s"
-
-#~ msgid "Required when qty exceeds balance"
-#~ msgstr "مطلوب عندما تتجاوز الكمية الرصيد"
-
-#~ msgid "Reset"
-#~ msgstr "إعادة تعيين"
-
-#~ msgid "Responsible User"
-#~ msgstr "المستخدم المسؤول"
-
-#~ msgid "Return"
-#~ msgstr "مرتجع"
-
-#~ msgid "Return ID:"
-#~ msgstr "معرف المرتجع:"
-
-#~ msgid "Return Value"
-#~ msgstr "قيمة المرتجع"
-
-#~ msgid ""
-#~ "Return not allowed. Invoice age (%s days) exceeded allowed return period "
-#~ "(%s days)."
-#~ msgstr ""
-#~ "المرتجع غير مسموح به. تجاوز عمر الفاتورة (أيام %s) فترة الإرجاع المسموح "
-#~ "بها (أيام %s)."
-
-#~ msgid "Return qty for product %s exceeds allowed max (%s)."
-#~ msgstr "الكمية المرتجع للمنتج %s تتجاوز الحد الأقصى المسموح به (%s)."
-
-#~ msgid "Return quantity cannot be negative for product %s."
-#~ msgstr "لا يمكن أن تكون كمية المرتجع سالبة للمنتج %s."
-
-#~ msgid "Return quantity cannot be negative."
-#~ msgstr "لا يمكن أن تكون كمية المرتجع سالبة."
-
-#~ msgid "Return quantity exceeds max returnable quantity."
-#~ msgstr "تتجاوز كمية المرتجع الحد الأقصى للكمية القابلة للإرجاع."
-
-#~ msgid "Return value (%s) cannot exceed invoice net (%s)."
-#~ msgstr "لا يمكن أن تتجاوز قيمة المرتجع (%s) صافي الفاتورة (%s)."
-
-#~ msgid ""
-#~ "Return was saved, but updating sales_return.returned_items_value failed: "
-#~ "%s"
-#~ msgstr ""
-#~ "تم حفظ المرتجع، ولكن فشل تحديث sales_return.returned_items_value: %s"
-
-#~ msgid "Returns"
-#~ msgstr "المرتجعات"
-
-#~ msgid ""
-#~ "Returns accepted within 14 days; refrigerated medications and cosmetics "
-#~ "are not eligible for\n"
-#~ "                        return or exchange."
-#~ msgstr ""
-#~ "يُقبل الإرجاع خلال 14 يومًا؛أدوية الثلاجة ومستحضرات التجميل لا ترد ولا "
-#~ "تستبدل."
-
-#~ msgid "Row ID inside sales_trans_d"
-#~ msgstr ""
-#~ "معرف الصف داخل sales_trans_d. ظ†ططھط§ط¬ظ‡ ظپظٹ حيث ط¨طھطط¯ظٹط«ط³ط·ط± "
-#~ "ط§ظظ„ظپط§طھظˆط±ط©."
-
-#~ msgid "Run Selected"
-#~ msgstr "تشغيل المحدد"
-
-#~ msgid "SMS Delivery error"
-#~ msgstr "خطأ في تسليم SMS"
-
-#~ msgid "Sale"
-#~ msgstr "البيع"
-
-#~ msgid "Sale Line"
-#~ msgstr "سطر البيع"
-
-#~ msgid "Sales"
-#~ msgstr "المبيعات"
-
-#~ msgid "Sales Detail"
-#~ msgstr "تفاصيل المبيعات"
-
-#~ msgid "Sales Details"
-#~ msgstr "ab_sales_line"
-
-#~ msgid "Sales Header"
-#~ msgstr "رأس المبيعات"
-
-#~ msgid "Sales Net"
-#~ msgstr "صافي المبيعات"
-
-#~ msgid "Sales POS API"
-#~ msgstr "واجهة مبيعات نقطة البيع البرمجية"
-
-#~ msgid "Sales POS Replication Manual Turn"
-#~ msgstr "المبيعات POS النسخ المتماثل اليدوي"
-
-#~ msgid "Sales POS User Settings"
-#~ msgstr "إعدادات مستخدم نقطة البيع للمبيعات"
-
-#~ msgid "Sales Product Ranking Cache"
-#~ msgstr "ذاكرة تخزين ترتيب منتجات المبيعات"
-
-#~ msgid "Sales Return"
-#~ msgstr "مرتجع المبيعات"
-
-#~ msgid "Sales Return Analysis"
-#~ msgstr "تحليل مرتجع المبيعات"
-
-#~ msgid "Sales Return Search"
-#~ msgstr "بحث مرتجع المبيعات"
-
-#~ msgid "Sales Return UI API"
-#~ msgstr "واجهة برمجة تطبيقات مرتجع المبيعات"
-
-#~ msgid "Sales Returns"
-#~ msgstr "مرتجعات المبيعات"
-
-#~ msgid "Sales UI API"
-#~ msgstr "واجهة المبيعات البرمجية"
-
-#~ msgid "Sales bill was not found."
-#~ msgstr "لم يتم العثور على فاتورة المبيعات."
-
-#~ msgid "Sales header not found."
-#~ msgstr "لم يتم العثور على رأس المبيعات."
-
-#~ msgid "Sales return could not be loaded."
-#~ msgstr "لا يمكن تحميل إرجاع المبيعات."
-
-#~ msgid "Sales return could not be opened."
-#~ msgstr "لا يمكن فتح إرجاع المبيعات."
-
-#~ msgid "Sales return line was not found."
-#~ msgstr "لم يتم العثور على خط إرجاع المبيعات."
-
-#~ msgid "Sales return was not found."
-#~ msgstr "لم يتم العثور على عائد المبيعات."
-
-#~ msgid "Sales: Refresh Product Rank Cache"
-#~ msgstr "المبيعات: تحديث ذاكرة التخزين المؤقت للرتبة المنتج"
-
-#~ msgid "Sales: Sync Pending Status From Store"
-#~ msgstr "المبيعات: مزامنة الحالة المعلقة من المخزن"
-
-#~ msgid "Save"
-#~ msgstr "حفظ"
-
-#~ msgid "Save Default"
-#~ msgstr "حفظ كافتراضي"
-
-#~ msgid "Save Links"
-#~ msgstr "حفظ الروابط"
-
-#~ msgid "Save Notes"
-#~ msgstr "حفظ الملاحظات"
-
-#~ msgid "Save settings"
-#~ msgstr "حفظ الإعدادات"
-
-#~ msgid "Saved returns cannot be modified."
-#~ msgstr "لا يمكن تعديل المرتجعات المحفوظة."
-
-#~ msgid "Saved returns cannot be moved back to pending."
-#~ msgstr "لا يمكن إرجاع المرتجعات المحفوظة إلى المعلقة."
-
-#~ msgid "Scan or type barcode"
-#~ msgstr "امسح الباركود أو اكتبه"
-
-#~ msgid "Search"
-#~ msgstr "بحث"
-
-#~ msgid "Search Results"
-#~ msgstr "نتائج البحث"
-
-#~ msgid "Search by product name..."
-#~ msgstr "ابحث باسم المنتج..."
-
-#~ msgid "Search result includes old bills too."
-#~ msgstr "تتضمن نتيجة البحث الفواتير القديمة أيضًا."
-
-#~ msgid "Select a bill to see details."
-#~ msgstr "حدد الفاتورة لمعرفة التفاصيل."
-
-#~ msgid "Select a branch to search BConnect."
-#~ msgstr "حدد فرعًا للبحث عن BConnect."
-
-#~ msgid "Select unavailable reason..."
-#~ msgstr "حدد سبب عدم التوفر..."
-
-#~ msgid "Selected"
-#~ msgstr "المحدد"
-
-#~ msgid "Selected cron cannot be triggered manually."
-#~ msgstr "لا يمكن تشغيل مهمة Cron المحددة يدويًا."
-
-#~ msgid "Selected cron is inactive."
-#~ msgstr "مهمة Cron المحددة غير نشطة."
-
-#~ msgid "Selected printer is saved as default for next print operations."
-#~ msgstr "يتم حفظ الطابعة المحددة كطابعة افتراضية لعمليات الطباعة التالية."
-
-#~ msgid "Selected unit of measure was not found."
-#~ msgstr "لم يتم العثور على وحدة القياس المختارة."
-
-#~ msgid "Selected:"
-#~ msgstr "المحدد:"
-
-#~ msgid "Server %s is offline or too slow"
-#~ msgstr "الخادم %s غير متصل أو بطيء جدًا"
-
-#~ msgid "Server %s may be offline"
-#~ msgstr "قد يكون الخادم %s غير متصل"
-
-#~ msgid "Set Pending"
-#~ msgstr "تعيين كقيد الانتظار"
-
-#~ msgid "Settings Json"
-#~ msgstr "إعدادات JSON"
-
-#~ msgid "Shared printers require IP / Host."
-#~ msgstr "الطابعات المشتركة تتطلب IP / المضيف."
-
-#~ msgid "Shared printers require Printer / Share Name."
-#~ msgstr "تتطلب الطابعات المشتركة الطابعة / Share Name."
-
-#~ msgid "Show Balance"
-#~ msgstr "عرض الرصيد"
-
-#~ msgid ""
-#~ "Showing balances from offline data (ab_sales_inventory). Live E-Plus "
-#~ "connection is unavailable."
-#~ msgstr ""
-#~ "إظهار الأرصدة من البيانات غير المتصلة بالإنترنت (ab_sales_inventory). "
-#~ "الاتصال المباشر بـ E-Plus غير متاح."
-
-#~ msgid ""
-#~ "Showing balances from online data. Live E-Plus connection is available."
-#~ msgstr "إظهار الأرصدة من البيانات عبر الإنترنت. يتوفر اتصال مباشر E-Plus."
-
-#~ msgid "Showing latest 20 pending/saved bills."
-#~ msgstr "عرض أحدث 20 فاتورة معلقة/محفوظة."
-
-#~ msgid "Skip"
-#~ msgstr "تخطي"
-
-#~ msgid "Sold"
-#~ msgstr "تم البيع"
-
-#~ msgid "Sold Qty (source)"
-#~ msgstr "الكمية المباعة (المصدر)"
-
-#~ msgid "Sold Without Balance"
-#~ msgstr "تم البيع بدون رصيد"
-
-#~ msgid "Sold without balance"
-#~ msgstr "تم البيع بدون رصيد"
-
-#~ msgid "Some products exceed available stock in this store."
-#~ msgstr "بعض المنتجات تتجاوز المخزون المتاح في هذا المتجر."
-
-#~ msgid "Source"
-#~ msgstr "المصدر"
-
-#~ msgid "Source invoice was not found in Odoo; cannot validate return period."
-#~ msgstr ""
-#~ "لم يتم العثور على فاتورة المصدر في Odoo؛ لا يمكن التحقق من صحة فترة "
-#~ "العودة."
-
-#~ msgid ""
-#~ "Source sales invoice #%s is still pending. Save the source invoice first, "
-#~ "then push the return."
-#~ msgstr ""
-#~ "فاتورة المبيعات المصدر #%s لا تزال معلقة. احفظ فاتورة المصدر أولاً، ثم "
-#~ "ادفع الإرجاع."
-
-#~ msgid "Start Date"
-#~ msgstr "تاريخ البداية"
-
-#~ msgid ""
-#~ "Status based on activities\n"
-#~ "Overdue: Due date is already passed\n"
-#~ "Today: Activity date is today\n"
-#~ "Planned: Future activities."
-#~ msgstr ""
-#~ "حالة مبنية على الأنشطة:\n"
-#~ "متأخر: تاريخ الاستحقاق قد مضى بالفعل\n"
-#~ "اليوم: تاريخ النشاط هو اليوم\n"
-#~ "مُخطط: أنشطة مستقبلية."
-
-#~ msgid "Store %s is not allowed for sales."
-#~ msgstr "المخزن %s غير مسموح به للمبيعات."
-
-#~ msgid "Store Balances"
-#~ msgstr "أرصدة المخازن"
-
-#~ msgid "Store Code"
-#~ msgstr "كود المخزن"
-
-#~ msgid "Store ID in Item_Class_Store / sales_trans_d."
-#~ msgstr "معرف المخزن في Item_Class_Store / sales_trans_d."
-
-#~ msgid "Store IP"
-#~ msgstr "عنوان IP للمخزن"
-
-#~ msgid "Store Server Online"
-#~ msgstr "خادم المخزن متصل"
-
-#~ msgid "Store and product are required."
-#~ msgstr "المخزن والمنتج مطلوبان."
-
-#~ msgid "Store is missing E-Plus serial."
-#~ msgstr "المخزن يفتقد الرقم التسلسلي لـ E-Plus."
-
-#~ msgid "Store is required and must have an E-Plus serial."
-#~ msgstr "المخزن مطلوب ويجب أن يحتوي على مسلسل E-Plus."
-
-#~ msgid "Store is required."
-#~ msgstr "المخزن مطلوب."
-
-#~ msgid "Store:"
-#~ msgstr "المخزن:"
-
-#~ msgid "Stores"
-#~ msgstr "المخازن"
-
-#~ msgid "Structured inventory data: {'data': [...]}"
-#~ msgstr "بيانات مخزون منظمة: {'data': [...]}"
-
-#~ msgid "Submit (F10)"
-#~ msgstr "إرسال (F10)"
-
-#~ msgid "Submit is only allowed for bills created from POS."
-#~ msgstr "الإرسال مسموح فقط للفواتير التي تم إنشاؤها من نقطة البيع."
-
-#~ msgid "Submitting..."
-#~ msgstr "جارٍ الإرسال..."
-
-#~ msgid "Summary"
-#~ msgstr "الملخص"
-
-#~ msgid "System dialog (choose on print)"
-#~ msgstr "نافذة النظام (اختر عند الطباعة)"
-
-#~ msgid "Tel"
-#~ msgstr "الهاتف"
-
-#~ msgid "Test Printer"
-#~ msgstr "اختبار الطابعة"
-
-#~ msgid "Test print sent to %s."
-#~ msgstr "تم إرسال طباعة اختبار إلى %s."
-
-#~ msgid "The system print dialog opens on print. Choose the printer there."
-#~ msgstr "تفتح نافذة طباعة النظام عند الطباعة. اختر الطابعة من هناك."
-
-#~ msgid ""
-#~ "This  product \n"
-#~ "%(prod)s\n"
-#~ " cannot be sold in fractional small units. Requested %(req).4f small "
-#~ "units (qty=%(q).4f × factor=%(f).4f). Please adjust the quantity to a "
-#~ "whole small unit."
-#~ msgstr ""
-#~ "هذا المنتج \n"
-#~ "%(prod)s\n"
-#~ " لا يمكن بيعها في وحدات صغيرة كسرية. الوحدات الصغيرة %(req).4f المطلوبة "
-#~ "(الكمية = %(q).4f × العامل = %(f).4f). يرجى ضبط الكمية إلى وحدة صغيرة "
-#~ "كاملة."
-
-#~ msgid "This bill has no ePlus serial."
-#~ msgstr "هذه الفاتورة لا تحتوي على رقم تسلسلي لـ E-Plus."
-
-#~ msgid ""
-#~ "This bill is being submitted by another process. Please retry in a moment."
-#~ msgstr ""
-#~ "يتم إرسال هذه الفاتورة بواسطة عملية أخرى. يرجى إعادة المحاولة بعد لحظة."
-
-#~ msgid ""
-#~ "This cron is already running in background. Please wait for completion."
-#~ msgstr "مهمة Cron هذه تعمل بالفعل في الخلفية. يرجى الانتظار حتى الانتهاء."
-
-#~ msgid "This cron is scheduled to run in less than 10 seconds. Please wait."
-#~ msgstr "تمت جدولة تشغيل مهمة Cron هذه خلال أقل من 10 ثوانٍ. يرجى الانتظار."
-
-#~ msgid "This is not Replica DB"
-#~ msgstr "هذه ليست قاعدة بيانات Replica"
-
-#~ msgid "Toggle bills panel"
-#~ msgstr "تبديل لوحة الفواتير"
-
-#~ msgid "Total"
-#~ msgstr "الإجمالي"
-
-#~ msgid "Total Return Invoice"
-#~ msgstr "إجمالي فاتورة المرتجع"
-
-#~ msgid "Type name/code..."
-#~ msgstr "اكتب الاسم/الكود..."
-
-#~ msgid "Type name/code…"
-#~ msgstr "اكتب الاسم/الكود…"
-
-#~ msgid "Type of the exception activity on record."
-#~ msgstr "نوع نشاط الاستثناء على السجل."
-
-#~ msgid "Unavailable Product Reason"
-#~ msgstr "سبب عدم توفر المنتج"
-
-#~ msgid "Unavailable:"
-#~ msgstr "غير متوفر:"
-
-#~ msgid "Unknown product"
-#~ msgstr "منتج غير معروف"
-
-#~ msgid "Unsupported print combination: %s / %s"
-#~ msgstr "تركيبة الطباعة غير مدعومة: %s / %s"
-
-#~ msgid "Unsupported print command type: %s"
-#~ msgstr "نوع أمر الطباعة غير مدعوم: %s"
-
-#~ msgid "Unvailable Product Reason"
-#~ msgstr "سبب عدم توفر المنتج"
-
-#~ msgid "UoM Category"
-#~ msgstr "فئة وحدة القياس"
-
-#~ msgid "Updated"
-#~ msgstr "تم التحديث"
-
-#~ msgid "Use"
-#~ msgstr "استخدام"
-
-#~ msgid "Value"
-#~ msgstr "القيمة"
-
-#~ msgid "Windows RAW spooler print failed: %s"
-#~ msgstr "فشلت طباعة Windows RAW spooler: %s"
-
-#~ msgid "Windows installed-printer RAW printing requires pywin32: %s"
-#~ msgstr "الطباعة RAW للطابعات المثبتة على Windows تتطلب pywin32: %s"
-
-#~ msgid "Wizard"
-#~ msgstr "المعالج"
-
-#~ msgid "Write your feedback here"
-#~ msgstr "اكتب ملاحظاتك هنا"
-
-#~ msgid ""
-#~ "You already consumed your chance for this cron interval. Please let "
-#~ "another user try. Next chance: %s UTC"
-#~ msgstr ""
-#~ "لقد استهلكت فرصتك بالفعل خلال فترة Cron هذه. يرجى السماح لمستخدم آخر "
-#~ "بالمحاولة. الفرصة التالية: %s بالتوقيت العالمي"
-
-#~ msgid "You do not have access to sales return yet."
-#~ msgstr "ليس لديك صلاحية الوصول إلى مرتجع المبيعات بعد."
-
-#~ msgid "You try to call another Invoice, Please clear the old one!"
-#~ msgstr "أنت تحاول استدعاء فاتورة أخرى، يرجى مسح الفاتورة القديمة أولاً!"
-
-#~ msgid "ePlus Serial (Exact)"
-#~ msgstr "الرقم التسلسلي لـ E-Plus (مطابق)"
-
-#~ msgid "lp command failed."
-#~ msgstr "فشل أمر lp."
-
-#~ msgid "more lines not shown."
-#~ msgstr "هناك سطور أخرى غير معروضة."
-
-#~ msgid "sales_return ID (sr_id)"
-#~ msgstr "معرف sales_return (sr_id)"
-
-#~ msgid "wkhtmltoimage command failed."
-#~ msgstr "فشل أمر wkhtmltoimage."
-
-#~ msgid "wkhtmltopdf command failed."
-#~ msgstr "فشل أمر wkhtmltopdf."
 
 #~ msgid "Abdin Sales Sync"
 #~ msgstr "مزامنة مبيعات عبدين"

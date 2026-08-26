@@ -1,0 +1,574 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_ab_product_priced_sync_list" model="ir.ui.view">
+            <field name="name">ab_product_priced.list</field>
+            <field name="model">ab_product_priced</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="product_id"/>
+                    <field name="product_code"/>
+                    <field name="is_priced"/>
+                    <field name="active"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_product_priced_sync_form" model="ir.ui.view">
+            <field name="name">ab_product_priced.form</field>
+            <field name="model">ab_product_priced</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="product_id"/>
+                                <field name="product_code"/>
+                                <field name="is_priced"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_product_priced_sync" model="ir.actions.act_window">
+            <field name="name">Synced Product Priced Flags</field>
+            <field name="res_model">ab_product_priced</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="ab_product_metadata_view_list" model="ir.ui.view">
+            <field name="name">ab_product_metadata.list</field>
+            <field name="model">ab_product_metadata</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="product_id"/>
+                    <field name="product_code"/>
+                    <field name="is_priced"/>
+                    <field name="active"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_product_metadata_view_form" model="ir.ui.view">
+            <field name="name">ab_product_metadata.form</field>
+            <field name="model">ab_product_metadata</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="product_id"/>
+                                <field name="product_code"/>
+                                <field name="is_priced"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_product_metadata_action" model="ir.actions.act_window">
+            <field name="name">Synced Product Metadata</field>
+            <field name="res_model">ab_product_metadata</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="ab_sales_inventory_view_list" model="ir.ui.view">
+            <field name="name">ab_sales_inventory.list</field>
+            <field name="model">ab_sales_inventory</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="store_id"/>
+                    <field name="product_id"/>
+                    <field name="product_eplus_serial"/>
+                    <field name="product_code"/>
+                    <field name="balance"/>
+                    <field name="default_price"/>
+                    <field name="active"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_sales_inventory_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_inventory.form</field>
+            <field name="model">ab_sales_inventory</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="store_id"/>
+                                <field name="product_id"/>
+                                <field name="product_eplus_serial"/>
+                                <field name="product_code"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="balance"/>
+                            <field name="default_price"/>
+                        </group>
+                        <notebook>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_sales_inventory_action" model="ir.actions.act_window">
+            <field name="name">Synced Sales Inventory</field>
+            <field name="res_model">ab_sales_inventory</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="ab_sales_per_day_view_list" model="ir.ui.view">
+            <field name="name">ab_sales_per_day.list</field>
+            <field name="model">ab_sales_per_day</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="sale_date"/>
+                    <field name="store_id"/>
+                    <field name="product_id"/>
+                    <field name="product_eplus_serial"/>
+                    <field name="sales_qty"/>
+                    <field name="sync_at"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_sales_per_day_view_form" model="ir.ui.view">
+            <field name="name">ab_sales_per_day.form</field>
+            <field name="model">ab_sales_per_day</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="sale_date"/>
+                                <field name="store_id"/>
+                                <field name="product_id"/>
+                                <field name="product_eplus_serial"/>
+                                <field name="sales_qty"/>
+                                <field name="sync_at"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_sales_per_day_action" model="ir.actions.act_window">
+            <field name="name">Synced Sales Per Day</field>
+            <field name="res_model">ab_sales_per_day</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_sales_per_day_sync_state_sync_list" model="ir.ui.view">
+            <field name="name">ab_sales_per_day_sync_state.list</field>
+            <field name="model">ab_sales_per_day_sync_state</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="sale_date"/>
+                    <field name="state" widget="badge"/>
+                    <field name="rows_synced"/>
+                    <field name="started_at"/>
+                    <field name="finished_at"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_sales_per_day_sync_state_sync_form" model="ir.ui.view">
+            <field name="name">ab_sales_per_day_sync_state.form</field>
+            <field name="model">ab_sales_per_day_sync_state</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="sale_date"/>
+                                <field name="state"/>
+                                <field name="rows_synced"/>
+                                <field name="started_at"/>
+                                <field name="finished_at"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Error">
+                                <field name="error_message"/>
+                            </page>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_sales_per_day_action_state_sync" model="ir.actions.act_window">
+            <field name="name">Synced Sales Per Day States</field>
+            <field name="res_model">ab_sales_per_day_sync_state</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_product_rank_sync_list" model="ir.ui.view">
+            <field name="name">ab_product_rank.list</field>
+            <field name="model">ab_product_rank</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="store_id"/>
+                    <field name="product_id"/>
+                    <field name="customer_phone"/>
+                    <field name="rank_scope"/>
+                    <field name="period_days"/>
+                    <field name="order_count"/>
+                    <field name="qty_total"/>
+                    <field name="score"/>
+                    <field name="last_order_date"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_product_rank_sync_form" model="ir.ui.view">
+            <field name="name">ab_product_rank.form</field>
+            <field name="model">ab_product_rank</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="store_id"/>
+                                <field name="product_id"/>
+                                <field name="customer_phone"/>
+                                <field name="rank_scope"/>
+                                <field name="period_days"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="order_count"/>
+                            <field name="qty_total"/>
+                            <field name="score"/>
+                            <field name="last_order_date"/>
+                        </group>
+                        <notebook>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_product_rank_sync" model="ir.actions.act_window">
+            <field name="name">Synced Product Rankings</field>
+            <field name="res_model">ab_product_rank</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_sales_pos_settings_sync_list" model="ir.ui.view">
+            <field name="name">ab_sales_pos_settings.list</field>
+            <field name="model">ab_sales_pos_settings</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="settings_version"/>
+                    <field name="last_synced_at"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_sales_pos_settings_sync_form" model="ir.ui.view">
+            <field name="name">ab_sales_pos_settings.form</field>
+            <field name="model">ab_sales_pos_settings</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <field name="db_serial"/>
+                            <field name="rec_id"/>
+                            <field name="settings_version"/>
+                            <field name="last_synced_at"/>
+                            <field name="synced_at"/>
+                        </group>
+                        <notebook>
+                            <page string="Settings">
+                                <field name="settings_json" widget="ab_pretty_json"/>
+                            </page>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_sales_pos_settings_sync" model="ir.actions.act_window">
+            <field name="name">Synced POS Settings</field>
+            <field name="res_model">ab_sales_pos_settings</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_sales_pos_draft_cache_sync_list" model="ir.ui.view">
+            <field name="name">ab_sales_pos_draft_cache.list</field>
+            <field name="model">ab_sales_pos_draft_cache</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="employee_id"/>
+                    <field name="employee_scope_key"/>
+                    <field name="cache_key"/>
+                    <field name="selected_id"/>
+                    <field name="last_synced_at"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_sales_pos_draft_cache_sync_form" model="ir.ui.view">
+            <field name="name">ab_sales_pos_draft_cache.form</field>
+            <field name="model">ab_sales_pos_draft_cache</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="employee_id"/>
+                                <field name="employee_scope_key"/>
+                                <field name="cache_key"/>
+                                <field name="selected_id"/>
+                                <field name="last_synced_at"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Bills">
+                                <field name="bills_json" widget="ab_pretty_json"/>
+                            </page>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_sales_pos_draft_cache_sync" model="ir.actions.act_window">
+            <field name="name">Synced POS Draft Caches</field>
+            <field name="res_model">ab_sales_pos_draft_cache</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_sales_pos_replication_turn_sync_list" model="ir.ui.view">
+            <field name="name">ab_sales_pos_replication_turn.list</field>
+            <field name="model">ab_sales_pos_replication_turn</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="last_manual_run_at"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_sales_pos_replication_turn_sync_form" model="ir.ui.view">
+            <field name="name">ab_sales_pos_replication_turn.form</field>
+            <field name="model">ab_sales_pos_replication_turn</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <field name="db_serial"/>
+                            <field name="rec_id"/>
+                            <field name="source_revision"/>
+                            <field name="event_uuid"/>
+                            <field name="last_manual_run_at"/>
+                            <field name="synced_at"/>
+                        </group>
+                        <notebook>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_sales_pos_replication_turn_sync" model="ir.actions.act_window">
+            <field name="name">Synced POS Replication Turns</field>
+            <field name="res_model">ab_sales_pos_replication_turn</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="ab_printer_view_list" model="ir.ui.view">
+            <field name="name">ab_printer.list</field>
+            <field name="model">ab_printer</field>
+            <field name="arch" type="xml">
+                <list create="0" edit="0" delete="0">
+                    <field name="db_serial"/>
+                    <field name="rec_id"/>
+                    <field name="name"/>
+                    <field name="printer_name"/>
+                    <field name="protocol"/>
+                    <field name="paper_size"/>
+                    <field name="ip"/>
+                    <field name="port"/>
+                    <field name="is_default"/>
+                    <field name="active"/>
+                    <field name="synced_at"/>
+                </list>
+            </field>
+        </record>
+        <record id="ab_printer_view_form" model="ir.ui.view">
+            <field name="name">ab_printer.form</field>
+            <field name="model">ab_printer</field>
+            <field name="arch" type="xml">
+                <form create="0" edit="0" delete="0">
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="db_serial"/>
+                                <field name="rec_id"/>
+                                <field name="source_revision"/>
+                                <field name="event_uuid"/>
+                                <field name="synced_at"/>
+                            </group>
+                            <group>
+                                <field name="name"/>
+                                <field name="printer_name"/>
+                                <field name="protocol"/>
+                                <field name="paper_size"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="ip"/>
+                            <field name="port"/>
+                            <field name="username"/>
+                            <field name="is_default"/>
+                            <field name="extra_feed_lines"/>
+                        </group>
+                        <notebook>
+                            <page string="Notes">
+                                <field name="notes"/>
+                            </page>
+                            <page string="Raw Payload">
+                                <field name="payload_json" widget="ab_pretty_json"/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="ab_printer_action" model="ir.actions.act_window">
+            <field name="name">Synced Printer Configurations</field>
+            <field name="res_model">ab_printer</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <menuitem id="menu_ab_product_priced_sync" name="Synced Product Priced Flags"
+                  parent="sales_menu_root" action="action_ab_product_priced_sync" sequence="50"/>
+        <menuitem id="ab_product_metadata_menu" name="Synced Product Metadata"
+                  parent="sales_menu_root" action="ab_product_metadata_action" sequence="60"/>
+        <menuitem id="ab_sales_inventory_menu" name="Synced Sales Inventory"
+                  parent="sales_menu_root" action="ab_sales_inventory_action" sequence="70"/>
+        <menuitem id="ab_sales_per_day_menu" name="Synced Sales Per Day"
+                  parent="sales_menu_root" action="ab_sales_per_day_action" sequence="80"/>
+        <menuitem id="ab_sales_per_day_menu_state_sync" name="Synced Sales Per Day States"
+                  parent="sales_menu_root" action="ab_sales_per_day_action_state_sync" sequence="90"/>
+        <menuitem id="menu_ab_product_rank_sync" name="Synced Product Rankings"
+                  parent="sales_menu_root" action="action_ab_product_rank_sync" sequence="100"/>
+        <menuitem id="menu_ab_sales_pos_settings_sync" name="Synced POS Settings"
+                  parent="sales_menu_root" action="action_ab_sales_pos_settings_sync" sequence="110"/>
+        <menuitem id="menu_ab_sales_pos_draft_cache_sync" name="Synced POS Draft Caches"
+                  parent="sales_menu_root" action="action_ab_sales_pos_draft_cache_sync" sequence="120"/>
+        <menuitem id="menu_ab_sales_pos_replication_turn_sync" name="Synced POS Replication Turns"
+                  parent="sales_menu_root" action="action_ab_sales_pos_replication_turn_sync" sequence="130"/>
+        <menuitem id="ab_printer_menu" name="Synced Printer Configurations"
+                  parent="sales_menu_root" action="ab_printer_action" sequence="140"/>
+    </data>
+</odoo>
+
