@@ -22,6 +22,7 @@ Current changes before commit:
 - Skip duplicate `sales_trans_d` inserts and `Item_Class_Store` stock writes when the reused E-Plus invoice already has detail rows.
 - Keep the existing B-Connect total guard active so partial or mismatched existing details still block the push.
 - Preserve call-center branch invoice tokens after E-Plus push errors so the next call-center retry can reuse the same branch invoice.
+- Wrap POS-created header creation in a savepoint so failed creates do not poison the transaction before duplicate-token recovery.
 - Add Arabic translations for the reused E-Plus invoice success message.
 
 Files changed:
@@ -29,3 +30,4 @@ Files changed:
 - ab_sales/i18n/ar.po
 - ab_sales/i18n/ar_001.po
 - ab_sales/models/ab_sales_header.py
+- ab_sales/models/ab_sales_pos_api.py

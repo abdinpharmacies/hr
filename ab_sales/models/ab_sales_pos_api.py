@@ -900,7 +900,8 @@ class AbSalesPosApi(models.TransientModel):
                 raise UserError(_("Store %s is not allowed for sales.") % (store.display_name,))
         self.env["ab_sales_header"].new(header_vals)._validate_new_customer()
         try:
-            header = self.env["ab_sales_header"].create(header_vals)
+            with self.env.cr.savepoint():
+                header = self.env["ab_sales_header"].create(header_vals)
         except (UserError, ValidationError):
             raise
         except Exception:
