@@ -16,8 +16,13 @@ Files changed:
 
 User-facing changes:
 
-- Made Test Sync mirror identity fields optional so test `__sync` models follow the same schema-permissive rule as production mirrors.
+- Connected report-side test mirrors to `ab_odoo_sync_mapping` without depending
+  on operational source models or the upload capture runtime.
+- Removed upload-source declarations from report mapping data.
 
 Files changed:
 
-- `ab_test_sync/models/ab_test_sync_models.py`
+- `ab_test_sync/__manifest__.py`
+- `ab_test_sync/data/customer_reference_sync_profiles.xml`
+- `ab_test_sync/data/sync_profiles.xml`
+- `ab_test_sync/changelog.d/2026-08-25-sync-model-required-fields.md`

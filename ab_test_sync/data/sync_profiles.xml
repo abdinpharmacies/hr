@@ -1,48 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <record id="upload_source_ab_test_tag" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_tag</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_category" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_category</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_header" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_header</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_line" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_line</field>
-            <field name="aggregate_parent_field">header_id</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_delete_cascade_parent" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_delete_cascade_parent</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_delete_cascade_child" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_delete_cascade_child</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_delete_set_null_parent" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_delete_set_null_parent</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_delete_set_null_child" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_delete_set_null_child</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_delete_restrict_parent" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_delete_restrict_parent</field>
-            <field name="active">True</field>
-        </record>
-        <record id="upload_source_ab_test_delete_restrict_child" model="ab_odoo_sync_upload_source">
-            <field name="model_name">ab_test_delete_restrict_child</field>
-            <field name="active">True</field>
-        </record>
-
         <record id="apply_profile_ab_test_tag" model="ab_odoo_sync_apply_profile">
             <field name="name">Test Tags</field>
             <field name="sequence">10</field>

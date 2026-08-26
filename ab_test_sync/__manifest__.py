@@ -7,7 +7,10 @@
     "author": "Abdin Pharmacies",
     "developer": "Alhassan Hossny",
     "application": True,
-    "depends": ["ab_odoo_sync", "ab_test", "ab_customer"],
+    "depends": [
+        "ab_odoo_sync_mapping",
+        "ab_customer",
+    ],
     "data": [
         "security/security_groups.xml",
         "security/record_rules.xml",
