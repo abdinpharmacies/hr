@@ -1007,6 +1007,11 @@ msgid "Implementation %"
 msgstr ""
 
 #. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Inventory Implementation %"
+msgstr ""
+
+#. module: ab_self_inventory
 #. odoo-javascript
 #: code:addons/ab_self_inventory/static/src/js/self_inventory_form_widgets.js:0
 msgid "Implementation: %s"

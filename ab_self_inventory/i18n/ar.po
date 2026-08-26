@@ -1928,6 +1928,11 @@ msgid "Implementation %"
 msgstr "نسبة التنفيذ"
 
 #. module: ab_self_inventory
+#: model_terms:ir.ui.view,arch_db:ab_self_inventory.view_ab_self_inventory_request_list
+msgid "Inventory Implementation %"
+msgstr "نسبة تنفيذ الجرد"
+
+#. module: ab_self_inventory
 #: model:ir.model.fields,field_description:ab_self_inventory.field_ab_self_inventory_process_line__is_counted
 msgid "Counted"
 msgstr "تم جرده"

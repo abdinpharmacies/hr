@@ -32,6 +32,7 @@
                     <field name="deadline" widget="ab_inventory_deadline" string="Deadline" optional="show"/>
                     <field name="selected_line_count" widget="ab_inventory_kpi" string="Items" options="{'icon': 'items', 'label': 'Items'}" optional="show"/>
                     <field name="implementation_percent" widget="ab_inventory_implementation_progress" string="Implementation" optional="show"/>
+                    <field name="implementation_percent" widget="ab_inventory_implementation_progress" string="Inventory Implementation %" options="{'text_only': true}" optional="show"/>
                     <field name="branch_response_state" widget="ab_inventory_response_badge" string="Branch Response" optional="show"/>
                     <field name="requested_total_cost" widget="ab_inventory_kpi" string="Requested Products Cost" optional="show" options="{'icon': 'cost', 'label': 'Requested Products Cost'}"/>
                     <field name="process_id" widget="ab_inventory_relation_pill" string="Process" optional="show" options="{'type': 'process', 'icon': 'P'}"/>
