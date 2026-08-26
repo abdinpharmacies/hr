@@ -1,13 +1,13 @@
 # AB Odoo Sync Global Upload Test Guide
 
-This guide validates the global branch-to-MAIN upload flow in `ab_odoo_sync`.
-MAIN is treated as a reporting server. Business master data IDs are globally
-assigned upstream and must be preserved on MAIN.
+This guide validates the branch-to-reporting upload flow provided by the three
+AB Odoo Sync modules. The reporting database receives loose mirror data tagged
+with the branch `db_serial`.
 
 ## Scope
 
 - Branch chooses which models to upload from `Branch Upload Sources`.
-- MAIN accepts every uploaded payload into `Upload Records`.
+- The reporting server accepts every uploaded payload into `Received Uploads`.
 - MAIN apply profiles decide whether each source model is raw-only, ignored,
   applied into a `__sync` mirror, or applied into a real business model.
 - For `business_model` profiles, MAIN creates or updates the real target record
@@ -16,15 +16,15 @@ assigned upstream and must be preserved on MAIN.
 
 ## Prerequisites
 
-1. Install or upgrade `ab_odoo_sync` on MAIN and BRANCH.
-2. Set MAIN system parameter `ab_odoo_sync.server_role = main`.
-3. Set BRANCH system parameter `ab_odoo_sync.server_role = branch`.
-4. Configure BRANCH connection parameters:
+1. Install `ab_odoo_sync_upload` on the branch database.
+2. Install `ab_odoo_sync_mapping` on the reporting database.
+3. Configure branch connection parameters:
    - `ab_odoo_sync.main_url`
    - `ab_odoo_sync.main_database`
    - `ab_odoo_sync.api_key`
-5. Set a positive `db_serial` in the Odoo config file for each branch.
-6. On MAIN, create an active `Sync Checkpoint` for the branch `db_serial`.
+4. Set a positive `db_serial` in the Odoo config file for each branch.
+5. On the reporting server, create an active `Registered Branch` with the same
+   `db_serial`.
 
 ## Test 1: Unknown Model Is Accepted As Pending Mapping
 
@@ -33,11 +33,11 @@ assigned upstream and must be preserved on MAIN.
 3. Activate a source model that exists on the branch, for example `ab_sales_header`.
 4. Create or update one record in that source model.
 5. Send the outbox row from `Odoo Sync > Upload Outbox`, or wait for the upload cron.
-6. On MAIN, open `Odoo Sync > Upload Records`.
+6. On the reporting server, open `Odoo Sync > Received Uploads`.
 
 Expected result:
 
-- The row exists on MAIN.
+- The row exists on the reporting server.
 - `Status` is `Pending Mapping` when no active apply profile exists.
 - The full JSON payload is visible.
 - The upload endpoint response does not fail because the target model is not configured yet.
@@ -55,7 +55,7 @@ Expected result:
 
 - Matching upload records move to `Raw Only`.
 - No target business record or mirror record is created.
-- The original payload remains available in `Upload Records`.
+- The original payload remains available in `Received Uploads`.
 
 ## Test 3: Business Model Upload Forces MAIN Primary Key
 

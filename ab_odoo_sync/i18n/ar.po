@@ -599,6 +599,11 @@ msgid "Odoo Sync"
 msgstr "مزامنة أودو"
 
 #. module: ab_odoo_sync
+#: model:ir.model,name:ab_odoo_sync.model_ab_odoo_sync_rules
+msgid "AB Odoo Sync Rules"
+msgstr "قواعد مزامنة أودو"
+
+#. module: ab_odoo_sync
 #. odoo-python
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
 msgid "Odoo Sync Connection"
