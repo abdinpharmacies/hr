@@ -364,3 +364,9 @@ msgstr "تم إرسال فاتورة الفرع البعيد إلى E-Plus."
 #: code:addons/ab_sales/static/src/pos/pos_action.js:0
 msgid "Submitted to branch invoice ID %(id)s"
 msgstr "تم الإرسال إلى فاتورة الفرع رقم %(id)s"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_header.py:0
+msgid "Reused existing E-Plus invoice (sth_id=%s); skipped duplicate detail and stock writes."
+msgstr "تم استخدام فاتورة E-Plus موجودة مسبقًا (sth_id=%s)؛ وتم تجاوز تكرار كتابة التفاصيل والمخزون."

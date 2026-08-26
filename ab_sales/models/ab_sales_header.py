@@ -1033,12 +1033,13 @@ class AbdinSalesHeader(models.Model):
             totals = self._compute_header_numbers(cur=cur)
 
             # 1) Header
-            sth_id = self._insert_sales_trans_h(
+            sth_id, reused_eplus_header = self._insert_sales_trans_h(
                 cur=cur,
                 totals=totals,
                 emp_code=emp_code,
                 pc_name=pc_name,
                 bill_typ=bill_typ,
+                return_reuse=True,
             )
             if not self._sales_trans_h_exists(cur=cur, sth_id=sth_id):
                 raise UserError(
@@ -1046,11 +1047,27 @@ class AbdinSalesHeader(models.Model):
                 )
 
             # 2) Details
-            lines_count = self._insert_sales_trans_d(
-                cur=cur,
-                sth_id=sth_id,
-                emp_code=emp_code,
+            existing_lines_count = (
+                self._sales_trans_d_count(cur=cur, sth_id=sth_id)
+                if reused_eplus_header
+                else 0
             )
+            reused_eplus_details = bool(existing_lines_count)
+            if reused_eplus_details:
+                lines_count = existing_lines_count
+                _logger.warning(
+                    "Skipping duplicate sales_trans_d insert for reused E-Plus invoice %s "
+                    "from Odoo sales header %s; existing detail rows: %s",
+                    sth_id,
+                    self.id,
+                    existing_lines_count,
+                )
+            else:
+                lines_count = self._insert_sales_trans_d(
+                    cur=cur,
+                    sth_id=sth_id,
+                    emp_code=emp_code,
+                )
 
             if not lines_count:
                 raise UserError("BConnect Error no lines_count!\nContact Abdin Support.")
@@ -1064,16 +1081,23 @@ class AbdinSalesHeader(models.Model):
             self._bconnect_total_guard(cur=cur, sth_id=sth_id)
 
             # 3) Inventory consumption / updates
-            self._update_item_class_store(cur=cur)
+            if not reused_eplus_details:
+                self._update_item_class_store(cur=cur)
             if self.customer_id:
                 self._insert_sales_deliv_info(cur, sth_id, emp_code)
 
             snapshot_vals = self._get_bill_customer_snapshot_vals()
+            push_message = _("Pushed to E-Plus successfully (sth_id=%s).") % sth_id
+            if reused_eplus_details:
+                push_message = _(
+                    "Reused existing E-Plus invoice (sth_id=%s); "
+                    "skipped duplicate detail and stock writes."
+                ) % sth_id
             self.sudo().write({
                 'eplus_serial': sth_id,
                 'status': 'pending',
                 'push_state': 'success',
-                'push_message': _("Pushed to E-Plus successfully (sth_id=%s).") % sth_id,
+                'push_message': push_message,
                 **snapshot_vals,
             })
             conn.commit()
@@ -1085,6 +1109,12 @@ class AbdinSalesHeader(models.Model):
                 pass
             msg = self._format_eplus_error(ex)
             if self.status == "prepending":
+                if self.env.context.get("from_callcenter_rpc"):
+                    self.sudo().write({
+                        'push_state': 'error',
+                        'push_message': msg,
+                    })
+                    raise UserError(_("E-Plus push failed: %s") % msg)
                 try:
                     self.active = False
                     self.pos_client_token = None
@@ -1145,13 +1175,21 @@ class AbdinSalesHeader(models.Model):
         )
         return bool(cur.fetchone())
 
-    def _insert_sales_trans_h(self, cur, totals, emp_code, pc_name, bill_typ):
+    def _sales_trans_d_count(self, cur, sth_id):
+        cur.execute(
+            f"SELECT COUNT(*) FROM sales_trans_d WITH (UPDLOCK, HOLDLOCK) WHERE sth_id = {PARAM_STR}",
+            (int(sth_id),),
+        )
+        row = cur.fetchone()
+        return int(row[0] or 0) if row else 0
+
+    def _insert_sales_trans_h(self, cur, totals, emp_code, pc_name, bill_typ, return_reuse=False):
         self.ensure_one()
         rec = self
         if rec.eplus_serial:
             try:
                 eplus_serial = int(rec.eplus_serial)
-                return eplus_serial
+                return (eplus_serial, True) if return_reuse else eplus_serial
             except Exception as ex:
                 pass
 
@@ -1169,7 +1207,8 @@ class AbdinSalesHeader(models.Model):
             )
             row = cur.fetchone()
             if row and row[0] is not None:
-                return int(row[0])
+                sth_id = int(row[0])
+                return (sth_id, True) if return_reuse else sth_id
 
         no_of_items = int(totals['no_of_items'])
         total_bill = totals['total_bill']
@@ -1255,7 +1294,8 @@ class AbdinSalesHeader(models.Model):
         cur.execute("SELECT CAST(@@IDENTITY AS BIGINT)")
         row = cur.fetchone()
         if row and row[0] is not None:
-            return int(row[0])
+            sth_id = int(row[0])
+            return (sth_id, False) if return_reuse else sth_id
 
         raise UserError(
             _("Failed to get new STH ID (SCOPE_IDENTITY/@@IDENTITY/IDENT_CURRENT all returned NULL). "
