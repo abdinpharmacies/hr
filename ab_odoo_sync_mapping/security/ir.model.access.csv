@@ -1,0 +1,6 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_odoo_sync_branch_registry_system,ab_odoo_sync_branch_registry system,model_ab_odoo_sync_branch_registry,base.group_system,1,1,1,0
+access_ab_odoo_sync_identity_system,ab_odoo_sync_identity system,model_ab_odoo_sync_identity,base.group_system,1,1,1,0
+access_ab_odoo_sync_upload_record_system,ab_odoo_sync_upload_record system,model_ab_odoo_sync_upload_record,base.group_system,1,1,1,0
+access_ab_odoo_sync_apply_profile_system,ab_odoo_sync_apply_profile system,model_ab_odoo_sync_apply_profile,base.group_system,1,1,1,1
+access_ab_odoo_sync_field_mapping_system,ab_odoo_sync_field_mapping system,model_ab_odoo_sync_field_mapping,base.group_system,1,1,1,1

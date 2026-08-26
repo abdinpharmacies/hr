@@ -1,0 +1,936 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_odoo_sync_mapping
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-26 12:42+0000\n"
+"PO-Revision-Date: 2026-08-26 12:42+0000\n"
+"Last-Translator: \n"
+"Language-Team: Arabic\n"
+"Language: ar_001\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: \n"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_identity.py:0
+msgid "%s must be a positive integer."
+msgstr "يجب أن يكون %s رقما صحيحا موجبا."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_apply_profile
+msgid "AB Odoo Sync Apply Profile"
+msgstr "سجل رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_branch_registry
+msgid "AB Odoo Sync Branch Registration"
+msgstr "تسجيل فرع مزامنة Odoo"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_field_mapping
+msgid "AB Odoo Sync Field Mapping"
+msgstr "حالة حدث مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_identity
+msgid "AB Odoo Sync Identity"
+msgstr "هوية مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_service
+msgid "AB Odoo Sync Service"
+msgstr "حالة حدث مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model,name:ab_odoo_sync_mapping.model_ab_odoo_sync_upload_record
+msgid "AB Odoo Sync Upload Record"
+msgstr "سجل رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.actions.server,name:ab_odoo_sync_mapping.ir_cron_ab_odoo_sync_queue_upload_apply_ir_actions_server
+msgid "AB Odoo Sync: Queue Reporting Upload Apply"
+msgstr "مزامنة Odoo: إدراج تطبيق رفع التقارير في قائمة الانتظار"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__active
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__active
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__active
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__active
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__allow_placeholder_creation
+msgid "Allow Placeholder Creation"
+msgstr "السماح بإنشاء سجلات مؤقتة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__applied
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_search
+msgid "Applied"
+msgstr "تم التطبيق"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Applied %(applied)s upload record(s); %(failed)s failed."
+msgstr "تمت إضافة %(count)s سجل رفع للتطبيق إلى قائمة الانتظار."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__applied_at
+msgid "Applied At"
+msgstr "تم التطبيق في"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__apply_mode
+msgid "Apply Mode"
+msgstr "وضع التطبيق"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_apply_profile_form
+msgid "Apply Pending Uploads"
+msgstr "تطبيق التحميلات المعلقة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__apply_profile_id
+msgid "Apply Profile"
+msgstr "ملف تعريف التطبيق"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.actions.act_window,name:ab_odoo_sync_mapping.action_ab_odoo_sync_apply_profile
+#: model:ir.ui.menu,name:ab_odoo_sync_mapping.menu_ab_odoo_sync_apply_profiles
+msgid "Apply Profiles"
+msgstr "ملفات تعريف التطبيق"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Apply profile %(profile)s has no active field mappings."
+msgstr "لا يحتوي ملف تعريف التطبيق %(profile)s على تعيينات حقول نشطة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Apply uploaded sync record %(record_id)s"
+msgstr "تطبيق سجل الرفع للمزامنة %(record_id)s"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__source_operation__archive
+msgid "Archive"
+msgstr "أرشفة"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_branch_registry.py:0
+msgid "Archive branch registrations instead of deleting them."
+msgstr "أرشف تسجيلات الفروع بدلاً من حذفها."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__attempt_count
+msgid "Attempt Count"
+msgstr "عدد المحاولات"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__auto_apply
+msgid "Automatically Queue Apply"
+msgstr "إضافة التطبيق إلى قائمة الانتظار"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_apply_profile__apply_mode__business_model
+msgid "Business Model"
+msgstr "نموذج أعمال"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_identity__state__conflict
+msgid "Conflict"
+msgstr "تعارض"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__apply_mode
+msgid ""
+"Controls how MAIN handles accepted branch uploads for this source model."
+msgstr ""
+"يتحكم في طريقة تعامل MAIN مع الرفعات المقبولة من الفروع لهذا النموذج المصدر."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Could not resolve relation %(field)s for source record %(record)s."
+msgstr "تعذر تحديد العلاقة %(field)s لسجل المصدر %(record)s."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__allow_placeholder_creation
+msgid ""
+"Create missing target records with the source ID when source-ID relations "
+"arrive out of order."
+msgstr ""
+"ينشئ السجلات الهدف المفقودة بمعرف المصدر عند وصول علاقات معرف المصدر بترتيب "
+"غير متزامن."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__create_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__create_uid
+msgid "Created by"
+msgstr "إنشاء"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__create_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__create_date
+msgid "Created on"
+msgstr "إنشاء"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__db_serial
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__db_serial
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__db_serial
+msgid "DB Serial"
+msgstr "رقم قاعدة البيانات"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_branch_registry_positive_db_serial
+msgid "DB serial must be a positive integer."
+msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيانات عدداً صحيحاً موجباً."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_branch_registry_uniq_db_serial
+msgid "DB serial must be unique in the branch registry."
+msgstr "يجب أن يكون الرقم التسلسلي لقاعدة البيانات فريداً في سجل الفروع."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__direct
+msgid "Direct Value"
+msgstr "قيمة مباشرة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_service__display_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__display_name
+msgid "Display Name"
+msgstr "اسم العرض"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__error_message
+msgid "Error Message"
+msgstr "رسالة الخطأ"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__event_uuid
+msgid "Event UUID"
+msgstr "معرف الحدث المصدر"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_identity.py:0
+msgid "Expected target ID %(expected)s but identity points to %(actual)s."
+msgstr "المعرف الهدف المتوقع %(expected)s لكن الهوية تشير إلى %(actual)s."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__required
+msgid ""
+"Fail the whole apply operation when this relation or value cannot be "
+"resolved."
+msgstr "إفشال عملية التطبيق بالكامل عندما يتعذر تحديد هذه العلاقة أو القيمة."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__failed
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_search
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__mapping_ids
+msgid "Field Mappings"
+msgstr "تعيينات الحقول"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_field_mapping_uniq_profile_field_pair
+msgid "Field mapping must be unique per profile."
+msgstr "يجب أن يكون الحدث المصدر فريدا لكل رقم قاعدة بيانات."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_target_key
+msgid "Field searched on the MAIN relation model."
+msgstr "الحقل الذي يتم البحث به في نموذج العلاقة على MAIN."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_service__id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__id
+msgid "ID"
+msgstr "المعرّف"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_apply_profile__apply_mode__ignore
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__ignore
+msgid "Ignore"
+msgstr "تجاهل"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Install or upgrade target model %(model)s before loading field mappings."
+msgstr "ثبت أو رق النموذج الهدف %(model)s قبل تحميل ربط الحقول."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__auto_apply
+msgid "Keep disabled while inspecting raw payloads and selecting mappings."
+msgstr "أبقِه معطلاً أثناء فحص الحمولات الخام واختيار التعيينات."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__write_uid
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__write_uid
+msgid "Last Updated by"
+msgstr "آخر تحديث بواسطة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__write_date
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__write_date
+msgid "Last Updated on"
+msgstr "آخر تحديث في"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__last_upload_at
+msgid "Last Upload At"
+msgstr "آخر رفع في"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__last_upload_record_id
+msgid "Last Upload Record"
+msgstr "آخر سجل رفع"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_apply_profile_form
+msgid "Load Matching Fields"
+msgstr "تحميل الحقول المتطابقة"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Loaded %(count)s matching field mapping(s). Enable only the fields that MAIN"
+" should apply."
+msgstr ""
+"تم تحميل %(count)s من تعيينات الحقول المتطابقة. فعّل فقط الحقول التي يجب أن "
+"يطبقها MAIN."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__mapping_type
+msgid "Mapping Type"
+msgstr "نوع التعيين"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_list
+msgid "Mark Not Sync"
+msgstr "تعليم كغير متزامن"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Marked %(count)s upload record(s) as Not Sync."
+msgstr "تم تعليم %(count)s سجل رفع كغير متزامن."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_apply_profile__apply_mode__mirror_sync
+msgid "Mirror Sync Model"
+msgstr "نموذج مزامنة مرآة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_branch_registry__name
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "No active apply profile exists for source model %(model)s."
+msgstr "لا يوجد ملف تعريف تطبيق نشط لنموذج المصدر %(model)s."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_identity.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "No sequence found for model %(model)s."
+msgstr "لم يتم العثور على تسلسل للنموذج %(model)s."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__not_sync
+msgid "Not Sync"
+msgstr "غير متزامن"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__note
+msgid "Note"
+msgstr "ملاحظة"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Odoo Sync Mapping"
+msgstr "مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Odoo Sync Upload"
+msgstr "رفع مزامنة أودو"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_apply_profile_uniq_source_model
+msgid "Only one apply profile is allowed for each source model."
+msgstr "يُسمح بملف تعريف تطبيق واحد فقط لكل نموذج مصدر."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__payload_json
+msgid "Payload"
+msgstr "البيانات"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__pending
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_search
+msgid "Pending"
+msgstr "معلق"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__pending_mapping
+msgid "Pending Mapping"
+msgstr "بانتظار الربط"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_identity__state__placeholder
+msgid "Placeholder"
+msgstr "سجل مؤقت"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__profile_id
+msgid "Profile"
+msgstr "ملف التعريف"
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_list
+msgid "Queue Apply"
+msgstr "إضافة التطبيق إلى قائمة الانتظار"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Queue reporting upload records for apply"
+msgstr "إدراج سجلات رفع التقارير في قائمة انتظار التطبيق"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Queued %(count)s failed upload record(s) for replay."
+msgstr "تمت إضافة %(count)s سجل رفع فاشل لإعادة التشغيل إلى قائمة الانتظار."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Queued %(count)s upload record(s) for apply."
+msgstr "تمت إضافة %(count)s سجل رفع للتطبيق إلى قائمة الانتظار."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__queued_at
+msgid "Queued At"
+msgstr "أضيف إلى قائمة الانتظار في"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_apply_profile__apply_mode__raw_only
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__raw_only
+msgid "Raw Only"
+msgstr "بيانات خام فقط"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__received_at
+msgid "Received At"
+msgstr "تم الاستلام في"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.actions.act_window,name:ab_odoo_sync_mapping.action_ab_odoo_sync_upload_record
+#: model:ir.ui.menu,name:ab_odoo_sync_mapping.menu_ab_odoo_sync_received_uploads
+msgid "Received Uploads"
+msgstr "عمليات الرفع المستلمة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.actions.act_window,name:ab_odoo_sync_mapping.action_ab_odoo_sync_branch_registry
+#: model:ir.ui.menu,name:ab_odoo_sync_mapping.menu_ab_odoo_sync_registered_branches
+msgid "Registered Branches"
+msgstr "الفروع المسجلة"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Relation %(field)s is missing its source record ID."
+msgstr "تفتقد العلاقة %(field)s معرّف سجل المصدر."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Relation %(field)s is missing stable key %(key)s."
+msgstr "تفتقد العلاقة %(field)s المفتاح الثابت %(key)s."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_source_key
+msgid "Relation Source Key"
+msgstr "مفتاح مصدر العلاقة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_target_key
+msgid "Relation Target Key"
+msgstr "مفتاح هدف العلاقة"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Relation payload for %(field)s must be a list."
+msgstr "يجب أن تكون حمولة العلاقة للحقل %(field)s قائمة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Relation payload for %(field)s must be an object."
+msgstr "يجب أن تكون بيانات الرفع كائن JSON."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Relational target field %(field)s requires a relation mapping type."
+msgstr "يتطلب حقل الهدف العلاقي %(field)s نوع تعيين للعلاقة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Relations to %(model)s must use source-ID sync mapping according to sync-"
+"rules.md."
+msgstr ""
+"يجب أن تستخدم العلاقات إلى %(model)s ربط مزامنة معرف المصدر وفقًا لملف sync-"
+"rules.md."
+
+#. module: ab_odoo_sync_mapping
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_upload_record_list
+msgid "Replay Failed"
+msgstr "إعادة تشغيل الفاشل"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__required
+msgid "Required"
+msgstr "مطلوب"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Required relation %(field)s is empty."
+msgstr "العلاقة المطلوبة %(field)s فارغة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Required source field %(field)s is missing from the payload."
+msgstr "حقل المصدر المطلوب %(field)s غير موجود في الحمولة."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_identity__state__resolved
+msgid "Resolved"
+msgstr "تم حله"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,help:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__relation_source_key
+msgid ""
+"Scalar field included in the relation snapshot, such as eplus_serial or "
+"code."
+msgstr "حقل مفرد مضمن في لقطة العلاقة، مثل eplus_serial أو code."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__sequence
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__sequence
+msgid "Sequence"
+msgstr "التسلسل"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__skipped_fields_json
+msgid "Skipped Fields"
+msgstr "الحقول المتجاوزة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__source_field_name
+msgid "Source Field"
+msgstr "الموديل المصدر"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__source_model_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__source_model_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__model_name
+msgid "Source Model"
+msgstr "الموديل المصدر"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__source_operation
+msgid "Source Operation"
+msgstr "العملية"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__source_rec_id
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__rec_id
+msgid "Source Record ID"
+msgstr "معرف السجل المصدر"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__source_revision
+msgid "Source Revision"
+msgstr "معرف السجل المصدر"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__source_write_date
+msgid "Source Write Date"
+msgstr "معرف الحدث المصدر"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Source field %(field)s does not exist on %(model)s."
+msgstr "حقل المصدر %(field)s غير موجود في %(model)s."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_identity_uniq_source_identity
+msgid ""
+"Source identity must be unique per branch, source model, source ID, and "
+"target model."
+msgstr ""
+"يجب أن تكون هوية المصدر فريدة لكل فرع ونموذج مصدر ومعرف مصدر ونموذج هدف."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Source model %(model)s is protected by sync-rules.md and cannot be mirrored "
+"from branch uploads."
+msgstr ""
+"نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن نسخه كمرآة من "
+"رفعات الفروع."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Source user field %(source)s must map with sync_many2one to a %(user_model)s"
+" field."
+msgstr ""
+"يجب ربط حقل مستخدم المصدر %(source)s باستخدام sync_many2one إلى حقل "
+"%(user_model)s."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__stable_key_json
+msgid "Stable Keys"
+msgstr "المفاتيح الثابتة"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Stable relation %(field)s matched more than one MAIN record."
+msgstr "تطابقت العلاقة الثابتة %(field)s مع أكثر من سجل واحد في MAIN."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__stable_many2many
+msgid "Stable-key Many2many"
+msgstr "Many2many بمفتاح ثابت"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__stable_many2one
+msgid "Stable-key Many2one"
+msgstr "Many2one بمفتاح ثابت"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Stable-key mappings require both relation key fields."
+msgstr "تتطلب تعيينات المفتاح الثابت حقلي مفتاح العلاقة كليهما."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__state
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__status
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__sync_enabled
+msgid "Sync Enabled"
+msgstr "حالات أحداث المزامنة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.actions.act_window,name:ab_odoo_sync_mapping.action_ab_odoo_sync_identity
+#: model:ir.ui.menu,name:ab_odoo_sync_mapping.menu_ab_odoo_sync_identities
+msgid "Sync Identities"
+msgstr "هويات المزامنة"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__sync_many2many
+msgid "Sync Many2many by Source ID"
+msgstr "مزامنة Many2many بمعرّف المصدر"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_field_mapping__mapping_type__sync_many2one
+msgid "Sync Many2one by Source ID"
+msgstr "مزامنة Many2one بمعرّف المصدر"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_identity.py:0
+msgid "Sync identities are audit records and cannot be deleted."
+msgstr "هويات المزامنة سجلات تدقيق ولا يمكن حذفها."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_identity.py:0
+msgid "Sync identity points to a different target record."
+msgstr "هوية المزامنة تشير إلى سجل هدف مختلف."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid ""
+"Sync relation %(field)s cannot create placeholder records because %(model)s "
+"has no sync identity fields."
+msgstr ""
+"لا يمكن لعلاقة المزامنة %(field)s إنشاء سجلات مؤقتة لأن %(model)s لا يحتوي "
+"على حقول هوية المزامنة."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Sync upload records are audit records and cannot be deleted."
+msgstr "سجلات رفع المزامنة سجلات تدقيق ولا يمكن حذفها."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_field_mapping__target_field_name
+msgid "Target Field"
+msgstr "الموديل الهدف"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_apply_profile__target_model_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__target_model_name
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__target_model_name
+msgid "Target Model"
+msgstr "الموديل الهدف"
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_identity__target_res_id
+msgid "Target Record ID"
+msgstr "معرف السجل الهدف"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target field %(field)s does not exist on %(model)s."
+msgstr "موديل المزامنة الهدف %(model)s غير موجود."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Target field %(field)s on %(target)s must point to %(user_model)s because "
+"%(source)s points to res.users."
+msgstr ""
+"يجب أن يشير الحقل الهدف %(field)s في %(target)s إلى %(user_model)s لأن "
+"%(source)s يشير إلى res.users."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_identity.py:0
+msgid "Target model %(model)s does not exist."
+msgstr "النموذج الهدف %(model)s غير موجود."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target model %(model)s is not installed."
+msgstr "النموذج الهدف %(model)s غير مثبت."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target model is required for this apply mode."
+msgstr "النموذج الهدف مطلوب لهذا وضع التطبيق."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid ""
+"Target sync model %(model)s cannot archive records because it has no active "
+"field."
+msgstr ""
+"يجب أن يحتوي موديل المزامنة الهدف %(model)s على حقلي db_serial و rec_id."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Target sync model %(model)s does not exist."
+msgstr "موديل المزامنة الهدف %(model)s غير موجود."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target sync model %(model)s is missing required fields: %(fields)s"
+msgstr ""
+"يجب أن يحتوي موديل المزامنة الهدف %(model)s على حقلي db_serial و rec_id."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Target sync model %(model)s must define db_serial and rec_id fields."
+msgstr ""
+"يجب أن يحتوي موديل المزامنة الهدف %(model)s على حقلي db_serial و rec_id."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid ""
+"Target sync model %(model)s must not define required fields. Use apply "
+"profile field mappings to mark required values instead: %(fields)s"
+msgstr ""
+"يجب ألا يعرّف نموذج المزامنة المستهدف %(model)s حقولاً إلزامية. استخدم "
+"تعيينات حقول ملف التطبيق لتحديد القيم المطلوبة بدلاً من ذلك: %(fields)s"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/controllers/main.py:0
+msgid "Unauthorized"
+msgstr "غير مصرح."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Unknown or inactive db_serial."
+msgstr "رقم db_serial غير معروف أو غير نشط."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Upload payload must be a JSON object."
+msgstr "يجب أن تكون بيانات الرفع كائن JSON."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "Upload target does not match its active apply profile."
+msgstr "لا يتطابق هدف التحميل مع ملف تعريف التطبيق النشط الخاص به."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_upload_record_uniq_upload_event_uuid
+msgid "Uploaded event UUID must be unique."
+msgstr "يجب أن يكون رقم قاعدة البيانات فريدا."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.constraint,message:ab_odoo_sync_mapping.constraint_ab_odoo_sync_upload_record_uniq_upload_record
+msgid ""
+"Uploaded record must be unique per database serial, source model, and source"
+" record ID."
+msgstr ""
+"يجب أن يكون سجل الرفع فريدا لكل رقم قاعدة بيانات وموديل مصدر ومعرف سجل مصدر."
+
+#. module: ab_odoo_sync_mapping
+#: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__source_operation__upsert
+msgid "Upsert"
+msgstr "إدراج أو تحديث"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "event_uuid must be a valid UUID."
+msgstr "يجب أن يكون last_event_id عددا صحيحا."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "model_name is required."
+msgstr "حقل model_name مطلوب."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid ""
+"model_name must contain lowercase letters, numbers, underscores, and dots "
+"between model name segments only."
+msgstr ""
+"يجب أن يحتوي model_name على أحرف صغيرة وأرقام وشرطات سفلية ونقاط بين أجزاء "
+"اسم النموذج فقط."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "payload fields must be a JSON object."
+msgstr "يجب أن تكون payload كائن JSON."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "payload must be a JSON object."
+msgstr "يجب أن تكون payload كائن JSON."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "rec_id must be a positive integer."
+msgstr "يجب أن يكون rec_id رقما صحيحا موجبا."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "record must be a JSON object."
+msgstr "يجب أن يكون السجل كائن JSON."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "records must be a JSON array."
+msgstr "يجب أن تكون records مصفوفة JSON."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "source_operation must be upsert or archive."
+msgstr "يجب أن تكون source_operation هي upsert أو archive."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
+msgid "source_revision must be a positive integer."
+msgstr "يجب أن يكون rec_id رقما صحيحا موجبا."
