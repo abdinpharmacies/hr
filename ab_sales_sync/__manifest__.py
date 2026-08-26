@@ -7,7 +7,7 @@
     "author": "Abdin Pharmacies",
     "developer": "emadco88",
     "application": True,
-    "depends": ["ab_sales", "ab_odoo_sync"],
+    "depends": ["ab_sales", "ab_odoo_sync_mapping"],
     "data": [
         "data/sync_profiles.xml",
         "data/sync_profile_updates.xml",

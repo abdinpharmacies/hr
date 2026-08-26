@@ -32,19 +32,12 @@ Files changed:
 
 User-facing changes:
 
-- Recreated `ab_sales_sync` as a manually installed connector between `ab_odoo_sync` and the passive `ab_sales` reporting models.
+- Connected the manually installed sales connector to the report-only
+  `ab_odoo_sync_mapping` runtime and the passive `ab_sales` models.
 - Preserved all 14 same-name `mirror_sync` profiles and their field mappings.
-- Removed duplicate mirror models, access rules, views, and menus from the connector.
-- Added Arabic translations for the connector and its profile names.
 
 Files changed:
 
 - `ab_sales_sync/__init__.py`
 - `ab_sales_sync/__manifest__.py`
-- `ab_sales_sync/data/sync_profiles.xml`
-- `ab_sales_sync/data/sync_profile_updates.xml`
-- `ab_sales_sync/data/sync_profiles_extra.xml`
-- `ab_sales_sync/i18n/ar.po`
-- `ab_sales_sync/i18n/ar_001.po`
 - `ab_sales_sync/changelog.d/2026-08-26-sales-sync-connector.md`
-- Removed obsolete connector-owned models, security, views, and static assets.
