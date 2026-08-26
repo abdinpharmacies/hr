@@ -8,10 +8,11 @@ import { useService } from "@web/core/utils/hooks";
 import { pick } from "@web/core/utils/objects";
 import { formatChar } from "@web/views/fields/formatters";
 import { standardFieldProps } from "@web/views/fields/standard_field_props";
-import { Component, useState } from "@odoo/owl";
+import { Component, onWillDestroy, useState } from "@odoo/owl";
 
 const DROPDOWN_LIMIT = 7;
 const SEARCH_MORE_LIMIT = 40;
+const SEARCH_MORE_INPUT_DEBOUNCE = 250;
 
 export class AbCharAutocompleteSearchMoreDialog extends Component {
     static template = "ab_widgets.AbCharAutocompleteSearchMoreDialog";
@@ -34,8 +35,15 @@ export class AbCharAutocompleteSearchMoreDialog extends Component {
             offset: 0,
             hasMore: false,
             loading: false,
+            pageTransition: "",
         });
         this.requestSeq = 0;
+        this.pageTransitionTimer = 0;
+        this.searchInputTimer = 0;
+        onWillDestroy(() => {
+            this.clearPageTransitionTimer();
+            this.clearSearchInputTimer();
+        });
         this.loadPage(0);
     }
 
@@ -55,8 +63,13 @@ export class AbCharAutocompleteSearchMoreDialog extends Component {
         return this.state.hasMore && !this.state.loading;
     }
 
-    async loadPage(offset) {
+    get showPager() {
+        return this.state.offset > 0 || this.state.hasMore;
+    }
+
+    async loadPage(offset, transitionDirection = "") {
         const requestSeq = ++this.requestSeq;
+        this.setPageTransition("");
         this.state.loading = true;
         try {
             const result = await this.orm.call(
@@ -78,6 +91,10 @@ export class AbCharAutocompleteSearchMoreDialog extends Component {
             this.state.values = result.values || [];
             this.state.offset = result.offset || 0;
             this.state.hasMore = !!result.has_more;
+            if (transitionDirection) {
+                this.setPageTransition(transitionDirection);
+                this.clearPageTransitionSoon();
+            }
         } catch {
             if (requestSeq === this.requestSeq) {
                 this.state.values = [];
@@ -93,10 +110,31 @@ export class AbCharAutocompleteSearchMoreDialog extends Component {
 
     onSearchInput(ev) {
         this.state.searchTerm = ev.target.value;
+        this.scheduleSearch();
     }
 
     onSearchChange() {
+        this.searchNow();
+    }
+
+    searchNow() {
+        this.clearSearchInputTimer();
         this.loadPage(0);
+    }
+
+    scheduleSearch() {
+        this.clearSearchInputTimer();
+        this.searchInputTimer = setTimeout(() => {
+            this.searchInputTimer = 0;
+            this.loadPage(0, "next");
+        }, SEARCH_MORE_INPUT_DEBOUNCE);
+    }
+
+    clearSearchInputTimer() {
+        if (this.searchInputTimer) {
+            clearTimeout(this.searchInputTimer);
+            this.searchInputTimer = 0;
+        }
     }
 
     selectValue(value) {
@@ -106,13 +144,32 @@ export class AbCharAutocompleteSearchMoreDialog extends Component {
 
     previousPage() {
         if (this.canGoPrevious) {
-            this.loadPage(Math.max(0, this.state.offset - SEARCH_MORE_LIMIT));
+            this.loadPage(Math.max(0, this.state.offset - SEARCH_MORE_LIMIT), "previous");
         }
     }
 
     nextPage() {
         if (this.canGoNext) {
-            this.loadPage(this.state.offset + SEARCH_MORE_LIMIT);
+            this.loadPage(this.state.offset + SEARCH_MORE_LIMIT, "next");
+        }
+    }
+
+    setPageTransition(direction) {
+        this.clearPageTransitionTimer();
+        this.state.pageTransition = direction;
+    }
+
+    clearPageTransitionSoon() {
+        this.clearPageTransitionTimer();
+        this.pageTransitionTimer = setTimeout(() => {
+            this.state.pageTransition = "";
+        }, 240);
+    }
+
+    clearPageTransitionTimer() {
+        if (this.pageTransitionTimer) {
+            clearTimeout(this.pageTransitionTimer);
+            this.pageTransitionTimer = 0;
         }
     }
 }

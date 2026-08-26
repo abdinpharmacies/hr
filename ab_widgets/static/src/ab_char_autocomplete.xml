@@ -10,27 +10,41 @@
     </t>
 
     <t t-name="ab_widgets.AbCharAutocompleteSearchMoreDialog">
-        <Dialog title.translate="Suggestions" size="'md'">
+        <Dialog title.translate="Suggestions"
+                size="'md'"
+                contentClass="'o_ab_char_autocomplete_modal'">
             <div class="o_ab_char_autocomplete_dialog">
+                <p class="o_ab_char_autocomplete_dialog_hint">
+                    Search and select from available suggestions
+                </p>
                 <div class="o_ab_char_autocomplete_search">
-                    <input class="o_input"
-                           type="text"
-                           t-att-value="state.searchTerm"
-                           placeholder="Search values..."
-                           t-on-input="onSearchInput"
-                           t-on-change="onSearchChange"/>
-                    <button class="btn btn-primary"
-                            type="button"
-                            t-on-click="() => this.loadPage(0)">
-                        Search
-                    </button>
+                    <div class="o_ab_char_autocomplete_search_input_wrap">
+                        <i class="fa fa-search" aria-hidden="true"/>
+                        <input class="o_input o_ab_char_autocomplete_search_input"
+                               type="text"
+                               t-att-value="state.searchTerm"
+                               placeholder="Search values..."
+                               t-on-input="onSearchInput"
+                               t-on-change="onSearchChange"/>
+                    </div>
                 </div>
-                <div class="o_ab_char_autocomplete_values">
-                    <t t-if="state.loading">
-                        <div class="o_ab_char_autocomplete_empty">Loading...</div>
+                <div class="o_ab_char_autocomplete_values"
+                     t-att-class="{
+                         'o_ab_char_autocomplete_values--page-next': state.pageTransition === 'next',
+                         'o_ab_char_autocomplete_values--page-previous': state.pageTransition === 'previous',
+                     }">
+                    <t t-if="state.loading &amp;&amp; !state.values.length">
+                        <div class="o_ab_char_autocomplete_state o_ab_char_autocomplete_state_loading">
+                            <i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"/>
+                            <span>Loading...</span>
+                        </div>
                     </t>
                     <t t-elif="!state.values.length">
-                        <div class="o_ab_char_autocomplete_empty">No suggestions found</div>
+                        <div class="o_ab_char_autocomplete_state o_ab_char_autocomplete_state_empty">
+                            <i class="fa fa-search" aria-hidden="true"/>
+                            <strong>No suggestions found</strong>
+                            <span>Try a different search term.</span>
+                        </div>
                     </t>
                     <t t-else="">
                         <button t-foreach="state.values"
@@ -39,16 +53,17 @@
                                 class="o_ab_char_autocomplete_value"
                                 type="button"
                                 t-on-click="() => this.selectValue(row.value)">
-                            <span t-esc="row.value"/>
+                            <span class="o_ab_char_autocomplete_value_text" t-esc="row.value"/>
                         </button>
                     </t>
                 </div>
-                <div class="o_ab_char_autocomplete_pager">
+                <div class="o_ab_char_autocomplete_pager" t-if="showPager">
                     <button class="btn btn-secondary"
                             type="button"
                             t-att-disabled="!canGoPrevious"
                             t-on-click="previousPage">
-                        Previous
+                        <i class="fa fa-chevron-left" aria-hidden="true"/>
+                        <span>Previous</span>
                     </button>
                     <span class="o_ab_char_autocomplete_page">
                         <t t-esc="pageLabel"/>
@@ -57,7 +72,8 @@
                             type="button"
                             t-att-disabled="!canGoNext"
                             t-on-click="nextPage">
-                        Next
+                        <span>Next</span>
+                        <i class="fa fa-chevron-right" aria-hidden="true"/>
                     </button>
                 </div>
             </div>
@@ -69,15 +85,21 @@
 
     <t t-name="ab_widgets.AbCharAutocompleteInputPopover">
         <div class="o_ab_char_autocomplete_input_options"
+             t-att-class="{'o_ab_char_autocomplete_input_options--typing': state.resultsTransition}"
              t-att-id="listId"
              role="listbox">
-            <t t-if="state.loading">
-                <div class="o_ab_char_autocomplete_input_status">
-                    <i class="fa fa-spin fa-circle-o-notch"/> Loading...
+            <t t-if="state.loading &amp;&amp; !state.values.length">
+                <div class="o_ab_char_autocomplete_input_status o_ab_char_autocomplete_input_status_loading">
+                    <i class="fa fa-spin fa-circle-o-notch" aria-hidden="true"/>
+                    <span>Loading...</span>
                 </div>
             </t>
             <t t-elif="!state.values.length">
-                <div class="o_ab_char_autocomplete_input_status">No suggestions found</div>
+                <div class="o_ab_char_autocomplete_input_status o_ab_char_autocomplete_input_status_empty">
+                    <i class="fa fa-search" aria-hidden="true"/>
+                    <strong>No suggestions found</strong>
+                    <span>Try a different search term.</span>
+                </div>
             </t>
             <t t-else="">
                 <button t-foreach="state.values"
@@ -92,7 +114,7 @@
                         t-on-mouseenter="() => this.setActiveIndex(row_index)"
                         t-on-pointerdown.prevent=""
                         t-on-click="() => this.selectValue(row.value)">
-                    <span t-esc="row.value"/>
+                    <span class="o_ab_char_autocomplete_input_option_text" t-esc="row.value"/>
                 </button>
                 <button t-if="state.hasMore"
                         t-att-id="optionId(state.values.length)"
@@ -104,7 +126,8 @@
                         t-on-mouseenter="() => this.setActiveIndex(state.values.length)"
                         t-on-pointerdown.prevent=""
                         t-on-click="openSearchMore">
-                    Search More...
+                    <i class="fa fa-search-plus" aria-hidden="true"/>
+                    <span>Search More...</span>
                 </button>
             </t>
         </div>

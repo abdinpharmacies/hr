@@ -14,10 +14,11 @@ const INPUT_DEBOUNCE_DELAY = 250;
 const SUPPORTED_INPUT_TYPES = new Set(["", "text", "search", "email", "tel", "url"]);
 const MODEL_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*(?:\.[A-Za-z_][A-Za-z0-9_]*)*$/;
 const FIELD_NAME_RE = /^[A-Za-z_][A-Za-z0-9_]*$/;
+const AUTOCOMPLETE_SOURCE_REGISTRY = registry.category("ab_char_autocomplete_sources");
 
 let nextAutocompleteId = 0;
 
-function parseAutocompleteSource(input) {
+function parseAutocompleteSource(input, warn = false) {
     const source = String(input.getAttribute(AUTOCOMPLETE_ATTRIBUTE) || "").trim();
     const separatorIndex = source.lastIndexOf(".");
     if (
@@ -26,14 +27,81 @@ function parseAutocompleteSource(input) {
         separatorIndex <= 0 ||
         separatorIndex === source.length - 1
     ) {
+        if (warn && source) {
+            console.warn(`Invalid ${AUTOCOMPLETE_ATTRIBUTE} value:`, source);
+        }
         return false;
     }
     const modelName = source.slice(0, separatorIndex);
     const fieldName = source.slice(separatorIndex + 1);
     if (!MODEL_NAME_RE.test(modelName) || !FIELD_NAME_RE.test(fieldName)) {
+        if (warn) {
+            console.warn(`Invalid ${AUTOCOMPLETE_ATTRIBUTE} value:`, source);
+        }
         return false;
     }
     return { modelName, fieldName };
+}
+
+function normalizeText(text) {
+    return String(text || "").replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+function getInputLabelText(input) {
+    const labels = [];
+    if (input.id && window.CSS?.escape) {
+        const label = document.querySelector(`label[for="${window.CSS.escape(input.id)}"]`);
+        if (label) {
+            labels.push(label.textContent);
+        }
+    }
+    const fieldContainer = input.closest(".col-12, .col-md-4, .o_wrap_field, .o_field_widget");
+    const localLabel = fieldContainer?.querySelector?.("label");
+    if (localLabel) {
+        labels.push(localLabel.textContent);
+    }
+    return normalizeText(labels.join(" "));
+}
+
+function getOdooFieldName(input) {
+    const field = input.closest(".o_field_widget[name], .o_field_char[name], [data-name]");
+    return field?.getAttribute("name") || field?.dataset?.name || input.getAttribute("name") || "";
+}
+
+function getOdooModelName(input) {
+    const holder = input.closest("[data-res-model], [data-model]");
+    return holder?.dataset?.resModel || holder?.dataset?.model || "";
+}
+
+function isDoctorSpecialtyInput(input) {
+    const labelText = getInputLabelText(input);
+    if (input.closest(".ab_sales_doctor_create_dialog")) {
+        return labelText.includes("specialty");
+    }
+    if (getOdooFieldName(input) !== "specialty") {
+        return false;
+    }
+    const modelName = getOdooModelName(input);
+    return !modelName || modelName === "ab_doctor";
+}
+
+function getRegisteredAutocompleteSource(input) {
+    for (const source of AUTOCOMPLETE_SOURCE_REGISTRY.getAll()) {
+        if (source?.match?.(input)) {
+            return {
+                modelName: source.modelName,
+                fieldName: source.fieldName,
+            };
+        }
+    }
+    return false;
+}
+
+function getAutocompleteSource(input, warn = false) {
+    if (input.hasAttribute(AUTOCOMPLETE_ATTRIBUTE)) {
+        return parseAutocompleteSource(input, warn);
+    }
+    return getRegisteredAutocompleteSource(input);
 }
 
 function isEligibleInput(target) {
@@ -42,12 +110,22 @@ function isEligibleInput(target) {
     }
     const inputType = String(target.getAttribute("type") || "").toLowerCase();
     return (
-        target.hasAttribute(AUTOCOMPLETE_ATTRIBUTE) &&
+        !!getAutocompleteSource(target) &&
         !target.disabled &&
         !target.readOnly &&
         SUPPORTED_INPUT_TYPES.has(inputType)
     );
 }
+
+AUTOCOMPLETE_SOURCE_REGISTRY.add(
+    "ab_doctor.specialty",
+    {
+        modelName: "ab_doctor",
+        fieldName: "specialty",
+        match: isDoctorSpecialtyInput,
+    },
+    { force: true }
+);
 
 export class AbCharAutocompleteInputPopover extends Component {
     static template = "ab_widgets.AbCharAutocompleteInputPopover";
@@ -67,6 +145,7 @@ export class AbCharAutocompleteInputPopover extends Component {
             activeIndex: -1,
             hasMore: false,
             loading: true,
+            resultsTransition: false,
             searchTerm: "",
             values: [],
         });
@@ -74,6 +153,7 @@ export class AbCharAutocompleteInputPopover extends Component {
         this.isSelecting = false;
         this.instanceId = ++nextAutocompleteId;
         this.listId = `ab_char_autocomplete_input_${this.instanceId}`;
+        this.resultsTransitionTimer = 0;
         this.originalInputAttributes = new Map();
         this.debouncedSearch = useDebounced(
             () => this.loadSuggestions(this.props.target.value),
@@ -97,6 +177,7 @@ export class AbCharAutocompleteInputPopover extends Component {
 
         onWillDestroy(() => {
             this.requestSeq++;
+            this.clearResultsTransitionTimer();
             this.props.target.removeEventListener("input", this.onTargetInput);
             this.props.target.removeEventListener("keydown", this.onTargetKeydown);
             this.restoreInput();
@@ -162,6 +243,7 @@ export class AbCharAutocompleteInputPopover extends Component {
     onTargetInput() {
         if (!this.isSelecting) {
             this.state.activeIndex = -1;
+            this.state.searchTerm = String(this.props.target.value || "").trim();
             this.debouncedSearch();
         }
     }
@@ -211,10 +293,9 @@ export class AbCharAutocompleteInputPopover extends Component {
 
     async loadSuggestions(searchTerm) {
         const requestSeq = ++this.requestSeq;
+        this.setResultsTransition(false);
         this.state.loading = true;
         this.state.searchTerm = String(searchTerm || "").trim();
-        this.state.values = [];
-        this.state.hasMore = false;
         this.state.activeIndex = -1;
         try {
             const result = await this.orm.call(
@@ -233,14 +314,17 @@ export class AbCharAutocompleteInputPopover extends Component {
             if (requestSeq !== this.requestSeq) {
                 return;
             }
+            this.setResultsTransition(true);
             this.state.values = result.values || [];
             this.state.hasMore = !!result.has_more;
             this.state.activeIndex = -1;
+            this.clearResultsTransitionSoon();
         } catch {
             if (requestSeq === this.requestSeq) {
                 this.state.values = [];
                 this.state.hasMore = false;
                 this.state.activeIndex = -1;
+                this.clearResultsTransitionSoon();
                 this.notification.add(_t("Could not load suggestions."), { type: "warning" });
             }
         } finally {
@@ -252,6 +336,29 @@ export class AbCharAutocompleteInputPopover extends Component {
 
     setActiveIndex(index) {
         this.state.activeIndex = index;
+    }
+
+    setResultsTransition(active) {
+        this.clearResultsTransitionTimer();
+        this.state.resultsTransition = active;
+    }
+
+    clearResultsTransitionSoon() {
+        if (!this.state.resultsTransition) {
+            return;
+        }
+        this.clearResultsTransitionTimer();
+        this.resultsTransitionTimer = setTimeout(() => {
+            this.state.resultsTransition = false;
+            this.resultsTransitionTimer = 0;
+        }, 240);
+    }
+
+    clearResultsTransitionTimer() {
+        if (this.resultsTransitionTimer) {
+            clearTimeout(this.resultsTransitionTimer);
+            this.resultsTransitionTimer = 0;
+        }
     }
 
     selectValue(value) {
@@ -319,14 +426,10 @@ export const abCharAutocompleteInputService = {
             if (active?.input === input) {
                 return;
             }
-            const source = parseAutocompleteSource(input);
+            const source = getAutocompleteSource(input, true);
             if (!source) {
                 if (!invalidInputs.has(input)) {
                     invalidInputs.add(input);
-                    console.warn(
-                        `Invalid ${AUTOCOMPLETE_ATTRIBUTE} value:`,
-                        input.getAttribute(AUTOCOMPLETE_ATTRIBUTE)
-                    );
                 }
                 return;
             }
@@ -355,8 +458,16 @@ export const abCharAutocompleteInputService = {
                         }
                     },
                     onPositioned: (element) => {
-                        const width = Math.max(180, input.getBoundingClientRect().width);
+                        const inputRect = input.getBoundingClientRect();
+                        const width = Math.max(180, inputRect.width);
+                        const availableBelow = Math.max(140, window.innerHeight - inputRect.bottom - 8);
+                        const options = element.querySelector(".o_ab_char_autocomplete_input_options");
                         element.style.minWidth = `${width}px`;
+                        element.style.top = `${inputRect.bottom + 4}px`;
+                        element.style.maxHeight = `${availableBelow}px`;
+                        if (options) {
+                            options.style.maxHeight = `${availableBelow}px`;
+                        }
                     },
                 }
             );

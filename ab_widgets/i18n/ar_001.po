@@ -121,6 +121,12 @@ msgstr "بحث المزيد..."
 #. module: ab_widgets
 #. odoo-javascript
 #: code:addons/ab_widgets/static/src/ab_char_autocomplete.xml:0
+msgid "Search and select from available suggestions"
+msgstr "ابحث واختر من الاقتراحات المتاحة"
+
+#. module: ab_widgets
+#. odoo-javascript
+#: code:addons/ab_widgets/static/src/ab_char_autocomplete.xml:0
 msgid "Search values..."
 msgstr "بحث في القيم..."
 
@@ -129,3 +135,9 @@ msgstr "بحث في القيم..."
 #: code:addons/ab_widgets/static/src/ab_char_autocomplete.xml:0
 msgid "Suggestions"
 msgstr "اقتراحات"
+
+#. module: ab_widgets
+#. odoo-javascript
+#: code:addons/ab_widgets/static/src/ab_char_autocomplete.xml:0
+msgid "Try a different search term."
+msgstr "جرّب مصطلح بحث مختلف."
