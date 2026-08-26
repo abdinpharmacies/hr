@@ -28,6 +28,7 @@
         'views/ab_sales_inventory.xml',
         'views/ab_sales_per_day.xml',
         'views/ab_replica_db_inherit.xml',
+        'views/ab_sales_branch_rpc_config_views.xml',
         'views/ab_product_metadata_views.xml',
         'views/ab_product_inherit.xml',
         'views/ab_product_balance_wizard.xml',

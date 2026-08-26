@@ -1,0 +1,202 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-08-26 00:00+0000\n"
+"PO-Revision-Date: 2026-08-26 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_sales
+#: model:ir.model,name:ab_sales.model_ab_sales_branch_rpc_config
+msgid "Sales Branch RPC Configuration"
+msgstr "إعداد اتصال RPC لفرع المبيعات"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Branch RPC Configuration"
+msgstr "إعداد اتصال RPC للفرع"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_list
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_search
+#: model:ir.actions.act_window,name:ab_sales.ab_sales_branch_rpc_config_action
+#: model:ir.ui.menu,name:ab_sales.ab_sales_branch_rpc_config_menu
+msgid "Branch RPC Configurations"
+msgstr "إعدادات اتصال RPC للفروع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_url
+msgid "Branch Odoo URL"
+msgstr "رابط أودو الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_db
+msgid "Branch Database"
+msgstr "قاعدة بيانات الفرع"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_user
+msgid "RPC User"
+msgstr "مستخدم RPC"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_password
+msgid "RPC Password/API Key"
+msgstr "كلمة مرور أو مفتاح API لـ RPC"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_password_encrypted
+msgid "Encrypted RPC Password"
+msgstr "كلمة مرور RPC المشفرة"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_sync_key
+msgid "RPC Sync Key"
+msgstr "مفتاح مزامنة RPC"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__rpc_sync_key_encrypted
+msgid "Encrypted RPC Sync Key"
+msgstr "مفتاح مزامنة RPC المشفر"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__connection_timeout
+msgid "Connection Timeout"
+msgstr "مهلة الاتصال"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__last_test_state
+msgid "Last Test State"
+msgstr "حالة آخر اختبار"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__last_test_message
+msgid "Last Test Message"
+msgstr "رسالة آخر اختبار"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__last_tested_at
+msgid "Last Tested At"
+msgstr "وقت آخر اختبار"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__remote_store_id
+msgid "Remote Store"
+msgstr "الفرع البعيد"
+
+#. module: ab_sales
+#: model:ir.model.fields,field_description:ab_sales.field_ab_sales_branch_rpc_config__remote_store_name
+msgid "Remote Store Name"
+msgstr "اسم الفرع البعيد"
+
+#. module: ab_sales
+#: model:ir.model.fields.selection,name:ab_sales.selection__ab_sales_branch_rpc_config__last_test_state__untested
+msgid "Untested"
+msgstr "لم يتم اختباره"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Test Connection"
+msgstr "اختبار الاتصال"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_form
+msgid "Last Test"
+msgstr "آخر اختبار"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_search
+msgid "Successful Tests"
+msgstr "الاختبارات الناجحة"
+
+#. module: ab_sales
+#: model_terms:ir.ui.view,arch_db:ab_sales.ab_sales_branch_rpc_config_view_search
+msgid "Errors"
+msgstr "الأخطاء"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "New Branch RPC Configuration"
+msgstr "إعداد اتصال RPC جديد للفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "%s RPC"
+msgstr "%s RPC"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Branch Odoo URL must be a valid HTTP or HTTPS URL."
+msgstr "يجب أن يكون رابط أودو الفرع رابط HTTP أو HTTPS صحيحا."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Connection timeout must be between 3 and 120 seconds."
+msgstr "يجب أن تكون مهلة الاتصال بين 3 و120 ثانية."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Odoo configuration key 'decryption_key' is required for RPC secrets."
+msgstr "مفتاح إعداد أودو 'decryption_key' مطلوب لأسرار RPC."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Stored RPC secret cannot be decrypted with the current decryption key."
+msgstr "لا يمكن فك تشفير سر RPC المخزن باستخدام مفتاح التشفير الحالي."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "RPC password/API key is required."
+msgstr "كلمة مرور أو مفتاح API لـ RPC مطلوب."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Authentication failed for the configured branch Odoo connection."
+msgstr "فشلت المصادقة لاتصال أودو الفرع المعد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Selected store must have an E-Plus serial or code before testing RPC."
+msgstr "يجب أن يحتوي الفرع المحدد على رقم E-Plus أو كود قبل اختبار RPC."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Connection works, but matching branch store was not found on remote Odoo."
+msgstr "الاتصال يعمل، لكن لم يتم العثور على الفرع المطابق في أودو البعيد."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Connection succeeded. Remote store matched."
+msgstr "نجح الاتصال وتمت مطابقة الفرع البعيد."
+
+#. module: ab_sales
+#: model:ir.model.constraint,message:ab_sales.constraint_ab_sales_branch_rpc_config_uniq_store_rpc_config
+msgid "Only one branch RPC configuration is allowed per store."
+msgstr "يسمح بإعداد اتصال RPC واحد فقط لكل فرع."
