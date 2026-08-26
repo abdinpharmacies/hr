@@ -136,7 +136,11 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/views/ab_odoo_sync_views.xml`
 
-## Current changes before commit
+## 41f68f14cb76da0ebb01b04d341eca5f5f8265e5
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Mon Aug 17 09:46:11 2026 +0300
+- Subject: ab_odoo_sync/fix ui update
 
 User-facing changes:
 
@@ -152,3 +156,155 @@ Files changed:
 - `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
 - `ab_odoo_sync/models/ab_odoo_sync_service.py`
 - `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
+
+## 874085b2a4b03de4515d5bc8c23d45744580a749
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Mon Aug 17 10:06:46 2026 +0300
+- Subject: ab_odoo_sync/Now, when an upload record applies and a sync_many2one or sync_many2many relation is missing, it creates a placeholder record in the related __sync model using the same db_serial and source rec_id.
+
+User-facing changes:
+
+- Create missing `__sync` relation placeholders during upload apply using the same branch `db_serial` and source `rec_id`.
+- Allow records such as lines to apply before their category, header, or tag mirror record arrives; the later relation upload fills the placeholder through the normal update path.
+- Keep stable-key relations unchanged so partial sync payloads do not create real business master data from incomplete relation snapshots.
+- Added Arabic translations for the new placeholder validation message.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_record.py`
+
+## 08def18d07431a9ae72fb4d087ae53a4401f3696
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Mon Aug 17 10:52:08 2026 +0300
+- Subject: ab_odoo_sync/Implemented the MAIN auto-apply feeder in ab_odoo_sync.
+
+User-facing changes:
+
+- Added a MAIN-side upload apply feeder job that queues pending and failed upload records only for active apply profiles with `auto_apply` enabled.
+- Added an active MAIN cron that enqueues the feeder with a stable identity key so overlapping feeder jobs are not created.
+- Reused the existing per-record upload apply worker for actual mirror writes, retry handling, and audit status updates.
+- Added Arabic translations for the new cron and queue job labels.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/data/ab_odoo_sync_cron.xml`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`
+
+## f8aca5fbd4a360900c1d08e041bf234c1e40fec9
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Tue Aug 18 16:12:03 2026 +0300
+- Subject: ab_odoo_sync/What changed:
+
+User-facing changes:
+
+- Added generated mirror-target naming and a mirror scaffold generator for apply profiles.
+- Added scaffold audit records and administration views.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/__init__.py`
+- `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
+- `ab_odoo_sync/models/ab_odoo_sync_mirror_scaffold.py`
+- `ab_odoo_sync/security/ir.model.access.csv`
+- `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
+
+## 914d7492fcf12a00b9a9c07a2dc1f0aff3a1cee1
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Wed Aug 19 10:10:52 2026 +0300
+- Subject: ab_odoo_sync/remove scaffold generation and depending on manual module creation
+
+User-facing changes:
+
+- Removed runtime mirror scaffold generation and its administration records.
+- Required dedicated mirror addons to be created and installed explicitly.
+- Retained idempotent upload-source seeding for dedicated sync modules.
+
+Files changed:
+
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/__init__.py`
+- `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
+- `ab_odoo_sync/models/ab_odoo_sync_mirror_scaffold.py`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`
+- `ab_odoo_sync/models/ab_odoo_sync_upload_source.py`
+- `ab_odoo_sync/security/ir.model.access.csv`
+- `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
+
+## 23fd6c637dce58788fe44f93034792d738164016
+
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Wed Aug 19 15:13:41 2026 +0300
+- Subject: ab_odoo_sync/handle relational unlink policies safely
+
+User-facing changes:
+
+- Synchronized dependent records during unlink according to their source `Many2one.ondelete` policy.
+- Archived cascade descendants before their deleted parent and re-snapshotted surviving `set null` children.
+- Deferred unlink events and outbox writes until source deletion succeeds and kept restrict failures event-free.
+- Rolled back tracked deletions when required unlink synchronization could not be queued.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/models/ab_odoo_sync_orm_hook.py`
+- `ab_odoo_sync/models/ab_odoo_sync_outbox.py`
+
+## f816dfce34a8493a41be78d637eb4e2f49ce7112
+
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Wed Aug 19 16:38:46 2026 +0300
+- Subject: ab_odoo_sync/add shared formatted JSON field widget
+
+User-facing changes:
+
+- Added a shared pretty JSON field widget for all AB Odoo Sync dependent modules.
+- Formatted event payloads, changed fields, skipped fields, stable keys, upload payloads, and outbox payloads in scrollable JSON containers.
+- Kept JSON fields editable through a validated, formatted text area and rejected invalid JSON before saving.
+- Used a compact scrollable layout when JSON fields are displayed in list views.
+- Added Arabic translations for JSON validation and bumped the module version to `19.0.2.2.0`.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.js`
+- `ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.scss`
+- `ab_odoo_sync/static/src/fields/pretty_json/pretty_json_field.xml`
+- `ab_odoo_sync/views/ab_odoo_sync_upload_views.xml`
+- `ab_odoo_sync/views/ab_odoo_sync_views.xml`
+
+## Current changes before commit:
+
+User-facing changes:
+
+- Validate branch-to-MAIN transport settings before opening HTTP requests so non-ASCII values show a clear configuration error instead of a Latin-1 codec traceback.
+- Check `ab_odoo_sync.main_url`, `ab_odoo_sync.main_database`, and `ab_odoo_sync.api_key` for ASCII-safe values because they are used in URL/header transport.
+- Keep the Odoo database selection header in place for multi-database MAIN servers.
+- Add Arabic translations for the new configuration validation messages and bump the module version to `19.0.2.3.0`.
+
+Files changed:
+
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-12-db-serial-event-state.md`
+- `ab_odoo_sync/i18n/ar.po`
+- `ab_odoo_sync/i18n/ar_001.po`
+- `ab_odoo_sync/models/ab_odoo_sync_service.py`

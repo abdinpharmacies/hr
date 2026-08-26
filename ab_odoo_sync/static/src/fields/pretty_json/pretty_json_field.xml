@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+    <t t-name="ab_odoo_sync.PrettyJsonField">
+        <pre t-if="props.readonly" class="o_ab_pretty_json mb-0" tabindex="0"><t t-esc="formattedValue"/></pre>
+        <textarea t-else="" class="o_ab_pretty_json o_input"
+                  t-att-value="formattedValue" spellcheck="false"
+                  t-on-input="onInput" t-on-change="onChange"/>
+    </t>
+</templates>
