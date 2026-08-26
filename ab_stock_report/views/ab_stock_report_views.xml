@@ -255,7 +255,7 @@
             <field name="res_model">ab_stock_report_wizard</field>
             <field name="view_mode">form</field>
             <field name="target">new</field>
-            <field name="context">{'dialog_size': 'large'}</field>
+            <field name="context">{'dialog_size': 'extra-large'}</field>
             <field name="view_id" ref="ab_stock_report_wizard_view_form"/>
         </record>
 

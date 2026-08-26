@@ -1,3 +1,28 @@
+.modal-dialog:has(.o_ab_stock_report) {
+    width: calc(100vw - 32px);
+    max-width: 1360px;
+}
+
+.modal-dialog:has(.o_ab_stock_report) .modal-content {
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #f8fafc;
+    box-shadow: 0 24px 70px rgba(15, 23, 42, .18);
+}
+
+.modal-dialog:has(.o_ab_stock_report) .modal-body {
+    padding: 0;
+    background: #f8fafc;
+}
+
+.modal-dialog:has(.o_ab_stock_report) .modal-footer {
+    justify-content: flex-start !important;
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
 .o_ab_stock_report_dialog {
     --ab-sr-text: #0f172a;
     --ab-sr-text-soft: #1e293b;
@@ -202,9 +227,500 @@
     flex-direction: column;
     gap: 20px;
     min-width: 1180px;
+    min-height: 560px;
     padding: 28px 32px 22px;
     color: var(--ab-sr-text);
     background: var(--ab-sr-page);
+}
+
+.o_ab_stock_report.is-loading {
+    cursor: progress;
+
+    .o_ab_stock_report_tabs,
+    .o_ab_stock_report_filters,
+    .o_ab_stock_report_load_more,
+    .o_ab_stock_report_table,
+    .o_ab_stock_report_status {
+        pointer-events: none;
+    }
+
+    .o_ab_stock_report_tab,
+    .o_ab_stock_report_load_more_btn,
+    .o_ab_stock_report_footer_load_more_btn,
+    button[name^="action_"] {
+        cursor: progress;
+    }
+}
+
+@keyframes ab-stock-report-skeleton {
+    0% {
+        background-position: 140% 0;
+    }
+    100% {
+        background-position: -40% 0;
+    }
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_status {
+    position: relative;
+    min-height: 66px;
+    overflow: hidden;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_status > * {
+    opacity: 0;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_status::after {
+    content: "";
+    position: absolute;
+    inset: 16px;
+    border-radius: 10px;
+    background:
+        linear-gradient(90deg, #e2e8f0 0 90px, transparent 90px 118px, #e2e8f0 118px 230px, transparent 230px 258px, #e2e8f0 258px 430px),
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, .78), transparent);
+    background-color: #f8fafc;
+    background-size: 100% 100%, 220px 100%;
+    background-repeat: no-repeat;
+    animation: ab-stock-report-skeleton 1.25s ease-in-out infinite;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_table {
+    position: relative;
+    min-height: 410px;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_table .o_list_renderer,
+.o_ab_stock_report.is-loading .o_ab_stock_report_table .o_x2m_control_panel,
+.o_ab_stock_report.is-loading .o_ab_stock_report_table > .o_field_widget {
+    opacity: 0;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_table::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background:
+        linear-gradient(#f8fafc, #f8fafc) 0 0 / 100% 48px no-repeat,
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 51px,
+            #f1f5f9 51px,
+            #f1f5f9 52px
+        );
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_table::after {
+    content: "";
+    position: absolute;
+    inset: 18px 24px;
+    z-index: 3;
+    border-radius: 8px;
+    background:
+        linear-gradient(90deg, #e2e8f0 0 120px, transparent 120px 178px, #e2e8f0 178px 260px, transparent 260px 330px, #e2e8f0 330px 410px, transparent 410px 490px, #e2e8f0 490px 650px, transparent 650px 720px, #e2e8f0 720px 920px),
+        repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 38px,
+            rgba(226, 232, 240, .95) 38px,
+            rgba(226, 232, 240, .95) 52px
+        ),
+        linear-gradient(90deg, transparent, rgba(255, 255, 255, .8), transparent);
+    background-color: #ffffff;
+    background-size: 100% 26px, 100% 52px, 240px 100%;
+    background-position: 0 0, 0 52px, 140% 0;
+    background-repeat: repeat-y, repeat-y, no-repeat;
+    animation: ab-stock-report-skeleton 1.25s ease-in-out infinite;
+}
+
+.o_ab_stock_report {
+    position: relative;
+}
+
+.o_ab_stock_report_skeleton {
+    display: none;
+}
+
+.o_ab_stock_report.is-loading > :not(.o_ab_stock_report_skeleton) {
+    opacity: 0;
+}
+
+.o_ab_stock_report.is-loading > .o_ab_stock_report_skeleton {
+    position: absolute;
+    inset: 28px 32px 22px;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    color: var(--ab-sr-secondary);
+}
+
+.o_ab_stock_report_skeleton_line,
+.o_ab_stock_report_skeleton_product_icon,
+.o_ab_stock_report_skeleton_tab_icon,
+.o_ab_stock_report_skeleton_capsule {
+    display: inline-flex;
+    overflow: hidden;
+    border-radius: 7px;
+    background: linear-gradient(90deg, #e2e8f0 0%, #f8fafc 42%, #e2e8f0 78%);
+    background-size: 240% 100%;
+    animation: ab-stock-report-skeleton 1.35s ease-in-out infinite;
+}
+
+.o_ab_stock_report_skeleton_header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, auto);
+    gap: 24px;
+    align-items: end;
+}
+
+.o_ab_stock_report_skeleton_product {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+}
+
+.o_ab_stock_report_skeleton_product_icon {
+    flex: 0 0 64px;
+    width: 64px;
+    height: 64px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background-color: #ffffff;
+}
+
+.o_ab_stock_report_skeleton_product_text {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.o_ab_stock_report_skeleton_line.w-product-name {
+    width: 45vw;
+    max-width: 560px;
+    height: 17px;
+}
+
+.o_ab_stock_report_skeleton_line.w-product-name-short {
+    width: 34vw;
+    max-width: 360px;
+    height: 17px;
+}
+
+.o_ab_stock_report_skeleton_line.w-product-meta {
+    width: 190px;
+    height: 13px;
+    margin-top: 2px;
+}
+
+.o_ab_stock_report_skeleton_filters {
+    display: flex;
+    align-items: end;
+    justify-content: flex-end;
+    gap: 16px;
+}
+
+.o_ab_stock_report_skeleton_filter {
+    display: flex;
+    min-width: 190px;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.o_ab_stock_report_skeleton_line.w-filter-label {
+    width: 86px;
+    height: 12px;
+}
+
+.o_ab_stock_report_skeleton_line.w-filter-date,
+.o_ab_stock_report_skeleton_line.w-filter-limit {
+    height: 44px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: #ffffff;
+}
+
+.o_ab_stock_report_skeleton_line.w-filter-date {
+    width: 250px;
+}
+
+.o_ab_stock_report_skeleton_line.w-filter-limit {
+    width: 190px;
+}
+
+.o_ab_stock_report_skeleton_tabs {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0;
+    padding: 4px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, .04);
+}
+
+.o_ab_stock_report_skeleton_tab {
+    position: relative;
+    display: flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+}
+
+.o_ab_stock_report_skeleton_tab.active {
+    border-color: #e2e8f0;
+    background: #ffffff;
+    box-shadow: 0 6px 14px rgba(15, 23, 42, .08);
+}
+
+.o_ab_stock_report_skeleton_tab.active::after {
+    content: "";
+    position: absolute;
+    inset-inline: 18px;
+    bottom: -5px;
+    height: 3px;
+    border-radius: 999px;
+    background: #2563eb;
+}
+
+.o_ab_stock_report_skeleton_tab_icon {
+    width: 16px;
+    height: 16px;
+    border-radius: 5px;
+}
+
+.o_ab_stock_report_skeleton_line.w-tab {
+    width: 64px;
+    height: 13px;
+}
+
+.o_ab_stock_report_skeleton_line.w-tab-long {
+    width: 138px;
+    height: 13px;
+}
+
+.o_ab_stock_report_skeleton_table {
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+}
+
+.o_ab_stock_report_skeleton_table_header,
+.o_ab_stock_report_skeleton_row {
+    display: grid;
+    grid-template-columns: 160px 135px 125px 125px minmax(170px, 1fr) minmax(170px, 1fr) minmax(190px, 1.15fr) 42px;
+    align-items: center;
+}
+
+.o_ab_stock_report_skeleton_table_header {
+    min-height: 48px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #f8fafc;
+}
+
+.o_ab_stock_report_skeleton_th {
+    padding: 0 12px;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.o_ab_stock_report_skeleton_settings {
+    text-align: center;
+}
+
+.o_ab_stock_report_skeleton_row {
+    min-height: 52px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.o_ab_stock_report_skeleton_row:last-child {
+    border-bottom: 0;
+}
+
+.o_ab_stock_report_skeleton_td {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 6px;
+    padding: 0 12px;
+}
+
+.o_ab_stock_report_skeleton_td.number {
+    align-items: flex-end;
+}
+
+.o_ab_stock_report_skeleton_td.arabic,
+.o_ab_stock_report_skeleton_td.employee {
+    align-items: flex-end;
+}
+
+.o_ab_stock_report_skeleton_capsule {
+    width: 54px;
+    height: 26px;
+    border-radius: 999px;
+}
+
+.o_ab_stock_report_skeleton_capsule.wide {
+    width: 92px;
+}
+
+.o_ab_stock_report_skeleton_line.w-date {
+    width: 88px;
+    height: 12px;
+}
+
+.o_ab_stock_report_skeleton_line.w-time {
+    width: 62px;
+    height: 11px;
+}
+
+.o_ab_stock_report_skeleton_line.w-price {
+    width: 86px;
+    height: 12px;
+}
+
+.o_ab_stock_report_skeleton_line.w-qty {
+    width: 52px;
+    height: 12px;
+}
+
+.o_ab_stock_report_skeleton_line.w-ar-store {
+    width: 152px;
+    height: 13px;
+}
+
+.o_ab_stock_report_skeleton_line.w-ar-store-short {
+    width: 118px;
+    height: 13px;
+}
+
+.o_ab_stock_report_skeleton_line.w-ar-customer {
+    width: 168px;
+    height: 13px;
+}
+
+.o_ab_stock_report_skeleton_line.w-ar-customer-short {
+    width: 132px;
+    height: 13px;
+}
+
+.o_ab_stock_report_skeleton_line.w-employee {
+    width: 176px;
+    height: 12px;
+}
+
+.o_ab_stock_report_skeleton_line.w-employee-short {
+    width: 118px;
+    height: 11px;
+}
+
+.o_ab_stock_report_is_loading .modal-footer {
+    position: relative;
+}
+
+.o_ab_stock_report_is_loading .modal-footer > :not(.o_ab_stock_report_footer_skeleton) {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.o_ab_stock_report_footer_skeleton {
+    position: absolute;
+    inset: 16px 24px;
+    z-index: 5;
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.o_ab_stock_report_is_loading .o_ab_stock_report_footer_skeleton {
+    display: flex;
+}
+
+.o_ab_stock_report_footer_skeleton_buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.o_ab_stock_report_skeleton_line.w-footer-count {
+    width: 160px;
+    height: 14px;
+}
+
+.o_ab_stock_report_skeleton_line.w-footer-secondary,
+.o_ab_stock_report_skeleton_line.w-footer-primary {
+    height: 40px;
+    border-radius: 8px;
+}
+
+.o_ab_stock_report_skeleton_line.w-footer-secondary {
+    width: 102px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+}
+
+.o_ab_stock_report_skeleton_line.w-footer-primary {
+    width: 86px;
+    background: linear-gradient(90deg, #0f172a 0%, #334155 42%, #0f172a 78%);
+    background-size: 240% 100%;
+}
+
+.o_ab_stock_report.is-loading > :not(.o_ab_stock_report_skeleton) {
+    opacity: 1;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_status {
+    min-height: auto;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_status > * {
+    opacity: 1;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_status::after {
+    display: none;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_loading_target {
+    position: relative;
+    display: block !important;
+    min-height: 410px;
+}
+
+.o_ab_stock_report.is-loading .o_ab_stock_report_loading_target > .o_ab_stock_report_skeleton {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: block;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+}
+
+.o_ab_stock_report_is_loading .modal-footer > :not(.o_ab_stock_report_footer_skeleton) {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.o_ab_stock_report_is_loading .o_ab_stock_report_footer_skeleton {
+    display: none;
 }
 
 .o_ab_stock_report_header {

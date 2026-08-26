@@ -70,7 +70,7 @@ class AbStockReportProduct(models.Model):
                 self.env.context,
                 default_product_id=self.id,
                 default_limit=10,
-                dialog_size="large",
+                dialog_size="extra-large",
             ),
         })
         return action
@@ -282,7 +282,7 @@ class AbStockReportWizard(models.TransientModel):
         self.ensure_one()
         self._force_fetch_from_bconnect(self.active_tab)
         self._load_cached_lines(self.active_tab, loaded_from_cache=False)
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_load_lines(self):
         self.ensure_one()
@@ -292,30 +292,30 @@ class AbStockReportWizard(models.TransientModel):
         self.ensure_one()
         self._force_fetch_from_bconnect(self.active_tab)
         self._load_cached_lines(self.active_tab, loaded_from_cache=False)
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_clear_from_date(self):
         self.ensure_one()
         self.from_date = False
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_fetch_sales(self):
         self.ensure_one()
         self.active_tab = "sale"
         self._load_or_fetch_group("sale")
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_fetch_purchase(self):
         self.ensure_one()
         self.active_tab = "purchase"
         self._load_or_fetch_group("purchase")
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_fetch_transfers(self):
         self.ensure_one()
         self.active_tab = "transfer"
         self._load_or_fetch_group("transfer")
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_fetch_store_balances(self):
         self.ensure_one()
@@ -326,38 +326,38 @@ class AbStockReportWizard(models.TransientModel):
         else:
             cache_model._get_or_create_rows(self.product_id)
         self._load_store_balance_lines()
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_refresh_store_balance_main(self):
         self.ensure_one()
         self.active_tab = "store_balance"
         self.env["ab_stock_report_store_balance_cache"].sudo().refresh_main_server(self.product_id)
         self._load_store_balance_lines()
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_update_all_store_balances(self):
         self.ensure_one()
         self.active_tab = "store_balance"
         self.env["ab_stock_report_store_balance_job"].sudo().enqueue_for_product(self.product_id)
         self._load_store_balance_lines()
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_cancel_store_balance_update(self):
         self.ensure_one()
         self._active_store_balance_job().request_cancel()
         self._load_store_balance_lines()
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_refresh_store_balance_progress(self):
         self.ensure_one()
         self._load_store_balance_lines()
-        return self._open_action()
+        return self._soft_reload_action()
 
     def action_clear_store_balance_filter(self):
         self.ensure_one()
         self.store_balance_filter_store_id = False
         self._load_store_balance_lines()
-        return self._open_action()
+        return self._soft_reload_action()
 
     @api.onchange("store_balance_filter_store_id")
     def _onchange_store_balance_filter_store_id(self):
@@ -368,7 +368,7 @@ class AbStockReportWizard(models.TransientModel):
     def action_load_more(self):
         self.ensure_one()
         if not self.from_date:
-            return self._open_action()
+            return self._soft_reload_action()
         movement_group = self.active_tab
         cache_entry = self._get_cache_entry(movement_group)
         loaded_from_cache = True
@@ -379,7 +379,7 @@ class AbStockReportWizard(models.TransientModel):
             self._fetch_next_date_range_batch(movement_group)
             loaded_from_cache = False
         self._load_cached_lines(movement_group, loaded_from_cache=loaded_from_cache)
-        return self._open_action()
+        return self._soft_reload_action()
 
     def _load_or_fetch_group(self, movement_group):
         self.ensure_one()
@@ -436,10 +436,14 @@ class AbStockReportWizard(models.TransientModel):
                 self.env.context,
                 default_product_id=self.product_id.id,
                 default_limit=self.limit,
-                dialog_size="large",
+                dialog_size="extra-large",
             ),
         })
         return action
+
+    def _soft_reload_action(self):
+        self.ensure_one()
+        return self._open_action()
 
     def _bootstrap_from_cache(self):
         self.ensure_one()
@@ -846,4 +850,4 @@ class AbStockReportStoreBalanceWizardLine(models.TransientModel):
         wizard = self.wizard_id
         wizard.active_tab = "store_balance"
         wizard._load_store_balance_lines()
-        return wizard._open_action()
+        return wizard._soft_reload_action()
