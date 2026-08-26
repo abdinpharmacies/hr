@@ -1,4 +1,5 @@
 import datetime
+from unittest.mock import patch
 
 from odoo import Command
 from odoo.exceptions import AccessError, ValidationError
@@ -11,6 +12,7 @@ class TestReplicationOverride(TransactionCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.Override = cls.env['ab_odoo_replication_override'].sudo()
+        cls.WriteRule = cls.env['ab_odoo_replication_override_write_rule'].sudo()
         cls.group_user = cls.env.ref('base.group_user')
         cls.group_portal = cls.env.ref('base.group_portal')
         cls.regular_user = cls.env['res.users'].sudo().with_context(
@@ -53,6 +55,29 @@ class TestReplicationOverride(TransactionCase):
             **values,
         })
 
+    def _field(self, model_name, field_name):
+        field = self.env['ir.model.fields'].sudo().search([
+            ('model', '=', model_name),
+            ('name', '=', field_name),
+        ], limit=1)
+        self.assertTrue(field, f'Missing field {model_name}.{field_name}')
+        return field
+
+    def _add_write_rule(self, policy, group, *field_names):
+        return self.WriteRule.create({
+            'override_id': policy.id,
+            'group_id': group.id,
+            'field_ids': [Command.set([
+                self._field(policy.model_name, field_name).id
+                for field_name in field_names
+            ])],
+        })
+
+    def _new_group(self, suffix):
+        return self.env['res.groups'].sudo().create({
+            'name': f'Replication Override {suffix}',
+        })
+
     def test_default_policy_blocks_crud_without_implicit_admin_bypass(self):
         self._create_partner_policy()
 
@@ -60,18 +85,18 @@ class TestReplicationOverride(TransactionCase):
             self.env['res.partner'].with_user(self.regular_user).create({
                 'name': 'Blocked Partner',
             })
-        with self.assertRaisesRegex(AccessError, 'write'):
+        with self.assertRaises(AccessError):
             self.partner_a.with_user(self.regular_user).write({'name': 'Blocked'})
         with self.assertRaisesRegex(AccessError, 'delete'):
             self.partner_a.with_user(self.regular_user).unlink()
-        with self.assertRaisesRegex(AccessError, 'write'):
+        with self.assertRaises(AccessError):
             self.partner_a.with_user(self.admin_user).write({'name': 'Admin Blocked'})
 
     def test_allowed_groups_bypass_guard(self):
-        self._create_partner_policy(
-            allowed_write_group_ids=[Command.set(self.group_user.ids)],
+        policy = self._create_partner_policy(
             allowed_create_group_ids=[Command.set(self.group_user.ids)],
         )
+        self._add_write_rule(policy, self.group_user, 'name')
 
         created = self.env['res.partner'].with_user(self.regular_user).create({
             'name': 'Allowed Partner',
@@ -82,10 +107,10 @@ class TestReplicationOverride(TransactionCase):
         self.assertEqual(self.partner_a.name, 'Allowed Write')
 
     def test_allowed_group_does_not_grant_normal_model_access(self):
-        self._create_partner_policy(
-            allowed_write_group_ids=[Command.set(self.group_portal.ids)],
+        policy = self._create_partner_policy(
             allowed_create_group_ids=[Command.set(self.group_portal.ids)],
         )
+        self._add_write_rule(policy, self.group_portal, 'name')
 
         with self.assertRaises(AccessError):
             self.partner_a.with_user(self.portal_user).write({'name': 'No ACL'})
@@ -97,7 +122,7 @@ class TestReplicationOverride(TransactionCase):
     def test_replication_context_requires_sudo(self):
         self._create_partner_policy()
 
-        with self.assertRaisesRegex(AccessError, 'write'):
+        with self.assertRaises(AccessError):
             self.partner_a.with_user(self.regular_user).with_context(
                 replication=True,
             ).write({'name': 'Spoofed Replication'})
@@ -150,7 +175,7 @@ class TestReplicationOverride(TransactionCase):
         original_value = config.get('is_control_server', False)
         config['is_control_server'] = True
         try:
-            with self.assertRaisesRegex(AccessError, 'write'):
+            with self.assertRaises(AccessError):
                 self.partner_a.with_user(self.regular_user).write({'city': 'Blocked'})
 
             policy.write({'control_server_bypass': True})
@@ -180,6 +205,94 @@ class TestReplicationOverride(TransactionCase):
             self.Override.create({'model_name': 'Invalid Model Name'})
         with self.assertRaises(ValidationError):
             self.Override.create({'model_name': 'ab_odoo_replication_override'})
+        with self.assertRaises(ValidationError):
+            self.Override.create({'model_name': 'ab_odoo_replication_override_write_rule'})
+
+    def test_field_rule_rejects_mixed_write_atomically(self):
+        policy = self._create_partner_policy()
+        self._add_write_rule(policy, self.group_user, 'name')
+        original_name = self.partner_a.name
+        original_city = self.partner_a.city
+
+        with self.assertRaisesRegex(AccessError, 'city'):
+            self.partner_a.with_user(self.regular_user).write({
+                'name': 'Should Roll Back',
+                'city': 'Denied City',
+            })
+
+        self.assertEqual(self.partner_a.name, original_name)
+        self.assertEqual(self.partner_a.city, original_city)
+
+    def test_multiple_write_groups_combine_fields_by_union(self):
+        name_group = self._new_group('Name Group')
+        city_group = self._new_group('City Group')
+        self.regular_user.sudo().write({
+            'group_ids': [Command.link(name_group.id), Command.link(city_group.id)],
+        })
+        policy = self._create_partner_policy()
+        self._add_write_rule(policy, name_group, 'name')
+        self._add_write_rule(policy, city_group, 'city')
+
+        self.partner_a.with_user(self.regular_user).write({
+            'name': 'Union Name',
+            'city': 'Union City',
+        })
+
+        self.assertEqual(self.partner_a.name, 'Union Name')
+        self.assertEqual(self.partner_a.city, 'Union City')
+
+    def test_write_rule_changes_invalidate_cached_fields(self):
+        policy = self._create_partner_policy()
+        rule = self._add_write_rule(policy, self.group_user, 'name')
+        self.partner_a.with_user(self.regular_user).write({'name': 'Initially Allowed'})
+
+        rule.write({'field_ids': [Command.set([self._field('res.partner', 'city').id])]})
+
+        with self.assertRaisesRegex(AccessError, 'name'):
+            self.partner_a.with_user(self.regular_user).write({'name': 'Now Denied'})
+        self.partner_a.with_user(self.regular_user).write({'city': 'Now Allowed'})
+        self.assertEqual(self.partner_a.city, 'Now Allowed')
+
+    def test_write_rule_validates_fields_and_parent_model(self):
+        policy = self._create_partner_policy()
+        groups = [self._new_group(str(index)) for index in range(4)]
+        invalid_field_sets = [
+            [],
+            [self._field('res.users', 'login').id],
+            [self._field('res.partner', 'write_date').id],
+            [self._field('res.partner', 'display_name').id],
+        ]
+
+        for group, field_ids in zip(groups, invalid_field_sets):
+            with self.assertRaises(ValidationError):
+                self.WriteRule.create({
+                    'override_id': policy.id,
+                    'group_id': group.id,
+                    'field_ids': [Command.set(field_ids)],
+                })
+
+        rule = self._add_write_rule(policy, self.group_user, 'name')
+        self.assertEqual(rule.editable_fields, 'name')
+        with self.assertRaisesRegex(ValidationError, 'Remove the writable-field rules'):
+            policy.write({'model_name': 'res.users'})
+
+    def test_missing_policy_tables_bypass_guard_during_bootstrap(self):
+        policy = self._create_partner_policy()
+        self._add_write_rule(policy, self.group_user, 'name')
+        self.env.registry.clear_cache()
+        try:
+            with patch(
+                'odoo.addons.ab_odoo_replication.models.'
+                'ab_odoo_replication_override.sql.table_exists',
+                return_value=False,
+            ):
+                self.partner_a.with_user(self.regular_user).write({
+                    'city': 'Bootstrap Allowed',
+                })
+        finally:
+            self.env.registry.clear_cache()
+
+        self.assertEqual(self.partner_a.city, 'Bootstrap Allowed')
 
     def test_seeded_compatibility_policies(self):
         expected_models = {
@@ -217,6 +330,16 @@ class TestReplicationOverride(TransactionCase):
             self.env['ab_odoo_replication_override'].with_user(
                 self.regular_user,
             ).create({'model_name': 'x_forbidden_override'})
+
+        policy = self._create_partner_policy()
+        with self.assertRaises(AccessError):
+            self.env['ab_odoo_replication_override_write_rule'].with_user(
+                self.regular_user,
+            ).create({
+                'override_id': policy.id,
+                'group_id': self.group_user.id,
+                'field_ids': [Command.set([self._field('res.partner', 'name').id])],
+            })
 
     def test_missing_local_model_is_skipped(self):
         with self.assertLogs(
