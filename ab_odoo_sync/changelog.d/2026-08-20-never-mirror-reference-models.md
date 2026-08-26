@@ -15,13 +15,16 @@ Files changed:
 - `ab_odoo_sync/never-mirror.md`
 - `ab_odoo_sync/changelog.d/2026-08-20-never-mirror-reference-models.md`
 
-## Current changes before commit:
+## c28870f9ed15e97d73c14387f65b0b47821fd7ac
+
+- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
+- Date: Sun Aug 23 17:01:20 2026 +0300
+- Subject: ab_odoo_sync/Tracked branch record changes create Upload Outbox events, each event ensures a queue_job sender is queued, and the queue runner asynchronously sends pending outbox batches to MAIN
 
 User-facing changes:
 
-- Use the already installed `integration_queue_job` provider for Odoo Sync background jobs.
-- Stop forcing installation of the separate OCA `queue_job` addon, which collides with `integration_queue_job` on the unique root queue channel.
-- Queue branch Upload Outbox sending through `integration_queue_job` from both the Send Now action and the Branch Upload cron.
+- Use the OCA `queue_job` provider for Odoo Sync background jobs.
+- Queue branch Upload Outbox sending through `queue_job` from both the Send Now action and the Branch Upload cron.
 - Automatically enqueue the branch upload sender when a new upload outbox event is captured.
 - Keep the existing branch-to-MAIN HTTP batch sender as the queued worker body so failed outbox rows still record their error details.
 

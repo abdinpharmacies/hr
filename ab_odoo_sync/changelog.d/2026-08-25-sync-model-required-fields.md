@@ -1,15 +1,20 @@
-## c28870f9ed15e97d73c14387f65b0b47821fd7ac
+## 009977908d7046630ecdb3313b94a52a52ca53d0
 
-- Author: Hossam Elsheikh <hossam.m.elsheikh@gmail.com>
-- Date: Sun Aug 23 17:01:20 2026 +0300
-- Subject: ab_odoo_sync/Tracked branch record changes create Upload Outbox events, each event ensures a queue_job sender is queued, and the queue runner asynchronously sends pending outbox batches to MAIN
+- Author: Alhassan Hossny <alhassan.hossny@gmail.com>
+- Date: Tue Aug 25 10:56:32 2026 +0300
+- Subject: ab_odoo_sync: enforce report sync schema rules
 
 User-facing changes:
 
-- Added queued branch upload sending and queue job registration for upload apply work.
+- Enforced permissive mirror schemas and moved required-value checks into apply-profile mappings.
+- Switched Odoo Sync jobs to the Integration Queue Job provider used by the reporting environment at that time.
 
 Files changed:
 
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/changelog.d/2026-08-20-never-mirror-reference-models.md`
+- `ab_odoo_sync/changelog.d/2026-08-25-sync-model-required-fields.md`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
 - `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
 - `ab_odoo_sync/sync-rules.md`
 
@@ -17,10 +22,13 @@ Files changed:
 
 User-facing changes:
 
-- Documented Rule 3: `__sync` mirror models must not define required fields.
-- Added apply-profile validation that rejects mirror target models with required fields, so strictness is controlled by field mapping `required` flags instead of table schema.
+- Use the available OCA `queue_job` addon for all Odoo Sync background work.
+- Register upload apply, MAIN apply feeder, and branch sender jobs on `queue_job.channel_root`.
+- Remove the runtime dependency on the deleted `integration_queue_job` wrapper.
 
 Files changed:
 
-- `ab_odoo_sync/models/ab_odoo_sync_apply_profile.py`
-- `ab_odoo_sync/sync-rules.md`
+- `ab_odoo_sync/__manifest__.py`
+- `ab_odoo_sync/data/ab_odoo_sync_queue_job.xml`
+- `ab_odoo_sync/changelog.d/2026-08-20-never-mirror-reference-models.md`
+- `ab_odoo_sync/changelog.d/2026-08-25-sync-model-required-fields.md`

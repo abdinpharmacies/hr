@@ -7,8 +7,8 @@
     "website": "https://www.abdinpharmacies.com",
     "license": "LGPL-3",
     "category": "Tools",
-    "version": "19.0.2.3.0",
-    "depends": ["base", "web", "integration_queue_job"],
+    "version": "19.0.2.3.1",
+    "depends": ["base", "web", "queue_job"],
     "data": [
         "security/ir.model.access.csv",
         "data/ab_odoo_sync_queue_job.xml",
