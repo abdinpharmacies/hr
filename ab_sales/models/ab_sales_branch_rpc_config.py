@@ -224,15 +224,17 @@ class AbSalesBranchRpcConfig(models.Model):
                 uid, password = record._authenticate()
                 with record._socket_timeout():
                     object_proxy = record._rpc_object_proxy()
-                    object_proxy.execute_kw(
+                    access_allowed = object_proxy.execute_kw(
                         record.rpc_db,
                         uid,
                         password,
                         "res.users",
                         "check_access_rights",
                         ["read"],
-                        {"raise_exception": True},
+                        {"raise_exception": False},
                     )
+                    if not access_allowed:
+                        raise UserError(_("Authenticated, but remote user does not have read access."))
                     stores = object_proxy.execute_kw(
                         record.rpc_db,
                         uid,

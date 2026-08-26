@@ -3991,6 +3991,12 @@ msgstr "فشلت المصادقة لاتصال أودو الفرع المعد."
 #. module: ab_sales
 #. odoo-python
 #: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
+msgid "Authenticated, but remote user does not have read access."
+msgstr "تمت المصادقة، لكن المستخدم البعيد لا يملك صلاحية القراءة."
+
+#. module: ab_sales
+#. odoo-python
+#: code:addons/ab_sales/models/ab_sales_branch_rpc_config.py:0
 msgid "Selected store must have an E-Plus serial or code before testing RPC."
 msgstr "يجب أن يحتوي الفرع المحدد على رقم E-Plus أو كود قبل اختبار RPC."
 
