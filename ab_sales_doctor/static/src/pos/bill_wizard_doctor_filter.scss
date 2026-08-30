@@ -1,0 +1,28 @@
+.o_ab_sales_bill_wizard_filter_doctor {
+  flex: 1.4 1 260px;
+  max-width: 420px;
+  min-width: 240px;
+}
+
+.o_ab_sales_bill_wizard_filter_doctor .o_ab_many2many_tags {
+  min-height: 31px;
+  padding: 3px 0;
+}
+
+.o_ab_sales_bill_wizard_filter_doctor .o_ab_many2many_tags .badge {
+  max-width: 100%;
+}
+
+.o_ab_sales_bill_wizard_filter_doctor .o_ab_many2many_tags .badge > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+  .o_ab_sales_bill_wizard_filter_doctor {
+    flex-basis: 100%;
+    max-width: none;
+    min-width: 0;
+  }
+}

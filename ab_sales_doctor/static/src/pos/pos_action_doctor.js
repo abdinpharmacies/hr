@@ -332,6 +332,7 @@ if (PosAction) {
                         query,
                         limit: 24,
                         store_id: storeId,
+                        item_type: this.state.productItemType || "all",
                     }
                 );
                 if (requestId !== this._abSalesDoctorProductRequestId) {
