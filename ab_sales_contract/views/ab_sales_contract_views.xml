@@ -34,6 +34,17 @@
             </field>
         </record>
 
+        <record id="ab_sales_header_view_tree_inherit_contract_total_after_discount" model="ir.ui.view">
+            <field name="name">ab_sales_header_view_tree_inherit_contract_total_after_discount</field>
+            <field name="model">ab_sales_header</field>
+            <field name="inherit_id" ref="ab_sales.ab_sales_header_view_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='total_price']" position="after">
+                    <field name="total_after_discount"/>
+                </xpath>
+            </field>
+        </record>
+
         <!-- Contract management (basic) -->
         <record id="ab_contract_view_tree" model="ir.ui.view">
             <field name="name">ab_contract_view_tree</field>
