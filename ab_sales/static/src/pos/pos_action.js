@@ -965,6 +965,7 @@ class AbSalesPosAction extends Component {
             productQuery: "",
             productHasBalanceOnly: !!initialPosUiSettings.productHasBalanceOnly,
             productHasPosBalanceOnly: !!initialPosUiSettings.productHasPosBalanceOnly,
+            productItemType: "all",
             productColumnPercent: initialProductColumnPercent,
             posSettingsSaving: false,
             selectionIndex: -1,
@@ -1058,6 +1059,7 @@ class AbSalesPosAction extends Component {
         this.onProductSearchKeydown = this.onProductSearchKeydown.bind(this);
         this.onProductHasBalanceChange = this.onProductHasBalanceChange.bind(this);
         this.onProductHasPosBalanceChange = this.onProductHasPosBalanceChange.bind(this);
+        this.onProductItemTypeChange = this.onProductItemTypeChange.bind(this);
         this.updateLineQty = this.updateLineQty.bind(this);
         this.updateLineSellPrice = this.updateLineSellPrice.bind(this);
         this.updateLineTargetPrice = this.updateLineTargetPrice.bind(this);
@@ -2512,6 +2514,11 @@ class AbSalesPosAction extends Component {
         this.searchProducts(this.state.productQuery.trim());
     }
 
+    onProductItemTypeChange(itemType) {
+        this.state.productItemType = ["medicine", "non_medicine"].includes(itemType) ? itemType : "all";
+        this.searchProducts(this.state.productQuery.trim());
+    }
+
     onProductSearch(ev) {
         this.state.productQuery = ev.target.value || "";
         if (this._productSearchTimer) {
@@ -2574,6 +2581,7 @@ class AbSalesPosAction extends Component {
                     has_pos_balance: this.state.productHasPosBalanceOnly,
                     store_id: storeId,
                     customer_phone: customerPhone,
+                    item_type: this.state.productItemType || "all",
                     context: ctx,
                 }
             );

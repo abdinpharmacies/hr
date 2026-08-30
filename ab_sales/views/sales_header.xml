@@ -146,7 +146,7 @@
                                         <field name="unavailable_reason" optional="hide"/>
                                         <field name="unavailable_reason_other" optional="hide"/>
                                         <button name="btn_get_product_balance" type="object" icon="fa-cubes"
-                                                class="btn-primary"/>
+                                                class="btn-primary" title="Get Product Balance"/>
                                     </list>
                                 </field>
                             </page>

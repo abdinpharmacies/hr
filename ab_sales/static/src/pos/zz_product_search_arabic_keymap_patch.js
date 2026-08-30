@@ -198,6 +198,7 @@ if (PosAction) {
                         has_pos_balance: this.state.productHasPosBalanceOnly,
                         store_id: storeId,
                         customer_phone: customerPhone,
+                        item_type: this.state.productItemType || "all",
                         context: ctx,
                     });
                     if ((this.state.productQuery || "").trim() !== sourceQuery) {

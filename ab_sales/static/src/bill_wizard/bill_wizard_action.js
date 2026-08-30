@@ -77,6 +77,7 @@ class AbSalesBillWizardAction extends Component {
                 eplusSerial: "",
                 dateStart: "",
                 dateEnd: "",
+                itemType: "all",
             },
             pagination: {
                 page: 1,
@@ -103,6 +104,7 @@ class AbSalesBillWizardAction extends Component {
         });
 
         this.onFilterInput = this.onFilterInput.bind(this);
+        this.onItemTypeChange = this.onItemTypeChange.bind(this);
         this.onProductSelectionUpdate = this.onProductSelectionUpdate.bind(this);
         this.productSelectionDomain = this.productSelectionDomain.bind(this);
         this.onFilterKeydown = this.onFilterKeydown.bind(this);
@@ -145,6 +147,7 @@ class AbSalesBillWizardAction extends Component {
             eplus_serial: (this.state.filters.eplusSerial || "").trim(),
             date_start: this.state.filters.dateStart || false,
             date_end: this.state.filters.dateEnd || false,
+            item_type: this.state.filters.itemType || "all",
             page: targetPage,
             per_page: 20,
         };
@@ -313,6 +316,11 @@ class AbSalesBillWizardAction extends Component {
         this.state.filters[filterKey] = ev.target.value || "";
     }
 
+    onItemTypeChange(itemType) {
+        this.state.filters.itemType = ["medicine", "non_medicine"].includes(itemType) ? itemType : "all";
+        this.applyFilters();
+    }
+
     onProductSelectionUpdate(value) {
         this.state.filters.productSelection = Array.isArray(value) ? value : [];
     }
@@ -343,6 +351,7 @@ class AbSalesBillWizardAction extends Component {
         this.state.filters.eplusSerial = "";
         this.state.filters.dateStart = "";
         this.state.filters.dateEnd = "";
+        this.state.filters.itemType = "all";
         await this.loadBills({page: 1});
     }
 

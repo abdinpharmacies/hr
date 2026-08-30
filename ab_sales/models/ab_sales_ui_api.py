@@ -1495,10 +1495,12 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             has_pos_balance=False,
             store_id=None,
             fields_list=None,
+            item_type="all",
     ):
         barcode_query = (f"%{barcode_query}" or "").strip()
         if not barcode_query or len(barcode_query) <= 5:
             return []
+        item_type = self._normalize_item_type_filter(item_type)
 
         barcode_models = [
             model_name
@@ -1518,6 +1520,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 "is_service",
                 "default_price",
                 "is_priced",
+                "is_medicine",
                 "allow_sell_fraction",
                 "eplus_serial",
                 "uom_id",
@@ -1547,8 +1550,11 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         if not product_ids:
             return []
 
+        product_domain = [("id", "in", product_ids), ("active", "=", True)]
+        if item_type != "all":
+            product_domain.append(("is_medicine", "=", item_type == "medicine"))
         rows = Product.search_read(
-            self._safe_domain("ab_product", [("id", "in", product_ids), ("active", "=", True)]),
+            self._safe_domain("ab_product", product_domain),
             fields_list,
             limit=chunk_size,
             order="name",
@@ -1632,10 +1638,14 @@ for ($i = $startInt; $i -le $endInt; $i++) {
             header_id=None,
             store_id=None,
             customer_phone=None,
+            item_type="all",
     ):
         self._require_models("ab_product", "ab_product_uom")
         Product = self.env["ab_product"]
         base_domain = [("active", "=", True)]
+        item_type = self._normalize_item_type_filter(item_type)
+        if item_type != "all":
+            base_domain.append(("is_medicine", "=", item_type == "medicine"))
         raw_query = (query or "").strip()
         query_code = ""
         query_like = ""
@@ -1651,6 +1661,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                 "is_service",
                 "default_price",
                 "is_priced",
+                "is_medicine",
                 "allow_sell_fraction",
                 "eplus_serial",
                 "uom_id",
@@ -1694,7 +1705,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
         def _run_search(search_domain, sql_filter=None):
             search_domain = self._safe_domain("ab_product", search_domain)
 
-            if want_pos_balance_only and store_id and not raw_query:
+            if item_type == "all" and want_pos_balance_only and store_id and not raw_query:
                 params = [store_id]
                 extra_where = ""
                 if sql_filter:
@@ -1849,6 +1860,7 @@ for ($i = $startInt; $i -le $endInt; $i++) {
                     has_pos_balance=want_pos_balance_only,
                     store_id=store_id,
                     fields_list=fields_list,
+                    item_type=item_type,
                 )
                 if barcode_rows:
                     seen_ids = {int(row.get("id") or 0) for row in rows if row.get("id")}

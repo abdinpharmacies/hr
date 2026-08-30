@@ -111,6 +111,29 @@
                                t-on-input="(ev) => onFilterInput('eplusSerial', ev)"
                                t-on-keydown="onFilterKeydown"/>
                     </div>
+                    <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_item_type">
+                        <label class="form-label mb-1">Item Type</label>
+                        <div class="btn-group btn-group-sm w-100" role="group" aria-label="Item Type">
+                            <button class="btn"
+                                    t-att-class="state.filters.itemType === 'all' ? 'btn-primary' : 'btn-outline-secondary'"
+                                    type="button"
+                                    t-on-click="() => onItemTypeChange('all')">
+                                All
+                            </button>
+                            <button class="btn"
+                                    t-att-class="state.filters.itemType === 'medicine' ? 'btn-primary' : 'btn-outline-secondary'"
+                                    type="button"
+                                    t-on-click="() => onItemTypeChange('medicine')">
+                                Medicine
+                            </button>
+                            <button class="btn"
+                                    t-att-class="state.filters.itemType === 'non_medicine' ? 'btn-primary' : 'btn-outline-secondary'"
+                                    type="button"
+                                    t-on-click="() => onItemTypeChange('non_medicine')">
+                                Non-medicine
+                            </button>
+                        </div>
+                    </div>
                     <div class="o_ab_sales_bill_wizard_filter o_ab_sales_bill_wizard_filter_date">
                         <label class="form-label mb-1">Start Date</label>
                         <input class="form-control form-control-sm"

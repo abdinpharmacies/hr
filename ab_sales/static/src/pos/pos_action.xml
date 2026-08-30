@@ -340,6 +340,28 @@
                                                aria-hidden="true"/>
                                         </label>
                                     </div>
+                                    <div class="btn-group btn-group-sm ab_pos_product_item_type_filter"
+                                         role="group"
+                                         aria-label="Item Type">
+                                        <button class="btn"
+                                                t-att-class="state.productItemType === 'all' ? 'btn-primary' : 'btn-outline-secondary'"
+                                                type="button"
+                                                t-on-click="() => onProductItemTypeChange('all')">
+                                            All
+                                        </button>
+                                        <button class="btn"
+                                                t-att-class="state.productItemType === 'medicine' ? 'btn-primary' : 'btn-outline-secondary'"
+                                                type="button"
+                                                t-on-click="() => onProductItemTypeChange('medicine')">
+                                            Medicine
+                                        </button>
+                                        <button class="btn"
+                                                t-att-class="state.productItemType === 'non_medicine' ? 'btn-primary' : 'btn-outline-secondary'"
+                                                type="button"
+                                                t-on-click="() => onProductItemTypeChange('non_medicine')">
+                                            Non-medicine
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                                     <div class="o_ab_sales_pos_product_hint ab_pos_product_hint">
