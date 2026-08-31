@@ -17,6 +17,32 @@ Files changed:
 - ab_promo_program/models/ab_promo_program_wiz.py
 
 
+commit 18f8406
+Author: hager yasser
+Date:   Sun Aug 23 2026
+
+    ab_promo_program/FEAT(#2168): move promo compensation and update wizard placeholder
+
+- Move promotion ownership and compensation metadata fields into the base Promotion Programs module.
+- Replace ownership values with `other_promotion` and `our_promotion`, defaulting new manual and Excel-created promotions to `other_promotion`.
+- Keep compensation company, timing, type, and approval attachment fields optional at the model layer while preserving form-level required timing/type controls.
+- Add the always-visible Compensation Details group to the base promotion form and keep the existing supplier accounting domain.
+- Keep Excel validation/grouping compatible with the new ownership keys and English labels.
+- Move Arabic compensation and ownership translations into `ab_promo_program` for both `ar` and `ar_001`.
+- Replace the Promotion Wizard paste placeholder with the exact tab-separated header row and one realistic example row.
+- Translate remaining Arabic promotion form labels for UoM basis, incentives, replica databases, and refine compensation/ownership wording.
+
+Files changed:
+
+- ab_promo_program/changelog.d
+- ab_promo_program/i18n/ar.po
+- ab_promo_program/i18n/ar_001.po
+- ab_promo_program/models/ab_promo_program.py
+- ab_promo_program/models/ab_promo_program_wiz.py
+- ab_promo_program/views/ab_promo_program.xml
+- ab_promo_program/views/ab_promo_program_wizard.xml
+
+
 commit 3db5d59
 Author: emadco88
 Date:   Tue Jul 28 2026
@@ -44,21 +70,10 @@ Files changed:
 
 Current changes before commit:
 
-- Move promotion ownership and compensation metadata fields into the base Promotion Programs module.
-- Replace ownership values with `other_promotion` and `our_promotion`, defaulting new manual and Excel-created promotions to `other_promotion`.
-- Keep compensation company, timing, type, and approval attachment fields optional at the model layer while preserving form-level required timing/type controls.
-- Add the always-visible Compensation Details group to the base promotion form and keep the existing supplier accounting domain.
-- Keep Excel validation/grouping compatible with the new ownership keys and English labels.
-- Move Arabic compensation and ownership translations into `ab_promo_program` for both `ar` and `ar_001`.
-- Replace the Promotion Wizard paste placeholder with the exact tab-separated header row and one realistic example row.
-- Translate remaining Arabic promotion form labels for UoM basis, incentives, replica databases, and refine compensation/ownership wording.
+- Require the Promotion Wizard Excel import headers `Compensation Way`, `Compensation Type`, and `promotion_ownership`.
+- Keep case-insensitive header matching, aggregated missing-header errors, blank value handling, and existing nonblank selection validation unchanged.
 
 Files changed:
 
 - ab_promo_program/changelog.d
-- ab_promo_program/i18n/ar.po
-- ab_promo_program/i18n/ar_001.po
-- ab_promo_program/models/ab_promo_program.py
 - ab_promo_program/models/ab_promo_program_wiz.py
-- ab_promo_program/views/ab_promo_program.xml
-- ab_promo_program/views/ab_promo_program_wizard.xml

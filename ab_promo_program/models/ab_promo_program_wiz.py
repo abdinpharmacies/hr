@@ -244,10 +244,19 @@ class AbPromoProgramWizard(models.TransientModel):
         header_map = self._build_header_map(header_row)
 
         # Required headers (technical names)
-        # أول 5 أعمدة اللي هتدخلهم يدويًا
+        # Import must include these columns; blank optional values are handled below.
         self._validate_required_headers(
             header_map,
-            ['name', 'product_code', 'promo_text', 'rule_date_from', 'rule_date_to']
+            [
+                'name',
+                'product_code',
+                'promo_text',
+                'rule_date_from',
+                'rule_date_to',
+                'Compensation Way',
+                'Compensation Type',
+                'promotion_ownership',
+            ]
         )
 
         promo_map = {}
