@@ -1,5 +1,6 @@
 import base64
 import os
+import re
 
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError, AccessError
@@ -7,6 +8,157 @@ from odoo.tools import html_escape
 
 DEFAULT_WEBSITE_IMAGE_DIRECTORY = "/opt/odoo19/product_images"
 WEBSITE_IMAGE_EXTENSIONS = (".jpg", ".jpeg", ".png", ".webp", ".gif", ".bmp")
+WEBSITE_PLACEHOLDER_IMAGE_PATH = os.path.abspath(
+    os.path.join(
+        os.path.dirname(__file__),
+        "..",
+        "static",
+        "src",
+        "img",
+        "placeholders",
+        "product_placeholder.jpeg",
+    )
+)
+
+WEBSITE_CATEGORY_TRANSLATIONS = {
+    "Medicines": "الأدوية",
+    "Pain Relief": "مسكنات الألم",
+    "Digestive Health": "صحة الجهاز الهضمي",
+    "Respiratory Care": "الجهاز التنفسي",
+    "Allergy Care": "الحساسية",
+    "Brain & Nervous System": "المخ والجهاز العصبي",
+    "Heart & Circulation": "القلب والدورة الدموية",
+    "Hormones": "الهرمونات",
+    "Infections": "العدوى والمضادات",
+    "Kidney & Urinary Care": "الكلى والمسالك البولية",
+    "Eye Care Medicines": "أدوية العيون",
+    "Ear Care": "العناية بالأذن",
+    "Mouth & Throat": "الفم والحلق",
+    "Skin Medicines": "أدوية الجلد",
+    "Women's Health": "صحة المرأة",
+    "Men's Health": "صحة الرجل",
+    "Specialty Medicines": "أدوية متخصصة",
+    "Vitamins & Supplements": "الفيتامينات والمكملات",
+    "Multivitamins": "مالتي فيتامين",
+    "Minerals": "المعادن",
+    "Kids Vitamins": "فيتامينات الأطفال",
+    "Pregnancy Supplements": "مكملات الحمل والرضاعة",
+    "Omega & Eye Supplements": "أوميجا ومكملات العين",
+    "Beauty Supplements": "مكملات البشرة والشعر والأظافر",
+    "Weight Management": "إدارة الوزن",
+    "Herbal Products": "منتجات عشبية",
+    "Beauty & Skin Care": "الجمال والعناية بالبشرة",
+    "Face Care": "العناية بالوجه",
+    "Body Care": "العناية بالجسم",
+    "Sun Care": "العناية من الشمس",
+    "Hair Care": "العناية بالشعر",
+    "Skin Treatment": "علاج مشاكل البشرة",
+    "Makeup & Nails": "المكياج والأظافر",
+    "Perfumes": "العطور",
+    "Personal Care": "العناية الشخصية",
+    "Bath & Shower": "الاستحمام والدش",
+    "Oral Care": "العناية بالفم والأسنان",
+    "Deodorants": "مزيلات العرق",
+    "Feminine Care": "العناية النسائية",
+    "Men's Grooming": "عناية الرجل",
+    "Hair Removal": "إزالة الشعر",
+    "Hygiene & Household": "النظافة والمنزل",
+    "Mother & Baby": "الأم والطفل",
+    "Baby Diapers & Wipes": "حفاضات ومناديل الطفل",
+    "Baby Feeding": "تغذية وإرضاع الطفل",
+    "Baby Nutrition": "تغذية الطفل",
+    "Baby Toiletries": "عناية واستحمام الطفل",
+    "Baby Accessories": "إكسسوارات الطفل",
+    "Mom Care": "عناية الأم",
+    "Health Devices & Supplies": "الأجهزة والمستلزمات الصحية",
+    "Diagnostics": "أجهزة وشرائط القياس",
+    "Patient Care": "رعاية المريض بالمنزل",
+    "Mobility Aids": "مساعدات الحركة",
+    "Orthopedics & Supports": "العظام والدعامات",
+    "Wound Care": "العناية بالجروح",
+    "Fitness & Sport": "اللياقة والرياضة",
+    "First Aid": "الإسعافات الأولية",
+    "Everyday Essentials": "الاحتياجات اليومية",
+}
+
+WEBSITE_CATEGORY_RULES = (
+    (("analgesic", "pain", "inflamation", "inflammation", "muscle spasm", "gout"), ("Medicines", "Pain Relief")),
+    (("acidity", "heart burn", "hyperacidity", "colon", "constipation", "diarrhea", "digestion", "liver", "ulcer", "vomiting", "digestive"), ("Medicines", "Digestive Health")),
+    (("respiratory", "asthma", "breathing", "cough", "cold", "sinusitis", "nasal congestion", "nasal wash", "nose"), ("Medicines", "Respiratory Care")),
+    (("allergy",), ("Medicines", "Allergy Care")),
+    (("brain", "nervous", "alzheimer", "anxiety", "insomnia", "depression", "epilepsy", "parkinson", "psychosis", "hypnotic", "local anesthesia"), ("Medicines", "Brain & Nervous System")),
+    (("heart", "blood vessel", "bleeding", "blood clot", "cholesterol", "triglyceride", "hypertension", "hypotension", "vascular"), ("Medicines", "Heart & Circulation")),
+    (("hormone", "fertility", "growth hormone", "thyroid"), ("Medicines", "Hormones")),
+    (("infection", "anti-biotic", "antibiotic", "fungi", "fungal", "malaria", "virus", "worm"), ("Medicines", "Infections")),
+    (("kidney", "urinary", "uti", "stones"), ("Medicines", "Kidney & Urinary Care")),
+    (("eye allergy", "eye disease", "eye dryness", "eye infection"), ("Medicines", "Eye Care Medicines")),
+    (("ear", "ear inflammation", "ear pain", "ear wax"), ("Medicines", "Ear Care")),
+    (("mouth", "throat", "gum", "ulcer", "mouth wash", "gargle", "sore throat"), ("Medicines", "Mouth & Throat")),
+    (("acne", "skin infection", "skin rash", "wounds", "burns and scars", "skin /"), ("Medicines", "Skin Medicines")),
+    (("contraceptive", "pregnancy and lactation", "vaginal", "women's health"), ("Medicines", "Women's Health")),
+    (("erection", "premature ejaculation", "prostate", "sexual tonic", "men's health"), ("Medicines", "Men's Health")),
+    (("cancer", "oncology", "corticosteroid", "rheumatoid", "vaccine", "hemorrhoid", "low immunity", "laboratory preparations", "infusion"), ("Medicines", "Specialty Medicines")),
+    (("multivitamin", "man and woman"), ("Vitamins & Supplements", "Multivitamins")),
+    (("mineral", "calcium", "iron", "zinc", "zink"), ("Vitamins & Supplements", "Minerals")),
+    (("babies", "children", "kids gumm", "kids syrup"), ("Vitamins & Supplements", "Kids Vitamins")),
+    (("pregnancy supplement",), ("Vitamins & Supplements", "Pregnancy Supplements")),
+    (("omega", "fish oil", "eye supplement"), ("Vitamins & Supplements", "Omega & Eye Supplements")),
+    (("skin and hair and nails", "colla", "collagen"), ("Vitamins & Supplements", "Beauty Supplements")),
+    (("weight gain", "weight loss", "chromax cut"), ("Vitamins & Supplements", "Weight Management")),
+    (("herbal",), ("Vitamins & Supplements", "Herbal Products")),
+    (("vitamin", "supplement", "d3"), ("Vitamins & Supplements",)),
+    (("face care", "cleanser", "face mask", "freshness", "moisturizer", "toner", "whiten"), ("Beauty & Skin Care", "Face Care")),
+    (("body care", "body care l3", "scrub", "body care products"), ("Beauty & Skin Care", "Body Care")),
+    (("sun protection", "sun tan", "sun", "photoderm"), ("Beauty & Skin Care", "Sun Care")),
+    (("hair care", "hair dye", "dyeing", "dyes", "henna", "hair nourishment", "hair mask", "hair oil", "hair serum", "hair styling", "hair treatment", "anti lice", "antidandruff", "hair loss", "hair straightener", "shampoo", "conditioner", "colored hair", "curly hair", "dry hair", "normal hair", "oily hair", "straightened hair"), ("Beauty & Skin Care", "Hair Care")),
+    (("skin treatment", "burns", "scars", "wrinkles", "lip care", "eye care"), ("Beauty & Skin Care", "Skin Treatment")),
+    (("make-up", "makeup", "nail", "lashes", "brows"), ("Beauty & Skin Care", "Makeup & Nails")),
+    (("perfume", "scent"), ("Beauty & Skin Care", "Perfumes")),
+    (("bath", "shower", "soap", "hand wash", "shower gel", "bath accessories"), ("Personal Care", "Bath & Shower")),
+    (("oral", "breath", "dental", "toothbrush", "mouthwash", "toothpaste"), ("Personal Care", "Oral Care")),
+    (("deod", "antiperspirant", "body freshener", "body splash", "roll on", "scented powder"), ("Personal Care", "Deodorants")),
+    (("woman care", "intimate care", "sanitary", "carefree", "molped"), ("Personal Care", "Feminine Care")),
+    (("men care", "men grooming"), ("Personal Care", "Men's Grooming")),
+    (("hair remover", "hair removal"), ("Personal Care", "Hair Removal")),
+    (("hygenic", "hygienic", "household", "air freshener", "antiseptic", "batteries", "papers", "tissues", "pests control", "medical soap"), ("Personal Care", "Hygiene & Household")),
+    (("baby diaper", "baby nappies", "baby wipes", "training pants", "molfix", "good care"), ("Mother & Baby", "Baby Diapers & Wipes")),
+    (("baby feeding", "breast feeding"), ("Mother & Baby", "Baby Feeding")),
+    (("baby food", "growing up milk", "infant milk"), ("Mother & Baby", "Baby Nutrition")),
+    (("baby toiletr", "baby grooming"), ("Mother & Baby", "Baby Toiletries")),
+    (("baby accessories", "baby safety", "baby toys", "baby travel", "general accessories"), ("Mother & Baby", "Baby Accessories")),
+    (("mom care", "maternity"), ("Mother & Baby", "Mom Care")),
+    (("diagnostic", "glucose", "tests"), ("Health Devices & Supplies", "Diagnostics")),
+    (("home patient", "bath room safety", "geriatric", "compress", "pillow", "cushion"), ("Health Devices & Supplies", "Patient Care")),
+    (("mobility", "walking aid", "wheel chair"), ("Health Devices & Supplies", "Mobility Aids")),
+    (("orthopedic", "osteoporosis", "joint health", "body support", "support"), ("Health Devices & Supplies", "Orthopedics & Supports")),
+    (("wound care",), ("Health Devices & Supplies", "Wound Care")),
+    (("fittness", "fitness", "sport", "massager", "sport tools"), ("Health Devices & Supplies", "Fitness & Sport")),
+    (("first aid",), ("First Aid",)),
+    (("accu chek", "accu-chek", "one touch", "onetouch", "glucose", "test strips", "lancets", "جهاز سكر", "جهاز قياس سكر"), ("Health Devices & Supplies", "Diagnostics")),
+    (("belt", "brace", "support", "collar", "knee", "wrist", "حزام", "دعامة", "ركبة", "رقبة", "رست", "ساند"), ("Health Devices & Supplies", "Orthopedics & Supports")),
+    (("shampoo", "conditioner", "hair", "زيت شعر", "فرشة شعر"), ("Beauty & Skin Care", "Hair Care")),
+    (("shower gel", "soap", "cotton pads", "tissues"), ("Personal Care", "Bath & Shower")),
+    (("perfume", "spray 250ml"), ("Beauty & Skin Care", "Perfumes")),
+    (("cream", "lotion", "gel", "serum"), ("Beauty & Skin Care", "Skin Treatment")),
+    ((" mg ", " tab", " cap", " vial", " supp", " oral drop", " eff", " sachet", " suspension", " syrup"), ("Medicines",)),
+)
+
+WEBSITE_CATEGORY_TOP_LEVEL = {
+    "medicine": ("Medicines",),
+    "medicines": ("Medicines",),
+    "medical soap": ("Personal Care", "Hygiene & Household"),
+    "vitamins and supplements": ("Vitamins & Supplements",),
+    "vitamins": ("Vitamins & Supplements",),
+    "beauty care": ("Beauty & Skin Care",),
+    "beauty": ("Beauty & Skin Care",),
+    "skin care": ("Beauty & Skin Care",),
+    "personal care": ("Personal Care",),
+    "mom and baby care": ("Mother & Baby",),
+    "baby care": ("Mother & Baby",),
+    "medical supplies": ("Health Devices & Supplies",),
+    "health devices": ("Health Devices & Supplies",),
+    "everyday essentials": ("Everyday Essentials",),
+}
 
 
 class AbProductGroup(models.Model):
@@ -24,25 +176,100 @@ class AbProductGroup(models.Model):
         categories = self.env["product.public.category"].sudo()
         for group in self:
             categories |= group._get_or_create_website_category()
+        if not categories:
+            categories = self._get_or_create_canonical_website_category(("Everyday Essentials",))
         return categories
 
     def _get_or_create_website_category(self):
         self.ensure_one()
-        Category = self.env["product.public.category"].sudo()
-        category = self.website_public_category_id.sudo()
-        parent = self.parent_id._get_or_create_website_category() if self.parent_id else Category
-        name = self.name or self.code or _("Unnamed Category")
-        vals = {
-            "name": name,
-            "parent_id": parent.id if parent else False,
-        }
-
-        if category:
-            category.write(vals)
-        else:
-            category = Category.create(vals)
+        category_path = self._get_canonical_website_category_path()
+        if category_path:
+            category = self._get_or_create_canonical_website_category(category_path)
             self.sudo().website_public_category_id = category.id
+            return category
+        return self.env["product.public.category"].sudo()
+
+    @api.model
+    def _normalize_website_category_text(self, text):
+        text = (text or "").casefold()
+        text = re.sub(r"\bl\d+\b", " ", text)
+        text = text.replace("&", " and ")
+        text = re.sub(r"[^0-9a-z\u0600-\u06ff/]+", " ", text)
+        return re.sub(r"\s+", " ", text).strip()
+
+    def _get_website_group_name_chain(self):
+        self.ensure_one()
+        chain = []
+        group = self
+        while group:
+            chain.append(group.name or group.code or "")
+            group = group.parent_id
+        return list(reversed([name for name in chain if name]))
+
+    def _get_canonical_website_category_path(self):
+        self.ensure_one()
+        raw_parts = self._get_website_group_name_chain()
+        return self._get_canonical_website_category_path_from_text(" / ".join(raw_parts))
+
+    @api.model
+    def _get_canonical_website_category_path_from_text(self, text):
+        normalized_path = self._normalize_website_category_text(text)
+        if not normalized_path:
+            return False
+        normalized_parts = [
+            part.strip()
+            for part in normalized_path.split("/")
+            if part.strip()
+        ]
+
+        exact = WEBSITE_CATEGORY_TOP_LEVEL.get(normalized_parts[-1])
+        if exact:
+            return exact
+        for keywords, category_path in WEBSITE_CATEGORY_RULES:
+            if any(keyword in normalized_path for keyword in keywords):
+                return category_path
+        return False
+
+    @api.model
+    def _get_or_create_canonical_website_category(self, category_path):
+        Category = self.env["product.public.category"].sudo().with_context(lang=False)
+        parent = Category
+        category = Category
+        sequence_base = 10
+        for depth, name in enumerate(category_path):
+            domain = [("name", "=", name), ("parent_id", "=", parent.id if parent else False)]
+            category = Category.search(domain, limit=1)
+            vals = {
+                "name": name,
+                "parent_id": parent.id if parent else False,
+                "sequence": sequence_base + depth,
+            }
+            if category:
+                category.write(vals)
+            else:
+                category = Category.create(vals)
+            category._write_arabic_website_category_translation()
+            parent = category
+            sequence_base += 10
         return category
+
+
+class ProductPublicCategory(models.Model):
+    _inherit = "product.public.category"
+
+    def _write_arabic_website_category_translation(self):
+        Lang = self.env["res.lang"].sudo()
+        arabic_langs = Lang.search([("code", "in", ["ar_001", "ar"])])
+        if not arabic_langs:
+            arabic_langs = Lang.search([("code", "like", "ar%")])
+        for category in self:
+            arabic_name = WEBSITE_CATEGORY_TRANSLATIONS.get(
+                category.with_context(lang=False).name
+            )
+            if not arabic_name:
+                continue
+            for lang in arabic_langs:
+                category.with_context(lang=lang.code).write({"name": arabic_name})
 
 
 class AbProductTag(models.Model):
@@ -250,6 +477,22 @@ class AbProduct(models.Model):
         return template
 
     @api.model
+    def _get_website_placeholder_image(self):
+        if not os.path.isfile(WEBSITE_PLACEHOLDER_IMAGE_PATH):
+            return False
+        with open(WEBSITE_PLACEHOLDER_IMAGE_PATH, "rb") as image_file:
+            return base64.b64encode(image_file.read())
+
+    def _ensure_website_product_placeholder_image(self, template):
+        self.ensure_one()
+        if template.image_1920:
+            return template
+        placeholder_image = self._get_website_placeholder_image()
+        if placeholder_image:
+            template.sudo().write({"image_1920": placeholder_image})
+        return template
+
+    @api.model
     def _search_website_product_tmpl_id(self, operator, value):
         if operator in ("=", "!=") and not value:
             synced = operator == "!="
@@ -336,7 +579,7 @@ class AbProduct(models.Model):
     def _prepare_website_product_template_vals(self):
         self.ensure_one()
         ProductTemplate = self.env["product.template"]
-        public_categories = self.groups_ids._get_or_create_website_categories()
+        public_categories = self._get_or_create_website_public_categories()
         product_tags = self.tag_ids._get_or_create_website_product_tags()
         name = self.name or self.product_card_name or self.code or _("Unnamed Product")
         description = self.description or False
@@ -369,6 +612,30 @@ class AbProduct(models.Model):
         if "service_tracking" in ProductTemplate._fields:
             vals["service_tracking"] = "no"
         return vals
+
+    def _get_or_create_website_public_categories(self, fallback=True):
+        self.ensure_one()
+        public_categories = self.groups_ids._get_or_create_website_categories() if self.groups_ids else self.env["product.public.category"].sudo()
+        if public_categories:
+            return public_categories
+
+        classifier = self.env["ab_product_group"]
+        text = " ".join(
+            part
+            for part in [
+                self.name,
+                self.product_card_name,
+                self.description,
+                self.code,
+            ]
+            if part
+        )
+        category_path = classifier._get_canonical_website_category_path_from_text(text)
+        if category_path:
+            return classifier._get_or_create_canonical_website_category(category_path)
+        if fallback:
+            return classifier._get_or_create_canonical_website_category(("Everyday Essentials",))
+        return self.env["product.public.category"].sudo()
 
     def _prepare_initial_website_stock_display_vals(self):
         self.ensure_one()
@@ -408,6 +675,7 @@ class AbProduct(models.Model):
             else:
                 vals.update(product._prepare_initial_website_stock_display_vals())
                 template = ProductTemplate.create(vals)
+            product._ensure_website_product_placeholder_image(template)
 
             variant = template.product_variant_id or template.with_context(active_test=False).product_variant_ids[:1]
             if variant:
