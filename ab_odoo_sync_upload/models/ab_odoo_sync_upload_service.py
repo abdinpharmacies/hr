@@ -125,41 +125,46 @@ class AbOdooSyncUploadService(models.AbstractModel):
             return str(ex)
 
         required = {
-            "ab_odoo_sync.main_url": _("Missing MAIN URL config: ab_odoo_sync.main_url"),
-            "ab_odoo_sync.main_database": _(
-                "Missing MAIN database config: ab_odoo_sync.main_database"
+            "ab_odoo_sync.report_url": _(
+                "Set the report URL system parameter: ab_odoo_sync.report_url"
             ),
-            "ab_odoo_sync.api_key": _("Missing API key config: ab_odoo_sync.api_key"),
+            "ab_odoo_sync.report_database": _(
+                "Set the report database system parameter: "
+                "ab_odoo_sync.report_database"
+            ),
+            "ab_odoo_sync.api_key": _(
+                "Set the API key system parameter: ab_odoo_sync.api_key"
+            ),
         }
         for key, message in required.items():
-            if not (self._icp().get_param(key) or "").strip():
+            if not self.is_configured(self._icp().get_param(key)):
                 return message
         return False
 
     @api.model
-    def _main_api_call(self, path, payload):
-        main_url = (
-            self._icp().get_param("ab_odoo_sync.main_url") or ""
+    def _report_api_call(self, path, payload):
+        report_url = (
+            self._icp().get_param("ab_odoo_sync.report_url") or ""
         ).strip().rstrip("/")
-        main_database = (
-            self._icp().get_param("ab_odoo_sync.main_database") or ""
+        report_database = (
+            self._icp().get_param("ab_odoo_sync.report_database") or ""
         ).strip()
         api_key = (self._icp().get_param("ab_odoo_sync.api_key") or "").strip()
         for key, value in (
-            ("ab_odoo_sync.main_url", main_url),
-            ("ab_odoo_sync.main_database", main_database),
+            ("ab_odoo_sync.report_url", report_url),
+            ("ab_odoo_sync.report_database", report_database),
             ("ab_odoo_sync.api_key", api_key),
         ):
             self._ensure_ascii_transport_config(key, value)
 
         request = urllib.request.Request(
-            url=f"{main_url}{path}",
+            url=f"{report_url}{path}",
             data=json.dumps(payload).encode("utf-8"),
             method="POST",
         )
         request.add_header("Content-Type", "application/json")
         request.add_header("X-AB-Sync-Key", api_key)
-        request.add_header("X-Odoo-Database", main_database)
+        request.add_header("X-Odoo-Database", report_database)
 
         try:
             with urllib.request.urlopen(request, timeout=60) as response:
@@ -167,22 +172,25 @@ class AbOdooSyncUploadService(models.AbstractModel):
         except UnicodeEncodeError as ex:
             raise ValueError(
                 _(
-                    "MAIN API request contains non-ASCII characters in an HTTP URL "
+                    "Report API request contains non-ASCII characters in an HTTP URL "
                     "or header."
                 )
             ) from ex
         except urllib.error.HTTPError as ex:
             error_body = ex.read().decode("utf-8", errors="ignore")
-            raise ValueError(f"MAIN API HTTP {ex.code}: {error_body}") from ex
+            raise ValueError(
+                _("Report API HTTP %(status)s: %(error)s")
+                % {"status": ex.code, "error": error_body}
+            ) from ex
         except urllib.error.URLError as ex:
-            raise ValueError(f"MAIN API connection error: {ex}") from ex
+            raise ValueError(_("Report API connection error: %s") % ex) from ex
 
         try:
             result = json.loads(body or "{}")
         except json.JSONDecodeError as ex:
-            raise ValueError(_("MAIN API returned an invalid JSON response.")) from ex
+            raise ValueError(_("Report API returned an invalid JSON response.")) from ex
         if not result.get("ok"):
-            raise ValueError(result.get("error") or _("MAIN API returned failure."))
+            raise ValueError(result.get("error") or _("Report API returned failure."))
         return result
 
     @api.model
@@ -192,7 +200,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
         configuration_error = self._get_upload_configuration_error()
         if configuration_error:
             raise ValueError(configuration_error)
-        return self._main_api_call(
+        return self._report_api_call(
             "/ab_odoo_sync/upload",
             {
                 "db_serial": self.get_db_serial(),
@@ -326,7 +334,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
                 return {"status": "ok", "queued": 0}
             self.sudo().with_delay(
                 identity_key=self._branch_upload_sender_identity_key(),
-                description=_("Send branch upload outbox events to MAIN"),
+                description=_("Send branch upload outbox events to the report server"),
                 max_retries=0,
             ).job_send_branch_upload_batch()
             return {"status": "queued", "queued": len(outbox_records)}
@@ -339,7 +347,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
 
         self.sudo().with_delay(
             identity_key=self._branch_upload_sender_identity_key(outbox_records),
-            description=_("Send branch upload outbox events to MAIN"),
+            description=_("Send branch upload outbox events to the report server"),
             max_retries=0,
         ).job_send_branch_upload_batch(outbox_records.ids)
         return {"status": "queued", "queued": len(outbox_records)}
@@ -368,7 +376,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
             return {"status": "skipped", "reason": configuration_error}
 
         db_serial = self.get_db_serial()
-        health = self._main_api_call(
+        health = self._report_api_call(
             "/ab_odoo_sync/health",
             {"db_serial": db_serial},
         )
@@ -376,7 +384,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
         return {
             "status": "ok",
             "db_serial": db_serial,
-            "main_database": health.get("database"),
+            "report_database": health.get("database"),
             "push_accepted": push.get("accepted", 0),
             "capabilities": health.get("capabilities") or {},
         }
@@ -401,7 +409,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
                 "for DB serial %(db_serial)s."
             )
             % {
-                "database": result["main_database"],
+                "database": result["report_database"],
                 "db_serial": result["db_serial"],
             },
             "success",

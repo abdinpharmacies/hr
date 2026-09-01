@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_ab_odoo_sync_upload_configuration" model="ir.actions.act_window">
+        <field name="name">Branch Upload Configuration</field>
+        <field name="res_model">ir.config_parameter</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('key', 'in', ['ab_odoo_sync.report_url', 'ab_odoo_sync.report_database', 'ab_odoo_sync.api_key', 'ab_odoo_sync.batch_size'])]</field>
+        <field name="group_ids" eval="[(4, ref('base.group_system'))]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_empty_folder">
+                Set the report connection parameters before enabling branch uploads.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_ab_odoo_sync_upload_configuration"
+              name="Branch Upload Configuration"
+              parent="ab_odoo_sync.menu_ab_odoo_sync_root"
+              action="action_ab_odoo_sync_upload_configuration"
+              sequence="90"
+              groups="base.group_system"/>
+</odoo>
