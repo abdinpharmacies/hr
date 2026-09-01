@@ -161,8 +161,8 @@
                 <header>
                     <button name="action_load_matching_fields" type="object"
                             string="Load Matching Fields" class="btn-secondary"/>
-                    <button name="action_apply_pending" type="object"
-                            string="Apply Pending Uploads" class="btn-primary"/>
+                    <button name="action_queue_pending_uploads" type="object"
+                            string="Queue Pending Uploads" class="btn-primary"/>
                 </header>
                 <sheet>
                     <group>

@@ -1,7 +1,11 @@
 {
     "name": "AB Odoo Sync Mapping",
     "summary": "Receive branch uploads and apply reporting mappings",
+<<<<<<< Updated upstream
     "version": "19.0.1.1.0",
+=======
+    "version": "19.0.1.2.0",
+>>>>>>> Stashed changes
     "license": "LGPL-3",
     "category": "Tools",
     "author": "Abdin Pharmacies",

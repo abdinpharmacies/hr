@@ -77,12 +77,6 @@ msgid "Applied"
 msgstr "تم التطبيق"
 
 #. module: ab_odoo_sync_mapping
-#. odoo-python
-#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
-msgid "Applied %(applied)s upload record(s); %(failed)s failed."
-msgstr "تمت إضافة %(count)s سجل رفع للتطبيق إلى قائمة الانتظار."
-
-#. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__applied_at
 msgid "Applied At"
 msgstr "تم التطبيق في"
@@ -94,8 +88,8 @@ msgstr "وضع التطبيق"
 
 #. module: ab_odoo_sync_mapping
 #: model_terms:ir.ui.view,arch_db:ab_odoo_sync_mapping.view_ab_odoo_sync_apply_profile_form
-msgid "Apply Pending Uploads"
-msgstr "تطبيق التحميلات المعلقة"
+msgid "Queue Pending Uploads"
+msgstr "إضافة التحميلات المعلقة إلى قائمة الانتظار"
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields,field_description:ab_odoo_sync_mapping.field_ab_odoo_sync_upload_record__apply_profile_id
@@ -442,8 +436,14 @@ msgstr "إضافة التطبيق إلى قائمة الانتظار"
 #. module: ab_odoo_sync_mapping
 #. odoo-python
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
-msgid "Queue reporting upload records for apply"
-msgstr "إدراج سجلات رفع التقارير في قائمة انتظار التطبيق"
+msgid "Queue reporting upload records for %(profile)s"
+msgstr "إدراج سجلات رفع التقارير لـ %(profile)s في قائمة الانتظار"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Queued pending upload feeder(s) for %(count)s profile(s)."
+msgstr "تمت إضافة مغذي التحميلات المعلقة إلى قائمة الانتظار لعدد %(count)s ملف تعريف."
 
 #. module: ab_odoo_sync_mapping
 #: model:ir.model.fields.selection,name:ab_odoo_sync_mapping.selection__ab_odoo_sync_upload_record__status__queued
@@ -828,6 +828,12 @@ msgstr ""
 msgid "Target sync model %(model)s must define db_serial and rec_id fields."
 msgstr ""
 "يجب أن يحتوي موديل المزامنة الهدف %(model)s على حقلي db_serial و rec_id."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Target sync model %(model)s must define a unique database constraint on db_serial and rec_id."
+msgstr "يجب أن يعرّف نموذج المزامنة الهدف %(model)s قيد قاعدة بيانات فريدا على db_serial و rec_id."
 
 #. module: ab_odoo_sync_mapping
 #. odoo-python

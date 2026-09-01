@@ -3,6 +3,15 @@ from odoo.exceptions import ValidationError
 from odoo.tools.translate import _
 
 
+_APPLY_CAPABLE_MODES = {"mirror_sync", "business_model"}
+_AUTO_FEEDER_PROFILE_FIELDS = {
+    "active",
+    "allow_placeholder_creation",
+    "apply_mode",
+    "auto_apply",
+    "source_model_name",
+    "target_model_name",
+}
 _TARGET_META_FIELDS = {
     "id",
     "db_serial",
@@ -117,6 +126,13 @@ class AbOdooSyncApplyProfile(models.Model):
                             "fields": ", ".join(sorted(missing)),
                         }
                     )
+                if not profile._target_has_unique_identity_constraint(target_model):
+                    raise ValidationError(
+                        _(
+                            "Target sync model %(model)s must define a unique database constraint on db_serial and rec_id."
+                        )
+                        % {"model": profile.target_model_name}
+                    )
                 required_fields = sorted(
                     field_name
                     for field_name, field in target_model._fields.items()
@@ -158,6 +174,35 @@ class AbOdooSyncApplyProfile(models.Model):
                                 }
                             )
 
+    @api.model
+    def _target_has_unique_identity_constraint(self, target_model):
+        self.env.cr.execute(
+            """
+            SELECT array_agg(att.attname ORDER BY keys.ordinality)
+              FROM pg_constraint con
+              JOIN pg_class cls ON cls.oid = con.conrelid
+              JOIN pg_namespace nsp ON nsp.oid = cls.relnamespace
+              JOIN unnest(con.conkey) WITH ORDINALITY AS keys(attnum, ordinality)
+                ON true
+              JOIN pg_attribute att
+                ON att.attrelid = con.conrelid
+               AND att.attnum = keys.attnum
+             WHERE con.contype = 'u'
+               AND cls.relname = %s
+               AND nsp.nspname = current_schema()
+             GROUP BY con.oid
+            """,
+            (target_model._table,),
+        )
+        return any(set(row[0] or []) == {"db_serial", "rec_id"} for row in self.env.cr.fetchall())
+
+    def _queue_auto_upload_apply_feeders(self):
+        service = self.env["ab_odoo_sync_service"].sudo()
+        queued = 0
+        for profile in self.sudo():
+            queued += service.queue_upload_apply_feeder(profile)
+        return queued
+
     @api.model_create_multi
     def create(self, vals_list):
         for vals in vals_list:
@@ -167,11 +212,17 @@ class AbOdooSyncApplyProfile(models.Model):
                     vals.get("source_model_name"),
                     apply_mode,
                 )
-        return super().create(vals_list)
+        profiles = super().create(vals_list)
+        profiles._queue_auto_upload_apply_feeders()
+        return profiles
 
     def write(self, vals):
+        should_queue = bool(_AUTO_FEEDER_PROFILE_FIELDS.intersection(vals))
         if "target_model_name" in vals:
-            return super().write(vals)
+            result = super().write(vals)
+            if should_queue:
+                self._queue_auto_upload_apply_feeders()
+            return result
 
         for profile in self:
             source_model_name = vals.get("source_model_name", profile.source_model_name)
@@ -183,6 +234,8 @@ class AbOdooSyncApplyProfile(models.Model):
                     apply_mode,
                 )
             super(AbOdooSyncApplyProfile, profile).write(write_vals)
+        if should_queue:
+            self._queue_auto_upload_apply_feeders()
         return True
 
     @api.model
@@ -293,34 +346,20 @@ class AbOdooSyncApplyProfile(models.Model):
             "success" if created else "warning",
         )
 
-    def action_apply_pending(self):
-        applied = 0
-        failed = 0
-        Upload = self.env["ab_odoo_sync_upload_record"].sudo()
+    def action_queue_pending_uploads(self):
+        queued = 0
+        service = self.env["ab_odoo_sync_service"].sudo()
         for profile in self.sorted("sequence"):
-            records = Upload.search(
-                [
-                    ("model_name", "=", profile.source_model_name),
-                    ("status", "in", ["pending_mapping", "raw_only", "pending", "failed"]),
-                    ("active", "=", True),
-                ],
-                order="source_revision, id",
-            )
-            for record in records:
-                record._set_profile_handling(profile)
-                if record.status in {"raw_only", "not_sync"}:
-                    continue
-                record._apply_to_target()
-                if record.status == "applied":
-                    applied += 1
-                elif record.status == "failed":
-                    failed += 1
+            queued += service.queue_upload_apply_feeder(profile, manual=True)
         return self._notification(
             _("Odoo Sync Mapping"),
-            _("Applied %(applied)s upload record(s); %(failed)s failed.")
-            % {"applied": applied, "failed": failed},
-            "success" if not failed else "warning",
+            _("Queued pending upload feeder(s) for %(count)s profile(s).")
+            % {"count": queued},
+            "success" if queued else "warning",
         )
+
+    def action_apply_pending(self):
+        return self.action_queue_pending_uploads()
 
     @api.model
     def _notification(self, title, message, notification_type):
@@ -424,6 +463,34 @@ class AbOdooSyncFieldMapping(models.Model):
             else:
                 self.sudo().create(vals)
         return True
+
+    def _queue_auto_upload_apply_feeders_for_profiles(self, profiles):
+        profiles.filtered(
+            lambda profile: (
+                profile.active
+                and profile.auto_apply
+                and profile.apply_mode in _APPLY_CAPABLE_MODES
+            )
+        )._queue_auto_upload_apply_feeders()
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        mappings = super().create(vals_list)
+        self._queue_auto_upload_apply_feeders_for_profiles(mappings.mapped("profile_id"))
+        return mappings
+
+    def write(self, vals):
+        profiles = self.mapped("profile_id")
+        result = super().write(vals)
+        profiles |= self.mapped("profile_id")
+        self._queue_auto_upload_apply_feeders_for_profiles(profiles)
+        return result
+
+    def unlink(self):
+        profiles = self.mapped("profile_id")
+        result = super().unlink()
+        self._queue_auto_upload_apply_feeders_for_profiles(profiles)
+        return result
 
     @api.constrains(
         "source_field_name",

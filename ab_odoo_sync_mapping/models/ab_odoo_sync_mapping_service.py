@@ -5,6 +5,8 @@ from odoo.tools.translate import _
 
 
 _logger = logging.getLogger(__name__)
+_APPLY_CAPABLE_MODES = {"mirror_sync", "business_model"}
+_FEEDER_UPLOAD_STATUSES = ["pending_mapping", "raw_only", "pending", "failed"]
 
 
 class AbOdooSyncMappingService(models.AbstractModel):
@@ -108,61 +110,101 @@ class AbOdooSyncMappingService(models.AbstractModel):
         )
 
     @api.model
-    def _upload_apply_feeder_identity_key(self):
-        return "ab_odoo_sync_mapping_upload_apply_feeder"
+    def _upload_apply_feeder_identity_key(self, profile, manual=False):
+        profile.ensure_one()
+        mode = "manual" if manual else "auto"
+        return "ab_odoo_sync_mapping_upload_apply_feeder:%s:%s" % (mode, profile.id)
+
+    @api.model
+    def _can_queue_upload_apply_feeder(self, profile, manual=False):
+        profile.ensure_one()
+        return (
+            profile.active
+            and profile.apply_mode in _APPLY_CAPABLE_MODES
+            and (manual or profile.auto_apply)
+        )
+
+    @api.model
+    def queue_upload_apply_feeder(self, profile, manual=False):
+        profile.ensure_one()
+        profile = profile.sudo()
+        if not self._can_queue_upload_apply_feeder(profile, manual=manual):
+            return 0
+        self.sudo().with_delay(
+            identity_key=self._upload_apply_feeder_identity_key(profile, manual=manual),
+            description=_("Queue reporting upload records for %(profile)s")
+            % {"profile": profile.display_name},
+            max_retries=0,
+        ).job_queue_upload_apply_records(profile.id, manual=manual)
+        return 1
 
     @api.model
     def cron_queue_upload_apply_records(self):
-        self.sudo().with_delay(
-            identity_key=self._upload_apply_feeder_identity_key(),
-            description=_("Queue reporting upload records for apply"),
-            max_retries=0,
-        ).job_queue_upload_apply_records()
-        return {"status": "queued"}
-
-    @api.model
-    def job_queue_upload_apply_records(self):
-        batch_size = self.get_batch_size()
-        queued_count = 0
-        upload_model = self.env["ab_odoo_sync_upload_record"].sudo()
         profiles = self.env["ab_odoo_sync_apply_profile"].sudo().search(
             [
                 ("active", "=", True),
                 ("auto_apply", "=", True),
-                ("apply_mode", "in", ["mirror_sync", "business_model"]),
+                ("apply_mode", "in", list(_APPLY_CAPABLE_MODES)),
             ],
             order="sequence, id",
         )
-        for profile in profiles:
-            remaining = batch_size - queued_count
-            if remaining <= 0:
-                break
-            records = upload_model.search(
-                [
-                    ("model_name", "=", profile.source_model_name),
-                    (
-                        "status",
-                        "in",
-                        ["pending_mapping", "raw_only", "pending", "failed"],
-                    ),
-                    ("active", "=", True),
-                ],
-                order="source_revision, id",
-                limit=remaining,
-            )
-            for record in records:
-                if (
-                    record.apply_profile_id != profile
-                    or record.target_model_name != profile.target_model_name
-                    or record.status in {"pending_mapping", "raw_only"}
-                ):
-                    record._set_profile_handling(profile)
-            queued_count += records._queue_apply_records()
+        queued = sum(self.queue_upload_apply_feeder(profile) for profile in profiles)
+        return {"status": "queued", "feeders": queued}
+
+    @api.model
+    def job_queue_upload_apply_records(self, profile_id=False, manual=False):
+        if not profile_id:
+            return self.cron_queue_upload_apply_records()
+
+        profile = (
+            self.env["ab_odoo_sync_apply_profile"]
+            .sudo()
+            .browse(int(profile_id or 0))
+            .exists()
+        )
+        if not profile:
+            return {"status": "missing_profile", "queued": 0}
+        if not self._can_queue_upload_apply_feeder(profile, manual=manual):
+            return {"status": "skipped", "queued": 0, "profile_id": profile.id}
+
+        batch_size = self.get_batch_size()
+        upload_model = self.env["ab_odoo_sync_upload_record"].sudo()
+
+        records = upload_model.search(
+            [
+                ("model_name", "=", profile.source_model_name),
+                ("status", "in", _FEEDER_UPLOAD_STATUSES),
+                ("active", "=", True),
+            ],
+            order="source_revision, id",
+            limit=batch_size,
+        )
+        for record in records:
+            if (
+                record.apply_profile_id != profile
+                or record.target_model_name != profile.target_model_name
+                or record.status in {"pending_mapping", "raw_only"}
+            ):
+                record._set_profile_handling(profile)
+        queued_count = records._queue_apply_records()
+
+        remaining_count = upload_model.search_count(
+            [
+                ("model_name", "=", profile.source_model_name),
+                ("status", "in", _FEEDER_UPLOAD_STATUSES),
+                ("active", "=", True),
+            ]
+        )
+        if remaining_count:
+            self.queue_upload_apply_feeder(profile, manual=manual)
 
         result = {
             "status": "ok",
+            "profile_id": profile.id,
+            "manual": bool(manual),
             "queued": queued_count,
             "batch_size": batch_size,
+            "remaining": remaining_count,
         }
         _logger.info("AB Odoo Sync mapping feeder result: %s", result)
         return result

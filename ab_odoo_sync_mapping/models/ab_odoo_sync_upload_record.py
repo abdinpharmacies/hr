@@ -234,7 +234,7 @@ class AbOdooSyncUploadRecord(models.Model):
             if profile.apply_mode in {"raw_only", "ignore"}:
                 record._set_profile_handling(profile)
                 continue
-            if record.status in {"applied", "not_sync", "raw_only"}:
+            if record.status in {"applied", "queued", "not_sync", "raw_only"}:
                 continue
             record.write(
                 {
@@ -685,7 +685,21 @@ class AbOdooSyncUploadRecord(models.Model):
         if existing:
             existing.write(vals)
             return existing
-        return target_model.create(vals)
+        try:
+            with self.env.cr.savepoint():
+                return target_model.create(vals)
+        except Exception:
+            existing = target_model.search(
+                [
+                    ("db_serial", "=", self.db_serial),
+                    ("rec_id", "=", self.rec_id),
+                ],
+                limit=1,
+            )
+            if existing:
+                existing.write(vals)
+                return existing
+            raise
 
     def _apply_to_business_model(self, target_model, vals):
         self.ensure_one()
