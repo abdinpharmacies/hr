@@ -8,9 +8,9 @@ with the branch `db_serial`.
 
 - Branch chooses which models to upload from `Branch Upload Sources`.
 - The reporting server accepts every uploaded payload into `Received Uploads`.
-- MAIN apply profiles decide whether each source model is raw-only, ignored,
+- Report apply profiles decide whether each source model is raw-only, ignored,
   applied into a `__sync` mirror, or applied into a real business model.
-- For `business_model` profiles, MAIN creates or updates the real target record
+- For `business_model` profiles, the report server creates or updates the real target record
   using the same primary key as the source record ID.
 - Unknown or unmapped source models remain raw and do not fail the upload.
 
@@ -19,8 +19,8 @@ with the branch `db_serial`.
 1. Install `ab_odoo_sync_upload` on the branch database.
 2. Install `ab_odoo_sync_mapping` on the reporting database.
 3. Configure branch connection parameters:
-   - `ab_odoo_sync.main_url`
-   - `ab_odoo_sync.main_database`
+   - `ab_odoo_sync.report_url`
+   - `ab_odoo_sync.report_database`
    - `ab_odoo_sync.api_key`
 4. Set a positive `db_serial` in the Odoo config file for each branch.
 5. On the reporting server, create an active `Registered Branch` with the same
@@ -44,7 +44,7 @@ Expected result:
 
 ## Test 2: Raw-Only Profile Keeps Payload Without Applying
 
-1. On MAIN, open `Odoo Sync > Apply Profiles`.
+1. On the report server, open `Odoo Sync > Apply Profiles`.
 2. Create a profile:
    - `Source Model`: the uploaded model name.
    - `Apply Mode`: `Raw Only`.
@@ -57,13 +57,13 @@ Expected result:
 - No target business record or mirror record is created.
 - The original payload remains available in `Received Uploads`.
 
-## Test 3: Business Model Upload Forces MAIN Primary Key
+## Test 3: Business Model Upload Forces Report Primary Key
 
 Use a model whose IDs are globally assigned upstream, such as `ab_product`,
 `ab_customer`, or `ab_store`.
 
 1. On BRANCH, configure `ab_product` as a `Branch Upload Source`.
-2. On MAIN, create an apply profile:
+2. On the report server, create an apply profile:
    - `Source Model`: `ab_product`
    - `Apply Mode`: `Business Model`
    - `Target Model`: `ab_product`
@@ -76,11 +76,11 @@ Use a model whose IDs are globally assigned upstream, such as `ab_product`,
    - `active -> active`, `Direct Value`
 4. On BRANCH, create or update `ab_product` with a known ID, for example `10025`.
 5. Send the branch upload.
-6. On MAIN, apply the upload if auto-apply is disabled.
+6. On the report server, apply the upload if auto-apply is disabled.
 
 Expected result:
 
-- MAIN has `ab_product` with `id = 10025`.
+- The report server has `ab_product` with `id = 10025`.
 - `Odoo Sync > Sync Identities` has a resolved identity row:
   - `DB Serial`: branch serial
   - `Source Model`: `ab_product`
@@ -93,10 +93,10 @@ Expected result:
 
 This validates out-of-order reporting uploads.
 
-1. Ensure MAIN does not currently have `ab_product(id=10026)`.
+1. Ensure the report server does not currently have `ab_product(id=10026)`.
 2. Configure a transaction/reporting source model on BRANCH, for example a sales
    line model with a `product_id` Many2one.
-3. On MAIN, configure the sales line apply profile with:
+3. On the report server, configure the sales line apply profile with:
    - `Apply Mode`: `Mirror Sync Model` or `Business Model`, depending on target.
    - `product_id` mapping type: `Sync Many2one by Source ID`.
    - `Required`: enabled if the line must not apply without a product identity.
@@ -105,7 +105,7 @@ This validates out-of-order reporting uploads.
 
 Expected result:
 
-- MAIN creates a placeholder `ab_product` with `id = 10026`.
+- The report server creates a placeholder `ab_product` with `id = 10026`.
 - The sales line target links to `product_id = 10026`.
 - `Sync Identities` shows `ab_product / 10026` as `Placeholder`.
 
@@ -114,30 +114,30 @@ Expected result:
 Continue from Test 4.
 
 1. On BRANCH, send the real `ab_product(id=10026)` payload.
-2. On MAIN, apply the product upload.
+2. On the report server, apply the product upload.
 
 Expected result:
 
-- MAIN updates the existing `ab_product(id=10026)`.
+- The report server updates the existing `ab_product(id=10026)`.
 - No duplicate product is created.
 - The identity row changes from `Placeholder` to `Resolved`.
 - Sales/reporting rows that already referenced `product_id = 10026` keep the same link.
 
 ## Test 6: Ignore Profile Accepts But Skips
 
-1. On MAIN, create or change an apply profile:
+1. On the report server, create or change an apply profile:
    - `Apply Mode`: `Ignore`
 2. Upload a branch record for that source model.
 
 Expected result:
 
-- MAIN accepts the upload.
+- The report server accepts the upload.
 - Upload record status becomes `Not Sync`.
 - No target record is created or updated.
 
 ## Validation Queries
 
-Run from Odoo shell on MAIN when needed:
+Run from Odoo shell on the report server when needed:
 
 ```python
 env["ab_odoo_sync_upload_record"].search([
@@ -165,5 +165,5 @@ env["ab_product"].browse(10026).exists()
   `virtual_available`, `free_qty`, `incoming_qty`, or `outgoing_qty`.
 - Product, customer, store, and pricing fields should be mapped with a strict
   whitelist for reporting requirements.
-- Unknown models should stay `Pending Mapping` or `Raw Only` until MAIN has an
+- Unknown models should stay `Pending Mapping` or `Raw Only` until the report server has an
   explicit profile.

@@ -73,16 +73,15 @@ current report environment, keep the database selection compatible with
 
 Branch database parameters:
 
-- `ab_odoo_sync.main_url`: base URL of the report server, for example
+- `ab_odoo_sync.report_url`: base URL of the report server, for example
   `http://report-server:4090`
-- `ab_odoo_sync.main_database`: report database name, for example `abdin_report`
+- `ab_odoo_sync.report_database`: report database name, for example `abdin_report`
 - `ab_odoo_sync.api_key`: shared sync API key
 - `ab_odoo_sync.batch_size`: optional, defaults to `1000`, maximum `10000`
 
 Report database parameters:
 
 - `ab_odoo_sync.api_key`: the same shared sync API key used by the branches
-- `ab_odoo_sync.batch_size`: optional apply feeder batch size
 
 Current code uses one report-side API key for the upload endpoints. Branch
 authorization after that is by registered `db_serial` in
@@ -129,8 +128,8 @@ SYNC_DRY_RUN=1
 ```bash
 SYNC_ROLE=branch \
 SYNC_DB_SERIAL=101 \
-SYNC_MAIN_URL=http://report-server:4090 \
-SYNC_MAIN_DATABASE=abdin_report \
+SYNC_REPORT_URL=http://report-server:4090 \
+SYNC_REPORT_DATABASE=abdin_report \
 SYNC_API_KEY='replace-with-secret' \
 SYNC_SOURCE_MODELS=ab_sales_header,ab_sales_line,ab_sales_return_header,ab_sales_return_line \
 SYNC_ACTIVATE_CRONS=1 \
@@ -227,7 +226,7 @@ env["ab_odoo_sync_service"].sudo().test_upload_connection()
 Expected result:
 
 - `status` is `ok`
-- `main_database` is `abdin_report`
+- `report_database` is `abdin_report`
 - `db_serial` matches the branch
 
 From the report server, verify:

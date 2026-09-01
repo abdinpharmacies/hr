@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="ab_odoo_sync_service"
+              name="_ensure_config_parameter_defaults"
+              eval="({'ab_odoo_sync.api_key': '--- 12345abcde'},)"/>
+</odoo>

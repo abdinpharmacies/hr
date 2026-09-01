@@ -3,8 +3,8 @@
 Run with Odoo shell, for example:
 
 SYNC_ROLE=branch \
-SYNC_MAIN_URL=http://report-server:4090 \
-SYNC_MAIN_DATABASE=abdin_report \
+SYNC_REPORT_URL=http://report-server:4090 \
+SYNC_REPORT_DATABASE=abdin_report \
 SYNC_API_KEY=change-me \
 SYNC_SOURCE_MODELS=ab_sales_header,ab_sales_line \
 /opt/odoo19/venv19/bin/python /opt/odoo19/server/odoo-bin shell \
@@ -159,9 +159,8 @@ def _branch_specs_from_env():
 
 def _configure_branch():
     _require_model("ab_odoo_sync_upload_source")
-    _set_param("ab_odoo_sync.server_role", "branch")
-    _set_param("ab_odoo_sync.main_url", _env("SYNC_MAIN_URL"))
-    _set_param("ab_odoo_sync.main_database", _env("SYNC_MAIN_DATABASE"))
+    _set_param("ab_odoo_sync.report_url", _env("SYNC_REPORT_URL"))
+    _set_param("ab_odoo_sync.report_database", _env("SYNC_REPORT_DATABASE"))
     _set_param("ab_odoo_sync.api_key", _env("SYNC_API_KEY"))
     _set_param("ab_odoo_sync.batch_size", _env("SYNC_BATCH_SIZE"))
 
@@ -207,9 +206,7 @@ def _configure_report():
     Profile = _require_model("ab_odoo_sync_apply_profile")
     Mapping = _require_model("ab_odoo_sync_field_mapping")
 
-    _set_param("ab_odoo_sync.server_role", "report")
     _set_param("ab_odoo_sync.api_key", _env("SYNC_API_KEY"))
-    _set_param("ab_odoo_sync.batch_size", _env("SYNC_BATCH_SIZE"))
 
     for spec in _branch_specs_from_env():
         db_serial = int(spec.get("db_serial") or 0)

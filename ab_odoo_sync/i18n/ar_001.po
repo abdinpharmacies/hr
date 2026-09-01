@@ -1574,3 +1574,8 @@ msgstr "تمت إضافة %(count)s من أحداث صندوق الرفع إلى
 #: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
 msgid "Send branch upload outbox events to MAIN"
 msgstr "إرسال أحداث صندوق رفع الفرع إلى MAIN"
+#. module: ab_odoo_sync
+#. odoo-python
+#: code:addons/ab_odoo_sync/models/ab_odoo_sync_service.py:0
+msgid "Configuration defaults must be a dictionary."
+msgstr "يجب أن تكون قيم الإعدادات الافتراضية قاموساً."

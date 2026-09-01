@@ -1,9 +1,9 @@
 ## Rule number 1
 These models must never be cloned into `__sync` mirror tables.
-They are MAIN-owned reference/master models and should be referenced from
-transaction/reporting mirrors. If a referenced record is not in MAIN yet, the
+They are report-owned reference/master models and should be referenced from
+transaction/reporting mirrors. If a referenced record is not in the report server yet, the
 sync apply flow should force/reserve the same ID as a placeholder, then the
-later MAIN/master-data update should fill the remaining fields.
+later report/master-data update should fill the remaining fields.
 
 - ab_product
 - ab_product_card
@@ -28,10 +28,10 @@ later MAIN/master-data update should fill the remaining fields.
 
 Example of force ID mechanism:
 
-A branch uploads a sale operation with a product that MAIN does not have yet.
+A branch uploads a sale operation with a product that the report server does not have yet.
 The sync apply flow should force/reserve the same product ID as a placeholder.
 The branch should send and map only the product ID in the JSON payload, not the
-full product data. Later, after MAIN updates the product list, it should fill
+full product data. Later, after the report server updates the product list, it should fill
 the remaining fields of the reserved product record.
 
 ## Rule number 2
@@ -47,11 +47,11 @@ Do not serialize or map user names, logins, emails, groups, passwords, partner
 fields, or any other `res.users` data into the transaction/reporting JSON
 payload.
 
-MAIN apply must resolve that ID through the Rule 1 force-ID pattern:
+Report apply must resolve that ID through the Rule 1 force-ID pattern:
 
 - if `ab_users(id=<source_user_id>)` exists, link to it;
 - if it does not exist, force/reserve the same ID in `ab_users` as a placeholder;
-- later MAIN/master-data user synchronization fills the remaining `ab_users`
+- later report/master-data user synchronization fills the remaining `ab_users`
   fields.
 
 Example:
@@ -77,4 +77,4 @@ the relevant `ab_odoo_sync_apply_profile` field mapping by enabling the mapping
 schema.
 
 This keeps raw/report storage tolerant while still allowing strict validation
-for selected fields when MAIN later applies or validates the data.
+for selected fields when the report server later applies or validates the data.
