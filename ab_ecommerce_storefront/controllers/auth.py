@@ -19,6 +19,7 @@ SIGN_UP_REQUEST_PARAMS.add("phone")
 
 _ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789")
 _EGYPT_MOBILE_RE = re.compile(r"^01[0125]\d{8}$")
+_PASSWORD_SPECIAL_RE = re.compile(r"[^A-Za-z0-9]")
 
 
 def normalize_egyptian_phone(value):
@@ -37,6 +38,17 @@ def normalize_egyptian_phone(value):
 
 def is_valid_egyptian_mobile(value):
     return bool(_EGYPT_MOBILE_RE.fullmatch(value or ""))
+
+
+def validate_storefront_password(value):
+    password = value or ""
+    return (
+        len(password) >= 8
+        and any(char.isupper() for char in password)
+        and any(char.islower() for char in password)
+        and any(char.isdigit() for char in password)
+        and bool(_PASSWORD_SPECIAL_RE.search(password))
+    )
 
 
 class AbStorefrontAuth(AuthSignupHome):
@@ -85,6 +97,8 @@ class AbStorefrontAuth(AuthSignupHome):
             raise UserError(_("رقم الهاتف مطلوب."))
         if not is_valid_egyptian_mobile(phone):
             raise UserError(_("برجاء إدخال رقم هاتف صحيح."))
+        if not validate_storefront_password(qcontext.get("password")):
+            raise UserError(_("استخدم 8 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز خاص."))
 
         qcontext["phone"] = phone
         qcontext["login"] = phone

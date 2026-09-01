@@ -4315,12 +4315,363 @@ body.ab-storefront-image-hero-open {
     transform: translateY(0);
 }
 
+.ab-auth-password-strength {
+    overflow: hidden;
+    max-height: 0;
+    margin-top: 0;
+    color: $ab-muted;
+    border: 1px solid transparent;
+    border-radius: .95rem;
+    background: transparent;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+        max-height .34s cubic-bezier(.22, 1, .36, 1),
+        margin-top .24s ease,
+        opacity .24s ease,
+        padding .24s ease,
+        border-color .24s ease,
+        background-color .24s ease,
+        box-shadow .24s ease;
+
+    &.is-revealed,
+    .field-password:focus-within & {
+        max-height: 25rem;
+        margin-top: .55rem;
+        padding: .85rem;
+        border-color: rgba($ab-green-dark, .1);
+        background: linear-gradient(180deg, rgba($ab-green-soft, .72), rgba(#fff, .92));
+        box-shadow: inset 0 0 0 1px rgba(#fff, .52);
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    &.has-value .ab-auth-password-empty {
+        display: none;
+    }
+
+    &:not(.has-value) .ab-auth-password-live {
+        display: none;
+    }
+
+    &[data-strength="very-weak"],
+    &[data-strength="weak"] {
+        --ab-password-strength-color: #c94536;
+    }
+
+    &[data-strength="medium"] {
+        --ab-password-strength-color: #d77a1f;
+    }
+
+    &[data-strength="good"] {
+        --ab-password-strength-color: #2674a8;
+    }
+
+    &[data-strength="strong"] {
+        --ab-password-strength-color: #16834f;
+    }
+}
+
+.ab-auth-password-empty,
+.ab-auth-password-hint {
+    margin: 0;
+    color: $ab-muted;
+    font-size: .78rem;
+    font-weight: 800;
+    line-height: 1.6;
+}
+
+.ab-auth-password-live {
+    display: grid;
+    gap: .7rem;
+}
+
+.ab-auth-strength-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .8rem;
+
+    span {
+        color: $ab-ink;
+        font-size: .78rem;
+        font-weight: 900;
+    }
+
+    strong {
+        color: var(--ab-password-strength-color, $ab-green);
+        font-size: .82rem;
+        font-weight: 900;
+        transition: color .22s ease, opacity .2s ease, transform .2s ease;
+
+        &.is-changing {
+            animation: ab-auth-strength-label .22s cubic-bezier(.4, 0, .2, 1);
+        }
+    }
+}
+
+.ab-auth-strength-meter {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: .35rem;
+
+    span {
+        height: .46rem;
+        border-radius: 999px;
+        background: rgba($ab-green-dark, .1);
+        transform: scaleX(.92);
+        transform-origin: center;
+        opacity: .78;
+        transition:
+            background-color .25s ease,
+            opacity .25s ease,
+            transform .25s ease;
+
+        &.is-active {
+            background: var(--ab-password-strength-color, $ab-green);
+            transform: scaleX(1);
+            opacity: 1;
+        }
+    }
+}
+
+.ab-auth-password-rules {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: .45rem .7rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li {
+        display: flex;
+        min-width: 0;
+        align-items: center;
+        gap: .45rem;
+        color: $ab-muted;
+        font-size: .76rem;
+        font-weight: 800;
+        line-height: 1.35;
+        transition: color .2s ease, transform .2s ease;
+
+        &.is-met {
+            color: $ab-green-dark;
+
+            .ab-auth-rule-icon {
+                color: #fff;
+                background: $ab-green;
+                animation: ab-auth-rule-check .22s cubic-bezier(.4, 0, .2, 1);
+            }
+        }
+    }
+}
+
+.ab-auth-rule-icon,
+.ab-auth-suggestion-icon {
+    display: inline-flex;
+    width: 1.28rem;
+    height: 1.28rem;
+    flex: 0 0 1.28rem;
+    align-items: center;
+    justify-content: center;
+    color: rgba($ab-green-dark, .42);
+    border-radius: 50%;
+    background: rgba(#fff, .84);
+
+    svg {
+        width: .82rem;
+        height: .82rem;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+    }
+}
+
+.ab-auth-password-suggestion {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: .7rem;
+    padding: .72rem;
+    border: 1px solid rgba($ab-green, .14);
+    border-radius: .8rem;
+    background: rgba(#fff, .9);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+
+    &.is-refreshing {
+        animation: ab-auth-suggestion-refresh .24s cubic-bezier(.4, 0, .2, 1);
+    }
+}
+
+.ab-auth-suggestion-icon {
+    width: 2rem;
+    height: 2rem;
+    flex-basis: 2rem;
+    color: $ab-orange;
+    background: rgba($ab-orange, .12);
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+        fill: currentColor;
+        stroke: none;
+    }
+}
+
+.ab-auth-suggestion-copy {
+    min-width: 0;
+
+    small,
+    code {
+        display: block;
+    }
+
+    small {
+        margin-bottom: .18rem;
+        color: $ab-muted;
+        font-size: .68rem;
+        font-weight: 900;
+    }
+
+    code {
+        overflow: hidden;
+        color: $ab-ink;
+        font-family: "Cairo", "Noto Sans Arabic", "Segoe UI", sans-serif;
+        font-size: .86rem;
+        font-weight: 900;
+        direction: ltr;
+        text-align: start;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+.ab-auth-suggestion-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+
+    .btn {
+        min-height: 34px;
+        padding: .42rem .6rem;
+        border-radius: .6rem;
+        font-size: .72rem;
+        font-weight: 900;
+    }
+}
+
+.ab-auth-suggestion-refresh {
+    color: $ab-green-dark;
+    border: 1px solid rgba($ab-green-dark, .14);
+    background: #fff;
+}
+
+.ab-auth-suggestion-use {
+    color: #fff;
+    border: 1px solid $ab-green;
+    background: $ab-green;
+}
+
+.ab-auth-confirm-message {
+    min-height: 1.1rem;
+    margin: .38rem 0 0;
+    color: $ab-muted;
+    font-size: .78rem;
+    font-weight: 800;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity .18s ease, color .18s ease, transform .18s ease;
+}
+
+.field-confirm_password.has-confirm-match,
+.field-confirm_password.has-confirm-mismatch {
+    .ab-auth-confirm-message {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.field-confirm_password.has-confirm-match {
+    .ab-auth-input {
+        border-color: rgba($ab-green, .48);
+        box-shadow: 0 0 0 .18rem rgba($ab-green, .08);
+    }
+
+    .ab-auth-confirm-message {
+        color: $ab-green-dark;
+    }
+}
+
+.field-confirm_password.has-confirm-mismatch {
+    .ab-auth-input {
+        border-color: rgba(#c94536, .68);
+        box-shadow: 0 0 0 .18rem rgba(#c94536, .08);
+    }
+
+    .ab-auth-confirm-message {
+        color: #b13a2e;
+    }
+}
+
+.oe_signup_form .ab-auth-primary,
+.oe_reset_password_form .ab-auth-primary {
+    transition:
+        background-color .2s ease,
+        border-color .2s ease,
+        box-shadow .24s ease,
+        transform .18s ease;
+}
+
+.oe_signup_form:has(.ab-auth-password-strength.is-strong) .ab-auth-primary,
+.oe_reset_password_form:has(.ab-auth-password-strength.is-strong) .ab-auth-primary {
+    box-shadow: 0 13px 26px rgba($ab-green, .18);
+    transform: translateY(-1px);
+}
+
 .ab-auth-field.is-angry {
     animation: ab-auth-angry-field .34s cubic-bezier(.36, .07, .19, .97);
 
     .ab-auth-input {
         border-color: rgba(#c94536, .8);
         box-shadow: 0 0 0 .2rem rgba(#c94536, .09), 0 10px 22px rgba(#c94536, .08);
+    }
+}
+
+@keyframes ab-auth-strength-label {
+    0% {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes ab-auth-rule-check {
+    0% {
+        opacity: .2;
+        transform: scale(.82);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes ab-auth-suggestion-refresh {
+    0% {
+        opacity: .65;
+        transform: translateY(3px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
@@ -5444,6 +5795,27 @@ body.ab-storefront-image-hero-open {
 
     .ab-storefront-product-promises {
         grid-template-columns: 1fr;
+    }
+
+    .ab-auth-password-strength.is-revealed {
+        padding: .72rem;
+    }
+
+    .ab-auth-password-rules {
+        grid-template-columns: 1fr;
+    }
+
+    .ab-auth-password-suggestion {
+        grid-template-columns: auto minmax(0, 1fr);
+
+        .ab-auth-suggestion-actions {
+            grid-column: 1 / -1;
+            justify-content: stretch;
+
+            .btn {
+                flex: 1 1 0;
+            }
+        }
     }
 }
 

@@ -16,6 +16,15 @@
             <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
             <circle cx="12" cy="12" r="3"/>
         </svg>
+        <svg t-elif="icon == 'check'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20 6 9 17l-5-5"/>
+        </svg>
+        <svg t-elif="icon == 'circle'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <circle cx="12" cy="12" r="7"/>
+        </svg>
+        <svg t-elif="icon == 'spark'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M12 2 9.4 8.8 3 11.5l6.4 2.7L12 21l2.6-6.8 6.4-2.7-6.4-2.7L12 2Z"/>
+        </svg>
         <svg t-elif="icon == 'arrow'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M19 12H5"/>
             <path d="m12 19-7-7 7-7"/>
@@ -133,6 +142,77 @@
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
                     </button>
                 </div>
+                <section class="ab-auth-password-strength"
+                         data-ab-password-strength=""
+                         aria-live="polite"
+                         aria-label="قوة كلمة المرور">
+                    <p class="ab-auth-password-empty" data-ab-password-empty="">أنشئ كلمة مرور قوية لحماية حسابك</p>
+                    <div class="ab-auth-password-live" data-ab-password-live="">
+                        <div class="ab-auth-strength-head">
+                            <span>قوة كلمة المرور</span>
+                            <strong data-ab-password-label="">ضعيفة جدًا</strong>
+                        </div>
+                        <div class="ab-auth-strength-meter" aria-hidden="true">
+                            <span data-ab-password-segment="1"/>
+                            <span data-ab-password-segment="2"/>
+                            <span data-ab-password-segment="3"/>
+                            <span data-ab-password-segment="4"/>
+                            <span data-ab-password-segment="5"/>
+                        </div>
+                        <ul class="ab-auth-password-rules">
+                            <li data-ab-password-rule="length">
+                                <span class="ab-auth-rule-icon">
+                                    <t t-set="icon" t-value="'circle'"/>
+                                    <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                                </span>
+                                <span>8 أحرف على الأقل</span>
+                            </li>
+                            <li data-ab-password-rule="upper">
+                                <span class="ab-auth-rule-icon">
+                                    <t t-set="icon" t-value="'circle'"/>
+                                    <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                                </span>
+                                <span>حرف كبير</span>
+                            </li>
+                            <li data-ab-password-rule="lower">
+                                <span class="ab-auth-rule-icon">
+                                    <t t-set="icon" t-value="'circle'"/>
+                                    <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                                </span>
+                                <span>حرف صغير</span>
+                            </li>
+                            <li data-ab-password-rule="number">
+                                <span class="ab-auth-rule-icon">
+                                    <t t-set="icon" t-value="'circle'"/>
+                                    <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                                </span>
+                                <span>رقم واحد على الأقل</span>
+                            </li>
+                            <li data-ab-password-rule="special">
+                                <span class="ab-auth-rule-icon">
+                                    <t t-set="icon" t-value="'circle'"/>
+                                    <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                                </span>
+                                <span>رمز خاص واحد على الأقل</span>
+                            </li>
+                        </ul>
+                        <div class="ab-auth-password-suggestion" data-ab-password-suggestion-wrap="">
+                            <span class="ab-auth-suggestion-icon">
+                                <t t-set="icon" t-value="'spark'"/>
+                                <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                            </span>
+                            <div class="ab-auth-suggestion-copy">
+                                <small>اقتراح كلمة مرور قوية</small>
+                                <code data-ab-password-suggestion="">--</code>
+                            </div>
+                            <div class="ab-auth-suggestion-actions">
+                                <button type="button" class="btn ab-auth-suggestion-refresh" data-ab-password-generate="">اقتراح آخر</button>
+                                <button type="button" class="btn ab-auth-suggestion-use" data-ab-password-use="">استخدمها</button>
+                            </div>
+                        </div>
+                        <p class="ab-auth-password-hint" data-ab-password-hint="">استخدم مزيجًا من الحروف والأرقام والرموز</p>
+                    </div>
+                </section>
             </div>
         </xpath>
         <xpath expr="//div[hasclass('field-confirm_password')]" position="replace">
@@ -147,6 +227,7 @@
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
                     </button>
                 </div>
+                <p class="ab-auth-confirm-message" data-ab-confirm-message="" aria-live="polite"/>
             </div>
         </xpath>
     </template>

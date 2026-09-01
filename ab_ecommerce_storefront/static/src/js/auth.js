@@ -11,6 +11,26 @@ const MOTION_MS = {
     enter: 420,
     success: 1180,
 };
+const PASSWORD_LEVELS = [
+    {key: "very-weak", label: "ضعيفة جدًا", hint: "ابدأ بكلمة أطول ومزيج أوضح من الأحرف"},
+    {key: "weak", label: "ضعيفة", hint: "أضف حرفًا كبيرًا ورقمًا أو رمزًا"},
+    {key: "medium", label: "متوسطة", hint: "اقتربت. أضف عنصرًا آخر لزيادة الأمان"},
+    {key: "good", label: "جيدة", hint: "كلمة جيدة. الرمز الخاص يجعلها أقوى"},
+    {key: "strong", label: "قوية", hint: "كلمة مرور قوية"},
+];
+const PASSWORD_RULES = [
+    {key: "length", test: (value) => value.length >= 8},
+    {key: "upper", test: (value) => /[A-Z]/.test(value)},
+    {key: "lower", test: (value) => /[a-z]/.test(value)},
+    {key: "number", test: (value) => /\d/.test(value)},
+    {key: "special", test: (value) => /[^A-Za-z0-9]/.test(value)},
+];
+const PASSWORD_GROUPS = {
+    upper: "ABCDEFGHJKLMNPQRSTUVWXYZ",
+    lower: "abcdefghijkmnopqrstuvwxyz",
+    number: "23456789",
+    special: "@#$%&*!?",
+};
 
 function normalizeEgyptianPhone(value = "") {
     let phone = "";
@@ -35,6 +55,46 @@ function wait(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+function randomInt(max) {
+    if (!window.crypto?.getRandomValues) {
+        return Math.floor(Math.random() * max);
+    }
+    const values = new Uint32Array(1);
+    window.crypto.getRandomValues(values);
+    return values[0] % max;
+}
+
+function shuffledPassword(chars) {
+    const nextChars = [...chars];
+    for (let index = nextChars.length - 1; index > 0; index--) {
+        const swapIndex = randomInt(index + 1);
+        [nextChars[index], nextChars[swapIndex]] = [nextChars[swapIndex], nextChars[index]];
+    }
+    return nextChars.join("");
+}
+
+function generateStrongPassword(length = 14) {
+    const groups = Object.values(PASSWORD_GROUPS);
+    const chars = groups.map((group) => group[randomInt(group.length)]);
+    const allChars = groups.join("");
+    while (chars.length < length) {
+        chars.push(allChars[randomInt(allChars.length)]);
+    }
+    return shuffledPassword(chars);
+}
+
+function evaluatePassword(value = "") {
+    const met = Object.fromEntries(PASSWORD_RULES.map((rule) => [rule.key, rule.test(value)]));
+    const score = PASSWORD_RULES.reduce((total, rule) => total + (met[rule.key] ? 1 : 0), 0);
+    const levelIndex = Math.max(0, Math.min(PASSWORD_LEVELS.length - 1, score - 1));
+    return {
+        met,
+        score,
+        level: value ? PASSWORD_LEVELS[levelIndex] : PASSWORD_LEVELS[0],
+        isStrong: score === PASSWORD_RULES.length,
+    };
+}
+
 export class AbStorefrontAuth extends Interaction {
     static selector = ".ab-auth-page";
 
@@ -46,9 +106,11 @@ export class AbStorefrontAuth extends Interaction {
         this.onPhoneInput = this.onPhoneInput.bind(this);
         this.onPhoneBlur = this.onPhoneBlur.bind(this);
         this.onPasswordToggle = this.onPasswordToggle.bind(this);
+        this.onPasswordFocus = this.onPasswordFocus.bind(this);
         this.onDelegatedClick = this.onDelegatedClick.bind(this);
         this.onDelegatedInput = this.onDelegatedInput.bind(this);
         this.onDelegatedBlur = this.onDelegatedBlur.bind(this);
+        this.onDelegatedFocus = this.onDelegatedFocus.bind(this);
         this.onDelegatedSubmit = this.onDelegatedSubmit.bind(this);
     }
 
@@ -56,6 +118,7 @@ export class AbStorefrontAuth extends Interaction {
         this.el.addEventListener("click", this.onDelegatedClick);
         this.el.addEventListener("input", this.onDelegatedInput);
         this.el.addEventListener("blur", this.onDelegatedBlur, true);
+        this.el.addEventListener("focusin", this.onDelegatedFocus);
         this.el.addEventListener("submit", this.onDelegatedSubmit);
         document.addEventListener("click", this.onDelegatedClick, true);
         document.addEventListener("submit", this.onDelegatedSubmit, true);
@@ -67,12 +130,28 @@ export class AbStorefrontAuth extends Interaction {
         this.el.removeEventListener("click", this.onDelegatedClick);
         this.el.removeEventListener("input", this.onDelegatedInput);
         this.el.removeEventListener("blur", this.onDelegatedBlur, true);
+        this.el.removeEventListener("focusin", this.onDelegatedFocus);
         this.el.removeEventListener("submit", this.onDelegatedSubmit);
         document.removeEventListener("click", this.onDelegatedClick, true);
         document.removeEventListener("submit", this.onDelegatedSubmit, true);
     }
 
     onDelegatedClick(ev) {
+        if (ev.abAuthHandled) {
+            return;
+        }
+        ev.abAuthHandled = true;
+        const passwordField = ev.target.closest(".field-password");
+        if (passwordField && this.el.contains(passwordField)) {
+            const password = passwordField.querySelector("input[name='password']");
+            if (password) {
+                this.updatePasswordExperience(password, {reveal: true});
+                this.ensurePasswordSuggestion(passwordField);
+            }
+        }
+        if (!ev.target.closest(".field-password")) {
+            this.hidePasswordExperiences();
+        }
         const navLink = ev.target.closest("[data-ab-auth-nav]");
         if (navLink && this.el.contains(navLink)) {
             this.onModeNavigation(this.withCurrentTarget(ev, navLink));
@@ -81,6 +160,16 @@ export class AbStorefrontAuth extends Interaction {
         const passwordToggle = ev.target.closest(".ab-auth-password-toggle");
         if (passwordToggle && this.el.contains(passwordToggle)) {
             this.onPasswordToggle(this.withCurrentTarget(ev, passwordToggle));
+            return;
+        }
+        const generateButton = ev.target.closest("[data-ab-password-generate]");
+        if (generateButton && this.el.contains(generateButton)) {
+            this.generatePasswordSuggestion(generateButton.closest(".ab-auth-field"));
+            return;
+        }
+        const useButton = ev.target.closest("[data-ab-password-use]");
+        if (useButton && this.el.contains(useButton)) {
+            this.usePasswordSuggestion(useButton.closest(".ab-auth-field"));
             return;
         }
         const submitButton = ev.target.closest("[data-ab-auth-submit]");
@@ -97,6 +186,14 @@ export class AbStorefrontAuth extends Interaction {
             this.onPhoneInput(this.withCurrentTarget(ev, ev.target));
             return;
         }
+        if (ev.target.matches("input[name='password']")) {
+            this.updatePasswordExperience(ev.target, {reveal: true});
+            this.ensurePasswordSuggestion(ev.target.closest(".ab-auth-field"));
+            this.updateConfirmExperience(ev.target.form);
+        }
+        if (ev.target.matches("input[name='confirm_password']")) {
+            this.updateConfirmExperience(ev.target.form, {shakeOnMismatch: true});
+        }
         if (ev.target.matches("input")) {
             this.clearFieldError(ev.target);
         }
@@ -106,6 +203,30 @@ export class AbStorefrontAuth extends Interaction {
         if (ev.target.matches("[data-ab-phone-input]")) {
             this.onPhoneBlur(this.withCurrentTarget(ev, ev.target));
         }
+        if (ev.target.matches("input[name='confirm_password']")) {
+            this.updateConfirmExperience(ev.target.form, {shakeOnMismatch: true});
+        }
+        if (ev.target.matches("input[name='password']")) {
+            window.setTimeout(() => {
+                if (!ev.target.closest(".field-password")?.contains(document.activeElement)) {
+                    this.hidePasswordExperiences();
+                }
+            }, 0);
+        }
+    }
+
+    onDelegatedFocus(ev) {
+        if (ev.target.matches("input[name='password']")) {
+            this.onPasswordFocus(this.withCurrentTarget(ev, ev.target));
+        } else if (!ev.target.closest(".field-password")) {
+            this.hidePasswordExperiences();
+        }
+    }
+
+    onPasswordFocus(ev) {
+        const input = ev.currentTarget;
+        this.updatePasswordExperience(input, {reveal: true});
+        this.ensurePasswordSuggestion(input.closest(".ab-auth-field"));
     }
 
     onDelegatedSubmit(ev) {
@@ -130,6 +251,9 @@ export class AbStorefrontAuth extends Interaction {
     }
 
     async onModeNavigation(ev) {
+        if (ev.abAuthHandled) {
+            return;
+        }
         const link = ev.currentTarget;
         const url = this.getLocalizedAuthUrl(link.href);
         if (!url || this.isTransitioning || this.isSubmitting || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) {
@@ -195,6 +319,9 @@ export class AbStorefrontAuth extends Interaction {
     }
 
     onPasswordToggle(ev) {
+        if (ev.abAuthHandled) {
+            return;
+        }
         const button = ev.currentTarget;
         const input = button.closest(".ab-auth-input")?.querySelector("input[type='password'], input[type='text']");
         if (!input) {
@@ -311,11 +438,123 @@ export class AbStorefrontAuth extends Interaction {
 
         const password = form.querySelector("input[name='password']");
         const confirm = form.querySelector("input[name='confirm_password']");
+        if (password && form.matches(".oe_signup_form, .oe_reset_password_form")) {
+            const strength = evaluatePassword(password.value);
+            if (password.value && !strength.isStrong) {
+                this.updatePasswordExperience(password, {reveal: true});
+                this.setFieldError(password, "استخدم 8 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز خاص");
+                return password;
+            }
+        }
         if (password && confirm && password.value !== confirm.value) {
             this.setFieldError(confirm, "كلمتا المرور غير متطابقتين");
+            this.updateConfirmExperience(form, {shakeOnMismatch: true});
             return confirm;
         }
         return null;
+    }
+
+    updatePasswordExperience(input, options = {}) {
+        const field = input.closest(".ab-auth-field");
+        const helper = field?.querySelector("[data-ab-password-strength]");
+        if (!field || !helper) {
+            return;
+        }
+        const value = input.value || "";
+        const strength = evaluatePassword(value);
+        helper.classList.toggle("is-revealed", Boolean(options.reveal));
+        helper.classList.toggle("has-value", Boolean(value));
+        helper.classList.toggle("is-strong", strength.isStrong);
+        helper.dataset.strength = strength.level.key;
+
+        helper.querySelectorAll("[data-ab-password-segment]").forEach((segment) => {
+            const index = Number(segment.dataset.abPasswordSegment || 0);
+            segment.classList.toggle("is-active", index <= strength.score);
+        });
+        helper.querySelectorAll("[data-ab-password-rule]").forEach((row) => {
+            const isMet = Boolean(strength.met[row.dataset.abPasswordRule]);
+            row.classList.toggle("is-met", isMet);
+            const icon = row.querySelector("svg");
+            if (icon) {
+                icon.innerHTML = isMet
+                    ? '<path d="M20 6 9 17l-5-5"/>'
+                    : '<circle cx="12" cy="12" r="7"/>';
+            }
+        });
+
+        const label = helper.querySelector("[data-ab-password-label]");
+        if (label && label.textContent !== strength.level.label) {
+            label.classList.remove("is-changing");
+            void label.offsetWidth;
+            label.textContent = strength.isStrong ? "كلمة مرور قوية" : strength.level.label;
+            label.classList.add("is-changing");
+        }
+        const hint = helper.querySelector("[data-ab-password-hint]");
+        if (hint) {
+            hint.textContent = strength.isStrong ? "كلمة مرور قوية" : strength.level.hint;
+        }
+    }
+
+    hidePasswordExperiences() {
+        this.el.querySelectorAll("[data-ab-password-strength].is-revealed").forEach((helper) => {
+            helper.classList.remove("is-revealed");
+        });
+    }
+
+    ensurePasswordSuggestion(field) {
+        const suggestion = field?.querySelector("[data-ab-password-suggestion]");
+        if (suggestion && (!suggestion.textContent || suggestion.textContent.trim() === "--")) {
+            this.setPasswordSuggestion(field, generateStrongPassword());
+        }
+    }
+
+    generatePasswordSuggestion(field) {
+        this.setPasswordSuggestion(field, generateStrongPassword());
+    }
+
+    setPasswordSuggestion(field, value) {
+        const suggestion = field?.querySelector("[data-ab-password-suggestion]");
+        const wrap = field?.querySelector("[data-ab-password-suggestion-wrap]");
+        if (!suggestion || !wrap) {
+            return;
+        }
+        wrap.classList.remove("is-refreshing");
+        void wrap.offsetWidth;
+        suggestion.textContent = value;
+        wrap.classList.add("is-refreshing");
+    }
+
+    usePasswordSuggestion(field) {
+        const password = field?.querySelector("input[name='password']");
+        const suggestion = field?.querySelector("[data-ab-password-suggestion]")?.textContent?.trim();
+        if (!password || !suggestion || suggestion === "--") {
+            return;
+        }
+        password.value = suggestion;
+        password.dispatchEvent(new Event("input", {bubbles: true}));
+        this.updatePasswordExperience(password, {reveal: true});
+    }
+
+    updateConfirmExperience(form, options = {}) {
+        const password = form?.querySelector("input[name='password']");
+        const confirm = form?.querySelector("input[name='confirm_password']");
+        const field = confirm?.closest(".ab-auth-field");
+        const message = field?.querySelector("[data-ab-confirm-message]");
+        if (!password || !confirm || !message) {
+            return;
+        }
+        field.classList.remove("has-confirm-match", "has-confirm-mismatch");
+        if (!confirm.value) {
+            message.textContent = "";
+            return;
+        }
+        const matches = password.value === confirm.value;
+        field.classList.add(matches ? "has-confirm-match" : "has-confirm-mismatch");
+        message.textContent = matches ? "كلمتا المرور متطابقتان" : "كلمتا المرور غير متطابقتين";
+        if (!matches && options.shakeOnMismatch && field.dataset.abLastConfirmState !== "mismatch") {
+            this.shakeField(field);
+        }
+        field.dataset.abLastConfirmState = matches ? "match" : "mismatch";
     }
 
     setFieldError(input, text) {
@@ -433,6 +672,11 @@ export class AbStorefrontAuth extends Interaction {
             child.style.setProperty("--ab-auth-motion-index", index);
         });
         this.bindCurrentControls();
+        form.querySelectorAll("input[name='password']").forEach((input) => {
+            this.updatePasswordExperience(input, {reveal: false});
+            this.ensurePasswordSuggestion(input.closest(".ab-auth-field"));
+        });
+        this.updateConfirmExperience(form);
     }
 
     bindCurrentControls() {
@@ -452,6 +696,10 @@ export class AbStorefrontAuth extends Interaction {
         this.el.querySelectorAll(".ab-auth-password-toggle:not([data-ab-motion-bound])").forEach((button) => {
             button.dataset.abMotionBound = "true";
             button.addEventListener("click", this.onPasswordToggle);
+        });
+        this.el.querySelectorAll("input[name='password']:not([data-ab-password-bound])").forEach((input) => {
+            input.dataset.abPasswordBound = "true";
+            input.addEventListener("focus", this.onPasswordFocus);
         });
         this.el.querySelectorAll("[data-ab-auth-submit]:not([data-ab-motion-bound])").forEach((button) => {
             button.dataset.abMotionBound = "true";
