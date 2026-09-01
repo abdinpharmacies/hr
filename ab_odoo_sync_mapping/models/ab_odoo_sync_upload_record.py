@@ -401,7 +401,10 @@ class AbOdooSyncUploadRecord(models.Model):
             )
             if len(relation) > 1:
                 raise ValueError(
-                    _("Stable relation %(field)s matched more than one MAIN record.")
+                    _(
+                        "Stable relation %(field)s matched more than one report "
+                        "record."
+                    )
                     % {"field": mapping.source_field_name}
                 )
 

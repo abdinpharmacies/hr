@@ -23,6 +23,7 @@ class AbOdooSyncMappingController(http.Controller):
         return payload if isinstance(payload, dict) else {}
 
     def _authorize(self):
+        service = request.env["ab_odoo_sync_service"].sudo()
         api_key = (
             request.env["ir.config_parameter"]
             .sudo()
@@ -32,7 +33,9 @@ class AbOdooSyncMappingController(http.Controller):
         request_key = (
             request.httprequest.headers.get("X-AB-Sync-Key") or ""
         ).strip()
-        return bool(api_key) and hmac.compare_digest(request_key, api_key)
+        return service.is_configured(api_key) and hmac.compare_digest(
+            request_key, api_key
+        )
 
     @http.route(
         "/ab_odoo_sync/health",

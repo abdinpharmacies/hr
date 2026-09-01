@@ -40,7 +40,7 @@ class AbOdooSyncApplyProfile(models.Model):
         default="mirror_sync",
         required=True,
         index=True,
-        help="Controls how MAIN handles accepted branch uploads for this source model.",
+        help="Controls how the report server handles accepted branch uploads for this source model.",
     )
     target_model_name = fields.Char(string="Target Model", index=True)
     allow_placeholder_creation = fields.Boolean(
@@ -285,7 +285,10 @@ class AbOdooSyncApplyProfile(models.Model):
 
         return self._notification(
             _("Odoo Sync Mapping"),
-            _("Loaded %(count)s matching field mapping(s). Enable only the fields that MAIN should apply.")
+            _(
+                "Loaded %(count)s matching field mapping(s). Enable only the "
+                "fields that the report server should apply."
+            )
             % {"count": created},
             "success" if created else "warning",
         )
@@ -369,7 +372,7 @@ class AbOdooSyncFieldMapping(models.Model):
     )
     relation_target_key = fields.Char(
         string="Relation Target Key",
-        help="Field searched on the MAIN relation model.",
+        help="Field searched on the report relation model.",
     )
     required = fields.Boolean(
         help="Fail the whole apply operation when this relation or value cannot be resolved.",
