@@ -31,9 +31,9 @@
                         aria-label="Add to wishlist">
                     <i t-attf-class="fa #{ab_is_wishlisted and 'fa-heart' or 'fa-heart-o'}" aria-hidden="true"/>
                 </button>
-                <span t-if="ab_is_sold_out" class="ab-storefront-stock-badge">Out of stock</span>
+                <span t-if="ab_is_sold_out" class="ab-storefront-stock-badge">غير متوفر</span>
                 <span t-elif="ab_price.get('base_price', 0) &gt; ab_price.get('price_reduce', 0)"
-                      class="ab-storefront-offer-badge">Offer</span>
+                      class="ab-storefront-offer-badge">عرض</span>
             </div>
 
             <div class="ab-storefront-product-body d-flex flex-column flex-grow-1">
@@ -60,12 +60,12 @@
                         class="o_wsale_product_btn_primary a-submit btn btn-primary w-100 mt-3"
                         data-show-quantity="false">
                     <i class="fa fa-shopping-cart me-2" aria-hidden="true"/>
-                    Add to cart
+                    أضف للسلة
                 </button>
                 <a t-else=""
                    t-att-href="product._get_product_url()"
                    class="btn btn-outline-primary w-100 mt-3">
-                    View product
+                    عرض المنتج
                 </a>
             </div>
         </form>
@@ -107,16 +107,31 @@
                             <div class="carousel-item active oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-primary"
                                  style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_01.svg');"
                                  data-name="Banner 1">
+                                <img class="ab-storefront-banner-art"
+                                     src="/ab_ecommerce_storefront/static/src/img/banners/banner_01.svg"
+                                     alt=""
+                                     aria-hidden="true"
+                                     loading="eager"/>
                             </div>
 
                             <div class="carousel-item oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-wellness"
                                  style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_02.svg');"
                                  data-name="Banner 2">
+                                <img class="ab-storefront-banner-art"
+                                     src="/ab_ecommerce_storefront/static/src/img/banners/banner_02.svg"
+                                     alt=""
+                                     aria-hidden="true"
+                                     loading="lazy"/>
                             </div>
 
                             <div class="carousel-item oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-delivery"
                                  style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_03.svg');"
                                  data-name="Banner 3">
+                                <img class="ab-storefront-banner-art"
+                                     src="/ab_ecommerce_storefront/static/src/img/banners/banner_03.svg"
+                                     alt=""
+                                     aria-hidden="true"
+                                     loading="lazy"/>
                             </div>
                         </div>
 
@@ -144,26 +159,26 @@
                         <div class="row g-0">
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
-                                    <i class="fa fa-shield" aria-hidden="true"/>
-                                    <span><strong>Trusted care</strong><small>From Abdin Pharmacies</small></span>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5.5 5.4v5.3c0 4.1 2.6 7.8 6.5 9.3 3.9-1.5 6.5-5.2 6.5-9.3V5.4L12 3Zm0 2.2 4.5 1.7v3.8c0 3-1.7 5.7-4.5 7.1-2.8-1.4-4.5-4.1-4.5-7.1V6.9L12 5.2Z"/><path d="m10.9 13.7-2.2-2.2 1.2-1.2 1 1 3.3-3.3 1.2 1.2-4.5 4.5Z"/></svg>
+                                    <span><strong>رعاية صيدلية موثوقة</strong><small>من صيدليات عابدين</small></span>
                                 </div>
                             </div>
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
-                                    <i class="fa fa-truck" aria-hidden="true"/>
-                                    <span><strong>Easy delivery</strong><small>Convenient ordering</small></span>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h12v9h1.3l1.1-3H21v3h1v2h-2.1a3 3 0 0 1-5.8 0H9.9a3 3 0 0 1-5.8 0H3V5Zm2 2v7h9V7H5Zm12.7 6.9H19v-.9h-.2l-.7 1.9h-.4v-1ZM7 16a1 1 0 1 0 0 2 1 1 0 0 0 0-2Zm10 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2Z"/></svg>
+                                    <span><strong>توصيل سريع</strong><small>طلب مريح حتى بابك</small></span>
                                 </div>
                             </div>
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
-                                    <i class="fa fa-lock" aria-hidden="true"/>
-                                    <span><strong>Secure payment</strong><small>Protected checkout</small></span>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 10V8a6 6 0 1 1 12 0v2h1.5v10h-15V10H6Zm2 0h8V8a4 4 0 0 0-8 0v2Zm-1.5 2v6h11v-6h-11Zm6.5 2v2h-2v-2h2Z"/></svg>
+                                    <span><strong>دفع آمن</strong><small>تجربة شراء محمية</small></span>
                                 </div>
                             </div>
                             <div class="col-6 col-lg-3">
                                 <div class="ab-storefront-service-item">
-                                    <i class="fa fa-phone" aria-hidden="true"/>
-                                    <span><strong>Need help?</strong><small>Call 19036</small></span>
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a8 8 0 0 0-8 8v3a3 3 0 0 0 3 3h1v-6H6a6 6 0 1 1 12 0h-2v6h1.6c-.5 1.2-1.7 2-3.1 2H13v2h1.5A5.5 5.5 0 0 0 20 15.5V11a8 8 0 0 0-8-8Zm-6 10h1v2H6v-2Zm11 0h1v2h-1v-2Z"/></svg>
+                                    <span><strong>دعم العملاء</strong><small>الخط الساخن 19036</small></span>
                                 </div>
                             </div>
                         </div>
@@ -174,10 +189,10 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Find what you need</span>
-                                <h2 class="mb-0">Shop by category</h2>
+                                <span class="ab-storefront-kicker">Categories</span>
+                                <h2 class="mb-0">تسوق حسب القسم</h2>
                             </div>
-                            <a href="/shop" class="ab-storefront-view-all text-decoration-none">View all products <i class="fa fa-arrow-right ms-1"/></a>
+                            <a href="/shop" class="ab-storefront-view-all text-decoration-none">كل الأقسام</a>
                         </div>
                         <div class="ab-storefront-category-grid">
                             <a t-foreach="ab_catalog['categories']"
@@ -216,10 +231,10 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Popular right now</span>
-                                <h2 class="mb-0">Best sellers</h2>
+                                <span class="ab-storefront-kicker">Best Sellers</span>
+                                <h2 class="mb-0">الأكثر مبيعًا</h2>
                             </div>
-                            <a href="/shop" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">View all</a>
+                            <a href="/shop" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">كل المنتجات</a>
                         </div>
                         <div class="row g-3 g-lg-4">
                             <div t-foreach="ab_catalog['best_sellers']" t-as="product" class="col-6 col-md-4 col-lg-3">
@@ -229,26 +244,30 @@
                     </div>
                 </section>
 
-                <section class="ab-storefront-promo py-4" data-name="Abdin Promotions">
+                <section class="ab-storefront-promo py-5" data-name="Promotions">
                     <div class="container">
-                        <div class="row g-4">
-                            <div class="col-12 col-lg-7">
+                        <div class="row g-3 g-lg-4">
+                            <div class="col-12 col-lg-6">
                                 <a href="/shop" class="ab-storefront-promo-card ab-storefront-promo-primary text-decoration-none">
-                                    <span class="ab-storefront-promo-icon"><i class="fa fa-heartbeat" aria-hidden="true"/></span>
+                                    <span class="ab-storefront-promo-icon">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v10H7.8L4 18.8V5Zm2 2v7l1-1h11V7H6Zm3 2h6v2H9V9Zm0 3h4v2H9v-2Z"/></svg>
+                                    </span>
                                     <span>
-                                        <small>Everyday health</small>
-                                        <strong>Your healthcare essentials in one place</strong>
-                                        <span>Browse the complete range <i class="fa fa-arrow-right ms-1"/></span>
+                                        <small>Pharmacy Care</small>
+                                        <strong>رعاية صيدلية موثوقة تصل إلى بابك</strong>
+                                        <span>تسوق الآن</span>
                                     </span>
                                 </a>
                             </div>
-                            <div class="col-12 col-lg-5">
-                                <a href="/contactus" class="ab-storefront-promo-card ab-storefront-promo-secondary text-decoration-none">
-                                    <span class="ab-storefront-promo-icon"><i class="fa fa-user-md" aria-hidden="true"/></span>
+                            <div class="col-12 col-lg-6">
+                                <a href="/shop" class="ab-storefront-promo-card ab-storefront-promo-secondary text-decoration-none">
+                                    <span class="ab-storefront-promo-icon">
+                                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a8 8 0 0 0-8 8v3a3 3 0 0 0 3 3h1v-6H6a6 6 0 1 1 12 0h-2v6h1.6c-.5 1.2-1.7 2-3.1 2H13v2h1.5A5.5 5.5 0 0 0 20 15.5V11a8 8 0 0 0-8-8Zm-6 10h1v2H6v-2Zm11 0h1v2h-1v-2Z"/></svg>
+                                    </span>
                                     <span>
-                                        <small>Here when you need us</small>
-                                        <strong>Talk to Abdin Pharmacies</strong>
-                                        <span>Contact our team <i class="fa fa-arrow-right ms-1"/></span>
+                                        <small>Hotline 19036</small>
+                                        <strong>تحتاج مساعدة؟ فريقنا قريب منك</strong>
+                                        <span>تواصل معنا</span>
                                     </span>
                                 </a>
                             </div>
@@ -260,10 +279,10 @@
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
-                                <span class="ab-storefront-kicker">Save on your favorites</span>
-                                <h2 class="mb-0">Offers</h2>
+                                <span class="ab-storefront-kicker">Promotions</span>
+                                <h2 class="mb-0">العروض الحالية</h2>
                             </div>
-                            <a href="/shop" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">View more</a>
+                            <a href="/shop" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">تسوق العروض</a>
                         </div>
                         <div t-if="ab_catalog['offers']" class="row g-3 g-lg-4">
                             <div t-foreach="ab_catalog['offers']" t-as="product" class="col-6 col-md-4 col-lg-3">
@@ -272,25 +291,28 @@
                         </div>
                         <div t-else="" class="ab-storefront-offers-empty d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-4">
                             <div>
-                                <h3>Fresh offers are coming soon.</h3>
-                                <p class="mb-0">Browse our pharmacy essentials while we prepare the next deals.</p>
+                                <h3>عروض جديدة قريبًا</h3>
+                                <p class="mb-0">تصفح منتجات الصيدلية الأساسية حتى تجهيز أحدث الخصومات.</p>
                             </div>
-                            <a href="/shop" class="btn btn-primary text-nowrap">Browse products</a>
+                            <a href="/shop" class="btn btn-primary text-nowrap">تصفح المنتجات</a>
                         </div>
                     </div>
                 </section>
 
-                <section class="ab-storefront-closing-cta py-5" data-name="Abdin Closing Call To Action">
+                <section class="ab-storefront-closing-cta py-5" data-name="Customer Support CTA">
                     <div class="container">
                         <div class="ab-storefront-closing-panel d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-4">
                             <div>
-                                <span class="ab-storefront-kicker">Abdin Pharmacies</span>
-                                <h2 class="mb-2">Care that stays close to you.</h2>
-                                <p class="mb-0">Browse trusted products online or call our pharmacy team for help.</p>
+                                <span class="ab-storefront-kicker">تحدث مع صيدليات عابدين</span>
+                                <h2 class="mb-2">معك عندما تحتاجنا</h2>
+                                <p class="mb-0">فريقنا جاهز لمساعدتك في اختيار المنتجات وطلباتك اليومية.</p>
                             </div>
-                            <div class="d-flex flex-wrap gap-3">
-                                <a href="/shop" class="btn btn-light btn-lg">Browse products</a>
-                                <a href="tel:19036" class="btn btn-outline-light btn-lg">Call 19036</a>
+                            <div class="ab-storefront-support-actions d-flex flex-wrap gap-3">
+                                <a href="/contactus" class="btn btn-light btn-lg">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a8 8 0 0 0-8 8v3a3 3 0 0 0 3 3h1v-6H6a6 6 0 1 1 12 0h-2v6h1.2c-.4 1.2-1.5 2-2.9 2H13v2h1.3A5.3 5.3 0 0 0 19.6 16H20v-5a8 8 0 0 0-8-8Z"/></svg>
+                                    تواصل مع فريقنا
+                                </a>
+                                <a href="tel:19036" class="btn btn-outline-light btn-lg">19036</a>
                             </div>
                         </div>
                     </div>

@@ -1703,7 +1703,7 @@ body.ab-storefront-location-picker-open {
 
     .carousel-inner,
     .carousel-item {
-        min-height: 620px;
+        min-height: clamp(360px, 39vw, 560px);
     }
 
     .carousel-item {
@@ -1712,6 +1712,10 @@ body.ab-storefront-location-picker-open {
         background-position: center;
         background-size: cover;
         background-repeat: no-repeat;
+    }
+
+    .ab-storefront-banner-art {
+        display: none;
     }
 
     .ab-storefront-banner-shade {
@@ -1956,15 +1960,18 @@ body.ab-storefront-location-picker-open {
 
     .ab-storefront-service-item {
         display: flex;
-        min-height: 104px;
+        min-height: 92px;
         align-items: center;
         gap: .9rem;
-        padding: 1.25rem;
+        padding: 1rem 1.15rem;
         border-inline-end: 1px solid $ab-border;
 
-        > i {
+        > svg {
+            width: 28px;
+            height: 28px;
+            flex: 0 0 28px;
             color: $ab-green;
-            font-size: 1.45rem;
+            fill: currentColor;
         }
 
         strong,
@@ -2196,6 +2203,134 @@ body.ab-storefront-location-picker-open {
     }
 }
 
+.ab-storefront-partner-ads {
+    background: linear-gradient(180deg, #fbfdfc, $ab-background);
+
+    .ab-storefront-kicker {
+        color: $ab-muted;
+    }
+}
+
+.ab-storefront-partner-carousel {
+    position: relative;
+    overflow: hidden;
+    border-radius: 1rem;
+
+    .carousel-inner {
+        border-radius: inherit;
+    }
+
+    .carousel-indicators {
+        gap: .35rem;
+        margin-bottom: .55rem;
+
+        [data-bs-target] {
+            width: 22px;
+            height: 4px;
+            margin: 0;
+            border: 0;
+            border-radius: 999px;
+            background: rgba($ab-ink, .24);
+            opacity: 1;
+        }
+
+        .active {
+            width: 34px;
+            background: $ab-green;
+        }
+    }
+}
+
+.ab-storefront-partner-ad {
+    position: relative;
+    display: grid;
+    min-height: 164px;
+    grid-template-columns: minmax(0, 1fr) minmax(220px, .55fr);
+    align-items: center;
+    gap: 1rem;
+    padding: clamp(1rem, 2.2vw, 1.6rem);
+    color: $ab-ink;
+    border: 1px solid rgba($ab-green-dark, .08);
+    border-radius: 1rem;
+    background: #fff;
+    isolation: isolate;
+
+    &:hover {
+        color: $ab-ink;
+    }
+
+    > svg {
+        width: 100%;
+        max-height: 118px;
+        color: rgba($ab-green, .18);
+        fill: currentColor;
+        justify-self: end;
+    }
+}
+
+.ab-storefront-sponsored-label {
+    position: absolute;
+    inset-block-start: .75rem;
+    inset-inline-start: .85rem;
+    padding: .22rem .55rem;
+    color: $ab-muted;
+    border: 1px solid rgba($ab-green-dark, .08);
+    border-radius: 999px;
+    background: rgba(#fff, .72);
+    font-size: .65rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+}
+
+.ab-storefront-partner-copy {
+    display: grid;
+    gap: .35rem;
+    padding-block-start: 1.2rem;
+
+    small {
+        color: $ab-muted;
+        font-size: .72rem;
+        font-weight: 800;
+    }
+
+    strong {
+        color: $ab-ink;
+        font-size: clamp(1.15rem, 2vw, 1.55rem);
+        font-weight: 900;
+        line-height: 1.35;
+    }
+
+    span {
+        color: $ab-green-dark;
+        font-size: .82rem;
+        font-weight: 900;
+    }
+}
+
+.ab-storefront-partner-ad-green {
+    background: linear-gradient(135deg, #f7fbf9, #edf8f2);
+
+    > svg {
+        color: rgba($ab-green, .18);
+    }
+}
+
+.ab-storefront-partner-ad-blue {
+    background: linear-gradient(135deg, #f7fbff, #edf6fb);
+
+    > svg {
+        color: rgba($ab-blue, .2);
+    }
+}
+
+.ab-storefront-partner-ad-warm {
+    background: linear-gradient(135deg, #fffaf4, #fff2e4);
+
+    > svg {
+        color: rgba($ab-orange, .2);
+    }
+}
+
 .ab-storefront-promo {
     background: $ab-background;
 }
@@ -2226,7 +2361,12 @@ body.ab-storefront-location-picker-open {
         justify-content: center;
         border-radius: 50%;
         background: rgba(#fff, .16);
-        font-size: 2rem;
+
+        svg {
+            width: 38px;
+            height: 38px;
+            fill: currentColor;
+        }
     }
 
     small,
@@ -2495,6 +2635,18 @@ body.ab-storefront-location-picker-open {
         display: flex;
         width: 100%;
         gap: .5rem;
+    }
+}
+
+.ab-storefront-support-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .55rem;
+
+    svg {
+        width: 20px;
+        height: 20px;
+        fill: currentColor;
     }
 }
 
@@ -4290,7 +4442,7 @@ body.ab-storefront-image-hero-open {
     .ab-storefront-hero-slider {
         .carousel-inner,
         .carousel-item {
-            min-height: 520px;
+            min-height: clamp(240px, 62vw, 360px);
         }
 
         .ab-storefront-banner-content {
@@ -4355,13 +4507,36 @@ body.ab-storefront-image-hero-open {
     .ab-storefront-hero-slider {
         .carousel-inner,
         .carousel-item {
-            min-height: 475px;
+            min-height: clamp(230px, 62vw, 340px);
+        }
+
+        .carousel-item,
+        .carousel-item.ab-storefront-banner,
+        .carousel-item.o_bg_img_center {
+            background-image: none !important;
+            /* rtl:ignore */
+            background-position: right center !important;
+            /* rtl:ignore */
+            background-position-x: 100% !important;
+            background-position-y: center !important;
+            background-size: auto 100% !important;
+        }
+
+        .ab-storefront-banner-art {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* rtl:ignore */
+            object-position: 100% 50%;
         }
 
         .ab-storefront-banner-shade,
         .ab-storefront-banner-wellness .ab-storefront-banner-shade,
         .ab-storefront-banner-delivery .ab-storefront-banner-shade {
-            background: linear-gradient(0deg, rgba(7, 49, 33, .91), rgba(9, 57, 38, .72));
+            background: linear-gradient(90deg, rgba(7, 49, 33, .05), rgba(9, 57, 38, .08));
         }
 
         .ab-storefront-banner-layout {
@@ -4406,17 +4581,20 @@ body.ab-storefront-image-hero-open {
     }
 
     .ab-storefront-category-grid {
-        grid-auto-rows: 165px;
+        display: grid;
+        grid-auto-rows: 170px;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .85rem;
     }
 
     .ab-storefront-category-card {
+        min-height: 160px;
         grid-column: span 1;
-        min-height: 165px;
+        grid-row: auto;
 
         &:first-child {
             grid-column: span 2;
-            grid-row: span 2;
+            grid-row: auto;
         }
 
         &:nth-child(4) {
@@ -4437,6 +4615,36 @@ body.ab-storefront-image-hero-open {
             flex-basis: 58px;
             font-size: 1.5rem;
         }
+    }
+
+    .ab-storefront-partner-ad {
+        min-height: 0;
+        aspect-ratio: 8 / 3;
+        grid-template-columns: minmax(0, 1.15fr) minmax(92px, .65fr);
+        padding: .85rem;
+
+        > svg {
+            max-height: 82px;
+        }
+    }
+
+    .ab-storefront-product-rail {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: .35rem;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .ab-storefront-product-rail-item {
+        width: 72vw;
+        max-width: 260px;
+        flex: 0 0 72vw;
+        scroll-snap-align: start;
     }
 
     .ab-storefront-product-card {
@@ -4576,10 +4784,127 @@ body.ab-storefront-image-hero-open {
         }
     }
 
+    .ab-storefront-service-strip {
+        .ab-storefront-service-item {
+            min-height: 82px;
+            padding: .85rem;
+            border-bottom: 1px solid $ab-border;
+
+            > svg {
+                width: 24px;
+                height: 24px;
+                flex-basis: 24px;
+            }
+
+            strong {
+                font-size: .82rem;
+            }
+
+            small {
+                font-size: .68rem;
+            }
+        }
+    }
+
+    .ab-storefront-category-grid {
+        display: grid;
+        grid-auto-rows: 155px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: .85rem;
+    }
+
+    .ab-storefront-category-card,
+    .ab-storefront-category-card:first-child,
+    .ab-storefront-category-card:nth-child(4) {
+        min-height: 160px;
+        grid-column: span 1;
+        grid-row: auto;
+    }
+
+    .ab-storefront-category-card:first-child {
+        grid-column: span 2;
+    }
+
+    .ab-storefront-partner-ad {
+        min-height: 0;
+        aspect-ratio: 8 / 3;
+        grid-template-columns: minmax(0, 1.15fr) minmax(92px, .65fr);
+        padding: .85rem;
+
+        > svg {
+            max-height: 82px;
+        }
+    }
+
+    .ab-storefront-sponsored-label {
+        inset-block-start: .45rem;
+        inset-inline-start: .55rem;
+        font-size: .56rem;
+    }
+
+    .ab-storefront-partner-copy {
+        gap: .18rem;
+        padding-block-start: 1rem;
+
+        small {
+            font-size: .58rem;
+        }
+
+        strong {
+            font-size: .9rem;
+        }
+
+        span {
+            font-size: .68rem;
+        }
+    }
+
+    .ab-storefront-product-rail {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: .35rem;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .ab-storefront-product-rail-item {
+        width: 72vw;
+        max-width: 260px;
+        flex: 0 0 72vw;
+        scroll-snap-align: start;
+    }
+
     .ab-storefront-hero-slider {
         .carousel-inner,
         .carousel-item {
-            min-height: 520px;
+            min-height: clamp(230px, 62vw, 320px);
+        }
+
+        .carousel-item,
+        .carousel-item.ab-storefront-banner,
+        .carousel-item.o_bg_img_center {
+            background-image: none !important;
+            /* rtl:ignore */
+            background-position: right center !important;
+            /* rtl:ignore */
+            background-position-x: 100% !important;
+            background-position-y: center !important;
+            background-size: auto 100% !important;
+        }
+
+        .ab-storefront-banner-art {
+            position: absolute;
+            inset: 0;
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* rtl:ignore */
+            object-position: 100% 50%;
         }
 
         .ab-storefront-banner-content {
