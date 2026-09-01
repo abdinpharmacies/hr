@@ -7,4 +7,5 @@ class AbUsers(models.Model):
     _description = 'Passive User Shadow'
 
     name = fields.Char()
-    active = fields.Boolean(default=True)
+    login = fields.Char(index=True)
+    active = fields.Boolean(default=True, index=True)
