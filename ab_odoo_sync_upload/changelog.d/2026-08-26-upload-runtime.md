@@ -1,4 +1,6 @@
-## Current changes before commit:
+## `da68489f` - emadco88 - 2026-08-26
+
+Original commit subject: `ab_odoo_sync_upload/ NEW from reports19`
 
 User-facing changes:
 
@@ -23,4 +25,16 @@ Files changed:
 - `ab_odoo_sync_upload/views/upload_views.xml`
 - `ab_odoo_sync_upload/i18n/ar.po`
 - `ab_odoo_sync_upload/i18n/ar_001.po`
+- `ab_odoo_sync_upload/changelog.d/2026-08-26-upload-runtime.md`
+
+## Current changes before commit:
+
+User-facing changes:
+
+- Fixed **Load Installed Models** so models protected by the shared sync rules
+  are skipped while valid inactive upload sources continue loading.
+
+Files changed:
+
+- `ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py`
 - `ab_odoo_sync_upload/changelog.d/2026-08-26-upload-runtime.md`
