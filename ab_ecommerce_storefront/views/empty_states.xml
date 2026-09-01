@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="cart_first_empty_message" inherit_id="website_sale.cart_lines" name="Abdin Cart First Empty Message">
+        <xpath expr="//div[hasclass('js_cart_lines')]/h5" position="replace">
+            <h5 class="mb-3" style="text-align: center;">
+                <t t-if="website._ab_storefront_is_first_cart_addition()">أضف أول منتج لك في عربة التسوق</t>
+                <t t-else="">Your cart is empty!</t>
+            </h5>
+        </xpath>
+    </template>
+
+    <template id="wishlist_first_empty_message" inherit_id="website_sale_wishlist.product_wishlist" name="Abdin Wishlist First Empty Message">
+        <xpath expr="//div[@id='empty-wishlist-message']/h5" position="replace">
+            <h5 class="mb-3" style="text-align: center;">
+                <t t-if="website._ab_storefront_is_first_wishlist_addition()">أضف أول منتج لك في المفضلة</t>
+                <t t-else="">Your wishlist is empty!</t>
+            </h5>
+        </xpath>
+    </template>
+</odoo>

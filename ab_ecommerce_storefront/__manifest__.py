@@ -18,9 +18,14 @@
         "views/homepage.xml",
         "views/shop.xml",
         "views/product.xml",
+        "views/empty_states.xml",
     ],
     "assets": {
         "web.assets_frontend": [
+            "ab_ecommerce_storefront/static/src/js/hero_carousel.js",
+            "ab_ecommerce_storefront/static/src/js/current_location.js",
+            "ab_ecommerce_storefront/static/src/js/logo_motion.js",
+            "ab_ecommerce_storefront/static/src/js/product_image_zoom.js",
             "ab_ecommerce_storefront/static/src/scss/storefront.scss",
         ],
     },

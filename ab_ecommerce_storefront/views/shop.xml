@@ -2,8 +2,7 @@
 <odoo>
     <template id="shop_category_navigation_item" name="Abdin Shop Category Navigation Item">
         <t t-set="ab_children" t-value="c.child_id"/>
-        <t t-if="not request.env.user._is_internal()"
-           t-set="ab_children"
+        <t t-set="ab_children"
            t-value="ab_children.filtered('has_published_products')"/>
         <li class="ab-storefront-side-category-item">
             <a t-att-href="keep('%s/category/%s' % (shop_path, request.env['ir.http']._slug(c)))"
@@ -87,6 +86,17 @@
         <xpath expr="//section[@id='o_wsale_products_grid']" position="attributes">
             <attribute name="class" add="ab-storefront-product-grid" separator=" "/>
         </xpath>
+        <xpath expr="//a[@data-bs-target='#o_wsale_search_modal']" position="attributes">
+            <attribute name="t-attf-class" add="ab-storefront-mobile-shop-search" separator=" "/>
+        </xpath>
+        <xpath expr="//a[@data-bs-target='#o_wsale_search_modal']/i" position="after">
+            <span class="ab-storefront-mobile-shop-search-label">
+                <t t-if="search" t-out="search"/>
+                <t t-elif="request.env.lang in ('ar', 'ar_001')">ابحث عن دواء أو منتج عناية...</t>
+                <t t-else="">Search medicines and wellness products</t>
+            </span>
+            <i t-if="search" class="fa fa-times ab-storefront-mobile-shop-search-clear" aria-hidden="true"/>
+        </xpath>
         <xpath expr="//aside[@id='products_grid_before']//t[@t-if='show_price_filter' and @t-call='website_sale.filter_products_price']" position="after">
             <t t-if="categories" t-call="ab_ecommerce_storefront.shop_category_navigation"/>
         </xpath>
@@ -108,12 +118,42 @@
               name="Abdin Shop Category Navigation Offcanvas"
               inherit_id="website_sale.o_wsale_offcanvas"
               priority="90">
+        <xpath expr="//aside[@id='o_wsale_offcanvas']" position="attributes">
+            <attribute name="class" add="ab-storefront-filter-dialog" separator=" "/>
+        </xpath>
+        <xpath expr="//aside[@id='o_wsale_offcanvas']/div[hasclass('offcanvas-body') and not(hasclass('border-top'))]" position="attributes">
+            <attribute name="class" add="ab-storefront-filter-dialog-search" separator=" "/>
+        </xpath>
         <xpath expr="//div[@id='o_wsale_offcanvas_content']/t[@t-call='website_sale.filter_products_price']" position="after">
             <div t-if="categories" class="accordion-item d-lg-none ab-storefront-side-categories-mobile">
-                <div class="accordion-body py-3">
-                    <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
+                <h2 id="ab_storefront_offcanvas_categories_header" class="accordion-header mb-0">
+                    <button class="o_wsale_offcanvas_title accordion-button rounded-0 collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#ab_storefront_offcanvas_categories"
+                            aria-expanded="false"
+                            aria-controls="ab_storefront_offcanvas_categories">
+                        <b>كل الأقسام</b>
+                    </button>
+                </h2>
+                <div id="ab_storefront_offcanvas_categories"
+                     class="accordion-collapse collapse"
+                     aria-labelledby="ab_storefront_offcanvas_categories_header">
+                    <div class="accordion-body py-3">
+                        <t t-call="ab_ecommerce_storefront.shop_category_navigation"/>
+                    </div>
                 </div>
             </div>
+        </xpath>
+        <xpath expr="//div[hasclass('offcanvas-body') and hasclass('border-top')]" position="attributes">
+            <attribute name="class" add="ab-storefront-filter-dialog-actions" separator=" "/>
+        </xpath>
+        <xpath expr="//div[hasclass('offcanvas-body') and hasclass('border-top')]/a[contains(@t-att-href, 'attribute_values=0')]" position="after">
+            <button type="button"
+                    class="btn btn-primary ab-storefront-filter-apply"
+                    data-bs-dismiss="offcanvas">
+                حفظ
+            </button>
         </xpath>
     </template>
 

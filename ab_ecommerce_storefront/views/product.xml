@@ -38,6 +38,132 @@
         <xpath expr="//div[@id='product_full_description']" position="attributes">
             <attribute name="class" add="ab-storefront-product-description container" separator=" "/>
         </xpath>
+        <xpath expr="//section[@id='product_detail']" position="after">
+            <t t-set="ab_related_products" t-value="product._get_website_alternative_product()[:4]"/>
+            <t t-set="ab_bought_with_products" t-value="product._get_website_accessory_product()[:4].product_tmpl_id"/>
+            <t t-set="ab_recommendation_category_ids" t-value="product.public_categ_ids.ids"/>
+            <t t-set="ab_recommendation_excluded_ids" t-value="(product | ab_related_products | ab_bought_with_products).ids"/>
+            <t t-set="ab_related_fallback_count" t-value="4 - len(ab_related_products)"/>
+            <t t-if="ab_related_fallback_count &gt; 0"
+               t-set="ab_related_products"
+               t-value="ab_related_products | request.env['product.template'].with_context(bin_size=True).search([('sale_ok', '=', True), ('is_published', '=', True), ('id', 'not in', ab_recommendation_excluded_ids)] + (ab_recommendation_category_ids and [('public_categ_ids', 'in', ab_recommendation_category_ids)] or []), order='website_sequence, id DESC', limit=ab_related_fallback_count)"/>
+            <t t-set="ab_recommendation_excluded_ids" t-value="(product | ab_related_products | ab_bought_with_products).ids"/>
+            <t t-set="ab_bought_with_fallback_count" t-value="4 - len(ab_bought_with_products)"/>
+            <t t-if="ab_bought_with_fallback_count &gt; 0"
+               t-set="ab_bought_with_products"
+               t-value="ab_bought_with_products | request.env['product.template'].with_context(bin_size=True).search([('sale_ok', '=', True), ('is_published', '=', True), ('id', 'not in', ab_recommendation_excluded_ids)] + (ab_recommendation_category_ids and [('public_categ_ids', 'in', ab_recommendation_category_ids)] or []), order='website_sequence, id DESC', limit=ab_bought_with_fallback_count)"/>
+            <t t-if="ab_related_products or ab_bought_with_products">
+                <t t-set="ab_recommendation_prices" t-value="(ab_related_products | ab_bought_with_products)._get_sales_prices(website)"/>
+                <section t-if="ab_related_products"
+                         class="ab-storefront-product-recommendations ab-storefront-related-products">
+                    <div class="container">
+                        <div class="ab-storefront-recommendation-heading">
+                            <span class="ab-storefront-kicker">Carefully matched</span>
+                            <h2>Related products</h2>
+                            <p>Explore nearby healthcare choices from the same shopping journey.</p>
+                        </div>
+                        <div class="ab-storefront-recommendation-grid">
+                            <t t-foreach="ab_related_products" t-as="ab_recommendation_product">
+                                <t t-set="ab_recommendation_variant" t-value="False"/>
+                                <t t-call="ab_ecommerce_storefront.product_recommendation_card"/>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+                <section t-if="ab_bought_with_products"
+                         class="ab-storefront-product-recommendations ab-storefront-bought-with-products">
+                    <div class="container">
+                        <div class="ab-storefront-recommendation-heading">
+                            <span class="ab-storefront-kicker">Complete the routine</span>
+                            <h2>Often bought with this product</h2>
+                            <p>Useful add-ons customers commonly pair with this item.</p>
+                        </div>
+                        <div class="ab-storefront-recommendation-grid">
+                            <t t-foreach="ab_bought_with_products" t-as="ab_recommendation_product">
+                                <t t-set="ab_recommendation_variant" t-value="False"/>
+                                <t t-call="ab_ecommerce_storefront.product_recommendation_card"/>
+                            </t>
+                        </div>
+                    </div>
+                </section>
+            </t>
+        </xpath>
+    </template>
+
+    <template id="product_recommendation_card" name="Abdin Product Recommendation Card">
+        <t t-set="ab_recommendation_price" t-value="ab_recommendation_prices.get(ab_recommendation_product.id, {})"/>
+        <t t-set="ab_recommendation_variant_id"
+           t-value="ab_recommendation_variant and ab_recommendation_variant.id or ab_recommendation_product._get_first_possible_variant_id()"/>
+        <t t-set="ab_recommendation_variant"
+           t-value="ab_recommendation_variant_id and request.env['product.product'].sudo().browse(ab_recommendation_variant_id)"/>
+        <t t-set="ab_recommendation_is_sold_out"
+           t-value="ab_recommendation_variant and ab_recommendation_variant._is_sold_out()"/>
+        <form class="oe_product_cart ab-storefront-product-card ab-storefront-recommendation-card h-100 d-flex flex-column"
+              role="article"
+              t-att-aria-label="ab_recommendation_product.name">
+            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+            <input t-if="ab_recommendation_variant"
+                   type="hidden"
+                   name="product_id"
+                   t-att-value="ab_recommendation_variant.id"/>
+            <input type="hidden" name="product_template_id" t-att-value="ab_recommendation_product.id"/>
+            <input type="hidden" name="product_type" t-att-value="ab_recommendation_product.type"/>
+
+            <div class="ab-storefront-product-media">
+                <a t-att-href="ab_recommendation_product._get_product_url()"
+                   t-att-title="ab_recommendation_product.name">
+                    <img t-att-src="website.image_url(ab_recommendation_product, 'image_512')"
+                         t-att-alt="ab_recommendation_product.name"
+                         width="420"
+                         height="420"
+                         loading="lazy"/>
+                </a>
+                <span t-if="ab_recommendation_is_sold_out" class="ab-storefront-stock-badge">Out of stock</span>
+                <span t-elif="ab_recommendation_price.get('base_price', 0) &gt; ab_recommendation_price.get('price_reduce', 0)"
+                      class="ab-storefront-offer-badge">Offer</span>
+            </div>
+
+            <div class="ab-storefront-product-body d-flex flex-column flex-grow-1">
+                <p t-if="ab_recommendation_product.public_categ_ids"
+                   class="ab-storefront-product-category mb-1">
+                    <span t-field="ab_recommendation_product.public_categ_ids[0].name"/>
+                </p>
+                <h3 class="ab-storefront-product-name">
+                    <a t-att-href="ab_recommendation_product._get_product_url()" class="text-decoration-none">
+                        <span t-field="ab_recommendation_product.name"/>
+                    </a>
+                </h3>
+                <div class="ab-storefront-product-price mt-auto">
+                    <span t-if="ab_recommendation_price.get('price_reduce') or not website.prevent_zero_price_sale"
+                          class="ab-storefront-sale-price"
+                          t-out="ab_recommendation_price.get('price_reduce', 0)"
+                          t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                    <del t-if="ab_recommendation_price.get('base_price', 0) &gt; ab_recommendation_price.get('price_reduce', 0)"
+                         class="ab-storefront-base-price"
+                         t-out="ab_recommendation_price['base_price']"
+                         t-options="{'widget': 'monetary', 'display_currency': website.currency_id}"/>
+                </div>
+                <button t-if="ab_recommendation_variant and ab_recommendation_product._website_show_quick_add() and not ab_recommendation_is_sold_out and not website.prevent_zero_price_sale"
+                        type="button"
+                        class="o_wsale_product_btn_primary a-submit btn btn-primary w-100 mt-3"
+                        data-show-quantity="false">
+                    <i class="fa fa-shopping-cart me-2" aria-hidden="true"/>
+                    Add to cart
+                </button>
+                <a t-else=""
+                   t-att-href="ab_recommendation_product._get_product_url()"
+                   class="btn btn-outline-primary w-100 mt-3">
+                    View product
+                </a>
+            </div>
+        </form>
+    </template>
+
+    <template id="disable_native_alternative_products"
+              name="Use Abdin Related Products UI"
+              inherit_id="website_sale.alternative_products"
+              priority="110">
+        <xpath expr="//div[@id='oe_structure_website_sale_recommended_products']" position="replace"/>
     </template>
 
     <template id="product_title" name="Abdin Product Title" inherit_id="website_sale.product_title" priority="90">

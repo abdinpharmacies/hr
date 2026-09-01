@@ -217,6 +217,230 @@ msgid "Convenient ordering"
 msgstr "طلب بكل سهولة"
 
 #. module: ab_ecommerce_storefront
+msgid "Medicines"
+msgstr "الأدوية"
+
+#. module: ab_ecommerce_storefront
+msgid "Pain Relief"
+msgstr "مسكنات الألم"
+
+#. module: ab_ecommerce_storefront
+msgid "Digestive Health"
+msgstr "صحة الجهاز الهضمي"
+
+#. module: ab_ecommerce_storefront
+msgid "Respiratory Care"
+msgstr "الجهاز التنفسي"
+
+#. module: ab_ecommerce_storefront
+msgid "Allergy Care"
+msgstr "الحساسية"
+
+#. module: ab_ecommerce_storefront
+msgid "Brain & Nervous System"
+msgstr "المخ والجهاز العصبي"
+
+#. module: ab_ecommerce_storefront
+msgid "Heart & Circulation"
+msgstr "القلب والدورة الدموية"
+
+#. module: ab_ecommerce_storefront
+msgid "Hormones"
+msgstr "الهرمونات"
+
+#. module: ab_ecommerce_storefront
+msgid "Infections"
+msgstr "العدوى والمضادات"
+
+#. module: ab_ecommerce_storefront
+msgid "Kidney & Urinary Care"
+msgstr "الكلى والمسالك البولية"
+
+#. module: ab_ecommerce_storefront
+msgid "Eye Care Medicines"
+msgstr "أدوية العيون"
+
+#. module: ab_ecommerce_storefront
+msgid "Ear Care"
+msgstr "العناية بالأذن"
+
+#. module: ab_ecommerce_storefront
+msgid "Mouth & Throat"
+msgstr "الفم والحلق"
+
+#. module: ab_ecommerce_storefront
+msgid "Skin Medicines"
+msgstr "أدوية الجلد"
+
+#. module: ab_ecommerce_storefront
+msgid "Women's Health"
+msgstr "صحة المرأة"
+
+#. module: ab_ecommerce_storefront
+msgid "Men's Health"
+msgstr "صحة الرجل"
+
+#. module: ab_ecommerce_storefront
+msgid "Specialty Medicines"
+msgstr "أدوية متخصصة"
+
+#. module: ab_ecommerce_storefront
+msgid "Vitamins & Supplements"
+msgstr "الفيتامينات والمكملات"
+
+#. module: ab_ecommerce_storefront
+msgid "Multivitamins"
+msgstr "مالتي فيتامين"
+
+#. module: ab_ecommerce_storefront
+msgid "Minerals"
+msgstr "المعادن"
+
+#. module: ab_ecommerce_storefront
+msgid "Kids Vitamins"
+msgstr "فيتامينات الأطفال"
+
+#. module: ab_ecommerce_storefront
+msgid "Pregnancy Supplements"
+msgstr "مكملات الحمل والرضاعة"
+
+#. module: ab_ecommerce_storefront
+msgid "Omega & Eye Supplements"
+msgstr "أوميجا ومكملات العين"
+
+#. module: ab_ecommerce_storefront
+msgid "Beauty Supplements"
+msgstr "مكملات البشرة والشعر والأظافر"
+
+#. module: ab_ecommerce_storefront
+msgid "Weight Management"
+msgstr "إدارة الوزن"
+
+#. module: ab_ecommerce_storefront
+msgid "Herbal Products"
+msgstr "منتجات عشبية"
+
+#. module: ab_ecommerce_storefront
+msgid "Bath & Shower"
+msgstr "الاستحمام والدش"
+
+#. module: ab_ecommerce_storefront
+msgid "Oral Care"
+msgstr "العناية بالفم والأسنان"
+
+#. module: ab_ecommerce_storefront
+msgid "Deodorants"
+msgstr "مزيلات العرق"
+
+#. module: ab_ecommerce_storefront
+msgid "Feminine Care"
+msgstr "العناية النسائية"
+
+#. module: ab_ecommerce_storefront
+msgid "Men's Grooming"
+msgstr "عناية الرجل"
+
+#. module: ab_ecommerce_storefront
+msgid "Hair Removal"
+msgstr "إزالة الشعر"
+
+#. module: ab_ecommerce_storefront
+msgid "Hygiene & Household"
+msgstr "النظافة والمنزل"
+
+#. module: ab_ecommerce_storefront
+msgid "Health Devices & Supplies"
+msgstr "الأجهزة والمستلزمات الصحية"
+
+#. module: ab_ecommerce_storefront
+msgid "Diagnostics"
+msgstr "أجهزة وشرائط القياس"
+
+#. module: ab_ecommerce_storefront
+msgid "Patient Care"
+msgstr "رعاية المريض بالمنزل"
+
+#. module: ab_ecommerce_storefront
+msgid "Mobility Aids"
+msgstr "مساعدات الحركة"
+
+#. module: ab_ecommerce_storefront
+msgid "Orthopedics & Supports"
+msgstr "العظام والدعامات"
+
+#. module: ab_ecommerce_storefront
+msgid "Wound Care"
+msgstr "العناية بالجروح"
+
+#. module: ab_ecommerce_storefront
+msgid "Fitness & Sport"
+msgstr "اللياقة والرياضة"
+
+#. module: ab_ecommerce_storefront
+msgid "Beauty & Skin Care"
+msgstr "الجمال والعناية بالبشرة"
+
+#. module: ab_ecommerce_storefront
+msgid "Face Care"
+msgstr "العناية بالوجه"
+
+#. module: ab_ecommerce_storefront
+msgid "Body Care"
+msgstr "العناية بالجسم"
+
+#. module: ab_ecommerce_storefront
+msgid "Sun Care"
+msgstr "العناية من الشمس"
+
+#. module: ab_ecommerce_storefront
+msgid "Hair Care"
+msgstr "العناية بالشعر"
+
+#. module: ab_ecommerce_storefront
+msgid "Skin Treatment"
+msgstr "علاج مشاكل البشرة"
+
+#. module: ab_ecommerce_storefront
+msgid "Makeup & Nails"
+msgstr "المكياج والأظافر"
+
+#. module: ab_ecommerce_storefront
+msgid "Perfumes"
+msgstr "العطور"
+
+#. module: ab_ecommerce_storefront
+msgid "Mother & Baby"
+msgstr "الأم والطفل"
+
+#. module: ab_ecommerce_storefront
+msgid "Baby Diapers & Wipes"
+msgstr "حفاضات ومناديل الطفل"
+
+#. module: ab_ecommerce_storefront
+msgid "Baby Feeding"
+msgstr "تغذية وإرضاع الطفل"
+
+#. module: ab_ecommerce_storefront
+msgid "Baby Nutrition"
+msgstr "تغذية الطفل"
+
+#. module: ab_ecommerce_storefront
+msgid "Baby Toiletries"
+msgstr "عناية واستحمام الطفل"
+
+#. module: ab_ecommerce_storefront
+msgid "Baby Accessories"
+msgstr "إكسسوارات الطفل"
+
+#. module: ab_ecommerce_storefront
+msgid "Mom Care"
+msgstr "عناية الأم"
+
+#. module: ab_ecommerce_storefront
+msgid "Everyday Essentials"
+msgstr "الاحتياجات اليومية"
+
+#. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "Secure payment"
 msgstr "دفع آمن"
@@ -311,6 +535,36 @@ msgstr "أضف إلى السلة"
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage
 msgid "View product"
 msgstr "عرض المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Carefully matched"
+msgstr "مختارة بعناية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Related products"
+msgstr "منتجات مرتبطة"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Explore nearby healthcare choices from the same shopping journey."
+msgstr "استكشف اختيارات صحية قريبة من نفس رحلة التسوق."
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Complete the routine"
+msgstr "أكمل روتين العناية"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Often bought with this product"
+msgstr "يشترى غالبًا مع هذا المنتج"
+
+#. module: ab_ecommerce_storefront
+#: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.product
+msgid "Useful add-ons customers commonly pair with this item."
+msgstr "إضافات مفيدة يختارها العملاء عادةً مع هذا المنتج."
 
 #. module: ab_ecommerce_storefront
 #: model_terms:ir.ui.view,arch_db:ab_ecommerce_storefront.homepage

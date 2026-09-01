@@ -24,11 +24,10 @@
                 <button t-if="ab_variant"
                         type="button"
                         t-attf-class="ab-storefront-wishlist o_add_wishlist btn #{ab_is_wishlisted and 'o_in_wishlist'}"
-                        t-att-disabled="ab_is_wishlisted"
                         t-att-data-product-template-id="product.id"
                         t-att-data-product-product-id="ab_variant.id"
                         data-action="o_wishlist"
-                        t-att-title="ab_is_wishlisted and 'In your wishlist' or 'Add to wishlist'"
+                        t-att-title="ab_is_wishlisted and 'Remove from wishlist' or 'Add to wishlist'"
                         aria-label="Add to wishlist">
                     <i t-attf-class="fa #{ab_is_wishlisted and 'fa-heart' or 'fa-heart-o'}" aria-hidden="true"/>
                 </button>
@@ -108,52 +107,16 @@
                             <div class="carousel-item active oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-primary"
                                  style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_01.svg');"
                                  data-name="Banner 1">
-                                <div class="ab-storefront-banner-shade"/>
-                                <div class="container ab-storefront-banner-layout">
-                                    <div class="ab-storefront-banner-content">
-                                        <div class="ab-storefront-banner-kicker">Care you can trust</div>
-                                        <h1>Everything your family needs, from a pharmacy that cares.</h1>
-                                        <p>Shop medicines, personal care, wellness essentials, and everyday healthcare products from Abdin Pharmacies.</p>
-                                        <div class="d-flex flex-wrap gap-3">
-                                            <a href="/shop" class="btn btn-light btn-lg px-4">Shop now</a>
-                                            <a href="tel:19036" class="btn btn-outline-light btn-lg px-4">Call 19036</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="carousel-item oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-wellness"
                                  style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_02.svg');"
                                  data-name="Banner 2">
-                                <div class="ab-storefront-banner-shade"/>
-                                <div class="container ab-storefront-banner-layout">
-                                    <div class="ab-storefront-banner-content">
-                                        <div class="ab-storefront-banner-kicker">Everyday wellness</div>
-                                        <h2>Simple choices for healthier, brighter days.</h2>
-                                        <p>Discover personal care, vitamins, wellness, and family essentials selected for everyday life.</p>
-                                        <div class="d-flex flex-wrap gap-3">
-                                            <a href="/shop" class="btn btn-light btn-lg px-4">Explore wellness</a>
-                                            <a href="/shop" class="btn btn-outline-light btn-lg px-4">View all products</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
 
                             <div class="carousel-item oe_img_bg o_bg_img_center ab-storefront-banner ab-storefront-banner-delivery"
                                  style="background-image: url('/ab_ecommerce_storefront/static/src/img/banners/banner_03.svg');"
                                  data-name="Banner 3">
-                                <div class="ab-storefront-banner-shade"/>
-                                <div class="container ab-storefront-banner-layout">
-                                    <div class="ab-storefront-banner-content">
-                                        <div class="ab-storefront-banner-kicker">Convenient pharmacy care</div>
-                                        <h2>Trusted healthcare, delivered closer to you.</h2>
-                                        <p>Order your healthcare essentials online and let Abdin Pharmacies take care of the rest.</p>
-                                        <div class="d-flex flex-wrap gap-3">
-                                            <a href="/shop" class="btn btn-light btn-lg px-4">Browse products</a>
-                                            <a href="/contactus" class="btn btn-outline-light btn-lg px-4">Contact us</a>
-                                        </div>
-                                    </div>
-                                </div>
                             </div>
                         </div>
 
@@ -293,7 +256,7 @@
                     </div>
                 </section>
 
-                <section class="ab-storefront-section ab-storefront-offers py-5" data-name="Offers">
+                <section id="ab-storefront-offers" class="ab-storefront-section ab-storefront-offers py-5" data-name="Offers">
                     <div class="container">
                         <div class="ab-storefront-section-heading d-flex align-items-end justify-content-between gap-3 mb-4">
                             <div>
