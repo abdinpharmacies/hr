@@ -14,6 +14,7 @@
     "data": [
         "data/storefront_catalog.xml",
         "views/category_icons.xml",
+        "views/auth.xml",
         "views/layout.xml",
         "views/homepage.xml",
         "views/shop.xml",
@@ -23,6 +24,7 @@
     "assets": {
         "web.assets_frontend": [
             "ab_ecommerce_storefront/static/src/js/hero_carousel.js",
+            "ab_ecommerce_storefront/static/src/js/auth.js",
             "ab_ecommerce_storefront/static/src/js/current_location.js",
             "ab_ecommerce_storefront/static/src/js/logo_motion.js",
             "ab_ecommerce_storefront/static/src/js/product_image_zoom.js",

@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="auth_svg_icon" name="Abdin Auth SVG Icon">
+        <svg t-if="icon == 'phone'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M22 16.92v2.1a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 3.3 2 2 0 0 1 4.11 1h2.1a2 2 0 0 1 2 1.72c.13.96.35 1.9.66 2.8a2 2 0 0 1-.45 2.11L7.55 8.5a16 16 0 0 0 6 6l.87-.87a2 2 0 0 1 2.11-.45c.9.31 1.84.53 2.8.66A2 2 0 0 1 22 16.92Z"/>
+        </svg>
+        <svg t-elif="icon == 'lock'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <rect x="4" y="10" width="16" height="11" rx="2"/>
+            <path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+        </svg>
+        <svg t-elif="icon == 'user'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20 21a8 8 0 0 0-16 0"/>
+            <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <svg t-elif="icon == 'eye'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+            <circle cx="12" cy="12" r="3"/>
+        </svg>
+        <svg t-elif="icon == 'arrow'" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M19 12H5"/>
+            <path d="m12 19-7-7 7-7"/>
+        </svg>
+        <svg t-else="" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+            <path d="M20 6 9 17l-5-5"/>
+        </svg>
+    </template>
+
+    <template id="auth_layout" name="Abdin Pharmacy Auth Layout" inherit_id="website.login_layout" priority="200">
+        <xpath expr="//div[hasclass('oe_website_login_container')]" position="replace">
+            <t t-set="no_header" t-value="True"/>
+            <t t-set="no_footer" t-value="True"/>
+            <div class="ab-auth-page" dir="rtl">
+                <header class="ab-auth-header">
+                    <a href="/" class="ab-auth-brand ab-storefront-brand-logo" aria-label="صيدليات عابدين">
+                        <img t-attf-src="/web/binary/company_logo{{ '?dbname='+db if db else '' }}" alt="صيدليات عابدين"/>
+                    </a>
+                    <a href="/shop" class="ab-auth-store-link">
+                        <span>تسوق الآن</span>
+                        <t t-set="icon" t-value="'arrow'"/>
+                        <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                    </a>
+                </header>
+                <main class="ab-auth-main">
+                    <section class="ab-auth-visual" aria-label="صيدليات عابدين">
+                        <span class="ab-auth-kicker">صيدليات عابدين</span>
+                        <h1>رعاية صيدلية موثوقة تصل إلى بابك</h1>
+                        <p>ادخل لحسابك لتتابع طلباتك، تحفظ منتجاتك المفضلة، وتكمل تجربة التسوق بسهولة.</p>
+                        <div class="ab-auth-trust-grid" aria-hidden="true">
+                            <span>منتجات أصلية</span>
+                            <span>دفع آمن</span>
+                            <span>دعم 19036</span>
+                        </div>
+                    </section>
+                    <section class="ab-auth-card" aria-label="تسجيل الدخول إلى صيدليات عابدين">
+                        <t t-out="0"/>
+                    </section>
+                </main>
+                <footer class="ab-auth-footer">
+                    <strong>صيدليات عابدين</strong>
+                    <span>رعاية صحية باهتمام، كل يوم.</span>
+                    <a href="tel:19036">الخط الساخن 19036</a>
+                </footer>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="auth_login" name="Abdin Phone Login" inherit_id="web.login" priority="220">
+        <xpath expr="//owl-component[@name='web.user_switch']" position="replace"/>
+        <xpath expr="//form[@t-attf-action='/web/login']" position="replace">
+            <form class="oe_login_form ab-auth-form" role="form" t-attf-action="/web/login" method="post" onsubmit="this.action = '/web/login' + location.hash" data-captcha="login" data-ab-auth-form="login">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="ab-auth-form-head">
+                    <span class="ab-auth-form-mark">حسابك في صيدليات عابدين</span>
+                    <h2>تسجيل الدخول</h2>
+                    <p>ادخل إلى حسابك للمتابعة</p>
+                </div>
+                <div class="ab-auth-field field-login">
+                    <label for="login">رقم الهاتف</label>
+                    <div class="ab-auth-input">
+                        <t t-set="icon" t-value="'phone'"/>
+                        <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                        <input type="tel" inputmode="tel" placeholder="01XXXXXXXXX" name="login" t-att-value="login" id="login" required="required" autocapitalize="off" autocomplete="username" data-ab-phone-input=""/>
+                    </div>
+                    <p class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
+                </div>
+                <div class="ab-auth-field field-password o_caps_lock_warning">
+                    <div class="ab-auth-label-row">
+                        <label for="password">كلمة المرور</label>
+                        <a t-if="reset_password_enabled" t-attf-href="/web/reset_password?{{ keep_query() }}" data-ab-auth-nav="reset">نسيت كلمة المرور؟</a>
+                    </div>
+                    <div class="ab-auth-input">
+                        <t t-set="icon" t-value="'lock'"/>
+                        <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                        <input type="password" placeholder="كلمة المرور" name="password" id="password" required="required" autocomplete="current-password" t-att-autofocus="'autofocus' if login else None" maxlength="4096"/>
+                        <button type="button" class="ab-auth-password-toggle o_show_password" aria-label="إظهار كلمة المرور">
+                            <t t-set="icon" t-value="'eye'"/>
+                            <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                        </button>
+                    </div>
+                </div>
+                <p class="ab-auth-alert ab-auth-alert-error" t-if="error" role="alert">
+                    رقم الهاتف أو كلمة المرور غير صحيحة.
+                </p>
+                <p class="ab-auth-alert ab-auth-alert-success" t-if="message" role="status">
+                    <t t-esc="message"/>
+                </p>
+                <div class="oe_login_buttons ab-auth-actions">
+                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="جاري تسجيل الدخول...">تسجيل الدخول</button>
+                    <div class="ab-auth-divider"><span>أو</span></div>
+                    <p>ليس لديك حساب؟</p>
+                    <a t-if="signup_enabled" class="btn ab-auth-secondary" t-attf-href="/web/signup?{{ keep_query() }}" data-ab-auth-nav="signup">إنشاء حساب</a>
+                    <t t-if="debug">
+                        <button type="submit" name="redirect" value="/web/become" class="btn btn-link btn-sm">Log in as superuser</button>
+                    </t>
+                    <t t-call="web.login_oauth"/>
+                </div>
+                <input type="hidden" name="type" value="password"/>
+                <input type="hidden" name="redirect" t-att-value="redirect"/>
+            </form>
+        </xpath>
+    </template>
+
+    <template id="auth_signup_fields" name="Abdin Password Fields" inherit_id="auth_signup.fields" priority="220">
+        <xpath expr="//div[hasclass('field-password')]" position="replace">
+            <div class="ab-auth-field field-password o_caps_lock_warning">
+                <label for="password">كلمة المرور</label>
+                <div class="ab-auth-input">
+                    <t t-set="icon" t-value="'lock'"/>
+                    <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                    <input type="password" name="password" id="password" required="required" t-att-autofocus="'autofocus' if autofocus else None" placeholder="كلمة المرور" autocomplete="new-password"/>
+                    <button type="button" class="ab-auth-password-toggle o_show_password" aria-label="إظهار كلمة المرور">
+                        <t t-set="icon" t-value="'eye'"/>
+                        <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                    </button>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('field-confirm_password')]" position="replace">
+            <div class="ab-auth-field field-confirm_password">
+                <label for="confirm_password">تأكيد كلمة المرور</label>
+                <div class="ab-auth-input">
+                    <t t-set="icon" t-value="'lock'"/>
+                    <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                    <input type="password" name="confirm_password" id="confirm_password" required="required" placeholder="تأكيد كلمة المرور" autocomplete="new-password"/>
+                    <button type="button" class="ab-auth-password-toggle o_show_password" aria-label="إظهار كلمة المرور">
+                        <t t-set="icon" t-value="'eye'"/>
+                        <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                    </button>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <template id="auth_signup" name="Abdin Phone Signup" inherit_id="auth_signup.signup" priority="220">
+        <xpath expr="//form[hasclass('oe_signup_form')]" position="replace">
+            <form class="oe_signup_form ab-auth-form" role="form" method="post" t-if="not message" data-captcha="signup" data-ab-auth-form="signup">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="ab-auth-form-head">
+                    <span class="ab-auth-form-mark">ابدأ تجربة أسهل</span>
+                    <h2>إنشاء حساب</h2>
+                    <p>أنشئ حسابك لتستمتع بتجربة تسوق أسهل وأسرع</p>
+                </div>
+                <div class="ab-auth-field field-name">
+                    <label for="name">الاسم</label>
+                    <div class="ab-auth-input">
+                        <t t-set="icon" t-value="'user'"/>
+                        <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                        <input type="text" name="name" t-att-value="name" id="name" placeholder="اكتب اسمك" autofocus="autofocus" required="required" autocomplete="name"/>
+                    </div>
+                </div>
+                <div class="ab-auth-field field-login">
+                    <label for="phone">رقم الهاتف</label>
+                    <div class="ab-auth-input">
+                        <t t-set="icon" t-value="'phone'"/>
+                        <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                        <input type="tel" inputmode="tel" name="phone" t-att-value="phone or login" id="phone" required="required" autocapitalize="off" autocomplete="tel" placeholder="01XXXXXXXXX" data-ab-phone-input=""/>
+                        <input type="hidden" name="login" t-att-value="phone or login"/>
+                    </div>
+                    <p class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
+                </div>
+                <t t-call="auth_signup.fields"/>
+                <p class="ab-auth-alert ab-auth-alert-error" t-if="error" role="alert">
+                    <t t-esc="error"/>
+                </p>
+                <input type="hidden" name="redirect" t-att-value="redirect"/>
+                <input type="hidden" name="token" t-att-value="token"/>
+                <div class="oe_login_buttons ab-auth-actions">
+                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="جاري إنشاء الحساب...">إنشاء الحساب</button>
+                    <p>لديك حساب بالفعل؟</p>
+                    <a t-attf-href="/web/login?{{ keep_query() }}" class="btn ab-auth-secondary" role="button" data-ab-auth-nav="login">تسجيل الدخول</a>
+                    <t t-call="web.login_oauth"/>
+                </div>
+            </form>
+        </xpath>
+    </template>
+
+    <template id="auth_reset_password" name="Abdin Phone Reset Password" inherit_id="auth_signup.reset_password" priority="220">
+        <xpath expr="//div[hasclass('oe_login_form')]" position="replace">
+            <div t-if="message" class="ab-auth-form">
+                <div class="ab-auth-form-head">
+                    <span class="ab-auth-form-mark">استعادة الحساب</span>
+                    <h2>راجع رسائلك</h2>
+                </div>
+                <p class="ab-auth-alert ab-auth-alert-success" role="status">
+                    <t t-esc="message"/>
+                </p>
+                <a href="/web/login" class="btn ab-auth-secondary" role="button" data-ab-auth-nav="login">العودة لتسجيل الدخول</a>
+            </div>
+        </xpath>
+        <xpath expr="//form[hasclass('oe_reset_password_form')]" position="replace">
+            <form class="oe_reset_password_form ab-auth-form" role="form" method="post" t-if="not message" data-captcha="password_reset" data-ab-auth-form="reset">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                <div class="ab-auth-form-head">
+                    <span class="ab-auth-form-mark">استعادة الحساب</span>
+                    <h2>نسيت كلمة المرور؟</h2>
+                    <p>أدخل رقم هاتفك لاستعادة الوصول إلى حسابك</p>
+                </div>
+                <t t-if="token and not invalid_token">
+                    <t t-call="auth_signup.fields">
+                        <t t-set="autofocus" t-value="1"/>
+                    </t>
+                </t>
+                <t t-if="not token">
+                    <div class="ab-auth-field field-login">
+                        <label for="login">رقم الهاتف</label>
+                        <div class="ab-auth-input">
+                            <t t-set="icon" t-value="'phone'"/>
+                            <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
+                            <input type="tel" inputmode="tel" name="login" t-att-value="login" id="login" autofocus="autofocus" required="required" autocapitalize="off" autocomplete="username" placeholder="01XXXXXXXXX" data-ab-phone-input=""/>
+                        </div>
+                        <p class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
+                    </div>
+                </t>
+                <p class="ab-auth-alert ab-auth-alert-error" t-if="error" role="alert">
+                    <t t-esc="error"/>
+                </p>
+                <input type="hidden" name="redirect" t-att-value="redirect"/>
+                <input type="hidden" name="token" t-att-value="token"/>
+                <div class="oe_login_buttons ab-auth-actions">
+                    <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="جاري المتابعة...">متابعة</button>
+                    <a t-if="not token" t-attf-href="/web/login?{{ keep_query() }}" class="btn ab-auth-secondary" data-ab-auth-nav="login">العودة لتسجيل الدخول</a>
+                    <a t-if="invalid_token" href="/web/login" class="btn ab-auth-secondary" data-ab-auth-nav="login">العودة لتسجيل الدخول</a>
+                    <t t-call="web.login_oauth"/>
+                </div>
+            </form>
+        </xpath>
+    </template>
+</odoo>
