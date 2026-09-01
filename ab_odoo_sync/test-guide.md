@@ -49,11 +49,11 @@ Expected result:
    - `Source Model`: the uploaded model name.
    - `Apply Mode`: `Raw Only`.
    - `Auto Apply`: disabled or enabled.
-3. Run `Apply Pending Uploads` from the profile.
+3. Run `Queue Pending Uploads` from the profile.
 
 Expected result:
 
-- Matching upload records move to `Raw Only`.
+- Matching upload records move to `Raw Only` after the queued feeder runs.
 - No target business record or mirror record is created.
 - The original payload remains available in `Received Uploads`.
 

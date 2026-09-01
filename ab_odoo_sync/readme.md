@@ -104,7 +104,7 @@ Collect this before enabling sync for a branch:
 - Mapping type for relation fields: `sync_many2one`, `sync_many2many`,
   `stable_many2one`, `stable_many2many`, `direct`, or `ignore`.
 - Which mapped fields are required by apply profile validation.
-- Whether branch upload cron and report apply cron should be active.
+- Whether branch upload cron and report recovery cron should be active.
 
 For relation fields that must preserve branch IDs, use the sync relation mapping
 types and keep `allow_placeholder_creation` enabled on the apply profile. The
@@ -215,6 +215,24 @@ The report apply cron XML ID is:
 ab_odoo_sync_mapping.ir_cron_ab_odoo_sync_queue_upload_apply
 ```
 
+The report cron is a two-hour recovery mechanism. Normal report-side mapping is
+event-driven: accepted uploads queue apply jobs immediately, while profile and
+field-mapping changes queue feeder jobs for existing eligible uploads.
+
+Production update note for `ab_odoo_sync_mapping` 19.0.1.2.0:
+
+- Upgrade only the target mapping module on the report database:
+  `-u ab_odoo_sync_mapping`; do not use `-u base`.
+- Confirm the deployed recovery cron keeps the same XML ID and changes to
+  `2 hours`.
+- Confirm existing upload records, queue jobs, apply profiles, and field
+  mappings remain in place after the upgrade.
+- Confirm mirror/passive target models used by `mirror_sync` profiles have a
+  database unique constraint on `db_serial, rec_id`.
+- Confirm `queue_job` workers are active before enabling or editing auto-apply
+  profiles, because normal mapping now depends on queued jobs instead of waiting
+  for the recovery cron.
+
 ## Verification
 
 From a branch Odoo shell:
@@ -236,6 +254,8 @@ From the report server, verify:
 - New payloads appear in `ab_odoo_sync_upload_record`.
 - Apply profiles point to passive/report target models.
 - Field mappings are enabled only for selected fields.
+- Active auto-apply profiles queue mapping jobs without waiting for the report
+  recovery cron.
 - Queue jobs run without stale `integration_queue_job` channels.
 
 ## Important Limits
