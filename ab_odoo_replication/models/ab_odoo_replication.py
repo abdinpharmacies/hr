@@ -12,6 +12,8 @@ from psycopg2.errors import ForeignKeyViolation
 
 _logger = logging.getLogger(__name__)
 
+SKIPPED_REPLICATION_RELATION_MODELS = {'res.users'}
+
 
 # -------------------------------
 # Helper: parse FK violation text
@@ -50,6 +52,116 @@ class OdooReplication(models.AbstractModel):
         missing_many2one_flds = None  # type: list
         fld__type_rel_dict = None  # type: dict
 
+    def _model_uses_main_rec_id(self, model):
+        return 'main_rec_id' in getattr(model, '_fields', {})
+
+    def _reset_table_id_sequence(self, table_name):
+        self.env.cr.execute("SELECT pg_get_serial_sequence(%s, 'id')", (table_name,))
+        sequence = self.env.cr.fetchone()[0]
+        if sequence:
+            self.env.cr.execute(
+                """
+                SELECT setval(
+                    %s,
+                    COALESCE((SELECT MAX(id) FROM """ + table_name + """), 0) + 1,
+                    false
+                )
+                """,
+                (sequence,),
+            )
+
+    def _create_many2one_placeholder(self, model_name, remote_id):
+        if model_name in SKIPPED_REPLICATION_RELATION_MODELS:
+            return None
+        if model_name not in self.env.registry:
+            _logger.warning(
+                "Cannot create placeholder for unavailable many2one model %s id %s",
+                model_name,
+                remote_id,
+            )
+            return None
+
+        model = self.env[model_name].with_context(active_test=False).sudo()
+        if not getattr(model, '_auto', True):
+            _logger.warning(
+                "Cannot create SQL placeholder for non-auto many2one model %s id %s",
+                model_name,
+                remote_id,
+            )
+            return None
+
+        table_name = model._table
+        try:
+            with self.env.cr.savepoint():
+                if self._model_uses_main_rec_id(model):
+                    self.env.cr.execute(
+                        f"""
+                        INSERT INTO {table_name}(main_rec_id)
+                        VALUES (%s)
+                        RETURNING id
+                        """,
+                        (remote_id,),
+                    )
+                    local_id = self.env.cr.fetchone()[0]
+                else:
+                    self.env.cr.execute(
+                        f"""
+                        INSERT INTO {table_name}(id)
+                        VALUES (%s)
+                        ON CONFLICT (id) DO NOTHING
+                        """,
+                        (remote_id,),
+                    )
+                    local_id = remote_id
+                    self._reset_table_id_sequence(table_name)
+
+            model.invalidate_model()
+            _logger.info(
+                "Created placeholder for missing many2one %s remote id %s as local id %s",
+                model_name,
+                remote_id,
+                local_id,
+            )
+            return local_id
+        except Exception:
+            _logger.warning(
+                "Failed to create placeholder for many2one %s id %s",
+                model_name,
+                remote_id,
+                exc_info=True,
+            )
+            return None
+
+    def _resolve_many2one_record_id(self, model_name, remote_id, create_missing=True):
+        if model_name in SKIPPED_REPLICATION_RELATION_MODELS:
+            return None
+        if model_name not in self.env.registry:
+            _logger.warning(
+                "Cannot resolve unavailable many2one model %s id %s",
+                model_name,
+                remote_id,
+            )
+            return None
+
+        try:
+            remote_id = int(remote_id)
+        except (TypeError, ValueError):
+            return None
+
+        model = self.env[model_name].with_context(active_test=False).sudo()
+        domain = (
+            [('main_rec_id', '=', remote_id)]
+            if self._model_uses_main_rec_id(model)
+            else [('id', '=', remote_id)]
+        )
+        record = model.search(domain, limit=1)
+        if record:
+            return record.id
+
+        if create_missing:
+            return self._create_many2one_placeholder(model_name, remote_id)
+        return None
+
     def eval_val(self, fld, val, rec_id):
         fld__type_rel_dict = self.ReplShare.fld__type_rel_dict
         ttype = fld__type_rel_dict[fld][0]
@@ -57,20 +169,12 @@ class OdooReplication(models.AbstractModel):
         if type(val) == list and ttype == 'many2one':
             m2o_rec_id = val and val[0]
             if m2o_rec_id:
-                m2o_mo = self.env[rel_model]
-                if hasattr(m2o_mo, 'main_rec_id'):
-                    m2o_rec = m2o_mo.with_context(active_test=False).search([
-                        ('main_rec_id', '=', m2o_rec_id)
-                    ], limit=1)
-                else:
-                    m2o_rec = m2o_mo.with_context(active_test=False).search([
-                        ('id', '=', m2o_rec_id)
-                    ])
-                if m2o_rec:
-                    return m2o_rec.id
-                else:
+                local_id = self._resolve_many2one_record_id(rel_model, m2o_rec_id)
+                if local_id:
+                    return local_id
+                if rel_model not in SKIPPED_REPLICATION_RELATION_MODELS:
                     self.ReplShare.missing_many2one_flds.append((rel_model, fld, m2o_rec_id, rec_id))
-                    return None
+                return None
             else:
                 return None
         elif not ttype == 'boolean' and not val:
@@ -104,7 +208,7 @@ class OdooReplication(models.AbstractModel):
         # conn now
         conn = OdooConnectionSingleton(self.env)
         table_name = model_name.replace('.', '_')
-        has_main_rec_id = hasattr(self.env[model_name], 'main_rec_id')
+        has_main_rec_id = self._model_uses_main_rec_id(self.env[model_name])
 
         # initiate ReplShare attributes
         self.ReplShare.conn = conn
@@ -116,7 +220,7 @@ class OdooReplication(models.AbstractModel):
         # fix write_date for base users/partners
         # self._fix_users_and_partners_write_date()
 
-        extra_fields = extra_fields or {}
+        extra_fields = self._filter_replicable_extra_fields(model_name, extra_fields or {})
 
         remotedb_flds_set = self._get_remotedb_flds_set()
         use_write_date = 'write_date' in remotedb_flds_set
@@ -142,18 +246,12 @@ class OdooReplication(models.AbstractModel):
 
         # تجهيز الفيلدز المشتركة بين repldb و remotedb
         repldb_flds__name_type_rel = self._get_repldb_flds__name_type_rel()
-        repldb_flds_set = {row[0] for row in repldb_flds__name_type_rel}
-        # get shared - intersection - fields between repldb and remotedb
-        pagination_fields = {'id'}
-        if use_write_date:
-            pagination_fields.add('write_date')
-        fields_to_get = list((repldb_flds_set & remotedb_flds_set) | extra_fields.keys() | pagination_fields)
-
-        self.ReplShare.fld__type_rel_dict = {
-            row[0]: (row[1], row[2])
-            for row in repldb_flds__name_type_rel
-            if row[0] in fields_to_get
-        }
+        fields_to_get, self.ReplShare.fld__type_rel_dict = self._prepare_replicable_fields(
+            repldb_flds__name_type_rel,
+            remotedb_flds_set,
+            extra_fields,
+            use_write_date,
+        )
 
         # 🔑 مفاتيح الـ seek pagination
         # نبدأ من آخر نقطة تكرار محفوظة في جدول الـ log (لو متاحة)
@@ -378,7 +476,46 @@ class OdooReplication(models.AbstractModel):
                         ('last_update_date',
                         'message_main_attachment_id')
                     """, (model_name,))
-        return self.env.cr.fetchall()
+        return self._filter_replicable_field_rows(model_name, self.env.cr.fetchall())
+
+    def _is_skipped_relation_field(self, model_name, field_name, relation=None, ttype=None):
+        if model_name == 'res.users':
+            return False
+        if relation:
+            return relation in SKIPPED_REPLICATION_RELATION_MODELS
+        if ttype and ttype not in ('many2one', 'many2many', 'one2many'):
+            return False
+        if model_name not in self.env.registry:
+            return False
+        field = self.env[model_name]._fields.get(field_name)
+        return bool(field and getattr(field, 'comodel_name', None) in SKIPPED_REPLICATION_RELATION_MODELS)
+
+    def _filter_replicable_field_rows(self, model_name, field_rows):
+        return [
+            row for row in field_rows
+            if not self._is_skipped_relation_field(model_name, row[0], row[2], row[1])
+        ]
+
+    def _filter_replicable_extra_fields(self, model_name, extra_fields):
+        return {
+            field_name: ttype
+            for field_name, ttype in extra_fields.items()
+            if not self._is_skipped_relation_field(model_name, field_name, ttype=ttype)
+        }
+
+    def _prepare_replicable_fields(self, repldb_flds__name_type_rel, remotedb_flds_set, extra_fields, use_write_date):
+        repldb_flds_set = {row[0] for row in repldb_flds__name_type_rel}
+        # get shared - intersection - fields between repldb and remotedb
+        pagination_fields = {'id'}
+        if use_write_date:
+            pagination_fields.add('write_date')
+        fields_to_get = list((repldb_flds_set & remotedb_flds_set) | extra_fields.keys() | pagination_fields)
+        fld__type_rel_dict = {
+            row[0]: (row[1], row[2])
+            for row in repldb_flds__name_type_rel
+            if row[0] in fields_to_get
+        }
+        return fields_to_get, fld__type_rel_dict
 
     def _replicate_main_fields(self, rec):
         """
@@ -536,54 +673,41 @@ class OdooReplication(models.AbstractModel):
           rec_id: record id that has many2one field (e.g ab_accounting_je_line(1000))
         """
 
-        # internal means 'many2one model' is same as 'target replicated model' (e.g parent_id)
-        # if internal, then replicate immediately
-        internal_many2one_flds = [(item[1], item[2], item[3])
-                                  for item in self.ReplShare.missing_many2one_flds
-                                  if item[0] == model_name]
-        # external means 'many2one model' is another model
-        # if external, then this means we need to replicate entire many2one model (e.g Wrong Replication Order)
-        external_many2one_flds = [(item[1], item[2], item[3], item[0])
-                                  for item in self.ReplShare.missing_many2one_flds
-                                  if item[0] != model_name]
-        # Replicating Internal Many2one fields
-        for many2one_name, many2one_value, rec_id in internal_many2one_flds:
+        missing_many2one_flds = self.ReplShare.missing_many2one_flds or []
+
+        # Internal means the many2one model is the same as the replicated model
+        # (for example parent_id). External models are not recursively replicated here;
+        # missing external records should already have local placeholders.
+        for m2o_model_name, many2one_name, many2one_value, rec_id in missing_many2one_flds:
             if many2one_name in {'create_uid', 'write_uid'}:
                 continue
-            self.env.cr.execute(f"""UPDATE {table_name} SET {many2one_name} = %s WHERE id = %s
-                """, (many2one_value, rec_id))
-        self.env.cr.execute(f"""SELECT setval ('{table_name}_id_seq', (SELECT MAX (id) FROM {table_name})+1);""")
+            if m2o_model_name != model_name:
+                _logger.warning(
+                    "Leaving unresolved external many2one %s.%s=%s for record %s",
+                    model_name,
+                    many2one_name,
+                    many2one_value,
+                    rec_id,
+                )
+                continue
 
+            local_id = self._resolve_many2one_record_id(m2o_model_name, many2one_value, create_missing=False)
+            if local_id:
+                self.env.cr.execute(
+                    f"""UPDATE {table_name} SET {many2one_name} = %s WHERE id = %s""",
+                    (local_id, rec_id),
+                )
+            else:
+                _logger.warning(
+                    "Leaving unresolved internal many2one %s.%s=%s for record %s",
+                    model_name,
+                    many2one_name,
+                    many2one_value,
+                    rec_id,
+                )
+
+        self._reset_table_id_sequence(table_name)
         self.env.cr.commit()
-
-        # Getting external not replicated many2one models.
-        missing_models = {item[0] for item in self.ReplShare.missing_many2one_flds if item[0] != model_name}
-
-        # Replicate external not replicated many2one models manually
-        #  to make many2one record id available (existed)
-        for mo in missing_models:
-            self.replicate_model(mo)
-
-        # Now we can update external many2one field, after many2one model was replicated.
-        for many2one_name, many2one_value, rec_id, m2o_model_name in external_many2one_flds:
-            model = self.env[m2o_model_name].sudo()
-            if hasattr(model, 'main_rec_id'):
-                rec = model.with_context(active_test=False).search([('main_rec_id', '=', rec_id)], limit=1)
-                rec_id = rec.id
-
-            Many2oneFld = model._fields.get(many2one_name)
-            if Many2oneFld:
-                related_model = Many2oneFld.comodel_name
-
-                # Filter only existing IDs
-                safe_ids = self._filter_existing_ids(related_model, [many2one_value])
-
-                if many2one_value not in safe_ids:
-                    self.replicate_model(related_model, replicate_all=True,
-                                         extra_domain=[('id', 'in', [many2one_value])])
-
-            self.env.cr.execute(f"""UPDATE {table_name} SET {many2one_name} = %s where id=%s
-                """, (many2one_value, rec_id))
 
     def init(self):
         self.env.cr.execute("""

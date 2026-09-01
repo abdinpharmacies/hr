@@ -1,4 +1,6 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ab_users_sys,access_ab_users_sys,model_ab_users,base.group_system,1,1,1,1
+access_ab_users_user,access_ab_users_user,model_ab_users,base.group_user,1,0,0,0
 access_ab_odoo_replication_admin,access_ab_odoo_replication_admin,model_ab_odoo_replication,base.group_system,1,1,1,1
 access_ab_odoo_replication_log_sys,access_ab_odoo_replication_log_sys,model_ab_odoo_replication_log,base.group_system,1,1,1,1
 access_ab_odoo_replication_override_admin,access_ab_odoo_replication_override_admin,model_ab_odoo_replication_override,base.group_system,1,1,1,0

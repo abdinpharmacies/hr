@@ -352,3 +352,143 @@ class TestReplicationOverride(TransactionCase):
 
         self.assertIsNone(result)
         self.assertIn('Skipping replication for unavailable local model', logs.output[0])
+
+    def _next_missing_partner_id(self):
+        self.env.cr.execute("SELECT COALESCE(MAX(id), 0) + 50 FROM res_partner")
+        return self.env.cr.fetchone()[0]
+
+    def _next_missing_ab_user_id(self):
+        self.env.cr.execute("SELECT COALESCE(MAX(id), 0) + 50 FROM ab_users")
+        return self.env.cr.fetchone()[0]
+
+    def test_missing_exact_id_many2one_placeholder_is_created(self):
+        replication = self.env['ab_odoo_replication']
+        partner_model = self.env['res.partner'].with_context(active_test=False).sudo()
+        missing_id = self._next_missing_partner_id()
+        self.assertFalse(partner_model.browse(missing_id).exists())
+
+        local_id = replication._resolve_many2one_record_id('res.partner', missing_id)
+
+        self.assertEqual(local_id, missing_id)
+        partner_model.invalidate_model()
+        self.assertTrue(partner_model.browse(missing_id).exists())
+
+    def test_existing_many2one_record_is_reused_without_placeholder(self):
+        replication = self.env['ab_odoo_replication']
+
+        local_id = replication._resolve_many2one_record_id('res.partner', self.partner_a.id)
+
+        self.assertEqual(local_id, self.partner_a.id)
+        self.assertEqual(
+            self.env['res.partner'].sudo().search_count([('id', '=', self.partner_a.id)]),
+            1,
+        )
+
+    def test_res_users_many2one_placeholder_is_skipped(self):
+        replication = self.env['ab_odoo_replication']
+
+        self.assertIsNone(
+            replication._resolve_many2one_record_id('res.users', self.regular_user.id),
+        )
+
+    def test_eval_val_creates_placeholder_for_missing_many2one(self):
+        replication = self.env['ab_odoo_replication']
+        partner_model = self.env['res.partner'].with_context(active_test=False).sudo()
+        missing_id = self._next_missing_partner_id()
+        replication.ReplShare.fld__type_rel_dict = {
+            'partner_id': ('many2one', 'res.partner'),
+        }
+        replication.ReplShare.missing_many2one_flds = []
+
+        local_id = replication.eval_val('partner_id', [missing_id, 'Remote Partner'], 123)
+
+        self.assertEqual(local_id, missing_id)
+        self.assertEqual(replication.ReplShare.missing_many2one_flds, [])
+        partner_model.invalidate_model()
+        self.assertTrue(partner_model.browse(missing_id).exists())
+
+    def test_ab_users_many2one_placeholder_is_created(self):
+        replication = self.env['ab_odoo_replication']
+        ab_users = self.env['ab_users'].with_context(active_test=False).sudo()
+        missing_id = self._next_missing_ab_user_id()
+        self.assertFalse(ab_users.browse(missing_id).exists())
+
+        local_id = replication._resolve_many2one_record_id('ab_users', missing_id)
+
+        self.assertEqual(local_id, missing_id)
+        ab_users.invalidate_model()
+        self.assertTrue(ab_users.browse(missing_id).exists())
+
+    def test_ab_users_relation_fields_are_not_excluded_from_replication_fields(self):
+        replication = self.env['ab_odoo_replication']
+        field_rows = [
+            ('id', 'integer', None),
+            ('write_date', 'datetime', None),
+            ('user_id', 'many2one', 'ab_users'),
+        ]
+
+        filtered_rows = replication._filter_replicable_field_rows('ab_hr_employee', field_rows)
+        fields_to_get, fld_type_rel = replication._prepare_replicable_fields(
+            filtered_rows,
+            {'id', 'write_date', 'user_id'},
+            {},
+            True,
+        )
+
+        self.assertIn('user_id', fields_to_get)
+        self.assertEqual(fld_type_rel['user_id'], ('many2one', 'ab_users'))
+
+    def test_res_users_relation_fields_are_excluded_from_replication_fields(self):
+        replication = self.env['ab_odoo_replication']
+        field_rows = [
+            ('id', 'integer', None),
+            ('write_date', 'datetime', None),
+            ('name', 'char', None),
+            ('user_id', 'many2one', 'res.users'),
+            ('department_id', 'many2one', 'ab_hr_department'),
+        ]
+
+        filtered_rows = replication._filter_replicable_field_rows('ab_hr_employee', field_rows)
+        fields_to_get, fld_type_rel = replication._prepare_replicable_fields(
+            filtered_rows,
+            {'id', 'write_date', 'name', 'user_id', 'department_id'},
+            {},
+            True,
+        )
+
+        self.assertNotIn('user_id', fields_to_get)
+        self.assertNotIn('user_id', fld_type_rel)
+        self.assertIn('name', fields_to_get)
+        self.assertIn('department_id', fields_to_get)
+        self.assertEqual(fld_type_rel['department_id'], ('many2one', 'ab_hr_department'))
+
+    def test_res_users_relation_extra_fields_are_excluded_for_non_user_models(self):
+        replication = self.env['ab_odoo_replication']
+        user_relation_field = 'user_id' if 'user_id' in self.env['res.partner']._fields else 'create_uid'
+
+        extra_fields = replication._filter_replicable_extra_fields(
+            'res.partner',
+            {
+                user_relation_field: 'many2one',
+                'x_payload': 'binary',
+            },
+        )
+        fields_to_get, _fld_type_rel = replication._prepare_replicable_fields(
+            [('id', 'integer', None), ('name', 'char', None)],
+            {'id', 'name', user_relation_field, 'x_payload'},
+            extra_fields,
+            False,
+        )
+
+        self.assertNotIn(user_relation_field, fields_to_get)
+        self.assertIn('x_payload', fields_to_get)
+
+    def test_res_users_replication_extra_groups_field_remains_allowed(self):
+        replication = self.env['ab_odoo_replication']
+
+        extra_fields = replication._filter_replicable_extra_fields(
+            'res.users',
+            {'groups_id': 'many2many'},
+        )
+
+        self.assertEqual(extra_fields, {'groups_id': 'many2many'})
