@@ -411,3 +411,68 @@ msgstr "إدراج أو تحديث"
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
 msgid "records must be a JSON array."
 msgstr "يجب أن تكون records مصفوفة JSON."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.actions.act_window,name:ab_odoo_sync_upload.action_ab_odoo_sync_upload_configuration
+#: model:ir.ui.menu,name:ab_odoo_sync_upload.menu_ab_odoo_sync_upload_configuration
+msgid "Branch Upload Configuration"
+msgstr "إعداد رفع الفروع"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report API connection error: %s"
+msgstr "خطأ في الاتصال بواجهة خادم التقارير: %s"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report API HTTP %(status)s: %(error)s"
+msgstr "خطأ HTTP من واجهة خادم التقارير %(status)s: %(error)s"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report API request contains non-ASCII characters in an HTTP URL or header."
+msgstr "يحتوي طلب واجهة خادم التقارير على محارف غير متوافقة مع ASCII في رابط HTTP أو الترويسة."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report API returned an invalid JSON response."
+msgstr "أعادت واجهة خادم التقارير استجابة JSON غير صحيحة."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Report API returned failure."
+msgstr "أعادت واجهة خادم التقارير نتيجة فشل."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Send branch upload outbox events to the report server"
+msgstr "إرسال أحداث صندوق رفع الفرع إلى خادم التقارير"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Set the API key system parameter: ab_odoo_sync.api_key"
+msgstr "اضبط معلمة النظام لمفتاح API: ab_odoo_sync.api_key"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Set the report URL system parameter: ab_odoo_sync.report_url"
+msgstr "اضبط معلمة النظام لرابط خادم التقارير: ab_odoo_sync.report_url"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Set the report database system parameter: ab_odoo_sync.report_database"
+msgstr "اضبط معلمة النظام لقاعدة بيانات التقارير: ab_odoo_sync.report_database"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.actions.act_window,help:ab_odoo_sync_upload.action_ab_odoo_sync_upload_configuration
+msgid "Set the report connection parameters before enabling branch uploads."
+msgstr "اضبط معلمات الاتصال بخادم التقارير قبل تفعيل رفع الفروع."

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <function model="ab_odoo_sync_service"
+              name="_ensure_config_parameter_defaults"
+              eval="({
+                  'ab_odoo_sync.report_url': '--- https://report.example.com',
+                  'ab_odoo_sync.report_database': '--- report_db',
+                  'ab_odoo_sync.batch_size': '--- Optional, for example 1000',
+              },)"/>
+</odoo>

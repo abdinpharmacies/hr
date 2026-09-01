@@ -1,7 +1,7 @@
 {
     "name": "AB Odoo Sync Upload",
     "summary": "Queue branch records for upload to the reporting database",
-    "version": "19.0.1.0.0",
+    "version": "19.0.1.1.0",
     "license": "LGPL-3",
     "category": "Tools",
     "author": "Abdin Pharmacies",
@@ -11,9 +11,12 @@
     "depends": ["ab_odoo_sync", "queue_job"],
     "data": [
         "security/ir.model.access.csv",
+        "data/system_parameters.xml",
         "data/queue_jobs.xml",
         "data/crons.xml",
         "views/upload_views.xml",
+        "views/configuration_views.xml",
+        "data/configuration_todo.xml",
     ],
     "installable": True,
 }
