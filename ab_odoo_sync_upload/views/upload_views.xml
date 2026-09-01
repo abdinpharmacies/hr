@@ -4,15 +4,30 @@
         <field name="name">ab_odoo_sync_upload_source.list</field>
         <field name="model">ab_odoo_sync_upload_source</field>
         <field name="arch" type="xml">
-            <list>
+            <list multi_edit="1">
                 <header>
                     <button name="action_load_installed_models" type="object"
                             string="Load Installed Models" class="btn-secondary"
                             display="always"/>
+                    <button name="action_queue_historical_upload" type="object"
+                            string="Queue Historical Upload" class="btn-primary"/>
+                    <button name="action_cancel_historical_upload" type="object"
+                            string="Cancel Historical Upload" class="btn-secondary"/>
                 </header>
                 <field name="model_name"/>
                 <field name="aggregate_parent_field" optional="show"/>
                 <field name="active"/>
+                <field name="historical_upload_months" optional="show"/>
+                <field name="historical_upload_from" optional="show"/>
+                <field name="historical_upload_state" optional="show" widget="badge"
+                       decoration-muted="historical_upload_state in ('not_started', 'cancelled')"
+                       decoration-info="historical_upload_state == 'queued'"
+                       decoration-warning="historical_upload_state == 'running'"
+                       decoration-success="historical_upload_state == 'done'"
+                       decoration-danger="historical_upload_state == 'failed'"/>
+                <field name="historical_upload_processed_count" optional="show"/>
+                <field name="historical_upload_queued_count" optional="show"/>
+                <field name="historical_upload_skipped_count" optional="show"/>
             </list>
         </field>
     </record>
@@ -25,6 +40,12 @@
                 <header>
                     <button name="action_load_installed_models" type="object"
                             string="Load Installed Models" class="btn-secondary"/>
+                    <button name="action_queue_historical_upload" type="object"
+                            string="Queue Historical Upload" class="btn-primary"
+                            invisible="not active or not historical_upload_from or historical_upload_state in ('queued', 'running', 'done')"/>
+                    <button name="action_cancel_historical_upload" type="object"
+                            string="Cancel Historical Upload" class="btn-secondary"
+                            invisible="historical_upload_state not in ('queued', 'running')"/>
                 </header>
                 <sheet>
                     <group>
@@ -32,8 +53,30 @@
                         <field name="aggregate_parent_field"/>
                         <field name="active"/>
                     </group>
+                    <group string="Historical Upload Backfill">
+                        <group>
+                            <field name="historical_upload_months"/>
+                            <field name="historical_upload_from"/>
+                            <field name="historical_upload_state" widget="badge"/>
+                        </group>
+                        <group>
+                            <field name="historical_upload_frozen_until"/>
+                            <field name="historical_upload_cursor_write_date"/>
+                            <field name="historical_upload_cursor_id"/>
+                            <field name="historical_upload_processed_count"/>
+                            <field name="historical_upload_queued_count"/>
+                            <field name="historical_upload_skipped_count"/>
+                            <field name="historical_upload_completed_at"/>
+                        </group>
+                    </group>
+                    <group invisible="not historical_upload_last_error">
+                        <field name="historical_upload_last_error"/>
+                    </group>
                     <div class="alert alert-info" role="alert">
                         Stored fields are captured as a raw snapshot. The reporting server controls how each snapshot is mapped and applied.
+                    </div>
+                    <div class="alert alert-info" role="alert">
+                        Historical upload queues current snapshots for records whose write date is between Historical Upload From and the frozen run cutoff. Future create, update, and archive operations continue syncing automatically while the source is active.
                     </div>
                 </sheet>
             </form>

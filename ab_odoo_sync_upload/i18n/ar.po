@@ -476,3 +476,187 @@ msgstr "اضبط معلمة النظام لقاعدة بيانات التقار�
 #: model_terms:ir.actions.act_window,help:ab_odoo_sync_upload.action_ab_odoo_sync_upload_configuration
 msgid "Set the report connection parameters before enabling branch uploads."
 msgstr "اضبط معلمات الاتصال بخادم التقارير قبل تفعيل رفع الفروع."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_months
+msgid "Historical Upload Past Months"
+msgstr "أشهر الرفع التاريخي السابقة"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,help:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_months
+msgid "Set past months to fill Historical Upload From quickly. It does not start a backfill by itself."
+msgstr "اضبط عدد الأشهر السابقة لملء تاريخ بداية الرفع التاريخي بسرعة. لا يبدأ هذا الحقل عملية الرفع التاريخي تلقائيًا."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_from
+msgid "Historical Upload From"
+msgstr "الرفع التاريخي من"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,help:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_from
+msgid "UTC datetime cutoff for manual historical upload backfills. Records with write_date on or after this value are eligible."
+msgstr "حد تاريخ ووقت UTC لعمليات الرفع التاريخي اليدوية. تكون السجلات ذات write_date عند هذه القيمة أو بعدها مؤهلة."
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_state
+msgid "Historical Upload State"
+msgstr "حالة الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_upload_source__historical_upload_state__not_started
+msgid "Not Started"
+msgstr "لم يبدأ"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_upload_source__historical_upload_state__queued
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_upload_source__historical_upload_state__running
+msgid "Running"
+msgstr "قيد التشغيل"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_upload_source__historical_upload_state__done
+msgid "Done"
+msgstr "تم"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields.selection,name:ab_odoo_sync_upload.selection__ab_odoo_sync_upload_source__historical_upload_state__cancelled
+msgid "Cancelled"
+msgstr "ملغى"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_frozen_until
+msgid "Historical Upload Frozen Until"
+msgstr "الرفع التاريخي مجمد حتى"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_cursor_write_date
+msgid "Historical Upload Cursor Write Date"
+msgstr "تاريخ كتابة مؤشر الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_cursor_id
+msgid "Historical Upload Cursor ID"
+msgstr "معرف مؤشر الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_processed_count
+msgid "Historical Upload Processed Count"
+msgstr "عدد السجلات المعالجة في الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_queued_count
+msgid "Historical Upload Queued Count"
+msgstr "عدد السجلات المدرجة في الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_skipped_count
+msgid "Historical Upload Skipped Count"
+msgstr "عدد السجلات المتخطاة في الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_last_error
+msgid "Historical Upload Last Error"
+msgstr "آخر خطأ في الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model:ir.model.fields,field_description:ab_odoo_sync_upload.field_ab_odoo_sync_upload_source__historical_upload_completed_at
+msgid "Historical Upload Completed At"
+msgstr "اكتمل الرفع التاريخي في"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_list
+msgid "Queue Historical Upload"
+msgstr "إدراج الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_form
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_list
+msgid "Cancel Historical Upload"
+msgstr "إلغاء الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_form
+msgid "Historical Upload Backfill"
+msgstr "استكمال الرفع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#: model_terms:ir.ui.view,arch_db:ab_odoo_sync_upload.view_ab_odoo_sync_upload_source_form
+msgid "Historical upload queues current snapshots for records whose write date is between Historical Upload From and the frozen run cutoff. Future create, update, and archive operations continue syncing automatically while the source is active."
+msgstr "يدرج الرفع التاريخي اللقطات الحالية للسجلات التي يقع تاريخ كتابتها بين تاريخ بداية الرفع التاريخي وحد التشغيل المجمد. وتستمر عمليات الإنشاء والتحديث والأرشفة القادمة في المزامنة تلقائيًا طالما أن المصدر نشط."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Historical Branch Upload"
+msgstr "رفع الفرع التاريخي"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Historical Upload Past Months cannot be negative."
+msgstr "لا يمكن أن تكون أشهر الرفع التاريخي السابقة بقيمة سالبة."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Historical Upload From cannot be in the future."
+msgstr "لا يمكن أن يكون تاريخ بداية الرفع التاريخي في المستقبل."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Only System administrators can manage historical upload backfills."
+msgstr "يمكن لمسؤولي النظام فقط إدارة عمليات الرفع التاريخي."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Activate %(model)s before queuing historical upload."
+msgstr "قم بتفعيل %(model)s قبل إدراج الرفع التاريخي."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Set Historical Upload From before queuing historical upload for %(model)s."
+msgstr "اضبط تاريخ بداية الرفع التاريخي قبل إدراج الرفع التاريخي لـ %(model)s."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Historical Upload From cannot be in the future for %(model)s."
+msgstr "لا يمكن أن يكون تاريخ بداية الرفع التاريخي في المستقبل لـ %(model)s."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Source model %(model)s must have a stored write_date field for historical upload."
+msgstr "يجب أن يحتوي نموذج المصدر %(model)s على حقل write_date مخزن للرفع التاريخي."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Queue historical branch upload batch"
+msgstr "إدراج دفعة الرفع التاريخي للفرع"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Queued historical upload for %(queued)s source(s); %(skipped)s source(s) were already queued, running, or done."
+msgstr "تم إدراج الرفع التاريخي لـ %(queued)s مصدر؛ وتم تخطي %(skipped)s مصدر لأنه مدرج أو قيد التشغيل أو مكتمل بالفعل."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Cancelled historical upload for %(count)s source(s)."
+msgstr "تم إلغاء الرفع التاريخي لـ %(count)s مصدر."
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_source.py:0
+msgid "Cannot change Source Model, Active, Historical Upload Past Months, or Historical Upload From while a historical upload is queued or running."
+msgstr "لا يمكن تغيير نموذج المصدر أو الحالة النشطة أو أشهر الرفع التاريخي السابقة أو تاريخ بداية الرفع التاريخي أثناء إدراج رفع تاريخي أو تشغيله."

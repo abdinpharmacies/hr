@@ -64,26 +64,99 @@ class AbOdooSyncOutbox(models.Model):
         }
 
     @api.model
+    def prepare_record_snapshots(self, records):
+        return [self.prepare_record_snapshot(record) for record in records]
+
+    @api.model
+    def filter_uncovered_upsert_snapshots(self, snapshots):
+        snapshots = [snapshot for snapshot in snapshots or [] if snapshot]
+        if not snapshots:
+            return [], 0
+
+        dated_snapshots = [
+            snapshot for snapshot in snapshots if snapshot.get("source_write_date")
+        ]
+        if not dated_snapshots:
+            return snapshots, 0
+
+        min_write_date = min(
+            snapshot["source_write_date"] for snapshot in dated_snapshots
+        )
+        model_names = sorted({snapshot["model_name"] for snapshot in dated_snapshots})
+        rec_ids = sorted({snapshot["rec_id"] for snapshot in dated_snapshots})
+        existing_events = self.sudo().search(
+            [
+                ("operation", "=", "upsert"),
+                ("model_name", "in", model_names),
+                ("rec_id", "in", rec_ids),
+                ("source_write_date", ">=", min_write_date),
+            ]
+        )
+
+        latest_write_by_key = {}
+        for event in existing_events:
+            if not event.source_write_date:
+                continue
+            key = (event.model_name, event.rec_id)
+            latest_write_date = latest_write_by_key.get(key)
+            if not latest_write_date or event.source_write_date > latest_write_date:
+                latest_write_by_key[key] = event.source_write_date
+
+        uncovered = []
+        skipped = 0
+        for snapshot in snapshots:
+            source_write_date = snapshot.get("source_write_date")
+            key = (snapshot.get("model_name"), snapshot.get("rec_id"))
+            if (
+                source_write_date
+                and latest_write_by_key.get(key)
+                and latest_write_by_key[key] >= source_write_date
+            ):
+                skipped += 1
+                continue
+            uncovered.append(snapshot)
+        return uncovered, skipped
+
+    @api.model
     def capture_prepared_snapshot(self, snapshot, operation="upsert"):
+        return self.capture_prepared_snapshots([snapshot], operation=operation)[:1]
+
+    @api.model
+    def capture_prepared_snapshots(self, snapshots, operation="upsert"):
         if operation not in {"upsert", "archive"}:
             raise ValueError(
                 _("Unsupported upload operation: %(operation)s")
                 % {"operation": operation}
             )
 
-        vals = dict(snapshot)
-        vals["operation"] = operation
-        outbox = self.with_context(skip_ab_odoo_sync_upload=True).sudo().create(vals)
-        outbox.with_context(skip_ab_odoo_sync_upload=True).sudo().write(
-            {"source_revision": outbox.id}
+        vals_list = []
+        for snapshot in snapshots or []:
+            vals = dict(snapshot)
+            vals["operation"] = operation
+            vals_list.append(vals)
+        if not vals_list:
+            return self.browse()
+
+        outboxes = (
+            self.with_context(skip_ab_odoo_sync_upload=True).sudo().create(vals_list)
         )
-        self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch()
-        return outbox
+        for outbox in outboxes:
+            outbox.with_context(skip_ab_odoo_sync_upload=True).sudo().write(
+                {"source_revision": outbox.id}
+            )
+        if not self.env.context.get("defer_ab_odoo_sync_upload_sender"):
+            self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch()
+        return outboxes
 
     @api.model
     def capture_record(self, record, operation="upsert"):
         snapshot = self.prepare_record_snapshot(record)
         return self.capture_prepared_snapshot(snapshot, operation=operation)
+
+    @api.model
+    def capture_records(self, records, operation="upsert"):
+        snapshots = self.prepare_record_snapshots(records)
+        return self.capture_prepared_snapshots(snapshots, operation=operation)
 
     def action_send_now(self):
         result = self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch(self)
