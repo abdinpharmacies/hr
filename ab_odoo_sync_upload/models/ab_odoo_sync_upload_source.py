@@ -95,6 +95,8 @@ class AbOdooSyncUploadSource(models.Model):
             return False
         if model_name.startswith("ab_odoo_sync"):
             return False
+        if self.env["ab_odoo_sync_rules"].sudo().is_upload_source_forbidden(model_name):
+            return False
         try:
             model = self.env[model_name]
         except KeyError:
