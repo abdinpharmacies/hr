@@ -7,9 +7,10 @@
     "website": "https://www.abdinpharmacies.com",
     "license": "LGPL-3",
     "category": "Tools",
-    "version": "19.0.3.0.0",
+    "version": "19.0.3.1.0",
     "depends": ["base", "web"],
     "data": [
+        "data/system_parameters.xml",
         "views/menus.xml",
     ],
     "assets": {
