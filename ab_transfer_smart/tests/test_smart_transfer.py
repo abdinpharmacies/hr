@@ -2589,6 +2589,123 @@ class TestSmartTransfer(TransactionCase):
         refresh_lock.assert_called_once()
         fetch_rows.assert_not_called()
 
+    def test_source_cache_read_adds_received_quantity_delta(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        store = header.from_store_id
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"].sudo()
+        today = fields.Date.context_today(SourceCache)
+        SourceCache.create({
+            "store_id": store.id,
+            "product_eplus_serial": 990175,
+            "stock_qty": 10,
+            "received_qty": 4,
+            "cache_date": today,
+        })
+
+        cache_context = SourceCache.read_store_cache_context(store, [990175])
+
+        self.assertTrue(cache_context["has_cache"])
+        self.assertEqual(cache_context["stock_by_serial"], {990175: 14.0})
+
+    def test_source_received_qty_refresh_overwrites_delta_without_double_counting(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        store = header.from_store_id
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"].sudo()
+        today = fields.Date.context_today(SourceCache)
+        existing_line = SourceCache.create({
+            "store_id": store.id,
+            "product_eplus_serial": 990176,
+            "stock_qty": 10,
+            "received_qty": 9,
+            "cache_date": today,
+        })
+
+        with patch.object(
+                type(SourceCache),
+                "_fetch_store_received_qty_rows",
+                return_value={990176: 4, 990177: 6},
+        ):
+            first_result = SourceCache.refresh_store_received_qty(store)
+            second_result = SourceCache.refresh_store_received_qty(store)
+
+        existing_line.invalidate_recordset(["stock_qty", "received_qty", "received_updated_at"])
+        created_line = SourceCache.search([
+            ("store_id", "=", store.id),
+            ("product_eplus_serial", "=", 990177),
+            ("cache_date", "=", today),
+        ])
+        self.assertEqual(first_result, {"products": 2, "total_received_qty": 10.0})
+        self.assertEqual(second_result, {"products": 2, "total_received_qty": 10.0})
+        self.assertEqual(existing_line.stock_qty, 10.0)
+        self.assertEqual(existing_line.received_qty, 4.0)
+        self.assertTrue(existing_line.received_updated_at)
+        self.assertEqual(created_line.stock_qty, 0.0)
+        self.assertEqual(created_line.received_qty, 6.0)
+        self.assertEqual(
+            SourceCache.read_store_cache_rows(store, [990176, 990177]),
+            {990176: 14.0, 990177: 6.0},
+        )
+
+    def test_source_received_qty_refresh_resets_stale_delta_when_no_rows_return(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        store = header.from_store_id
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"].sudo()
+        line = SourceCache.create({
+            "store_id": store.id,
+            "product_eplus_serial": 990178,
+            "stock_qty": 10,
+            "received_qty": 5,
+            "cache_date": fields.Date.context_today(SourceCache),
+        })
+
+        with patch.object(
+                type(SourceCache),
+                "_fetch_store_received_qty_rows",
+                return_value={},
+        ):
+            result = SourceCache.refresh_store_received_qty(store)
+
+        line.invalidate_recordset(["received_qty"])
+        self.assertEqual(result, {"products": 0, "total_received_qty": 0.0})
+        self.assertEqual(line.received_qty, 0.0)
+        self.assertEqual(SourceCache.read_store_cache_rows(store, [990178]), {990178: 10.0})
+
+    def test_source_received_qty_fetch_uses_snapshot_datetime_and_store(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        store = header.from_store_id
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"]
+        cursor = MagicMock()
+        cursor.fetchall.return_value = [(990179, 7.0)]
+        connection = MagicMock()
+        connection.cursor.return_value.__enter__.return_value = cursor
+        connection_context = MagicMock()
+        connection_context.__enter__.return_value = connection
+        snapshot_at = fields.Datetime.now()
+
+        with patch.object(
+                type(SourceCache),
+                "_get_store_sql_id",
+                return_value=8326,
+        ), patch.object(
+                type(SourceCache),
+                "_get_store_server",
+                return_value="127.0.0.1",
+        ), patch.object(
+                type(SourceCache),
+                "connect_eplus",
+                return_value=connection_context,
+        ):
+            received_rows = SourceCache._fetch_store_received_qty_rows(store, snapshot_at)
+
+        query, params = cursor.execute.call_args.args
+        self.assertIn("FROM Store_Trans Store_Trans", query)
+        self.assertIn("Store_Trans.sec_insert_date > ?", query)
+        self.assertIn("Store_Trans.st_to_store = ?", query)
+        self.assertIn("h.stnh_flag = 'R'", query)
+        self.assertIn("/ NULLIF(Item_Catalog.itm_unit1_unit3, 0)", query)
+        self.assertEqual(params, (snapshot_at, 8326))
+        self.assertEqual(received_rows, {990179: 7.0})
+
     def test_smart_source_inventory_row_keeps_transfer_price_semantics(self):
         header = self._create_smart_header_from_existing_records_or_skip()
         product = self._get_existing_smart_product_with_serial_or_skip()
@@ -2991,6 +3108,43 @@ class TestSmartTransfer(TransactionCase):
         other_header.write({"smart_stage": SMART_STAGE_STORE_REVISION})
 
         self.assertEqual(line.smart_expected_source_stock_qty, 15)
+
+    def test_expected_source_stock_uses_received_source_cache_delta(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        product = self._get_existing_smart_product_with_serial_or_skip()
+        line = self._create_smart_line(
+            header,
+            product,
+            product.uom_id,
+            qty=2,
+            smart_source_stock_qty=50,
+        )
+        cache_line = self.env["ab_transfer_smart_source_stock_cache"].create({
+            "store_id": header.from_store_id.id,
+            "product_eplus_serial": int(product.eplus_serial),
+            "stock_qty": 20,
+            "received_qty": 7,
+            "cache_date": fields.Date.context_today(header),
+        })
+        other_destination = self.env["ab_store"].sudo().search([
+            ("id", "!=", header.from_store_id.id),
+            ("allow_sale", "=", True),
+        ], limit=1)
+        if not other_destination:
+            self.skipTest("No destination store is available for received Expected Stock tests.")
+        other_header = self.env["ab_transfer_header"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_store_id": other_destination.id,
+            "user_id": header.user_id.id,
+        })
+        self._create_smart_line(other_header, product, product.uom_id, qty=5)
+        other_header.write({"smart_stage": SMART_STAGE_SUBMIT})
+
+        line.invalidate_recordset(["smart_expected_source_stock_qty"])
+
+        self.assertEqual(cache_line.stock_qty, 20)
+        self.assertEqual(cache_line.received_qty, 7)
+        self.assertEqual(line.smart_expected_source_stock_qty, 22)
 
     def test_expected_source_stock_only_subtracts_submissions_after_opening_snapshot(self):
         header = self._create_smart_header()
@@ -3809,6 +3963,35 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(refresh.call_args.args[0], wizard.to_stores_id)
         self.assertEqual(action["params"]["type"], "success")
 
+    def test_wizard_get_received_qty_refreshes_source_cache_delta(self):
+        header = self._create_smart_header_from_existing_records_or_skip()
+        wizard = self.env["ab_transfer_smart_wizard"].create({
+            "from_store_id": header.from_store_id.id,
+            "to_stores_id": [(6, 0, header.to_store_id.ids)],
+            "user_id": header.user_id.id,
+            "company_id": header.company_id.id,
+        })
+        SourceCache = self.env["ab_transfer_smart_source_stock_cache"]
+
+        with patch.object(
+                type(SourceCache),
+                "refresh_store_received_qty",
+                return_value={"products": 2, "total_received_qty": 7.5},
+        ) as refresh:
+            action = wizard.get_received_qty()
+
+        refresh.assert_called_once()
+        self.assertEqual(refresh.call_args.args[0], wizard.from_store_id)
+        self.assertEqual(action["params"]["type"], "success")
+        self.assertIn("Products: 2", action["params"]["message"])
+        self.assertIn("Total received qty: 7.50", action["params"]["message"])
+
+    def test_wizard_get_received_qty_blocks_done_wizards(self):
+        wizard, _header = self._create_smart_archive_wizard()
+
+        with self.assertRaisesRegex(UserError, "Done wizards cannot get received quantities"):
+            wizard.get_received_qty()
+
     def test_wizard_refresh_sales_cache_syncs_missing_days_and_resumes_generation(self):
         wizard = self.env["ab_transfer_smart_wizard"].new({
             "sales_cache_warning_message": "Missing sales cache days",
@@ -3947,6 +4130,24 @@ class TestSmartTransfer(TransactionCase):
         self.assertEqual(refresh_index + 1, generated_index)
         self.assertEqual(refresh_button.get("string"), "Refresh Sales Cache & Resume")
         self.assertIn("sales_cache_warning_message", refresh_button.get("invisible"))
+
+    def test_wizard_view_places_get_received_qty_after_refresh_smart_cache(self):
+        view = self.env.ref("ab_transfer_smart.ab_transfer_smart_wizard_view_form")
+        arch = etree.fromstring(view.arch_db.encode())
+        header_buttons = arch.xpath("//form/header/button")
+        button_names = [button.get("name") for button in header_buttons]
+
+        refresh_index = button_names.index("action_refresh_smart_cache")
+        received_index = button_names.index("get_received_qty")
+        received_button = header_buttons[received_index]
+
+        self.assertEqual(refresh_index + 1, received_index)
+        self.assertEqual(received_button.get("string"), "Get Received Qty")
+        self.assertIn("state != 'draft'", received_button.get("invisible"))
+        self.assertEqual(
+            received_button.get("groups"),
+            "ab_transfer_smart.group_transfer_smart_purchase",
+        )
 
     def test_wizard_generate_ensures_cache_before_warning_check(self):
         source = self._create_store_or_skip({

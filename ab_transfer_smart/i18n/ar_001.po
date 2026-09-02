@@ -321,6 +321,12 @@ msgid "Done wizards cannot refresh smart cache."
 msgstr "لا يمكن للمعالجات المكتملة تحديث الكاش الذكي."
 
 #. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Done wizards cannot get received quantities."
+msgstr "لا يمكن للمعالجات المكتملة جلب الكميات المستلمة."
+
+#. module: ab_transfer_smart
 #: model:ir.model.fields.selection,name:ab_transfer_smart.selection__ab_transfer_smart_wizard__state__draft
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_search
 msgid "Draft"
@@ -899,6 +905,23 @@ msgid "Refresh Smart Cache"
 msgstr "تحديث الكاش الذكي"
 
 #. module: ab_transfer_smart
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_wizard_view_form
+msgid "Get Received Qty"
+msgstr "جلب الكمية المستلمة"
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "Cannot get received quantities because source stock snapshot is missing for %(store)s."
+msgstr "لا يمكن جلب الكميات المستلمة لأن لقطة رصيد المصدر غير موجودة للمخزن %(store)s."
+
+#. module: ab_transfer_smart
+#. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
+msgid "Received quantities updated. Products: %(products)s, Total received qty: %(total_received_qty).2f."
+msgstr "تم تحديث الكميات المستلمة. الأصناف: %(products)s، إجمالي الكمية المستلمة: %(total_received_qty).2f."
+
+#. module: ab_transfer_smart
 #. odoo-python
 #: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
 msgid "Sales cache refresh did not complete all required days. Check EPlus connectivity or retry the refresh."
@@ -1132,6 +1155,12 @@ msgstr "تم تحديث الكاش الذكي. المخازن: %(stores)s، سط
 
 #. module: ab_transfer_smart
 #. odoo-python
+#: code:addons/ab_transfer_smart/models/ab_transfer_smart_cache.py:0
+msgid "Smart transfer source received quantity refresh failed for %(store)s: %(error)s"
+msgstr "فشل تحديث الكمية المستلمة لرصيد مصدر التحويل الذكي للمخزن %(store)s: %(error)s"
+
+#. module: ab_transfer_smart
+#. odoo-python
 #: code:addons/ab_transfer_smart/models/ab_transfer_header.py:0
 #: code:addons/ab_transfer_smart/models/ab_transfer_smart_wizard.py:0
 msgid "Smart days must be at least 1."
@@ -1326,6 +1355,17 @@ msgstr "طريقة حساب المخزون"
 #: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_stock_cache_view_list
 msgid "Stock Quantity"
 msgstr "كمية المخزون"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_source_stock_cache__received_qty
+#: model_terms:ir.ui.view,arch_db:ab_transfer_smart.ab_transfer_smart_source_stock_cache_view_list
+msgid "Received Quantity"
+msgstr "الكمية المستلمة"
+
+#. module: ab_transfer_smart
+#: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_source_stock_cache__received_updated_at
+msgid "Received Updated At"
+msgstr "تاريخ تحديث الكمية المستلمة"
 
 #. module: ab_transfer_smart
 #: model:ir.model.fields,field_description:ab_transfer_smart.field_ab_transfer_smart_stock_cache__stock_pending_qty

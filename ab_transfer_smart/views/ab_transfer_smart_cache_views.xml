@@ -103,6 +103,8 @@
                     <field name="product_id"/>
                     <field name="product_eplus_serial" optional="hide"/>
                     <field name="stock_qty" sum="Stock Quantity"/>
+                    <field name="received_qty" sum="Received Quantity" optional="show"/>
+                    <field name="received_updated_at" optional="hide"/>
                     <field name="create_date" optional="hide"/>
                     <field name="write_date" optional="hide"/>
                 </list>
@@ -125,6 +127,8 @@
                                 <field name="product_id"/>
                                 <field name="product_eplus_serial"/>
                                 <field name="stock_qty"/>
+                                <field name="received_qty"/>
+                                <field name="received_updated_at"/>
                             </group>
                         </group>
                     </sheet>

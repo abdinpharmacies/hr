@@ -79,6 +79,28 @@ SMART_SOURCE_STOCK_SQL = """
     ) > 0
 """
 
+SMART_SOURCE_RECEIVED_QTY_SQL = """
+    SELECT
+        Item_Catalog.itm_id,
+        CAST(
+            SUM(Store_Trans.st_itm_quantity / NULLIF(Item_Catalog.itm_unit1_unit3, 0))
+            AS decimal(18,2)
+        ) AS received_qty
+    FROM Store_Trans Store_Trans
+    INNER JOIN Item_Catalog Item_Catalog
+        ON Item_Catalog.itm_id = Store_Trans.st_itm_id
+    INNER JOIN Store Store_1
+        ON Store_1.sto_id = Store_Trans.st_to_store
+    LEFT JOIN Store_Trans_h h
+        ON h.stnh_id = Store_Trans.stnh_id
+        AND h.stnh_f_Sto_id = Store_Trans.st_from_store
+        AND h.stnh_t_Sto_id = Store_Trans.st_to_store
+    WHERE Store_Trans.sec_insert_date > ?
+        AND Store_Trans.st_to_store = ?
+        AND h.stnh_flag = 'R'
+    GROUP BY Item_Catalog.itm_id
+"""
+
 SMART_DESTINATION_SALES_QTY_EXPR = """
     CASE sd.itm_unit
         WHEN 1 THEN CAST(ISNULL(sd.qnty, 0) - ISNULL(sd.itm_back, 0) AS DECIMAL(18, 4))
@@ -217,6 +239,19 @@ class AbTransferSmartSourceStockCache(AbTransferSmartCacheTools, models.Model):
         digits=(16, 4),
         aggregator="sum",
     )
+    received_qty = fields.Float(
+        string="Received Quantity",
+        digits=(16, 4),
+        aggregator="sum",
+        default=0.0,
+        readonly=True,
+        copy=False,
+    )
+    received_updated_at = fields.Datetime(
+        string="Received Updated At",
+        readonly=True,
+        copy=False,
+    )
     cache_date = fields.Date(
         string="Cache Date",
         required=True,
@@ -334,10 +369,108 @@ class AbTransferSmartSourceStockCache(AbTransferSmartCacheTools, models.Model):
             "has_cache": bool(snapshot_record),
             "snapshot_at": snapshot_record.create_date if snapshot_record else False,
             "stock_by_serial": {
-                int(line.product_eplus_serial): float(line.stock_qty or 0.0)
+                int(line.product_eplus_serial): (
+                    float(line.stock_qty or 0.0)
+                    + float(line.received_qty or 0.0)
+                )
                 for line in self.search(domain)
             },
         }
+
+    @api.model
+    def refresh_store_received_qty(self, store):
+        store = self._ensure_store_record(store)
+        cache_date = self._get_cache_date()
+        self.refresh_store_cache(store, force=False)
+        self._lock_source_stock_cache_refresh(store)
+        cache_context = self.read_store_cache_context(store, cache_date=cache_date)
+        snapshot_at = cache_context["snapshot_at"]
+        if not cache_context["has_cache"] or not snapshot_at:
+            raise UserError(
+                _("Cannot get received quantities because source stock snapshot is missing for %(store)s.")
+                % {"store": store.display_name}
+            )
+
+        received_by_product = self._fetch_store_received_qty_rows(store, snapshot_at)
+        today_lines = self.search([
+            ("store_id", "=", store.id),
+            ("cache_date", "=", cache_date),
+        ])
+        now = fields.Datetime.now()
+        if today_lines:
+            today_lines.write({
+                "received_qty": 0.0,
+                "received_updated_at": now,
+            })
+
+        lines_by_serial = {
+            int(line.product_eplus_serial): line
+            for line in today_lines
+        }
+        vals_list = []
+        updated_products = 0
+        total_received_qty = 0.0
+        for product_serial, received_qty in received_by_product.items():
+            product_serial = self._safe_int(product_serial)
+            received_qty = float(received_qty or 0.0)
+            if not product_serial or received_qty == 0.0:
+                continue
+            line = lines_by_serial.get(product_serial)
+            if line:
+                line.write({
+                    "received_qty": received_qty,
+                    "received_updated_at": now,
+                })
+            else:
+                vals_list.append({
+                    "store_id": store.id,
+                    "product_eplus_serial": product_serial,
+                    "stock_qty": 0.0,
+                    "received_qty": received_qty,
+                    "received_updated_at": now,
+                    "cache_date": cache_date,
+                })
+            updated_products += 1
+            total_received_qty += received_qty
+        if vals_list:
+            self.create(vals_list)
+        return {
+            "products": updated_products,
+            "total_received_qty": total_received_qty,
+        }
+
+    @api.model
+    def _fetch_store_received_qty_rows(self, store, snapshot_at):
+        store_sql_id = self._get_store_sql_id(store)
+        server = self._get_store_server(store)
+        try:
+            received_by_product = {}
+            with self.connect_eplus(
+                    server=server,
+                    param_str="?",
+                    autocommit=True,
+                    propagate_error=True,
+            ) as conn:
+                with conn.cursor() as cursor:
+                    cursor.execute(
+                        SMART_SOURCE_RECEIVED_QTY_SQL,
+                        (snapshot_at, store_sql_id),
+                    )
+                    for product_serial, received_qty in cursor.fetchall() or []:
+                        product_serial = self._safe_int(product_serial)
+                        received_qty = float(received_qty or 0.0)
+                        if product_serial and received_qty != 0.0:
+                            received_by_product[product_serial] = received_qty
+            return received_by_product
+        except Exception as error:
+            _logger.exception(
+                "Smart transfer source received quantity refresh failed: store=%s",
+                store.display_name,
+            )
+            raise UserError(
+                _("Smart transfer source received quantity refresh failed for %(store)s: %(error)s")
+                % {"store": store.display_name, "error": error}
+            )
 
     @api.model
     def _fetch_store_stock_rows(self, store):

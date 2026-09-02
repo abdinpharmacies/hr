@@ -539,6 +539,26 @@ class AbTransferSmartWizard(models.Model):
             },
         }
 
+    def get_received_qty(self):
+        self.ensure_one()
+        if not self.env.user.has_group(SMART_GROUP_PURCHASE):
+            raise AccessError(_("You are not allowed to refresh smart transfer cache."))
+        if self.state == "done":
+            raise UserError(_("Done wizards cannot get received quantities."))
+        if not self.from_store_id:
+            raise UserError(_("Source store is required."))
+
+        result = self.env[
+            "ab_transfer_smart_source_stock_cache"
+        ].sudo().refresh_store_received_qty(self.from_store_id)
+        return self._smart_notification(
+            _("Smart Transfer Cache"),
+            _(
+                "Received quantities updated. Products: %(products)s, Total received qty: %(total_received_qty).2f."
+            ) % result,
+            "success",
+        )
+
     def _check_archive_allowed(self):
         if not self.env.user.has_group(SMART_GROUP_PURCHASE):
             raise AccessError(_("You are not allowed to archive smart transfer wizards."))

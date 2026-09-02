@@ -88,6 +88,12 @@
                                 class="btn-secondary"
                                 groups="ab_transfer_smart.group_transfer_smart_purchase"
                                 invisible="state != 'draft' or (create_uid and create_uid != uid)"/>
+                        <button name="get_received_qty"
+                                type="object"
+                                string="Get Received Qty"
+                                class="btn-secondary"
+                                groups="ab_transfer_smart.group_transfer_smart_purchase"
+                                invisible="state != 'draft' or (create_uid and create_uid != uid)"/>
                         <button name="action_export_excel"
                                 type="object"
                                 string="Export Smart Transfer Excel"

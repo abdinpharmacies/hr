@@ -1,20 +1,21 @@
 Current changes before commit:
 
-- Validate Pre-Submit quantities against the current business day's opening stock minus reservations from other active Smart Transfers.
-- Exclude the current transfer from Expected Stock so its quantity is not counted twice.
-- Deduct submitted transfers only when they were sent after the daily opening-stock snapshot.
-- Keep live batch, class, and expiry validation when generating final transfer lines.
-- Add matching Arabic translations and regression coverage for daily rollover, snapshot timing, and current-header exclusion.
+- Add a Get Received Qty button to the Smart Transfer wizard for purchase users in draft state.
+- Fetch received E-Plus Store_Trans quantities for the source store after the source-stock snapshot timestamp.
+- Store received source-stock deltas separately and overwrite them on each refresh to avoid double-counting repeated clicks.
+- Include received deltas in source stock cache reads so existing Source Stock, Expected Stock, and Smart Transfer planning use the adjusted source availability.
+- Show received source-stock diagnostics and add matching Arabic translations and regression coverage.
 
 Files changed:
 
 - ab_transfer_smart/changelog.d
 - ab_transfer_smart/i18n/ar.po
 - ab_transfer_smart/i18n/ar_001.po
-- ab_transfer_smart/models/ab_transfer_header.py
-- ab_transfer_smart/models/ab_transfer_line.py
 - ab_transfer_smart/models/ab_transfer_smart_cache.py
+- ab_transfer_smart/models/ab_transfer_smart_wizard.py
 - ab_transfer_smart/tests/test_smart_transfer.py
+- ab_transfer_smart/views/ab_transfer_smart_cache_views.xml
+- ab_transfer_smart/views/ab_transfer_smart_wizard_views.xml
 
 
 commit ef67934c75aa989216f2926cfe0fbf1728b65316
