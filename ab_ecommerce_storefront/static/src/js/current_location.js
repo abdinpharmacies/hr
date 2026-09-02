@@ -36,10 +36,14 @@ export class AbStorefrontCurrentLocation extends Interaction {
 
     applyStoredLocation() {
         const location = this.getStoredLocation();
-        if (!location) {
+        if (location) {
+            this.setState("is-set", location.governorate || FALLBACK_SET_LABEL);
             return;
         }
-        this.setState("is-set", location.governorate || FALLBACK_SET_LABEL);
+        const defaultLocation = (this.el.dataset.abLocationDefault || "").trim();
+        if (defaultLocation) {
+            this.setState("is-set", defaultLocation);
+        }
     }
 
     getStoredLocation() {

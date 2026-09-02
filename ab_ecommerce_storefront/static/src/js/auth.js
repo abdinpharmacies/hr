@@ -605,6 +605,7 @@ export class AbStorefrontAuth extends Interaction {
         if (nextCard && card) {
             card.innerHTML = nextCard.innerHTML;
             this.prepareMotionItems();
+            this.services["public.interactions"]?.startInteractions(card);
             return;
         }
         const form = this.el.querySelector("[data-ab-auth-form]");

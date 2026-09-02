@@ -8,7 +8,7 @@ const DEFAULT_AVATAR = "avatar_none";
 const CLOSE_ANIMATION_MS = 380;
 
 export class AbStorefrontAvatarPicker extends Interaction {
-    static selector = "[data-ab-avatar-scope]";
+    static selector = ".ab-auth-page, .ab-account-hero-scope, .ab-account-avatar-card";
 
     setup() {
         this.onClick = this.onClick.bind(this);
@@ -221,7 +221,7 @@ export class AbStorefrontAvatarPicker extends Interaction {
     }
 
     updatePreview(scope, avatar, customSrc = null) {
-        scope.querySelectorAll(".ab-auth-avatar-preview .ab-storefront-avatar, .ab-account-avatar-visual .ab-storefront-avatar").forEach((avatarNode) => {
+        scope.querySelectorAll(".ab-auth-avatar-preview .ab-storefront-avatar, .ab-account-avatar-visual .ab-storefront-avatar, .ab-account-hero-avatar .ab-storefront-avatar").forEach((avatarNode) => {
             const img = avatarNode.querySelector("img");
             avatarNode.dataset.abAvatarValue = avatar;
             avatarNode.classList.remove("is-changing");
@@ -273,10 +273,15 @@ export class AbStorefrontAvatarPicker extends Interaction {
             this.updateGlobalAvatars(avatar, this.previewUrls.get(scope));
             scope.classList.add("is-avatar-saved");
             if (status) {
-                status.textContent = "تم حفظ الصورة";
+                status.textContent = "تم حفظ الأفاتار";
             }
             this.closePicker(picker, {animate: true});
-            window.setTimeout(() => scope.classList.remove("is-avatar-saved"), 900);
+            window.setTimeout(() => {
+                scope.classList.remove("is-avatar-saved");
+                if (status) {
+                    status.textContent = "";
+                }
+            }, 3000);
         } catch {
             if (status) {
                 status.textContent = "تعذر حفظ الأفاتار. حاول مرة أخرى.";

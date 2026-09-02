@@ -282,7 +282,7 @@
                                 <span class="ab-storefront-kicker">Promotions</span>
                                 <h2 class="mb-0">العروض الحالية</h2>
                             </div>
-                            <a href="/shop" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">تسوق العروض</a>
+                            <a href="/#ab-storefront-offers" class="ab-storefront-view-all ab-storefront-view-all-button text-decoration-none">تسوق العروض</a>
                         </div>
                         <div t-if="ab_catalog['offers']" class="row g-3 g-lg-4">
                             <div t-foreach="ab_catalog['offers']" t-as="product" class="col-6 col-md-4 col-lg-3">

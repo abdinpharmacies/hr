@@ -11,6 +11,11 @@
                 <t t-set="ab_current_path" t-value="request.httprequest.path.rstrip('/') or '/'"/>
                 <t t-set="ab_offers_href" t-value="'/#ab-storefront-offers'"/>
                 <t t-set="ab_offers_badge" t-value="False"/>
+                <t t-set="ab_location_partner" t-value="False if request.env.user._is_public() else request.env.user.partner_id"/>
+                <t t-set="ab_location_saved_addresses" t-value="ab_location_partner and ab_location_partner.child_ids.filtered(lambda address: address.type in ('delivery', 'other') and (address.city or address.state_id or address.country_id or address.street))[:1]"/>
+                <t t-set="ab_location_address" t-value="ab_location_saved_addresses and ab_location_saved_addresses[0] or ab_location_partner"/>
+                <t t-set="ab_location_name" t-value="ab_location_address and (ab_location_address.city or ab_location_address.state_id.name or ab_location_address.country_id.name or ab_location_address.street) or ''"/>
+                <t t-set="ab_location_label" t-value="'توصيل إلى %s' % ab_location_name if ab_location_name else 'منطقتك الحالية'"/>
 
                 <div class="ab-storefront-announcement">
                     <div class="container d-flex align-items-center justify-content-between gap-3 py-2">
@@ -58,13 +63,15 @@
                                 <t t-set="_input_classes" t-value="'form-control'"/>
                                 <t t-set="_submit_classes" t-value="'btn btn-primary'"/>
                             </t>
-                            <div class="ab-storefront-location" data-ab-current-location="true">
+                            <div class="ab-storefront-location"
+                                 data-ab-current-location="true"
+                                 t-att-data-ab-location-default="ab_location_name">
                                 <button class="ab-storefront-location-trigger btn"
                                         type="button"
-                                        aria-label="منطقتك الحالية"
-                                        title="منطقتك الحالية">
+                                        t-att-aria-label="ab_location_label"
+                                        t-att-title="ab_location_label">
                                     <i class="fa fa-map-marker" aria-hidden="true"/>
-                                    <span class="ab-storefront-location-label" data-ab-location-label="">منطقتك الحالية</span>
+                                    <span class="ab-storefront-location-label" data-ab-location-label="" t-out="ab_location_label"/>
                                 </button>
                                 <span class="visually-hidden" aria-live="polite" data-ab-location-status=""/>
                             </div>
@@ -90,7 +97,7 @@
                                 <t t-set="_link_class" t-value="'ab-storefront-action btn position-relative'"/>
                                 <t t-set="_badge_class" t-value="'position-absolute top-0 end-0 rounded-pill'"/>
                             </t>
-                            <li t-if="not request.env.user._is_public()" class="nav-item d-none d-sm-block">
+                            <li t-if="not request.env.user._is_public()" class="nav-item">
                                 <a href="/my/home"
                                    class="ab-storefront-action btn"
                                    aria-label="My account"
@@ -132,13 +139,15 @@
                                 <t t-set="_input_classes" t-value="'form-control'"/>
                                 <t t-set="_submit_classes" t-value="'btn btn-primary'"/>
                             </t>
-                            <div class="ab-storefront-location" data-ab-current-location="true">
+                            <div class="ab-storefront-location"
+                                 data-ab-current-location="true"
+                                 t-att-data-ab-location-default="ab_location_name">
                                 <button class="ab-storefront-location-trigger btn"
                                         type="button"
-                                        aria-label="منطقتك الحالية"
-                                        title="منطقتك الحالية">
+                                        t-att-aria-label="ab_location_label"
+                                        t-att-title="ab_location_label">
                                     <i class="fa fa-map-marker" aria-hidden="true"/>
-                                    <span class="ab-storefront-location-label" data-ab-location-label="">منطقتك الحالية</span>
+                                    <span class="ab-storefront-location-label" data-ab-location-label="" t-out="ab_location_label"/>
                                 </button>
                                 <span class="visually-hidden" aria-live="polite" data-ab-location-status=""/>
                             </div>
@@ -305,7 +314,7 @@
                     </section>
                 </div>
 
-                <div class="ab-storefront-category-nav d-none d-lg-block">
+                <div class="ab-storefront-category-nav navbar navbar-expand-lg d-none d-lg-block">
                     <div class="container d-flex align-items-center gap-2">
                         <a href="/"
                            t-attf-class="ab-storefront-home-link nav-link d-inline-flex align-items-center gap-1 text-nowrap #{'active' if ab_current_path in ['/', '/ar'] else ''}">
@@ -338,7 +347,7 @@
                                 </a>
                             </div>
                         </div>
-                        <ul class="navbar-nav flex-row align-items-center flex-grow-1 overflow-hidden">
+                        <ul class="top_menu navbar-nav flex-row align-items-center flex-grow-1 overflow-hidden">
                             <li t-foreach="ab_header_categories" t-as="ab_category" class="nav-item">
                                 <t t-set="ab_category_href" t-value="'/shop/category/%s' % request.env['ir.http']._slug(ab_category)"/>
                                 <a t-att-href="ab_category_href"
