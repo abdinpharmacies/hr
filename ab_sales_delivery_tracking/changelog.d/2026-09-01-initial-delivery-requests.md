@@ -29,7 +29,7 @@ Current changes before commit:
 - Added the `ab_sales_delivery_tracking` addon.
 - Added delivery request logging for delivery bills after successful E-Plus push.
 - Added queued Telegram send jobs with an Arabic delivery message and a `تم الاستلام` inline button.
-- Added `store.code` and secure callback tokens to identify the source branch request.
+- Added `store.code` and callback delivery references to identify the source branch request in Telegram.
 - Added callback-data validation so invalid branch codes fail safely before Telegram send.
 - Kept branch requests local to the sending branch; supervisor button handling does not write back through XML-RPC.
 - Added manager UI, security, configuration parameters, Arabic translations, and changelog.
@@ -42,28 +42,21 @@ Current changes before commit:
 - Made send attempts use the current configured Telegram chat id, including older queued rows.
 - Added a post-commit background sender fallback for new delivery bills when the queue job runner and target database cron are not active.
 - Fixed background sender thread environment setup for Odoo 19.
-- Added a single-entry long-polling setup helper that installs/upgrades the Odoo module, receiver runner, systemd unit, environment file, and SQLite state directory.
+- Added a single-entry long-polling setup helper that installs the standalone Telegram receiver runner, systemd unit, environment file, and SQLite state directory.
 - Renamed the branch addon technical directory and config namespace to `ab_sales_delivery_tracking`.
 - Kept Telegram callback polling out of Odoo cron; callback handling belongs to the standalone systemd long-polling service.
 - Removed the dependency on manually supplied `delivery_longpoll/` and `deploy/` files for service deployment.
-- Made the setup helper validate Python/Odoo dependencies, verify the target database/model, run `systemctl daemon-reload`, restart existing installations safely, and show status/log diagnostics on startup failure.
-- Added the Delivery Telegram activation guide for branch setup, single-entry supervisor setup, testing, verification, and troubleshooting.
+- Removed all Odoo imports, registry access, database arguments, module upgrade steps, model checks, and `ab_delivery_request` writes from the standalone long-polling flow.
+- Removed Odoo-side reception fields, the manual mark-received action, the `received` request state, and stored callback tokens from the delivery request model.
+- Removed reception fields, manual receive action, and received-state filters from the delivery request views.
+- Made the setup helper validate only standalone Python/Telegram service dependencies, run `systemctl daemon-reload`, restart existing installations safely, and show status/log diagnostics on startup failure.
+- Changed the long-polling receiver to update Telegram messages and store reception/audit data in SQLite only.
+- Added the Delivery Telegram activation guide for branch setup, standalone supervisor setup, testing, verification, and troubleshooting.
 
 Files changed:
-- ab_sales_delivery_tracking/__init__.py
-- ab_sales_delivery_tracking/__manifest__.py
-- ab_sales_delivery_tracking/models/__init__.py
-- ab_sales_delivery_tracking/models/ab_delivery_request.py
-- ab_sales_delivery_tracking/models/ab_sales_header.py
-- ab_sales_delivery_tracking/security/security_groups.xml
-- ab_sales_delivery_tracking/security/record_rules.xml
-- ab_sales_delivery_tracking/security/ir.model.access.csv
-- ab_sales_delivery_tracking/scripts/setup_delivery_longpoll.sh
 - ab_sales_delivery_tracking/DELIVERY_TELEGRAM_ACTIVATION_GUIDE.md
-- ab_sales_delivery_tracking/data/ir_config_parameter.xml
-- ab_sales_delivery_tracking/data/queue_jobs.xml
-- ab_sales_delivery_tracking/data/ir_cron.xml
-- ab_sales_delivery_tracking/views/ab_delivery_request_views.xml
-- ab_sales_delivery_tracking/i18n/ar.po
-- ab_sales_delivery_tracking/i18n/ar_001.po
+- ab_sales_delivery_tracking/__manifest__.py
 - ab_sales_delivery_tracking/changelog.d/2026-09-01-initial-delivery-requests.md
+- ab_sales_delivery_tracking/models/ab_delivery_request.py
+- ab_sales_delivery_tracking/scripts/setup_delivery_longpoll.sh
+- ab_sales_delivery_tracking/views/ab_delivery_request_views.xml
