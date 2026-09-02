@@ -2,14 +2,19 @@ import logging
 from collections import defaultdict, deque
 
 from odoo import api, models
+from odoo.api import Environment
 from odoo.models import BaseModel
 
 _logger = logging.getLogger(__name__)
 
 _ORIGINAL_CREATE = None
 _ORIGINAL_WRITE = None
+_ORIGINAL_WRITE_MULTI = None
 _ORIGINAL_UNLINK = None
+_ORIGINAL_ADD_TO_COMPUTE = None
 _PATCHED = False
+_COLLECTOR_KEY = "ab_odoo_sync_upload.pending_snapshots"
+_LOG_ACCESS_FIELDS = {"create_uid", "create_date", "write_uid", "write_date"}
 
 
 def _is_sync_model(model_name):
@@ -32,14 +37,113 @@ def _should_capture_upload(model):
     )
 
 
+def _is_real_record_id(record_id):
+    return type(record_id) is int and record_id > 0
+
+
+def _get_upload_collector_state(env):
+    state = env.cr.precommit.data.get(_COLLECTOR_KEY)
+    if state is None:
+        state = {
+            "scheduled": False,
+            "emitting": False,
+            "upsert_keys": {},
+            "archive_snapshots": {},
+            "archive_order": [],
+        }
+        env.cr.precommit.data[_COLLECTOR_KEY] = state
+    if not state["scheduled"]:
+        env.cr.precommit.add(lambda: _flush_upload_collector(env))
+        state["scheduled"] = True
+    return state
+
+
+def _mark_upload_snapshots(records):
+    if not records or records.env.context.get("skip_ab_odoo_sync_upload"):
+        return
+    state = _get_upload_collector_state(records.env)
+    if state["emitting"]:
+        return
+    for record in records:
+        if not _is_real_record_id(record.id):
+            continue
+        key = (record._name, record.id)
+        if key not in state["archive_snapshots"]:
+            state["upsert_keys"][key] = key
+
+
+def _mark_prepared_archive_snapshots(env, snapshots):
+    if not snapshots or env.context.get("skip_ab_odoo_sync_upload"):
+        return
+    state = _get_upload_collector_state(env)
+    if state["emitting"]:
+        return
+    for snapshot in snapshots:
+        key = (snapshot.get("model_name"), snapshot.get("rec_id"))
+        model_name, record_id = key
+        if not model_name or not _is_real_record_id(record_id):
+            continue
+        if key not in state["archive_snapshots"]:
+            state["archive_order"].append(key)
+        state["archive_snapshots"][key] = snapshot
+        state["upsert_keys"].pop(key, None)
+
+
+def _capture_upload_snapshot_now(record, operation):
+    Outbox = record.env["ab_odoo_sync_outbox"].with_context(
+        skip_ab_odoo_sync_upload=True,
+    ).sudo()
+    Outbox.capture_record(record, operation=operation)
+
+
+def _capture_prepared_snapshot_now(env, snapshot, operation):
+    Outbox = env["ab_odoo_sync_outbox"].with_context(
+        skip_ab_odoo_sync_upload=True,
+    ).sudo()
+    Outbox.capture_prepared_snapshot(snapshot, operation=operation)
+
+
+def _flush_upload_collector(env):
+    state = env.cr.precommit.data.get(_COLLECTOR_KEY)
+    if not state or state["emitting"]:
+        return
+    state["emitting"] = True
+    try:
+        archive_keys = set(state["archive_snapshots"])
+        upsert_by_model = defaultdict(list)
+        for model_name, record_id in state["upsert_keys"]:
+            if (model_name, record_id) not in archive_keys:
+                upsert_by_model[model_name].append(record_id)
+
+        for model_name, record_ids in sorted(upsert_by_model.items()):
+            if model_name not in env:
+                continue
+            records = (
+                env[model_name]
+                .with_context(active_test=False, skip_ab_odoo_sync_upload=True)
+                .sudo()
+                .browse(record_ids)
+                .exists()
+            )
+            for record in records:
+                _capture_upload_snapshot_now(record, "upsert")
+
+        for key in state["archive_order"]:
+            snapshot = state["archive_snapshots"].get(key)
+            if snapshot:
+                _capture_prepared_snapshot_now(env, snapshot, "archive")
+    finally:
+        state["emitting"] = False
+
+
 def _emit_upload_snapshots(records, operation):
     if not records:
         return
-    Outbox = records.env["ab_odoo_sync_outbox"].with_context(
-        skip_ab_odoo_sync_upload=True,
-    ).sudo()
-    for record in records:
-        Outbox.capture_record(record, operation=operation)
+    if operation != "upsert":
+        for record in records:
+            _capture_upload_snapshot_now(record, operation)
+        return
+    _mark_upload_snapshots(records)
 
 
 def _prepare_upload_snapshots(records):
@@ -54,11 +158,11 @@ def _prepare_upload_snapshots(records):
 def _emit_prepared_upload_snapshots(env, snapshots, operation):
     if not snapshots:
         return
-    Outbox = env["ab_odoo_sync_outbox"].with_context(
-        skip_ab_odoo_sync_upload=True,
-    ).sudo()
-    for snapshot in snapshots:
-        Outbox.capture_prepared_snapshot(snapshot, operation=operation)
+    if operation != "archive":
+        for snapshot in snapshots:
+            _capture_prepared_snapshot_now(env, snapshot, operation)
+        return
+    _mark_prepared_archive_snapshots(env, snapshots)
 
 
 def _get_upload_aggregate_parents(records):
@@ -129,6 +233,35 @@ def _get_upload_capture_models(records):
             and not _is_sync_model(model_name)
         )
     }
+
+
+def _is_meaningful_stored_write(model, vals_list):
+    for vals in vals_list:
+        for field_name in vals:
+            if field_name in _LOG_ACCESS_FIELDS:
+                continue
+            field = model._fields.get(field_name)
+            if field and field.store:
+                return True
+    return False
+
+
+def _should_capture_low_level_write(records, vals_list):
+    if not records or records.env.context.get("skip_ab_odoo_sync_upload"):
+        return False
+    if not _is_meaningful_stored_write(records, vals_list):
+        return False
+    return _should_capture_upload(records)
+
+
+def _should_capture_computed_records(env, field, records):
+    if not records or records.env.context.get("skip_ab_odoo_sync_upload"):
+        return False
+    if not field.store or not field.compute:
+        return False
+    if field.model_name not in env:
+        return False
+    return _should_capture_upload(env[field.model_name])
 
 
 def _get_relevant_unlink_models(dependency_index, capture_models):
@@ -243,13 +376,16 @@ def _build_unlink_plan(records, capture_models, relevant_models):
 
 
 def _patch_base_model_methods():
-    global _ORIGINAL_CREATE, _ORIGINAL_WRITE, _ORIGINAL_UNLINK, _PATCHED
+    global _ORIGINAL_CREATE, _ORIGINAL_WRITE, _ORIGINAL_WRITE_MULTI
+    global _ORIGINAL_UNLINK, _ORIGINAL_ADD_TO_COMPUTE, _PATCHED
     if _PATCHED:
         return
 
     _ORIGINAL_CREATE = BaseModel.create
     _ORIGINAL_WRITE = BaseModel.write
+    _ORIGINAL_WRITE_MULTI = BaseModel._write_multi
     _ORIGINAL_UNLINK = BaseModel.unlink
+    _ORIGINAL_ADD_TO_COMPUTE = Environment.add_to_compute
 
     @api.model_create_multi
     def create_with_ab_sync_upload(self, vals_list):
@@ -285,6 +421,25 @@ def _patch_base_model_methods():
             except Exception:
                 _logger.exception(
                     "AB Odoo Sync upload snapshot failed after write on %s",
+                    records._name,
+                )
+                raise
+        return result
+
+    def write_multi_with_ab_sync_upload(self, vals_list):
+        records = self
+        try:
+            capture_upload = _should_capture_low_level_write(records, vals_list)
+        except Exception:
+            capture_upload = False
+
+        result = _ORIGINAL_WRITE_MULTI(records, vals_list)
+        if capture_upload:
+            try:
+                _mark_upload_snapshots(records)
+            except Exception:
+                _logger.exception(
+                    "AB Odoo Sync upload snapshot failed after low-level write on %s",
                     records._name,
                 )
                 raise
@@ -341,9 +496,26 @@ def _patch_base_model_methods():
             raise
         return result
 
+    def add_to_compute_with_ab_sync_upload(self, field, records):
+        result = _ORIGINAL_ADD_TO_COMPUTE(self, field, records)
+        try:
+            if _should_capture_computed_records(self, field, records):
+                _mark_upload_snapshots(records)
+        except Exception:
+            _logger.exception(
+                "AB Odoo Sync upload snapshot failed after scheduling recompute "
+                "of %s.%s",
+                field.model_name,
+                field.name,
+            )
+            raise
+        return result
+
     BaseModel.create = create_with_ab_sync_upload
     BaseModel.write = write_with_ab_sync_upload
+    BaseModel._write_multi = write_multi_with_ab_sync_upload
     BaseModel.unlink = unlink_with_ab_sync_upload
+    Environment.add_to_compute = add_to_compute_with_ab_sync_upload
     _PATCHED = True
 
 
@@ -355,4 +527,3 @@ class AbOdooSyncUploadOrmHook(models.AbstractModel):
         result = super()._register_hook()
         _patch_base_model_methods()
         return result
-
