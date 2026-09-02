@@ -951,3 +951,51 @@ msgstr "يجب أن تكون source_operation هي upsert أو archive."
 #: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_upload_record.py:0
 msgid "source_revision must be a positive integer."
 msgstr "يجب أن يكون rec_id رقما صحيحا موجبا."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Could not auto-create same-name passive apply profile for %(model)s: %(error)s"
+msgstr "تعذر إنشاء ملف تطبيق تلقائي بنفس اسم نموذج التقارير الخامل %(model)s: %(error)s"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Mirror Sync Model profiles must use the same source and target model."
+msgstr "يجب أن تستخدم ملفات تطبيق نموذج المزامنة المرآة نفس نموذج المصدر والهدف."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Report model %(model)s cannot be auto-mapped because it is missing passive sync fields: %(fields)s"
+msgstr "لا يمكن تعيين نموذج التقارير %(model)s تلقائيا لأنه يفتقد حقول المزامنة الخاملة: %(fields)s"
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Report model %(model)s cannot be auto-mapped because it lacks a unique constraint on db_serial and rec_id."
+msgstr "لا يمكن تعيين نموذج التقارير %(model)s تلقائيا لأنه لا يحتوي على قيد فريد على db_serial و rec_id."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Report model %(model)s is not installed; install the passive report model or create an explicit apply profile."
+msgstr "نموذج التقارير %(model)s غير مثبت؛ ثبّت نموذج التقارير الخامل أو أنشئ ملف تطبيق صريحا."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Source model %(model)s is protected by sync-rules.md and cannot be uploaded from branches."
+msgstr "نموذج المصدر %(model)s محمي بواسطة sync-rules.md ولا يمكن رفعه من الفروع."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_apply_profile.py:0
+msgid "Source model %(model)s is report-owned and must use Business Model apply mode."
+msgstr "نموذج المصدر %(model)s مملوك للتقارير ويجب أن يستخدم وضع تطبيق نموذج الأعمال."
+
+#. module: ab_odoo_sync_mapping
+#. odoo-python
+#: code:addons/ab_odoo_sync_mapping/models/ab_odoo_sync_mapping_service.py:0
+msgid "Source model %(model)s is report-owned; create a Business Model apply profile instead of a Mirror Sync Model profile."
+msgstr "نموذج المصدر %(model)s مملوك للتقارير؛ أنشئ ملف تطبيق نموذج الأعمال بدلا من ملف نموذج المزامنة المرآة."

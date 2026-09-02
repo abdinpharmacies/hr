@@ -77,16 +77,13 @@ class AbOdooSyncApplyProfile(models.Model):
 
     @api.model
     def mirror_target_from_source(self, source_model_name):
+        """Deprecated compatibility helper; mirror targets are same-name models."""
         source_model_name = (source_model_name or "").strip()
-        if not source_model_name:
-            return False
-        return "%s__sync" % source_model_name.replace(".", "_")
+        return source_model_name or False
 
     @api.model
     def _default_target_model_name(self, source_model_name, apply_mode):
-        if apply_mode == "mirror_sync":
-            return self.mirror_target_from_source(source_model_name)
-        if apply_mode == "business_model":
+        if apply_mode in {"mirror_sync", "business_model"}:
             return (source_model_name or "").strip() or False
         return False
 
@@ -101,9 +98,10 @@ class AbOdooSyncApplyProfile(models.Model):
     @api.constrains("source_model_name", "target_model_name", "apply_mode")
     def _check_models(self):
         for profile in self:
-            if self.env["ab_odoo_sync_rules"].sudo().is_upload_source_forbidden(profile.source_model_name):
+            rules = self.env["ab_odoo_sync_rules"].sudo()
+            if rules.is_upload_source_forbidden(profile.source_model_name):
                 raise ValidationError(
-                    _("Source model %(model)s is protected by sync-rules.md and cannot be mirrored from branch uploads.")
+                    _("Source model %(model)s is protected by sync-rules.md and cannot be uploaded from branches.")
                     % {"model": profile.source_model_name}
                 )
             if profile.apply_mode in {"raw_only", "ignore"}:
@@ -117,7 +115,16 @@ class AbOdooSyncApplyProfile(models.Model):
                 )
             target_model = self.env[profile.target_model_name]
             if profile.apply_mode == "mirror_sync":
-                missing = {"db_serial", "rec_id", "payload_json"} - set(target_model._fields)
+                if profile.source_model_name != profile.target_model_name:
+                    raise ValidationError(
+                        _("Mirror Sync Model profiles must use the same source and target model.")
+                    )
+                if rules.is_never_mirror_model(profile.source_model_name):
+                    raise ValidationError(
+                        _("Source model %(model)s is report-owned and must use Business Model apply mode.")
+                        % {"model": profile.source_model_name}
+                    )
+                missing = self._missing_mirror_sync_fields(target_model)
                 if missing:
                     raise ValidationError(
                         _("Target sync model %(model)s is missing required fields: %(fields)s")
@@ -150,8 +157,8 @@ class AbOdooSyncApplyProfile(models.Model):
                         }
                     )
             source_model = self.env[profile.source_model_name] if profile.source_model_name in self.env else False
-            user_target = self.env["ab_odoo_sync_rules"].sudo().user_mirror_model()
-            if source_model:
+            user_target = rules.user_mirror_model()
+            if source_model and profile.apply_mode == "mirror_sync":
                 for field_name, source_field in source_model._fields.items():
                     if (
                         source_field.type == "many2one"
@@ -173,6 +180,19 @@ class AbOdooSyncApplyProfile(models.Model):
                                     "source": "%s.%s" % (profile.source_model_name, field_name),
                                 }
                             )
+
+    @api.model
+    def _missing_mirror_sync_fields(self, target_model):
+        return {"db_serial", "rec_id", "payload_json"} - set(target_model._fields)
+
+    @api.model
+    def _has_mirror_sync_metadata(self, model_name):
+        if not model_name or model_name not in self.env:
+            return False
+        target_model = self.env[model_name]
+        return not self._missing_mirror_sync_fields(target_model) and self._target_has_unique_identity_constraint(
+            target_model
+        )
 
     @api.model
     def _target_has_unique_identity_constraint(self, target_model):
@@ -252,18 +272,47 @@ class AbOdooSyncApplyProfile(models.Model):
     def _mapping_type_for_fields(self, source_field, target_field, apply_mode="mirror_sync"):
         if target_field.type == "one2many":
             return "ignore"
+        rules = self.env["ab_odoo_sync_rules"].sudo()
+        source_comodel = getattr(source_field, "comodel_name", False)
         if target_field.type == "many2one":
-            if target_field.comodel_name.endswith("__sync") or apply_mode == "business_model":
+            if source_comodel == rules.user_source_model():
+                if target_field.comodel_name == rules.user_mirror_model():
+                    return "sync_many2one"
+                return "ignore"
+            if (
+                apply_mode == "business_model"
+                or target_field.comodel_name == rules.user_mirror_model()
+                or target_field.comodel_name.endswith("__sync")
+                or rules.is_id_only_relation_model(source_comodel)
+                or self._has_mirror_sync_metadata(target_field.comodel_name)
+            ):
                 return "sync_many2one"
-            return "stable_many2one"
+            return "ignore"
         if target_field.type == "many2many":
-            if target_field.comodel_name.endswith("__sync") or apply_mode == "business_model":
+            if source_comodel == rules.user_source_model():
+                if target_field.comodel_name == rules.user_mirror_model():
+                    return "sync_many2many"
+                return "ignore"
+            if (
+                apply_mode == "business_model"
+                or target_field.comodel_name.endswith("__sync")
+                or rules.is_id_only_relation_model(source_comodel)
+                or self._has_mirror_sync_metadata(target_field.comodel_name)
+            ):
                 return "sync_many2many"
-            return "stable_many2many"
+            return "ignore"
         source_type = source_field.type if source_field else False
         if source_type == target_field.type:
             return "direct"
         return "ignore"
+
+    @api.model
+    def _is_auto_sync_safe_field(self, source_field, target_field, mapping_type):
+        if mapping_type not in {"direct", "sync_many2one", "sync_many2many"}:
+            return False
+        if not getattr(source_field, "store", False) or not target_field.store:
+            return False
+        return not (target_field.compute and not target_field.inverse)
 
     def _source_field_info(self):
         self.ensure_one()
@@ -292,7 +341,7 @@ class AbOdooSyncApplyProfile(models.Model):
             for field_name in fields_payload
         }
 
-    def action_load_matching_fields(self):
+    def _load_matching_fields(self, default_sync_enabled=False, stored_only=False):
         Mapping = self.env["ab_odoo_sync_field_mapping"].sudo()
         created = 0
         for profile in self:
@@ -318,10 +367,19 @@ class AbOdooSyncApplyProfile(models.Model):
                 if pair in existing_pairs:
                     continue
                 source_field = source_fields[field_name]
+                if stored_only and (
+                    not getattr(source_field, "store", False) or not target_field.store
+                ):
+                    continue
                 mapping_type = self._mapping_type_for_fields(
                     source_field,
                     target_field,
                     profile.apply_mode,
+                )
+                sync_enabled = default_sync_enabled and profile._is_auto_sync_safe_field(
+                    source_field,
+                    target_field,
+                    mapping_type,
                 )
                 vals_list.append(
                     {
@@ -329,13 +387,17 @@ class AbOdooSyncApplyProfile(models.Model):
                         "source_field_name": field_name,
                         "target_field_name": field_name,
                         "mapping_type": mapping_type,
-                        "sync_enabled": False,
+                        "sync_enabled": sync_enabled,
                     }
                 )
             if vals_list:
                 created += len(Mapping.create(vals_list))
                 profile.invalidate_recordset(["mapping_ids"])
 
+        return created
+
+    def action_load_matching_fields(self):
+        created = self._load_matching_fields(default_sync_enabled=False)
         return self._notification(
             _("Odoo Sync Mapping"),
             _(
@@ -530,6 +592,8 @@ class AbOdooSyncFieldMapping(models.Model):
                 and source_field.type == "many2one"
                 and source_field.comodel_name == self.env["ab_odoo_sync_rules"].sudo().user_source_model()
             ):
+                if mapping.mapping_type == "ignore":
+                    continue
                 user_target = self.env["ab_odoo_sync_rules"].sudo().user_mirror_model()
                 if (
                     mapping.mapping_type != "sync_many2one"

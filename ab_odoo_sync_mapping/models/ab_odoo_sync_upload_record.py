@@ -94,7 +94,7 @@ class AbOdooSyncUploadRecord(models.Model):
 
     @api.model
     def target_model_from_source(self, model_name):
-        return f"{model_name}__sync"
+        return (model_name or "").strip() or False
 
     @api.model
     def validate_source_model_name(self, model_name):

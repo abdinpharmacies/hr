@@ -35,6 +35,7 @@ class AbOdooSyncMappingService(models.AbstractModel):
             raise ValueError(_("records must be a JSON array."))
 
         upload_model = self.env["ab_odoo_sync_upload_record"].sudo()
+        profile_model = self.env["ab_odoo_sync_apply_profile"].sudo()
         result = {
             "accepted": 0,
             "queued": 0,
@@ -57,6 +58,12 @@ class AbOdooSyncMappingService(models.AbstractModel):
                 payload_json = row.get("payload")
                 if not isinstance(payload_json, dict):
                     raise ValueError(_("payload must be a JSON object."))
+                profile = profile_model.get_for_source(model_name)
+                pending_mapping_error = False
+                if not profile:
+                    profile, pending_mapping_error = self._ensure_same_name_passive_profile(
+                        model_name
+                    )
                 upload_record, changed = upload_model.upsert_from_upload(
                     db_serial=db_serial,
                     model_name=model_name,
@@ -68,6 +75,12 @@ class AbOdooSyncMappingService(models.AbstractModel):
                     source_write_date=row.get("source_write_date") or False,
                 )
                 result["accepted"] += 1
+                if (
+                    pending_mapping_error
+                    and upload_record.status == "pending_mapping"
+                    and upload_record.error_message != pending_mapping_error
+                ):
+                    upload_record.write({"error_message": pending_mapping_error})
                 if not changed:
                     result["ignored"] += 1
                     continue
@@ -91,6 +104,101 @@ class AbOdooSyncMappingService(models.AbstractModel):
 
         branch.write({"last_upload_at": fields.Datetime.now()})
         return result
+
+    @api.model
+    def _ensure_same_name_passive_profile(self, model_name):
+        Profile = self.env["ab_odoo_sync_apply_profile"].sudo()
+        existing = Profile.get_for_source(model_name)
+        if existing:
+            return existing, False
+
+        pending_error = self._same_name_passive_profile_error(model_name)
+        if pending_error:
+            return False, pending_error
+
+        profile_vals = {
+            "name": model_name,
+            "source_model_name": model_name,
+            "target_model_name": model_name,
+            "apply_mode": "mirror_sync",
+            "auto_apply": True,
+            "allow_placeholder_creation": True,
+            "active": True,
+        }
+        profile = Profile.with_context(active_test=False).search(
+            [("source_model_name", "=", model_name)],
+            limit=1,
+        )
+        try:
+            with self.env.cr.savepoint():
+                if profile:
+                    profile.write(profile_vals)
+                else:
+                    profile = Profile.create(profile_vals)
+                profile._load_matching_fields(
+                    default_sync_enabled=True,
+                    stored_only=True,
+                )
+                self._refresh_uploads_for_profile(profile)
+        except Exception as ex:
+            _logger.exception(
+                "Could not auto-create same-name passive sync profile for %s",
+                model_name,
+            )
+            return False, _(
+                "Could not auto-create same-name passive apply profile for %(model)s: %(error)s"
+            ) % {"model": model_name, "error": str(ex)}
+        return profile, False
+
+    @api.model
+    def _same_name_passive_profile_error(self, model_name):
+        rules = self.env["ab_odoo_sync_rules"].sudo()
+        Profile = self.env["ab_odoo_sync_apply_profile"].sudo()
+        if rules.is_upload_source_forbidden(model_name):
+            return _(
+                "Source model %(model)s is protected by sync-rules.md and cannot be uploaded from branches."
+            ) % {"model": model_name}
+        if rules.is_never_mirror_model(model_name):
+            return _(
+                "Source model %(model)s is report-owned; create a Business Model apply profile instead of a Mirror Sync Model profile."
+            ) % {"model": model_name}
+        if model_name not in self.env:
+            return _(
+                "Report model %(model)s is not installed; install the passive report model or create an explicit apply profile."
+            ) % {"model": model_name}
+
+        target_model = self.env[model_name]
+        missing = Profile._missing_mirror_sync_fields(target_model)
+        if missing:
+            return _(
+                "Report model %(model)s cannot be auto-mapped because it is missing passive sync fields: %(fields)s"
+            ) % {
+                "model": model_name,
+                "fields": ", ".join(sorted(missing)),
+            }
+        if not Profile._target_has_unique_identity_constraint(target_model):
+            return _(
+                "Report model %(model)s cannot be auto-mapped because it lacks a unique constraint on db_serial and rec_id."
+            ) % {"model": model_name}
+        return False
+
+    @api.model
+    def _refresh_uploads_for_profile(self, profile):
+        records = self.env["ab_odoo_sync_upload_record"].sudo().search(
+            [
+                ("model_name", "=", profile.source_model_name),
+                ("status", "in", _FEEDER_UPLOAD_STATUSES),
+                ("active", "=", True),
+            ]
+        )
+        for record in records:
+            if (
+                record.apply_profile_id != profile
+                or record.target_model_name != profile.target_model_name
+                or record.status in {"pending_mapping", "raw_only"}
+            ):
+                record._set_profile_handling(profile)
+        return len(records)
 
     @api.model
     def _force_next_id(self, model, target_id):
