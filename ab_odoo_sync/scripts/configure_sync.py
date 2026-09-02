@@ -126,14 +126,16 @@ def _profile_specs_from_env():
             _fail("SYNC_PROFILE_SPECS_JSON must be a JSON list.")
         return specs
 
-    apply_mode = _env("SYNC_APPLY_MODE", "mirror_sync")
+    apply_mode = _env("SYNC_APPLY_MODE")
     auto_apply = _env_bool("SYNC_AUTO_APPLY", True)
+    rules = env["ab_odoo_sync_rules"].sudo()
     return [
         {
             "name": model_name,
             "source_model_name": model_name,
             "target_model_name": model_name,
-            "apply_mode": apply_mode,
+            "apply_mode": apply_mode
+            or ("business_model" if rules.is_never_mirror_model(model_name) else "mirror_sync"),
             "auto_apply": auto_apply,
             "active": True,
         }

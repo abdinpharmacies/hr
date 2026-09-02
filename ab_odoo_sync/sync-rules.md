@@ -1,30 +1,40 @@
 ## Rule number 1
-These models must never be cloned into `__sync` mirror tables.
+These models must never be cloned into passive mirror tables.
 They are report-owned reference/master models and should be referenced from
-transaction/reporting mirrors. If a referenced record is not in the report server yet, the
-sync apply flow should force/reserve the same ID as a placeholder, then the
-later report/master-data update should fill the remaining fields.
+transaction/reporting mirrors. Configure uploads for these models with
+`business_model` apply profiles, not `mirror_sync`. If a referenced record is
+not in the report server yet, the sync apply flow should force/reserve the same
+ID as a placeholder, then the later report/master-data update should fill the
+remaining fields.
 
-- ab_product
-- ab_product_card
-- ab_product_uom
-- ab_product_uom_category
-- ab_uom
+- ab_costcenter
+- ab_store
+- ab_replica_db
+- ab_hr_region
+- ab_hr_job
+- ab_hr_department
+- ab_hr_employee
+- ab_hr_job_occupied
+- ab_customer
 - ab_uom_type
+- ab_uom
+- ab_product_uom_category
+- ab_product_uom
+- ab_product_card
+- ab_product
+- ab_product_barcode
+- ab_contract
+- ab_promo_program
+- ab_employee_access_sales_role
+- ab_employee_access
+- ab_doctor
+- ab_product_metadata
 - ab_product_company
 - ab_product_origin
 - ab_product_group
 - ab_usage_causes
 - ab_usage_manner
-- ab_scientific_group
-- ab_product_barcode
-- ab_doctor
-- ab_customer
-- ab_store
-- ab_supplier
-- ab_contract
-- ab_costcenter
-- ab_hr_employee
+- ab_sales_channel
 
 Example of force ID mechanism:
 
@@ -39,7 +49,7 @@ the remaining fields of the reserved product record.
 This rule applies only to mirrored models that depend on `res.users`.
 
 When a source model has a stored `Many2one` field to `res.users`, the
-corresponding `__sync` mirror model must not point to `res.users` directly. It
+corresponding passive mirror model must not point to `res.users` directly. It
 must define that relation as a `Many2one` to `ab_users`.
 
 The branch payload for that user relation must carry the source user ID only.
@@ -63,9 +73,9 @@ must resolve only ID `17` into `ab_users`. It must not create or mirror a
 
 ## Rule number 3
 
-Every `__sync` mirror model must be schema-permissive.
+Every passive mirror model must be schema-permissive.
 
-No field on a `__sync` model may be declared with `required=True`, including
+No field on a passive mirror model may be declared with `required=True`, including
 technical identity fields such as `db_serial`, `rec_id`, `event_uuid`, and
 payload fields. The report server must be able to accept partial branch data,
 force-create placeholder rows, and preserve raw payloads without being blocked

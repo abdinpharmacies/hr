@@ -99,7 +99,8 @@ Collect this before enabling sync for a branch:
 - Shared API key.
 - Selected source model list.
 - Optional aggregate parent field per source model.
-- Target passive/report model for each source model.
+- Target passive/report model for each source model. For passive mirrors, the
+  default target is the same technical model name as the source model.
 - Selected field mappings for each apply profile.
 - Mapping type for relation fields: `sync_many2one`, `sync_many2many`,
   `stable_many2one`, `stable_many2many`, `direct`, or `ignore`.
@@ -110,6 +111,13 @@ For relation fields that must preserve branch IDs, use the sync relation mapping
 types and keep `allow_placeholder_creation` enabled on the apply profile. The
 report server can then force-create placeholder rows with the same source ID and
 fill them later when the relevant master data is synced.
+
+When the report server receives a branch upload for a source model that exists
+as a same-name passive report model, it can create a same-name `mirror_sync`
+profile automatically. Auto-created profiles require the passive model to define
+`db_serial`, `rec_id`, `payload_json`, and a unique `(db_serial, rec_id)`
+constraint. Report-owned master/reference models listed in `sync-rules.md`
+should be configured as `business_model` profiles instead of passive mirrors.
 
 ## Setup Script
 
@@ -193,6 +201,10 @@ SYNC_PROFILE_SPECS_JSON='[
   }
 ]'
 ```
+
+If `SYNC_PROFILE_MODELS` is used without `SYNC_APPLY_MODE`, report-owned
+master/reference models from `sync-rules.md` default to `business_model`; other
+models default to same-name `mirror_sync`.
 
 For explicit field mappings:
 

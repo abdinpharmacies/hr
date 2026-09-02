@@ -9,7 +9,10 @@ with the branch `db_serial`.
 - Branch chooses which models to upload from `Branch Upload Sources`.
 - The reporting server accepts every uploaded payload into `Received Uploads`.
 - Report apply profiles decide whether each source model is raw-only, ignored,
-  applied into a `__sync` mirror, or applied into a real business model.
+  applied into a same-name passive mirror, or applied into a real business model.
+- If a same-name passive report model exists and no profile exists yet, the
+  report server can create a `mirror_sync` profile and same-name field mappings
+  automatically.
 - For `business_model` profiles, the report server creates or updates the real target record
   using the same primary key as the source record ID.
 - Unknown or unmapped source models remain raw and do not fail the upload.
@@ -26,23 +29,43 @@ with the branch `db_serial`.
 5. On the reporting server, create an active `Registered Branch` with the same
    `db_serial`.
 
-## Test 1: Unknown Model Is Accepted As Pending Mapping
+## Test 1: Same-Name Passive Model Auto-Creates A Profile
 
 1. On BRANCH, open `Odoo Sync > Branch Upload Sources`.
 2. Click `Load Installed Models`.
 3. Activate a source model that exists on the branch, for example `ab_sales_header`.
 4. Create or update one record in that source model.
 5. Send the outbox row from `Odoo Sync > Upload Outbox`, or wait for the upload cron.
-6. On the reporting server, open `Odoo Sync > Received Uploads`.
+6. On the reporting server, open `Odoo Sync > Apply Profiles` and `Odoo Sync > Received Uploads`.
+
+Expected result:
+
+- An active apply profile exists for the source model.
+- `Source Model` and `Target Model` are the same technical model name.
+- `Apply Mode` is `Mirror Sync Model`.
+- Matching safe stored fields are loaded as enabled mappings.
+- The upload is `Pending`, `Queued`, or `Applied` depending on queue timing.
+- No new target name with a `__sync` suffix is generated.
+
+## Test 2: Missing Report Model Is Accepted As Pending Mapping
+
+1. On BRANCH, activate a source model that is not installed as a passive model
+   on the reporting server.
+2. Create or update one record in that source model.
+3. Send the outbox row from `Odoo Sync > Upload Outbox`, or wait for the upload cron.
+4. On the reporting server, open `Odoo Sync > Received Uploads`.
 
 Expected result:
 
 - The row exists on the reporting server.
 - `Status` is `Pending Mapping` when no active apply profile exists.
 - The full JSON payload is visible.
+- `Target Model` is the source model name.
+- The error message explains that the report model is missing or is not a valid
+  passive sync model.
 - The upload endpoint response does not fail because the target model is not configured yet.
 
-## Test 2: Raw-Only Profile Keeps Payload Without Applying
+## Test 3: Raw-Only Profile Keeps Payload Without Applying
 
 1. On the report server, open `Odoo Sync > Apply Profiles`.
 2. Create a profile:
@@ -57,7 +80,7 @@ Expected result:
 - No target business record or mirror record is created.
 - The original payload remains available in `Received Uploads`.
 
-## Test 3: Business Model Upload Forces Report Primary Key
+## Test 4: Business Model Upload Forces Report Primary Key
 
 Use a model whose IDs are globally assigned upstream, such as `ab_product`,
 `ab_customer`, or `ab_store`.
@@ -89,7 +112,7 @@ Expected result:
   - `Target Record ID`: `10025`
   - `State`: `Resolved`
 
-## Test 4: Relation Arrives Before Product Payload
+## Test 5: Relation Arrives Before Product Payload
 
 This validates out-of-order reporting uploads.
 
@@ -97,7 +120,8 @@ This validates out-of-order reporting uploads.
 2. Configure a transaction/reporting source model on BRANCH, for example a sales
    line model with a `product_id` Many2one.
 3. On the report server, configure the sales line apply profile with:
-   - `Apply Mode`: `Mirror Sync Model` or `Business Model`, depending on target.
+   - `Apply Mode`: `Mirror Sync Model` for a same-name passive target, or
+     `Business Model` for a report-owned model.
    - `product_id` mapping type: `Sync Many2one by Source ID`.
    - `Required`: enabled if the line must not apply without a product identity.
 4. On BRANCH, create a sales line referencing `ab_product(id=10026)`.
@@ -109,7 +133,7 @@ Expected result:
 - The sales line target links to `product_id = 10026`.
 - `Sync Identities` shows `ab_product / 10026` as `Placeholder`.
 
-## Test 5: Later Product Payload Patches The Placeholder
+## Test 6: Later Product Payload Patches The Placeholder
 
 Continue from Test 4.
 
@@ -123,7 +147,7 @@ Expected result:
 - The identity row changes from `Placeholder` to `Resolved`.
 - Sales/reporting rows that already referenced `product_id = 10026` keep the same link.
 
-## Test 6: Ignore Profile Accepts But Skips
+## Test 7: Ignore Profile Accepts But Skips
 
 1. On the report server, create or change an apply profile:
    - `Apply Mode`: `Ignore`
@@ -167,3 +191,6 @@ env["ab_product"].browse(10026).exists()
   whitelist for reporting requirements.
 - Unknown models should stay `Pending Mapping` or `Raw Only` until the report server has an
   explicit profile.
+- Report-owned reference/master models from `sync-rules.md`, such as products,
+  customers, stores, HR employees, and sales channels, should use
+  `business_model` apply profiles and should not be auto-mirrored.
