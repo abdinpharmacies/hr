@@ -76,6 +76,46 @@
                 </form>
             </field>
         </record>
+
+
+        <record id="ab_test_header_relation_view_form" model="ir.ui.view">
+            <field name="name">ab_test_header_relation_view_form</field>
+            <field name="model">ab_test_header_relation</field>
+            <field name="arch" type="xml">
+                <form string="ab_test_header_relation_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_test_header_relation_view_list" model="ir.ui.view">
+            <field name="name">ab_test_header_relation_view_form</field>
+            <field name="model">ab_test_header_relation</field>
+            <field name="arch" type="xml">
+                <list string="ab_test_header_relation_list">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_test.ab_test_header_relation_action" model="ir.actions.act_window">
+            <field name="name">ab_test_header_relation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_test_header_relation</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+
+        <menuitem id="ab_test_header_relation_menu"
+                  name="Test Relation"
+                  parent="base.menu_custom"
+                  action="ab_test_header_relation_action"
+                  sequence="100"/>
+
         <record id="action_ab_test_tag" model="ir.actions.act_window">
             <field name="name">Test Tags</field>
             <field name="res_model">ab_test_tag</field>
@@ -107,6 +147,9 @@
                     <sheet>
                         <group>
                             <group>
+
+                                <field name="header_rel_id"/>
+                                <field name="name_computed_stored"/>
                                 <field name="reference"/>
                                 <field name="name"/>
                                 <field name="transaction_date"/>
@@ -139,7 +182,7 @@
                             </page>
                             <page string="Additional Data">
                                 <field name="notes"/>
-                                <field name="settings_json"/>
+                                <field name="settings_json" widget="ab_pretty_json"/>
                             </page>
                         </notebook>
                     </sheet>
@@ -170,9 +213,255 @@
                 </list>
             </field>
         </record>
+        <record id="view_ab_test_line_form" model="ir.ui.view">
+            <field name="name">ab_test_line.form</field>
+            <field name="model">ab_test_line</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="header_id"/>
+                                <field name="sequence"/>
+                                <field name="name"/>
+                                <field name="category_id"/>
+                                <field name="tag_ids" widget="many2many_tags"/>
+                            </group>
+                            <group>
+                                <field name="quantity"/>
+                                <field name="unit_price"/>
+                                <field name="subtotal" readonly="1"/>
+                                <field name="planned_date"/>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <field name="attributes_json" widget="ab_pretty_json"/>
+                    </sheet>
+                </form>
+            </field>
+        </record>
         <record id="action_ab_test_line" model="ir.actions.act_window">
             <field name="name">Test Lines</field>
             <field name="res_model">ab_test_line</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_delete_cascade_parent_list" model="ir.ui.view">
+            <field name="name">ab_test_delete_cascade_parent.list</field>
+            <field name="model">ab_test_delete_cascade_parent</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_delete_cascade_parent_form" model="ir.ui.view">
+            <field name="name">ab_test_delete_cascade_parent.form</field>
+            <field name="model">ab_test_delete_cascade_parent</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <field name="child_ids">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="note"/>
+                                <field name="active"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_delete_cascade_parent" model="ir.actions.act_window">
+            <field name="name">Cascade Delete Parents</field>
+            <field name="res_model">ab_test_delete_cascade_parent</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_delete_cascade_child_list" model="ir.ui.view">
+            <field name="name">ab_test_delete_cascade_child.list</field>
+            <field name="model">ab_test_delete_cascade_child</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="parent_id"/>
+                    <field name="name"/>
+                    <field name="note"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_delete_cascade_child_form" model="ir.ui.view">
+            <field name="name">ab_test_delete_cascade_child.form</field>
+            <field name="model">ab_test_delete_cascade_child</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="parent_id"/>
+                            <field name="name"/>
+                            <field name="note"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_delete_cascade_child" model="ir.actions.act_window">
+            <field name="name">Cascade Delete Children</field>
+            <field name="res_model">ab_test_delete_cascade_child</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_delete_set_null_parent_list" model="ir.ui.view">
+            <field name="name">ab_test_delete_set_null_parent.list</field>
+            <field name="model">ab_test_delete_set_null_parent</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_delete_set_null_parent_form" model="ir.ui.view">
+            <field name="name">ab_test_delete_set_null_parent.form</field>
+            <field name="model">ab_test_delete_set_null_parent</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <field name="child_ids">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="note"/>
+                                <field name="active"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_delete_set_null_parent" model="ir.actions.act_window">
+            <field name="name">Set Null Delete Parents</field>
+            <field name="res_model">ab_test_delete_set_null_parent</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_delete_set_null_child_list" model="ir.ui.view">
+            <field name="name">ab_test_delete_set_null_child.list</field>
+            <field name="model">ab_test_delete_set_null_child</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="parent_id"/>
+                    <field name="name"/>
+                    <field name="note"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_delete_set_null_child_form" model="ir.ui.view">
+            <field name="name">ab_test_delete_set_null_child.form</field>
+            <field name="model">ab_test_delete_set_null_child</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="parent_id"/>
+                            <field name="name"/>
+                            <field name="note"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_delete_set_null_child" model="ir.actions.act_window">
+            <field name="name">Set Null Delete Children</field>
+            <field name="res_model">ab_test_delete_set_null_child</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_delete_restrict_parent_list" model="ir.ui.view">
+            <field name="name">ab_test_delete_restrict_parent.list</field>
+            <field name="model">ab_test_delete_restrict_parent</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="code"/>
+                    <field name="name"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_delete_restrict_parent_form" model="ir.ui.view">
+            <field name="name">ab_test_delete_restrict_parent.form</field>
+            <field name="model">ab_test_delete_restrict_parent</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                        </group>
+                        <field name="child_ids">
+                            <list editable="bottom">
+                                <field name="name"/>
+                                <field name="note"/>
+                                <field name="active"/>
+                            </list>
+                        </field>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_delete_restrict_parent" model="ir.actions.act_window">
+            <field name="name">Restrict Delete Parents</field>
+            <field name="res_model">ab_test_delete_restrict_parent</field>
+            <field name="view_mode">list,form</field>
+        </record>
+
+        <record id="view_ab_test_delete_restrict_child_list" model="ir.ui.view">
+            <field name="name">ab_test_delete_restrict_child.list</field>
+            <field name="model">ab_test_delete_restrict_child</field>
+            <field name="arch" type="xml">
+                <list>
+                    <field name="parent_id"/>
+                    <field name="name"/>
+                    <field name="note"/>
+                    <field name="active"/>
+                </list>
+            </field>
+        </record>
+        <record id="view_ab_test_delete_restrict_child_form" model="ir.ui.view">
+            <field name="name">ab_test_delete_restrict_child.form</field>
+            <field name="model">ab_test_delete_restrict_child</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <field name="parent_id"/>
+                            <field name="name"/>
+                            <field name="note"/>
+                            <field name="active"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="action_ab_test_delete_restrict_child" model="ir.actions.act_window">
+            <field name="name">Restrict Delete Children</field>
+            <field name="res_model">ab_test_delete_restrict_child</field>
             <field name="view_mode">list,form</field>
         </record>
 
@@ -186,5 +475,19 @@
                   action="action_ab_test_category" sequence="30"/>
         <menuitem id="menu_ab_test_tag" name="Tags" parent="menu_ab_test_root"
                   action="action_ab_test_tag" sequence="40"/>
+        <menuitem id="menu_ab_test_delete_policy" name="Delete Policy Tests"
+                  parent="menu_ab_test_root" sequence="50"/>
+        <menuitem id="menu_ab_test_delete_cascade_parent" name="Cascade Parents"
+                  parent="menu_ab_test_delete_policy" action="action_ab_test_delete_cascade_parent" sequence="10"/>
+        <menuitem id="menu_ab_test_delete_cascade_child" name="Cascade Children"
+                  parent="menu_ab_test_delete_policy" action="action_ab_test_delete_cascade_child" sequence="20"/>
+        <menuitem id="menu_ab_test_delete_set_null_parent" name="Set Null Parents"
+                  parent="menu_ab_test_delete_policy" action="action_ab_test_delete_set_null_parent" sequence="30"/>
+        <menuitem id="menu_ab_test_delete_set_null_child" name="Set Null Children"
+                  parent="menu_ab_test_delete_policy" action="action_ab_test_delete_set_null_child" sequence="40"/>
+        <menuitem id="menu_ab_test_delete_restrict_parent" name="Restrict Parents"
+                  parent="menu_ab_test_delete_policy" action="action_ab_test_delete_restrict_parent" sequence="50"/>
+        <menuitem id="menu_ab_test_delete_restrict_child" name="Restrict Children"
+                  parent="menu_ab_test_delete_policy" action="action_ab_test_delete_restrict_child" sequence="60"/>
     </data>
 </odoo>

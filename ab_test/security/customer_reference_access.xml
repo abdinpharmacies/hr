@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="access_ab_test_customer_reference_user" model="ir.model.access">
+            <field name="name">ab_test_customer_reference user</field>
+            <field name="model_id" ref="model_ab_test_customer_reference"/>
+            <field name="group_id" ref="group_ab_test_user"/>
+            <field name="perm_read">1</field>
+            <field name="perm_write">1</field>
+            <field name="perm_create">1</field>
+            <field name="perm_unlink">1</field>
+        </record>
+    </data>
+</odoo>
