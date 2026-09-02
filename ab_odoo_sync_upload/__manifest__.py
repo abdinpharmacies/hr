@@ -1,7 +1,7 @@
 {
     "name": "AB Odoo Sync Upload",
     "summary": "Queue branch records for upload to the reporting database",
-    "version": "19.0.1.1.0",
+    "version": "19.0.1.2.0",
     "license": "LGPL-3",
     "category": "Tools",
     "author": "Abdin Pharmacies",
