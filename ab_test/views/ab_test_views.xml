@@ -112,7 +112,7 @@
 
         <menuitem id="ab_test_header_relation_menu"
                   name="Test Relation"
-                  parent="base.menu_custom"
+                  parent="ab_test.menu_root"
                   action="ab_test_header_relation_action"
                   sequence="100"/>
 
@@ -465,7 +465,7 @@
             <field name="view_mode">list,form</field>
         </record>
 
-        <menuitem id="menu_ab_test_root" name="AB Sync Test" parent="base.menu_custom"
+        <menuitem id="menu_ab_test_root" name="AB Sync Test" parent="ab_test.menu_root"
                   sequence="70" groups="group_ab_test_user"/>
         <menuitem id="menu_ab_test_header" name="Headers" parent="menu_ab_test_root"
                   action="action_ab_test_header" sequence="10"/>

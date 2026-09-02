@@ -15,6 +15,7 @@
         "security/ir.model.access.csv",
         "security/customer_reference_access.xml",
         # "data/sync_upload_sources.xml",
+        "views/menu.xml",
         "views/ab_test_views.xml",
         "views/ab_test_customer_reference_views.xml",
     ],
