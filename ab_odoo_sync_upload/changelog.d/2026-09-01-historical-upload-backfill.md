@@ -25,6 +25,7 @@ Files changed:
 - Added manual historical upload backfills per branch upload source, based on `write_date >= historical_upload_from`.
 - Added queued, running, done, failed, and cancelled state tracking with frozen run cutoff, composite cursor, counters, last error, and completion timestamp.
 - Processed historical uploads newest-first in queue-job batches, using the existing outbox and sender payload without changing the live-upload pipeline.
+- Queued newly captured live outbox records by exact ID batch so upcoming operations do not wait behind older historical or pending backlog rows.
 - Skipped already-covered upsert outbox events with equal-or-newer source write dates to avoid duplicate historical snapshots.
 - Added cancellation, running-edit guards, administrator action checks, multi-edit list controls, and Arabic translations.
 - Bumped the module version to `19.0.1.2.0`.

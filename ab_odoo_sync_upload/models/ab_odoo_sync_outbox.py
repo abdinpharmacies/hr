@@ -145,7 +145,7 @@ class AbOdooSyncOutbox(models.Model):
                 {"source_revision": outbox.id}
             )
         if not self.env.context.get("defer_ab_odoo_sync_upload_sender"):
-            self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch()
+            self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch(outboxes)
         return outboxes
 
     @api.model
