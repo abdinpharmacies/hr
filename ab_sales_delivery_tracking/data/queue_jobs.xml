@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="job_function_ab_delivery_request_send_to_telegram" model="queue.job.function">
+        <field name="model_id" ref="model_ab_delivery_request"/>
+        <field name="method">job_send_to_telegram</field>
+        <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="retry_pattern" eval="{1: 60, 2: 300, 3: 900, 4: 3600}"/>
+    </record>
+</odoo>

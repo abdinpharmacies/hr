@@ -1,0 +1,20 @@
+{
+    'name': 'Abdin Sales Delivery Tracking',
+    'version': '19.0.1.0.0',
+    'license': 'LGPL-3',
+    'category': 'AbdinSupplyChain',
+    'author': 'Abdin Pharmacies',
+    'developer': 'hagerYasser',
+    'application': False,
+    'depends': ['base', 'ab_sales', 'queue_job'],
+    'data': [
+        'security/security_groups.xml',
+        'security/record_rules.xml',
+        'security/ir.model.access.csv',
+        'data/ir_config_parameter.xml',
+        'data/queue_jobs.xml',
+        'data/ir_cron.xml',
+        'views/ab_delivery_request_views.xml',
+    ],
+    'installable': True,
+}

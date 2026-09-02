@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo noupdate="1">
+    <record id="param_telegram_bot_token" model="ir.config_parameter">
+        <field name="key">ab_sales_delivery_tracking.telegram_bot_token</field>
+        <field name="value">8912171916:AAGYvD5FjR6QQIrZcpuZd3Bp-bGHo5RoLvg</field>
+    </record>
+    <record id="param_telegram_chat_id" model="ir.config_parameter">
+        <field name="key">ab_sales_delivery_tracking.telegram_chat_id</field>
+        <field name="value">-5441953845</field>
+    </record>
+</odoo>

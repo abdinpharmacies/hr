@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="ab_delivery_request_rule_manager_all" model="ir.rule">
+            <field name="name">Delivery Requests: manager access</field>
+            <field name="model_id" ref="model_ab_delivery_request"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('ab_sales_delivery_tracking.group_ab_sales_delivery_tracking_manager'))]"/>
+            <field name="perm_read" eval="True"/>
+            <field name="perm_write" eval="True"/>
+            <field name="perm_create" eval="True"/>
+            <field name="perm_unlink" eval="False"/>
+        </record>
+    </data>
+</odoo>

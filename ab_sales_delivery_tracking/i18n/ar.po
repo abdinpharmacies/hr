@@ -1,0 +1,189 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* ab_sales_delivery_tracking
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-09-01 00:00+0000\n"
+"PO-Revision-Date: 2026-09-01 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: ab_sales_delivery_tracking
+msgid "A delivery request already exists for this bill."
+msgstr "يوجد طلب توصيل لهذه الفاتورة بالفعل."
+
+#. module: ab_sales_delivery_tracking
+msgid "Active"
+msgstr "نشط"
+
+#. module: ab_sales_delivery_tracking
+msgid "Address"
+msgstr "العنوان"
+
+#. module: ab_sales_delivery_tracking
+msgid "Bill"
+msgstr "الفاتورة"
+
+#. module: ab_sales_delivery_tracking
+msgid "Bill Number"
+msgstr "رقم الفاتورة"
+
+#. module: ab_sales_delivery_tracking
+msgid "Bill Sum"
+msgstr "إجمالي الفاتورة"
+
+#. module: ab_sales_delivery_tracking
+msgid "Branch"
+msgstr "الفرع"
+
+#. module: ab_sales_delivery_tracking
+msgid "Branch Code"
+msgstr "كود الفرع"
+
+#. module: ab_sales_delivery_tracking
+msgid "Branch Name"
+msgstr "اسم الفرع"
+
+#. module: ab_sales_delivery_tracking
+msgid "Customer"
+msgstr "العميل"
+
+#. module: ab_sales_delivery_tracking
+msgid "Delivery Request"
+msgstr "طلب توصيل"
+
+#. module: ab_sales_delivery_tracking
+msgid "Delivery Requests"
+msgstr "طلبات التوصيل"
+
+#. module: ab_sales_delivery_tracking
+msgid "Delivery Requests: manager access"
+msgstr "طلبات التوصيل: صلاحية المدير"
+
+#. module: ab_sales_delivery_tracking
+msgid "Delivery request Telegram notifications"
+msgstr "إشعارات طلبات التوصيل عبر تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Failed"
+msgstr "فشل"
+
+#. module: ab_sales_delivery_tracking
+msgid "Failure Count"
+msgstr "عدد مرات الفشل"
+
+#. module: ab_sales_delivery_tracking
+msgid "Group By"
+msgstr "تجميع حسب"
+
+#. module: ab_sales_delivery_tracking
+msgid "Last Error"
+msgstr "آخر خطأ"
+
+#. module: ab_sales_delivery_tracking
+msgid "Mark Received"
+msgstr "تسجيل الاستلام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Name"
+msgstr "الاسم"
+
+#. module: ab_sales_delivery_tracking
+msgid "Next Attempt Date"
+msgstr "تاريخ المحاولة التالية"
+
+#. module: ab_sales_delivery_tracking
+msgid "Open"
+msgstr "مفتوح"
+
+#. module: ab_sales_delivery_tracking
+msgid "Pending"
+msgstr "قيد الانتظار"
+
+#. module: ab_sales_delivery_tracking
+msgid "Phone"
+msgstr "الهاتف"
+
+#. module: ab_sales_delivery_tracking
+msgid "Queued"
+msgstr "في قائمة الانتظار"
+
+#. module: ab_sales_delivery_tracking
+msgid "Received"
+msgstr "تم الاستلام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Received Date"
+msgstr "تاريخ الاستلام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Received By"
+msgstr "تم الاستلام بواسطة"
+
+#. module: ab_sales_delivery_tracking
+msgid "Received By Telegram ID"
+msgstr "معرف مستلم تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Received By Telegram Username"
+msgstr "اسم مستخدم مستلم تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Resend Telegram Message"
+msgstr "إعادة إرسال رسالة تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Send delivery request to Telegram"
+msgstr "إرسال طلب التوصيل إلى تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Delivery Requests: Send Pending Telegram Messages"
+msgstr "طلبات التوصيل: إرسال رسائل تيليجرام المعلقة"
+
+#. module: ab_sales_delivery_tracking
+msgid "Sent"
+msgstr "تم الإرسال"
+
+#. module: ab_sales_delivery_tracking
+msgid "Sent Date"
+msgstr "تاريخ الإرسال"
+
+#. module: ab_sales_delivery_tracking
+msgid "State"
+msgstr "الحالة"
+
+#. module: ab_sales_delivery_tracking
+msgid "Status"
+msgstr "الحالة"
+
+#. module: ab_sales_delivery_tracking
+msgid "Telegram"
+msgstr "تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Telegram Callback Token"
+msgstr "رمز رد تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Telegram Chat ID"
+msgstr "معرف محادثة تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Telegram Message ID"
+msgstr "معرف رسالة تيليجرام"
+
+#. module: ab_sales_delivery_tracking
+msgid "Telegram send failed: %s"
+msgstr "فشل إرسال تيليجرام: %s"
+
+#. module: ab_sales_delivery_tracking
+msgid "Telegram Update ID"
+msgstr "معرف تحديث تيليجرام"
