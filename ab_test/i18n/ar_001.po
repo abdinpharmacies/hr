@@ -457,3 +457,31 @@ msgstr "توابع حذف تفريغ العلاقة"
 #: model:ir.actions.act_window,name:ab_test.action_ab_test_delete_set_null_parent
 msgid "Set Null Delete Parents"
 msgstr "أصول حذف تفريغ العلاقة"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header_relation__db_serial
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__db_serial
+msgid "DB Serial"
+msgstr "رقم قاعدة البيانات"
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header_relation__payload_json
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__payload_json
+msgid "Full Source Payload"
+msgstr "بيانات المصدر الكاملة"
+
+#. module: ab_test
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_header_relation_uniq_branch_source
+msgid "Header relation mirror must be unique per branch and source record."
+msgstr "يجب أن تكون علاقة الرأس المرآة فريدة لكل فرع وسجل مصدر."
+
+#. module: ab_test
+#: model:ir.model.constraint,message:ab_test.constraint_ab_test_header_uniq_branch_source
+msgid "Header mirror must be unique per branch and source record."
+msgstr "يجب أن يكون الرأس المرآة فريدا لكل فرع وسجل مصدر."
+
+#. module: ab_test
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header_relation__rec_id
+#: model:ir.model.fields,field_description:ab_test.field_ab_test_header__rec_id
+msgid "Source Record ID"
+msgstr "معرف سجل المصدر"

@@ -56,7 +56,15 @@ class AbTestHeaderRelation(models.Model):
     _name = 'ab_test_header_relation'
     _description = 'ab_test_header_relation'
 
+    db_serial = fields.Integer(string="DB Serial", readonly=True, index=True)
+    rec_id = fields.Integer(string="Source Record ID", readonly=True, index=True)
+    payload_json = fields.Json(string="Full Source Payload", default=dict, readonly=True)
     name = fields.Char()
+
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Header relation mirror must be unique per branch and source record.",
+    )
 
 
 class AbTestHeader(models.Model):
@@ -66,9 +74,12 @@ class AbTestHeader(models.Model):
 
     header_rel_id = fields.Many2one('ab_test_header_relation')
 
-    name_computed_stored = fields.Char(compute='_compute_name_computed_stored')
-    name = fields.Char(required=True)
-    reference = fields.Char(required=True, index=True)
+    name_computed_stored = fields.Char(compute='_compute_name_computed_stored',store=True)
+    db_serial = fields.Integer(string="DB Serial", readonly=True, index=True)
+    rec_id = fields.Integer(string="Source Record ID", readonly=True, index=True)
+    payload_json = fields.Json(string="Full Source Payload", default=dict, readonly=True)
+    name = fields.Char()
+    reference = fields.Char(index=True)
     state = fields.Selection(
         selection=[
             ("draft", "Draft"),
@@ -76,7 +87,6 @@ class AbTestHeader(models.Model):
             ("cancelled", "Cancelled"),
         ],
         default="draft",
-        required=True,
         index=True,
     )
     priority = fields.Selection(
@@ -86,12 +96,10 @@ class AbTestHeader(models.Model):
             ("urgent", "Urgent"),
         ],
         default="normal",
-        required=True,
     )
-    transaction_date = fields.Date(default=fields.Date.context_today, required=True)
+    transaction_date = fields.Date(default=fields.Date.context_today)
     category_id = fields.Many2one(
         "ab_test_category",
-        required=True,
         ondelete="restrict",
         index=True,
     )
@@ -116,6 +124,10 @@ class AbTestHeader(models.Model):
     _uniq_reference = models.Constraint(
         "UNIQUE(reference)",
         "Header reference must be unique.",
+    )
+    _uniq_branch_source = models.Constraint(
+        "UNIQUE(db_serial, rec_id)",
+        "Header mirror must be unique per branch and source record.",
     )
 
     @api.depends('header_rel_id.name')
