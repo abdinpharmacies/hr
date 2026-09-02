@@ -52,11 +52,21 @@ class AbTestTag(models.Model):
     )
 
 
+class AbTestHeaderRelation(models.Model):
+    _name = 'ab_test_header_relation'
+    _description = 'ab_test_header_relation'
+
+    name = fields.Char()
+
+
 class AbTestHeader(models.Model):
     _name = "ab_test_header"
     _description = "AB Sync Test Header"
     _order = "id desc"
 
+    header_rel_id = fields.Many2one('ab_test_header_relation')
+
+    name_computed_stored = fields.Char(compute='_compute_name_computed_stored')
     name = fields.Char(required=True)
     reference = fields.Char(required=True, index=True)
     state = fields.Selection(
@@ -107,6 +117,11 @@ class AbTestHeader(models.Model):
         "UNIQUE(reference)",
         "Header reference must be unique.",
     )
+
+    @api.depends('header_rel_id.name')
+    def _compute_name_computed_stored(self):
+        for rec in self:
+            rec.name_computed_stored = str(rec.header_rel_id.name) + "- hi"
 
     @api.depends("line_ids", "line_ids.subtotal")
     def _compute_totals(self):

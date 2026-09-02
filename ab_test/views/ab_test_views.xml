@@ -76,6 +76,45 @@
                 </form>
             </field>
         </record>
+
+
+        <record id="ab_test_header_relation_view_form" model="ir.ui.view">
+            <field name="name">ab_test_header_relation_view_form</field>
+            <field name="model">ab_test_header_relation</field>
+            <field name="arch" type="xml">
+                <form string="ab_test_header_relation_form">
+                    <sheet>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="ab_test_header_relation_view_list" model="ir.ui.view">
+            <field name="name">ab_test_header_relation_view_form</field>
+            <field name="model">ab_test_header_relation</field>
+            <field name="arch" type="xml">
+                <list string="ab_test_header_relation_list">
+                    <field name="name"/>
+                </list>
+            </field>
+        </record>
+
+        <record id="ab_test.ab_test_header_relation_action" model="ir.actions.act_window">
+            <field name="name">ab_test_header_relation</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">ab_test_header_relation</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <menuitem id="ab_test_header_relation_menu"
+                  name="Test Relation"
+                  parent="base.menu_custom"
+                  action="ab_test_header_relation_action"
+                  sequence="100"/>
+
         <record id="action_ab_test_tag" model="ir.actions.act_window">
             <field name="name">Test Tags</field>
             <field name="res_model">ab_test_tag</field>
@@ -107,6 +146,9 @@
                     <sheet>
                         <group>
                             <group>
+
+                                <field name="header_rel_id"/>
+                                <field name="name_computed_stored"/>
                                 <field name="reference"/>
                                 <field name="name"/>
                                 <field name="transaction_date"/>
