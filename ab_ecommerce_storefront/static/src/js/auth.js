@@ -636,6 +636,13 @@ export class AbStorefrontAuth extends Interaction {
 
         const stage = document.createElement("div");
         stage.className = "ab-auth-success-stage";
+        const selectedAvatar = this.el.querySelector(".ab-auth-avatar-choice .ab-storefront-avatar img")?.cloneNode(true);
+        if (selectedAvatar) {
+            const avatarWrap = document.createElement("div");
+            avatarWrap.className = "ab-auth-success-avatar ab-storefront-avatar ab-storefront-avatar-xl";
+            avatarWrap.appendChild(selectedAvatar);
+            stage.appendChild(avatarWrap);
+        }
         const logoWrap = document.createElement("div");
         logoWrap.className = "ab-auth-success-logo ab-storefront-brand-logo is-celebrating";
         logoWrap.appendChild(logo);

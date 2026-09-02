@@ -234,7 +234,7 @@
 
     <template id="auth_signup" name="Abdin Phone Signup" inherit_id="auth_signup.signup" priority="220">
         <xpath expr="//form[hasclass('oe_signup_form')]" position="replace">
-            <form class="oe_signup_form ab-auth-form" role="form" method="post" t-if="not message" data-captcha="signup" data-ab-auth-form="signup">
+            <form class="oe_signup_form ab-auth-form" role="form" method="post" enctype="multipart/form-data" t-if="not message" data-captcha="signup" data-ab-auth-form="signup">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <div class="ab-auth-form-head">
                     <span class="ab-auth-form-mark">ابدأ تجربة أسهل</span>
@@ -260,6 +260,31 @@
                     <p class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
                 </div>
                 <t t-call="auth_signup.fields"/>
+                <section class="ab-auth-avatar-choice"
+                         data-ab-avatar-scope="signup"
+                         data-ab-avatar-current="avatar_none">
+                    <input type="hidden" name="ab_storefront_avatar" value="avatar_none" data-ab-avatar-input=""/>
+                    <input type="file"
+                           name="ab_storefront_avatar_upload"
+                           accept="image/png,image/jpeg,image/webp"
+                           class="d-none"
+                           data-ab-avatar-form-upload=""/>
+                    <div class="ab-auth-avatar-preview">
+                        <t t-set="avatar_value" t-value="'avatar_none'"/>
+                        <t t-set="avatar_size" t-value="'xl'"/>
+                        <t t-set="avatar_alt" t-value="'أفاتار الحساب المختار'"/>
+                        <t t-call="ab_ecommerce_storefront.avatar_image"/>
+                    </div>
+                    <div class="ab-auth-avatar-copy">
+                        <strong>صورتك الشخصية</strong>
+                        <span>اختَر أفاتارك</span>
+                    </div>
+                    <button type="button" class="btn ab-auth-avatar-button" data-ab-avatar-open="">
+                        اختيار أفاتار
+                    </button>
+                    <t t-set="avatar_current" t-value="'avatar_none'"/>
+                    <t t-call="ab_ecommerce_storefront.avatar_picker"/>
+                </section>
                 <p class="ab-auth-alert ab-auth-alert-error" t-if="error" role="alert">
                     <t t-esc="error"/>
                 </p>

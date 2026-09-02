@@ -1,5 +1,6 @@
 import logging
 import re
+import base64
 
 import werkzeug
 from odoo import _, http
@@ -16,10 +17,14 @@ from werkzeug.urls import url_encode
 _logger = logging.getLogger(__name__)
 
 SIGN_UP_REQUEST_PARAMS.add("phone")
+SIGN_UP_REQUEST_PARAMS.add("ab_storefront_avatar")
 
 _ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789")
 _EGYPT_MOBILE_RE = re.compile(r"^01[0125]\d{8}$")
 _PASSWORD_SPECIAL_RE = re.compile(r"[^A-Za-z0-9]")
+_AVATAR_KEYS = {"avatar_none", "custom"} | {f"avatar_{index:02d}" for index in range(1, 13)}
+_CUSTOM_AVATAR_MIMETYPES = {"image/jpeg", "image/png", "image/webp"}
+_CUSTOM_AVATAR_MAX_BYTES = 3 * 1024 * 1024
 
 
 def normalize_egyptian_phone(value):
@@ -49,6 +54,24 @@ def validate_storefront_password(value):
         and any(char.isdigit() for char in password)
         and bool(_PASSWORD_SPECIAL_RE.search(password))
     )
+
+
+def _read_custom_avatar_upload(field_name="ab_storefront_avatar_upload"):
+    cache_key = f"_ab_storefront_{field_name}_data"
+    if cache_key in request.httprequest.environ:
+        return request.httprequest.environ[cache_key]
+    upload = request.httprequest.files.get(field_name)
+    if not upload or not upload.filename:
+        request.httprequest.environ[cache_key] = False
+        return False
+    if upload.mimetype not in _CUSTOM_AVATAR_MIMETYPES:
+        raise UserError(_("برجاء رفع صورة بصيغة PNG أو JPG أو WebP."))
+    data = upload.read(_CUSTOM_AVATAR_MAX_BYTES + 1)
+    if len(data) > _CUSTOM_AVATAR_MAX_BYTES:
+        raise UserError(_("حجم الصورة كبير. اختر صورة أقل من 3 ميجابايت."))
+    encoded = base64.b64encode(data)
+    request.httprequest.environ[cache_key] = encoded
+    return encoded
 
 
 class AbStorefrontAuth(AuthSignupHome):
@@ -99,6 +122,7 @@ class AbStorefrontAuth(AuthSignupHome):
             raise UserError(_("برجاء إدخال رقم هاتف صحيح."))
         if not validate_storefront_password(qcontext.get("password")):
             raise UserError(_("استخدم 8 أحرف على الأقل مع حرف كبير وصغير ورقم ورمز خاص."))
+        _read_custom_avatar_upload()
 
         qcontext["phone"] = phone
         qcontext["login"] = phone
@@ -160,6 +184,20 @@ class AbStorefrontAuth(AuthSignupHome):
             if "mobile" in user.partner_id._fields:
                 partner_values["mobile"] = login
             user.partner_id.write(partner_values)
+        if user:
+            avatar = request.params.get("ab_storefront_avatar")
+            avatar_upload = _read_custom_avatar_upload()
+            partner_values = {}
+            if avatar_upload:
+                partner_values.update({
+                    "ab_storefront_avatar": "custom",
+                    "image_1920": avatar_upload,
+                })
+            elif avatar in _AVATAR_KEYS and avatar != "custom":
+                partner_values["ab_storefront_avatar"] = avatar
+                partner_values["image_1920"] = False
+            if partner_values:
+                user.partner_id.write(partner_values)
         credential = {"login": login, "password": password, "type": "password"}
         if do_login:
             request.session.authenticate(request.env, credential)
@@ -174,3 +212,21 @@ class AbStorefrontAuth(AuthSignupHome):
         elif hasattr(response, "qcontext") and response.qcontext.get("message"):
             response.qcontext["message"] = _("إذا كان الرقم مسجلًا لدينا، ستصلك تعليمات استعادة الحساب.")
         return response
+
+    @http.route("/ab_storefront/avatar/update", type="http", auth="user", website=True, methods=["POST"], csrf=True)
+    def ab_storefront_avatar_update(self, **post):
+        avatar = post.get("avatar")
+        if avatar not in _AVATAR_KEYS:
+            return request.make_json_response({"ok": False, "error": _("اختيار الأيقونة غير صحيح.")}, status=400)
+        try:
+            avatar_upload = _read_custom_avatar_upload("avatar_upload")
+        except UserError as error:
+            return request.make_json_response({"ok": False, "error": error.args[0]}, status=400)
+        partner_values = {"ab_storefront_avatar": avatar}
+        if avatar_upload:
+            partner_values.update({"ab_storefront_avatar": "custom", "image_1920": avatar_upload})
+            avatar = "custom"
+        elif avatar != "custom":
+            partner_values["image_1920"] = False
+        request.env.user.partner_id.sudo().write(partner_values)
+        return request.make_json_response({"ok": True, "avatar": avatar})

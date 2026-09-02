@@ -95,7 +95,10 @@
                                    class="ab-storefront-action btn"
                                    aria-label="My account"
                                    title="My account">
-                                    <i class="fa fa-user" aria-hidden="true"/>
+                                    <t t-set="avatar_value" t-value="request.env.user.partner_id.ab_storefront_avatar"/>
+                                    <t t-set="avatar_size" t-value="'sm'"/>
+                                    <t t-set="avatar_alt" t-value="'أفاتار حسابك'"/>
+                                    <t t-call="ab_ecommerce_storefront.avatar_image"/>
                                 </a>
                             </li>
                             <t t-call="website.placeholder_header_language_selector">
@@ -379,6 +382,15 @@
                         <a href="/shop" class="ab-storefront-mobile-primary-link">
                             <i class="fa fa-shopping-bag" aria-hidden="true"/>
                             تسوق حسب القسم
+                        </a>
+                        <a t-if="not request.env.user._is_public()"
+                           href="/my/home"
+                           class="ab-storefront-mobile-secondary-link">
+                            <t t-set="avatar_value" t-value="request.env.user.partner_id.ab_storefront_avatar"/>
+                            <t t-set="avatar_size" t-value="'xs'"/>
+                            <t t-set="avatar_alt" t-value="'أفاتار حسابك'"/>
+                            <t t-call="ab_ecommerce_storefront.avatar_image"/>
+                            <span>حسابي</span>
                         </a>
                         <p class="ab-storefront-mobile-heading">الأقسام</p>
                         <nav class="nav flex-column mb-4">

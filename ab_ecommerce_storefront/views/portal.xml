@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="portal_my_details_avatar" name="Abdin Portal Avatar" inherit_id="portal.portal_my_details" priority="120">
+        <xpath expr="//div[hasclass('o_customer_address_fill')]" position="before">
+            <section class="ab-account-avatar-card"
+                     data-ab-avatar-scope="profile"
+                     t-att-data-ab-avatar-current="user_id.partner_id.ab_storefront_avatar"
+                     data-ab-avatar-update-url="/ab_storefront/avatar/update">
+                <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()" data-ab-avatar-csrf=""/>
+                <div class="ab-account-avatar-visual">
+                    <t t-set="avatar_value" t-value="user_id.partner_id.ab_storefront_avatar"/>
+                    <t t-set="avatar_size" t-value="'xl'"/>
+                    <t t-set="avatar_alt" t-value="'أفاتار حسابك'"/>
+                    <t t-call="ab_ecommerce_storefront.avatar_image"/>
+                </div>
+                <div class="ab-account-avatar-copy">
+                    <span>صورتك الشخصية</span>
+                    <h2 t-out="user_id.name"/>
+                    <p>
+                        <t t-out="user_id.partner_id.phone or user_id.login"/>
+                    </p>
+                    <button type="button" class="btn ab-account-avatar-button" data-ab-avatar-open="">
+                        تغيير الصورة
+                    </button>
+                    <small data-ab-avatar-status="" aria-live="polite"/>
+                </div>
+                <t t-set="avatar_current" t-value="user_id.partner_id.ab_storefront_avatar"/>
+                <t t-call="ab_ecommerce_storefront.avatar_picker"/>
+            </section>
+        </xpath>
+    </template>
+
+    <template id="portal_side_content_avatar" name="Abdin Portal Sidebar Avatar" inherit_id="portal.side_content" priority="120">
+        <xpath expr="//img[contains(@class, 'rounded')][1]" position="replace">
+            <t t-set="avatar_value" t-value="user_id.partner_id.ab_storefront_avatar"/>
+            <t t-set="avatar_size" t-value="'md'"/>
+            <t t-set="avatar_alt" t-value="'أفاتار حسابك'"/>
+            <t t-call="ab_ecommerce_storefront.avatar_image"/>
+        </xpath>
+    </template>
+</odoo>

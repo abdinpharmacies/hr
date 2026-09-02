@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" role="img" aria-label="Default profile picture">
+    <defs>
+        <linearGradient id="abAvatarNoneBg" x1="24" y1="18" x2="136" y2="142" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#e9f6ef"/>
+            <stop offset="1" stop-color="#ffffff"/>
+        </linearGradient>
+    </defs>
+    <rect width="160" height="160" rx="34" fill="url(#abAvatarNoneBg)"/>
+    <circle cx="80" cy="60" r="25" fill="#d7ebe0"/>
+    <path d="M37 127c6-27 24-42 43-42s37 15 43 42" fill="#d7ebe0"/>
+    <path d="M37 127c6-27 24-42 43-42s37 15 43 42" fill="none" stroke="#16834f" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="80" cy="60" r="25" fill="none" stroke="#16834f" stroke-width="7"/>
+    <path d="M111 39 49 121" fill="none" stroke="#ef8b2c" stroke-width="8" stroke-linecap="round"/>
+</svg>
