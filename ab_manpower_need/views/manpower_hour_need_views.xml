@@ -27,14 +27,14 @@
                     <field name="current_employee_count" sum="Current Employees"/>
                     <field name="employee_shortage_count"
                            sum="Employees Shortage / Increase"
-                           decoration-danger="employee_shortage_count &gt; 0"
-                           decoration-success="employee_shortage_count &lt; 0"/>
+                           decoration-danger="employee_shortage_count &lt; 0"
+                           decoration-success="employee_shortage_count &gt; 0"/>
                     <field name="required_operating_hours" sum="Required Hours"/>
                     <field name="actual_available_hours" sum="Actual Hours"/>
                     <field name="shortage_hours"
                            sum="Shortage / Increase Hours"
-                           decoration-danger="shortage_hours &gt; 0"
-                           decoration-success="shortage_hours &lt; 0"/>
+                           decoration-danger="shortage_hours &lt; 0"
+                           decoration-success="shortage_hours &gt; 0"/>
                     <field name="hours_capacity_status"
                            widget="badge"
                            decoration-danger="hours_capacity_status == 'shortage'"
@@ -149,7 +149,7 @@
                                         <span class="text-muted">
                                             <field name="employee_shortage_label"/>
                                         </span>
-                                        <strong t-att-class="record.employee_shortage_count.raw_value &gt; 0 ? 'text-danger' : (record.employee_shortage_count.raw_value &lt; 0 ? 'text-success' : 'text-info')">
+                                        <strong t-att-class="record.employee_shortage_count.raw_value &lt; 0 ? 'text-danger' : (record.employee_shortage_count.raw_value &gt; 0 ? 'text-success' : 'text-info')">
                                             <field name="employee_shortage_display"/>
                                         </strong>
                                     </div>
@@ -169,7 +169,7 @@
                                         <span class="text-muted">
                                             <field name="shortage_hours_label"/>
                                         </span>
-                                        <strong t-att-class="record.shortage_hours.raw_value &gt; 0 ? 'text-danger' : (record.shortage_hours.raw_value &lt; 0 ? 'text-success' : 'text-info')">
+                                        <strong t-att-class="record.shortage_hours.raw_value &lt; 0 ? 'text-danger' : (record.shortage_hours.raw_value &gt; 0 ? 'text-success' : 'text-info')">
                                             <field name="shortage_hours_display"/>
                                         </strong>
                                     </div>
@@ -215,7 +215,7 @@
                     <field name="workplace"/>
                     <field name="workplace_region"/>
                     <field name="job_title"/>
-                    <filter name="filter_shortage" string="Shortage" domain="[('shortage_hours', '&gt;', 0)]"/>
+                    <filter name="filter_shortage" string="Shortage" domain="[('shortage_hours', '&lt;', 0)]"/>
                     <separator/>
                     <filter name="group_workplace" string="Branch" context="{'group_by': 'workplace'}"/>
                     <filter name="group_job_title" string="Job Title" context="{'group_by': 'job_title'}"/>

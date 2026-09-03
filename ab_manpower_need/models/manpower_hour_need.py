@@ -120,19 +120,19 @@ class ManpowerHourNeed(models.Model):
     @api.depends('required_employee_count', 'current_employee_count')
     def _compute_employee_shortage_count(self):
         for rec in self:
-            rec.employee_shortage_count = rec.required_employee_count - rec.current_employee_count
+            rec.employee_shortage_count = rec.current_employee_count - rec.required_employee_count
             rec.employee_capacity_status = rec._get_capacity_status(rec.employee_shortage_count)
 
     @api.depends('required_operating_hours', 'actual_available_hours')
     def _compute_shortage_hours(self):
         for rec in self:
-            rec.shortage_hours = rec.required_operating_hours - rec.actual_available_hours
+            rec.shortage_hours = rec.actual_available_hours - rec.required_operating_hours
             rec.hours_capacity_status = rec._get_capacity_status(rec.shortage_hours)
 
     def _get_capacity_status(self, value):
-        if value > 0:
-            return 'shortage'
         if value < 0:
+            return 'shortage'
+        if value > 0:
             return 'increase'
         return 'balanced'
 
@@ -143,11 +143,9 @@ class ManpowerHourNeed(models.Model):
             rec.employee_shortage_display = rec._format_capacity_display(rec.employee_shortage_count)
 
     def _format_capacity_display(self, value):
-        amount = abs(value)
-        prefix = '-' if value > 0 else '+' if value < 0 else ''
-        if isinstance(amount, float):
-            amount = f'{amount:g}'
-        return f'{prefix}{amount}'
+        if isinstance(value, float):
+            return f'{value:g}'
+        return str(value)
 
     def _compute_kanban_labels(self):
         is_arabic = (self.env.lang or '').startswith('ar')
@@ -196,7 +194,7 @@ class ManpowerHourNeed(models.Model):
             rec.actual_employee_ids = values['actual_employee_ids']
             rec.employee_line_ids = values['employee_line_ids']
             rec.actual_available_hours = values['actual_available_hours']
-            rec.shortage_hours = rec.required_operating_hours - values['actual_available_hours']
+            rec.shortage_hours = values['actual_available_hours'] - rec.required_operating_hours
 
     @api.depends('workplace.name', 'job_title.name')
     def _compute_display_name(self):
