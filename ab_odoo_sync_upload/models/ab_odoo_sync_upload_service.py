@@ -12,6 +12,8 @@ from odoo.tools.translate import _
 
 _logger = logging.getLogger(__name__)
 _SENSITIVE_SNAPSHOT_FIELDS = {"password"}
+_LIVE_UPLOAD_CHANNEL = "root.live_sales"
+_HISTORICAL_UPLOAD_CHANNEL = "root.historical_sales"
 
 
 class AbOdooSyncUploadService(models.AbstractModel):
@@ -315,6 +317,12 @@ class AbOdooSyncUploadService(models.AbstractModel):
         return f"ab_odoo_sync_branch_upload_sender:{digest}"
 
     @api.model
+    def _historical_upload_sender_identity_key(self, outbox_records):
+        raw_ids = ",".join(str(record_id) for record_id in sorted(outbox_records.ids))
+        digest = hashlib.sha1(raw_ids.encode("ascii")).hexdigest()
+        return f"ab_odoo_sync_historical_upload_sender:{digest}"
+
+    @api.model
     def queue_branch_upload_batch(self, outbox_records=None):
         configuration_error = self._get_upload_configuration_error()
         if configuration_error:
@@ -336,6 +344,7 @@ class AbOdooSyncUploadService(models.AbstractModel):
                 identity_key=self._branch_upload_sender_identity_key(),
                 description=_("Send branch upload outbox events to the report server"),
                 max_retries=0,
+                channel=_LIVE_UPLOAD_CHANNEL,
             ).job_send_branch_upload_batch()
             return {"status": "queued", "queued": len(outbox_records)}
 
@@ -349,7 +358,32 @@ class AbOdooSyncUploadService(models.AbstractModel):
             identity_key=self._branch_upload_sender_identity_key(outbox_records),
             description=_("Send branch upload outbox events to the report server"),
             max_retries=0,
+            channel=_LIVE_UPLOAD_CHANNEL,
         ).job_send_branch_upload_batch(outbox_records.ids)
+        return {"status": "queued", "queued": len(outbox_records)}
+
+    @api.model
+    def queue_historical_upload_batch(self, outbox_records):
+        configuration_error = self._get_upload_configuration_error()
+        if configuration_error:
+            return {"status": "skipped", "queued": 0, "reason": configuration_error}
+        if not outbox_records:
+            return {"status": "ok", "queued": 0}
+
+        outbox_records = outbox_records.sudo().filtered(
+            lambda record: record.status in {"pending", "failed"} and record.active
+        ).sorted("id")
+        if not outbox_records:
+            return {"status": "ok", "queued": 0}
+
+        self.sudo().with_delay(
+            identity_key=self._historical_upload_sender_identity_key(outbox_records),
+            description=_(
+                "Send historical branch upload outbox events to the report server"
+            ),
+            max_retries=0,
+            channel=_HISTORICAL_UPLOAD_CHANNEL,
+        ).job_send_historical_upload_batch(outbox_records.ids)
         return {"status": "queued", "queued": len(outbox_records)}
 
     @api.model
@@ -361,6 +395,17 @@ class AbOdooSyncUploadService(models.AbstractModel):
         )
         result = self.send_branch_upload_batch(outbox_records)
         _logger.info("AB Odoo Sync upload sender result: %s", result)
+        return result
+
+    @api.model
+    def job_send_historical_upload_batch(self, outbox_ids=None):
+        if not outbox_ids:
+            result = {"status": "ok", "sent": 0, "failed": 0}
+            _logger.info("AB Odoo Sync historical upload sender result: %s", result)
+            return result
+        outbox_records = self.env["ab_odoo_sync_outbox"].sudo().browse(outbox_ids)
+        result = self.send_branch_upload_batch(outbox_records)
+        _logger.info("AB Odoo Sync historical upload sender result: %s", result)
         return result
 
     @api.model

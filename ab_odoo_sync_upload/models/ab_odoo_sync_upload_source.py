@@ -12,6 +12,7 @@ _logger = logging.getLogger(__name__)
 
 _HISTORICAL_RUNNING_STATES = {"queued", "running"}
 _HISTORICAL_TERMINAL_STATES = {"done", "failed", "cancelled"}
+_HISTORICAL_UPLOAD_CHANNEL = "root.historical_sales"
 
 
 class AbOdooSyncUploadSource(models.Model):
@@ -266,6 +267,7 @@ class AbOdooSyncUploadSource(models.Model):
             identity_key=self._historical_upload_identity_key(),
             description=_("Queue historical branch upload batch"),
             max_retries=0,
+            channel=_HISTORICAL_UPLOAD_CHANNEL,
         ).job_queue_historical_upload_batch()
         return True
 
@@ -331,7 +333,9 @@ class AbOdooSyncUploadSource(models.Model):
         snapshots, skipped_count = Outbox.filter_uncovered_upsert_snapshots(snapshots)
         outboxes = Outbox.capture_prepared_snapshots(snapshots, operation="upsert")
         if outboxes:
-            self.env["ab_odoo_sync_service"].sudo().queue_branch_upload_batch(outboxes)
+            self.env["ab_odoo_sync_service"].sudo().queue_historical_upload_batch(
+                outboxes
+            )
 
         last_record = records[-1]
         processed_count = len(records)

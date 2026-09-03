@@ -1,10 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="channel_ab_odoo_sync_upload_live_sales" model="queue.job.channel">
+        <field name="name">live_sales</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+
+    <record id="channel_ab_odoo_sync_upload_historical_sales" model="queue.job.channel">
+        <field name="name">historical_sales</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+
     <record id="job_function_ab_odoo_sync_service_send_branch_upload_batch"
             model="queue.job.function">
         <field name="model_id" ref="ab_odoo_sync.model_ab_odoo_sync_service"/>
         <field name="method">job_send_branch_upload_batch</field>
-        <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="channel_id" ref="channel_ab_odoo_sync_upload_live_sales"/>
+        <field name="retry_pattern" eval="{1: 10, 2: 60, 3: 300, 4: 86400}"/>
+    </record>
+
+    <record id="job_function_ab_odoo_sync_service_send_historical_upload_batch"
+            model="queue.job.function">
+        <field name="model_id" ref="ab_odoo_sync.model_ab_odoo_sync_service"/>
+        <field name="method">job_send_historical_upload_batch</field>
+        <field name="channel_id" ref="channel_ab_odoo_sync_upload_historical_sales"/>
         <field name="retry_pattern" eval="{1: 10, 2: 60, 3: 300, 4: 86400}"/>
     </record>
 
@@ -12,7 +30,7 @@
             model="queue.job.function">
         <field name="model_id" ref="model_ab_odoo_sync_upload_source"/>
         <field name="method">job_queue_historical_upload_batch</field>
-        <field name="channel_id" ref="queue_job.channel_root"/>
+        <field name="channel_id" ref="channel_ab_odoo_sync_upload_historical_sales"/>
         <field name="retry_pattern" eval="{1: 10, 2: 60, 3: 300, 4: 86400}"/>
     </record>
 </odoo>

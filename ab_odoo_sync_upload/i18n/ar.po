@@ -457,6 +457,12 @@ msgstr "إرسال أحداث صندوق رفع الفرع إلى خادم ال�
 #. module: ab_odoo_sync_upload
 #. odoo-python
 #: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
+msgid "Send historical branch upload outbox events to the report server"
+msgstr "إرسال أحداث صندوق الرفع التاريخي للفرع إلى خادم التقارير"
+
+#. module: ab_odoo_sync_upload
+#. odoo-python
+#: code:addons/ab_odoo_sync_upload/models/ab_odoo_sync_upload_service.py:0
 msgid "Set the API key system parameter: ab_odoo_sync.api_key"
 msgstr "اضبط معلمة النظام لمفتاح API: ab_odoo_sync.api_key"
 
