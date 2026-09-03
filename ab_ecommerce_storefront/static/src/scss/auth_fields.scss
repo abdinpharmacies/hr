@@ -1,0 +1,19 @@
+.ab-auth-page {
+    .ab-auth-input {
+        > svg {
+            order: 2;
+            flex: 0 0 20px;
+        }
+
+        input {
+            order: 1;
+            direction: rtl !important #{"/*rtl:ignore*/"};
+            text-align: right !important #{"/*rtl:ignore*/"};
+            unicode-bidi: plaintext;
+        }
+    }
+
+    .ab-auth-password-toggle {
+        order: 3;
+    }
+}

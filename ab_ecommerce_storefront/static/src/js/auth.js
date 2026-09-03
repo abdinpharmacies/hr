@@ -107,6 +107,7 @@ export class AbStorefrontAuth extends Interaction {
         this.onPhoneBlur = this.onPhoneBlur.bind(this);
         this.onPasswordToggle = this.onPasswordToggle.bind(this);
         this.onPasswordFocus = this.onPasswordFocus.bind(this);
+        this.onDelegatedPointerDown = this.onDelegatedPointerDown.bind(this);
         this.onDelegatedClick = this.onDelegatedClick.bind(this);
         this.onDelegatedInput = this.onDelegatedInput.bind(this);
         this.onDelegatedBlur = this.onDelegatedBlur.bind(this);
@@ -115,6 +116,7 @@ export class AbStorefrontAuth extends Interaction {
     }
 
     start() {
+        this.el.addEventListener("pointerdown", this.onDelegatedPointerDown, true);
         this.el.addEventListener("click", this.onDelegatedClick);
         this.el.addEventListener("input", this.onDelegatedInput);
         this.el.addEventListener("blur", this.onDelegatedBlur, true);
@@ -127,6 +129,7 @@ export class AbStorefrontAuth extends Interaction {
     }
 
     destroy() {
+        this.el.removeEventListener("pointerdown", this.onDelegatedPointerDown, true);
         this.el.removeEventListener("click", this.onDelegatedClick);
         this.el.removeEventListener("input", this.onDelegatedInput);
         this.el.removeEventListener("blur", this.onDelegatedBlur, true);
@@ -134,6 +137,16 @@ export class AbStorefrontAuth extends Interaction {
         this.el.removeEventListener("submit", this.onDelegatedSubmit);
         document.removeEventListener("click", this.onDelegatedClick, true);
         document.removeEventListener("submit", this.onDelegatedSubmit, true);
+    }
+
+    onDelegatedPointerDown(ev) {
+        if (!ev.target.closest("[data-ab-auth-nav]")) {
+            return;
+        }
+        this.isNavigatingAuthMode = true;
+        window.setTimeout(() => {
+            this.isNavigatingAuthMode = false;
+        }, 500);
     }
 
     onDelegatedClick(ev) {
@@ -154,6 +167,7 @@ export class AbStorefrontAuth extends Interaction {
         }
         const navLink = ev.target.closest("[data-ab-auth-nav]");
         if (navLink && this.el.contains(navLink)) {
+            this.clearAuthModeValidation();
             this.onModeNavigation(this.withCurrentTarget(ev, navLink));
             return;
         }
@@ -245,6 +259,7 @@ export class AbStorefrontAuth extends Interaction {
             ctrlKey: ev.ctrlKey,
             shiftKey: ev.shiftKey,
             altKey: ev.altKey,
+            relatedTarget: ev.relatedTarget,
             preventDefault: () => ev.preventDefault(),
             stopPropagation: () => ev.stopPropagation(),
         };
@@ -264,6 +279,7 @@ export class AbStorefrontAuth extends Interaction {
         }
 
         ev.preventDefault();
+        this.clearAuthModeValidation();
         this.isTransitioning = true;
         this.el.classList.add("is-auth-transitioning");
 
@@ -314,7 +330,23 @@ export class AbStorefrontAuth extends Interaction {
         }
     }
 
+    clearAuthModeValidation() {
+        this.el.querySelectorAll(".ab-auth-field").forEach((field) => {
+            field.classList.remove("has-error", "is-angry");
+        });
+        this.el.querySelectorAll(".ab-auth-form input").forEach((input) => {
+            input.classList.remove("is-invalid");
+            input.removeAttribute("aria-invalid");
+        });
+        this.el.querySelectorAll(".ab-auth-field-message").forEach((message) => {
+            message.textContent = "";
+        });
+    }
+
     onPhoneBlur(ev) {
+        if (this.isNavigatingAuthMode || ev.relatedTarget?.closest?.("[data-ab-auth-nav]")) {
+            return;
+        }
         this.validatePhone(ev.currentTarget, true);
     }
 

@@ -32,6 +32,7 @@
             "ab_ecommerce_storefront/static/src/js/logo_motion.js",
             "ab_ecommerce_storefront/static/src/js/product_image_zoom.js",
             "ab_ecommerce_storefront/static/src/scss/storefront.scss",
+            "ab_ecommerce_storefront/static/src/scss/auth_fields.scss",
         ],
     },
     "installable": True,

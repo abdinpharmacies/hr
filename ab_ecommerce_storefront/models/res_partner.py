@@ -28,6 +28,10 @@ class ResPartner(models.Model):
         required=True,
         copy=False,
     )
+    ab_storefront_avatar_completed = fields.Boolean(
+        string="Avatar Choice Completed",
+        copy=False,
+    )
     ab_storefront_has_cart_history = fields.Boolean(
         string="Has Storefront Cart History",
         copy=False,

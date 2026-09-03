@@ -17,11 +17,12 @@ class AbStorefrontCustomerPortal(CustomerPortal):
         partner_mobile = partner.mobile if "mobile" in partner._fields else False
         account_phone = partner.phone or partner_mobile or user.login
         account_avatar = partner.ab_storefront_avatar or "avatar_none"
+        avatar_complete = partner.ab_storefront_avatar_completed or account_avatar != "avatar_none"
         has_address = bool(partner.street or partner.city or partner.country_id)
         profile_completion = (
             (25 if partner.name else 0)
             + (25 if account_phone else 0)
-            + (25 if account_avatar != "avatar_none" else 0)
+            + (25 if avatar_complete else 0)
             + (25 if has_address else 0)
         )
 
@@ -49,6 +50,7 @@ class AbStorefrontCustomerPortal(CustomerPortal):
             "account_partner": partner,
             "account_phone": account_phone,
             "account_avatar": account_avatar,
+            "avatar_complete": avatar_complete,
             "has_address": has_address,
             "profile_completion": profile_completion,
             "profile_completion_style": f"--ab-profile-completion: {profile_completion}%",

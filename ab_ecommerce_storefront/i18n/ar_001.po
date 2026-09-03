@@ -935,3 +935,8 @@ msgstr "الصحة والعافية"
 #: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_seen_profile_onboarding
 msgid "Seen Storefront Profile Onboarding"
 msgstr "شاهد تهيئة ملف واجهة المتجر"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_avatar_completed
+msgid "Avatar Choice Completed"
+msgstr "تم اختيار الأفاتار"

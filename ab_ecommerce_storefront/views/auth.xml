@@ -96,7 +96,7 @@
                 <div class="ab-auth-field field-password o_caps_lock_warning">
                     <div class="ab-auth-label-row">
                         <label for="password">كلمة المرور</label>
-                        <a t-if="reset_password_enabled" t-attf-href="/web/reset_password?{{ keep_query() }}" data-ab-auth-nav="reset">نسيت كلمة المرور؟</a>
+                        <a t-if="reset_password_enabled" t-attf-href="/web/reset_password?{{ keep_query() }}" data-ab-auth-nav="reset" tabindex="-1">نسيت كلمة المرور؟</a>
                     </div>
                     <div class="ab-auth-input">
                         <t t-set="icon" t-value="'lock'"/>
@@ -118,7 +118,7 @@
                     <button type="submit" class="btn btn-primary ab-auth-primary" data-ab-auth-submit="" data-loading-text="جاري تسجيل الدخول...">تسجيل الدخول</button>
                     <div class="ab-auth-divider"><span>أو</span></div>
                     <p>ليس لديك حساب؟</p>
-                    <a t-if="signup_enabled" class="btn ab-auth-secondary" t-attf-href="/web/signup?{{ keep_query() }}" data-ab-auth-nav="signup">إنشاء حساب</a>
+                    <a t-if="signup_enabled" class="btn ab-auth-secondary" t-attf-href="/web/signup?{{ keep_query() }}" data-ab-auth-nav="signup" onmousedown="event.preventDefault()">إنشاء حساب</a>
                     <t t-if="debug">
                         <button type="submit" name="redirect" value="/web/become" class="btn btn-link btn-sm">Log in as superuser</button>
                     </t>
@@ -265,6 +265,7 @@
                          data-ab-avatar-scope="signup"
                          data-ab-avatar-current="avatar_none">
                     <input type="hidden" name="ab_storefront_avatar" value="avatar_none" data-ab-avatar-input=""/>
+                    <input type="hidden" name="ab_storefront_avatar_completed" value="0" data-ab-avatar-completed-input=""/>
                     <input type="file"
                            name="ab_storefront_avatar_upload"
                            accept="image/png,image/jpeg,image/webp"

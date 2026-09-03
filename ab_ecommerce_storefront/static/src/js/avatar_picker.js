@@ -165,6 +165,7 @@ export class AbStorefrontAvatarPicker extends Interaction {
         if (input) {
             input.value = avatar;
         }
+        this.markAvatarChoiceComplete(scope);
         if (avatar !== "custom") {
             this.clearUpload(scope);
         }
@@ -178,6 +179,7 @@ export class AbStorefrontAvatarPicker extends Interaction {
         if (input) {
             input.value = "custom";
         }
+        this.markAvatarChoiceComplete(scope);
         const formUpload = scope.querySelector("[data-ab-avatar-form-upload]");
         if (formUpload && window.DataTransfer) {
             const transfer = new DataTransfer();
@@ -207,6 +209,13 @@ export class AbStorefrontAvatarPicker extends Interaction {
         if (currentPreviewUrl) {
             URL.revokeObjectURL(currentPreviewUrl);
             this.previewUrls.delete(scope);
+        }
+    }
+
+    markAvatarChoiceComplete(scope) {
+        const completedInput = scope.querySelector("[data-ab-avatar-completed-input]");
+        if (completedInput) {
+            completedInput.value = "1";
         }
     }
 
@@ -271,6 +280,7 @@ export class AbStorefrontAvatarPicker extends Interaction {
                 throw new Error("avatar_update_failed");
             }
             this.updateGlobalAvatars(avatar, this.previewUrls.get(scope));
+            this.updateProfileCompletion(scope);
             scope.classList.add("is-avatar-saved");
             if (status) {
                 status.textContent = "تم حفظ الأفاتار";
@@ -287,6 +297,24 @@ export class AbStorefrontAvatarPicker extends Interaction {
                 status.textContent = "تعذر حفظ الأفاتار. حاول مرة أخرى.";
             }
         }
+    }
+
+    updateProfileCompletion(scope) {
+        const completion = document.querySelector(".ab-account-completion[data-ab-profile-completion]");
+        if (!completion || completion.dataset.abAvatarComplete === "1") {
+            return;
+        }
+        const currentValue = Number.parseInt(completion.dataset.abProfileCompletion || "0", 10) || 0;
+        const nextValue = Math.min(currentValue + 25, 100);
+        completion.dataset.abProfileCompletion = String(nextValue);
+        completion.dataset.abAvatarComplete = "1";
+        completion.style.setProperty("--ab-profile-completion", `${nextValue}%`);
+        const percent = completion.querySelector(".ab-account-completion-copy strong");
+        if (percent) {
+            const suffix = percent.textContent.replace(/^[\d\s%]+/, "");
+            percent.textContent = `${nextValue}%${suffix ? ` ${suffix.trim()}` : ""}`;
+        }
+        completion.classList.toggle("is-complete", nextValue === 100);
     }
 
     updateGlobalAvatars(avatar, customSrc = null) {

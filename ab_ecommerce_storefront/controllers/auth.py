@@ -18,6 +18,7 @@ _logger = logging.getLogger(__name__)
 
 SIGN_UP_REQUEST_PARAMS.add("phone")
 SIGN_UP_REQUEST_PARAMS.add("ab_storefront_avatar")
+SIGN_UP_REQUEST_PARAMS.add("ab_storefront_avatar_completed")
 
 _ARABIC_DIGITS = str.maketrans("٠١٢٣٤٥٦٧٨٩۰۱۲۳۴۵۶۷۸۹", "01234567890123456789")
 _EGYPT_MOBILE_RE = re.compile(r"^01[0125]\d{8}$")
@@ -215,16 +216,19 @@ class AbStorefrontAuth(AuthSignupHome):
             user.partner_id.write(partner_values)
         if user:
             avatar = request.params.get("ab_storefront_avatar")
+            avatar_completed = request.params.get("ab_storefront_avatar_completed") == "1"
             avatar_upload = _read_custom_avatar_upload()
             partner_values = {}
             if avatar_upload:
                 partner_values.update({
                     "ab_storefront_avatar": "custom",
+                    "ab_storefront_avatar_completed": True,
                     "image_1920": avatar_upload,
                 })
             elif avatar in _AVATAR_KEYS and avatar != "custom":
                 partner_values["ab_storefront_avatar"] = avatar
                 partner_values["image_1920"] = False
+                partner_values["ab_storefront_avatar_completed"] = avatar_completed or avatar != "avatar_none"
             if partner_values:
                 user.partner_id.write(partner_values)
         credential = {"login": login, "password": password, "type": "password"}
@@ -251,7 +255,7 @@ class AbStorefrontAuth(AuthSignupHome):
             avatar_upload = _read_custom_avatar_upload("avatar_upload")
         except UserError as error:
             return request.make_json_response({"ok": False, "error": error.args[0]}, status=400)
-        partner_values = {"ab_storefront_avatar": avatar}
+        partner_values = {"ab_storefront_avatar": avatar, "ab_storefront_avatar_completed": True}
         if avatar_upload:
             partner_values.update({"ab_storefront_avatar": "custom", "image_1920": avatar_upload})
             avatar = "custom"
