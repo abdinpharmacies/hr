@@ -358,35 +358,6 @@ class AbSupplierClaimTelegramRegistration(models.Model):
         return self._ensure_registration_from_employee(self._find_employee_by_telegram_code(text))
 
     @api.model
-    def import_existing_managers(self):
-        job_dept_map = {
-            'نائب مدير المخازن': 'inventory',
-            'مدير قسم حسابات الضرائب': 'tax_accounts',
-            'مدير قسم حسابات الموردين': 'suppliers',
-            'مدير قسم حسابات البنوك': 'bank_accounts',
-            'نائب مدير قطاع المشتريات والتجارية': 'purchase',
-        }
-        created = 0
-        for job_name, dept_code in job_dept_map.items():
-            jobs = self.env['ab_hr_job'].sudo().search([('name', '=', job_name)])
-            if not jobs:
-                continue
-            employees = self.env['ab_hr_employee'].sudo().search([('job_id', 'in', jobs.ids)])
-            for employee in employees:
-                existing = self.sudo().search([('employee_id', '=', employee.id)], limit=1)
-                if existing:
-                    if not existing.manager_department:
-                        existing.write({'manager_department': dept_code})
-                    continue
-                rec = self.sudo().create({
-                    'employee_id': employee.id,
-                    'manager_department': dept_code,
-                })
-                if rec:
-                    created += 1
-        return {'created': created}
-
-    @api.model
     def migrate_legacy_registration_data(self):
         return True
 

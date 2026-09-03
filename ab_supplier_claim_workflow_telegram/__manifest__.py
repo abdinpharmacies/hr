@@ -10,7 +10,6 @@
     'data': [
         'security/ir.model.access.csv',
         'data/cron_telegram_updates.xml',
-        'data/auto_import_managers.xml',
         'views/ab_supplier_claim_cycle_views.xml',
         'views/ab_supplier_claim_escalation_views.xml',
         'views/ab_supplier_claim_telegram_registration_views.xml',
