@@ -149,6 +149,11 @@
                         <field name="can_current_user_act" invisible="1"/>
                         <field name="can_finish" invisible="1"/>
                         <field name="can_secretarial_override" invisible="1"/>
+                        <field name="can_edit_inventory_notes" invisible="1"/>
+                        <field name="can_edit_purchase_notes" invisible="1"/>
+                        <field name="can_edit_suppliers_notes" invisible="1"/>
+                        <field name="can_edit_tax_accounts_notes" invisible="1"/>
+                        <field name="can_edit_bank_accounts_notes" invisible="1"/>
                         <field name="supplier_notified" invisible="1"/>
                         <field name="whatsapp_message_sent" invisible="1"/>
                         <field name="whatsapp_message_sent_by" invisible="1"/>
@@ -393,6 +398,13 @@
                                     <field name="inv_reason" readonly="inv_decision == 'accepted'"/>
                                 </span>
                             </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_inventory,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Inventory Notes</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="inv_notes" readonly="not can_edit_inventory_notes"/>
+                                </span>
+                            </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_purchase"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
@@ -419,6 +431,13 @@
                                 <span class="scc-stage-field-label o_translate_inline">Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="pur_reason" readonly="pur_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_purchase,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Purchase Notes</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="pur_notes" readonly="not can_edit_purchase_notes"/>
                                 </span>
                             </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_suppliers"
@@ -449,6 +468,13 @@
                                     <field name="sup_reason" readonly="sup_decision == 'accepted'"/>
                                 </span>
                             </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_suppliers,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Suppliers Notes</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="sup_notes" readonly="not can_edit_suppliers_notes"/>
+                                </span>
+                            </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_tax_accounts"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or supplier_type != 'withholding_tax'">
                                 <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
@@ -477,6 +503,13 @@
                                     <field name="tax_reason" readonly="tax_decision == 'accepted'"/>
                                 </span>
                             </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_tax_accounts,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc') or supplier_type != 'withholding_tax'">
+                                <span class="scc-stage-field-label o_translate_inline">Tax Accounts Notes</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="tax_notes" readonly="not can_edit_tax_accounts_notes"/>
+                                </span>
+                            </div>
                             <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_bank_acc"
                                  invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
                                 <span class="scc-stage-field-label o_translate_inline">Expected Completion Date</span>
@@ -503,6 +536,13 @@
                                 <span class="scc-stage-field-label o_translate_inline">Rejection Reason</span>
                                 <span class="scc-stage-field-value">
                                     <field name="bank_reason" readonly="bank_decision == 'accepted'"/>
+                                </span>
+                            </div>
+                            <div class="scc-stage-field" groups="ab_supplier_claim_workflow.supplier_claim_group_bank_acc,ab_supplier_claim_cycle.supplier_claim_group_user,ab_supplier_claim_cycle.supplier_claim_group_admin"
+                                 invisible="status not in ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc')">
+                                <span class="scc-stage-field-label o_translate_inline">Bank Accounts Notes</span>
+                                <span class="scc-stage-field-value">
+                                    <field name="bank_notes" readonly="not can_edit_bank_accounts_notes"/>
                                 </span>
                             </div>
 
