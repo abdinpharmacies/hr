@@ -72,6 +72,13 @@ DEFER_OVERDUE_DAYS_FIELD_MAP = {
     'tax_accounts': 'tax_deferred_overdue_days',
     'bank_acc': 'bank_deferred_overdue_days',
 }
+NOTE_FIELD_MAP = {
+    'inventory': 'inv_notes',
+    'purchase': 'pur_notes',
+    'suppliers': 'sup_notes',
+    'tax_accounts': 'tax_notes',
+    'bank_acc': 'bank_notes',
+}
 WITHHOLDING_TAX_SUPPLIER_TYPE = 'withholding_tax'
 
 
@@ -192,6 +199,11 @@ class SupplierClaimCycle(models.Model):
     bank_decision = fields.Selection(
         selection=[('pending', 'Pending'), ('accepted', 'Accepted'), ('rejected', 'Rejected'), ('deferred', 'Deferred')],
         default='pending', string='Bank Account Decision')
+    type_of_invoice = fields.Selection(
+        selection_add=[('account_statement', 'Account Statement')],
+        ondelete={'account_statement': 'set default'},
+        default='original',
+    )
     inv_finished = fields.Boolean(default=False, string='Inventory Finished')
     pur_finished = fields.Boolean(default=False, string='Purchase Finished')
     sup_finished = fields.Boolean(default=False, string='Suppliers Finished')
@@ -209,6 +221,11 @@ class SupplierClaimCycle(models.Model):
     sup_reason = fields.Text(string="Suppliers Reason", copy=False)
     tax_reason = fields.Text(string="Tax Accounts Reason", copy=False)
     bank_reason = fields.Text(string="Bank Account Reason", copy=False)
+    inv_notes = fields.Text(string='Inventory Notes', copy=False, tracking=True)
+    pur_notes = fields.Text(string='Purchase Notes', copy=False, tracking=True)
+    sup_notes = fields.Text(string='Suppliers Notes', copy=False, tracking=True)
+    tax_notes = fields.Text(string='Tax Accounts Notes', copy=False, tracking=True)
+    bank_notes = fields.Text(string='Bank Accounts Notes', copy=False, tracking=True)
     inv_deferred_expected_date = fields.Date(string='Inventory Expected Completion Date', copy=False, tracking=True)
     pur_deferred_expected_date = fields.Date(string='Purchase Expected Completion Date', copy=False, tracking=True)
     sup_deferred_expected_date = fields.Date(string='Suppliers Expected Completion Date', copy=False, tracking=True)
@@ -260,6 +277,11 @@ class SupplierClaimCycle(models.Model):
     can_secretarial_override = fields.Boolean(compute='_compute_workflow_access')
     can_edit_documents = fields.Boolean(compute='_compute_workflow_access')
     can_finish = fields.Boolean(compute='_compute_workflow_access')
+    can_edit_inventory_notes = fields.Boolean(compute='_compute_department_note_access')
+    can_edit_purchase_notes = fields.Boolean(compute='_compute_department_note_access')
+    can_edit_suppliers_notes = fields.Boolean(compute='_compute_department_note_access')
+    can_edit_tax_accounts_notes = fields.Boolean(compute='_compute_department_note_access')
+    can_edit_bank_accounts_notes = fields.Boolean(compute='_compute_department_note_access')
     is_dev_override = fields.Boolean(compute='_compute_dev_override')
     show_dev_override_badge = fields.Boolean(compute='_compute_dev_override')
     is_escalation_viewer = fields.Boolean(compute='_compute_escalation_viewer')
@@ -1084,6 +1106,38 @@ class SupplierClaimCycle(models.Model):
             rec.can_current_user_edit = is_admin or (rec.status != 'closed' and (is_secretarial or can_handle))
             rec.can_edit_documents = is_admin or (is_secretarial and rec.status != 'closed')
 
+    @api.depends_context('uid')
+    @api.depends(
+        'status',
+        'inv_decision',
+        'pur_decision',
+        'sup_decision',
+        'tax_decision',
+        'bank_decision',
+        'has_blocking_issue',
+    )
+    def _compute_department_note_access(self):
+        for rec in self:
+            rec.can_edit_inventory_notes = rec._can_user_edit_department_notes('inventory')
+            rec.can_edit_purchase_notes = rec._can_user_edit_department_notes('purchase')
+            rec.can_edit_suppliers_notes = rec._can_user_edit_department_notes('suppliers')
+            rec.can_edit_tax_accounts_notes = rec._can_user_edit_department_notes('tax_accounts')
+            rec.can_edit_bank_accounts_notes = rec._can_user_edit_department_notes('bank_acc')
+
+    def _can_user_edit_department_notes(self, stage_key):
+        self.ensure_one()
+        if self._is_supplier_claim_admin():
+            return True
+        if self.status == 'closed' or self.has_blocking_issue:
+            return False
+        if stage_key not in dict(self._get_parallel_decision_fields()):
+            return False
+        group_xmlid = self._get_stage_group_xmlids().get(stage_key)
+        if not group_xmlid or not self.env.user.has_group(group_xmlid):
+            return False
+        decision_field = dict(PARALLEL_DECISION_FIELDS).get(stage_key)
+        return bool(decision_field and self[decision_field] == 'pending')
+
     def _compute_dev_override(self):
         enabled = self._is_dev_override_enabled()
         is_match = False
@@ -1206,6 +1260,23 @@ class SupplierClaimCycle(models.Model):
             'notes': notes,
         })
 
+    def _get_department_notes(self, stage_key):
+        self.ensure_one()
+        note_field = NOTE_FIELD_MAP.get(stage_key)
+        return self[note_field] if note_field else ''
+
+    def _append_department_notes_to_history(self, stage_key, notes=None):
+        self.ensure_one()
+        department_notes = self._get_department_notes(stage_key)
+        if not department_notes:
+            return notes
+        if notes:
+            return _('%(notes)s\nDepartment Notes: %(department_notes)s') % {
+                'notes': notes,
+                'department_notes': department_notes,
+            }
+        return department_notes
+
     def name_get(self):
         result = []
         for rec in self:
@@ -1293,9 +1364,28 @@ class SupplierClaimCycle(models.Model):
             vals['sub_delivery_status'] = False
         return vals
 
+    def _check_department_note_write_access(self, vals):
+        note_fields = set(vals) & set(NOTE_FIELD_MAP.values())
+        if not note_fields or self.env.context.get('supplier_claim_internal_write'):
+            return
+        if self._is_supplier_claim_admin():
+            return
+        field_to_stage = {field_name: stage_key for stage_key, field_name in NOTE_FIELD_MAP.items()}
+        for rec in self:
+            for field_name in note_fields:
+                if vals.get(field_name) == rec[field_name]:
+                    continue
+                stage_key = field_to_stage[field_name]
+                if not rec._can_user_edit_department_notes(stage_key):
+                    raise AccessError(_(
+                        "Only %(department)s users with a pending decision, or Supplier Claim Admin users, "
+                        "can edit %(department)s notes."
+                    ) % {'department': rec._get_stage_label(stage_key)})
+
     def write(self, vals):
         vals = dict(vals)
         self._normalize_check_delivery_status_vals(vals)
+        self._check_department_note_write_access(vals)
         if 'supplier_id' in vals and len(self) == 1:
             current_values = {
                 field_name: self[field_name]
@@ -1460,7 +1550,26 @@ class SupplierClaimCycle(models.Model):
             'days': self._get_deferred_actual_overdue_days(stage_key),
         }
 
+    def _action_open_supplier_claim_list(self):
+        action = self.env.ref('ab_supplier_claim_cycle.invoice_action', raise_if_not_found=False)
+        if action:
+            values = action.sudo().read()[0]
+        else:
+            values = {
+                'type': 'ir.actions.act_window',
+                'name': _('Supplier Claims'),
+                'res_model': self._name,
+                'view_mode': 'list,form',
+            }
+        values.pop('res_id', None)
+        values.update({
+            'target': 'current',
+            'view_mode': 'list,form',
+        })
+        return values
+
     def action_finish(self):
+        action = False
         for rec in self:
             rec._check_can_act_current_stage()
             if rec.status not in DEPARTMENT_STAGES:
@@ -1481,7 +1590,9 @@ class SupplierClaimCycle(models.Model):
                     break
             if not finished:
                 raise AccessError(_("You are not authorized to finish this stage."))
-            rec._try_advance_from_parallel()
+            rec.sudo().with_context(supplier_claim_internal_write=True)._try_advance_from_parallel()
+            action = rec._action_open_supplier_claim_list()
+        return action
 
     def _missing_info_action(self, message):
         return {
@@ -1531,13 +1642,21 @@ class SupplierClaimCycle(models.Model):
                     vals[REASON_FIELD_MAP[stage_key]] = dept_reason
                 self.with_context(supplier_claim_internal_write=True).write(vals)
                 if decision == 'accepted':
-                    self._create_stage_history(stage_key, decision)
+                    self._create_stage_history(
+                        stage_key,
+                        decision,
+                        self._append_department_notes_to_history(stage_key),
+                    )
                     self.with_context(supplier_claim_internal_write=True).write({
                         'department_decision': self._get_parallel_overall_decision(),
                     })
                     self._notify_secretarial_department_accepted(stage_key)
                 elif decision == 'rejected':
-                    self._create_stage_history(stage_key, decision, dept_reason)
+                    self._create_stage_history(
+                        stage_key,
+                        decision,
+                        self._append_department_notes_to_history(stage_key, dept_reason),
+                    )
                     self.with_context(supplier_claim_internal_write=True).write({
                         'department_decision': self._get_parallel_overall_decision(),
                     })
@@ -1556,7 +1675,10 @@ class SupplierClaimCycle(models.Model):
                     self._create_stage_history(
                         stage_key,
                         decision,
-                        self._format_deferred_stage_history_note(stage_key),
+                        self._append_department_notes_to_history(
+                            stage_key,
+                            self._format_deferred_stage_history_note(stage_key),
+                        ),
                     )
                     self.message_post(
                         body=_("%(stage)s deferred this supplier claim until %(date)s. Reason: %(reason)s") % {

@@ -37,6 +37,20 @@ class TestSupplierClaimWorkflow(TransactionCase):
             self.supplier = self.env['ab_costcenter'].sudo().search([('code', '=like', '1-%')], limit=1)
             self.assertTrue(self.supplier, 'At least one supplier cost center is required for workflow tests.')
 
+        self.secretarial_user = self._make_role_user('claim_secretarial_user', self.group_secretarial)
+        self.inventory_user = self._make_role_user('claim_inventory_user', self.group_inventory)
+        self.purchase_user = self._make_role_user('claim_purchase_user', self.group_purchase)
+        self.suppliers_user = self._make_role_user('claim_suppliers_user', self.group_suppliers)
+        self.admin_user = self._make_role_user('claim_admin_user', self.group_admin)
+
+    def _make_role_user(self, login, group):
+        return self.env['res.users'].with_context(no_reset_password=True).sudo().create({
+            'name': login.replace('_', ' ').title(),
+            'login': '%s@example.com' % login,
+            'email': '%s@example.com' % login,
+            'group_ids': [(6, 0, [self.group_user.id, group.id])],
+        })
+
     def _set_workflow_group(self, group):
         self.workflow_user.write({
             'group_ids': [(3, g.id) for g in self.workflow_groups] + [
@@ -98,7 +112,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
             'claim_document_filename': 'claim.pdf',
         })
 
-        action = claim.with_user(self.workflow_user).action_done()
+        action = claim.with_user(self.workflow_user).with_context(lang='en_US').action_done()
 
         self.assertEqual(action['res_model'], 'ab_claim_error_wizard')
         self.assertEqual(action['context']['default_error_message'], 'Please enter the cheque amount.')
@@ -109,7 +123,7 @@ class TestSupplierClaimWorkflow(TransactionCase):
 
         results = Supplier.name_search(
             name='',
-            args=[('code', '=like', '1-%'), ('id', '=', self.supplier.id)],
+            domain=[('code', '=like', '1-%'), ('id', '=', self.supplier.id)],
             operator='ilike',
             limit=10,
         )
@@ -438,3 +452,116 @@ class TestSupplierClaimWorkflow(TransactionCase):
         })
         claim.with_user(self.workflow_user).action_supplier_notified()
         self.assertTrue(claim.supplier_notified)
+
+    def test_department_visibility_tracks_pending_department_work(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+        Claim = self.env['ab_supplier_claim_cycle']
+
+        self.assertEqual(Claim.with_user(self.inventory_user).search_count([('id', '=', claim.id)]), 1)
+        self.assertEqual(Claim.with_user(self.purchase_user).search_count([('id', '=', claim.id)]), 1)
+
+        claim.with_user(self.inventory_user).action_accept()
+        self.assertEqual(Claim.with_user(self.inventory_user).search_count([('id', '=', claim.id)]), 1)
+        claim.with_user(self.inventory_user).action_finish()
+
+        self.assertEqual(Claim.with_user(self.inventory_user).search_count([('id', '=', claim.id)]), 0)
+        self.assertEqual(Claim.with_user(self.purchase_user).search_count([('id', '=', claim.id)]), 1)
+        with self.assertRaises(AccessError):
+            claim.with_user(self.inventory_user).read(['name'])
+        self.assertEqual(Claim.with_user(self.admin_user).search_count([('id', '=', claim.id)]), 1)
+        self.assertEqual(Claim.with_user(self.secretarial_user).search_count([('id', '=', claim.id)]), 1)
+
+    def test_purchase_finish_advances_to_suppliers_without_access_error(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+        Claim = self.env['ab_supplier_claim_cycle']
+
+        claim.with_user(self.inventory_user).action_accept()
+        claim.with_user(self.inventory_user).action_finish()
+        claim.with_user(self.purchase_user).action_accept()
+        action = claim.with_user(self.purchase_user).action_finish()
+
+        self.assertEqual(action['type'], 'ir.actions.act_window')
+        self.assertEqual(claim.status, 'suppliers')
+        self.assertEqual(Claim.with_user(self.purchase_user).search_count([('id', '=', claim.id)]), 0)
+        self.assertEqual(Claim.with_user(self.suppliers_user).search_count([('id', '=', claim.id)]), 1)
+
+    def test_department_notes_are_scoped_and_copied_on_accept(self):
+        claim = self._create_claim()
+        self._start_cycle(claim)
+
+        claim.with_user(self.inventory_user).write({'inv_notes': 'Apply 5% discount on damaged items.'})
+        with self.assertRaises(AccessError):
+            claim.with_user(self.purchase_user).write({'inv_notes': 'Purchase cannot edit inventory notes.'})
+
+        claim.with_user(self.inventory_user).action_accept()
+        accepted_history = claim.stage_history_ids.filtered(
+            lambda history: history.stage == 'inventory' and history.decision == 'accepted'
+        )[-1]
+        self.assertIn('Apply 5% discount on damaged items.', accepted_history.notes)
+
+        with self.assertRaises(AccessError):
+            claim.with_user(self.inventory_user).write({'inv_notes': 'Changed after decision.'})
+
+        claim.with_user(self.admin_user).write({'inv_notes': 'Admin correction.'})
+        self.assertEqual(claim.inv_notes, 'Admin correction.')
+
+    def test_department_notes_are_copied_on_reject_and_defer(self):
+        reject_claim = self._create_claim()
+        self._start_cycle(reject_claim)
+        reject_claim.with_user(self.inventory_user).write({
+            'inv_notes': 'Deduction note for short shipment.',
+            'inv_reason': 'Missing stamped invoice.',
+        })
+        reject_claim.with_user(self.inventory_user).action_reject()
+        rejected_history = reject_claim.stage_history_ids.filtered(
+            lambda history: history.stage == 'inventory' and history.decision == 'rejected'
+        )[-1]
+        self.assertIn('Missing stamped invoice.', rejected_history.notes)
+        self.assertIn('Deduction note for short shipment.', rejected_history.notes)
+
+        defer_claim = self._create_claim()
+        self._start_cycle(defer_claim)
+        defer_claim.with_user(self.inventory_user).write({'inv_notes': 'Awaiting deduction confirmation.'})
+        tomorrow = fields.Date.add(fields.Date.context_today(defer_claim), days=1)
+        wizard = self.env['ab_supplier_claim_defer_wizard'].with_user(self.inventory_user).create({
+            'claim_id': defer_claim.id,
+            'stage_key': 'inventory',
+            'expected_completion_date': tomorrow,
+            'deferral_reason': 'Waiting for supplier statement.',
+        })
+        wizard.action_confirm()
+        deferred_history = defer_claim.stage_history_ids.filtered(
+            lambda history: history.stage == 'inventory' and history.decision == 'deferred'
+        )[-1]
+        self.assertIn('Waiting for supplier statement.', deferred_history.notes)
+        self.assertIn('Awaiting deduction confirmation.', deferred_history.notes)
+
+    def test_account_statement_invoice_type_is_valid(self):
+        for invoice_type in ('original', 'copy', 'account_statement'):
+            claim = self.env['ab_supplier_claim_cycle'].with_user(self.secretarial_user).create({
+                'supplier_id': self.supplier.id,
+                'supplier_type': 'non_taxable',
+                'supplier_section': 'medicine',
+                'num_of_invoice': 1,
+                'area': 'south',
+                'amount_of_check': 750.0,
+                'type_of_invoice': invoice_type,
+                'claim_document': b'dGVzdF9jbGFpbV9kb2N1bWVudA==',
+                'claim_document_filename': 'claim.pdf',
+            })
+            self.assertEqual(claim.type_of_invoice, invoice_type)
+
+    def test_department_notes_do_not_change_amounts(self):
+        claim = self._create_claim(supplier_type='withholding_tax')
+        self._start_cycle(claim)
+        amount = claim.amount_of_check
+        tax_amount = claim.tax_amount
+        net_payable = claim.net_payable
+
+        claim.with_user(self.inventory_user).write({'inv_notes': 'Discount note only; do not calculate.'})
+
+        self.assertEqual(claim.amount_of_check, amount)
+        self.assertEqual(claim.tax_amount, tax_amount)
+        self.assertEqual(claim.net_payable, net_payable)

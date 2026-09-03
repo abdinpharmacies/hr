@@ -3500,3 +3500,39 @@ msgstr ""
 "التاريخ المتوقع للانتهاء: %(date)s\n"
 "السبب: %(reason)s\n"
 "أيام التأخير الفعلية: %(days)s"
+
+#. module: ab_supplier_claim_workflow
+msgid "Account Statement"
+msgstr "كشف حساب"
+
+#. module: ab_supplier_claim_workflow
+msgid "Inventory Notes"
+msgstr "ملاحظات المخازن"
+
+#. module: ab_supplier_claim_workflow
+msgid "Purchase Notes"
+msgstr "ملاحظات المشتريات"
+
+#. module: ab_supplier_claim_workflow
+msgid "Suppliers Notes"
+msgstr "ملاحظات الموردين"
+
+#. module: ab_supplier_claim_workflow
+msgid "Tax Accounts Notes"
+msgstr "ملاحظات حسابات الضرائب"
+
+#. module: ab_supplier_claim_workflow
+msgid "Bank Accounts Notes"
+msgstr "ملاحظات حسابات البنوك"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Department Notes: %(department_notes)s"
+msgstr "ملاحظات القسم: %(department_notes)s"
+
+#. module: ab_supplier_claim_workflow
+#. odoo-python
+#: code:addons/ab_supplier_claim_workflow/models/ab_supplier_claim_cycle.py:0
+msgid "Only %(department)s users with a pending decision, or Supplier Claim Admin users, can edit %(department)s notes."
+msgstr "يمكن فقط لمستخدمي %(department)s الذين لديهم قرار معلق، أو مسؤولي مطالبات الموردين، تعديل ملاحظات %(department)s."

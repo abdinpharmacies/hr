@@ -48,55 +48,55 @@
 
         <!-- Department-specific write rules -->
         <record id="rule_supplier_claim_inventory_write_current_stage" model="ir.rule">
-            <field name="name">Supplier Claim Inventory writes department stages</field>
+            <field name="name">Supplier Claim Inventory pending department records</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_inventory'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
-            <field name="perm_read" eval="0"/>
+            <field name="domain_force">['&amp;', ('status', 'in', ('inventory', 'purchase')), '|', ('inv_decision', 'in', ('pending', 'deferred')), '&amp;', ('inv_decision', 'in', ('accepted', 'rejected')), ('inv_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
         <record id="rule_supplier_claim_purchase_write_current_stage" model="ir.rule">
-            <field name="name">Supplier Claim Purchase writes department stages</field>
+            <field name="name">Supplier Claim Purchase pending department records</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_purchase'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
-            <field name="perm_read" eval="0"/>
+            <field name="domain_force">['&amp;', ('status', 'in', ('inventory', 'purchase')), '|', ('pur_decision', 'in', ('pending', 'deferred')), '&amp;', ('pur_decision', 'in', ('accepted', 'rejected')), ('pur_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
         <record id="rule_supplier_claim_suppliers_write_current_stage" model="ir.rule">
-            <field name="name">Supplier Claim Suppliers writes department stages</field>
+            <field name="name">Supplier Claim Suppliers pending department records</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_suppliers'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
-            <field name="perm_read" eval="0"/>
+            <field name="domain_force">['&amp;', ('status', '=', 'suppliers'), '|', ('sup_decision', 'in', ('pending', 'deferred')), '&amp;', ('sup_decision', 'in', ('accepted', 'rejected')), ('sup_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
         <record id="rule_supplier_claim_tax_accounts_write_current_stage" model="ir.rule">
-            <field name="name">Supplier Claim Tax Accounts writes department stages</field>
+            <field name="name">Supplier Claim Tax Accounts pending department records</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_tax_accounts'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
-            <field name="perm_read" eval="0"/>
+            <field name="domain_force">['&amp;', ('status', '=', 'tax_accounts'), '|', ('tax_decision', 'in', ('pending', 'deferred')), '&amp;', ('tax_decision', 'in', ('accepted', 'rejected')), ('tax_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
         </record>
 
         <record id="rule_supplier_claim_bank_acc_write_current_stage" model="ir.rule">
-            <field name="name">Supplier Claim Bank Acc writes department stages</field>
+            <field name="name">Supplier Claim Bank Accounts pending department records</field>
             <field name="model_id" ref="ab_supplier_claim_cycle.model_ab_supplier_claim_cycle"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_bank_acc'))]"/>
-            <field name="domain_force">[('status', 'in', ('inventory', 'purchase', 'suppliers', 'tax_accounts', 'bank_acc'))]</field>
-            <field name="perm_read" eval="0"/>
+            <field name="domain_force">['&amp;', ('status', '=', 'bank_acc'), '|', ('bank_decision', 'in', ('pending', 'deferred')), '&amp;', ('bank_decision', 'in', ('accepted', 'rejected')), ('bank_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="1"/>
             <field name="perm_create" eval="0"/>
             <field name="perm_unlink" eval="0"/>
@@ -140,6 +140,62 @@
             <field name="model_id" ref="model_ab_supplier_claim_stage_history"/>
             <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_inventory')),(4, ref('ab_supplier_claim_workflow.supplier_claim_group_purchase')),(4, ref('ab_supplier_claim_workflow.supplier_claim_group_suppliers')),(4, ref('ab_supplier_claim_workflow.supplier_claim_group_tax_accounts')),(4, ref('ab_supplier_claim_workflow.supplier_claim_group_bank_acc'))]"/>
             <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="active" eval="0"/>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_stage_history_inventory_read" model="ir.rule">
+            <field name="name">Stage History inventory read</field>
+            <field name="model_id" ref="model_ab_supplier_claim_stage_history"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_inventory'))]"/>
+            <field name="domain_force">['&amp;', ('claim_id.status', 'in', ('inventory', 'purchase')), '|', ('claim_id.inv_decision', 'in', ('pending', 'deferred')), '&amp;', ('claim_id.inv_decision', 'in', ('accepted', 'rejected')), ('claim_id.inv_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_stage_history_purchase_read" model="ir.rule">
+            <field name="name">Stage History purchase read</field>
+            <field name="model_id" ref="model_ab_supplier_claim_stage_history"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_purchase'))]"/>
+            <field name="domain_force">['&amp;', ('claim_id.status', 'in', ('inventory', 'purchase')), '|', ('claim_id.pur_decision', 'in', ('pending', 'deferred')), '&amp;', ('claim_id.pur_decision', 'in', ('accepted', 'rejected')), ('claim_id.pur_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_stage_history_suppliers_read" model="ir.rule">
+            <field name="name">Stage History suppliers read</field>
+            <field name="model_id" ref="model_ab_supplier_claim_stage_history"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_suppliers'))]"/>
+            <field name="domain_force">['&amp;', ('claim_id.status', '=', 'suppliers'), '|', ('claim_id.sup_decision', 'in', ('pending', 'deferred')), '&amp;', ('claim_id.sup_decision', 'in', ('accepted', 'rejected')), ('claim_id.sup_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_stage_history_tax_accounts_read" model="ir.rule">
+            <field name="name">Stage History tax accounts read</field>
+            <field name="model_id" ref="model_ab_supplier_claim_stage_history"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_tax_accounts'))]"/>
+            <field name="domain_force">['&amp;', ('claim_id.status', '=', 'tax_accounts'), '|', ('claim_id.tax_decision', 'in', ('pending', 'deferred')), '&amp;', ('claim_id.tax_decision', 'in', ('accepted', 'rejected')), ('claim_id.tax_finished', '=', False)]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <record id="rule_stage_history_bank_acc_read" model="ir.rule">
+            <field name="name">Stage History bank accounts read</field>
+            <field name="model_id" ref="model_ab_supplier_claim_stage_history"/>
+            <field name="groups" eval="[(4, ref('ab_supplier_claim_workflow.supplier_claim_group_bank_acc'))]"/>
+            <field name="domain_force">['&amp;', ('claim_id.status', '=', 'bank_acc'), '|', ('claim_id.bank_decision', 'in', ('pending', 'deferred')), '&amp;', ('claim_id.bank_decision', 'in', ('accepted', 'rejected')), ('claim_id.bank_finished', '=', False)]</field>
             <field name="perm_read" eval="1"/>
             <field name="perm_write" eval="0"/>
             <field name="perm_create" eval="1"/>
