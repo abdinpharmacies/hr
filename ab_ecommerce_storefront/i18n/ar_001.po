@@ -930,3 +930,8 @@ msgstr "العناية بالطفل"
 #: model:product.public.category,name:ab_ecommerce_storefront.category_wellness
 msgid "Wellness"
 msgstr "الصحة والعافية"
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_seen_profile_onboarding
+msgid "Seen Storefront Profile Onboarding"
+msgstr "شاهد تهيئة ملف واجهة المتجر"

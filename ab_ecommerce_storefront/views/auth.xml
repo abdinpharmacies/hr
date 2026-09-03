@@ -76,6 +76,7 @@
     <template id="auth_login" name="Abdin Phone Login" inherit_id="web.login" priority="220">
         <xpath expr="//owl-component[@name='web.user_switch']" position="replace"/>
         <xpath expr="//form[@t-attf-action='/web/login']" position="replace">
+            <t t-set="backend_login" t-value="redirect and (redirect.startswith('/odoo') or redirect.startswith('/web'))"/>
             <form class="oe_login_form ab-auth-form" role="form" t-attf-action="/web/login" method="post" onsubmit="this.action = '/web/login' + location.hash" data-captcha="login" data-ab-auth-form="login">
                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                 <div class="ab-auth-form-head">
@@ -88,9 +89,9 @@
                     <div class="ab-auth-input">
                         <t t-set="icon" t-value="'phone'"/>
                         <t t-call="ab_ecommerce_storefront.auth_svg_icon"/>
-                        <input type="tel" inputmode="tel" placeholder="01XXXXXXXXX" name="login" t-att-value="login" id="login" required="required" autocapitalize="off" autocomplete="username" data-ab-phone-input=""/>
+                        <input t-att-type="'text' if backend_login else 'tel'" t-att-inputmode="'text' if backend_login else 'tel'" placeholder="01XXXXXXXXX" name="login" t-att-value="login" id="login" required="required" autocapitalize="off" autocomplete="username" t-att-data-ab-phone-input="None if backend_login else ''"/>
                     </div>
-                    <p class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
+                    <p t-if="not backend_login" class="ab-auth-field-message" data-ab-phone-message="" aria-live="polite"/>
                 </div>
                 <div class="ab-auth-field field-password o_caps_lock_warning">
                     <div class="ab-auth-label-row">

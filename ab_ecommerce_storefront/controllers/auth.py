@@ -75,6 +75,15 @@ def _read_custom_avatar_upload(field_name="ab_storefront_avatar_upload"):
 
 
 class AbStorefrontAuth(AuthSignupHome):
+    def _is_backend_login_request(self, redirect=None):
+        target = redirect or request.params.get("redirect") or ""
+        return target.startswith(("/odoo", "/web"))
+
+    @staticmethod
+    def _is_username_login(value):
+        login = (value or "").strip()
+        return bool(login and re.search(r"[A-Za-z@._-]", login))
+
     def _is_storefront_lang_ar(self):
         return request.env.lang in ("ar", "ar_001") or request.httprequest.path.startswith("/ar/")
 
@@ -91,19 +100,39 @@ class AbStorefrontAuth(AuthSignupHome):
             request.params["phone"] = normalized
         return normalized
 
+    def _login_redirect(self, uid, redirect=None):
+        if request.params.get("login_success") and not self._is_backend_login_request(redirect):
+            user = request.env["res.users"].browse(uid)
+            if user._is_internal():
+                return "/odoo"
+            partner = user.partner_id.sudo()
+            if not partner.ab_storefront_seen_profile_onboarding:
+                partner.write({"ab_storefront_seen_profile_onboarding": True})
+                return "/my/home"
+            return "/"
+        return super()._login_redirect(uid, redirect=redirect)
+
     @http.route()
     def web_login(self, redirect=None, **kw):
-        if request.httprequest.method == "POST":
-            phone = self._prepare_phone_login_params()
-            if not phone:
-                request.params["login"] = "__empty_phone__"
-            elif not is_valid_egyptian_mobile(phone):
-                request.params["login"] = "__invalid_phone__"
+        if request.httprequest.method == "POST" and not self._is_backend_login_request(redirect):
+            login = request.params.get("login") or request.params.get("phone")
+            if not self._is_username_login(login):
+                phone = self._prepare_phone_login_params()
+                if not phone:
+                    request.params["login"] = "__empty_phone__"
+                elif not is_valid_egyptian_mobile(phone):
+                    request.params["login"] = "__invalid_phone__"
 
         response = super().web_login(redirect=redirect, **kw)
         if hasattr(response, "qcontext"):
             response.qcontext.update(self.get_auth_signup_config())
-            if request.httprequest.method == "POST" and response.qcontext.get("error"):
+            response.qcontext["backend_login"] = self._is_backend_login_request(redirect)
+            if (
+                request.httprequest.method == "POST"
+                and not self._is_backend_login_request(redirect)
+                and not self._is_username_login(request.params.get("login"))
+                and response.qcontext.get("error")
+            ):
                 response.qcontext["error"] = self._friendly_error()
         return response
 

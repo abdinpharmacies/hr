@@ -1273,3 +1273,8 @@ msgstr "إيزيس زنجبيل وقرفة أعشاب | 12 كيسًا"
 #: model:product.template,description_sale:ab_ecommerce_storefront.product_isis_ginger_cinnamon
 msgid "Warming ginger and cinnamon herbal infusion supplied as 12 tea bags."
 msgstr "مشروب أعشاب دافئ بالزنجبيل والقرفة في عبوة 12 كيسًا."
+
+#. module: ab_ecommerce_storefront
+#: model:ir.model.fields,field_description:ab_ecommerce_storefront.field_res_partner__ab_storefront_seen_profile_onboarding
+msgid "Seen Storefront Profile Onboarding"
+msgstr "شاهد تهيئة ملف واجهة المتجر"

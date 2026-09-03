@@ -38,3 +38,8 @@ class ResPartner(models.Model):
         copy=False,
         readonly=True,
     )
+    ab_storefront_seen_profile_onboarding = fields.Boolean(
+        string="Seen Storefront Profile Onboarding",
+        copy=False,
+        readonly=True,
+    )

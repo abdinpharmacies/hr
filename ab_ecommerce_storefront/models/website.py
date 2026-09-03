@@ -1,3 +1,5 @@
+from markupsafe import Markup
+
 from odoo import _lt, fields, models
 
 
@@ -87,6 +89,9 @@ _CATEGORY_ICON_FALLBACKS = (
 
 class Website(models.Model):
     _inherit = "website"
+
+    def _control_third_party_trackers_in_html(self, html):
+        return Markup(html or "")
 
     @staticmethod
     def _ab_storefront_category_source_name(category):
