@@ -43,14 +43,11 @@ class AbDeliveryRequest(models.Model):
     amount_total = fields.Float(readonly=True, string="Bill Sum")
     telegram_chat_id = fields.Char(readonly=True, string="Telegram Chat ID")
     telegram_message_id = fields.Char(readonly=True, copy=False, string="Telegram Message ID")
-    telegram_callback_token = fields.Char(readonly=True, copy=False, index=True, string="Telegram Callback Token")
-    telegram_update_id = fields.Integer(readonly=True, copy=False, string="Telegram Update ID")
     state = fields.Selection(
         [
             ("pending", "Pending"),
             ("queued", "Queued"),
             ("sent", "Sent"),
-            ("received", "Received"),
             ("failed", "Failed"),
         ],
         default="pending",
@@ -61,10 +58,6 @@ class AbDeliveryRequest(models.Model):
         string="Status",
     )
     sent_date = fields.Datetime(readonly=True, copy=False, string="Sent Date")
-    received_date = fields.Datetime(readonly=True, copy=False, string="Received Date")
-    received_by_telegram_id = fields.Char(readonly=True, copy=False, string="Received By Telegram ID")
-    received_by_telegram_name = fields.Char(readonly=True, copy=False, string="Received By")
-    received_by_telegram_username = fields.Char(readonly=True, copy=False, string="Received By Telegram Username")
     next_attempt_date = fields.Datetime(readonly=True, copy=False, string="Next Attempt Date")
     failure_count = fields.Integer(default=0, readonly=True, copy=False, string="Failure Count")
     last_error = fields.Text(readonly=True, copy=False, string="Last Error")
@@ -83,12 +76,6 @@ class AbDeliveryRequest(models.Model):
                 bill_number,
             )
 
-    @api.model_create_multi
-    def create(self, vals_list):
-        for vals in vals_list:
-            vals.setdefault("telegram_callback_token", secrets.token_urlsafe(12))
-        return super().create(vals_list)
-
     @api.model
     def create_from_sale_header(self, header):
         header = header.sudo().exists()
@@ -99,8 +86,7 @@ class AbDeliveryRequest(models.Model):
         request = self.sudo().search([("sale_header_id", "=", header.id)], limit=1)
         vals = self._delivery_request_vals_from_sale_header(header)
         if request:
-            if request.state != "received":
-                request.write(vals)
+            request.write(vals)
             return request
         return self.sudo().create(vals)
 
@@ -121,19 +107,8 @@ class AbDeliveryRequest(models.Model):
             "telegram_chat_id": self._get_telegram_chat_id(),
         }
 
-    def action_mark_received(self):
-        for request in self.sudo():
-            request.write({
-                "state": "received",
-                "received_date": fields.Datetime.now(),
-                "last_error": False,
-            })
-        return True
-
     def action_resend_to_telegram(self):
         for request in self.sudo().exists():
-            if request.state == "received":
-                continue
             try:
                 request.write({
                     "state": "queued",
@@ -148,7 +123,7 @@ class AbDeliveryRequest(models.Model):
     def queue_send_to_telegram(self, force=False):
         requests_to_send = self.browse()
         for request in self.sudo().exists():
-            if request.state == "received" or (not force and request.state == "sent" and request.telegram_message_id):
+            if not force and request.state == "sent" and request.telegram_message_id:
                 continue
             try:
                 request.write({
@@ -171,7 +146,7 @@ class AbDeliveryRequest(models.Model):
 
     def job_send_to_telegram(self, force=False):
         self.ensure_one()
-        if self.state == "received" or (not force and self.state == "sent" and self.telegram_message_id):
+        if not force and self.state == "sent" and self.telegram_message_id:
             return {"status": "skipped", "reason": self.state}
         self._refresh_from_sale_header()
         chat_id = self._get_telegram_chat_id() or self.telegram_chat_id
@@ -215,7 +190,7 @@ class AbDeliveryRequest(models.Model):
 
     def _refresh_from_sale_header(self):
         for request in self.sudo().exists():
-            if request.state == "received" or not request.sale_header_id:
+            if not request.sale_header_id:
                 continue
             request.write(
                 request._delivery_request_vals_from_sale_header(request.sale_header_id.sudo())
@@ -295,9 +270,12 @@ class AbDeliveryRequest(models.Model):
             raise ValueError("Branch store code is not configured.")
         if ":" in self.branch_code:
             raise ValueError("Branch store code cannot contain ':'.")
-        callback_data = "dr:%s:%s:%s" % (self.branch_code, self.id, self.telegram_callback_token)
+        reference = self.bill_number or str(self.sale_header_id.id or "")
+        if ":" in reference:
+            raise ValueError("Delivery callback reference cannot contain ':'.")
+        callback_data = "dr:%s:%s:%s" % (self.branch_code, reference, secrets.token_urlsafe(8))
         if len(callback_data.encode("utf-8")) > 64:
-            raise ValueError("Telegram callback data is too long. Check the branch store code.")
+            raise ValueError("Telegram callback data is too long. Check the branch store code or bill number.")
         return callback_data
 
     def _send_identity_key(self):

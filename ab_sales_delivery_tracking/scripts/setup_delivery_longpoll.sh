@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-DB_NAME="${AB_DELIVERY_DB:-}"
+INSTANCE_NAME="${AB_DELIVERY_INSTANCE:-}"
 BOT_TOKEN="${AB_DELIVERY_BOT_TOKEN:-}"
 CHAT_ID="${AB_DELIVERY_CHAT_ID:-}"
-PYTHON_BIN="${AB_DELIVERY_PYTHON:-/opt/odoo19/venv19/bin/python}"
-ODOO_SERVER_PATH="${AB_DELIVERY_ODOO_SERVER_PATH:-/opt/odoo19/server}"
-ODOO_BIN="${AB_DELIVERY_ODOO_BIN:-/opt/odoo19/server/odoo-bin}"
-ODOO_CONFIG="${AB_DELIVERY_ODOO_CONFIG:-/opt/odoo19/odoo19.conf}"
-RUNNER_DEST="${AB_DELIVERY_RUNNER_DEST:-/opt/odoo19/custom-addons/delivery_longpoll/run_longpoll_service.py}"
+PYTHON_BIN="${AB_DELIVERY_PYTHON:-/usr/bin/python3}"
+RUNNER_DEST="${AB_DELIVERY_RUNNER_DEST:-/opt/ab-delivery-longpoll/run_longpoll_service.py}"
 UNIT_DEST="${AB_DELIVERY_SYSTEMD_UNIT_DEST:-/etc/systemd/system/ab-delivery-longpoll@.service}"
 ENV_DIR="${AB_DELIVERY_ENV_DIR:-/etc/ab-delivery-longpoll}"
 STATE_DIR="${AB_DELIVERY_STATE_DIR:-/var/lib/ab-delivery-longpoll}"
@@ -18,8 +15,6 @@ SERVICE_USER="${AB_DELIVERY_SERVICE_USER:-abdin_01}"
 SERVICE_GROUP="${AB_DELIVERY_SERVICE_GROUP:-abdin_01}"
 START_SERVICE=1
 STARTUP_WAIT="${AB_DELIVERY_STARTUP_WAIT:-3}"
-SKIP_MODULE_UPGRADE="${AB_DELIVERY_SKIP_MODULE_UPGRADE:-0}"
-SKIP_ODOO_DB_CHECK="${AB_DELIVERY_SKIP_ODOO_DB_CHECK:-0}"
 USE_SUDO=0
 TMP_FILES=()
 
@@ -27,38 +22,36 @@ usage() {
     cat <<'EOF'
 Usage:
   bash ab_sales_delivery_tracking/scripts/setup_delivery_longpoll.sh \
-    --db '<ODOO_DB>' \
+    --db '<SERVICE_INSTANCE>' \
     --bot-token '<TELEGRAM_BOT_TOKEN>' \
     --chat-id '<TELEGRAM_GROUP_CHAT_ID>'
 
-This is the single deployment entry point for the Telegram delivery receiver.
+This is the single deployment entry point for the standalone Telegram delivery
+long-polling receiver. The --db value is only a service instance/state name for
+systemd and SQLite paths. It is not an Odoo database connection.
 
 What this script does:
-  1. Validates the Odoo paths, Python runtime, systemd tooling, and inputs.
-  2. Installs/upgrades ab_sales_delivery_tracking in the selected Odoo database.
-  3. Installs/updates the standalone long-polling runner automatically.
-  4. Installs/updates the systemd service template automatically.
-  5. Creates/updates /etc/ab-delivery-longpoll/<escaped-db>.env.
-  6. Creates/prepares the SQLite state directory.
-  7. Runs systemctl daemon-reload.
-  8. Enables and restarts ab-delivery-longpoll@<escaped-db>.service unless --no-start is used.
-  9. Verifies that the service is active and prints useful status/log output on failure.
+  1. Validates Python, systemd tooling, service user/group, and inputs.
+  2. Installs/updates the standalone Telegram-only polling runner.
+  3. Installs/updates the systemd service template.
+  4. Creates/updates /etc/ab-delivery-longpoll/<escaped-instance>.env.
+  5. Creates/prepares the SQLite state directory.
+  6. Runs systemctl daemon-reload.
+  7. Enables and restarts ab-delivery-longpoll@<escaped-instance>.service unless --no-start is used.
+  8. Verifies that the service is active and prints status/log output on failure.
 
 Options:
-  --db DB                Odoo database containing ab_delivery_request records.
-  --bot-token TOKEN      Telegram bot token.
-  --chat-id CHAT_ID      Telegram group chat ID guard.
-  --no-start             Install/update files and reload systemd, but do not start the service.
-  -h, --help             Show this help.
+  --db NAME             Service instance name used for systemd and SQLite paths.
+  --bot-token TOKEN     Telegram bot token.
+  --chat-id CHAT_ID     Telegram group chat ID guard.
+  --no-start            Install/update files and reload systemd, but do not start the service.
+  -h, --help            Show this help.
 
 Environment overrides:
-  AB_DELIVERY_DB
+  AB_DELIVERY_INSTANCE
   AB_DELIVERY_BOT_TOKEN
   AB_DELIVERY_CHAT_ID
   AB_DELIVERY_PYTHON
-  AB_DELIVERY_ODOO_SERVER_PATH
-  AB_DELIVERY_ODOO_BIN
-  AB_DELIVERY_ODOO_CONFIG
   AB_DELIVERY_RUNNER_DEST
   AB_DELIVERY_SYSTEMD_UNIT_DEST
   AB_DELIVERY_ENV_DIR
@@ -68,8 +61,6 @@ Environment overrides:
   AB_DELIVERY_SERVICE_USER
   AB_DELIVERY_SERVICE_GROUP
   AB_DELIVERY_STARTUP_WAIT
-  AB_DELIVERY_SKIP_MODULE_UPGRADE
-  AB_DELIVERY_SKIP_ODOO_DB_CHECK
 EOF
 }
 
@@ -93,12 +84,6 @@ trap cleanup EXIT
 
 shell_quote() {
     printf "%q" "$1"
-}
-
-repo_root() {
-    local script_dir
-    script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-    cd "$script_dir/../.." && pwd
 }
 
 path_parent() {
@@ -194,7 +179,6 @@ def _sanitize_name(value):
 
 class PollingStore:
     def __init__(self, path):
-        self.path = path
         parent = os.path.dirname(os.path.abspath(path))
         if parent:
             os.makedirs(parent, exist_ok=True)
@@ -214,16 +198,24 @@ class PollingStore:
                 value TEXT NOT NULL,
                 updated_at TEXT NOT NULL
             );
-            CREATE TABLE IF NOT EXISTS telegram_updates (
+            CREATE TABLE IF NOT EXISTS telegram_receptions (
                 update_id INTEGER PRIMARY KEY,
                 received_at TEXT NOT NULL,
                 processed_at TEXT,
-                state TEXT NOT NULL,
+                processing_status TEXT NOT NULL,
+                reception_status TEXT NOT NULL,
+                request_reference TEXT,
+                request_id TEXT,
+                branch_code TEXT,
+                callback_token TEXT,
                 callback_data TEXT,
+                callback_query_id TEXT,
                 chat_id TEXT,
                 message_id TEXT,
-                odoo_model TEXT,
-                odoo_record_id INTEGER,
+                telegram_user_id TEXT,
+                telegram_username TEXT,
+                telegram_user_name TEXT,
+                message_text TEXT,
                 raw_json TEXT NOT NULL,
                 error TEXT
             );
@@ -256,67 +248,83 @@ class PollingStore:
         )
         self.conn.commit()
 
-    def update_state(self, update, state, error="", odoo_model="", odoo_record_id=None):
-        update_id = int(update.get("update_id") or 0)
+    def final_state(self, update_id):
+        row = self.conn.execute(
+            "SELECT processing_status FROM telegram_receptions WHERE update_id = ?",
+            (int(update_id or 0),),
+        ).fetchone()
+        if row and row["processing_status"] in ("processed", "ignored"):
+            return row["processing_status"]
+        return ""
+
+    def record_update(self, update, processing_status, reception_status="", parsed=None, error=""):
+        parsed = parsed or {}
         callback = update.get("callback_query") or {}
         message = callback.get("message") or {}
         chat = message.get("chat") or {}
-        processed_at = _utc_now() if state in ("processed", "ignored", "failed") else None
+        telegram_user = callback.get("from") or {}
+        now = _utc_now()
         self.conn.execute(
             """
-            INSERT INTO telegram_updates(
-                update_id, received_at, processed_at, state, callback_data,
-                chat_id, message_id, odoo_model, odoo_record_id, raw_json, error
+            INSERT INTO telegram_receptions(
+                update_id, received_at, processed_at, processing_status,
+                reception_status, request_reference, request_id, branch_code,
+                callback_token, callback_data, callback_query_id, chat_id,
+                message_id, telegram_user_id, telegram_username,
+                telegram_user_name, message_text, raw_json, error
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(update_id) DO UPDATE SET
                 processed_at = excluded.processed_at,
-                state = excluded.state,
+                processing_status = excluded.processing_status,
+                reception_status = excluded.reception_status,
+                request_reference = excluded.request_reference,
+                request_id = excluded.request_id,
+                branch_code = excluded.branch_code,
+                callback_token = excluded.callback_token,
                 callback_data = excluded.callback_data,
+                callback_query_id = excluded.callback_query_id,
                 chat_id = excluded.chat_id,
                 message_id = excluded.message_id,
-                odoo_model = excluded.odoo_model,
-                odoo_record_id = excluded.odoo_record_id,
+                telegram_user_id = excluded.telegram_user_id,
+                telegram_username = excluded.telegram_username,
+                telegram_user_name = excluded.telegram_user_name,
+                message_text = excluded.message_text,
                 raw_json = excluded.raw_json,
                 error = excluded.error
             """,
             (
-                update_id,
-                _utc_now(),
-                processed_at,
-                state,
+                int(update.get("update_id") or 0),
+                now,
+                now if processing_status in ("processed", "ignored", "failed") else None,
+                processing_status,
+                reception_status,
+                parsed.get("request_reference", ""),
+                parsed.get("request_id", ""),
+                parsed.get("branch_code", ""),
+                parsed.get("callback_token", ""),
                 callback.get("data") or "",
+                callback.get("id") or "",
                 str(chat.get("id") or ""),
                 str(message.get("message_id") or ""),
-                odoo_model,
-                odoo_record_id,
+                str(telegram_user.get("id") or ""),
+                telegram_user.get("username") or "",
+                telegram_user_display_name(telegram_user),
+                message.get("text") or "",
                 json.dumps(update, ensure_ascii=False, sort_keys=True),
                 error,
             ),
         )
         self.conn.commit()
 
-    def final_state(self, update_id):
-        row = self.conn.execute(
-            "SELECT state FROM telegram_updates WHERE update_id = ?",
-            (int(update_id or 0),),
-        ).fetchone()
-        if row and row["state"] in ("processed", "ignored"):
-            return row["state"]
-        return ""
-
 
 class DeliveryLongPollingService:
-    def __init__(self, args, store, odoo_modules):
+    def __init__(self, args, store):
         self.args = args
         self.store = store
-        self.api = odoo_modules["api"]
-        self.fields = odoo_modules["fields"]
-        self.Registry = odoo_modules["Registry"]
-        self.SUPERUSER_ID = odoo_modules["SUPERUSER_ID"]
 
     def run(self):
-        _logger.info("Starting Telegram long polling for database %s", self.args.database)
+        _logger.info("Starting standalone Telegram long polling for instance %s", self.args.instance)
         while not _STOP_REQUESTED:
             try:
                 self.poll_once()
@@ -345,11 +353,11 @@ class DeliveryLongPollingService:
             max_update_id = max(max_update_id, update_id)
             if self.store.final_state(update_id):
                 continue
-            self.store.update_state(update, "received")
+            self.store.record_update(update, "received")
             try:
                 self._process_update(update)
             except Exception as ex:
-                self.store.update_state(update, "failed", error=str(ex))
+                self.store.record_update(update, "failed", error=str(ex))
                 raise
             self.store.set_offset(update_id + 1)
         if not updates:
@@ -358,78 +366,47 @@ class DeliveryLongPollingService:
             self.store.set_offset(max_update_id + 1)
 
     def _process_update(self, update):
-        update_id = int(update.get("update_id") or 0)
         callback = update.get("callback_query") or {}
         callback_id = callback.get("id") or ""
         message = callback.get("message") or {}
         chat = message.get("chat") or {}
         chat_id = str(chat.get("id") or "")
         message_id = str(message.get("message_id") or "")
+        original_text = message.get("text") or ""
         data = callback.get("data") or ""
         telegram_user = callback.get("from") or {}
-        receiver_name = self._telegram_user_display_name(telegram_user)
+        receiver_name = telegram_user_display_name(telegram_user)
+        parsed = parse_callback_data(data)
 
-        parsed = self._parse_callback_data(data)
         if not parsed:
-            self.store.update_state(update, "ignored", error="Unsupported callback data.")
+            self._answer_callback_query(callback_id, "تعذر قراءة طلب التوصيل")
+            self.store.record_update(update, "ignored", error="Unsupported callback data.")
             return
 
         if self.args.telegram_chat_id and chat_id != str(self.args.telegram_chat_id):
             self._answer_callback_query(callback_id, "هذه الرسالة ليست مخصصة لمجموعة التوصيل")
-            self.store.update_state(update, "ignored", error="Callback came from an unexpected Telegram chat.")
+            self.store.record_update(
+                update,
+                "ignored",
+                parsed=parsed,
+                error="Callback came from an unexpected Telegram chat.",
+            )
             return
 
-        branch_code, request_id, token = parsed
-        request_id = self._mark_delivery_request_received(
-            request_id=request_id,
-            branch_code=branch_code,
-            token=token,
-            update_id=update_id,
-            telegram_user=telegram_user,
-            receiver_name=receiver_name,
-        )
-        if not request_id:
-            self._answer_callback_query(callback_id, "تعذر تسجيل الاستلام")
-            self.store.update_state(update, "ignored", error="No delivery request matches callback data.")
-            return
+        received_at = _utc_now()
         self._answer_callback_query(callback_id, "تم تسجيل الاستلام")
-        self._edit_message_as_received(chat_id, message_id, message.get("text") or "", receiver_name)
-        self.store.update_state(
+        self._edit_message_as_received(chat_id, message_id, original_text, receiver_name, received_at)
+        self.store.record_update(
             update,
             "processed",
-            odoo_model="ab_delivery_request",
-            odoo_record_id=request_id,
+            reception_status="received",
+            parsed=parsed,
         )
-        _logger.info("Processed Telegram update %s for delivery request %s", update_id, request_id)
-
-    def _mark_delivery_request_received(self, request_id, branch_code, token, update_id, telegram_user, receiver_name):
-        registry = self.Registry(self.args.database)
-        with registry.cursor() as cr:
-            env = self.api.Environment(cr, self.SUPERUSER_ID, {})
-            if "ab_delivery_request" not in env.registry.models:
-                raise RuntimeError("Odoo model ab_delivery_request is not installed in database %s" % self.args.database)
-            request = env["ab_delivery_request"].sudo().search(
-                [
-                    ("id", "=", int(request_id)),
-                    ("branch_code", "=", branch_code),
-                    ("telegram_callback_token", "=", token),
-                ],
-                limit=1,
-            )
-            if not request:
-                cr.commit()
-                return None
-            request.write({
-                "state": "received",
-                "received_date": self.fields.Datetime.now(),
-                "telegram_update_id": update_id,
-                "received_by_telegram_id": str(telegram_user.get("id") or ""),
-                "received_by_telegram_name": receiver_name,
-                "received_by_telegram_username": telegram_user.get("username") or "",
-                "last_error": False,
-            })
-            cr.commit()
-            return request.id
+        _logger.info(
+            "Processed Telegram update %s for delivery reference %s",
+            update.get("update_id"),
+            parsed.get("request_reference") or "-",
+        )
 
     def _telegram_api(self, method, payload, timeout=60):
         url = "https://api.telegram.org/bot%s/%s" % (self.args.telegram_token, method)
@@ -462,11 +439,15 @@ class DeliveryLongPollingService:
         except Exception:
             _logger.exception("Failed to answer Telegram callback query %s", callback_id)
 
-    def _edit_message_as_received(self, chat_id, message_id, original_text, receiver_name):
+    def _edit_message_as_received(self, chat_id, message_id, original_text, receiver_name, received_at):
         if not chat_id or not message_id:
             return
         clean_text = (original_text or "").split("\n\nتم الاستلام بواسطة:")[0]
-        text = "%s\n\nتم الاستلام بواسطة: %s" % (clean_text, receiver_name or "-")
+        text = "%s\n\nتم الاستلام بواسطة: %s\nوقت الاستلام: %s" % (
+            clean_text,
+            receiver_name or "-",
+            received_at,
+        )
         try:
             self._telegram_api(
                 "editMessageText",
@@ -482,58 +463,58 @@ class DeliveryLongPollingService:
             _logger.exception("Failed to edit Telegram message %s in chat %s", message_id, chat_id)
 
     @staticmethod
-    def _parse_callback_data(data):
-        if not data.startswith("dr:"):
-            return False
-        parts = data.split(":", 3)
-        if len(parts) != 4:
-            return False
-        branch_code = (parts[1] or "").strip()
-        token = parts[3] or ""
-        try:
-            request_id = int(parts[2])
-        except (TypeError, ValueError):
-            return False
-        if not branch_code or not request_id or not token:
-            return False
-        return branch_code, request_id, token
-
-    @staticmethod
-    def _telegram_user_display_name(telegram_user):
-        name = " ".join(
-            part
-            for part in [
-                (telegram_user.get("first_name") or "").strip(),
-                (telegram_user.get("last_name") or "").strip(),
-            ]
-            if part
-        )
-        username = (telegram_user.get("username") or "").strip()
-        if name and username:
-            return "%s (@%s)" % (name, username)
-        return name or (("@%s" % username) if username else str(telegram_user.get("id") or ""))
-
-    @staticmethod
     def _sleep(seconds):
         deadline = time.monotonic() + max(0, seconds)
         while not _STOP_REQUESTED and time.monotonic() < deadline:
             time.sleep(min(1, deadline - time.monotonic()))
 
 
+def parse_callback_data(data):
+    if not data.startswith("dr:"):
+        return {}
+    parts = data.split(":", 3)
+    if len(parts) != 4:
+        return {}
+    branch_code = (parts[1] or "").strip()
+    request_id = (parts[2] or "").strip()
+    callback_token = parts[3] or ""
+    if not branch_code or not request_id or not callback_token:
+        return {}
+    return {
+        "request_reference": request_id,
+        "request_id": request_id,
+        "branch_code": branch_code,
+        "callback_token": callback_token,
+    }
+
+
+def telegram_user_display_name(telegram_user):
+    name = " ".join(
+        part
+        for part in [
+            (telegram_user.get("first_name") or "").strip(),
+            (telegram_user.get("last_name") or "").strip(),
+        ]
+        if part
+    )
+    username = (telegram_user.get("username") or "").strip()
+    if name and username:
+        return "%s (@%s)" % (name, username)
+    return name or (("@%s" % username) if username else str(telegram_user.get("id") or ""))
+
+
 def parse_args(argv):
-    parser = argparse.ArgumentParser(description="Run the delivery Telegram long-polling service.")
-    parser.add_argument("--odoo-server-path", default=os.environ.get("ODOO_SERVER_PATH", "/opt/odoo19/server"))
-    parser.add_argument("--config", required=True, help="Odoo config path.")
-    parser.add_argument("--database", required=True, help="Odoo database containing ab_delivery_request records.")
+    parser = argparse.ArgumentParser(description="Run the standalone delivery Telegram long-polling service.")
+    parser.add_argument("--instance", default=os.environ.get("AB_DELIVERY_INSTANCE", "default"))
     parser.add_argument(
         "--sqlite-path",
         default=os.environ.get("AB_DELIVERY_SQLITE_PATH"),
-        help="SQLite file used for Telegram offset and update audit.",
+        help="SQLite file used for Telegram offset and reception audit.",
     )
     parser.add_argument(
         "--telegram-token",
         default=os.environ.get("AB_DELIVERY_BOT_TOKEN", ""),
-        help="Telegram bot token. Prefer AB_DELIVERY_BOT_TOKEN from systemd EnvironmentFile.",
+        help="Telegram bot token.",
     )
     parser.add_argument(
         "--telegram-chat-id",
@@ -545,45 +526,10 @@ def parse_args(argv):
     parser.add_argument("--log-level", default=os.environ.get("AB_DELIVERY_LOG_LEVEL", "INFO"))
     args = parser.parse_args(argv)
     if not args.sqlite_path:
-        args.sqlite_path = "/tmp/ab-delivery-longpoll-%s.sqlite" % _sanitize_name(args.database)
-    return args
-
-
-def bootstrap_odoo(args):
-    sys.path.insert(0, args.odoo_server_path)
-    from odoo import SUPERUSER_ID, api, fields
-    from odoo.modules.registry import Registry
-    from odoo.tools import config
-
-    config.parse_config(["-c", args.config, "-d", args.database, "--no-http"], setup_logging=False)
-    return {
-        "api": api,
-        "fields": fields,
-        "Registry": Registry,
-        "SUPERUSER_ID": SUPERUSER_ID,
-    }
-
-
-def load_missing_telegram_config(args, odoo_modules):
-    if args.telegram_token and args.telegram_chat_id:
-        return
-    registry = odoo_modules["Registry"](args.database)
-    with registry.cursor() as cr:
-        env = odoo_modules["api"].Environment(cr, odoo_modules["SUPERUSER_ID"], {})
-        Param = env["ir.config_parameter"].sudo()
-        if not args.telegram_token:
-            args.telegram_token = (
-                Param.get_param("ab_sales_delivery_tracking.telegram_bot_token", "") or ""
-            ).strip()
-        if not args.telegram_chat_id:
-            args.telegram_chat_id = (
-                Param.get_param("ab_sales_delivery_tracking.telegram_chat_id", "") or ""
-            ).strip()
+        args.sqlite_path = "/tmp/ab-delivery-longpoll-%s.sqlite" % _sanitize_name(args.instance)
     if not args.telegram_token:
-        raise RuntimeError(
-            "Telegram bot token is not configured. Set AB_DELIVERY_BOT_TOKEN "
-            "or ab_sales_delivery_tracking.telegram_bot_token."
-        )
+        raise RuntimeError("Telegram bot token is not configured. Set AB_DELIVERY_BOT_TOKEN or --telegram-token.")
+    return args
 
 
 def main(argv=None):
@@ -596,9 +542,7 @@ def main(argv=None):
     )
     store = PollingStore(args.sqlite_path)
     try:
-        odoo_modules = bootstrap_odoo(args)
-        load_missing_telegram_config(args, odoo_modules)
-        service = DeliveryLongPollingService(args, store, odoo_modules)
+        service = DeliveryLongPollingService(args, store)
         service.run()
     finally:
         store.close()
@@ -615,16 +559,16 @@ write_unit_template() {
     cat > "$target" <<EOF
 [Unit]
 Description=Abdin Delivery Telegram Long Polling (%I)
-After=network-online.target postgresql.service
+After=network-online.target
 Wants=network-online.target
 
 [Service]
 Type=simple
 User=$SERVICE_USER
 Group=$SERVICE_GROUP
-WorkingDirectory=$(repo_root)
+WorkingDirectory=$(path_parent "$RUNNER_DEST")
 EnvironmentFile=-$ENV_DIR/%i.env
-ExecStart=$PYTHON_BIN $RUNNER_DEST --odoo-server-path $ODOO_SERVER_PATH --config $ODOO_CONFIG --database %I --sqlite-path $STATE_DIR/%i.sqlite
+ExecStart=$PYTHON_BIN $RUNNER_DEST --instance %I --sqlite-path $STATE_DIR/%i.sqlite
 Restart=always
 RestartSec=10
 KillSignal=SIGTERM
@@ -638,7 +582,9 @@ write_env_file() {
     local target
     target="$1"
     {
-        printf 'AB_DELIVERY_BOT_TOKEN='
+        printf 'AB_DELIVERY_INSTANCE='
+        systemd_env_value "$INSTANCE_NAME"
+        printf '\nAB_DELIVERY_BOT_TOKEN='
         systemd_env_value "$BOT_TOKEN"
         printf '\nAB_DELIVERY_CHAT_ID='
         systemd_env_value "$CHAT_ID"
@@ -649,17 +595,14 @@ write_env_file() {
 }
 
 validate_inputs() {
-    [[ -n "$DB_NAME" ]] || die "--db or AB_DELIVERY_DB is required"
+    [[ -n "$INSTANCE_NAME" ]] || die "--db or AB_DELIVERY_INSTANCE is required"
     [[ -n "$BOT_TOKEN" ]] || die "--bot-token or AB_DELIVERY_BOT_TOKEN is required"
     [[ -n "$CHAT_ID" ]] || die "--chat-id or AB_DELIVERY_CHAT_ID is required"
 
-    require_no_newline "Database name" "$DB_NAME"
+    require_no_newline "Service instance name" "$INSTANCE_NAME"
     require_no_newline "Telegram bot token" "$BOT_TOKEN"
     require_no_newline "Telegram chat ID" "$CHAT_ID"
     require_no_spaces "Python path" "$PYTHON_BIN"
-    require_no_spaces "Odoo server path" "$ODOO_SERVER_PATH"
-    require_no_spaces "Odoo bin path" "$ODOO_BIN"
-    require_no_spaces "Odoo config path" "$ODOO_CONFIG"
     require_no_spaces "Runner path" "$RUNNER_DEST"
     require_no_spaces "Unit path" "$UNIT_DEST"
     require_no_spaces "Environment directory" "$ENV_DIR"
@@ -670,77 +613,23 @@ validate_inputs() {
     command -v mktemp >/dev/null 2>&1 || die "mktemp is required"
     command -v "$SYSTEMCTL" >/dev/null 2>&1 || die "$SYSTEMCTL is required"
     [[ -x "$PYTHON_BIN" ]] || die "Python executable not found or not executable: $PYTHON_BIN"
-    [[ -d "$ODOO_SERVER_PATH" ]] || die "Odoo server path not found: $ODOO_SERVER_PATH"
-    [[ -f "$ODOO_BIN" ]] || die "Odoo bin not found: $ODOO_BIN"
-    [[ -f "$ODOO_CONFIG" ]] || die "Odoo config not found: $ODOO_CONFIG"
     id "$SERVICE_USER" >/dev/null 2>&1 || die "Service user does not exist: $SERVICE_USER"
     getent group "$SERVICE_GROUP" >/dev/null 2>&1 || die "Service group does not exist: $SERVICE_GROUP"
 }
 
 validate_python_runtime() {
-    info "Checking Python runtime dependencies"
+    info "Checking standalone Python runtime dependencies"
     "$PYTHON_BIN" - <<'PYEOF'
+import argparse
 import json
+import logging
 import os
 import signal
 import sqlite3
-import urllib.request
-PYEOF
-    PYTHONPATH="$ODOO_SERVER_PATH${PYTHONPATH:+:$PYTHONPATH}" "$PYTHON_BIN" - <<'PYEOF'
-import odoo
-from odoo.modules.registry import Registry
-PYEOF
-}
-
-install_or_upgrade_odoo_module() {
-    if [[ "$SKIP_MODULE_UPGRADE" == "1" ]]; then
-        info "Skipping Odoo module install/upgrade because AB_DELIVERY_SKIP_MODULE_UPGRADE=1"
-        return
-    fi
-
-    info "Installing or upgrading Odoo module ab_sales_delivery_tracking in $DB_NAME"
-    "$PYTHON_BIN" "$ODOO_BIN" \
-        -c "$ODOO_CONFIG" \
-        -d "$DB_NAME" \
-        -i ab_sales_delivery_tracking \
-        -u ab_sales_delivery_tracking \
-        --stop-after-init \
-        --no-http
-}
-
-validate_odoo_database() {
-    if [[ "$SKIP_ODOO_DB_CHECK" == "1" ]]; then
-        info "Skipping Odoo database check because AB_DELIVERY_SKIP_ODOO_DB_CHECK=1"
-        return
-    fi
-
-    info "Checking Odoo database and delivery request model"
-    PYTHONPATH="$ODOO_SERVER_PATH${PYTHONPATH:+:$PYTHONPATH}" "$PYTHON_BIN" - "$ODOO_CONFIG" "$DB_NAME" <<'PYEOF'
 import sys
-
-from odoo import SUPERUSER_ID, api
-from odoo.modules.registry import Registry
-from odoo.tools import config
-
-config_path = sys.argv[1]
-database = sys.argv[2]
-config.parse_config(["-c", config_path, "-d", database, "--no-http"], setup_logging=False)
-try:
-    registry = Registry(database)
-    with registry.cursor() as cr:
-        env = api.Environment(cr, SUPERUSER_ID, {})
-        if "ab_delivery_request" not in env.registry.models:
-            raise RuntimeError(
-                "model ab_delivery_request is missing. Install or upgrade ab_sales_delivery_tracking in %s first."
-                % database
-            )
-except Exception as ex:
-    message = str(ex) or repr(ex)
-    raise SystemExit(
-        "Odoo database check failed (%s): %s. Check --db and the database settings in %s."
-        % (type(ex).__name__, message, config_path)
-    )
-print("Odoo database check OK: %s" % database)
+import time
+import urllib.request
+from datetime import datetime, timezone
 PYEOF
 }
 
@@ -767,7 +656,7 @@ install_runner() {
     write_runner_template "$runner_tmp"
     "$PYTHON_BIN" -m py_compile "$runner_tmp" || die "Generated long-polling runner failed Python compilation"
 
-    info "Installing long-polling runner: $RUNNER_DEST"
+    info "Installing standalone long-polling runner: $RUNNER_DEST"
     run_privileged install -D -m 0755 "$runner_tmp" "$RUNNER_DEST"
 }
 
@@ -783,7 +672,7 @@ install_unit() {
 install_environment() {
     local env_tmp env_file
     env_tmp="$(make_temp_file)"
-    env_file="$ENV_DIR/${ESCAPED_DB}.env"
+    env_file="$ENV_DIR/${ESCAPED_INSTANCE}.env"
     write_env_file "$env_tmp"
 
     info "Creating environment file: $env_file"
@@ -836,9 +725,9 @@ reload_and_start_service() {
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --db|--database)
+        --db|--instance)
             [[ $# -ge 2 ]] || die "$1 requires a value"
-            DB_NAME="${2:-}"
+            INSTANCE_NAME="${2:-}"
             shift 2
             ;;
         --bot-token)
@@ -867,14 +756,12 @@ done
 
 validate_inputs
 validate_python_runtime
-install_or_upgrade_odoo_module
-validate_odoo_database
 configure_sudo
 
-ESCAPED_DB="$(systemd-escape -- "$DB_NAME")"
-ENV_FILE="$ENV_DIR/${ESCAPED_DB}.env"
-SERVICE_NAME="ab-delivery-longpoll@${ESCAPED_DB}.service"
-SQLITE_PATH="$STATE_DIR/${ESCAPED_DB}.sqlite"
+ESCAPED_INSTANCE="$(systemd-escape -- "$INSTANCE_NAME")"
+ENV_FILE="$ENV_DIR/${ESCAPED_INSTANCE}.env"
+SERVICE_NAME="ab-delivery-longpoll@${ESCAPED_INSTANCE}.service"
+SQLITE_PATH="$STATE_DIR/${ESCAPED_INSTANCE}.sqlite"
 
 install_runner
 install_unit
@@ -889,10 +776,9 @@ runner_dest_q="$(shell_quote "$RUNNER_DEST")"
 
 cat <<EOF
 
-Long-polling service configured.
+Standalone Telegram long-polling service configured.
 
-Database: $DB_NAME
-Instance: $ESCAPED_DB
+Instance: $INSTANCE_NAME
 Service: $SERVICE_NAME
 Runner: $RUNNER_DEST
 Environment file: $ENV_FILE
@@ -904,11 +790,11 @@ Status and logs:
   sudo systemctl restart $service_name_q
 
 Manual foreground run:
-  sudo -u $SERVICE_USER AB_DELIVERY_BOT_TOKEN='<TELEGRAM_BOT_TOKEN>' AB_DELIVERY_CHAT_ID='<TELEGRAM_GROUP_CHAT_ID>' $PYTHON_BIN $runner_dest_q --odoo-server-path $ODOO_SERVER_PATH --config $ODOO_CONFIG --database '$DB_NAME' --sqlite-path $sqlite_path_q
+  sudo -u $SERVICE_USER AB_DELIVERY_BOT_TOKEN='<TELEGRAM_BOT_TOKEN>' AB_DELIVERY_CHAT_ID='<TELEGRAM_GROUP_CHAT_ID>' $PYTHON_BIN $runner_dest_q --instance '$INSTANCE_NAME' --sqlite-path $sqlite_path_q
 
 SQLite checks:
   sqlite3 $sqlite_path_q ".tables"
   sqlite3 $sqlite_path_q "SELECT key, value, updated_at FROM polling_state;"
-  sqlite3 $sqlite_path_q "SELECT update_id, state, callback_data, odoo_record_id, error FROM telegram_updates ORDER BY update_id DESC LIMIT 5;"
+  sqlite3 $sqlite_path_q "SELECT update_id, processing_status, reception_status, request_reference, branch_code, chat_id, message_id, telegram_user_name, error FROM telegram_receptions ORDER BY update_id DESC LIMIT 5;"
 
 EOF

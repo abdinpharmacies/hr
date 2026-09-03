@@ -15,11 +15,8 @@
                     <field name="state" widget="badge"
                            decoration-warning="state in ('pending', 'queued')"
                            decoration-info="state == 'sent'"
-                           decoration-success="state == 'received'"
                            decoration-danger="state == 'failed'"/>
                     <field name="sent_date"/>
-                    <field name="received_date"/>
-                    <field name="received_by_telegram_name" optional="show"/>
                     <field name="next_attempt_date" optional="hide"/>
                     <field name="failure_count" optional="hide"/>
                 </list>
@@ -35,13 +32,7 @@
                         <button name="action_resend_to_telegram"
                                 type="object"
                                 string="Resend Telegram Message"
-                                class="btn-primary"
-                                invisible="state == 'received'"/>
-                        <button name="action_mark_received"
-                                type="object"
-                                string="Mark Received"
-                                class="btn-secondary"
-                                invisible="state == 'received'"/>
+                                class="btn-primary"/>
                         <field name="state" widget="statusbar"/>
                     </header>
                     <sheet>
@@ -64,10 +55,6 @@
                             <field name="telegram_chat_id"/>
                             <field name="telegram_message_id"/>
                             <field name="sent_date"/>
-                            <field name="received_date"/>
-                            <field name="received_by_telegram_name"/>
-                            <field name="received_by_telegram_username"/>
-                            <field name="received_by_telegram_id"/>
                             <field name="next_attempt_date"/>
                             <field name="failure_count"/>
                             <field name="last_error"/>
@@ -89,7 +76,6 @@
                     <field name="customer_phone"/>
                     <filter name="pending" string="Open"
                             domain="[('state', 'in', ['pending', 'queued', 'sent', 'failed'])]"/>
-                    <filter name="received" string="Received" domain="[('state', '=', 'received')]"/>
                     <group name="group_by">
                         <filter name="group_by_state" string="State" context="{'group_by': 'state'}"/>
                         <filter name="group_by_branch" string="Branch" context="{'group_by': 'store_id'}"/>
